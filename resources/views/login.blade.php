@@ -28,26 +28,22 @@
       <!-- loader END -->
         <!-- Sign in Start -->
         <section class="sign-in-page">
-            <div class="container sign-in-page-bg mt-5 p-0">
-                <div class="row no-gutters">
-                    <div class="col-md-6 text-center">
+            <div class="container sign-in-page-bg mt-4 p-0">
+                <div class="row no-gutters pl-5">
+                    <div class="col-md-6 text-center ">
                         <div class="sign-in-detail text-white">
-                            <a class="sign-in-logo" href="#"><img src="{{ asset('images/mbm-logo-w.png') }}" class="img-fluid" alt="MBM"></a>
                             <div class="owl-carousel" data-autoplay="true" data-loop="true" data-nav="false" data-dots="true" data-items="1" data-items-laptop="1" data-items-tab="1" data-items-mobile="1" data-items-mobile-sm="1" data-margin="0">
-                                <div class="item">
-                                    <img src="{{ asset('images/login/1.png') }}" class="img-fluid mb-4" alt="logo">
-                                    {{-- <h4 class="mb-1 text-white">Manage your orders</h4>
-                                    <p>It is a long established fact that a reader will be distracted by the readable content.</p> --}}
+                                <div class="item login-slider">
+                                    <img src="{{ asset('images/login/1.jpg') }}" class="img-fluid mb-4 radius-10" alt="logo">
+                                    <h4 class="mb-1 text-white">Manage Time & Attendance</h4>
                                 </div>
-                                <div class="item">
-                                    <img src="{{ asset('images/login/2 - Copy.png') }}" class="img-fluid mb-4" alt="logo">
-                                    {{-- <h4 class="mb-1 text-white">Manage your orders</h4>
-                                    <p>It is a long established fact that a reader will be distracted by the readable content.</p> --}}
+                                <div class="item login-slider">
+                                    <img src="{{ asset('images/login/2.jpg') }}" class="img-fluid mb-4 radius-10" alt="logo">
+                                    <h4 class="mb-1 text-white">Process Salary</h4>
                                 </div>
-                                <div class="item">
-                                    <img src="{{ asset('images/login/3.png') }}" class="img-fluid mb-4" alt="logo">
-                                    {{-- <h4 class="mb-1 text-white">Manage your orders</h4>
-                                    <p>It is a long established fact that a reader will be distracted by the readable content.</p> --}}
+                                <div class="item login-slider">
+                                    <img src="{{ asset('images/login/3.jpg') }}" class="img-fluid mb-4 radius-10" alt="logo">
+                                    <h4 class="mb-1 text-white">Manage your orders</h4>
                                 </div>
                             </div>
                         </div>
@@ -56,6 +52,9 @@
                         <div class="sign-in-from">
                             
                             <form class="mt-4">
+                                <a class="sign-in-logo text-center mb-3 " href="#">
+                                    <img src="{{ asset('images/login/logo.png') }}" class="img-fluid" alt="MBM">
+                                </a>
                                 <div class="form-group">
                                     <label for="exampleInputEmail1">Email address</label>
                                     <input type="email" class="form-control mb-0" id="exampleInputEmail1" placeholder="Enter email">
