@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Models\Employee;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -40,4 +41,9 @@ class User extends Authenticatable
     protected $date = [
         'created_at', 'updated_at'
     ];
+
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class, 'associate_id', 'associate_id');
+    }
 }

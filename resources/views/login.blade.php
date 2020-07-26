@@ -51,18 +51,29 @@
                     <div class="col-md-6 position-relative">
                         <div class="sign-in-from">
                             
-                            <form class="mt-4">
+                            <form method="POST" action="{{ route('login') }}" class="mt-4">
+                              @csrf
                                 <a class="sign-in-logo text-center mb-3 " href="#">
                                     <img src="{{ asset('images/login/logo.png') }}" class="img-fluid" alt="MBM">
                                 </a>
                                 <div class="form-group">
-                                    <label for="exampleInputEmail1">Email address</label>
-                                    <input type="email" class="form-control mb-0" id="exampleInputEmail1" placeholder="Enter email">
+                                    <label for="email">Email address</label>
+                                    <input name="email" type="email" class="form-control mb-0 @error('email') is-invalid @enderror" id="email" value="{{ old('email') }}" placeholder="Enter email">
+                                    @error('email')
+                                      <span class="invalid-feedback" role="alert">
+                                          <strong>{{ $message }}</strong>
+                                      </span>
+                                    @enderror
                                 </div>
                                 <div class="form-group">
-                                    <label for="exampleInputPassword1">Password</label>
-                                    <a href="#" class="float-right">Forgot password?</a>
-                                    <input type="password" class="form-control mb-0" id="exampleInputPassword1" placeholder="Password">
+                                    <label for="password">Password</label>
+                                    <a href="{{ route('password.request') }}" class="float-right">Forgot password?</a>
+                                    <input name="password" type="password" class="form-control mb-0 @error('password') is-invalid @enderror" id="password" placeholder="Password" value="{{ old('password') }}">
+                                    @error('password')
+                                      <span class="invalid-feedback" role="alert">
+                                          <strong>{{ $message }}</strong>
+                                      </span>
+                                  @enderror
                                 </div>
                                 <div class="d-inline-block w-100">
                                     <div class="custom-control custom-checkbox d-inline-block mt-2 pt-1">
@@ -111,5 +122,4 @@
       <script src="{{ asset('assets/js/custom.js') }}"></script>
    </body>
 
-<!-- Mirrored from iqonic.design/themes/xray/html/sign-in.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 07 Jul 2020 09:40:56 GMT -->
 </html>

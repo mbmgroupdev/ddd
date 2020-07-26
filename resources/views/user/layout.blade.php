@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@include('hr.menu')
+@include('user.menu')
 @section('content')
 	<div class="container-fluid">
 		@yield('main-content')

@@ -13,14 +13,20 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('login');
+
+
+
+Route::group(['middleware' => 'guest'], function(){
+	Route::get('/', function () {
+	    return view('login');
+	});
+});
+Auth::routes();
+Route::group(['middleware' => 'auth'], function(){
+	Route::get('/', 'HomeController@index');
+	@include 'modules/hr.php';
 });
 
-Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
 
-Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
