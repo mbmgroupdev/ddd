@@ -161,7 +161,7 @@
                      <div class="iq-card">
                         <div class="iq-card-body bg-primary rounded pt-2 pb-2 pr-2">
                            <div class="d-flex align-items-center justify-content-between">
-                              <p class="mb-0">Advice! Connect your Apple Watch for better results.</p>
+                              <p class="mb-0">Announcement will placed here! no announcement</p>
                               <div class="rounded iq-card-icon bg-white">
                                  <img src="{{ asset('assets/images/page-img/37.png') }}" class="img-fluid" alt="icon">
                               </div>
