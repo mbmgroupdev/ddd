@@ -241,9 +241,9 @@
                          <ul class="navbar-list">
                             <li>
                                <a href="#" class="search-toggle iq-waves-effect d-flex align-items-center">
-                                  <img src='{{ auth::user()->employee['as_pic'] != null?asset(auth::user()->employee['as_pic'] ):(auth::user()->employee['as_gender'] == 'Female'?asset('assets/images/user/02.jpg'):asset('assets/images/user/01.jpg')) }}' class="img-fluid rounded mr-3" alt="{{ auth::user()->name }}" onError='this.onerror=null;this.src="{{ (auth::user()->employee['as_gender'] == 'Female'?asset('assets/images/user/02.jpg'):asset('assets/images/user/01.jpg')) }}";'>
+                                  <img src='{{ auth()->user()->employee != null?asset(auth()->user()->employee['as_pic'] ):(auth()->user()->employee['as_gender'] == 'Female'?asset('assets/images/user/02.jpg'):asset('assets/images/user/01.jpg')) }}' class="img-fluid rounded mr-3" alt="{{ auth()->user()->name }}" onError='this.onerror=null;this.src="{{ (auth()->user()->employee['as_gender'] == 'Female'?asset('assets/images/user/02.jpg'):asset('assets/images/user/01.jpg')) }}";'>
                                   <div class="caption">
-                                     <h6 class="mb-0 line-height">{{ auth::user()->name }}</h6>
+                                     <h6 class="mb-0 line-height">{{ auth()->user()->name }}</h6>
                                      {{-- <span class="font-size-12">Available</span> --}}
                                   </div>
                                </a>
@@ -251,7 +251,7 @@
                                   <div class="iq-card shadow-none m-0">
                                      <div class="iq-card-body p-0 ">
                                         <div class="bg-primary p-3">
-                                           <h5 class="mb-0 text-white line-height">Hello {{ auth::user()->name }}</h5>
+                                           <h5 class="mb-0 text-white line-height">Hello {{ auth()->user()->name }}</h5>
                                            {{-- <span class="text-white font-size-12">Available</span> --}}
                                         </div>
                                         <a href="profile.html" class="iq-sub-card iq-bg-primary-hover">
