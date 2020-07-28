@@ -24,21 +24,45 @@
                   </div>
                   <ul class="doctoe-sedual d-flex align-items-center justify-content-between p-0 mt-4 mb-0">
                      <li class="text-center">
-                        <h6 class="text-primary">Weight</h6>
-                        <h3>60<span>kg</span></h3>
+                        <h6 class="text-primary">Logged In</h6>
+                        <span>30 minutes ago</span>
                      </li>
                      <li class="text-center">
-                        <h6 class="text-primary">Height</h6>
-                        <h3>170<span>cm</span></h3>
-                     </li>
-                     <li class="text-center">
-                        <h6 class="text-primary">Goal</h6>
-                        <h3 class="text-warning">55<span>kg</span></h3>
+                        <h6 class="text-primary">IP</h6>
+                        <span>103.198.136.178</span>
                      </li>
                   </ul>
                </div>
             </div>
          </div></div>
+         <div class="col-sm-12">
+            <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+               <div class="iq-card-header d-flex justify-content-between">
+                  <div class="iq-header-title">
+                     <h4 class="card-title">My Logs</h4>
+                  </div>
+               </div>
+               <div class="iq-card-body">
+                  <ul class="iq-timeline">
+                     @php $logs= []; @endphp 
+                     @if(count($logs)>0)
+                        @foreach($logs as $log)
+                        <li>
+                           <div class="timeline-dots"></div>
+                           <h6 class="float-left mb-1">{{$log->log_message}} </h6>
+                           <small class="float-right mt-1">23 November 2019</small>
+                           <div class="d-inline-block w-100">
+                              <p>at row no.  {{$log->log_row_no}} </p>
+                           </div>
+                        </li>
+                        @endforeach
+                    @else
+                    <center>No Action </center>
+                    @endif
+                  </ul>
+               </div>
+            </div>
+         </div>
          <div class="col-sm-12">
          <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
             <div class="iq-card-body">
@@ -151,6 +175,8 @@
                </div>
             </div>
          </div>
+
+         <!--  -->
       </div>
       </div>
       <div class="col-lg-8">
