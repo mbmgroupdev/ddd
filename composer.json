@@ -40,7 +40,7 @@
         },
         "files": [
             "app/Helpers/helper.php",
-            "app/Helpers/employee.php",
+            "app/Helpers/employee.php"
         ],
         "classmap": [
             "database/seeds",
