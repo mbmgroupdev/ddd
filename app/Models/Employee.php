@@ -9,7 +9,8 @@ class Employee extends Model
 {
 	use Compoships;
 
-	// public $with = ['employee_bengali','designation', 'unit', 'floor', 'department'];
+    //public $with = ['employee_bengali','designation', 'unit', 'floor', 'department'];
+	public $with = ['designation'];
     protected $table = "hr_as_basic_info";
     protected $guarded = [];
 
@@ -36,12 +37,12 @@ class Employee extends Model
     {
         return Employee::select('as_id', 'as_name', 'associate_id')->get();
     }
-
+    */
     public function designation()
     {
     	return $this->belongsTo('App\Models\Hr\Designation', 'as_designation_id', 'hr_designation_id');
     }
-
+    /*
     public function benefits()
     {
         return $this->hasOne(Benefits::class, 'ben_as_id', 'associate_id');

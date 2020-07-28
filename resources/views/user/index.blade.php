@@ -8,6 +8,8 @@
       <link href="{{ asset('assets/fullcalendar/timegrid/main.css') }}" rel='stylesheet' />
       <link href="{{ asset('assets/fullcalendar/list/main.css') }}" rel='stylesheet' />
    @endpush
+
+   @php $user = auth()->user(); @endphp
    <div class="row">
       <div class="col-lg-4 row m-0 p-0">
          <div class="col-sm-12">
@@ -15,30 +17,55 @@
             <div class="iq-card-body">
                <div class="user-details-block">
                   <div class="user-profile text-center">
-                     <img src='{{ auth::user()->employee['as_pic'] != null?asset(auth::user()->employee['as_pic'] ):(auth::user()->employee['as_gender'] == 'Female'?asset('assets/images/user/02.jpg'):asset('assets/images/user/01.jpg')) }}' class="avatar-130 img-fluid" alt="{{ auth::user()->name }}" onError='this.onerror=null;this.src="{{ (auth::user()->employee['as_gender'] == 'Female'?asset('assets/images/user/02.jpg'):asset('assets/images/user/01.jpg')) }}";'>
+                     <img src='{{ $user->employee['as_pic'] != null?asset($user->employee['as_pic'] ):($user->employee['as_gender'] == 'Female'?asset('assets/images/user/02.jpg'):asset('assets/images/user/01.jpg')) }}' class="avatar-130 img-fluid" alt="{{ $user->name }}" onError='this.onerror=null;this.src="{{ ($user->employee['as_gender'] == 'Female'?asset('assets/images/user/02.jpg'):asset('assets/images/user/01.jpg')) }}";'>
                   </div>
                   <div class="text-center mt-3">
-                     <h4><b>{{ auth::user()->name }}</b></h4>
-                     <p class="mb-0">{{ auth::user()->employee['as_designation_id']}}</p>
-                     <p class="mb-0">Join {{ auth::user()->employee['as_doj']->diffForHumans() }}</p>
+                     <h4><b>{{ $user->name }}</b></h4>
+                     <p class="mb-0">{{ $user->employee['as_designation_id']}}</p>
+                     <p class="mb-0">Joined {{ $user->employee['as_doj']->diffForHumans() }}</p>
                   </div>
                   <ul class="doctoe-sedual d-flex align-items-center justify-content-between p-0 mt-4 mb-0">
                      <li class="text-center">
-                        <h6 class="text-primary">Weight</h6>
-                        <h3>60<span>kg</span></h3>
+                        <h6 class="text-primary">Logged In</h6>
+                        <span>{{$user->lastlogin()->login_at->diffForHumans() }}</span>
                      </li>
                      <li class="text-center">
-                        <h6 class="text-primary">Height</h6>
-                        <h3>170<span>cm</span></h3>
-                     </li>
-                     <li class="text-center">
-                        <h6 class="text-primary">Goal</h6>
-                        <h3 class="text-warning">55<span>kg</span></h3>
+                        <h6 class="text-primary">IP</h6>
+                        <span>{{$user->lastlogin()->ip_address}}</span>
                      </li>
                   </ul>
                </div>
             </div>
          </div></div>
+         <div class="col-sm-12">
+            <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+               <div class="iq-card-header d-flex justify-content-between">
+                  <div class="iq-header-title">
+                     <h4 class="card-title">My Logs</h4>
+                  </div>
+               </div>
+               <div class="iq-card-body">
+                  <ul class="iq-timeline">
+                     @if(count($user->logs) > 0)
+                        @foreach($user->logs as $log)
+                        <li>
+                           <div class="timeline-dots"></div>
+                           <h6 class="float-left mb-1">{{$log->log_message??''}}</h6>
+                           <small class="float-right mt-1">{{date('d F, Y',strtotime($log->created_at))}}</small>
+                           @if($log->log_row_no != 0)
+                           <div class="d-inline-block w-100">
+                              <p>at row no.  {{$log->log_row_no}} </p>
+                           </div>
+                           @endif
+                        </li>
+                        @endforeach
+                    @else
+                    <center>No Action </center>
+                    @endif
+                  </ul>
+               </div>
+            </div>
+         </div>
          <div class="col-sm-12">
          <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
             <div class="iq-card-body">
@@ -151,6 +178,8 @@
                </div>
             </div>
          </div>
+
+         <!--  -->
       </div>
       </div>
       <div class="col-lg-8">
