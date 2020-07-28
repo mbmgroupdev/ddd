@@ -38,7 +38,7 @@
                            <div class="form-card text-left">
                               <div class="row">
                                  <div class="col-12">
-                                    <h3 class="mb-4">Personal Information:</h3>
+                                    <h3 class="mb-4">Personal Info:</h3>
                                  </div>
                               </div>
                               <div class="row">
