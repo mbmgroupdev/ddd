@@ -356,7 +356,7 @@
     <!-- Smooth Scrollbar JavaScript -->
     <script src="{{ asset('assets/js/smooth-scrollbar.js') }}"></script>
     <!-- am animated JavaScript -->
-    <!-- <script src="{{ asset('assets/js/animated.js') }}"></script> -->
+    <script src="{{ asset('assets/js/animated.js') }}"></script>
     <!-- Custom JavaScript -->
     <script src="{{ asset('assets/js/custom.js') }}"></script>
     @stack('js')
