@@ -4,6 +4,7 @@ namespace App\Models;
 use Awobaz\Compoships\Compoships;
 
 use Illuminate\Database\Eloquent\Model;
+use DB;
 
 class Employee extends Model
 {
@@ -235,36 +236,15 @@ class Employee extends Model
         ->where('as_unit_id', $unitId)
         ->get();
     }
-
+    */
     public  function todayAtt()
     {
-        $unit = $this->as_unit_id;
-        $att = "";
-        $tableName = "";
-
-        //$table = getAttTable($this->as_unit_id);
-        if($unit== 1 || $unit == 4 || $unit ==5 || $unit ==9){
-            $tableName= "hr_attendance_mbm";
-        }
-        else if($unit==2){
-            $tableName= "hr_attendance_ceil";
-        }
-        else if($unit==3){
-            $tableName= "hr_attendance_aql";
-        }
-        else if($unit==8){
-            $tableName= "hr_attendance_cew";
-        }
-        
-        if($tableName != ""){
-
-            $att = DB::table($tableName)->where([
+        $table = get_att_table($this->as_unit_id);
+        //dd($table);
+        return DB::table($table)->where([
                 'as_id' => $this->as_id,
                 'in_date' => date('Y-m-d')
             ])->first();
-        }
-
-        return $att;
     }
 
     public  function job_duration($date)
@@ -272,11 +252,9 @@ class Employee extends Model
         $joind = \Carbon\Carbon::createFromFormat('Y-m-d', $this->as_doj);
         $thisday = \Carbon\Carbon::createFromFormat('Y-m-d', $date);
 
-        $diff = round(($joind->diffInDays($thisday))/30.416);
-
-        // if differecnce is greater than 15 days , 1 month increases
+        $diff = round($joind->floatDiffInMonths($thisday));
         
 
         return (int) $diff;
-    }*/
+    }
 }

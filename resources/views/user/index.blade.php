@@ -74,7 +74,7 @@
                      <div class="col-md-6">
                         <div class="data-block">
                            <p class="mb-0">Walked</p>
-                           <h5>4532 steps</h5>
+                           <h5></h5>
                         </div>
                         <div class="data-block mt-3">
                            <p class="mb-0">My Goal</p>
@@ -199,39 +199,42 @@
                      </div>
                      <div class="iq-card">
                         <div class="iq-header-title">
-                           <h4 class="card-title text-primary">Popular Training</h4>
+                           <h4 class="card-title text-primary"></h4>
                         </div>
                         <div class="iq-card-body pl-0 pr-0 pb-0">
                            <div class="row">
-                              <div class="col-md-4">
+                              <div class="col-md-6">
                                  <div class="training-block d-flex align-items-center">
                                     <div class="rounded-circle iq-card-icon iq-bg-primary">
                                        <img src="{{ asset('assets/images/page-img/34.png') }}" class="img-fluid" alt="icon">
                                     </div>
                                     <div class="ml-3">
-                                       <h5 class="">Power Training</h5>
-                                       <p class="mb-0">395 kcal / h</p>
+                                       @php $att = $user->employee->todayAtt(); @endphp
+                                        @if($att != null)
+                                        <h5 class="">
+                                                Present
+                                        </h5>
+                                        <p class="mb-0">
+                                            @if($att->in_time != null)
+                                                {{date('h:i A', strtotime($att->in_time))}}
+                                            @endif
+                                            -
+                                            @if($att->in_time != null)
+                                                {{date('h:i A', strtotime($att->out_time))}}
+                                            @endif
+                                        </p>
+                                        @endif
                                     </div>
+
                                  </div>
                               </div>
-                              <div class="col-md-4">
+                              <div class="col-md-6">
                                  <div class="training-block d-flex align-items-center">
                                     <div class="rounded-circle iq-card-icon iq-bg-primary">
                                        <img src="{{ asset('assets/images/page-img/35.png') }}" class="img-fluid" alt="icon">
                                     </div>
                                     <div class="ml-3">
                                        <h5 class="">Yoga Training</h5>
-                                       <p class="mb-0">395 kcal / h</p>
-                                    </div>
-                                 </div>
-                              </div>
-                              <div class="col-md-4">
-                                 <div class="training-block d-flex align-items-center">
-                                    <div class="rounded-circle iq-card-icon iq-bg-primary">
-                                       <img src="{{ asset('assets/images/page-img/36.png') }}" class="img-fluid" alt="icon">
-                                    </div>
-                                    <div class="ml-3">
-                                       <h5 class="">Stretching</h5>
                                        <p class="mb-0">395 kcal / h</p>
                                     </div>
                                  </div>
