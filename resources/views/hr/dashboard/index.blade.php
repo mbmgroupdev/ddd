@@ -548,7 +548,7 @@
                     },
                 },*/
                 legend: {
-                  position: 'right',
+                  position: 'right', 
                   offsetY: 40
                 },
                 fill: {
