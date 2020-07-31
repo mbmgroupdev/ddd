@@ -4,6 +4,7 @@ namespace App\Models;
 use Awobaz\Compoships\Compoships;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Hr\Leave;
 use DB;
 
 class Employee extends Model
@@ -237,14 +238,34 @@ class Employee extends Model
         ->get();
     }
     */
-    public  function todayAtt()
+    public  function today_status()
     {
+        $today = date('Y-m-d');
         $table = get_att_table($this->as_unit_id);
-        //dd($table);
-        return DB::table($table)->where([
+        
+        $att = DB::table($table)->where([
                 'as_id' => $this->as_id,
-                'in_date' => date('Y-m-d')
+                'in_date' => $today
             ])->first();
+
+        $leave = Leave::where('leave_from', '=<', $today)
+                    ->where('leave_to', '>=', $today)
+                    ->where('leave_ass_id', $this->associate_id)
+                    ->first();
+
+        // if leave and att both exists
+        $data = array();
+
+        if($att != null && $leave != null){
+            $data['status'] = 'Leave';
+            $data['info'] = $leave;
+        }else if($att != null && $leave == null){
+            $data['status'] = 'Leave';
+            $data['info'] = $att;
+        }else{
+            $data['status'] = 'Absent';
+        }
+        return $data;
     }
 
     public  function job_duration($date)

@@ -26,11 +26,11 @@
                   </div>
                   <ul class="doctoe-sedual d-flex align-items-center justify-content-between p-0 mt-4 mb-0">
                      <li class="text-center">
-                        <h6 class="text-primary">Logged In</h6>
+                        <h6 class="text-primary">Logged In </h6>
                         <span>{{$user->lastlogin()->login_at->diffForHumans() }}</span>
                      </li>
                      <li class="text-center">
-                        <h6 class="text-primary">IP</h6>
+                        <h6 class="text-primary">IP Address</h6>
                         <span>{{$user->lastlogin()->ip_address}}</span>
                      </li>
                   </ul>
@@ -183,11 +183,14 @@
       </div>
       </div>
       <div class="col-lg-8">
+        <div class="row">
+            
+        </div>
          <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
             <div class="iq-card-body pb-0">
-               <div class="row">
-                  <div class="col-sm-12">
-                     <div class="iq-card">
+               <div class="row"> 
+                   <div class="col-sm-12">
+                    <div class="iq-card">
                         <div class="iq-card-body bg-primary rounded pt-2 pb-2 pr-2">
                            <div class="d-flex align-items-center justify-content-between">
                               <p class="mb-0">Announcement will placed here! no announcement</p>
@@ -196,7 +199,9 @@
                               </div>
                            </div>
                         </div>
-                     </div>
+                    </div>
+                </div>   
+                <div class="col-lg-12">  
                      <div class="iq-card">
                         <div class="iq-header-title">
                            <h4 class="card-title text-primary"></h4>
@@ -209,21 +214,26 @@
                                        <img src="{{ asset('assets/images/page-img/34.png') }}" class="img-fluid" alt="icon">
                                     </div>
                                     <div class="ml-3">
-                                       @php $att = $user->employee->todayAtt(); @endphp
-                                        @if($att != null)
+                                        <!-- check attendance -->
+                                        @php $emp_status = $user->employee->today_status(); @endphp
                                         <h5 class="">
-                                                Present
+                                                {{$emp_status['status']}}
                                         </h5>
                                         <p class="mb-0">
-                                            @if($att->in_time != null)
-                                                {{date('h:i A', strtotime($att->in_time))}}
-                                            @endif
-                                            -
-                                            @if($att->in_time != null)
-                                                {{date('h:i A', strtotime($att->out_time))}}
+                                            @if($emp_status['status'] == 'Present')
+                                                @if($emp_status['info']->in_time != null)
+                                                    {{date('h:i A', strtotime($emp_status['info']->in_time))}}
+                                                @endif
+                                                -
+                                                @if($emp_status['info']->in_time != null)
+                                                    {{date('h:i A', strtotime($emp_status['info']->out_time))}}
+                                                @endif 
+                                            @elseif($emp_status['status'] == 'Leave')
+                                                {{$emp_status['info']->leave_type}}
+                                            @else
+                                                -
                                             @endif
                                         </p>
-                                        @endif
                                     </div>
 
                                  </div>
@@ -256,6 +266,7 @@
                      </div>
                   </div>
                   <div class="col-lg-4">
+
                      <div class="iq-card mb-0">
                         <div class="iq-card-header d-flex justify-content-between p-0 bg-white">
                            <div class="iq-header-title">
