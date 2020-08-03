@@ -15,7 +15,8 @@
         "guzzlehttp/guzzle": "^6.3",
         "laravel/framework": "^7.0",
         "laravel/tinker": "^2.0",
-        "laravel/ui": "^2.1"
+        "laravel/ui": "^2.1",
+        "spatie/laravel-permission": "^3.13"
     },
     "require-dev": {
         "facade/ignition": "^2.0",
@@ -40,7 +41,7 @@
         },
         "files": [
             "app/Helpers/helper.php",
-            "app/Helpers/employee.php",
+            "app/Helpers/employee.php"
         ],
         "classmap": [
             "database/seeds",

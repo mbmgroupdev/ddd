@@ -9,34 +9,40 @@
       <link href="{{ asset('assets/fullcalendar/list/main.css') }}" rel='stylesheet' />
    	@endpush
 	<div class="row">
-       <div class="col-lg-8">
+       <div class="col-lg-6">
          <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
             <div class="iq-card-header d-flex justify-content-between">
                <div class="iq-header-title">
-                  <h4 class="card-title">Activity Statistic</h4>
+                  <h4 class="card-title">Monthly Salary</h4>
                </div>
             </div>
             <div class="iq-card-body">
-               <div id="home-chart-05"></div>
+               <div id="monthly-salary-chart"></div>
             </div>
          </div>
       </div>
-      <div class="col-lg-4">
-         <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
-            <div class="iq-card-body p-0 rounded ">
-               <img src="{{ asset('assets/images/page-img/39.png') }}" class="img-fluid rounded" alt="banner-img">
+      <div class="col-lg-6">
+        <div class="iq-card">
+            <div class="iq-card-header d-flex justify-content-between">
+               <div class="iq-header-title">
+                  <h4 class="card-title">Attendance: {{date('F')}}</h4>
+               </div>
             </div>
-         </div>
+            <div class="iq-card-body">
+               <div id="att-chart"></div>
+            </div>
+        </div>
+         <!--  -->
       </div>                  
       <div class="col-md-6">
          <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
             <div class="iq-card-header d-flex justify-content-between">
                <div class="iq-header-title">
-                  <h4 class="card-title">Patient Distribution</h4>
+                  <h4 class="card-title">Monthly Overtime</h4>
                </div>
             </div>
             <div class="iq-card-body">
-               <div id="doc-chart-01" style="height: 415px;"></div>
+               <div id="ot-comparison"></div>
             </div>
          </div>
       </div>
@@ -488,9 +494,193 @@
       
       <!-- am kelly JavaScript -->
       <script src="{{ asset('assets/js/kelly.js') }}"></script>
+
+      <script src="{{ asset('assets/js/highcharts.js')}}"></script>
       
       <!-- Chart Custom JavaScript -->
       <script src="{{ asset('assets/js/chart-custom.js') }}"></script>
+
+      <script type="text/javascript">
+        jQuery("#monthly-salary-chart").length && am4core.ready(function() {
+            var options = {
+                  series: [{
+                  name: 'Salary',
+                  data: @php echo json_encode(array_values($salary_chart['salary'])); @endphp
+                }, {
+                  name: 'OT Payment',
+                  data: @php echo json_encode(array_values($salary_chart['ot'])); @endphp
+                }],
+                colors: ['#089bab','#FC9F5B'],
+                  chart: {
+                  type: 'bar',
+                  height: 350,
+                  stacked: true,
+                  toolbar: {
+                    show: true
+                  },
+                  zoom: {
+                    enabled: true
+                  }
+                },
+                responsive: [{
+                  breakpoint: 480,
+                  options: {
+                    legend: {
+                      position: 'bottom',
+                      offsetX: -10,
+                      offsetY: 0
+                    }
+                  }
+                }],
+                plotOptions: {
+                  bar: {
+                    horizontal: false,
+                  },
+                },
+                xaxis: {
+                  categories: @php echo json_encode(array_values($salary_chart['category'])); @endphp,
+                },
+                /*yaxis:{
+                    labels: {
+                        formatter: function() {
+                            return this.value / 1000 + 'K'; // clean, unformatted number for year
+                        }
+                    },
+                },*/
+                legend: {
+                  position: 'right', 
+                  offsetY: 40
+                },
+                fill: {
+                  opacity: 1
+                }
+                };
+
+                var chart = new ApexCharts(document.querySelector("#monthly-salary-chart"), options);
+                chart.render();
+        })
+        if (jQuery('#ot-comparison').length) {
+            Highcharts.chart('ot-comparison', {
+                chart: {
+                    zoomType: 'xy'
+                },
+                title: {
+                    text: ''
+                },
+                xAxis: [{
+                    categories: @php echo json_encode(array_keys($ot_chart)); @endphp,
+                    crosshair: true
+                }],
+                yAxis: [{ // Primary yAxis
+                    labels: {
+                        format: '{value} h',
+                        style: {
+                            color: Highcharts.getOptions().colors[1]
+                        }
+                    },
+
+                    title: {
+                        text: 'Overtime',
+                        style: {
+                            color: Highcharts.getOptions().colors[1]
+                        }
+                    }
+                }],
+                tooltip: {
+                    shared: true
+                },
+                legend: {
+                    layout: 'vertical',
+                    align: 'left',
+                    x: 120,
+                    verticalAlign: 'top',
+                    y: 100,
+                    floating: true,
+                    backgroundColor: Highcharts.defaultOptions.legend.backgroundColor || // theme
+                        'rgba(255,255,255,0.25)'
+                },
+                series: [{
+                    name: 'Overtime',
+                    type: 'area',
+                    data: @php echo json_encode(array_values($ot_chart)); @endphp,
+                    color: '#FC9F5B',
+                    tooltip: {
+                        valueSuffix: 'h'
+                    }
+                }]
+            });
+        }
+
+        if (jQuery('#att-chart').length) {
+        Highcharts.chart('att-chart', {
+            chart: {
+                type: 'area'
+            },
+            accessibility: {
+                description: ''
+            },
+            title: {
+                text: ''
+            },
+            subtitle: {
+                text: ''
+            },
+            xAxis: {
+                allowDecimals: false,
+                labels: {
+                    formatter: function() {
+                        return this.value+' {{date("M")}}'; // clean, unformatted number for year
+                    }
+                },
+                accessibility: {
+                    rangeDescription: 'This month'
+                }
+            },
+            yAxis: {
+                title: {
+                    text: 'Employee'
+                },
+                /*labels: {
+                    formatter: function() {
+                        return this.value / 1000 + 'k';
+                    }
+                }*/
+            },
+            tooltip: {
+                pointFormat: '{series.name} had present <b>{point.y:,.0f}</b><br/>employees at {point.x} {{date("F")}}'
+            },
+            plotOptions: {
+                area: {
+                    pointStart: 1,
+                    marker: {
+                        enabled: false,
+                        symbol: 'circle',
+                        radius: 2,
+                        states: {
+                            hover: {
+                                enabled: true
+                            }
+                        }
+                    }
+                }
+            },
+            series: [{
+                name: 'MBM',
+                data: @php echo json_encode(array_values($att_chart['mbm'])); @endphp,
+                color: '#089bab'
+            }, {
+                name: 'CEIL',
+                data: @php echo json_encode(array_values($att_chart['ceil'])); @endphp,
+                color: '#FC9F5B'
+            }]
+        });
+    }
+
+
+
+
+
+      </script>
    	@endpush 
 @endsection
 

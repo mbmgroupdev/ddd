@@ -4,12 +4,15 @@ namespace App\Models;
 use Awobaz\Compoships\Compoships;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Hr\Leave;
+use DB;
 
 class Employee extends Model
 {
 	use Compoships;
 
-	// public $with = ['employee_bengali','designation', 'unit', 'floor', 'department'];
+    //public $with = ['employee_bengali','designation', 'unit', 'floor', 'department'];
+	public $with = ['designation'];
     protected $table = "hr_as_basic_info";
     protected $guarded = [];
 
@@ -36,12 +39,12 @@ class Employee extends Model
     {
         return Employee::select('as_id', 'as_name', 'associate_id')->get();
     }
-
+    */
     public function designation()
     {
     	return $this->belongsTo('App\Models\Hr\Designation', 'as_designation_id', 'hr_designation_id');
     }
-
+    /*
     public function benefits()
     {
         return $this->hasOne(Benefits::class, 'ben_as_id', 'associate_id');
@@ -234,36 +237,35 @@ class Employee extends Model
         ->where('as_unit_id', $unitId)
         ->get();
     }
-
-    public  function todayAtt()
+    */
+    public  function today_status()
     {
-        $unit = $this->as_unit_id;
-        $att = "";
-        $tableName = "";
-
-        //$table = getAttTable($this->as_unit_id);
-        if($unit== 1 || $unit == 4 || $unit ==5 || $unit ==9){
-            $tableName= "hr_attendance_mbm";
-        }
-        else if($unit==2){
-            $tableName= "hr_attendance_ceil";
-        }
-        else if($unit==3){
-            $tableName= "hr_attendance_aql";
-        }
-        else if($unit==8){
-            $tableName= "hr_attendance_cew";
-        }
+        $today = date('Y-m-d');
+        $table = get_att_table($this->as_unit_id);
         
-        if($tableName != ""){
-
-            $att = DB::table($tableName)->where([
+        $att = DB::table($table)->where([
                 'as_id' => $this->as_id,
-                'in_date' => date('Y-m-d')
+                'in_date' => $today
             ])->first();
-        }
 
-        return $att;
+        $leave = Leave::where('leave_from', '=<', $today)
+                    ->where('leave_to', '>=', $today)
+                    ->where('leave_ass_id', $this->associate_id)
+                    ->first();
+
+        // if leave and att both exists
+        $data = array();
+
+        if($att != null && $leave != null){
+            $data['status'] = 'Leave';
+            $data['info'] = $leave;
+        }else if($att != null && $leave == null){
+            $data['status'] = 'Leave';
+            $data['info'] = $att;
+        }else{
+            $data['status'] = 'Absent';
+        }
+        return $data;
     }
 
     public  function job_duration($date)
@@ -271,11 +273,9 @@ class Employee extends Model
         $joind = \Carbon\Carbon::createFromFormat('Y-m-d', $this->as_doj);
         $thisday = \Carbon\Carbon::createFromFormat('Y-m-d', $date);
 
-        $diff = round(($joind->diffInDays($thisday))/30.416);
-
-        // if differecnce is greater than 15 days , 1 month increases
+        $diff = round($joind->floatDiffInMonths($thisday));
         
 
         return (int) $diff;
-    }*/
+    }
 }
