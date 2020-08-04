@@ -12,7 +12,7 @@ class Section extends Model
 	use SoftDeletes;
 
 	protected $table = 'hr_section';
-	protected $primaryKey = ['hr_section_id'];
+	protected $primaryKey = 'hr_section_id';
     protected $guarded = [];
 
     protected $dates = [

@@ -10,7 +10,7 @@ class Subsection extends Model
 	use SoftDeletes;
 
 	protected $table = 'hr_subsection';
-	protected $primaryKey = ['hr_subsec_id'];
+	protected $primaryKey = 'hr_subsec_id';
     protected $guarded = [];
 
     protected $dates = [

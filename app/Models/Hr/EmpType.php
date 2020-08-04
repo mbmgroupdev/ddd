@@ -11,7 +11,7 @@ class EmpType extends Model
 	use SoftDeletes;
 
 	protected $table = 'hr_emp_type';
-	protected $primaryKey = ['worker_id'];
+	protected $primaryKey = 'worker_id';
     protected $guarded = [];
 
     protected $dates = [

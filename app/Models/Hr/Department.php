@@ -10,7 +10,7 @@ class Department extends Model
 	use SoftDeletes;
 	 
 	protected $table = 'hr_department';
-	protected $primaryKey = ['hr_department_id'];
+	protected $primaryKey = 'hr_department_id';
     protected $guarded = [];
 
     protected $dates = [

@@ -11,7 +11,7 @@ class Area extends Model
 	use SoftDeletes;
 
 	protected $table = 'hr_area';
-	protected $primaryKey = ['hr_area_id'];
+	protected $primaryKey = 'hr_area_id';
     protected $guarded = [];
 
     protected $dates = [
