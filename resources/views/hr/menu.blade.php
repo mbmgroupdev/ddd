@@ -4,7 +4,7 @@
          <li>
             <a href="{{ url('/') }}" class="iq-waves-effect"><i class="las la-home"></i><span>Dashboard</span></a>
          </li>
-         <li class="active">
+         <li class="{{ Request::is('hr')?'active':'' }}">
             <a href="{{ url('/hr') }}" class="iq-waves-effect"><i class="las la-users"></i><span>HR Dashboard</span></a>
          </li>
          <li>
@@ -31,11 +31,6 @@
             <a href="#timeattendance" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="ri-user-3-fill"></i><span>Time & Attendance</span><i class="ri-arrow-right-s-line iq-arrow-right"></i></a>
             <ul id="timeattendance" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
                <li><a href="#"><i class="ri-file-list-fill"></i>Attendance Upload</a></li>
-               <li><a href="#"><i class="ri-user-add-fill"></i> Define Shift Roster</a></li>
-               <li><a href="#"><i class="ri-profile-fill"></i>Shift Assign</a></li>
-               <li><a href="#"><i class="ri-profile-fill"></i>Roster Assign</a></li>
-               <li><a href="#"><i class="ri-profile-fill"></i>Holiday Roster</a></li>
-               <li><a href="#"><i class="ri-profile-fill"></i>Holiday Planner</a></li>
                <li><a href="#"><i class="ri-profile-fill"></i>Leave</a></li>
             </ul>
          </li>
@@ -67,6 +62,12 @@
          <li>
             <a href="#operation" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="ri-user-3-fill"></i><span>Operation</span><i class="ri-arrow-right-s-line iq-arrow-right"></i></a>
             <ul id="operation" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+               <li><a href="#"><i class="ri-user-add-fill"></i> Attendance Operation</a></li>
+               <li><a href="#"><i class="ri-user-add-fill"></i> Define Shift Roster</a></li>
+               <li><a href="#"><i class="ri-profile-fill"></i>Shift Assign</a></li>
+               <li><a href="#"><i class="ri-profile-fill"></i>Roster Assign</a></li>
+               <li><a href="#"><i class="ri-profile-fill"></i>Holiday Roster</a></li>
+               <li><a href="#"><i class="ri-profile-fill"></i>Holiday Planner</a></li>
                <li><a href="#"><i class="ri-file-list-fill"></i>Job Card</a></li>
                <li><a href="#"><i class="ri-user-add-fill"></i>Salary Sheet</a></li>
                <li><a href="#"><i class="ri-profile-fill"></i>Payslip</a></li>
