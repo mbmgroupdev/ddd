@@ -4,3 +4,18 @@
 .iq-submenu{
 	background: #fff;
 }
+.has-float-label.has-required label:before {
+    content:"*"; 
+    color:red; 
+}
+
+.form-group.required label:after {
+    content:"*"; 
+    color:red; 
+}
+.has-float-label .form-control:placeholder-shown:not(:focus)+* {
+    top: 0.6em;
+}
+.has-float-label label, .has-float-label>span {
+    font-size: 90%;
+}

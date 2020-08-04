@@ -1,12 +1,15 @@
 @extends('hr.layout')
-@section('title', 'HR Dashboard')
+@section('title', 'Recruitment Process')
+@push('css')
+   <link rel="stylesheet" href="{{ asset('assets/css/recruitment.css')}}">
+@endpush
 @section('main-content')
-	<div class="row">
+   <div class="row">
       <div class="col-sm-12 col-lg-12">
          <div class="iq-card">
             <div class="iq-card-header d-flex justify-content-between">
                <div class="iq-header-title">
-                  <h4 class="card-title">Vertical Wizard</h4>
+                  <h4 class="card-title">Recruitment Process</h4>
                </div>
             </div>
             <div class="iq-card-body">
@@ -15,17 +18,17 @@
                      <ul id="top-tabbar-vertical" class="p-0">
                         <li class="active" id="personal">
                            <a href="javascript:void();">
-                           <i class="ri-lock-unlock-line text-primary"></i><span>Personal</span>
+                           <i class="fa fa-address-book"></i><span>Basic</span>
                            </a>
                         </li>
                         <li id="contact">
                            <a href="javascript:void();">
-                           <i class="ri-user-fill text-danger"></i><span>Medical</span>
+                           <i class="fa fa-user-md"></i><span>Medical</span>
                            </a>
                         </li>
                         <li id="official">
                            <a href="javascript:void();">
-                           <i class="ri-camera-fill text-success"></i><span>IE</span>
+                           <i class="fa fa-eye text-success"></i><span>IE</span>
                            </a>
                         </li>
                         
@@ -38,43 +41,78 @@
                            <div class="form-card text-left">
                               <div class="row">
                                  <div class="col-12">
-                                    <h3 class="mb-4">Personal Info:</h3>
+                                    <h3 class="mb-4">Basic Info:</h3>
                                  </div>
                               </div>
-                              <div class="row">
+                              <div class="row form-card-details">
                                  <div class="col-md-12">
-                                    <div class="form-group">
-                                       <label for="fname">First Name: *</label>
-                                       <input type="text" class="form-control" id="fname" name="fname" placeholder="First Name" required="required" />
-                                    </div>
-                                 </div>
-                                 <div class="col-md-12">
-                                    <div class="form-group">
-                                       <label for="lname">Last Name: *</label>
-                                       <input type="text" class="form-control" id="lname" name="lname" placeholder="Last Name" />
-                                    </div>
-                                 </div>
-                                 <div class="col-md-12">
-                                    <div class="form-group">
-                                       <label>Gender: *</label>
-                                       <div class="form-check">
-                                          <div class="custom-control custom-radio custom-control-inline">
-                                             <input type="radio" id="customRadio1" name="customRadio" class="custom-control-input">
-                                             <label class="custom-control-label" for="customRadio1"> Male</label>
+                                    <div class="card mb-3">
+                                       <div class="card-body row">
+                                          <div class="col-md-6">
+                                             <div class="form-group has-float-label has-required">
+                                                <input type="text" class="form-control" id="associate-name" name="associate_name" placeholder="Type Associate Name" required="required" />
+                                                <label for="associate-name">Associate Name</label>
+                                             </div>
                                           </div>
-                                          <div class="custom-control custom-radio custom-control-inline">
-                                             <input type="radio" id="customRadio2" name="customRadio" class="custom-control-input">
-                                             <label class="custom-control-label" for="customRadio2"> Female</label>
+                                          <div class="col-md-6">
+                                             <div class="form-group has-float-label has-required">
+                                                <input type="text" class="form-control" id="contactNo" name="contact" placeholder="Type Contact Number" />
+                                                <label for="contactNo">Contact No.</label>
+                                             </div>
+                                          </div>
+                                          <div class="col-md-6">
+                                             <div class="form-group has-float-label has-required">
+                                                <label class="gender">Gender</label>
+                                                <select class="form-control" id="gender" required="">
+                                                   <option selected="" disabled="" value="">Choose...</option>
+                                                   <option>...</option>
+                                                </select>
+                                             </div>
+                                          </div>
+                                          <div class="col-md-6">
+                                             <div class="form-group required">
+                                                <label for="dob">Date Of Birth:</label>
+                                                <input type="date" class="form-control" id="dob" name="dob" />
+                                             </div>
+                                          </div>
+                                          <div class="col-md-6">
+                                             <div class="form-group required">
+                                             <label for="dob">Date of Joining:</label>
+                                             <input type="date" class="form-control" id="dob" name="dob" />
+                                          </div>   
+                                          </div>
+                                          <div class="col-md-6">
+                                             <div class="form-group ">
+                                                <label for="lname">NID/Birth Certificate:</label>
+                                                <input type="text" class="form-control" id="lname" name="lname" placeholder="Last Name" />
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div class="card">
+                                       <div class="card-body row">
+                                          <div class="col-md-6">
+                                             <div class="form-group required">
+                                                <label for="employeeType">Employee Type:</label>
+                                                <select class="form-control" id="employeeType" required="">
+                                                   <option selected="" disabled="" value="">Choose...</option>
+                                                   <option>...</option>
+                                                </select>
+                                             </div>
+                                          </div>
+                                          <div class="col-md-6">
+                                             <div class="form-group required">
+                                                <label for="designation">Designation:</label>
+                                                <select class="form-control" id="designation" required="">
+                                                   <option selected="" disabled="" value="">Choose...</option>
+                                                   <option>...</option>
+                                                </select>
+                                             </div>
                                           </div>
                                        </div>
                                     </div>
                                  </div>
-                                 <div class="col-md-12">
-                                    <div class="form-group">
-                                       <label for="dob">Date Of Birth: *</label>
-                                       <input type="date" class="form-control" id="dob" name="dob" />
-                                    </div>
-                                 </div>
+                                 
                               </div>
                            </div>
                            <button id="submit" type="button" name="next" class="btn btn-primary next action-button float-right" value="Next" >Next</button>
@@ -86,7 +124,7 @@
                                     <h3 class="mb-4">Contact Information:</h3>
                                  </div>
                               </div>
-                              <div class="row">
+                              <div class="row form-card-details">
                                  <div class="col-md-12">
                                     <div class="form-group">
                                        <label for="email">Email Id: *</label>
@@ -124,7 +162,7 @@
                                     <h3 class="mb-4 text-left">Payment:</h3>
                                  </div>
                               </div>
-                              <div class="row">
+                              <div class="row form-card-details">
                                  <div class="col-md-12">
                                     <div class="form-group">
                                        <label for="panno">Pan No: *</label>
@@ -162,24 +200,8 @@
       </div>
    </div>
    @push('js')
-	  <!-- Countdown JavaScript -->
-	  <script src="{{ asset('assets/js/countdown.min.js') }}"></script>
-	  <!-- Counterup JavaScript -->
-	  <script src="{{ asset('assets/js/waypoints.min.js') }}"></script>
-	  <script src="{{ asset('assets/js/jquery.counterup.min.js') }}"></script>
-	  <!-- Wow JavaScript -->
-	  <script src="{{ asset('assets/js/wow.min.js') }}"></script>
-	  <!-- Apexcharts JavaScript -->
-	  <script src="{{ asset('assets/js/apexcharts.js') }}"></script>
-	  <!-- Slick JavaScript -->
-	  <script src="{{ asset('assets/js/slick.min.js') }}"></script>
-	  <!-- Select2 JavaScript -->
-	  <script src="{{ asset('assets/js/select2.min.js') }}"></script>
-	  <!-- Owl Carousel JavaScript -->
-	  <script src="{{ asset('assets/js/owl.carousel.min.js') }}"></script>
-	  <!-- lottie JavaScript -->
-	  <script src="{{ asset('assets/js/lottie.js') }}"></script>
-	  <!-- Chart Custom JavaScript -->
-	  <script src="{{ asset('assets/js/chart-custom.js') }}"></script>
+     <!-- Select2 JavaScript -->
+     <script src="{{ asset('assets/js/select2.min.js') }}"></script>
+
    @endpush
 @endsection
