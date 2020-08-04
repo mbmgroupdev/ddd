@@ -8,7 +8,7 @@ class Location extends Model
 {
 
 	protected $table = 'hr_location';
-	protected $primaryKey = ['hr_location_id'];
+	protected $primaryKey = 'hr_location_id';
     protected $guarded = [];
 
     protected $dates = [

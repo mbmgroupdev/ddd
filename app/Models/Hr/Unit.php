@@ -11,7 +11,7 @@ class Unit extends Model
 	use SoftDeletes;
 
 	protected $table = 'hr_unit';
-	protected $primaryKey = ['hr_unit_id'];
+	protected $primaryKey = 'hr_unit_id';
     protected $guarded = [];
 
     protected $dates = [

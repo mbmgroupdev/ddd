@@ -10,7 +10,7 @@ class Line extends Model
 	use SoftDeletes;
 
 	protected $table = 'hr_line';
-	protected $primaryKey = ['hr_line_id'];
+	protected $primaryKey = 'hr_line_id';
     protected $guarded = [];
 
     protected $dates = [

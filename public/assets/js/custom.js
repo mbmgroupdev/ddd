@@ -608,6 +608,11 @@ Index Of Script
             });
         });
 
+
+        jQuery.validate({
+            modules : 'date, security'
+        });
+
     });
 
 })(jQuery);

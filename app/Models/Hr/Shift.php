@@ -10,7 +10,7 @@ class Shift extends Model
 	use SoftDeletes;
 
 	protected $table = 'hr_shift';
-	protected $primaryKey = ['hr_shift_id'];
+	protected $primaryKey = 'hr_shift_id';
     protected $guarded = [];
 
     protected $dates = [

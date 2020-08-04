@@ -10,7 +10,7 @@ class Floor extends Model
 	use SoftDeletes;
 	 
 	protected $table = 'hr_floor';
-	protected $primaryKey = ['hr_floor_id'];
+	protected $primaryKey = 'hr_floor_id';
     protected $guarded = [];
 
     protected $dates = [
