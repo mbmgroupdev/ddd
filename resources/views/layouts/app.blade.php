@@ -362,6 +362,7 @@
     <script src="{{ asset('assets/js/animated.js') }}"></script>
 
     <!-- Custom JavaScript -->
+    <script src="{{ asset('assets/mbmerp.js') }}"></script>
     <script src="{{ asset('assets/js/custom.js') }}"></script>
     @stack('js')
 </body>
