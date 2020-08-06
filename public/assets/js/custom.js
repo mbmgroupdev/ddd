@@ -57,6 +57,7 @@ Index Of Script
         /*---------------------------------------------------------------------
         Scrollbar
         -----------------------------------------------------------------------*/
+        let options = [];
         let Scrollbar = window.Scrollbar;
         if (jQuery('#sidebar-scrollbar').length) {
             Scrollbar.init(document.querySelector('#sidebar-scrollbar'), options);
@@ -295,10 +296,10 @@ Index Of Script
         /*---------------------------------------------------------------------
         Select input
         -----------------------------------------------------------------------*/
-        jQuery('.select2jsMultiSelect').select2({
+        /*jQuery('.select2jsMultiSelect').select2({
             tags: true
         });
-
+*/
         /*---------------------------------------------------------------------
         Search input
         -----------------------------------------------------------------------*/
@@ -335,15 +336,15 @@ Index Of Script
         /*---------------------------------------------------------------------
         Counter
         -----------------------------------------------------------------------*/
-        jQuery('.counter').counterUp({
+        /*jQuery('.counter').counterUp({
             delay: 10,
             time: 1000
-        });
+        });*/
 
         /*---------------------------------------------------------------------
         slick
         -----------------------------------------------------------------------*/
-        jQuery('.slick-slider').slick({
+        /*jQuery('.slick-slider').slick({
             centerMode: true,
             centerPadding: '60px',
             slidesToShow: 9,
@@ -475,7 +476,7 @@ Index Of Script
             }],
             nextArrow: '<a href="#" class="ri-arrow-left-s-line left"></a>',
             prevArrow: '<a href="#" class="ri-arrow-right-s-line right"></a>',
-        });
+        });*/
         
         /*---------------------------------------------------------------------
         Progress Bar
@@ -512,14 +513,14 @@ Index Of Script
         /*---------------------------------------------------------------------
         Wow Animation
         -----------------------------------------------------------------------*/
-        let wow = new WOW({
+        /*let wow = new WOW({
             boxClass: 'wow',
             animateClass: 'animated',
             offset: 0,
             mobile: false,
             live: true
         });
-        wow.init();
+        wow.init();*/
 
 
         /*---------------------------------------------------------------------
@@ -609,10 +610,7 @@ Index Of Script
         });
 
 
-        jQuery.validate({
-            modules : 'date, security'
-        });
-
+        
     });
 
 })(jQuery);

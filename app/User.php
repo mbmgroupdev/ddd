@@ -6,12 +6,13 @@ use App\Models\Employee;
 use App\Models\UserActivity;
 use App\Models\UserLog;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use Notifiable,HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -51,6 +52,7 @@ class User extends Authenticatable
         return $this->belongsTo(Employee::class, 'associate_id', 'associate_id');
     }
 
+
     public function logins()
     {
         return $this->hasMany(UserActivity::class, 'associate_id', 'associate_id')->orderBy('id','DESC');
@@ -65,5 +67,17 @@ class User extends Authenticatable
     public function lastlogin()
     {
         return UserActivity::where('associate_id',$this->associate_id)->orderBy('id','DESC')->first();
+    }
+
+    public function unit_permissions()
+    {
+        $units = explode(",", $this->unit_permissions);
+        return (!empty($units[0])?$units:[]);
+    }
+
+    public function buyer_permissions()
+    {
+        $buyers = explode(",", $this->buyer_permissions);
+        return (!empty($buyers[0])?$buyers:[]);
     }
 }

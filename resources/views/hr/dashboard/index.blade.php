@@ -7,7 +7,7 @@
       <link href="{{ asset('assets/fullcalendar/daygrid/main.css') }}" rel='stylesheet' />
       <link href="{{ asset('assets/fullcalendar/timegrid/main.css') }}" rel='stylesheet' />
       <link href="{{ asset('assets/fullcalendar/list/main.css') }}" rel='stylesheet' />
-   	@endpush
+   @endpush
 	<div class="row">
        <div class="col-lg-6">
          <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
@@ -54,7 +54,7 @@
                </div>
             </div>
             <div class="iq-card-body">
-               <div id="bar-chart-6"></div>
+               <div id="am-3dpie-chart"></div>
             </div>
          </div>
       </div>
@@ -470,14 +470,8 @@
       </div>
    	</div>
    	@push('js')
-      <!-- Countdown JavaScript -->
-      <script src="{{ asset('assets/js/countdown.min.js') }}"></script>
-      <!-- Counterup JavaScript -->
-      <script src="{{ asset('assets/js/waypoints.min.js') }}"></script>
-      <script src="{{ asset('assets/js/jquery.counterup.min.js') }}"></script>
-      <!-- Wow JavaScript -->
-      <script src="{{ asset('assets/js/wow.min.js') }}"></script>
       <!-- Apexcharts JavaScript -->
+      <script src="{{ asset('assets/js/jquery.appear.js')}}"></script>
       <script src="{{ asset('assets/js/apexcharts.js') }}"></script>
       <!-- Slick JavaScript -->
       <script src="{{ asset('assets/js/slick.min.js') }}"></script>
@@ -493,12 +487,11 @@
       <script src="{{ asset('assets/js/charts.js') }}"></script>
       
       <!-- am kelly JavaScript -->
-      <script src="{{ asset('assets/js/kelly.js') }}"></script>
+      {{-- <script src="{{ asset('assets/js/kelly.js') }}"></script> --}}
 
       <script src="{{ asset('assets/js/highcharts.js')}}"></script>
-      
       <!-- Chart Custom JavaScript -->
-      <script src="{{ asset('assets/js/chart-custom.js') }}"></script>
+      
 
       <script type="text/javascript">
         jQuery("#monthly-salary-chart").length && am4core.ready(function() {
@@ -672,9 +665,57 @@
                 name: 'CEIL',
                 data: @php echo json_encode(array_values($att_chart['ceil'])); @endphp,
                 color: '#FC9F5B'
+            }, {
+                name: 'AQL',
+                data: @php echo json_encode(array_values($att_chart['aql'])); @endphp,
+                color: '#0abb78'
             }]
         });
     }
+
+    if (jQuery('#am-3dpie-chart').length) {
+    am4core.ready(function() {
+
+        // Themes begin
+        am4core.useTheme(am4themes_animated);
+        // Themes end
+
+        var chart = am4core.create("am-3dpie-chart", am4charts.PieChart3D);
+        chart.hiddenState.properties.opacity = 0; // this creates initial fade-in
+
+        chart.legend = new am4charts.Legend();
+
+        chart.data = [{
+            country: "Lithuania",
+            litres: 501.9,
+            fill: "red"
+        }, {
+            country: "Germany",
+            litres: 165.8
+        }, {
+            country: "Australia",
+            litres: 139.9
+        }, {
+            country: "Austria",
+            litres: 128.3
+        }, {
+            country: "UK",
+            litres: 99
+        }, {
+            country: "Belgium",
+            litres: 60
+        }];
+
+        var series = chart.series.push(new am4charts.PieSeries3D());
+        series.colors.list = [am4core.color("#089bab"), am4core.color("#FC9F5B"), am4core.color("#57de53"),
+            am4core.color("#f26361"), am4core.color("#ababab"), am4core.color("#61e2fc")
+        ];
+        series.dataFields.value = "litres";
+        series.dataFields.category = "country";
+
+    }); // end am4core.ready()
+}
+
 
 
 
