@@ -29,7 +29,7 @@
 	                	<div class="tab-pane fade active show" id="active" role="tabpanel" aria-labelledby="active-tab">
                          
 		                    <div class="table-responsive">
-		                        <table id="datatable" class="table table-striped table-bordered" >
+		                        <table id="datatable" class="table table-striped table-bordered table-hover" >
 		                         	<thead>
 			                            <tr>
 			                               
@@ -46,7 +46,7 @@
 		                         	<tbody>
 		                         		@if($units->isNotEmpty() )
 		                         		@foreach($units as $key => $unit)
-		                                <tr>
+		                                <tr class="datatable-action-button">
 		                                    <td>
 		                                    	<img src='' alt="Logo" width="80" height="30">
 		                                    </td>
@@ -54,8 +54,15 @@
 		                                    <td>{{ $unit->hr_unit_short_name??'' }}</td>
 		                                    <td>{{ $unit->hr_unit_name_bn??'' }}</td>
 		                                    <td>{{ $unit->hr_unit_code??'' }}</td>
-		                                    <td>
+		                                    <td class="relative">
 		                                    	<img src='' alt="Signature" width="60" height="20">
+
+		                                    	<!-- <ul class="iq-social-media">
+	                                                <li><a href="#"><i class="ri-delete-bin-2-line"></i></a></li>
+	                                                <li><a href="#"><i class="ri-mail-line"></i></a></li>
+	                                                <li><a href="#"><i class="ri-file-list-2-line"></i></a></li>
+	                                                <li><a href="#"><i class="ri-time-line"></i></a></li>
+	                                             </ul> -->
 		                                    </td>
 		                                    <td>
 		                                        <div class="btn-group">
@@ -105,6 +112,8 @@
 			                                    <td>{{ $item->hr_unit_code??'' }}</td>
 			                                    <td>
 			                                    	<img src='' alt="Signature" width="60" height="20">
+
+
 			                                    </td>
 			                                    <td>
 			                                        <div class="btn-group">
@@ -113,6 +122,7 @@
 			                                            	Delete
 			                                            </a>
 			                                        </div>
+
 			                                    </td>
 			                                </tr>
 			                                @endforeach
