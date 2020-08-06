@@ -25,7 +25,7 @@ class DashboardController extends Controller
         $today_att_chart = $this->today_att();
 
         //dd($today_att_chart);
-    	return view('hr.dashboard.index', compact('ot_chart','salary_chart','att_chart'));
+    	return view('hr.dashboard.index', compact('ot_chart','salary_chart','att_chart','today_att_chart'));
     }
 
     public function att_data()
@@ -133,11 +133,12 @@ class DashboardController extends Controller
 
     public function today_att()
     {
-        $today_mbm = Cache::remember('today_att', 300, function () {
-            return $this->attData(1);
+        $unit = auth()->user()->employee['as_unit_id'];
+        $today_att = Cache::remember('today_att'.$unit, 300, function  () use ($unit) {
+            return $this->attData($unit);
         });
 
-        return $today_mbm;
+        return $today_att;
     }
 
 
