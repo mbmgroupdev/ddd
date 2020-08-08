@@ -30,7 +30,7 @@ class DashboardController extends Controller
 
     public function att_data()
     {
-    	$att_mbm =  Cache::remember('att_mbm', 300, function () {
+    	$att_mbm =  Cache::remember('att_mbm', 10000, function () {
 		    return AttMBM::whereHas('employee', function ($query) {
 			    $query->where('as_unit_id','1');
 			})->selectRaw('count(*) as present,in_date')
@@ -42,7 +42,7 @@ class DashboardController extends Controller
    			->pluck('present','in_date');
 		});
 
-        $att_aql =  Cache::remember('att_aql', 300, function () {
+        $att_aql =  Cache::remember('att_aql', 10000, function () {
             return AttAQL::selectRaw('count(*) as present,in_date')
             /*->whereMonth('in_date',date('m'))
             ->whereYear('in_date',date('Y'))*/
@@ -52,7 +52,7 @@ class DashboardController extends Controller
             ->pluck('present','in_date');
         });
 
-		$att_ceil =  Cache::remember('att_ceil', 300, function () {
+		$att_ceil =  Cache::remember('att_ceil', 10000, function () {
 		    return AttCEIL::selectRaw('count(*) as present,in_date')
 		    /*->whereMonth('in_date',date('m'))
 		    ->whereYear('in_date',date('Y'))*/
@@ -80,7 +80,7 @@ class DashboardController extends Controller
     public function ot_data()
     {
 
-    	$data =  Cache::remember('monthly_ot', 300, function () {
+    	$data =  Cache::remember('monthly_ot', 10000, function () {
 		    return HrMonthlySalary::selectRaw('sum(ot_hour) as ot, CONCAT(year,"-",month) as ym')
     		->groupBy('month','year')
     		->orderBy('id','DESC')
@@ -105,7 +105,7 @@ class DashboardController extends Controller
 
     public function salary_data()
     {
-    	$data =  Cache::remember('monthly_salary', 300, function () {
+    	$data =  Cache::remember('monthly_salary', 10000, function () {
 		    return HrMonthlySalary::selectRaw(
 		    	'round(sum(salary_payable)/1000,0) as salary, round(sum(ot_hour*ot_rate)/1000,0) as ot, CONCAT(year,"-",month) as ym')
     		->groupBy('month','year')
@@ -134,7 +134,7 @@ class DashboardController extends Controller
     public function today_att()
     {
         $unit = auth()->user()->employee['as_unit_id'];
-        $today_att = Cache::remember('today_att'.$unit, 300, function  () use ($unit) {
+        $today_att = Cache::remember('today_att'.$unit, 10000, function  () use ($unit) {
             return $this->attData($unit);
         });
 
