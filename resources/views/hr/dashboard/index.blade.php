@@ -7,7 +7,7 @@
       <link href="{{ asset('assets/fullcalendar/daygrid/main.css') }}" rel='stylesheet' />
       <link href="{{ asset('assets/fullcalendar/timegrid/main.css') }}" rel='stylesheet' />
       <link href="{{ asset('assets/fullcalendar/list/main.css') }}" rel='stylesheet' />
-   	@endpush
+   @endpush
 	<div class="row">
        <div class="col-lg-6">
          <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
@@ -54,7 +54,7 @@
                </div>
             </div>
             <div class="iq-card-body">
-               <div id="bar-chart-6"></div>
+               <div id="today-att" style="width: 100%; height: 400px;"></div>
             </div>
          </div>
       </div>
@@ -470,14 +470,8 @@
       </div>
    	</div>
    	@push('js')
-      <!-- Countdown JavaScript -->
-      <script src="{{ asset('assets/js/countdown.min.js') }}"></script>
-      <!-- Counterup JavaScript -->
-      <script src="{{ asset('assets/js/waypoints.min.js') }}"></script>
-      <script src="{{ asset('assets/js/jquery.counterup.min.js') }}"></script>
-      <!-- Wow JavaScript -->
-      <script src="{{ asset('assets/js/wow.min.js') }}"></script>
       <!-- Apexcharts JavaScript -->
+      <script src="{{ asset('assets/js/jquery.appear.js')}}"></script>
       <script src="{{ asset('assets/js/apexcharts.js') }}"></script>
       <!-- Slick JavaScript -->
       <script src="{{ asset('assets/js/slick.min.js') }}"></script>
@@ -496,9 +490,8 @@
       <script src="{{ asset('assets/js/kelly.js') }}"></script>
 
       <script src="{{ asset('assets/js/highcharts.js')}}"></script>
-      
       <!-- Chart Custom JavaScript -->
-      <script src="{{ asset('assets/js/chart-custom.js') }}"></script>
+      
 
       <script type="text/javascript">
         jQuery("#monthly-salary-chart").length && am4core.ready(function() {
@@ -612,71 +605,109 @@
         }
 
         if (jQuery('#att-chart').length) {
-        Highcharts.chart('att-chart', {
-            chart: {
-                type: 'area'
-            },
-            accessibility: {
-                description: ''
-            },
-            title: {
-                text: ''
-            },
-            subtitle: {
-                text: ''
-            },
-            xAxis: {
-                allowDecimals: false,
-                labels: {
-                    formatter: function() {
-                        return this.value+' {{date("M")}}'; // clean, unformatted number for year
-                    }
-                },
-                accessibility: {
-                    rangeDescription: 'This month'
-                }
-            },
-            yAxis: {
-                title: {
-                    text: 'Employee'
-                },
-                /*labels: {
-                    formatter: function() {
-                        return this.value / 1000 + 'k';
-                    }
-                }*/
-            },
-            tooltip: {
-                pointFormat: '{series.name} had present <b>{point.y:,.0f}</b><br/>employees at {point.x} {{date("F")}}'
-            },
-            plotOptions: {
-                area: {
-                    pointStart: 1,
-                    marker: {
-                        enabled: false,
-                        symbol: 'circle',
-                        radius: 2,
-                        states: {
-                            hover: {
-                                enabled: true
-                            }
-                        }
-                    }
-                }
-            },
-            series: [{
-                name: 'MBM',
-                data: @php echo json_encode(array_values($att_chart['mbm'])); @endphp,
-                color: '#089bab'
-            }, {
-                name: 'CEIL',
-                data: @php echo json_encode(array_values($att_chart['ceil'])); @endphp,
-                color: '#FC9F5B'
-            }]
-        });
-    }
+           Highcharts.chart('att-chart', {
+               chart: {
+                   type: 'area'
+               },
+               accessibility: {
+                   description: ''
+               },
+               title: {
+                   text: ''
+               },
+               subtitle: {
+                   text: ''
+               },
+               xAxis: {
+                   allowDecimals: false,
+                   labels: {
+                       formatter: function() {
+                           return this.value+' {{date("M")}}'; // clean, unformatted number for year
+                       }
+                   },
+                   accessibility: {
+                       rangeDescription: 'This month'
+                   }
+               },
+               yAxis: {
+                   title: {
+                       text: 'Employee'
+                   },
+                   /*labels: {
+                       formatter: function() {
+                           return this.value / 1000 + 'k';
+                       }
+                   }*/
+               },
+               tooltip: {
+                   pointFormat: '{series.name} had present <b>{point.y:,.0f}</b><br/>employees at {point.x} {{date("F")}}'
+               },
+               plotOptions: {
+                   area: {
+                       pointStart: 1,
+                       marker: {
+                           enabled: false,
+                           symbol: 'circle',
+                           radius: 2,
+                           states: {
+                               hover: {
+                                   enabled: true
+                               }
+                           }
+                       }
+                   }
+               },
+               series: [{
+                   name: 'MBM',
+                   data: @php echo json_encode(array_values($att_chart['mbm'])); @endphp,
+                   color: '#089bab'
+               }, {
+                   name: 'CEIL',
+                   data: @php echo json_encode(array_values($att_chart['ceil'])); @endphp,
+                   color: '#FC9F5B'
+               }, {
+                   name: 'AQL',
+                   data: @php echo json_encode(array_values($att_chart['aql'])); @endphp,
+                   color: '#0abb78'
+               }]
+           });
+        }
 
+       if (jQuery('#today-att').length) {
+          am4core.ready(function() {
 
+              // Themes begin
+              am4core.useTheme(am4themes_animated);
+              // Themes end
+
+              var chart = am4core.create("today-att", am4charts.PieChart3D);
+              chart.hiddenState.properties.opacity = 0; // this creates initial fade-in
+
+              chart.legend = new am4charts.Legend();
+
+              chart.data = [ {
+                  title: "Present",
+                  employee: {{$today_att_chart['present']??0}}
+              }, {
+                  title: "Absent",
+                  employee: {{$today_att_chart['absent']??0}}
+              },{
+                  title: "Late",
+                  employee: {{$today_att_chart['late']??0}}
+              }, {
+                  title: "Leave",
+                  employee: {{$today_att_chart['leave']??0}}
+              }];
+
+              var series = chart.series.push(new am4charts.PieSeries3D());
+              series.colors.list = [am4core.color("#208207"), am4core.color("#f26361"), am4core.color("#089bab"),
+                  am4core.color("#FC9F5B")
+              ];
+              series.dataFields.value = "employee";
+              series.dataFields.category = "title";
+
+          }); // end am4core.ready()
+       }
 
 
 

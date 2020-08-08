@@ -29,7 +29,7 @@
 	                	<div class="tab-pane fade active show" id="active" role="tabpanel" aria-labelledby="active-tab">
                          
 		                    <div class="table-responsive">
-		                        <table id="datatable" class="table table-striped table-bordered" >
+		                        <table id="datatable" class="table table-striped table-bordered table-hover" >
 		                         	<thead>
 			                            <tr>
 			                               
@@ -46,7 +46,7 @@
 		                         	<tbody>
 		                         		@if($units->isNotEmpty() )
 		                         		@foreach($units as $key => $unit)
-		                                <tr>
+		                                <tr class="datatable-action-button">
 		                                    <td>
 		                                    	<img src='' alt="Logo" width="80" height="30">
 		                                    </td>
@@ -54,8 +54,15 @@
 		                                    <td>{{ $unit->hr_unit_short_name??'' }}</td>
 		                                    <td>{{ $unit->hr_unit_name_bn??'' }}</td>
 		                                    <td>{{ $unit->hr_unit_code??'' }}</td>
-		                                    <td>
+		                                    <td class="relative">
 		                                    	<img src='' alt="Signature" width="60" height="20">
+
+		                                    	<!-- <ul class="iq-social-media">
+	                                                <li><a href="#"><i class="ri-delete-bin-2-line"></i></a></li>
+	                                                <li><a href="#"><i class="ri-mail-line"></i></a></li>
+	                                                <li><a href="#"><i class="ri-file-list-2-line"></i></a></li>
+	                                                <li><a href="#"><i class="ri-time-line"></i></a></li>
+	                                             </ul> -->
 		                                    </td>
 		                                    <td>
 		                                        <div class="btn-group">
@@ -82,13 +89,13 @@
 		                         	<thead>
 			                            <tr>
 			                               
-		                                    <th style="width: 20%;">Logo</th>
-		                                    <th style="width: 20%;">Unit Name</th>
-		                                    <th style="width: 20%;">Short Name</th>
-		                                    <th style="width: 20%;">ইউনিট (বাংলা)</th>
-		                                    <th style="width: 20%;">Unit Code</th>
-		                                    <th style="width: 20%;">Signature</th>
-		                                    <th style="width: 20%;">Action</th>
+		                                    <th style="width: 10%;">Logo</th>
+		                                    <th style="width: 25%;">Unit Name</th>
+		                                    <th style="width: 10%;">Short Name</th>
+		                                    <th style="width: 25%;">ইউনিট (বাংলা)</th>
+		                                    <th style="width: 10%;">Unit Code</th>
+		                                    <th style="width: 10%;">Signature</th>
+		                                    <th style="width: 10%;">Action</th>
 		                                    
 			                            </tr>
 		                            </thead>
@@ -105,6 +112,8 @@
 			                                    <td>{{ $item->hr_unit_code??'' }}</td>
 			                                    <td>
 			                                    	<img src='' alt="Signature" width="60" height="20">
+
+
 			                                    </td>
 			                                    <td>
 			                                        <div class="btn-group">
@@ -113,6 +122,7 @@
 			                                            	Delete
 			                                            </a>
 			                                        </div>
+
 			                                    </td>
 			                                </tr>
 			                                @endforeach
@@ -133,29 +143,29 @@
 	</div>
 	<!-- add unit modal -->
 	<!--  -->
-	<div class="modal fade " id="libraryAdd" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	<div class="modal fade " id="libraryAdd" tabindex="-1" role="dialog" aria-labelledby="libraryTitle" aria-hidden="true">
       <div class="modal-dialog modal-lg" role="document">
          <div class="modal-content">
             <div class="modal-header">
-               <h5 class="modal-title" id="exampleModalCenterTitle">Add Unit</h5>
+               <h5 class="modal-title" id="libraryTitle">Add Unit</h5>
                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                <span aria-hidden="true">&times;</span>
                </button>
             </div>
             <div class="modal-body">
-               <form class="form-horizontal" role="form" method="post" action="{{ url('hr/setup/unit')  }}" enctype="multipart/form-data">
+               <form class="form-horizontal" role="form" method="post" action="{{ url('hr/settings/unit')  }}" enctype="multipart/form-data">
                     @csrf
                     <div class="row">
                     	<div class="col-sm-6">
                     		<div class="form-group">
-		                        <label class="" for="hr_unit_name" > Unit Name <span class="text-red">&#42;</span> </label>
-		                        <input type="text" id="hr_unit_name" name="hr_unit_name" placeholder="Unit name" class="form-control" data-validation="required length custom" data-validation-length="1-128"/>
+		                        <label class="" for="hr_unit_name" > Unit Name <span class="text-danger">&#42;</span> </label>
+		                        <input type="text" id="hr_unit_name" name="hr_unit_name" placeholder="Unit name" class="form-control" data-validation="required length custom" data-validation-length="1-128" required />
 		                    </div>
 
 		                    <div class="form-group">
-		                        <label class="" for="hr_unit_short_name" > Unit Short Name <span class="text-red">&#42;</span> </label>
+		                        <label class="" for="hr_unit_short_name" > Unit Short Name <span class="text-danger">&#42;</span> </label>
 		                        
-		                        <input type="text" id="hr_unit_short_name" name="hr_unit_short_name" placeholder="Unit short name" class="form-control" data-validation="required length custom" data-validation-length="1-20"/>
+		                        <input type="text" id="hr_unit_short_name" name="hr_unit_short_name" placeholder="Unit short name" class="form-control" data-validation="required length custom" data-validation-length="1-20" required/>
 		                    </div>
 
 		                    <div class="form-group">

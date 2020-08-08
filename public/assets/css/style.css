@@ -565,6 +565,10 @@ div#contact-slider:hover .slick-arrow,div#blog-slider:hover .slick-arrow{opacity
 .iq-email-sender-list .iq-social-media { position: absolute; line-height: 62px; right: -200px; top: 0; background: #ffffff; font-size: 18px; padding: 0 30px; transition: all 0.3s ease-in-out; transition: all 0.3s ease-in-out; -moz-transition: all 0.3s ease-in-out; -ms-transition: all 0.3s ease-in-out; -o-transition: all 0.3s ease-in-out; -webkit-transition: all 0.3s ease-in-out; }
 .iq-email-listbox .iq-email-sender-list li:hover .iq-social-media { right: 0; }
 
+.datatable-action-button{position: relative;}
+.datatable-action-button .iq-social-media { position: absolute; line-height: 62px; right: -200px; top: 0; background: #ffffff; font-size: 18px; padding: 0 30px; transition: all 0.3s ease-in-out; transition: all 0.3s ease-in-out; -moz-transition: all 0.3s ease-in-out; -ms-transition: all 0.3s ease-in-out; -o-transition: all 0.3s ease-in-out; -webkit-transition: all 0.3s ease-in-out; }
+.datatable-action-button:hover .iq-social-media { right: 0; }
+
 /*----------------------------------*/
 .iq-inbox-details tr td { padding: 5px 10px; }
 .iq-inbox-details tr td:first-child { width: 75px; color: #374948; }
