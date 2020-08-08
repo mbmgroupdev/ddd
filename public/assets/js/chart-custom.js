@@ -7972,7 +7972,7 @@ allNextBtn.click(function() {
     var curStep = jQuery(this).closest(".setup-content"),
         curStepBtn = curStep.attr("id"),
         nextStepWizard = jQuery('div.setup-panel div a[href="#' + curStepBtn + '"]').parent().next().children("a"),
-        curInputs = curStep.find("input[type='text'],input[type='email'],input[type='password'],input[type='url'],textarea"),
+        curInputs = curStep.find("input[type='text'],input[type='email'],input[type='password'],input[type='url'],input[type='date'],textarea,select"),
         isValid = true;
 
     jQuery(".form-group").removeClass("has-error");

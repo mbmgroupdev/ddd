@@ -362,9 +362,12 @@
     <!-- am animated JavaScript -->
     @stack('js')
     <script src="{{ asset('assets/js/animated.js') }}"></script>
-    
+    {{-- notify --}}
+    <script src="{{asset('assets/js/notify/notify.js')}}"></script>
+    {{-- <script src="{{asset('assets/js/notify/index.js')}}"></script> --}}
     <!-- Custom JavaScript -->
     <script src="{{ asset('assets/js/custom.js') }}"></script>
+    
     <script src="{{ asset('assets/js/chart-custom.js') }}"></script>
 </body>
 </html>
