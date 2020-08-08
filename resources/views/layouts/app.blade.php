@@ -361,9 +361,12 @@
     <script src="{{ asset('assets/js/smooth-scrollbar.js') }}"></script>
     <!-- am animated JavaScript -->
     <script src="{{ asset('assets/js/animated.js') }}"></script>
-    
+    {{-- notify --}}
+    <script src="{{asset('assets/js/notify/notify.js')}}"></script>
+    {{-- <script src="{{asset('assets/js/notify/index.js')}}"></script> --}}
     <!-- Custom JavaScript -->
     <script src="{{ asset('assets/js/custom.js') }}"></script>
+    
     <script src="{{ asset('assets/js/chart-custom.js') }}"></script>
     @stack('js')
 </body>
