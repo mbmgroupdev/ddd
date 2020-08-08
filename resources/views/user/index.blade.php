@@ -21,7 +21,7 @@
                   </div>
                   <div class="text-center mt-3">
                      <h4><b>{{ $user->name }}</b></h4>
-                     <p class="mb-0">{{ $user->employee['as_designation_id']}}</p>
+                     <p class="mb-0">{{ $user->employee->designation['hr_designation_name']??''}}</p>
                      <p class="mb-0">Joined {{ $user->employee['as_doj']->diffForHumans() }}</p>
                   </div>
                   <ul class="doctoe-sedual d-flex align-items-center justify-content-between p-0 mt-4 mb-0">

@@ -50,7 +50,7 @@
          <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
             <div class="iq-card-header d-flex justify-content-between">
                <div class="iq-header-title">
-                  <h4 class="card-title">Patients In</h4>
+                  <h4 class="card-title">Today's Attendance</h4>
                </div>
             </div>
             <div class="iq-card-body">
@@ -59,7 +59,7 @@
          </div>
       </div>
    </div>
-   <div class="row">
+   {{-- <div class="row">
       <div class="col-lg-4">
          <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
             <div class="iq-card-header d-flex justify-content-between">
@@ -468,8 +468,8 @@
             </div>
          </div>
       </div>
-   	</div>
-   	@push('js')
+   </div> --}}
+   @push('js')
       <!-- Apexcharts JavaScript -->
       <script src="{{ asset('assets/js/jquery.appear.js')}}"></script>
       <script src="{{ asset('assets/js/apexcharts.js') }}"></script>
@@ -686,21 +686,21 @@
               chart.legend = new am4charts.Legend();
 
               chart.data = [ {
-                  title: "Present",
-                  employee: {{$today_att_chart['present']??0}}
+                  title: "Present (intime)",
+                  employee: {{($today_att_chart['present']??0)-($today_att_chart['late']??0)}}
+              }, {
+                  title: "Leave",
+                  employee: {{$today_att_chart['leave']??0}}
               }, {
                   title: "Absent",
                   employee: {{$today_att_chart['absent']??0}}
               },{
                   title: "Late",
                   employee: {{$today_att_chart['late']??0}}
-              }, {
-                  title: "Leave",
-                  employee: {{$today_att_chart['leave']??0}}
               }];
 
               var series = chart.series.push(new am4charts.PieSeries3D());
-              series.colors.list = [am4core.color("#208207"), am4core.color("#f26361"), am4core.color("#089bab"),
+              series.colors.list = [am4core.color("#208207"), am4core.color("#089bab"), am4core.color("#f26361"),
                   am4core.color("#FC9F5B")
               ];
               series.dataFields.value = "employee";
@@ -712,6 +712,6 @@
 
 
       </script>
-   	@endpush 
+   @endpush 
 @endsection
 
