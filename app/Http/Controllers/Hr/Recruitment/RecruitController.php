@@ -7,9 +7,10 @@ use App\Models\Hr\Area;
 use App\Models\Hr\EmpType;
 use App\Models\Hr\Unit;
 use App\Models\Hr\WorkerRecruitment;
+use Auth, Validator, DB;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Auth, Validator;
+use Yajra\DataTables\DataTables;
 
 class RecruitController extends Controller
 {
@@ -20,7 +21,48 @@ class RecruitController extends Controller
      */
     public function index()
     {
-        //
+        return view('hr.recruitment.recruit.list');
+    }
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function list()
+    {
+        DB::statement(DB::raw('set @rownum=0'));
+        $data = WorkerRecruitment::with(['employee_type:emp_type_id,hr_emp_type_name', 'designation:hr_designation_id,hr_designation_name','unit:hr_unit_id,hr_unit_short_name', 'area:hr_area_id,hr_area_name'])
+        ->get();
+        return DataTables::of($data)
+        ->addIndexColumn()
+        ->addColumn('hr_emp_type_name', function ($data) {
+            return $data->employee_type['hr_emp_type_name'];
+        })
+        ->addColumn('hr_designation_name', function ($data) {
+            return $data->designation['hr_designation_name'];
+        })
+        ->addColumn('hr_unit_short_name', function ($data) {
+            return $data->unit['hr_unit_short_name'];
+        })
+        ->addColumn('hr_area_name', function ($data) {
+            return $data->area['hr_area_name'];
+        })
+        ->addColumn('worker_doj', function ($data) {
+            return date('Y-m-d', strtotime($data->worker_doj));
+        })
+        ->addColumn('action', function ($data) {
+            
+            /*return "<a class=\"btn btn-sm btn-primary\" data-toggle=\"tooltip\" title=\"Edit\">
+                <i class=\"ace-icon fa fa-pencil bigger-120\"></i>
+            </a>
+            <a onclick=\"return confirm('Are you sure?');\" class=\"btn btn-sm btn-danger\" data-toggle=\"tooltip\" title=\"Delete\" style=\"padding-right: 6px;\">
+                <i class=\"ace-icon fa fa-trash bigger-120\"></i>
+            </a>";*/
+            return '<button class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="" data-original-title="Migrate To Employee"><i class="ri-heart-fill pr-0"></i></button>';
+
+        })
+        ->rawColumns(['DT_RowIndex', 'hr_emp_type_name', 'hr_designation_name', 'hr_unit_short_name','hr_area_name','worker_name','worker_contact','worker_doj','action'])
+        ->make(true);
     }
 
     /**
@@ -65,7 +107,8 @@ class RecruitController extends Controller
             toastr()->error('Some field validation fails');
             return redirect()->back()->withErrors($validator)->withInput();
         }
-        $input = $request->all($request->except('_token'));
+
+        $input = $request->except('_token');
 
         $worker = WorkerRecruitment::checkRecruitmentWorker($input);
         if($worker != null){
@@ -89,6 +132,7 @@ class RecruitController extends Controller
             return redirect('/hr/recruitment/recruit');
         } catch (\Exception $e) {
             $bug = $e->getMessage();
+            return $bug;
             toastr()->error($bug);
             return back();
         }
@@ -174,27 +218,9 @@ class RecruitController extends Controller
             return response()->json($data);
         }
         try {
-
-            WorkerRecruitment::insert([
-                'worker_name'           => $input['worker_name'],
-                'worker_doj'            => $input['worker_doj'],
-                'worker_emp_type_id'    => $input['worker_emp_type_id'],
-                'worker_designation_id' => $input['worker_designation_id'],
-                'worker_unit_id'        => $input['worker_unit_id'],
-                'worker_area_id'        => $input['worker_area_id'],
-                'worker_department_id'  => $input['worker_department_id'],
-                'worker_section_id'     => $input['worker_section_id'],
-                'worker_subsection_id'  => $input['worker_subsection_id'],
-                'worker_dob'            => $input['worker_dob'],
-                'worker_ot'             => isset($input['worker_ot'])?1:0,
-                'worker_gender'         => $input['worker_gender'],
-                'worker_contact'        => $input['worker_contact'],
-                'worker_nid'            => $input['worker_nid'],
-                'as_rfid'               => $input['as_rfid'],
-                'as_oracle_code'        => $input['as_oracle_code'],
-                'worker_created_at'     => Carbon::now(),
-                'worker_created_by'     => Auth::user()->id
-            ]);
+            $input['worker_ot'] = isset($input['worker_ot'])?1:0;
+            $input['worker_created_by'] = Auth::user()->id;
+            WorkerRecruitment::create($input);
 
             $data['type'] = 'success';
             $data['url'] = url()->previous();
@@ -242,7 +268,7 @@ class RecruitController extends Controller
         $data = array();
         $data['type'] = 'error';
         $input = $request->all();
-        return $input;
+
         // check existing worker
         $worker = WorkerRecruitment::checkRecruitmentWorker($input);
         if($worker != null){
@@ -250,34 +276,12 @@ class RecruitController extends Controller
             return response()->json($data);
         }
         try {
-            WorkerRecruitment::insert([
-                'worker_name'                => $input['worker_name'],
-                'worker_doj'                 => $input['worker_doj'],
-                'worker_emp_type_id'         => $input['worker_emp_type_id'],
-                'worker_designation_id'      => $input['worker_designation_id'],
-                'worker_unit_id'             => $input['worker_unit_id'],
-                'worker_area_id'             => $input['worker_area_id'],
-                'worker_department_id'       => $input['worker_department_id'],
-                'worker_section_id'          => $input['worker_section_id'],
-                'worker_subsection_id'       => $input['worker_subsection_id'],
-                'worker_dob'                 => $input['worker_dob'],
-                'worker_ot'                  => isset($input['worker_ot'])?1:0,
-                'worker_gender'              => $input['worker_gender'],
-                'worker_contact'             => $input['worker_contact'],
-                'worker_nid'                 => $input['worker_nid'],
-                'as_rfid'                    => $input['as_rfid'],
-                'as_oracle_code'             => $input['as_oracle_code'],
-                'worker_height'              => $input['worker_height'],
-                'worker_weight'              => $input['worker_weight'],
-                'worker_tooth_structure'     => $input['worker_tooth_structure'],
-                'worker_blood_group'         => $input['worker_blood_group'],
-                'worker_identification_mark' => $input['worker_identification_mark'],
-                'worker_doctor_age_confirm'  => $input['worker_doctor_age_confirm'],
-                'worker_doctor_comments'     => $input['worker_doctor_comments'],
-                'worker_doctor_acceptance'   => isset($input['worker_doctor_acceptance'])?1:2,
-                'worker_created_at'          => Carbon::now(),
-                'worker_created_by'          => Auth::user()->id
-            ]);
+
+            $input['worker_ot'] = isset($input['worker_ot'])?1:0;
+            $input['worker_doctor_acceptance'] = isset($input['worker_doctor_acceptance'])?1:2;
+            $input['worker_created_by'] = Auth::user()->id;
+            // return $input;
+            WorkerRecruitment::create($input);
             
             $data['type'] = 'success';
             $data['url'] = url()->previous();

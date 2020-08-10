@@ -67,7 +67,7 @@
             </div>
          </div>
          <div class="col-sm-12">
-         <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+         <!-- <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
             <div class="iq-card-body">
                <div class="patient-steps">
                   <div class="d-flex align-items-center justify-content-between">
@@ -177,7 +177,7 @@
                   </ul>
                </div>
             </div>
-         </div>
+         </div> -->
 
          <!--  -->
       </div>
@@ -327,7 +327,7 @@
                         </div>
                      </div>
                   </div>
-                  <div class="col-md-6">
+                  <!-- <div class="col-md-6">
                      <div class="iq-card">
                         <div class="iq-card-header d-flex justify-content-between p-0 bg-white">
                            <div class="iq-header-title">
@@ -362,7 +362,7 @@
                            </div>
                         </div>
                      </div>
-                  </div>
+                  </div> -->
                </div>
             </div>
          </div>
