@@ -10,6 +10,9 @@
 .avatar-130{
 	border-radius: 50%;
 }
+.iq-card .iq-card-header {
+    margin-bottom: 10px;
+}
 .iq-submenu{
 	background: #fff;
 }

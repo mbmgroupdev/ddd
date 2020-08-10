@@ -7983,8 +7983,17 @@ allNextBtn.click(function() {
         }
     }
 
-    if (isValid)
+    if (isValid){
         nextStepWizard.removeClass('disabled').trigger('click');
+    }else{
+        $.notify("Some field are required", {
+          type: 'error',
+          allow_dismiss: true,
+          delay: 100,
+          z_index: 1031,
+          timer: 300
+        });
+    }
 });
 
 jQuery('div.setup-panel div a.active').trigger('click');

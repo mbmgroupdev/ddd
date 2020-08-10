@@ -2,6 +2,7 @@
 
 Route::group(['prefix' => 'recruitment','namespace' => 'Recruitment'], function(){
 	Route::resource('recruit', 'RecruitController');
+	Route::get('recruit-data-list', 'RecruitController@list');
 	Route::post('first-step-recruitment', 'RecruitController@basicRecruitStore');
 	Route::post('second-step-recruitment', 'RecruitController@medicalRecruitStore');
 });
