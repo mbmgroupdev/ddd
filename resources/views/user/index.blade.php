@@ -17,7 +17,7 @@
             <div class="iq-card-body">
                <div class="user-details-block">
                   <div class="user-profile text-center">
-                     <img src='{{ $user->employee['as_pic'] != null?asset($user->employee['as_pic'] ):($user->employee['as_gender'] == 'Female'?asset('assets/images/user/02.jpg'):asset('assets/images/user/01.jpg')) }}' class="avatar-130 img-fluid" alt="{{ $user->name }}" onError='this.onerror=null;this.src="{{ ($user->employee['as_gender'] == 'Female'?asset('assets/images/user/02.jpg'):asset('assets/images/user/01.jpg')) }}";'>
+                     <img src='{{ $user->employee['as_pic'] != null?asset($user->employee['as_pic'] ):($user->employee['as_gender'] == 'Female'?asset('assets/images/user/1.jpg'):asset('assets/images/user/09.jpg')) }}' class="avatar-130 img-fluid" alt="{{ $user->name }}" onError='this.onerror=null;this.src="{{ ($user->employee['as_gender'] == 'Female'?asset('assets/images/user/1.jpg'):asset('assets/images/user/09.jpg')) }}";'>
                   </div>
                   <div class="text-center mt-3">
                      <h4><b>{{ $user->name }}</b></h4>
