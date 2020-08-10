@@ -194,7 +194,7 @@ class DashboardController extends Controller
         $employee = Employee::where("as_status", 1)->where('as_unit_id', $unit)->count();
 
         $absent = DB::table('hr_absent')
-                   ->whereBetween('date',array($today,$today))
+                   ->whereDate('date',$today)
                    ->where('hr_unit', $unit)
                    ->get()
                    ->count();
