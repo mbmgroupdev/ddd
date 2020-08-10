@@ -11,7 +11,7 @@
             <a href="#recruitment" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="las la-user-tie"></i><span>Recruitment</span><i class="ri-arrow-right-s-line iq-arrow-right"></i></a>
             <ul id="recruitment" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
                <li><a href="{{ url('/hr/recruitment/recruit/create') }}"><i class="ri-inbox-fill"></i>New Recruit</a></li>
-               <li><a href="#"><i class="ri-edit-2-fill"></i>Recruit List</a></li>
+               <li><a href="{{ url('/hr/recruitment/recruit') }}"><i class="ri-edit-2-fill"></i>Recruit List</a></li>
                <li><a href="#"><i class="ri-edit-2-fill"></i>Job Application</a></li>
                <li><a href="#"><i class="ri-edit-2-fill"></i>Appointment Letter</a></li>
                <li><a href="#"><i class="ri-edit-2-fill"></i>Nominee</a></li>

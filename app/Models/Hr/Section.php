@@ -2,10 +2,11 @@
 
 namespace App\Models\Hr;
 
+use App\Models\Employee;
+use App\Models\Hr\Section;
+use App\Models\Hr\Subsection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\Employee;
-use App\Models\Hr\Subsection;
 
 class Section extends Model
 {
@@ -19,6 +20,10 @@ class Section extends Model
         'created_at', 'updated_at', 'deleted_at'
     ];
 
+    public static function getSectionDepartmentIdWise($id)
+    {
+        return Section::where('hr_section_department_id', $id)->where('hr_section_status', 1)->get();
+    }
     public static function getSectionList()
     {
      	return Section::pluck('hr_section_name', 'hr_section_id');
