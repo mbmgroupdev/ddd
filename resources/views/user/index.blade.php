@@ -26,7 +26,7 @@
                   </div>
                   <ul class="doctoe-sedual d-flex align-items-center justify-content-between p-0 mt-4 mb-0">
                      <li class="text-center">
-                        <h6 class="text-primary">Logged In </h6>
+                        <h6 class="text-primary">Last Logged In </h6>
                         <span>{{$user->lastlogin()->login_at->diffForHumans() }}</span>
                      </li>
                      <li class="text-center">
