@@ -58,7 +58,7 @@
                               Please select a role!
                            </div>
                         </div>
-                        <div class="form-group">
+                         <div class="form-group">
                            <label  for="roles" >Unit Permission </label>
                            <br>
                            @foreach($units as $key => $unit)
@@ -70,7 +70,7 @@
                            </div>
                            @endforeach
                         </div>
-                        <div class="form-group">
+                        <!--<div class="form-group">
                            <label  for="roles" >Buyer Permission </label>
                            <br>
                            @foreach($buyers as $key => $buyer)
@@ -90,7 +90,7 @@
                               <label class="custom-control-label" for="but{{ $buyerTemplate->id }}"> {{ $buyerTemplate->template_name }}</label>
                            </div>
                            @endforeach
-                        </div>
+                        </div> -->
                         <div class="form-group">
                            <button class="btn btn-primary" type="submit">Save</button>
                         </div>

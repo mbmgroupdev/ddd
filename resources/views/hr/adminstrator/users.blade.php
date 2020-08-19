@@ -16,10 +16,10 @@
                         <th>Associate ID</th>
                         <th>Name</th>
                         <th>Email</th>
-                        <th>Unit Permission</th>
+                        {{-- <th>Unit Permission</th> --}}
                         <th>Roles</th>
-                        <th>Buyer Permission</th>
-                        <th>Management Permission</th>
+                        {{-- <th>Buyer Permission</th>
+                        <th>Management Permission</th> --}}
                         <th>Action</th>
                      </tr>
                   </thead>
@@ -88,10 +88,10 @@
                {data: 'associate_id', name: 'associate_id'}, 
                {data: 'name', name: 'name'}, 
                {data: 'email',  name: 'email'}, 
-               {data: 'units', name: 'units'},  
+               /*{data: 'units', name: 'units'}, */ 
                {data: 'roles', name: 'roles'}, 
-               {data: 'buyer', name: 'buyer'},  
-               {data: 'management', name: 'management'},  
+               /*{data: 'buyer', name: 'buyer'},  
+               {data: 'management', name: 'management'},  */
                {data: 'action', name: 'action', orderable: false, searchable: false}
            ], 
             initComplete: function () {   

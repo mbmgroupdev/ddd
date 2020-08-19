@@ -33,8 +33,8 @@ class UserController extends Controller
         $roles = Role::get()->pluck('name', 'name');
         $units = Unit::get();
         $units_count= count($units);
-        $buyers= Buyer::get();
-        $templates = DB::table('hr_buyer_template')->get();
+        /*$buyers= Buyer::get();
+        $templates = DB::table('hr_buyer_template')->get();*/
         return view('hr.adminstrator.add-user', compact('roles', 'units','buyers','templates'));
     }
 
@@ -110,7 +110,7 @@ class UserController extends Controller
                 ->get();
 
         return DataTables::of($data)
-            ->addColumn('units', function ($data) {
+            /*->addColumn('units', function ($data) {
                 $result = "";
                 $units = explode(",", $data->unit_permissions);
                 foreach ($units as $unit):
@@ -119,7 +119,7 @@ class UserController extends Controller
                     $result .= "<span class=\"label label-primary\">$name</span> ";
                 endforeach;
                 return $result;
-            })
+            })*/
             ->addColumn('roles', function ($data) {
                 $roles = "";
                 foreach ($data->roles()->pluck('name') as $role):
@@ -129,7 +129,7 @@ class UserController extends Controller
             })
 
 
-            ->addColumn('buyer', function ($data) {
+            /*->addColumn('buyer', function ($data) {
                 $i=1;
                 $result = "";
 
@@ -142,8 +142,8 @@ class UserController extends Controller
                     }
                 endforeach;
                 return $result;
-            })
-            ->addColumn('management', function ($data) {
+            })*/
+            /*->addColumn('management', function ($data) {
                 $i=1;
                 $result = "";
 
@@ -156,7 +156,7 @@ class UserController extends Controller
                     }
                 endforeach;
                 return $result;
-            })
+            })*/
             ->addColumn('action', function ($data) {
                 if ($data->associate_id == 9999999999)
                 {
@@ -175,7 +175,7 @@ class UserController extends Controller
                 }
 
             })
-            ->rawColumns(['serial_no', 'units', 'buyer', 'roles','management','action'])
+            ->rawColumns(['serial_no',  'roles','action'])
             ->make(true);
     }
 }
