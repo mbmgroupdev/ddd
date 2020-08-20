@@ -5,11 +5,12 @@ namespace App\Http\Controllers\Hr\Adminstrator;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Hr\Unit;
+use App\Models\Employee;
 use App\Models\Merch\Buyer;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\User;
-use DB,DataTables;
+use DB,DataTables,Hash,Validator;
 
 class UserController extends Controller
 {
@@ -32,10 +33,9 @@ class UserController extends Controller
     {
         $roles = Role::get()->pluck('name', 'name');
         $units = Unit::get();
-        $units_count= count($units);
         /*$buyers= Buyer::get();
         $templates = DB::table('hr_buyer_template')->get();*/
-        return view('hr.adminstrator.add-user', compact('roles', 'units','buyers','templates'));
+        return view('hr.adminstrator.add-user', compact('roles', 'units'));
     }
 
     /**
@@ -46,7 +46,36 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(),[
+            'name'     => 'required|string|max:255',
+            'associate_id' => 'sometimes|string|unique:users,associate_id',
+            'email'    => 'required|string|email|max:255|unique:users,email',
+            'role'    => 'required'
+        ]);
+
+        if ($validator->fails()){
+            return redirect()->back()->withErrors($validator)->withInput();
+        }else{
+
+            $unit_permissions = implode(",", $request->input("unit_permissions"));
+
+            $user = new User();
+            $user->name = $request->name;
+            $user->associate_id = $request->associate_id??'';
+            $user->email = $request->email;
+            $user->password = Hash::make('123456');
+            $user->unit_permissions = $unit_permissions;
+
+            $user->save();
+
+            $roles = $request->input('role') ? [$request->input('role')] : [];
+            $user->assignRole($roles);
+
+            // create log file
+            log_file_write("User Created", $user->id);
+
+            return redirect('hr/adminstrator/user/edit/'.$user->id)->with('success', 'Save Successful.');
+        }
     }
 
     /**
@@ -68,7 +97,12 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        //
+        $user = User::findOrFail($id);
+        $roles = Role::get()->pluck('name', 'name');
+        $units = Unit::get();
+        $role = $user->roles()->first()->name;
+
+        return view('hr.adminstrator.edit-user', compact('user','roles', 'units','role'));
     }
 
     /**
@@ -80,7 +114,31 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $validator = Validator::make($request->all(),[
+            'name'     => 'required|string|max:255',
+            'associate_id' => 'sometimes|unique:users,associate_id,{$id}',
+            'role'    => 'required'
+        ]);
+
+        if ($validator->fails()){
+            return redirect()->back()->withErrors($validator)->withInput();
+        }else{
+
+            $user = User::findOrFail($id);
+            $user->name = $request->name;
+            $user->associate_id = $request->associate_id??'';
+            $user->unit_permissions = implode(",", $request->input("unit_permissions"));
+
+            $user->save();
+
+            $roles = $request->input('role') ? [$request->input('role')] : [];
+            $user->syncRoles($roles);
+
+            // create log file
+            log_file_write("User information updated", $user->id);
+
+            return redirect()->back()->with('success', 'User information updated succesfully.');
+        }
     }
 
     /**
@@ -91,17 +149,24 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $user = User::findOrFail($id);
+
+        if ($user->delete()){
+
+            log_file_write("User Deleted", $id );
+            return redirect()->back()
+                ->with("success", "Delete Successful!");
+        }else{
+            return redirect()->back()
+                    ->with("error", "Please try again.");
+
+        }
     }
 
 
     public function getUserList()
     {
-
-        $unit_perm = auth()->user()->unit_permissions();
-
-        $data = User::whereIn('unit_permissions',$unit_perm)
-                ->where(function($q) {
+        $data = User::where(function($q) {
                     if (auth()->user()->associate_id != 9999999999)
                     {
                         $q->whereNotIn("users.associate_id", [9999999999]);
@@ -158,24 +223,90 @@ class UserController extends Controller
                 return $result;
             })*/
             ->addColumn('action', function ($data) {
-                if ($data->associate_id == 9999999999)
-                {
-                    return "<a href=".url('users_management/user/edit/'.$data->id)." class=\"btn btn-xs btn-primary\" data-toggle=\"tooltip\" title=\"Edit\">
-                        <i class=\"ace-icon fa fa-pencil bigger-120\"></i>
-                    </a>";
-                }
-                else
-                {
-                    return "<a href=".url('users_management/user/edit/'.$data->id)." class=\"btn btn-xs btn-primary\" data-toggle=\"tooltip\" title=\"Edit\">
-                        <i class=\"ace-icon fa fa-pencil bigger-120\"></i>
-                    </a>
-                    <a href=".url('users_management/user/delete/'.$data->id)." onclick=\"return confirm('Are you sure?');\" class=\"btn btn-xs btn-danger\" data-toggle=\"tooltip\" title=\"Delete\" style=\"padding-right: 6px;\">
-                        <i class=\"ace-icon fa fa-trash bigger-120\"></i>
-                    </a>";
-                }
+                
+                return "<a href=".url('hr/adminstrator/user/edit/'.$data->id)." class=\"btn btn-xs btn-primary\" data-toggle=\"tooltip\" title=\"Edit\">
+                    <i class=\"fa fa-pencil\"></i>
+                </a>
+                <a href=".url('hr/adminstrator/user/delete/'.$data->id)." onclick=\"return confirm('Are you sure?');\" class=\"btn btn-xs btn-danger\" data-toggle=\"tooltip\" title=\"Trash\" style=\"padding-right: 6px;\">
+                    <i class=\"fa fa-trash\"></i>
+                </a>";
 
             })
-            ->rawColumns(['serial_no',  'roles','action'])
+            ->rawColumns(['serial_no', 'roles','action'])
             ->make(true);
+    }
+
+    public function permissionAssign(Request $request)
+    {
+        $permissions = Permission::orderBy('name','ASC')->get();
+        $permissions = $permissions->groupBy(['module','groups']);
+
+        return view('hr.adminstrator.assign-permission', compact('permissions'));
+    }
+
+
+    public function getPermission(Request $request)
+    {
+        $user = User::where('associate_id', $request->id)->first();
+
+        $permissions = Permission::orderBy('name','ASC')->get();
+        $permissions = $permissions->groupBy(['module','groups']);
+
+        return view('hr.adminstrator.get-permission', compact('user','permissions'))->render();
+    }
+
+    public function syncPermission(Request $request)
+    {
+        $user = User::where('associate_id', $request->id)->first();
+
+        if($request->type == 'revoke'){
+            $user->revokePermissionTo($request->permission);
+            log_file_write("Permission ".$request->permission." revoked from ".$request->id, '');
+
+            return '"'.$request->permission.'" revoked from';
+
+        }else if($request->type == 'assign'){
+            $user->givePermissionTo($request->permission); 
+            log_file_write("Permission ".$request->permission." assigned to ".$request->id, '');
+
+            return '"'.$request->permission.'" assigned to';            
+        }
+
+    }
+
+
+    public function employeeSearch(Request $request)
+    {
+        $data = []; 
+        if($request->has('keyword')){
+            $search = $request->keyword;
+            $data = Employee::select("associate_id", DB::raw('CONCAT_WS(" - ", associate_id, as_name) AS user_name'))
+                ->where(function($q) use($search) {
+                    $q->where("associate_id", "LIKE" , "%{$search}%");
+                    $q->orWhere("as_name", "LIKE" , "%{$search}%");
+                })
+                ->take(10)
+                ->get();
+        }
+
+        return response()->json($data);
+    }
+
+
+    public function userSearch(Request $request)
+    {
+        $data = []; 
+        if($request->has('keyword')){
+            $search = $request->keyword;
+            $data = User::select("associate_id", DB::raw('CONCAT_WS(" - ", associate_id, name) AS user_name'))
+                ->where(function($q) use($search) {
+                    $q->where("associate_id", "LIKE" , "%{$search}%");
+                    $q->orWhere("name", "LIKE" , "%{$search}%");
+                })
+                ->take(10)
+                ->get();
+        }
+
+        return response()->json($data);
     }
 }

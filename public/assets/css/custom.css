@@ -27,10 +27,11 @@
 }
 .has-float-label .form-control:placeholder-shown:not(:focus)+* {
     top: .9em;
-    font-size: 110%;
+    font-size: 12px;
+    opacity: 1;
 }
 .has-float-label label, .has-float-label>span {
-    font-size: 90%;
+    font-size: 12px;
 }
 .form-group{
 	margin-bottom: 15px;
@@ -54,6 +55,7 @@
     top: -6px;
     left: 15px;
     outline: none;
+    background: #fff;
 }
 .select2-container .select2-selection--single {
     height: 40px;
@@ -88,4 +90,23 @@
 }
 .pb-15{
     padding-bottom: 15px !important;
+}
+.custom-control-inline {
+    display: inline-block;
+}
+.btn-100{
+    width:100px;
+}
+.card-header {
+    background-color: rgb(244 254 255);
+    border: 0;
+}
+.f-16{
+    font-size: 16px;
+}
+.invalid-feedback {
+    font-size: 12px;
+}
+.pt-40{
+    padding-top: 40px;
 }

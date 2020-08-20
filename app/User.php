@@ -2,17 +2,18 @@
 
 namespace App;
 
-use App\Models\Employee;
-use App\Models\UserActivity;
-use App\Models\UserLog;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Employee;
+use App\Models\UserActivity;
+use App\Models\UserLog;
 
 class User extends Authenticatable
 {
-    use Notifiable,HasRoles;
+    use Notifiable, HasRoles, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -44,7 +45,7 @@ class User extends Authenticatable
     ];
 
     protected $date = [
-        'created_at', 'updated_at'
+        'created_at', 'updated_at', 'deleted_at'
     ];
 
     public function employee()
@@ -66,7 +67,7 @@ class User extends Authenticatable
 
     public function lastlogin()
     {
-        return UserActivity::where('associate_id',$this->associate_id)->orderBy('id','DESC')->first();
+        return UserActivity::where('associate_id',$this->id)->orderBy('id','DESC')->first();
     }
 
     public function unit_permissions()

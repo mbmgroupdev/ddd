@@ -22,7 +22,9 @@
     <link rel="stylesheet" href="{{ asset('assets/css/typography.css') }}">
     <!-- Style CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
-    <link rel="stylesheet" href="https://cdn.rawgit.com/tonystar/bootstrap-float-label/v3.0.1/dist/bootstrap-float-label.min.css"/>
+    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-float-label.min.css')}}"/>
+    <link rel="stylesheet" href="{{ asset('assets/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/toastr.min.css') }}">
     @stack('css')
     {{-- Custom CSS --}}
     <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
@@ -242,7 +244,11 @@
                          <ul class="navbar-list">
                             <li>
                                <a href="#" class="search-toggle iq-waves-effect d-flex align-items-center">
+                                  @if(auth()->user()->employee)
                                   <img src='{{ auth()->user()->employee != null?asset(auth()->user()->employee['as_pic'] ):(auth()->user()->employee['as_gender'] == 'Female'?asset('assets/images/user/1.jpg'):asset('assets/images/user/09.jpg')) }}' class="img-fluid rounded mr-3" alt="{{ auth()->user()->name }}" onError='this.onerror=null;this.src="{{ (auth()->user()->employee['as_gender'] == 'Female'?asset('assets/images/user/1.jpg'):asset('assets/images/user/09.jpg')) }}";'>
+                                  @else
+                                    <img class="img-fluid rounded mr-3" src="{{ asset('assets/images/user/09.jpg') }} ">
+                                  @endif
                                   <div class="caption">
                                      <h6 class="mb-0 line-height">{{ auth()->user()->name }}</h6>
                                      {{-- <span class="font-size-12">Available</span> --}}
@@ -288,17 +294,6 @@
                                               </div>
                                            </div>
                                         </a>
-                                        {{-- <a href="privacy-setting.html" class="iq-sub-card iq-bg-primary-hover">
-                                           <div class="media align-items-center">
-                                              <div class="rounded iq-card-icon iq-bg-primary">
-                                                 <i class="ri-lock-line"></i>
-                                              </div>
-                                              <div class="media-body ml-3">
-                                                 <h6 class="mb-0 ">Privacy Settings</h6>
-                                                 <p class="mb-0 font-size-12">Control your privacy parameters.</p>
-                                              </div>
-                                           </div>
-                                        </a> --}}
                                         <div class="d-inline-block w-100 text-center p-3">
                                            
                                            <a class="bg-primary iq-sign-btn" role="button" href="{{ route('logout') }}"
@@ -347,26 +342,19 @@
     </div>
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}"></script>
-    {{-- <script src="{{ asset('assets/js/jquery.min.js') }}"></script> --}}
-    {{-- <script src="{{ asset('assets/js/popper.min.js') }}"></script> --}}
-    {{-- <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script> --}}
-    {{-- <script src="{{ asset('plugins/DataTables/datatables.min.js') }}"></script> --}}
-    {{-- <script src="{{ asset('plugins/form-validator/jquery.form-validator.min.js') }}"></script> --}}
-    <!-- Appear JavaScript -->
-    {{-- <script src="{{ asset('assets/js/jquery.appear.js') }}"></script> --}}
-
-    <!-- Magnific Popup JavaScript -->
     <script src="{{ asset('assets/js/jquery.magnific-popup.min.js') }}"></script>
     <!-- Smooth Scrollbar JavaScript -->
     <script src="{{ asset('assets/js/smooth-scrollbar.js') }}"></script>
     <!-- am animated JavaScript -->
     <script src="{{ asset('assets/js/animated.js') }}"></script>
-    @stack('js')
     {{-- notify --}}
     <script src="{{asset('assets/js/notify/notify.js')}}"></script>
-    {{-- <script src="{{asset('assets/js/notify/index.js')}}"></script> --}}
+    <script src="{{asset('assets/js/select2.min.js')}}"></script>
+    <script src="{{asset('assets/js/toastr.min.js')}}"></script>
     <!-- Custom JavaScript -->
+    @stack('js')
     <script src="{{ asset('assets/js/custom.js') }}"></script>
+    <script src="{{ asset('js/custom.js') }}"></script>
     
     <script src="{{ asset('assets/js/chart-custom.js') }}"></script>
 </body>

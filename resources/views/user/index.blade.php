@@ -17,23 +17,35 @@
             <div class="iq-card-body">
                <div class="user-details-block">
                   <div class="user-profile text-center">
+                     @if($user->employee)
                      <img src='{{ $user->employee['as_pic'] != null?asset($user->employee['as_pic'] ):($user->employee['as_gender'] == 'Female'?asset('assets/images/user/1.jpg'):asset('assets/images/user/09.jpg')) }}' class="avatar-130 img-fluid" alt="{{ $user->name }}" onError='this.onerror=null;this.src="{{ ($user->employee['as_gender'] == 'Female'?asset('assets/images/user/1.jpg'):asset('assets/images/user/09.jpg')) }}";'>
+                     @else
+                        <img class="avatar-130 img-fluid" src="{{ asset('assets/images/user/09.jpg') }} ">
+                      @endif
                   </div>
                   <div class="text-center mt-3">
                      <h4><b>{{ $user->name }}</b></h4>
-                     <p class="mb-0">{{ $user->employee->designation['hr_designation_name']??''}}</p>
+                     @if($user->employee)
+                     <p class="mb-0">
+                        {{ $user->employee->designation['hr_designation_name']??''}}</p>
                      <p class="mb-0">Joined {{ $user->employee['as_doj']->diffForHumans() }}</p>
+                     @else
+                        <p class="mb-0">Joined in ERP {{ $user->created_at->diffForHumans() }}</p>
+                     @endif
                   </div>
+                  @php $last_login = $user->lastlogin(); @endphp
+                  @if($last_login)
                   <ul class="doctoe-sedual d-flex align-items-center justify-content-between p-0 mt-4 mb-0">
                      <li class="text-center">
                         <h6 class="text-primary">Last Logged In </h6>
-                        <span>{{$user->lastlogin()->login_at->diffForHumans() }}</span>
+                        <span>{{$last_login->login_at->diffForHumans() }}</span>
                      </li>
                      <li class="text-center">
                         <h6 class="text-primary">IP Address</h6>
-                        <span>{{$user->lastlogin()->ip_address}}</span>
+                        <span>{{$last_login->ip_address}}</span>
                      </li>
                   </ul>
+                  @endif
                </div>
             </div>
          </div></div>
@@ -213,6 +225,7 @@
                                     <div class="rounded-circle iq-card-icon iq-bg-primary">
                                        <img src="{{ asset('assets/images/page-img/34.png') }}" class="img-fluid" alt="icon">
                                     </div>
+                                    @if($user->employee)
                                     <div class="ml-3">
                                         <!-- check attendance -->
                                         @php $emp_status = $user->employee->today_status(); @endphp
@@ -235,6 +248,7 @@
                                             @endif
                                         </p>
                                     </div>
+                                    @endif
 
                                  </div>
                               </div>

@@ -1,5 +1,8 @@
 @extends('hr.layout')
 @section('title', 'All Users')
+@push('css')
+  <link rel="stylesheet" href="{{ asset('plugins/DataTables/datatables.css')}}">
+@endpush
 @section('main-content')
    <div class="row">
       <div class="col-sm-12 col-lg-12">
@@ -46,7 +49,7 @@
                      'X-CSRF-TOKEN': '{{ csrf_token() }}'
                } 
            }, 
-           dom: "<'row'<'col-sm-2'l><'col-sm-4'i><'col-sm-3 text-center'B><'col-sm-3'f>>tp", 
+           dom: "<'row'<'col-sm-3'l><'col-sm-5 text-center'B><'col-sm-4'f>>tip",
            buttons: [  
                {
                    extend: 'copy', 
