@@ -1,5 +1,8 @@
 @extends('hr.layout')
 @section('title', 'All Users')
+@push('css')
+  <link rel="stylesheet" href="{{ asset('plugins/DataTables/datatables.css')}}">
+@endpush
 @section('main-content')
    <div class="row">
       <div class="col-sm-12 col-lg-12">
@@ -16,10 +19,10 @@
                         <th>Associate ID</th>
                         <th>Name</th>
                         <th>Email</th>
-                        <th>Unit Permission</th>
+                        {{-- <th>Unit Permission</th> --}}
                         <th>Roles</th>
-                        <th>Buyer Permission</th>
-                        <th>Management Permission</th>
+                        {{-- <th>Buyer Permission</th>
+                        <th>Management Permission</th> --}}
                         <th>Action</th>
                      </tr>
                   </thead>
@@ -46,7 +49,7 @@
                      'X-CSRF-TOKEN': '{{ csrf_token() }}'
                } 
            }, 
-           dom: "<'row'<'col-sm-2'l><'col-sm-4'i><'col-sm-3 text-center'B><'col-sm-3'f>>tp", 
+           dom: "<'row'<'col-sm-3'l><'col-sm-5 text-center'B><'col-sm-4'f>>tip",
            buttons: [  
                {
                    extend: 'copy', 
@@ -88,10 +91,10 @@
                {data: 'associate_id', name: 'associate_id'}, 
                {data: 'name', name: 'name'}, 
                {data: 'email',  name: 'email'}, 
-               {data: 'units', name: 'units'},  
+               /*{data: 'units', name: 'units'}, */ 
                {data: 'roles', name: 'roles'}, 
-               {data: 'buyer', name: 'buyer'},  
-               {data: 'management', name: 'management'},  
+               /*{data: 'buyer', name: 'buyer'},  
+               {data: 'management', name: 'management'},  */
                {data: 'action', name: 'action', orderable: false, searchable: false}
            ], 
             initComplete: function () {   

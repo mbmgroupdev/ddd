@@ -91,11 +91,11 @@
          <li>
             <a href="#adminstration" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="ri-user-3-fill"></i><span>Adminstration</span><i class="ri-arrow-right-s-line iq-arrow-right"></i></a>
             <ul id="adminstration" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
-               <li><a href="#"><i class="ri-file-list-fill"></i>Add User</a></li>
-               <li><a href="#"><i class="ri-user-add-fill"></i>All User</a></li>
-               <li><a href="#"><i class="ri-user-add-fill"></i>Add Role</a></li>
-               <li><a href="#"><i class="ri-profile-fill"></i>All Role</a></li>
-               <li><a href="#"><i class="ri-profile-fill"></i>Assign Permission</a></li>
+               <li><a href="{{ url('/hr/adminstrator/user/create') }}"><i class="ri-user-add-fill"></i>Add User</a></li>
+               <li><a href="{{ url('/hr/adminstrator/users') }}"><i class=" ri-file-list-fill"></i>All User</a></li>
+               <li><a href="{{ url('/hr/adminstrator/user/permission-assign') }}"><i class="ri-profile-fill"></i>Assign Permission</a></li>
+               <li><a href="{{ url('/hr/adminstrator/role/create') }}"><i class="ri-user-add-fill"></i>Add Role</a></li>
+               <li><a href="{{ url('/hr/adminstrator/roles') }}"><i class="ri-profile-fill"></i>All Role</a></li>
             </ul>
          </li>
          <li>
