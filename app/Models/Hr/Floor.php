@@ -16,4 +16,9 @@ class Floor extends Model
     protected $dates = [
         'created_at', 'updated_at', 'deleted_at'
     ];
+
+    public static function getFloorList()
+    {
+    	return Floor::pluck('hr_floor_name', 'hr_floor_id');
+    }
 }

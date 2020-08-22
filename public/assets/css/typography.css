@@ -36,23 +36,26 @@ NOTE: This file contains the styling for responsive Template.
 /*---------------------------------------------------------------------
 Font
 -----------------------------------------------------------------------*/
-@import url('https://fonts.googleapis.com/css?family=Poppins:200,200i,300,400,500,600,700,800,900&amp;display=swap');
-
+/*@import url('https://fonts.googleapis.com/css?family=Poppins:200,200i,300,400,500,600,700,800,900&amp;display=swap');
+*/
 /*---------------------------------------------------------------------
 import Css
 -----------------------------------------------------------------------*/
-@import url("owl.carousel.min.css");
-@import url("dripicons.css");
-@import url("remixicon.css");
+
+
+
 @import url("fontawesome.css");
 @import url("line-awesome.min.css");
-@import url("ionicons.min.css");
-@import url("slick.css");
-@import url("slick-theme.css");
 @import url("Chart.min.css");
 @import url("select2.min.css");
 @import url("magnific-popup.css");
 @import url("animate.css");
+/*@import url("slick.css");
+@import url("dripicons.css");
+@import url("ionicons.min.css");
+@import url("remixicon.css");
+@import url("owl.carousel.min.css");
+@import url("slick-theme.css");*/
 
 /*---------------------------------------------------------------------
 General

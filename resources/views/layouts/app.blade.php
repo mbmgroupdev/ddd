@@ -14,16 +14,12 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-      
-    <!-- Bootstrap CSS -->
-    {{-- <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}"> --}}
-    {{-- <link rel="stylesheet" href="{{ asset('plugins/DataTables/datatables.min.css') }}"> --}}
-    <!-- Typography CSS -->
+
     <link rel="stylesheet" href="{{ asset('assets/css/typography.css') }}">
     <!-- Style CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-float-label.min.css')}}"/>
-    <link rel="stylesheet" href="{{ asset('assets/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-float-label.min.css')}}"/>{{-- 
+    <link rel="stylesheet" href="{{ asset('assets/css/select2.min.css') }}"> --}}
     <link rel="stylesheet" href="{{ asset('assets/css/toastr.min.css') }}">
     @stack('css')
     {{-- Custom CSS --}}
@@ -346,16 +342,16 @@
     <!-- Smooth Scrollbar JavaScript -->
     <script src="{{ asset('assets/js/smooth-scrollbar.js') }}"></script>
     <!-- am animated JavaScript -->
-    <script src="{{ asset('assets/js/animated.js') }}"></script>
     {{-- notify --}}
     <script src="{{asset('assets/js/notify/notify.js')}}"></script>
     <script src="{{asset('assets/js/select2.min.js')}}"></script>
     <script src="{{asset('assets/js/toastr.min.js')}}"></script>
     <!-- Custom JavaScript -->
     @stack('js')
-    <script src="{{ asset('assets/js/custom.js') }}"></script>
-    <script src="{{ asset('js/custom.js') }}"></script>
     
     <script src="{{ asset('assets/js/chart-custom.js') }}"></script>
+    <script src="{{ asset('assets/js/custom.js') }}"></script>
+    <script src="{{ asset('js/custom.js') }}"></script>
+    <script src="{{ asset('assets/js/animated.js') }}"></script>
 </body>
 </html>

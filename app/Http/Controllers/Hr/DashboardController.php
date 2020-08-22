@@ -117,6 +117,27 @@ class DashboardController extends Controller
         return $today_att;
     }
 
+    public function reportCount(){
+        # Count Total, Male & Female Employee
+        $data['employee'] = Employee::select(
+                DB::raw("
+                  COUNT(CASE WHEN as_gender = 'Male' THEN as_id END) AS males,
+                  COUNT(CASE WHEN as_gender = 'Female' THEN as_id END) AS females,
+                  COUNT(CASE WHEN as_ot = '0' THEN as_id END) AS non_ot,
+                  COUNT(CASE WHEN as_ot = '1' THEN as_id END) AS ot,
+                  COUNT(CASE WHEN as_status != '1' THEN as_id END) AS inactive,
+                  COUNT(CASE WHEN as_status = '1' THEN as_id END) AS active,
+                  COUNT(CASE WHEN as_doj = CURDATE() THEN as_id END) AS todays_join,
+                  COUNT(*) AS total
+                ")
+            )
+            ->whereIn('as_unit_id', auth()->user()->unit_permissions())
+             ->where('as_status',1) // checking status
+            ->first();
+
+        return (object)$data;
+    }
+
 
 
 

@@ -1,6 +1,9 @@
 *:focus {
    outline: 0;
  }
+ li{
+    color:#000;
+ }
 .content-page {
     padding: 100px 15px 0;
 }
@@ -13,8 +16,9 @@
 .iq-card .iq-card-header {
     margin-bottom: 10px;
 }
-.iq-submenu{
-	background: #fff;
+.iq-submenu {
+    background: #fff;
+    border-radius: 0 0 15px 15px;
 }
 .has-float-label.has-required label:before {
     content:"*"; 
@@ -109,4 +113,31 @@
 }
 .pt-40{
     padding-top: 40px;
+}
+.breadcrumb{
+    background-color: #fff;
+    border-radius: 15px;
+}
+.panel{
+    background: #fff;
+    border-radius: 15px;
+    margin-bottom: 1rem;
+}
+#searchContent .breadcrumbs .breadcrumb{
+    padding:0;
+    margin-bottom: 0;
+    padding-top:10px; 
+}
+.breadcrumb>li, .breadcrumb>li.active {
+    padding: 0 3px;
+}
+.breadcrumb>li+li:before {
+    font-family: FontAwesome;
+    font-size: 14px;
+    content: "\f105";
+    color: #B2B6BF;
+    padding: 0;
+    margin: 0 8px 0 0;
+    position: relative;
+    top: 1px;
 }
