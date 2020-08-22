@@ -22,6 +22,95 @@ Route::group(['middleware' => 'guest'], function(){
 	});
 });
 Auth::routes();
+
+
+// need to modify this routes
+Route::get('hr/payroll/promotion-jobs', 'Hr\Recruitment\BenefitController@promotionJobs');
+Route::get('hr/payroll/increment-jobs', 'Hr\Recruitment\BenefitController@incrementJobs');
+Route::get('hr/timeattendance/shift-jobs', 'Hr\TimeAttendance\ShiftRoasterController@shiftJobs');
+Route::get('hr/leave/leave_status_jobs', 'Hr\TimeAttendance\LeaveWorkerController@maternityLeaveCheck');
+Route::get('hr/leave/leave_status_update_jobs', 'Hr\TimeAttendance\LeaveWorkerController@LeaveStatusCheckAndUpdate');
+
+Route::group(['middleware' => 'auth'], function(){
+
+	Route::get('/search-employee-result', 'SearchController@searchEmp');
+	Route::get('dashboard', 'DashboardController@index');
+	Route::get('user/change-password', 'Users_Management\UsersController@password');
+	Route::post('user/change-password', 'Users_Management\UsersController@changePassword');
+	//---------USER MANAGEMENT-----------//
+
+	Route::get('users_management/users', 'Users_Management\UsersController@index')->middleware(['permission:View User']);
+	Route::get('users_management/get_emp_as_pic', 'Users_Management\UsersController@getEmpAsPic');
+	Route::post('users_management/user/data', 'Users_Management\UsersController@getUserData');
+	Route::get('users_management/user/create', 'Users_Management\UsersController@create')->middleware(['permission:Add User']);
+	Route::post('users_management/user/create', 'Users_Management\UsersController@store')->middleware(['permission:Add User']);
+	Route::get('users_management/user/edit/{id}', 'Users_Management\UsersController@edit')->middleware(['permission:Manage User']);
+	Route::post('users_management/user/edit/{id}', 'Users_Management\UsersController@update')->middleware(['permission:Manage User']); 
+	Route::get('users_management/user/delete/{id}', 'Users_Management\UsersController@destroy')->middleware(['permission:Manage User']);
+	Route::get('users_management/user/permission-assign', 'Users_Management\UsersController@permissionAssign')->middleware(['permission:Assign Permission']);
+	Route::post('users_management/user/password/{id}', 'Users_Management\UsersController@userPassword')->middleware(['permission:Manage User']);
+	Route::get('users_management/user/get-permission', 'Users_Management\UsersController@getPermission');
+	Route::get('users_management/user/sync-permission', 'Users_Management\UsersController@syncPermission')->middleware(['permission:Assign Permission']);
+
+	Route::get('system-all-user-dropdown-list', 'Users_Management\UsersController@userDropdown');
+    Route::get('management_dropdown-list', 'Users_Management\UsersController@managementDropdown');
+    Route::get('management_dropdown_list_for_edit', 'Users_Management\UsersController@managementDropdownEditPage');
+
+	Route::get('users_management/permissions', 'Users_Management\PermissionsController@index');
+	Route::post('users_management/permissions/store', 'Users_Management\PermissionsController@store');
+	Route::get('users_management/permissions/edit/{id}', 'Users_Management\PermissionsController@edit');
+	Route::post('users_management/permissions/edit/{id}', 'Users_Management\PermissionsController@update');
+	Route::get('users_management/permissions/delete/{id}', 'Users_Management\PermissionsController@destroy');
+
+	Route::group(['middleware' => 'permission:Manage Role'], function(){
+		Route::get('users_management/roles', 'Users_Management\RolesController@index');
+		Route::post('users_management/roles/store', 'Users_Management\RolesController@store');
+		Route::get('users_management/roles/edit/{id}', 'Users_Management\RolesController@edit');
+		Route::post('users_management/roles/edit/{id}', 'Users_Management\RolesController@update');
+		Route::post('users_management/roles/update', 'Users_Management\RolesController@update');
+
+		Route::get('users_management/roles/delete/{id}', 'Users_Management\RolesController@destroy'); 
+
+		Route::get('users_management/roles/create', 'Users_Management\RolesController@create');
+	});
+	//Top Management list
+    Route::get('users_management/top_management','Users_Management\TopManagementController@topManagement');
+    Route::get('users_management/top_management_list','Users_Management\TopManagementController@topManagementList');
+    Route::post('users_management/top_management','Users_Management\TopManagementController@StoreTopManagement');
+    Route::get('users_management/top_management_edit/{id}','Users_Management\TopManagementController@topManagementEdit');
+    Route::post('users_management/top_management_update','Users_Management\TopManagementController@updateTopManagement');
+    Route::get('users_management/top_management_delete/{id}','Users_Management\TopManagementController@deleteTopManagement');
+	
+	
+    //user dashboard
+	Route::get('/', 'UserDashboardController@index');
+	Route::get('user-dashboard/conversations', 'UserDashboardController@conversations');
+	Route::get('user-dashboard/send-message', 'UserDashboardController@sendMessage');
+	Route::get('user-dashboard/delete-message', 'UserDashboardController@deleteMessage');
+
+
+	
+
+  //user dashboard
+	Route::get('dashboard', 'UserDashboardController@index')->name('user-dashboard');
+	Route::post('user-dashboard/events', 'UserDashboardController@eventSettings');
+	Route::get('user-dashboard/conversations', 'UserDashboardController@conversations');
+	Route::get('user-dashboard/send-message', 'UserDashboardController@sendMessage');
+	Route::get('user-dashboard/delete-message', 'UserDashboardController@deleteMessage');
+
+
+	Route::get('/user-search', 'UserDashboardController@userSearch');
+
+});
+
+
+
+
+
+
+
+
+
 Route::group(['middleware' => 'auth'], function(){
 	Route::get('/', 'HomeController@index');
 	@include 'modules/hr.php';

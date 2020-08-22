@@ -33,6 +33,143 @@ if(!function_exists('get_att_table')){
 	}
 }
 
+if(!function_exists('sselected')){
+    function sselected($value1, $value2)
+    {
+        if($value1 == $value2) {
+            return "selected='selected'";
+        }
+        return '';
+    }
+}
+
+if(!function_exists('salary_lock_date')){
+    function salary_lock_date()
+    {
+        return  Cache::remember('salary_lock_date', 10000000, function () {
+            return DB::table('hr_system_setting')->first()->salary_lock;
+        }); 
+        
+    }
+}
+
+if(!function_exists('number_to_time')){
+    function number_to_time($number)
+    {
+        $number = round($number,1);
+        $hour = explode(".", $number);
+        if(isset($hour[1])){
+            return $hour[0].':'.round($hour[1]*6);   
+        }else
+            return $hour[0];
+    }
+}
+
+if(!function_exists('eng_to_bn')){
+    function eng_to_bn($value)
+    {
+        $en = array('0','1','2','3','4','5','6','7','8','9', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December',',');
+        $bn = array('০', '১', '২', '৩',  '৪', '৫', '৬', '৭', '৮', '৯', 'জানুয়ারী', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন', 'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর',',');
+
+        return str_replace($en, $bn, $value);
+    }
+}
+
+
+if(!function_exists('num_to_word')){
+    function num_to_word($num)
+    {
+        $num = str_replace(array(',', ' '), '' , trim($num));
+        if(! $num) {
+            return false;
+        }
+        $num = (int) $num;
+        $words = array();
+        $list1 = array('', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven',
+            'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'
+        );
+        $list2 = array('', 'ten', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety', 'hundred');
+        $list3 = array('', 'thousand', 'million', 'billion', 'trillion', 'quadrillion', 'quintillion', 'sextillion', 'septillion',
+            'octillion', 'nonillion', 'decillion', 'undecillion', 'duodecillion', 'tredecillion', 'quattuordecillion',
+            'quindecillion', 'sexdecillion', 'septendecillion', 'octodecillion', 'novemdecillion', 'vigintillion'
+        );
+        $num_length = strlen($num);
+        $levels = (int) (($num_length + 2) / 3);
+        $max_length = $levels * 3;
+        $num = substr('00' . $num, -$max_length);
+        $num_levels = str_split($num, 3);
+        for ($i = 0; $i < count($num_levels); $i++) {
+            $levels--;
+            $hundreds = (int) ($num_levels[$i] / 100);
+            $hundreds = ($hundreds ? ' ' . $list1[$hundreds] . ' hundred' . ' ' : '');
+            $tens = (int) ($num_levels[$i] % 100);
+            $singles = '';
+            if ( $tens < 20 ) {
+                $tens = ($tens ? ' ' . $list1[$tens] . ' ' : '' );
+            } else {
+                $tens = (int)($tens / 10);
+                $tens = ' ' . $list2[$tens] . ' ';
+                $singles = (int) ($num_levels[$i] % 10);
+                $singles = ' ' . $list1[$singles] . ' ';
+            }
+            $words[] = $hundreds . $tens . $singles . ( ( $levels && ( int ) ( $num_levels[$i] ) ) ? ' ' . $list3[$levels] . ' ' : '' );
+        } //end for loop
+        $commas = count($words);
+        if ($commas > 1) {
+            $commas = $commas - 1;
+        }
+        return implode(' ', $words);
+    }
+}
+
+
+if(!function_exists('number_to_time_format')){
+    function number_to_time_format($number)
+    {
+        $number = round($number,1);
+        $hour = explode(".", $number);
+        if(isset($hour[1])){
+            $hour[1] = round($hour[1]*6);    
+        }else{
+            $hour[1] = '00';
+        }
+        return $hour[0].':'.$hour[1];
+    }
+}
+
+
+if(!function_exists('log_file_write')){
+
+    function log_file_write($message, $event_id)
+    {
+        $log_message = date("Y-m-d H:i:s")." \"".auth()->user()->associate_id."\" ".$message." ".$event_id.PHP_EOL;
+        $log_message .= file_get_contents("assets/log.txt");
+        file_put_contents("assets/log.txt", $log_message);
+
+        // store user log
+        $logs = UserLog::where('log_as_id', auth()->id())->orderBy('updated_at','ASC')->get();
+
+        if(count($logs)<3){
+            $user_log= new UserLog;
+        }else{
+            $user_log = $logs->first();
+            $user_log->id = $logs->first()->id;
+        }
+            $user_log->log_as_id = auth()->id();
+            $user_log->log_message = $message;
+            $user_log->log_table = '';
+            $user_log->log_row_no = $event_id;
+            $user_log->save();
+    }
+}
+
+
+
+
+/*-------------------------------------
+ * Cache methods
+ *------------------------------------*/
+
 if(!function_exists('cache_att_all')){
     function cache_att_all()
     {
@@ -226,29 +363,3 @@ if(!function_exists('shift_by_code')){
     }
 }
 
-
-
-if(!function_exists('log_file_write')){
-
-    function log_file_write($message, $event_id)
-    {
-        $log_message = date("Y-m-d H:i:s")." \"".auth()->user()->associate_id."\" ".$message." ".$event_id.PHP_EOL;
-        $log_message .= file_get_contents("assets/log.txt");
-        file_put_contents("assets/log.txt", $log_message);
-
-        // store user log
-        $logs = UserLog::where('log_as_id', auth()->id())->orderBy('updated_at','ASC')->get();
-
-        if(count($logs)<3){
-            $user_log= new UserLog;
-        }else{
-            $user_log = $logs->first();
-            $user_log->id = $logs->first()->id;
-        }
-            $user_log->log_as_id = auth()->id();
-            $user_log->log_message = $message;
-            $user_log->log_table = '';
-            $user_log->log_row_no = $event_id;
-            $user_log->save();
-    }
-}

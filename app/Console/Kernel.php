@@ -13,7 +13,9 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        Commands\DailyAttCheck::class,
+        Commands\MySqlBackUp::class,
+        Commands\ImportDataBase::class
     ];
 
     /**
@@ -25,6 +27,10 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
+        $schedule->command('attendance:check')
+                 ->everyMinute()->runInBackground();
+
+        $schedule->command('mysql:backup')->weekly()->runInBackground();
     }
 
     /**
