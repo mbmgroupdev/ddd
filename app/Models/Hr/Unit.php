@@ -18,6 +18,13 @@ class Unit extends Model
         'created_at', 'updated_at', 'deleted_at'
     ];
 
+    public static function unitList()
+    {
+        return Unit::pluck('hr_unit_name', 'hr_unit_id'); 
+       
+    }
+
+
     public static function getActiveUnit()
     {
     	return DB::table('hr_unit')->where('hr_unit_status', 1)->get();

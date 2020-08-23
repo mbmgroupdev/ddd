@@ -1,0 +1,2 @@
+{!! $calendar->calendar() !!}
+{!! $calendar->script() !!}

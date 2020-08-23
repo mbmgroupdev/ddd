@@ -1,6 +1,9 @@
 *:focus {
    outline: 0;
  }
+ li{
+    color:#000;
+ }
 .content-page {
     padding: 100px 15px 0;
 }
@@ -13,8 +16,9 @@
 .iq-card .iq-card-header {
     margin-bottom: 10px;
 }
-.iq-submenu{
-	background: #fff;
+.iq-submenu {
+    background: #fff;
+    border-radius: 0 0 15px 15px;
 }
 .has-float-label.has-required label:before {
     content:"*"; 
@@ -27,10 +31,11 @@
 }
 .has-float-label .form-control:placeholder-shown:not(:focus)+* {
     top: .9em;
-    font-size: 110%;
+    font-size: 12px;
+    opacity: 1;
 }
 .has-float-label label, .has-float-label>span {
-    font-size: 90%;
+    font-size: 12px;
 }
 .form-group{
 	margin-bottom: 15px;
@@ -54,6 +59,7 @@
     top: -6px;
     left: 15px;
     outline: none;
+    background: #fff;
 }
 .select2-container .select2-selection--single {
     height: 40px;
@@ -88,4 +94,78 @@
 }
 .pb-15{
     padding-bottom: 15px !important;
+}
+.custom-control-inline {
+    display: inline-block;
+}
+.btn-100{
+    width:100px;
+}
+.card-header {
+    background-color: rgb(244 254 255);
+    border: 0;
+}
+.f-16{
+    font-size: 16px;
+}
+.invalid-feedback {
+    font-size: 12px;
+}
+.pt-40{
+    padding-top: 40px;
+}
+.breadcrumb{
+    background-color: #fff;
+    border-radius: 15px;
+}
+.panel{
+    background: #fff;
+    border-radius: 15px;
+    margin-bottom: 1rem;
+}
+#searchContent .breadcrumbs .breadcrumb{
+    padding:0;
+    margin-bottom: 0;
+    padding-top:10px; 
+}
+.breadcrumb>li, .breadcrumb>li.active {
+    padding: 0 3px;
+}
+.breadcrumb>li+li:before {
+    font-family: FontAwesome;
+    font-size: 14px;
+    content: "\f105";
+    color: #B2B6BF;
+    padding: 0;
+    margin: 0 8px 0 0;
+    position: relative;
+    top: 1px;
+}
+table th input{
+    height: 30px !important;
+    border: 1px solid #c4e5e8 !important;
+    border-radius: 5px !important;
+    text-align: center !important;
+}
+.panel-heading{
+    padding: 10px 15px;
+    border-bottom: 1px solid transparent;
+    border-top-right-radius: 3px;
+    border-top-left-radius: 3px;
+    border-bottom: 1px solid rgb(195 225 228);
+    
+}
+.panel-heading h6{
+    color: rgba(8, 155, 171, 1);
+    font-size: 18px;
+    font-weight: bold;
+}
+.panel-body{
+    padding: 15px 10px;
+}
+.job_app_div, .p-30{
+    padding: 30px;
+}
+.benefit-employee .user-details-block .user-profile {
+    margin-top: 10px; 
 }

@@ -18,6 +18,11 @@ class Subsection extends Model
         'created_at', 'updated_at', 'deleted_at'
     ];
 
+    public static function getSubSectionList()
+    {
+        return Subsection::pluck('hr_subsec_name', 'hr_subsec_id');
+    }
+
     public static function getSubSectionSectionIdWise($id)
     {
     	return Subsection::where('hr_subsec_section_id', $id)->where('hr_subsec_status', 1)->get();

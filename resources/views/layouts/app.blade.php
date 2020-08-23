@@ -14,15 +14,13 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-      
-    <!-- Bootstrap CSS -->
-    {{-- <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}"> --}}
-    {{-- <link rel="stylesheet" href="{{ asset('plugins/DataTables/datatables.min.css') }}"> --}}
-    <!-- Typography CSS -->
+
     <link rel="stylesheet" href="{{ asset('assets/css/typography.css') }}">
     <!-- Style CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
-    <link rel="stylesheet" href="https://cdn.rawgit.com/tonystar/bootstrap-float-label/v3.0.1/dist/bootstrap-float-label.min.css"/>
+    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-float-label.min.css')}}"/>
+    <link rel="stylesheet" href="{{ asset('assets/css/toastr.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('plugins/DataTables/datatables.css')}}">
     @stack('css')
     {{-- Custom CSS --}}
     <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
@@ -49,8 +47,8 @@
                    <div class="iq-menu-bt-sidebar">
                       <div class="iq-menu-bt align-self-center">
                          <div class="wrapper-menu">
-                            <div class="main-circle"><i class="ri-more-fill"></i></div>
-                            <div class="hover-circle"><i class="ri-more-2-fill"></i></div>
+                            <div class="main-circle"><i class="las la-ellipsis-h"></i></div>
+                            <div class="hover-circle"><i class="las la-ellipsis-v"></i></div>
                          </div>
                       </div>
                    </div>
@@ -77,16 +75,16 @@
                          <div class="iq-search-bar">
                             <form action="#" class="searchbox">
                                <input type="text" class="text search-input" placeholder="Type here to search...">
-                               <a class="search-link" href="#"><i class="ri-search-line"></i></a>
+                               <a class="search-link" href="#"><i class="las la-search"></i></a>
                             </form>
                          </div>
                          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                         <i class="ri-menu-3-line"></i>
+                         <i class="las la-ellipsis-h"></i>
                          </button>
                          <div class="iq-menu-bt align-self-center">
                             <div class="wrapper-menu">
-                               <div class="main-circle"><i class="ri-more-fill"></i></div>
-                               <div class="hover-circle"><i class="ri-more-2-fill"></i></div>
+                               <div class="main-circle"><i class="las la-ellipsis-h"></i></div>
+                               <div class="hover-circle"><i class="las la-ellipsis-v"></i></div>
                             </div>
                          </div>
                          <div class="nav-item iq-full-screen">
@@ -94,6 +92,7 @@
                          </div>
                          <div class="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul class="navbar-nav ml-auto navbar-list">
+
                                <!-- <li class="nav-item">
                                   <a class="search-toggle iq-waves-effect language-title" href="#"><img src="{{ asset('assets/images/small/flag-01.png') }}" alt="img-flaf" class="img-fluid mr-1" style="height: 16px; width: 16px;" /> English <i class="ri-arrow-down-s-line"></i></a>
                                   <div class="iq-sub-dropdown">
@@ -104,10 +103,11 @@
                                      <a class="iq-sub-card" href="#"><img src="{{ asset('assets/images/small/flag-06.png') }}" alt="img-flaf" class="img-fluid mr-2" />Japanese</a>
                                   </div>
                                </li> -->
+
                                
-                               <li class="nav-item">
+                               {{-- <li class="nav-item">
                                   <a href="#" class="search-toggle iq-waves-effect">
-                                  <i class="ri-notification-3-fill"></i>
+                                  <i class="las la-bell"></i>
                                   <span class="bg-danger dots"></span>
                                   </a>
                                   <div class="iq-sub-dropdown">
@@ -170,7 +170,7 @@
                                </li>
                                <li class="nav-item dropdown">
                                   <a href="#" class="search-toggle iq-waves-effect">
-                                  <i class="ri-mail-open-fill"></i>
+                                  <i class="las la-comments"></i>
                                   <span class="bg-primary count-mail"></span>
                                   </a>
                                   <div class="iq-sub-dropdown">
@@ -237,13 +237,17 @@
                                         </div>
                                      </div>
                                   </div>
-                               </li>
+                               </li> --}}
                             </ul>
                          </div>
                          <ul class="navbar-list">
                             <li>
                                <a href="#" class="search-toggle iq-waves-effect d-flex align-items-center">
+                                  @if(auth()->user()->employee)
                                   <img src='{{ auth()->user()->employee != null?asset(auth()->user()->employee['as_pic'] ):(auth()->user()->employee['as_gender'] == 'Female'?asset('assets/images/user/1.jpg'):asset('assets/images/user/09.jpg')) }}' class="img-fluid rounded mr-3" alt="{{ auth()->user()->name }}" onError='this.onerror=null;this.src="{{ (auth()->user()->employee['as_gender'] == 'Female'?asset('assets/images/user/1.jpg'):asset('assets/images/user/09.jpg')) }}";'>
+                                  @else
+                                    <img class="img-fluid rounded mr-3" src="{{ asset('assets/images/user/09.jpg') }} ">
+                                  @endif
                                   <div class="caption">
                                      <h6 class="mb-0 line-height">{{ auth()->user()->name }}</h6>
                                      {{-- <span class="font-size-12">Available</span> --}}
@@ -289,17 +293,6 @@
                                               </div>
                                            </div>
                                         </a>
-                                        {{-- <a href="privacy-setting.html" class="iq-sub-card iq-bg-primary-hover">
-                                           <div class="media align-items-center">
-                                              <div class="rounded iq-card-icon iq-bg-primary">
-                                                 <i class="ri-lock-line"></i>
-                                              </div>
-                                              <div class="media-body ml-3">
-                                                 <h6 class="mb-0 ">Privacy Settings</h6>
-                                                 <p class="mb-0 font-size-12">Control your privacy parameters.</p>
-                                              </div>
-                                           </div>
-                                        </a> --}}
                                         <div class="d-inline-block w-100 text-center p-3">
                                            
                                            <a class="bg-primary iq-sign-btn" role="button" href="{{ route('logout') }}"
@@ -348,28 +341,21 @@
     </div>
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}"></script>
-    {{-- <script src="{{ asset('assets/js/jquery.min.js') }}"></script> --}}
-    {{-- <script src="{{ asset('assets/js/popper.min.js') }}"></script> --}}
-    {{-- <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script> --}}
-    {{-- <script src="{{ asset('plugins/DataTables/datatables.min.js') }}"></script> --}}
-    {{-- <script src="{{ asset('plugins/form-validator/jquery.form-validator.min.js') }}"></script> --}}
-    <!-- Appear JavaScript -->
-    {{-- <script src="{{ asset('assets/js/jquery.appear.js') }}"></script> --}}
-
-    <!-- Magnific Popup JavaScript -->
     <script src="{{ asset('assets/js/jquery.magnific-popup.min.js') }}"></script>
     <!-- Smooth Scrollbar JavaScript -->
     <script src="{{ asset('assets/js/smooth-scrollbar.js') }}"></script>
-    
-    @stack('js')
-    <!-- am animated JavaScript -->
-    <script src="{{ asset('assets/js/animated.js') }}"></script>
+
     {{-- notify --}}
     <script src="{{asset('assets/js/notify/notify.js')}}"></script>
-    {{-- <script src="{{asset('assets/js/notify/index.js')}}"></script> --}}
+    <script src="{{asset('assets/js/select2.min.js')}}"></script>
+    <script src="{{asset('assets/js/toastr.min.js')}}"></script>
+    <script src="{{ asset('plugins/DataTables/datatables.min.js') }}"></script>
     <!-- Custom JavaScript -->
-    <script src="{{ asset('assets/js/custom.js') }}"></script>
+    @stack('js')
     
     <script src="{{ asset('assets/js/chart-custom.js') }}"></script>
+    <script src="{{ asset('assets/js/custom.js') }}"></script>
+    <script src="{{ asset('js/custom.js') }}"></script>
+    <script src="{{ asset('assets/js/animated.js') }}"></script>
 </body>
 </html>

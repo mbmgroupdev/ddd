@@ -32,32 +32,35 @@ class HomeController extends Controller
     public function userAtt()
     {
         $user = auth()->user();
-        $table = get_att_table($user->employee['as_unit_id']);
-        $as_id = $user->employee['as_id'];
+        if($user->employee){
+            
+            $table = get_att_table($user->employee['as_unit_id']);
+            $as_id = $user->employee['as_id'];
 
 
-        $present  = DB::table($table)
-                    ->whereMonth('in_time', date('m'))
-                    ->whereYear('in_date',date('Y'))
-                    ->where('as_id', $as_id)
-                    ->count();
+            $present  = DB::table($table)
+                        ->whereMonth('in_time', date('m'))
+                        ->whereYear('in_date',date('Y'))
+                        ->where('as_id', $as_id)
+                        ->count();
 
-        $late  = DB::table($table)
-                    ->whereMonth('in_time', date('m'))
-                    ->whereYear('in_date',date('Y'))
-                    ->where('as_id', $as_id)
-                    ->where('late_status', 1)
-                    ->count();
-      
-        /*----------------Leave------------------*/
-        $leave = DB::table('hr_leave')
-                 ->where('leave_status', '=', 1)
-                 ->count();
+            $late  = DB::table($table)
+                        ->whereMonth('in_time', date('m'))
+                        ->whereYear('in_date',date('Y'))
+                        ->where('as_id', $as_id)
+                        ->where('late_status', 1)
+                        ->count();
+          
+            /*----------------Leave------------------*/
+            $leave = DB::table('hr_leave')
+                     ->where('leave_status', '=', 1)
+                     ->count();
 
-        $absent = DB::table('hr_absent')
-                   ->whereMonth('date', date('m'))
-                   ->where('associate_id', $user->associate_id)
-                   ->count();
+            $absent = DB::table('hr_absent')
+                       ->whereMonth('date', date('m'))
+                       ->where('associate_id', $user->associate_id)
+                       ->count();
+        }
 
         $chartdata=[
             'present' => $present??0,

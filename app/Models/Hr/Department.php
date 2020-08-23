@@ -18,6 +18,12 @@ class Department extends Model
         'created_at', 'updated_at', 'deleted_at'
     ];
 
+    public static function getDeptList()
+    {
+        return Department::pluck('hr_department_name', 'hr_department_id');
+    }
+
+
     public static function getDepartmentAreaIdWise($id)
     {
     	return Department::where('hr_department_area_id', $id)->where('hr_department_status', 1)->get();

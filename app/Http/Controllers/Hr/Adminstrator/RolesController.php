@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Hr\Adminstrator;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class RolesController extends Controller
 {
@@ -24,7 +26,9 @@ class RolesController extends Controller
      */
     public function create()
     {
-        //
+        $permissions = Permission::orderBy('name','ASC')->get();
+        $permissions = $permissions->groupBy(['module','groups']);
+        return view('hr.adminstrator.add-roles', compact('permissions'));
     }
 
     /**
