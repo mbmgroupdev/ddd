@@ -1025,9 +1025,14 @@ Route::get('hr/setup/retirement/get_employee_details', 'Hr\Setup\RetirementPolic
 	Route::get('hr/reports/employee-yearly-activity-report', 'Hr\Reports\DailyActivityReportController@employeeActivityReport');
 	Route::get('hr/reports/employee-yearly-activity-report-modal', 'Hr\Reports\DailyActivityReportController@employeeActivityReportModal');
 
+	// Daily Attendance Report
+	Route::get('hr/reports/daily-attendance-activity', 'Hr\Reports\DailyActivityReportController@attendance');
+	Route::get('hr/reports/daily-attendance-activity-report', 'Hr\Reports\DailyActivityReportController@attendanceReport');
+
 	// monthly report
 	Route::get('hr/reports/monthly-salary', 'Hr\Reports\MonthlyActivityReportController@salary');
 	Route::get('hr/reports/monthly-salary-report', 'Hr\Reports\MonthlyActivityReportController@salaryReport');
+	Route::get('hr/reports/employee-yearly-salary-modal', 'Hr\Reports\MonthlyActivityReportController@salaryReportModal');
 
 
 	#------------- Search associate with paramenters(unit, floor, line)---------#

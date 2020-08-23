@@ -1,5 +1,8 @@
 @extends('hr.layout')
-@section('title', 'Before Absent After Present')
+@section('title', 'Daily Attendance')
+@push('css')
+   <link rel="stylesheet" href="{{ asset('assets/css/reports.css')}}">
+@endpush
 @section('main-content')
 @push('css')
 <style type="text/css">
@@ -24,7 +27,7 @@
                 <li>
                     <a href="#">Reports</a>
                 </li>
-                <li class="active"> Before Absent After Present</li>
+                <li class="active"> Daily Attendance</li>
             </ul>
         </div>
 
@@ -34,7 +37,7 @@
                     <form class="" role="form" id="activityReport" method="get" action="#"> 
                         <div class="panel">
                             <div class="panel-heading">
-                                <h6>Before Absent After Present Report</h6>
+                                <h6>Daily Attendance Report</h6>
                             </div>
                             <div class="panel-body">
                                 <div class="row">
@@ -110,12 +113,26 @@
                                     <div class="col-3">
                                         <div class="form-group has-float-label select-search-group">
                                             <?php
+                                                $reportType = ['absent'=>'Absent','leave'=>'Leave','ot'=>'OT', 'working_hour'=>'Working Hour', 'late'=>'Late'];
+                                            ?>
+                                            {{ Form::select('report_type', $reportType, null, ['placeholder'=>'Select Report Type ', 'class'=>'form-control capitalize select-search', 'id'=>'reportType']) }}
+                                            <label for="reportType">Report Type</label>
+                                        </div>
+                                        <div class="form-group has-float-label select-search-group">
+                                            <?php
                                                 $type = ['as_line_id'=>'Line','as_floor_id'=>'Floor','as_department_id'=>'Department','as_designation_id'=>'Designation'];
                                             ?>
                                             {{ Form::select('report_group', $type, null, ['placeholder'=>'Select Report Group ', 'class'=>'form-control capitalize select-search', 'id'=>'reportGroup']) }}
                                             <label for="reportGroup">Report Group</label>
                                         </div>
-                                        <div class="row">
+                                        <div id="single-date">
+                                          <div class="form-group has-float-label has-required">
+                                            <input type="text" class="report_date datepicker form-control" id="report-date" name="date" placeholder="Y-m-d" required="required" value="{{ date('Y-m-d') }}" autocomplete="off" />
+                                            <label for="report-date">Date</label>
+                                          </div>
+                                        </div>
+                                        <div id="double-date" style="display: none">
+                                          <div class="row">
                                             <div class="col pr-0">
                                                 <div class="form-group has-float-label has-required">
                                                     <input type="text" class="report_date datepicker form-control" id="present_date" name="present_date" placeholder="Y-m-d" required="required" value="{{ date('Y-m-d') }}" autocomplete="off" />
@@ -128,6 +145,7 @@
                                                     <label for="absent_date">Absent Date</label>
                                                 </div>
                                             </div>
+                                          </div>
                                         </div>
                                     </div>   
                                 </div>
@@ -137,6 +155,11 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div class="single-employee-search" id="single-employee-search" style="display: none;">
+                          <div class="form-group">
+                            <input type="text" name="employee" class="form-control" placeholder="Search Employee Associate ID..." id="searchEmployee">
+                          </div>
                         </div>
                     </form>
                     <!-- PAGE CONTENT ENDS -->
@@ -156,43 +179,54 @@
     $(document).ready(function(){   
         var loader = '<p style="text-align:center;margin:100px;"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p>';
         $('#activityReport').on('submit', function(e) {
-            $("#result-data").html(loader);
-            e.preventDefault();
-            var unit = $('select[name="unit"]').val();
-            var area = $('select[name="area"]').val();
-            var presentDate = $('input[name="present_date"]').val();
-            var absentDate = $('input[name="absent_date"]').val();
-            var form = $("#activityReport");
-            var flag = 0;
-            if(unit === '' || area === '' || presentDate === '' || absentDate === ''){
-              flag = 1;
-            }
-            if(flag === 0){
-              // $('html, body').animate({
-              //     scrollTop: $("#result-data").offset().top
-              // }, 2000);
-              $.ajax({
-                  type: "GET",
-                  url: '{{ url("hr/reports/before-absent-after-present-report") }}',
-                  data: form.serialize(), // serializes the form's elements.
-                  success: function(response)
-                  {
-                    // console.log(response);
-                    if(response !== 'error'){
-                      $("#result-data").html(response);
-                    }else{
-                      console.log(response);
-                      $("#result-data").html('');
-                    }
-                  },
-                  error: function (reject) {
-                      console.log(reject);
+          $("#result-data").html(loader);
+          $("#single-employee-search").hide();
+          e.preventDefault();
+          
+          var unit = $('select[name="unit"]').val();
+          var area = $('select[name="area"]').val();
+          var date = $('input[name="date"]').val();
+          var format = $('select[name="report_format"]').val();
+          var type = $('select[name="report_type"]').val();
+          var form = $("#activityReport");
+          var flag = 0;
+          if(unit === '' || area === '' || date === '' || type === ''){
+            flag = 1;
+          }
+          if(flag === 0){
+            $('html, body').animate({
+                scrollTop: $("#result-data").offset().top
+            }, 2000);
+
+            $.ajax({
+                type: "GET",
+                url: '{{ url("hr/reports/daily-attendance-activity-report") }}',
+                data: form.serialize(), // serializes the form's elements.
+                success: function(response)
+                {
+                  // console.log(response);
+                  if(response !== 'error'){
+                    $("#result-data").html(response);
+                  }else{
+                    console.log(response);
+                    $("#result-data").html('');
                   }
-              });
-            }else{
-              console.log('required');
-              $("#result-data").html('');
-            }
+
+                  if(format == 0 && response !== 'error'){
+                    $("#single-employee-search").show();
+                  }else{
+                     $("#single-employee-search").hide();
+                  }
+                },
+                error: function (reject) {
+                  console.log(reject);
+                }
+            });
+
+          }else{
+            console.log('required');
+            $("#result-data").html('');
+          }
         });
         // change from data action
         $('#present_date').on('dp.change', function() {
@@ -296,6 +330,25 @@
                console.log(reject);
              }
            });
+        });
+        //Report type
+        $('#reportType').on("change", function(){
+          var type = $(this).val();
+          $('input[name="employee"]').val('');
+          if(type == 'ot'){
+            $('#reportGroup').append('<option value="ot_hour">OT Hour</option>');
+          }else{
+            $("#reportGroup option[value='ot_hour']").remove();
+          }
+          var date = "{{ date('Y-m-d') }}";
+          if(type == 'ot' || type == 'working_hour'){
+            date = "{{ date('Y-m-d', strtotime('-1 day')) }}";
+          }
+          $("#report-date").val(date);
+        });
+
+        $('#reportFormat').on("change", function(){
+          $('input[name="employee"]').val('');
         });
        
     });

@@ -143,22 +143,30 @@
                <li class="@if($segment3 == 'earn-leave-payment') active @endif">
                   <a href="{{ url('hr/operation/earn-leave-payment') }}"><i class="las la-file-invoice-dollar"></i>Earn Leave Payment</a>
                </li>
-               <li class="@if($segment3 == 'fixed-salary-sheet') active @endif">
+               {{-- <li class="@if($segment3 == 'fixed-salary-sheet') active @endif">
                   <a href="{{ url('hr/operation/fixed-salary-sheet') }}"><i class="las la-file-invoice-dollar"></i>Fixed Salary Sheet</a>
-               </li>
+               </li> --}}
                <li class="@if($segment3 == 'maternity-leave-payment') active @endif">
                   <a href="{{ url('hr/operation/maternity-leave-payment') }}"><i class="las la-file-invoice-dollar"></i>Maternity Payment</a>
                </li>
             </ul>
          </li>
          <li>
-            <a href="#report" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="las la-file-invoice"></i><span>Report</span><i class="las la-angle-right iq-arrow-right"></i></a>
+            <a href="#report" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="las la-file-invoice"></i><span>Reports</span><i class="las la-angle-right iq-arrow-right"></i></a>
             <ul id="report" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
-               <li><a href="{{ url('hr/reports/manual_attendance') }}"><i class="las la-fingerprint"></i>Attendance Report</a></li>
+               <li><a href="{{ url('hr/timeattendance/shift_roaster') }}"><i class="las la-fingerprint"></i>Shift Roster Summary</a></li>
+               <li><a href="{{ url('hr/reports/attendance_summary_report') }}"><i class="las la-fingerprint"></i>Attendance Summary Report</a></li>
+               <li><a href="{{ url('hr/reports/before-absent-after-present') }}"><i class="las la-fingerprint"></i>Before Absent After Present</a></li>
+               <li><a href="{{ url('hr/reports/daily-attendance-activity') }}"><i class="las la-fingerprint"></i>Daily Attendance Report</a></li>
+               <li><a href="{{ url('hr/operation/absent_present_list') }}"><i class="las la-fingerprint"></i>Attendance Consecutive</a></li>
+               <li><a href="{{ url('hr/reports/group_attendance') }}"><i class="las la-fingerprint"></i>Group Attendance</a></li>
+               <li><a href="{{ url('hr/reports/monthly-salary') }}"><i class="las la-fingerprint"></i>Monthly Salary Report</a></li>
+               <li><a href="{{ url('hr/reports/employee-yearly-activity') }}"><i class="las la-fingerprint"></i>Employee Yearly Activity</a></li>
                <li><a href="{{ url('hr/reports/monthy_increment') }}"><i class="las la-chart-area"></i>Increment Report</a></li>
                <li><a href="{{ url('') }}"><i class="las la-chart-area"></i>Promotion Report</a></li>
                <li><a href="{{ url('hr/operation/location_change/list') }}"><i class="las la-list-ul"></i>Outside List</a></li>
-               <li><a href="{{ url('hr/reports/attendance_summary_report') }}"><i class="las la-fingerprint"></i>Attendance Summery</a></li>
+               
+               <li><a href="{{ url('hr/reports/leave_log') }}"><i class="las la-calendar-alt"></i>Leave Log</a></li>
                <li><a href="{{ url('hr/reports/event_history') }}"><i class="las la-calendar-alt"></i>Event History</a></li>
             </ul>
          </li>

@@ -405,6 +405,7 @@
       <!-- am charts JavaScript -->
       <script src="{{ asset('assets/js/charts.js') }}"></script>
       
+      <script src="{{ asset('assets/js/animated.js') }}"></script>
       <!-- am kelly JavaScript -->
       <script src="{{ asset('assets/js/kelly.js') }}"></script>
       

@@ -1,7 +1,13 @@
+*{
+    font-size: 12px;
+}
 *:focus {
    outline: 0;
- }
- li{
+}
+/*.wrapper {
+    background: linear-gradient(to right, #1469b0 0%, rgb(233 248 10) 100%);
+}*/
+li{
     color:#000;
  }
 .content-page {
@@ -38,17 +44,18 @@
     font-size: 12px;
 }
 .form-group{
-	margin-bottom: 15px;
+	margin-bottom: 12px;
 }
 .form-control {
-    height: 40px;
-    line-height: 40px;
+    height: 35px;
+    line-height: 35px;
+    font-size: 12px;
 }
 .capitalize{
 	text-transform: capitalize;
 }
 .select-search-group{
-    height: 40px;
+    height: 36px;
 }
 .select-search-group .select2 {
     width: 100% !important;
@@ -62,14 +69,14 @@
     background: #fff;
 }
 .select2-container .select2-selection--single {
-    height: 40px;
+    height: 35px;
 }
 .select2-container--default .select2-selection--single .select2-selection__rendered {
     color: #414141;
-    line-height: 40px;
+    line-height: 35px;
 }
 .select2-container--default .select2-selection--single .select2-selection__arrow {
-    height: 40px;
+    height: 35px;
 }
 .select2-container--default .select2-selection--single {
     border: 1px solid #c6c6c6;
@@ -168,4 +175,8 @@ table th input{
 }
 .benefit-employee .user-details-block .user-profile {
     margin-top: 10px; 
+}
+
+.select2-container .select2-selection--single {
+    height: 35px;
 }

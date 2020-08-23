@@ -1,10 +1,16 @@
 <?php
-use App\Models\Hr\Designation;
 use App\Models\Employee;
-use App\Models\UserLog;
+use App\Models\Hr\Area;
+use App\Models\Hr\Department;
+use App\Models\Hr\Designation;
+use App\Models\Hr\Floor;
 use App\Models\Hr\HrMonthlySalary;
+use App\Models\Hr\Line;
+use App\Models\Hr\Section;
 use App\Models\Hr\Shift;
+use App\Models\Hr\Subsection;
 use App\Models\Hr\Unit;
+use App\Models\UserLog;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
@@ -358,6 +364,75 @@ if(!function_exists('shift_by_code')){
     {
        return  Cache::remember('shift_code', 1000000, function () {
             return Shift::get()->keyBy('hr_shift_code')->toArray();
+        });      
+
+    }
+}
+
+if(!function_exists('unit_by_id')){
+    function unit_by_id()
+    {
+       return  Cache::remember('unit', 1000000, function () {
+            return Unit::get()->keyBy('hr_unit_id')->toArray();
+        });      
+
+    }
+}
+
+if(!function_exists('line_by_id')){
+    function line_by_id()
+    {
+       return  Cache::remember('line', 1000000, function () {
+            return Line::get()->keyBy('hr_line_id')->toArray();
+        });      
+
+    }
+}
+
+if(!function_exists('floor_by_id')){
+    function floor_by_id()
+    {
+       return  Cache::remember('floor', 1000000, function () {
+            return Floor::get()->keyBy('hr_floor_id')->toArray();
+        });      
+
+    }
+}
+
+if(!function_exists('department_by_id')){
+    function department_by_id()
+    {
+       return  Cache::remember('department', 1000000, function () {
+            return Department::get()->keyBy('hr_department_id')->toArray();
+        });      
+
+    }
+}
+
+if(!function_exists('section_by_id')){
+    function section_by_id()
+    {
+       return  Cache::remember('section', 1000000, function () {
+            return Section::get()->keyBy('hr_section_id')->toArray();
+        });      
+
+    }
+}
+if(!function_exists('subSection_by_id')){
+    function subSection_by_id()
+    {
+       return  Cache::remember('subSection', 1000000, function () {
+            return Subsection::get()->keyBy('hr_subsec_id')->toArray();
+        });      
+
+    }
+}
+
+if(!function_exists('area_by_id')){
+    function area_by_id()
+    {
+       return  Cache::remember('area', 1000000, function () {
+            return Area::get()->keyBy('hr_area_id')->toArray();
         });      
 
     }

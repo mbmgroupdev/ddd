@@ -1,0 +1,14 @@
+.single-employee-search{
+  width: 200px;
+  float: right;
+  position: absolute;
+  z-index: 5;
+  right: 34px;
+  margin-top: 40px;
+}
+.page-header-summery{
+  text-align: center;
+}
+.page-header-summery h4 b{
+  font-size:15px;
+}
