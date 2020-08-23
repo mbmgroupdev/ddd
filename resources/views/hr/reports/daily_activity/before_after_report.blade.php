@@ -8,14 +8,16 @@
 				$department = department_by_id();
 				$designation = designation_by_id();
 				$section = section_by_id();
+				$subSection = subSection_by_id();
 				$area = area_by_id();
 				$formatHead = explode('_',$format);
 			@endphp
 			
 			<div class="top_summery_section">
+				@if($input['report_format'] == 0 || ($input['report_format'] == 1 && $format != null))
 				<div class="page-header" style="text-align:left;border-bottom:2px double #666">
 		            <h2 style="margin:4px 10px; font-weight: bold; text-align: center;">Before Absent After Present </h2>
-		            <h4 style="margin:4px 10px; font-weight: bold; text-align: center;">@if($input['report_type'] == 0) Details @else Summary @endif Report</h4>
+		            <h4 style="margin:4px 10px; font-weight: bold; text-align: center;">@if($input['report_format'] == 0) Details @else Summary @endif Report</h4>
 		            <div class="row">
 		            	<div class="col-sm-5">
 		            		<div class="row">
@@ -63,7 +65,7 @@
 		                		<div class="col-sm-9">
 		                			<h4 style="margin:4px 5px; margin: 0; padding: 0">&nbsp;&nbsp;{{ $input['present_date'] }}</h4>
 		                		</div>
-		                		@if($input['report_type'] == 0 || ($input['report_type'] == 1 && $format == null))
+		                		@if($input['report_format'] == 0 || ($input['report_format'] == 1 && $format == null))
 		                		<div class="col-sm-3 no-padding-right">
 		                			<h4 style="margin:4px 5px; margin: 0; padding: 0"><font style="font-weight: bold; font-size: 12px;">Total Employee: </font></h4>
 		                		</div>
@@ -88,7 +90,7 @@
 		                			<h4 style="margin:4px 5px; margin: 0; padding: 0"><font style="font-weight: bold; font-size: 12px;">Sub Section: </font></h4>
 		                		</div>
 		                		<div class="col-sm-9">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0">&nbsp;&nbsp;{{ $department[$input['department']]['hr_department_name'] }}</h4>
+		                			<h4 style="margin:4px 5px; margin: 0; padding: 0">&nbsp;&nbsp;{{ $subSection[$input['subSection']]['hr_subsec_name'] }}</h4>
 		                		</div>
 		                		@endif
 		                		@if($input['floor_id'] != null)
@@ -111,9 +113,41 @@
 		            	</div>
 		            </div>
 		        </div>
+		        @else
+		        <div class="page-header-summery">
+        			
+        			<h2>Before Absent After Present Summary Report </h2>
+        			<h4>Unit: {{ $unit[$input['unit']]['hr_unit_name'] }}</h4>
+        			<h4>Area: {{ $area[$input['area']]['hr_area_name'] }}</h4>
+        			@if($input['department'] != null)
+        			<h4>Department: {{ $department[$input['department']]['hr_department_name'] }}</h4>
+        			@endif
+
+        			@if($input['section'] != null)
+        			<h4>Section: {{ $section[$input['section']]['hr_section_name'] }}</h4>
+        			@endif
+
+        			@if($input['subSection'] != null)
+        			<h4>Sub Section: {{ $subSection[$input['subSection']]['hr_subsec_name'] }}</h4>
+        			@endif
+
+        			@if($input['floor_id'] != null)
+        			<h4>Floor: {{ $floor[$input['floor_id']]['hr_floor_name'] }}</h4>
+        			@endif
+
+        			@if($input['line_id'] != null)
+        			<h4>Line: {{ $line[$input['line_id']]['hr_line_name'] }}</h4>
+        			@endif
+
+        			<h4>Absent Date: <b>{{ $input['absent_date'] }}</b></h4>
+        			<h4>Present Date: <b>{{ $input['present_date'] }}</b></h4>
+        			<h4>Total Employee: <b>{{ count($getEmployee) }}</b></h4>
+		            		
+		        </div>
+		        @endif
 			</div>
 			<div class="content_list_section">
-				@if($input['report_type'] == 0 || ($input['report_type'] == 1 && $format == null))
+				@if($input['report_format'] == 0)
 					@foreach($uniqueGroups as $group)
 					
 					<table class="table table-bordered table-hover">
@@ -123,16 +157,16 @@
 			                	@php
 									if($format == 'as_line_id'){
 										$head = 'Line';
-										$body = $line[$group]['hr_line_name'];
+										$body = $line[$group]['hr_line_name']??'';
 									}elseif($format == 'as_floor_id'){
 										$head = 'Floor';
-										$body = $floor[$group]['hr_floor_name'];
+										$body = $floor[$group]['hr_floor_name']??'';
 									}elseif($format == 'as_department_id'){
 										$head = 'Department';
-										$body = $department[$group]['hr_department_name'];
+										$body = $department[$group]['hr_department_name']??'';
 									}elseif($format == 'as_designation_id'){
 										$head = 'Designation';
-										$body = $designation[$group]['hr_designation_name'];
+										$body = $designation[$group]['hr_designation_name']??'';
 									}else{
 										$head = '';
 									}
@@ -215,7 +249,7 @@
 			            </tfoot>
 					</table>
 					@endforeach
-				@else
+				@elseif(($input['report_format'] == 1 && $format != null))
 					@php
 						if($format == 'as_line_id'){
 							$head = 'Line';
@@ -248,13 +282,13 @@
 									@php
 										$group = $employee->$format;
 										if($format == 'as_line_id'){
-											$body = $line[$group]['hr_line_name'];
+											$body = $line[$group]['hr_line_name']??'';
 										}elseif($format == 'as_floor_id'){
-											$body = $floor[$group]['hr_floor_name'];
+											$body = $floor[$group]['hr_floor_name']??'';
 										}elseif($format == 'as_department_id'){
-											$body = $department[$group]['hr_department_name'];
+											$body = $department[$group]['hr_department_name']??'';
 										}elseif($format == 'as_designation_id'){
-											$body = $designation[$group]['hr_designation_name'];
+											$body = $designation[$group]['hr_designation_name']??'';
 										}else{
 											$body = '';
 										}
@@ -316,6 +350,7 @@
 		               					<th>Late</th>
 		               					<th>Leave</th>
 		               					<th>Holiday</th>
+		               					<th>OT Hour</th>
 		               				</tr>
 		               			</thead>
 		               			<tbody id="body_result_section">
@@ -343,7 +378,7 @@
 
 
 <script type="text/javascript">
-    
+    var loaderModal = '<td class="text-center" colspan="6"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:50px;"></i></td>';
     $(".overlay-modal, .item_details_dialog").css("opacity", 0);
     /*Remove inline styles*/
     $(".overlay-modal, .item_details_dialog").removeAttr("style");
@@ -351,6 +386,7 @@
     let detailsheight = $(".item_details_dialog").css("min-height", "115px");
     var months    = ['','January','February','March','April','May','June','July','August','September','October','November','December'];
     $(document).on('click','.yearly-activity',function(){
+    	$("#body_result_section").html(loaderModal);
         let id = $(this).data('id');
         let associateId = $(this).data('eaid');
         let name = $(this).data('ename');
@@ -391,31 +427,7 @@
         // 
         
     });
-    $("#confirm-disbursed").click(function() {
-        let associate_id = $("#modal-associateId").val();
-        let month = $("#modal-month").val();
-        let year = $("#modal-year").val();
-        let select_id = $("#modal-id").val();
-        //alert(id);
-        var _token = $('input[name="_token"]').val();
-
-        $.ajax({
-            url: '/hr/reports/employee-salary-disbursed',
-            type: "post",
-            data: { _token : _token,
-                as_id: associate_id,
-                year: year,
-                month: month
-            },
-            success: function(response){
-                console.log(response);
-                if(response.status === 'success'){
-                    $("#"+select_id).html( $.trim(response.value) ).effect('highlight',{},2500);
-                }
-
-            }
-        });
-    });
+    
 
     $(".cancel_details").click(function() {
         $(".overlay-modal-details, .show_item_details_modal").fadeOut("slow", function() {

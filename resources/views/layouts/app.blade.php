@@ -356,6 +356,6 @@
     <script src="{{ asset('assets/js/chart-custom.js') }}"></script>
     <script src="{{ asset('assets/js/custom.js') }}"></script>
     <script src="{{ asset('js/custom.js') }}"></script>
-    <script src="{{ asset('assets/js/animated.js') }}"></script>
+    {{-- <script src="{{ asset('assets/js/animated.js') }}"></script> --}}
 </body>
 </html>
