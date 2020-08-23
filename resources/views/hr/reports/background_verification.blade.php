@@ -34,34 +34,45 @@
             <div class="row">
                  @include('inc/message')
                 <div class="col-12">
-                    <form class="row" role="form" method="post" action="{{ url('hr/recruitment/background-verification') }}" enctype="multipart/form-data"> 
+                    <form class="" role="form" method="post" action="{{ url('hr/recruitment/background-verification') }}" enctype="multipart/form-data"> 
 
                         @csrf
-                        <div class="col-4 right">
-                            <div class="form-group has-float-label has-required select-search-group">
+                        
+                        <div class="panel">
+                            <div class="panel-heading">
+                                <h6>Background Verification</h6>
+                            </div>
+                            <div class="panel-body">
+                                <div class="row">
                                     
-                                {{ Form::select('associate_id', [Request::get('associate_id') => Request::get('associate_id')], Request::get('associate_id'),['placeholder'=>'Select Associate\'s ID', 'data-validation'=> 'required', 'id'=>'associate_id',  'class'=> 'associates no-select form-control']) }} 
-                                <label for="associate_id"> Associate's ID </label>
+                                    <div class="col-md-offset-2 col-4">
+                                        
+                                        <div class="form-group has-float-label has-required select-search-group">
+                                            
+                                            {{ Form::select('associate_id', [Request::get('associate_id') => Request::get('associate_id')], Request::get('associate_id'),['placeholder'=>'Select Associate\'s ID', 'data-validation'=> 'required','id'=>'associate_id',  'class'=> 'associates no-select col-xs-12', 'required' => 'required']) }} 
+                                            <label  for="associate_id"> Associate's ID </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                         <a id="generate" class="btn btn-primary" href="{{ url('hr/recruitment/background-verification?associate_id=%ASSOCIATE_ID%') }}">Generate</a>
+                                         @if(!empty(Request::get('associate_id')))
+                                         <button type="button" onclick="printMe('printArea')" title="Print" class="btn btn-warning">
+                                                <i class="fa fa-print"></i> 
+                                        </button> 
+                                        
+                                        <a href="{{request()->fullUrl()}}&pdf=true" target="_blank" title="PDF" class="btn btn-danger">
+                                            <i class="fa fa-file-pdf-o"> </i> 
+                                        </a>
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
-                            
                         </div>
-                        <div class="col-6">
-                            
-                            <div class="form-group">
-                                 <a id="generate" class="btn btn-primary" href="{{ url('hr/reports/back_verf?associate_id=%ASSOCIATE_ID%') }}">Generate</a>
-                                 @if(!empty(Request::get('associate_id')))
-                                 <button type="button" onclick="printMe('printArea')" class="btn btn-warning" title="Print"><i class="fa fa-print"></i> 
-                                </button>
-                                <a href="{{request()->fullUrl()}}&pdf=true" target="_blank" class="btn btn-danger" title="PDF">
-                                    <i class="fa fa-file-pdf-o"></i> 
-                                </a>
-                                @endif
-                            </div>
-                        </div>
+
                         @if(!empty(Request::get('associate_id')) && $info != null)
-                        <div class="form-group">
+                        <div class="panel p-30">
                             {{-- <div class="col-xs-2"></div> --}}
-                            <div class="col-xs-12 background_div" id="printable" style="font-size: 9px;">
+                            <div class="col-xs-12 background_div" id="printable" style="font-size: 11px;">
                                 <div class="tinyMceLetter hide" name="printArea" id="printArea">
                                     <?php
                                     date_default_timezone_set('Asia/Dhaka');
@@ -241,6 +252,7 @@
         </div><!-- /.page-content -->
     </div>
 </div>
+@push('js')
 <script type="text/javascript">
     $(document).ready(function(){   
         // retrive all information  
@@ -259,51 +271,24 @@
             // $state.find("img").attr("src", baseUrl + "/" + state.element.value.toLowerCase() + ".png");
             return $state;
         };
-
-        $('select.associates').select2({
-            templateSelection:formatState,
-            ajax: {
-                url: '{{ url("hr/associate-search") }}',
-                dataType: 'json',
-                delay: 250,
-                data: function (params) {
-                    return { 
-                        keyword: params.term
-                    }; 
-                },
-                processResults: function (data) { 
-                    return {
-                        results:  $.map(data, function (item) {
-                            return {
-                                text: $("<span><img src='"+(item.as_pic ==null?'/assets/images/avatars/profile-pic.jpg':item.as_pic)+"' height='50px' width='auto'/> " + item.associate_name + "</span>"),
-                                id: item.associate_id,
-                                name: item.associate_name
-                            }
-                        }) 
-                    };
-                },
-                cache: true
-            }
-        });
     });
     $('body').on('change', '.associates', function(){
-            var id = $(this).val();
-            var str = $("#generate").attr("href");
-            var x = str.replace("%ASSOCIATE_ID%", id);
-            $("#generate").attr('href', x);
-        });
+        var id = $(this).val();
+        var str = $("#generate").attr("href");
+        var x = str.replace("%ASSOCIATE_ID%", id);
+        console.log(x);
+        $("#generate").attr('href', x);
+    });
 
         function printMe(el){ 
             var myWindow=window.open('','','width=800,height=800');
             myWindow.document.write('<html><head></head><body style="font-size:9px;">');
-            myWindow.document.write(document.getElementById(el).value);
+            myWindow.document.write(document.getElementById(el).innerHTML);
             myWindow.document.write('</body></html>');
             myWindow.focus();
             myWindow.print();
             myWindow.close();
         }
-        function attLocation(loc){
-           window.location = loc;
-        }
 </script>
+@endpush
 @endsection

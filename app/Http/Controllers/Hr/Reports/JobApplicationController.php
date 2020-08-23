@@ -11,7 +11,7 @@ use Validator, DB, ACL, PDF;
 class JobApplicationController extends Controller
 {
     public function applicationForm(Request $request){
-        // return $request->associate_id;
+        //dd($request->all());
         if($request->associate_id != null && $request->associate_id == '%ASSOCIATE_ID%'){
             return back()->with('error', "Please select Associate's ID!");
         }
@@ -109,6 +109,7 @@ class JobApplicationController extends Controller
         }        
     	return view('hr/reports/job_application', compact('info'));
     }
+
     public function saveApplicationForm(Request $request){
     	// dd($request->all());
     	DB::table('hr_job_application')->insert([

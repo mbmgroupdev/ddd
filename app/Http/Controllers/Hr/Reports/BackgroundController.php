@@ -94,6 +94,5 @@ class BackgroundController extends Controller
     }
 
     public function backgroundVerificationStore(Request $request){
-    	dd($request->all());
     }
 }

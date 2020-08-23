@@ -53,5 +53,17 @@ $(function() {
             },
             cache: true
         }
-    }); 
+    });
+
+    function printMe(el)
+    { 
+
+        var myWindow=window.open('','','width=800,height=800');
+        myWindow.document.write('<html><head></head><body style="font-size:9px;">');
+        myWindow.document.write(document.getElementById(el).innerHtml);
+        myWindow.document.write('</body></html>');
+        myWindow.focus();
+        myWindow.print();
+        myWindow.close();
+    } 
 });
