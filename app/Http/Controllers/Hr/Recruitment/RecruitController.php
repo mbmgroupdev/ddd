@@ -50,6 +50,20 @@ class RecruitController extends Controller
         ->addColumn('worker_doj', function ($data) {
             return date('Y-m-d', strtotime($data->worker_doj));
         })
+        ->addColumn('medical_info', function ($data) {
+            if($data->worker_doctor_acceptance == 1){
+                return '<div data-icon="S" class="icon"></div>';
+            }else{
+                return '<div class="icon dripicons-cross"></div>';
+            }
+        })
+        ->addColumn('ie_info', function ($data) {
+            if($data->worker_is_migrated == 1){
+                return '<div data-icon="S" class="icon"></div>';
+            }else{
+                return '<div class="icon dripicons-cross"></div>';
+            }
+        })
         ->addColumn('action', function ($data) {
             
             /*return "<a class=\"btn btn-sm btn-primary\" data-toggle=\"tooltip\" title=\"Edit\">
@@ -61,7 +75,7 @@ class RecruitController extends Controller
             return '<button class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="" data-original-title="Migrate To Employee"><i class="ri-heart-fill pr-0"></i></button>';
 
         })
-        ->rawColumns(['DT_RowIndex', 'hr_emp_type_name', 'hr_designation_name', 'hr_unit_short_name','hr_area_name','worker_name','worker_contact','worker_doj','action'])
+        ->rawColumns(['DT_RowIndex', 'hr_emp_type_name', 'hr_designation_name', 'hr_unit_short_name','hr_area_name','worker_name','worker_contact','worker_doj','medical_info','ie_info','action'])
         ->make(true);
     }
 

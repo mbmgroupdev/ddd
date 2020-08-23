@@ -138,8 +138,4 @@ class DashboardController extends Controller
         return (object)$data;
     }
 
-
-
-
-
 }

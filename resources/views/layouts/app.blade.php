@@ -87,8 +87,23 @@
                                <div class="hover-circle"><i class="las la-ellipsis-v"></i></div>
                             </div>
                          </div>
+                         <div class="nav-item iq-full-screen">
+                            <a href="#" class="iq-waves-effect" id="btnFullscreen"><i class="ri-fullscreen-line"></i></a>
+                         </div>
                          <div class="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul class="navbar-nav ml-auto navbar-list">
+
+                               <!-- <li class="nav-item">
+                                  <a class="search-toggle iq-waves-effect language-title" href="#"><img src="{{ asset('assets/images/small/flag-01.png') }}" alt="img-flaf" class="img-fluid mr-1" style="height: 16px; width: 16px;" /> English <i class="ri-arrow-down-s-line"></i></a>
+                                  <div class="iq-sub-dropdown">
+                                     <a class="iq-sub-card" href="#"><img src="{{ asset('assets/images/small/flag-02.png') }}" alt="img-flaf" class="img-fluid mr-2" />French</a>
+                                     <a class="iq-sub-card" href="#"><img src="{{ asset('assets/images/small/flag-03.png') }}" alt="img-flaf" class="img-fluid mr-2" />Spanish</a>
+                                     <a class="iq-sub-card" href="#"><img src="{{ asset('assets/images/small/flag-04.png') }}" alt="img-flaf" class="img-fluid mr-2" />Italian</a>
+                                     <a class="iq-sub-card" href="#"><img src="{{ asset('assets/images/small/flag-05.png') }}" alt="img-flaf" class="img-fluid mr-2" />German</a>
+                                     <a class="iq-sub-card" href="#"><img src="{{ asset('assets/images/small/flag-06.png') }}" alt="img-flaf" class="img-fluid mr-2" />Japanese</a>
+                                  </div>
+                               </li> -->
+
                                
                                {{-- <li class="nav-item">
                                   <a href="#" class="search-toggle iq-waves-effect">
@@ -329,7 +344,7 @@
     <script src="{{ asset('assets/js/jquery.magnific-popup.min.js') }}"></script>
     <!-- Smooth Scrollbar JavaScript -->
     <script src="{{ asset('assets/js/smooth-scrollbar.js') }}"></script>
-    <!-- am animated JavaScript -->
+
     {{-- notify --}}
     <script src="{{asset('assets/js/notify/notify.js')}}"></script>
     <script src="{{asset('assets/js/select2.min.js')}}"></script>
