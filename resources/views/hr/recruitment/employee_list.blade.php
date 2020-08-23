@@ -61,14 +61,11 @@
 		<div class="breadcrumbs ace-save-state" id="breadcrumbs">
 			<ul class="breadcrumb">
 				<li>
-					<i class="ace-icon fa fa-home home-icon"></i>
+					<i class="fa fa-home home-icon"></i>
 					<a href="#">Home</a>
 				</li>
 				<li>
-					<a href="#">Recruitment</a>
-				</li>
-				<li>
-					<a href="#">Employer</a>
+					<a href="#">Employee</a>
 				</li>
 				<li class="active">Employee List</li>
 			</ul><!-- /.breadcrumb -->
@@ -76,142 +73,108 @@
 
 		<div class="page-content">
             @include('inc/message')
- 			<div class="panel panel-info">
-                <div class="panel-heading"><h6>Employee List</h6></div> 
-                 <div class="panel-body">
+ 			<div class="panel ">
+                
+                <div class="panel-body pb-0">
 			 <!-- Display Erro/Success Message -->
-					<form class="widget-container-col" role="form" id="empFilter" method="get" action="#">
-		                <div class="">
-		                    <div class="widget-body">
-		                        <div class="row" {{-- style="padding: 10px 20px" --}}>
+					<form class="row" role="form" id="empFilter" method="get" action="#">
+                        <div class="col-3">
+                            <div class="form-group has-float-label has-required select-search-group">
+                                {{ Form::select('unit', $allUnit, null, ['placeholder'=>'Select Unit', 'id'=>'unit',  'class'=>'form-control']) }}
+                                <label  for="unit"> Unit </label>
+                            </div>
+                        </div>
 
-		                            <div class="col-sm-3">
-		                                <div class="form-group">
-		                                    <label class="col-sm-4 control-label no-padding-right" for="unit"> Unit </label>
-		                                    <div class="col-sm-8 employee_search">
-		                                        {{ Form::select('unit', $allUnit, null, ['placeholder'=>'Select Unit', 'id'=>'unit',  'class'=>'form-control', 'data-validation'=>'required', 'data-validation-error-msg'=>'The Unit field is required']) }}
-		                                    </div>
-		                                </div>
-		                            </div>
+                        <div class="col-3">
+                            <div class="form-group has-float-label select-search-group">
+                                <select name="otnonot" id="otnonot" class="form-control filter">
+                                    <option value="">Select OT/Non-OT</option>
+                                    <option value="0">Non-OT</option>
+                                    <option value="1">OT</option>
+                                </select>
+                                <label  for="otnonot">OT/Non-OT </label>
+                            </div>
+                        </div>
 
-		                            <div class="col-sm-3">
-		                                <div class="form-group">
-                                            <label class="col-sm-4 control-label no-padding-right" for="otnonot">OT/Non-OT </label>
-                                            <div class="col-sm-8">
-                                                <select name="otnonot" id="otnonot" class="form-control filter">
-                                                    <option value="">Select OT/Non-OT</option>
-                                                    <option value="0">Non-OT</option>
-                                                    <option value="1">OT</option>
-                                                </select>
-                                            </div>
-                                        </div>
-		                            </div>
+                        <div class="col-3">
+                            <div class="form-group has-float-label select-search-group">
+                                {{ Form::select('emp_type', $empTypes, null, ['placeholder'=>'Select Employee Type', 'id'=>'emp_type',  'class'=>'form-control']) }}
+                                <label  for="emp_type"> Employee Type </label>
+                            </div>
+                        </div>
 
-		                            <div class="col-sm-3">
-		                                <div class="form-group">
-		                                    <label class="col-sm-4 control-label no-padding-right" for="emp_type"> Employee Type </label>
-		                                    <div class="col-sm-8 employee_search">
-		                                        {{ Form::select('emp_type', $empTypes, null, ['placeholder'=>'Select Employee Type', 'id'=>'emp_type',  'class'=>'form-control']) }}
-		                                    </div>
-		                                </div>
-		                            </div>
-
-		                            <div class="col-sm-3">
-		                                <button type="submit" id="" class="btn btn-primary btn-sm empFilter">
-		                                <i class="fa fa-search"></i>
-		                                Search
-		                                </button>
-		                            </div>
-		                        </div>
-		                    </div>
-		                </div>
+                        <div class="col-2">
+                            <button type="button" id="" class="btn btn-primary  empFilter">
+                            <i class="fa fa-search"></i>
+                            Search
+                            </button>
+                        </div>
 		            </form>
+		        </div>
+		    </div>
 
-					<div class="row" style="padding-top: 30px;">
-						<div class="col-xs-12">
-							<div class="widget-header">
-								<div class="row">
-									<ul class="list-unstyled col-sm-4">
-										<li><strong>Total Employee:</strong>
-										{{ ($reportCount->employee->total?$reportCount->employee->total:0) }}</li>
-										<li><strong>Today's Join:</strong>
-										{{ ($reportCount->employee->todays_join?$reportCount->employee->todays_join:0) }}</li>
-									</ul>
-									<ul class="list-unstyled col-sm-4">
-										<li><strong>Males:</strong>
-										{{ ($reportCount->employee->males?$reportCount->employee->males:0) }}</li>
-										<li><strong>Females:</strong>
-										{{ ($reportCount->employee->females?$reportCount->employee->females:0) }}</li>
-									</ul>
-									<ul class="list-unstyled col-sm-4">
-										<li><strong>Non OT:</strong>
-										{{ ($reportCount->employee->non_ot?$reportCount->employee->non_ot:0) }}</li>
-										<li><strong>OT:</strong>
-										{{ ($reportCount->employee->ot?$reportCount->employee->ot:0) }}</li>
-									</dl>
-								</div>
-							</div>
+			<div class="panel ">	
+				<div class="panel-heading"><h6>Employee List</h6></div> 	
+				<div class="col-12 pt-3 pb-3">
+					<div class="widget-header">
+						<div class="row">
+							<ul class="list-unstyled col-4">
+								<li><strong>Total Employee:</strong>
+								{{ ($reportCount->employee->total?$reportCount->employee->total:0) }}</li>
+								<li><strong>Today's Join:</strong>
+								{{ ($reportCount->employee->todays_join?$reportCount->employee->todays_join:0) }}</li>
+							</ul>
+							<ul class="list-unstyled col-4">
+								<li><strong>Males:</strong>
+								{{ ($reportCount->employee->males?$reportCount->employee->males:0) }}</li>
+								<li><strong>Females:</strong>
+								{{ ($reportCount->employee->females?$reportCount->employee->females:0) }}</li>
+							</ul>
+							<ul class="list-unstyled col-4">
+								<li><strong>Non OT:</strong>
+								{{ ($reportCount->employee->non_ot?$reportCount->employee->non_ot:0) }}</li>
+								<li><strong>OT:</strong>
+								{{ ($reportCount->employee->ot?$reportCount->employee->ot:0) }}</li>
+							</dl>
 						</div>
-						
-						<div class="col-xs-12 worker-list">
-						<table>
-							<table id="dataTables" class="table table-striped table-bordered" style="display: block;overflow-x: auto;white-space: nowrap; width: 100%;">
-								<thead>
-									<tr>
-										<th>ID</th>
-										<th>Action</th>
-										<th>Status</th>
-										<th>Associate ID</th>
-										<th>Oracle ID</th>
-										<th>RFID</th>
-										<th>Name</th>
-										<th>Employee Type</th>
-										<th id="floor">Floor</th>
-										<th id="line">Line</th>
-										<th>Department</th>
-										<th>Designation</th>
-										<th>Gender</th>
-										<th>OT Status</th>
-									</tr>
-								</thead>
-								{{-- <tfoot class="bg-primary">
-									<tr>
-										<th>ID</th>
-										<th>Action</th>
-										<th>Status</th>
-										<th>Associate ID</th>
-										<th>Oracle ID</th>
-										<th>RFID</th>
-										<th>Name</th>
-										<th>Employee Type</th>
-										<th>Floor</th>
-										<th>Line</th>
-										<th>Department</th>
-										<th>Designation</th>
-										<th>Gender</th>
-										<th>OT Status</th>
-									</tr>
-																	
-								</tfoot> --}}
-							</table>
-						</div><!-- /.col -->
-						
-					</div><!-- /.row -->
-				 </div>
+					</div>
 				</div>
+				
+				<div class="col-12 worker-list">
+					<table id="dataTables" class="table table-striped table-bordered" style="display: block;overflow-x: auto;white-space: nowrap; width: 100%;">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Action</th>
+								<th>Status</th>
+								<th>Associate ID</th>
+								<th>Oracle ID</th>
+								<th>RFID</th>
+								<th>Name</th>
+								<th>Employee Type</th>
+								<th id="floor">Floor</th>
+								<th id="line">Line</th>
+								<th>Department</th>
+								<th>Designation</th>
+								<th>Gender</th>
+								<th>OT Status</th>
+							</tr>
+						</thead>
+		
+					</table>
+				</div>
+			</div>
+
 		</div><!-- /.page-content -->
 	</div>
 </div>
+@push('js')
 <script type="text/javascript">
 $(document).ready(function()
 {
 	
-	//$("#empFilter").on("submit", function(e){
-		//e.preventDefault();
-		//$("#dataTables").DataTable().clear();
 		var searchable = [3,4,5,6];
-		var selectable = [2,7,8,9,10,12,13]; //use 4,5,6,7,8,9,10,11,....and * for all
-		// dropdownList = {column_number: {'key':value}};
+		var selectable = [2,7,8,9,10,12,13]; 
 
 		var dropdownList = {
 			'2':['Active', 'Resign', 'Terminate', 'Suspend','Left'],
@@ -242,8 +205,6 @@ $(document).ready(function()
             }
           });
 		});
-
-		console.log(dropdownList);
 		
 
 		
@@ -263,7 +224,7 @@ $(document).ready(function()
                 loadingIndicator: false
             },
 	        pagingType: "full_numbers",
-	        dom: "<'row'<'col-sm-2'l><'col-sm-4'i><'col-sm-3 text-center'B><'col-sm-3'f>>tpr",
+	        dom: "<'row'<'col-sm-3'l><'col-sm-5 text-center'B><'col-sm-4'f>>tip",
 	        //dom: 'lBfrtip',
 	        ajax: {
 	            url: '{!! url("hr/recruitment/employee/employee_data") !!}',
@@ -413,11 +374,11 @@ $(document).ready(function()
 
 	//re draw
 
-	$("#empFilter").on("submit", function(e){
+	$(document).on("click",'#empFilter', function(e){
 		e.preventDefault();
 		dTable.draw();
-
 	});
 });
 </script>
+@endpush
 @endsection
