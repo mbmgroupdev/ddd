@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-float-label.min.css')}}"/>
     <link rel="stylesheet" href="{{ asset('assets/css/toastr.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('plugins/DataTables/datatables.css')}}">
     @stack('css')
     {{-- Custom CSS --}}
     <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
@@ -333,6 +334,7 @@
     <script src="{{asset('assets/js/notify/notify.js')}}"></script>
     <script src="{{asset('assets/js/select2.min.js')}}"></script>
     <script src="{{asset('assets/js/toastr.min.js')}}"></script>
+    <script src="{{ asset('plugins/DataTables/datatables.min.js') }}"></script>
     <!-- Custom JavaScript -->
     @stack('js')
     

@@ -19,207 +19,115 @@
 
 		<div class="page-content">  
            <div class="panel panel-success">
-
                 <div class="panel-heading">
                     <h6>
                     Benefits 
                         @if(request()->get("associate_id"))
-                        <div class="btn-group pull-right"> 
-                            <?php $ass_id = request()->get("associate_id"); ?>
-                            <a href='{{ url("hr/recruitment/employee/show/$ass_id") }}' target="_blank" class="btn btn-sm btn-success" title="Profile"><i class="glyphicon glyphicon-user"></i></a>
-                            <a href='{{ url("hr/recruitment/employee/edit/$ass_id") }}' class="btn btn-sm btn-success" title="Basic Info"><i class="glyphicon glyphicon-bold"></i></a>
-                            <a href='{{ url("hr/recruitment/operation/advance_info_edit/$ass_id") }}' class="btn btn-sm btn-info" title="Advance Info"><i class="glyphicon  glyphicon-font"></i></a>
-                            <a href='{{ url("hr/recruitment/operation/benefits?associate_id=$ass_id") }}' class="btn btn-sm btn-primary" title="Benefits"><i class="fa fa-usd"></i></a>
-                            <a href='{{ url("hr/ess/medical_incident?associate_id=$ass_id") }}' class="btn btn-sm btn-warning" title="Medical Incident"><i class="fa fa-stethoscope"></i></a>
-                            <a href='{{ url("hr/operation/servicebook?associate_id=$ass_id") }}' class="btn btn-sm btn-danger" title="Service Book"><i class="fa fa-book"></i></a>
-                        </div>
+                            <div class="btn-group pull-right"> 
+                                <?php $ass_id = request()->get("associate_id"); ?>
+                                <a href='{{ url("hr/recruitment/employee/show/$ass_id") }}' target="_blank" class="btn btn-sm btn-success" title="Profile"><i class="glyphicon glyphicon-user"></i></a>
+                                <a href='{{ url("hr/recruitment/employee/edit/$ass_id") }}' class="btn btn-sm btn-success" title="Basic Info"><i class="glyphicon glyphicon-bold"></i></a>
+                                <a href='{{ url("hr/recruitment/operation/advance_info_edit/$ass_id") }}' class="btn btn-sm btn-info" title="Advance Info"><i class="glyphicon  glyphicon-font"></i></a>
+                                <a href='{{ url("hr/recruitment/operation/benefits?associate_id=$ass_id") }}' class="btn btn-sm btn-primary" title="Benefits"><i class="fa fa-usd"></i></a>
+                                <a href='{{ url("hr/ess/medical_incident?associate_id=$ass_id") }}' class="btn btn-sm btn-warning" title="Medical Incident"><i class="fa fa-stethoscope"></i></a>
+                                <a href='{{ url("hr/operation/servicebook?associate_id=$ass_id") }}' class="btn btn-sm btn-danger" title="Service Book"><i class="fa fa-book"></i></a>
+                            </div>
                         @endif
                     </h6>
-              </div> 
+                </div> 
                 <div class="panel-body"> 
-                    <div class="row">
-                          <!-- Display Erro/Success Message -->
-                        @include('inc/message')
-                        <div class="col-xs-12">
-                            <!-- PAGE CONTENT BEGINS -->
-                            <!-- <h1 align="center">Add New Employee</h1> -->
-                            </br>
-                            <form class="form-horizontal" role="form" method="post" action="{{ url('hr/recruitment/operation/benefits') }}" enctype="multipart/form-data">
-                            {{ csrf_field() }}
-                               <div class="col-sm-12">  
-                                    <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <label class="col-sm-3 control-label no-padding-right" for="ben_as_id"> Associate's ID <span style="color: red; vertical-align: text-top;">&#42;</span> </label>
-                                            <div class="col-sm-8">
-                                                {{ Form::select('ben_as_id', [request()->get("associate_id") => request()->get("associate_id")], request()->get("associate_id"), ['placeholder'=>'Select Associate\'s ID', 'id'=>'ben_as_id', 'class'=> 'associates no-select form-control', 'data-validation'=>'required', 'data-validation-error-msg' => 'The Associate\'s ID field is required']) }}  
-                                            </div>
-                                        </div> 
-
-                                        <div class="form-group">
-                                            <label class="col-sm-3 control-label no-padding-right" for="ben_joining_salary"> Gross Salary <span style="color: red; vertical-align: text-top;">&#42;</span> </label>
-                                            <div class="col-sm-8">
-                                                <input type="text" name="ben_joining_salary" id="ben_joining_salary" placeholder="Gross Salary(tk) As Per Joining Letter" class="form-control" data-validation="required length number"data-validation-length="1-20" data-validation-allowing="float" data-validation-error-msg="Invalid Gross salary"/>
-                                            </div>
+                    @include('inc/message')
+                    <form class="form-horizontal" role="form" method="post" action="{{ url('hr/recruitment/operation/benefits') }}" enctype="multipart/form-data">
+                        {{ csrf_field() }}
+                        <div class="row justify-content-center">  
+                            <div class="col-6 p-4">
+                                <div class="form-group has-float-label has-required select-search-group">
+                                    {{ Form::select('ben_as_id', [request()->get("associate_id") => request()->get("associate_id")], request()->get("associate_id"), ['placeholder'=>'Select Associate\'s ID', 'id'=>'ben_as_id', 'class'=> 'associates no-select form-control']) }} 
+                                    <label for="ben_as_id"> Associate's ID  </label>
+                                </div>
+                                <div class="form-group has-float-label has-required ">
+                                    <input type="text" name="ben_joining_salary" id="ben_joining_salary" placeholder="Gross Salary(tk) As Per Joining Letter" class="form-control" />
+                                    <label  for="ben_joining_salary"> Gross Salary  </label>
+                                </div> 
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group has-float-label has-required">
+                                            <label  for="ben_basic"> Basic Salary</label>
+                                            <input type="text" name="ben_basic" id="ben_basic" placeholder="Basic Salary" value="0" class="form-control"  readonly/>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label class="col-sm-3 control-label no-padding-right" for="ben_cash_amount"> CASH <span style="color: red; vertical-align: text-top;">&#42;</span> </label>
-                                            <div class="col-sm-8">
-                                                <input type="text" name="ben_cash_amount" id="ben_cash_amount" placeholder="Amount Paid in Cash" class="form-control" data-validation="required length number" data-validation-allowing="float" data-validation-length="1-20" data-validation-error-msg="Invalid CASH amount"/>
-                                            </div>
+                                        <div class="form-group has-float-label has-required">
+                                            <input type="text" name="ben_house_rent" id="ben_house_rent" value="0" placeholder="House Rent" class="form-control"  readonly/>
+                                            <label  for="ben_house_rent"> House Rent</label>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label class="col-sm-3 control-label no-padding-right" for="ben_bank_amount"> BANK <span style="color: redk vertical-align: text-top;">&#42;</span> </label>
-                                            <div class="col-sm-8">
-                                                <input type="text" name="ben_bank_amount" id="ben_bank_amount" placeholder="Amount Paid in Bank" class="form-control" data-validation="required length number" data-validation-allowing="float" data-validation-length="1-20" data-validation-error-msg="Invalid BANK Amount"/>
-                                            </div>
+                                        <div class="form-group has-float-label has-required">
+                                            <input type="text" name="ben_medical" id="ben_medical" placeholder="Medical" class="form-control" value="{{ $structure->medical }}"  readonly/>
+                                            <label  for="ben_medical"> Medical</label>
+                                        </div>
+
+                                        <div class="form-group has-float-label has-required">
+                                            <input type="text" name="ben_transport" id="ben_transport" value="{{ $structure->transport }}" placeholder="Transportation" class="form-control" readonly/>
+                                            <label  for="ben_transport"> Transportation</label>
+                                        </div>
+
+                                        <div class="form-group has-float-label has-required">
+                                            <input type="text" name="ben_food" id="ben_food" placeholder="Food" value="{{ $structure->food }}" class="form-control"  readonly/>
+                                            <label  for="ben_food"> Food</label>
                                         </div>
                                         
-                                        <div class="form-group">
-                                            <label class="col-sm-3 control-label no-padding-right" for="ben_basic"> Basic Salary</label>
-                                            <div class="col-sm-8">
-                                                <input type="text" name="ben_basic" id="ben_basic" placeholder="Basic Salary" value="0" class="form-control" data-validation="required length number" data-validation-allowing="float" data-validation-length="1-20" data-validation-error-msg="Invalid Basic Salary" readonly/>
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label class="col-sm-3 control-label no-padding-right" for="ben_house_rent"> House Rent</label>
-                                            <div class="col-sm-8">
-                                                <input type="text" name="ben_house_rent" id="ben_house_rent" value="0" placeholder="House Rent" class="form-control" data-validation="required length number"  data-validation-allowing="float" data-validation-length="1-20" data-validation-error-msg="Invalid House Rent" readonly/>
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label class="col-sm-3 control-label no-padding-right" for="ben_medical"> Medical</label>
-                                            <div class="col-sm-8">
-                                                <input type="text" name="ben_medical" id="ben_medical" placeholder="Medical" class="form-control" value="{{ $structure->medical }}" data-validation="required length number"  data-validation-allowing="float" data-validation-length="1-20" data-validation-error-msg="Invalid Medical Allowance" readonly/>
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label class="col-sm-3 control-label no-padding-right" for="ben_transport"> Transportation</label>
-                                            <div class="col-sm-8">
-                                                <input type="text" name="ben_transport" id="ben_transport" value="{{ $structure->transport }}" placeholder="Transportation" class="form-control" data-validation="required length number"  data-validation-allowing="float" data-validation-length="1-20"data-validation-error-msg="Invalid Transportation Allowance" readonly/>
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label class="col-sm-3 control-label no-padding-right" for="ben_food"> Food</label>
-                                            <div class="col-sm-8">
-                                                <input type="text" name="ben_food" id="ben_food" placeholder="Food" value="{{ $structure->food }}" class="form-control" data-validation="required length number"  data-validation-allowing="float" data-validation-length="1-20" data-validation-error-msg="Invalid Food Allowance" readonly/>
-                                            </div>
-                                        </div>
-                                       
-                                    </div>    
-                                    <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <label class="col-sm-3 control-label no-padding-right" for="ben_food"> Fixed</label>
-                                            <div class="col-sm-8 pull-left" style="padding-top: 7px;" >
-                                                <input type="checkbox" name="fixed_check" id="fixed_check"/>
-                                            </div>
-                                        </div>
-                                        <!-- <div class="form-group">
-                                            <label class="col-sm-3 control-label no-padding-right" for="full_salary"> Full Salary Amount</label>
-                                            <div class="col-sm-8">
-                                                <input type="text" name="full_salary" id="full_salary" placeholder="Full Salary" value="" class="form-control fixed-salary"  disabled="disabled"  />
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="col-sm-3 control-label no-padding-right" for="ben_as_id"> Associate's ID<span style="color: red">&#42;</span> </label>
-                                            <div class="col-sm-8">
-                                              {{--   {{ Form::select('ben_as_id', [request()->get("associate_id") => request()->get("associate_id")], request()->get("associate_id"), ['placeholder'=>'Select Associate\'s ID', 'id'=>'ben_as_id', 'class'=> 'associates no-select form-control', 'data-validation'=>'required', 'data-validation-error-msg' => 'The Associate\'s ID field is required']) }}   --}}
-                                            </div>
-                                        </div>  -->
-
-                                        <div class="form-group">
-                                            <label class="col-sm-3 control-label no-padding-right" for="ben_joining_salary_fixed"> Gross Salary <span style="color: red; vertical-align: text-top;">&#42;</span> </label>
-                                            <div class="col-sm-8">
-                                                <input type="text" name="ben_joining_salary_fixed" id="ben_joining_salary_fixed" placeholder="Gross Salary(tk) As Per Joining Letter" class="form-control fixed-salary" data-validation="length number"data-validation-length="1-20" data-validation-allowing="float" data-validation-error-msg="Invalid Gross salary"  disabled="disabled"/>
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label class="col-sm-3 control-label no-padding-right" for="ben_cash_amount"> CASH <span style="color: red; vertical-align: text-top;">&#42;</span> </label>
-                                            <div class="col-sm-8">
-                                                <input type="text" name="ben_cash_amount_fixed" id="ben_cash_amount_fixed" placeholder="Amount Paid in Cash" class="form-control fixed-salary" data-validation="required length number" data-validation-allowing="float" data-validation-length="1-20" data-validation-error-msg="Invalid CASH amount" disabled="disabled"/>
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label class="col-sm-3 control-label no-padding-right" for="ben_bank_amount"> BANK <span style="color: red; vertical-align: text-top;">&#42;</span> </label>
-                                            <div class="col-sm-8">
-                                                <input type="text" name="ben_bank_amount_fixed" id="ben_bank_amount_fixed" placeholder="Amount Paid in Bank" class="form-control fixed-salary" data-validation="required length number" data-validation-allowing="float" data-validation-length="1-20" data-validation-error-msg="Invalid BANK Amount"  disabled="disabled"/>
-                                            </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group has-float-label has-required ">
+                                            <input type="text" name="ben_cash_amount" id="ben_cash_amount" placeholder="Amount Paid in Cash" class="form-control" />
+                                            <label  for="ben_cash_amount"> CASH  </label>
                                         </div>
                                         
-                                        <div class="form-group">
-                                            <label class="col-sm-3 control-label no-padding-right" for="ben_basic"> Basic Salary</label>
-                                            <div class="col-sm-8">
-                                                <input type="text" name="ben_basic_fixed" id="ben_basic_fixed" placeholder="Basic Salary" value="0" class="form-control fixed-salary" data-validation="required length number" data-validation-allowing="float" data-validation-length="1-20" data-validation-error-msg="Invalid Basic Salary"  disabled="disabled" readonly/>
-                                            </div>
+                                        <div class="form-group has-float-label has-required ">
+                                            <input type="text" name="ben_bank_amount" id="ben_bank_amount" placeholder="Amount Paid in Bank" class="form-control" />
+                                            <label  for="ben_bank_amount"> BANK </label>
                                         </div>
-
                                         <div class="form-group">
-                                            <label class="col-sm-3 control-label no-padding-right" for="ben_house_rent"> House Rent</label>
-                                            <div class="col-sm-8">
-                                                <input type="text" name="ben_house_rent_fixed" id="ben_house_rent_fixed" value="0" placeholder="House Rent" class="form-control fixed-salary" data-validation="required length number"  data-validation-allowing="float" data-validation-length="1-20" data-validation-error-msg="Invalid House Rent" disabled="disabled" readonly/>
-                                            </div>
+                                            <label  for="fixed_check"> Fixed</label>
+                                            <input type="checkbox" name="fixed_check" id="fixed_check"/>
                                         </div>
-
                                         <div class="form-group">
-                                            <label class="col-sm-3 control-label no-padding-right" for="ben_medical"> Medical</label>
-                                            <div class="col-sm-8">
-                                                <input type="text" name="ben_medical_fixed" id="ben_medical_fixed" placeholder="Medical" class="form-control fixed-salary" value="{{ $structure->medical }}" data-validation="required length number"  data-validation-allowing="float" data-validation-length="1-20" data-validation-error-msg="Invalid Medical Allowance" disabled="disabled" readonly/>
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label class="col-sm-3 control-label no-padding-right" for="ben_transport"> Transportation</label>
-                                            <div class="col-sm-8">
-                                                <input type="text" name="ben_transport_fixed" id="ben_transport_fixed" value="{{ $structure->transport }}" placeholder="Transportation" class="form-control fixed-salary" data-validation="required length number"  data-validation-allowing="float" data-validation-length="1-20"data-validation-error-msg="Invalid Transportation Allowance" disabled="disabled" readonly/>
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label class="col-sm-3 control-label no-padding-right" for="ben_food"> Food</label>
-                                            <div class="col-sm-8">
-                                                <input type="text" name="ben_food_fixed" id="ben_food_fixed" placeholder="Food" value="{{ $structure->food }}" class="form-control fixed-salary" data-validation="required length number"  data-validation-allowing="float" data-validation-length="1-20" data-validation-error-msg="Invalid Food Allowance" disabled="disabled" readonly/>
-                                            </div>
-                                        </div>
-                                        
-                                    </div>  
-                               </div>    
-                                <div class="col-sm-12">
-
-                                    <div class="clearfix form-actions">
-                                        <div class="col-md-offset-4 col-md-4 text-center"> 
-                                            <button class="btn btn-sm btn-success" type="submit" id="ben_submit">
-                                                <i class="ace-icon fa fa-check bigger-110"></i> Submit
+                                            <button class="btn btn-primary" type="submit" id="ben_submit">
+                                                <i class=" fa fa-check bigger-110"></i> Submit
                                             </button>
 
                                             &nbsp; &nbsp; &nbsp;
-                                            <button class="btn btn-sm" type="reset">
-                                                <i class="ace-icon fa fa-undo bigger-110"></i> Reset
+                                            <button class="btn " type="reset">
+                                                <i class=" fa fa-undo bigger-110"></i> Reset
                                             </button>
                                         </div>
                                     </div>
-                                </div>    
-
-                                <!-- /.row --> 
-                                <hr /> 
-                            </form> 
-                            <!-- PAGE CONTENT ENDS -->
-                        </div>
-                        <!-- /.col -->
-                    </div>
+                                </div>
+                            </div> 
+                            <div class="col-4 benefit-employee">
+                                @php $user = auth()->user(); @endphp
+                                <div class="user-details-block">
+                                      <div class="user-profile text-center">
+                                            <img class="avatar-130 img-fluid" src="{{ asset('assets/images/user/09.jpg') }} ">
+                                      </div>
+                                      <div class="text-center mt-3">
+                                         <h4><b>Selected User</b></h4>
+                                         <p class="mb-0">
+                                            Employee designation</p>
+                                         <p class="mb-0">Joined Status</p>
+                                         
+                                      </div>
+                                   </div>
+                            </div>
+                       </div> 
+                    </form> 
                 </div>
             </div>
 		</div><!-- /.page-content -->
 	</div>
 </div>
 
-
+@push('js')
 <script type="text/javascript">  
 function drawNewBtn(associate_id)
 {
@@ -514,33 +422,7 @@ $(document).ready(function(){
 });
 </script>
 
-<script type="text/javascript">
-$(document).ready(function()
-{   
-    $('select.associates').select2({
-        placeholder: 'Select Associate\'s ID',
-        ajax: {
-            url: '{{ url("hr/associate-search") }}',
-            dataType: 'json',
-            delay: 250,
-            data: function (params) {
-                return { 
-                    keyword: params.term
-                }; 
-            },
-            processResults: function (data) { 
-                return {
-                    results:  $.map(data, function (item) {
-                        return {
-                            text: item.associate_name,
-                            id: item.associate_id
-                        }
-                    }) 
-                };
-          },
-          cache: true
-        }
-    }); 
-});
+
 </script>
+@endpush
 @endsection

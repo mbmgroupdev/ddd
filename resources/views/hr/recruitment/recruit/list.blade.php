@@ -1,7 +1,7 @@
 @extends('hr.layout')
 @section('title', 'Recruitment List')
 @push('css')
-  <link rel="stylesheet" href="{{ asset('plugins/DataTables/datatables.css')}}">
+  
   <link rel="stylesheet" href="{{ asset('assets/css/recruitment.css')}}">
 @endpush
 @section('main-content')
@@ -34,7 +34,6 @@
       </div>
    </div>
    @push('js')
-   <script src="{{ asset('plugins/DataTables/datatables.min.js') }}"></script>
    <script type="text/javascript">
    $(document).ready(function(){ 
       var searchable = [1,2,3,4,5,6,7];

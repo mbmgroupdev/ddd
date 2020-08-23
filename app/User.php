@@ -81,4 +81,10 @@ class User extends Authenticatable
         $buyers = explode(",", $this->buyer_permissions);
         return (!empty($buyers[0])?$buyers:[]);
     }
+
+    public function management_permissions()
+    {
+        $managements = explode(",", $this->management_restriction);
+        return (!empty($managements[0])?$managements:[]);
+    }
 }
