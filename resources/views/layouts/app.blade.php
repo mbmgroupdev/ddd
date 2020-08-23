@@ -18,8 +18,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/typography.css') }}">
     <!-- Style CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-float-label.min.css')}}"/>{{-- 
-    <link rel="stylesheet" href="{{ asset('assets/css/select2.min.css') }}"> --}}
+    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-float-label.min.css')}}"/>
     <link rel="stylesheet" href="{{ asset('assets/css/toastr.min.css') }}">
     @stack('css')
     {{-- Custom CSS --}}
@@ -47,8 +46,8 @@
                    <div class="iq-menu-bt-sidebar">
                       <div class="iq-menu-bt align-self-center">
                          <div class="wrapper-menu">
-                            <div class="main-circle"><i class="ri-more-fill"></i></div>
-                            <div class="hover-circle"><i class="ri-more-2-fill"></i></div>
+                            <div class="main-circle"><i class="las la-ellipsis-h"></i></div>
+                            <div class="hover-circle"><i class="las la-ellipsis-v"></i></div>
                          </div>
                       </div>
                    </div>
@@ -75,36 +74,24 @@
                          <div class="iq-search-bar">
                             <form action="#" class="searchbox">
                                <input type="text" class="text search-input" placeholder="Type here to search...">
-                               <a class="search-link" href="#"><i class="ri-search-line"></i></a>
+                               <a class="search-link" href="#"><i class="las la-search"></i></a>
                             </form>
                          </div>
                          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                         <i class="ri-menu-3-line"></i>
+                         <i class="las la-ellipsis-h"></i>
                          </button>
                          <div class="iq-menu-bt align-self-center">
                             <div class="wrapper-menu">
-                               <div class="main-circle"><i class="ri-more-fill"></i></div>
-                               <div class="hover-circle"><i class="ri-more-2-fill"></i></div>
+                               <div class="main-circle"><i class="las la-ellipsis-h"></i></div>
+                               <div class="hover-circle"><i class="las la-ellipsis-v"></i></div>
                             </div>
                          </div>
                          <div class="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul class="navbar-nav ml-auto navbar-list">
-                               <!-- <li class="nav-item">
-                                  <a class="search-toggle iq-waves-effect language-title" href="#"><img src="{{ asset('assets/images/small/flag-01.png') }}" alt="img-flaf" class="img-fluid mr-1" style="height: 16px; width: 16px;" /> English <i class="ri-arrow-down-s-line"></i></a>
-                                  <div class="iq-sub-dropdown">
-                                     <a class="iq-sub-card" href="#"><img src="{{ asset('assets/images/small/flag-02.png') }}" alt="img-flaf" class="img-fluid mr-2" />French</a>
-                                     <a class="iq-sub-card" href="#"><img src="{{ asset('assets/images/small/flag-03.png') }}" alt="img-flaf" class="img-fluid mr-2" />Spanish</a>
-                                     <a class="iq-sub-card" href="#"><img src="{{ asset('assets/images/small/flag-04.png') }}" alt="img-flaf" class="img-fluid mr-2" />Italian</a>
-                                     <a class="iq-sub-card" href="#"><img src="{{ asset('assets/images/small/flag-05.png') }}" alt="img-flaf" class="img-fluid mr-2" />German</a>
-                                     <a class="iq-sub-card" href="#"><img src="{{ asset('assets/images/small/flag-06.png') }}" alt="img-flaf" class="img-fluid mr-2" />Japanese</a>
-                                  </div>
-                               </li> -->
-                               <li class="nav-item iq-full-screen">
-                                  <a href="#" class="iq-waves-effect" id="btnFullscreen"><i class="ri-fullscreen-line"></i></a>
-                               </li>
-                               <li class="nav-item">
+                               
+                               {{-- <li class="nav-item">
                                   <a href="#" class="search-toggle iq-waves-effect">
-                                  <i class="ri-notification-3-fill"></i>
+                                  <i class="las la-bell"></i>
                                   <span class="bg-danger dots"></span>
                                   </a>
                                   <div class="iq-sub-dropdown">
@@ -167,7 +154,7 @@
                                </li>
                                <li class="nav-item dropdown">
                                   <a href="#" class="search-toggle iq-waves-effect">
-                                  <i class="ri-mail-open-fill"></i>
+                                  <i class="las la-comments"></i>
                                   <span class="bg-primary count-mail"></span>
                                   </a>
                                   <div class="iq-sub-dropdown">
@@ -234,7 +221,7 @@
                                         </div>
                                      </div>
                                   </div>
-                               </li>
+                               </li> --}}
                             </ul>
                          </div>
                          <ul class="navbar-list">

@@ -802,7 +802,7 @@ Route::get('hr/payroll/salary', 'Hr\Payroll\SalaryController@view');
 	//---------HR / Reports-----------//
 	//application letter
 	Route::get('hr/recruitment/job-application', 'Hr\Reports\JobApplicationController@applicationForm');
-	Route::post('hr/reports/job_application', 'Hr\Reports\JobApplicationController@saveApplicationForm');
+	Route::post('hr/recruitment/job_application', 'Hr\Reports\JobApplicationController@saveApplicationForm');
 
 
 //---------HR / Training-----------//

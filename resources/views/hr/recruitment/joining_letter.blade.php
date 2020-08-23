@@ -22,29 +22,39 @@
 
             <div class="row">
                  @include('inc/message')
-                <div class="col-xs-12">
+                <div class="col-12">
                     <form class="form-horizontal" role="form" method="post" action="{{ url('hr/recruitment/job_portal/joining_letter') }}" enctype="multipart/form-data"> 
 
                          {{ csrf_field() }} 
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label no-padding-right" for="hr_letter_as_id"> Associate's ID<span style="color: red">&#42;</span></label>
-                            <div class="col-sm-5" style="padding-bottom: 10px;">
-                                {{ Form::select('hr_letter_as_id', [Request::get('associate_id') => Request::get('associate_id')], Request::get('associate_id'),['placeholder'=>'Select Associate\'s ID', 'data-validation'=> 'required', 'id'=>'hr_letter_as_id',  'class'=> 'associates no-select col-xs-12']) }} 
-                                
+                        <div class="panel">
+                            <div class="panel-heading">
+                                <h6>Appointment Letter</h6>
                             </div>
-                            <div class="col-sm-5">
-                                 <a id="generate" class="btn btn-sm btn-primary" href="{{ url('hr/recruitment/job_portal/joining_letter?associate_id=%ASSOCIATE_ID%') }}">Generate</a>
+                            <div class="panel-body">
+                                <div class="row">
+                                    
+                                    <div class="col-md-offset-2 col-4">
+                                        
+                                        <div class="form-group has-float-label has-required select-search-group">
+                                            
+                                            {{ Form::select('hr_letter_as_id', [Request::get('associate_id') => Request::get('associate_id')], Request::get('associate_id'),['placeholder'=>'Select Associate\'s ID', 'data-validation'=> 'required','id'=>'hr_letter_as_id',  'class'=> 'associates no-select col-xs-12', 'required' => 'required']) }} 
+                                            <label  for="hr_letter_as_id"> Associate's ID </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <a id="generate" class="btn btn-primary" href="{{ url('hr/recruitment/appointment-letter?associate_id=%ASSOCIATE_ID%') }}">Generate</a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        @if(!empty(Request::get('associate_id')))
+                    </form>
+                    @if(!empty(Request::get('associate_id')))
+                    <div class="panel p-30">
                         <div class="form-group">
                             
-                            <div class="col-xs-offset-1 col-xs-10" id="printable">
-                            <!-- <div class="text-center">
-                                <i class="fa fa-spinner fa-pulse fa-5x"></i>
-                            </div> -->
-                                <div class="tinyMceLetter hide" name="letter" id="letter" style="font-size: 12px;">
+                            <div id="printable">
+                                <div class="tinyMceLetter hide" id="letter" style="font-size: 12px;">
                                     <?php
                                     date_default_timezone_set('Asia/Dhaka');
                                     $en = array('0','1','2','3','4','5','6','7','8','9');
@@ -133,21 +143,13 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="space-4"></div>
-                        <div class="space-4"></div>
-                        <div class="space-4"></div>
-                        <div class="space-4"></div>
-                        <div class="space-4"></div>
                         <div class="clearfix form-actions">
-                            <div class="col-sm-offset-4 col-sm-4 text-center">
-                                &nbsp; &nbsp; &nbsp;
-                                <button class="btn btn-sm btn-info" type="submit" onclick="printMe('letter')">
-                                    <i class="ace-icon fa fa-print bigger-110"></i> Print
-                                </button> 
-                            </div>
+                            <button class="btn btn-danger" type="submit" onclick="printMe('letter')">
+                                <i class="fa fa-print bigger-110"></i> Print
+                            </button> 
                         </div>
-                        @endif
-                    </form>
+                    </div>
+                    @endif
                     <!-- PAGE CONTENT ENDS -->
                 </div>
                 <!-- /.col -->
@@ -155,21 +157,23 @@
 		</div><!-- /.page-content -->
 	</div>
 </div>
+@push('js')
 <script type="text/javascript">
-function printMe(el)
-  { 
 
+
+function printMe(el)
+{ 
     var myWindow=window.open('','','width=800,height=800');
     myWindow.document.write('<html><head></head><body style="font-size:9px;">');
-    myWindow.document.write(document.getElementById(el).innerHtml);
+    myWindow.document.write(document.getElementById('letter').innerHTML);
     myWindow.document.write('</body></html>');
     myWindow.focus();
     myWindow.print();
     myWindow.close();
-  }
-
+}
 $(document).ready(function()
 {
+
     function formatState (state) {
         //console.log(state.element);
         if (!state.id) {
@@ -186,32 +190,6 @@ $(document).ready(function()
         return $state;
     };
 
-    $('select.associates').select2({
-        templateSelection:formatState,
-        ajax: {
-            url: '{{ url("hr/associate-search") }}',
-            dataType: 'json',
-            delay: 250,
-            data: function (params) {
-                return { 
-                    keyword: params.term
-                }; 
-            }, 
-            processResults: function (data) { 
-                return {
-                    results:  $.map(data, function (item) {
-                        return {
-                            text: $("<span><img src='"+(item.as_pic ==null?'/assets/images/avatars/profile-pic.jpg':item.as_pic)+"' height='50px' width='auto'/> " + item.associate_name + "</span>"),
-                            id: item.associate_id,
-                            name: item.associate_name
-                        }
-                    }) 
-                };
-          },
-          cache: true
-        }
-    });
-
     // retrive all information  
     $('body').on('change', '.associates', function(){
         var id = $(this).val();
@@ -220,8 +198,6 @@ $(document).ready(function()
         $("#generate").attr('href', x);
     });
 });
-function attLocation(loc){
-    window.location = loc;
-   }
 </script>
+@endpush
 @endsection
