@@ -25,6 +25,8 @@
                         <th>Name</th>
                         <th>Contact</th>
                         <th>DOJ</th>
+                        <th>Medical</th>
+                        <th>IE</th>
                         <th>Action</th>
                      </tr>
                   </thead>
@@ -98,6 +100,8 @@
                {data: 'worker_name', name: 'worker_name'}, 
                {data: 'worker_contact', name: 'worker_contact'}, 
                {data: 'worker_doj', contact: 'worker_doj'},
+               {data: 'medical_info', contact: 'medical_info'},
+               {data: 'ie_info', contact: 'ie_info'},
                {data: 'action', name: 'action', orderable: false, searchable: false}
             ],
 

@@ -134,7 +134,7 @@ class DashboardController extends Controller
     public function today_att()
     {
         $unit = auth()->user()->employee['as_unit_id'];
-        $today_att = Cache::remember('today_att'.$unit, 10000, function  () use ($unit) {
+        $today_att = Cache::remember('today_att'.$unit, 10000000, function  () use ($unit) {
             return $this->attData($unit);
         });
 
@@ -144,7 +144,7 @@ class DashboardController extends Controller
 
     private function attData($unit)
     {
-        $today = date("2019-12-31");
+        $today = date("2020-06-24");
         $table = get_att_table($unit);
 
         $present = 0;

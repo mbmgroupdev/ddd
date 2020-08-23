@@ -89,6 +89,9 @@
                                <div class="hover-circle"><i class="ri-more-2-fill"></i></div>
                             </div>
                          </div>
+                         <div class="nav-item iq-full-screen">
+                            <a href="#" class="iq-waves-effect" id="btnFullscreen"><i class="ri-fullscreen-line"></i></a>
+                         </div>
                          <div class="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul class="navbar-nav ml-auto navbar-list">
                                <!-- <li class="nav-item">
@@ -101,9 +104,7 @@
                                      <a class="iq-sub-card" href="#"><img src="{{ asset('assets/images/small/flag-06.png') }}" alt="img-flaf" class="img-fluid mr-2" />Japanese</a>
                                   </div>
                                </li> -->
-                               <li class="nav-item iq-full-screen">
-                                  <a href="#" class="iq-waves-effect" id="btnFullscreen"><i class="ri-fullscreen-line"></i></a>
-                               </li>
+                               
                                <li class="nav-item">
                                   <a href="#" class="search-toggle iq-waves-effect">
                                   <i class="ri-notification-3-fill"></i>
@@ -359,9 +360,10 @@
     <script src="{{ asset('assets/js/jquery.magnific-popup.min.js') }}"></script>
     <!-- Smooth Scrollbar JavaScript -->
     <script src="{{ asset('assets/js/smooth-scrollbar.js') }}"></script>
+    
+    @stack('js')
     <!-- am animated JavaScript -->
     <script src="{{ asset('assets/js/animated.js') }}"></script>
-    @stack('js')
     {{-- notify --}}
     <script src="{{asset('assets/js/notify/notify.js')}}"></script>
     {{-- <script src="{{asset('assets/js/notify/index.js')}}"></script> --}}
