@@ -113,7 +113,7 @@
                                     <div class="col-3">
                                         <div class="form-group has-float-label select-search-group">
                                             <?php
-                                                $reportType = ['absent'=>'Absent','leave'=>'Leave','ot'=>'OT', 'working_hour'=>'Working Hour', 'late'=>'Late'];
+                                                $reportType = ['absent'=>'Absent', 'before_absent_after_present'=>'Before Absent After Present','leave'=>'Leave','ot'=>'OT', 'working_hour'=>'Working Hour', 'late'=>'Late'];
                                             ?>
                                             {{ Form::select('report_type', $reportType, null, ['placeholder'=>'Select Report Type ', 'class'=>'form-control capitalize select-search', 'id'=>'reportType']) }}
                                             <label for="reportType">Report Type</label>
@@ -127,7 +127,7 @@
                                         </div>
                                         <div id="single-date">
                                           <div class="form-group has-float-label has-required">
-                                            <input type="text" class="report_date datepicker form-control" id="report-date" name="date" placeholder="Y-m-d" required="required" value="{{ date('Y-m-d') }}" autocomplete="off" />
+                                            <input type="date" class="report_date datepicker form-control" id="report-date" name="date" placeholder="Y-m-d" required="required" value="{{ date('Y-m-d') }}" autocomplete="off" />
                                             <label for="report-date">Date</label>
                                           </div>
                                         </div>
@@ -135,13 +135,13 @@
                                           <div class="row">
                                             <div class="col pr-0">
                                                 <div class="form-group has-float-label has-required">
-                                                    <input type="text" class="report_date datepicker form-control" id="present_date" name="present_date" placeholder="Y-m-d" required="required" value="{{ date('Y-m-d') }}" autocomplete="off" />
+                                                    <input type="date" class="report_date datepicker form-control" id="present_date" name="present_date" placeholder="Y-m-d" required="required" value="{{ date('Y-m-d') }}" autocomplete="off" />
                                                     <label for="present_date">Present Date</label>
                                                 </div>
                                             </div>
                                             <div class="col">
                                                 <div class="form-group has-float-label has-required">
-                                                    <input type="text" class="report_date datepicker form-control" id="absent_date" name="absent_date" placeholder="Y-m-d" required="required" value="{{ date('Y-m-d', strtotime('-1 day')) }}" autocomplete="off" />
+                                                    <input type="date" class="report_date datepicker form-control" id="absent_date" name="absent_date" placeholder="Y-m-d" required="required" value="{{ date('Y-m-d', strtotime('-1 day')) }}" autocomplete="off" />
                                                     <label for="absent_date">Absent Date</label>
                                                 </div>
                                             </div>
@@ -151,7 +151,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="offset-8 col-4">
-                                        <button class="btn btn-primary nextBtn btn-lg pull-right" type="submit" ><i class="fa fa-search"></i> Search</button>
+                                        <button class="btn btn-primary nextBtn btn-lg pull-right" type="submit" ><i class="fa fa-save"></i> Generate</button>
                                     </div>
                                 </div>
                             </div>
@@ -177,7 +177,7 @@
 @push('js')
 <script type="text/javascript">
     $(document).ready(function(){   
-        var loader = '<p style="text-align:center;margin:100px;"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p>';
+        var loader = '<div class="panel"><div class="panel-body"><p style="text-align:center;margin:100px;"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>';
         $('#activityReport').on('submit', function(e) {
           $("#result-data").html(loader);
           $("#single-employee-search").hide();
@@ -229,7 +229,7 @@
           }
         });
         // change from data action
-        $('#present_date').on('dp.change', function() {
+        $('#present_date').on('change', function() {
           var before = 1 ;
           var dateBefore = moment($(this).val()).subtract(before , 'day');
           var dateBefore = dateBefore.format("YYYY-MM-DD");
@@ -345,6 +345,13 @@
             date = "{{ date('Y-m-d', strtotime('-1 day')) }}";
           }
           $("#report-date").val(date);
+          if(type === 'before_absent_after_present'){
+            $("#single-date").hide();
+            $("#double-date").show();
+          }else{
+            $("#single-date").show();
+            $("#double-date").hide();
+          }
         });
 
         $('#reportFormat').on("change", function(){

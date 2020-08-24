@@ -3,6 +3,7 @@
 namespace App\Models\Hr;
 
 use Illuminate\Database\Eloquent\Model;
+use DB;
 
 class HrMonthlySalary extends Model
 {
@@ -96,7 +97,8 @@ class HrMonthlySalary extends Model
 
     public static function getYearlyActivityMonthWise($asId, $year)
     {
-        return DB::table('hr_monthly_salary')->select('late_count', 'present', 'holiday', 'absent', 'leave', 'month', 'ot_hour')
+        return DB::table('hr_monthly_salary')
+            ->select('late_count', 'present', 'holiday', 'absent', 'leave', 'month', 'ot_hour')
             ->where('as_id', $asId)
             ->where('year', $year)
             ->orderBy('month', 'asc')
@@ -110,7 +112,7 @@ class HrMonthlySalary extends Model
             ->where('as_id', $asId)
             ->where('year', $year)
             ->orderBy('month', 'asc')
-            ->groupBy('month')
-            ->get();
+            ->get()
+            ->groupBy('month');
     }
 }
