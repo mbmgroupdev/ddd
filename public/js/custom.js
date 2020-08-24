@@ -55,6 +55,45 @@ $(function() {
         }
     });
 
+    function formatState (state) {
+        if (!state.id) {
+            return state.text;
+        }
+        var $state = $(
+        '<span><img /> <span></span></span>'
+        );
+        var targetName = state.name;
+        $state.find("span").text(targetName);
+        return $state;
+    };
+    // Associate Search
+    $('select.img-associates').select2({
+        templateSelection:formatState,
+        placeholder: 'Select Associate\'s ID',
+        ajax: {
+            url: baseurl+'hr/payroll/promotion-associate-search',
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return { 
+                    keyword: params.term
+                }; 
+            },
+            processResults: function (data) { 
+                return {
+                    results:  $.map(data, function (item) {
+                        return {
+                            text: $("<span><img src='"+(item.as_pic ==null?'/assets/images/avatars/profile-pic.jpg':item.as_pic)+"' height='50px' width='auto'/> " + item.associate_name + "</span>"),
+                            id: item.associate_id,
+                            name: item.associate_name
+                        }
+                    }) 
+                };
+          },
+          cache: true
+        }
+    }); 
+
     function printMe(el)
     { 
 
