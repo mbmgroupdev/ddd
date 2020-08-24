@@ -14,7 +14,7 @@
         <div class="breadcrumbs ace-save-state" id="breadcrumbs">
             <ul class="breadcrumb">
                 <li>
-                   <a href="/"><i class="ace-icon fa fa-home home-icon"></i>Human Resource</a> 
+                   <a href="/"><i class="fa fa-home home-icon"></i>Human Resource</a> 
                 </li>
                 <li>
                     <a href="#">Employee</a>
@@ -23,75 +23,93 @@
             </ul><!-- /.breadcrumb --> 
         </div>
 
-        <div class="page-content"> 
 
-			<div class="row"> 
-                {{ Form::open(['url'=>'', 'class'=>'form-horizontal', 'id'=>'IdCard']) }}
-				<div class="col-sm-6">
-					<div class="row" style="margin:10px 0px">
-						<div class="col-sm-6 file_tag_field">
-                            {{ Form::select('emp_type', $employeeTypes, null, ['placeholder'=>'Select Employee Type', 'class'=> 'form-control filter']) }}  
-						</div>
-						<div class="col-sm-6">
-                            {{ Form::select('unit', $unitList, null, ['placeholder'=>'Select Unit', 'class'=> 'form-control filter']) }}  
-						</div>
- 					</div>
-
-					<div class="row" style="margin:10px 0px">
-						<div class="col-sm-6 file_tag_field">
-    						{{ Form::select('floor', [], null, ['placeholder'=>'Select Floor', 'class'=>'form-control filter']) }}  
-						</div>
-						<div class="col-sm-6">
-							{{ Form::select('line', [], null, ['placeholder'=>'Select Line', 'class'=>'form-control filter']) }}   
-						</div>  
-					</div>
-
-					<div class="row" style="margin:10px 0px">
-						<div class="col-sm-6 file_tag_field">
-							<input type="text"  name="doj_from" id="doj_from" class="datepicker form-control filter" placeholder="Date of Join From" >
-						</div>
-						<div class="col-sm-6 file_tag_field">
-							<input type="text" name="doj_to" id="doj_to" class="datepicker form-control filter" placeholder="Date of Join To" >
-						</div>  
-					</div>
-
-					<div class="row" id="search_btn" style="margin:10px 0px; display: none;">
-						<div class="col-sm-6 col-sm-offset-6 ">
-                            <div class="btn-group pull-right">
-                                <button type="submit" class="btn btn-info btn-sm ck" type="button">
-                                    <i class="ace-icon fa fa-search"></i> Search
-                                </button> 
-								<div id="printBtn" style="display:inline-block;"></div>
-                            </div>
-						</div>
-					</div>
-				</div>
-
-
-				<div class="col-sm-6" style="padding-top: 10px; padding-left: 20px; padding-right: 20px;"> 
-                    <table id="AssociateTable" class="table header-fixed table-compact table-bordered">
-                        <tehad>
-                            <tr>
-                                <th><input type="checkbox" id="checkAll"/></th>
-                                <th>Associate ID</th>
-                                <th>Name</th>
-                            </tr>
-                            <tr>
-                                <th colspan="3" id="user_filter"></th>
-                            </tr>
-                        </tehad>
-                        <tbody id="associateList">
+		<div class="panel p-3 pb-0"> 
+            {{ Form::open(['url'=>'', 'class'=>'row', 'id'=>'IdCard']) }}
+			<div class="col-6">
+				<div class="row">
+					<div class="col-6 file_tag_field">
+						<div class="form-group has-float-label select-search-group">
 							
-                        </tbody>
-                    </table>
+	                        {{ Form::select('emp_type', $employeeTypes, null, ['placeholder'=>'Select Employee Type', 'class'=> 'form-control filter']) }}  
+	                        <label>Employee Type</label>
+						</div>
+					</div>
+					<div class="col-6">
+						<div class="form-group has-float-label select-search-group">
+                        	{{ Form::select('unit', $unitList, null, ['placeholder'=>'Select Unit', 'class'=> 'form-control filter']) }} 
+                        	<label>Unit</label>
+						</div> 
+					</div>
 				</div>
-				{{ Form::close() }}
 
-				<div class="col-xs-10 col-sm-offset-1" id="idCardPrint" style="overflow-y: scroll; height:1200px; border: 1px solid whitesmoke; " hidden></div> 
-			</div><!-- /.row -->
-		</div><!-- /.page-content -->
+				<div class="row">
+					<div class="col-6 file_tag_field">
+						<div class="form-group has-float-label select-search-group">
+							{{ Form::select('floor', [], null, ['placeholder'=>'Select Floor', 'class'=>'form-control filter']) }}
+							<label>Floor</label>
+						</div>   
+					</div>
+					<div class="col-6">
+						<div class="form-group has-float-label select-search-group">
+							{{ Form::select('line', [], null, ['placeholder'=>'Select Line', 'class'=>'form-control filter']) }} 
+							<label>Line</label>
+						</div>   
+					</div>  
+				</div>
+
+				<div class="row">
+					<div class="col-6 file_tag_field">
+						<div class="form-group has-float-label">
+							<input type="date"  name="doj_from" id="doj_from" class=" form-control" placeholder="Date of Join From" >
+							<label>From</label>
+						</div>  
+					</div>
+					<div class="col-6 file_tag_field">
+						<div class="form-group has-float-label">
+							<input type="date" name="doj_to" id="doj_to" class="datepicker form-control filter" placeholder="Date of Join To" >
+							<label>To</label>
+						</div> 
+					</div>  
+				</div>
+
+				<div class="row" id="search_btn" style="margin:10px 0px; display: none;">
+					<div class="col-6 col-offset-6 ">
+                        <div class="btn-group pull-right">
+                            <button type="submit" class="btn btn-info btn ck" type="button">
+                                <i class="ace-icon fa fa-search"></i> Search
+                            </button> 
+							<div id="printBtn" style="display:inline-block;"></div>
+                        </div>
+					</div>
+				</div>
+			</div>
+
+
+			<div class="col-6" style="padding-top: 10px; padding-left: 20px; padding-right: 20px;"> 
+                <table id="AssociateTable" class="table header-fixed table-compact table-bordered">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="checkAll"/></th>
+                            <th>Associate ID</th>
+                            <th>Name</th>
+                        </tr>
+                        <tr>
+                            <th colspan="3" id="user_filter"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="associateList">
+						
+                    </tbody>
+                </table>
+			</div>
+			{{ Form::close() }}
+
+			<div class="col-xs-10 col-offset-1" id="idCardPrint" style="overflow-y: scroll; height:1200px; border: 1px solid whitesmoke; " hidden></div> 
+		</div>
 	</div>
-</div>          
+</div>   
+@push('js')       
 <script type="text/javascript">
 $(document).ready(function(){
 	$(document).on('click','.associate-select, #checkAll', function(){
@@ -242,7 +260,7 @@ $(document).ready(function(){
 		e.preventDefault();
 
     	var formdata = new FormData($(this)[0]);
-    	idCardPrint.html('<center><table class"col-sm-12"><thead><th><h4>Please Wait...</th></h4></thead></table></center>');
+    	idCardPrint.html('<center><table class"col-12"><thead><th><h4>Please Wait...</th></h4></thead></table></center>');
 		$.ajax({
 			url  : '{{ url("hr/reports/filetag/search") }}',
 			type : $(this).attr('method'),
@@ -277,8 +295,7 @@ function printContent(el)
 	mywindow.print();
 	mywindow.close();  
 }
-  function attLocation(loc){
-    window.location = loc;
-   }
+ 
 </script>
+@endpush
 @endsection

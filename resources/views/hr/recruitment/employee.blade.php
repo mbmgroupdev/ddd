@@ -1,5 +1,5 @@
 @extends('hr.layout')
-@section('title', '')
+@section('title', $info->as_name.' Information')
 @section('main-content')
 @push('css')
 <style type="text/css">
@@ -36,463 +36,290 @@ table th {
 	border-radius: 2px;
 }
 </style>
-<link rel="stylesheet" href="{{ asset('assets/css/fullcalendar.min.css') }}">
+<link href="{{ asset('assets/fullcalendar/core/main.css')}}" rel='stylesheet' />
+<link href="{{ asset('assets/fullcalendar/daygrid/main.css')}}" rel='stylesheet' />
+<link href="{{ asset('assets/fullcalendar/timegrid/main.css')}}" rel='stylesheet' />
+<link href="{{ asset('assets/fullcalendar/list/main.css')}}" rel='stylesheet' />
 @endpush
 
 <div  class="main-content">
 	<div class="main-content-inner">
-        <div class="breadcrumbs ace-save-state" id="breadcrumbs">
-            <ul class="breadcrumb">
-                <li>
-                   <a href="/"><i class="ace-icon fa fa-home home-icon"></i>Human Resource</a> 
-                </li>
-                <li>
-                    <a href="#">Recruitment</a>
-                </li>
-                <li>
-                    <a href="#">Employer</a>
-                </li>
-                <li class="active">Employee Information</li>
-            </ul><!-- /.breadcrumb --> 
-        </div>
 
-        <div class="page-content">  
-			<div class="page-header row">
-                <h1 class="col-sm-6">Recruitment<small> <i class="ace-icon fa fa-angle-double-right"></i> Employee Information</small></h1>
-                <div class="btn-group pull-right">
-                	@if(auth()->user()->canany(['Manage Employee']) || $user->hasRole('Super Admin'))
-                    <div class="btn-group"> 
-                        <a  href='{{url("hr/recruitment/employee/pdf/$info->associate_id")}}' target="_blank" data-tooltip="Download Employee Profile" data-tooltip-location="top" class="btn btn-sm btn-danger"  style="border-radius: 2px !important; padding: 4px; "><i class="fa fa-file-pdf-o bigger-120"></i></a> 
-                        @if($info->as_gender == "Male")
-                        	<a  href='{{url("hr/recruitment/employee/edit/$info->associate_id")}}' target="_blank" data-tooltip="Edit Profile" data-tooltip-location="top" class="btn btn-sm btn-info"  style="border-radius: 2px !important; padding: 4px;"><i class="fa fa-male bigger-120">&nbsp</i><i class="fa fa-edit bigger-100" style="font-size: 10px;"></i></a>
-                        @else
-                        	<a  href='{{url("hr/recruitment/employee/edit/$info->associate_id")}}' target="_blank" data-tooltip="Edit Profile" data-tooltip-location="top" class="btn btn-sm btn-info"  style="border-radius: 2px !important; padding: 4px;"><i class="fa fa-female bigger-120">&nbsp</i><i class="fa fa-edit bigger-100" style="font-size: 10px;"></i></a>
-                        @endif
-                        <a  href='{{url("hr/recruitment/operation/medical_info_edit/$info->associate_id")}}' target="_blank" data-tooltip="Edit Medical Info" data-tooltip-location="left" class="btn btn-sm btn-warning" style="border-radius: 2px !important; padding: 4px;"><i class="fa fa-user-md bigger-120">&nbsp</i><i class="fa fa-edit bigger-100" style="font-size: 10px;"></i></a>
-
-                        {{-- <a  href='{{url("hr/recruitment/operation/advance_info_edit/$info->associate_id")}}' target="_blank" data-tooltip="Edit Advanced Info" data-tooltip-location="top" class="btn btn-sm btn-primary" style="border-radius: 2px !important; padding: 4px;"><i class="fa fa-user-plus bigger-120">&nbsp</i><i class="fa fa-edit bigger-100" style="font-size: 10px;"></i></a> --}}
-
-                    </div>
-                    @endif
-                </div>
-            </div>
-			<div class="row">
-				<div class="col-xs-12">
-					<div id="user-profile-2" class="user-profile">
-					    <div class="row">
-							<div class="col-xs-12 col-sm-3 center">
-								<div>
-									<span class="profile-picture">
-										<img id="avatar" style="width: auto; height: 200px;" class="img-responsive" alt="profile picture" src="{{ url($info->as_pic?$info->as_pic:'assets/images/avatars/profile-pic.jpg') }}" onError='this.onerror=null;this.src="{{ asset('assets/images/avatars/profile-pic.jpg') }}";'/>
-									</span>
-									<div class="space-4"></div>
-									<div class="width-100">
-
-										<div class="inline position-relative center">
-											<a href="#" class="user-title-label">
-												<span >{{ $info->as_name}}</span>
-											</a>
-										</div>
-									</div>
+        <div class="row">
+      		<div class="col-4">
+		        <div class="iq-card iq-card-block iq-card-stretch iq-card-height iq-user-profile-block">
+		            <div class="iq-card-body">
+		               <div class="user-details-block">
+		                  <div class="user-profile text-center">
+		                     @if($info->employee)
+		                     <img src='{{ $info->employee['as_pic'] != null?asset($info->employee['as_pic'] ):($info->employee['as_gender'] == 'Female'?asset('assets/images/user/1.jpg'):asset('assets/images/user/09.jpg')) }}' class="avatar-130 img-fluid" alt="{{ $info->name }}" onError='this.onerror=null;this.src="{{ ($info->employee['as_gender'] == 'Female'?asset('assets/images/user/1.jpg'):asset('assets/images/user/09.jpg')) }}";'>
+		                     @else
+		                        <img class="avatar-130 img-fluid" src="{{ asset('assets/images/user/09.jpg') }} ">
+		                      @endif
+		                  </div>
+		                  <div class="text-center mt-3">
+		                     <h2><strong>{{ $info->as_name }}</strong></h2>
+		                     <p class="mb-0">{{ $info->hr_designation_name }}, {{ $info->hr_department_name }}</p>
+		                     <p class="">{{ $info->hr_unit_name }}</p>
+		                  	 <p class="mb-0">Associate ID: {{ $info->associate_id }} </p>
+		                     <p class="">Today's Status: 
+								 @if($status['status']==2)
+								    <span class="label label-warning "> Leave </span>
+								    <span class="label label-success "> {{ $status['type'] }} </span>
+								 @elseif($status['status']==1)
+								    <span class="label label-success"> Present </span>
+								 @else
+								    <span class="label label-danger "> Absent </span>
+								 @endif
+							 </p>
+							 <div class="buttons">
+			                	@if(auth()->user()->canany(['Manage Employee']) || auth()->user()->hasRole('Super Admin'))
+			                    <div class="btn-group"> 
+			                        <a  href='{{url("hr/recruitment/employee/pdf/$info->associate_id")}}' target="_blank" data-tooltip="Download Employee Profile" data-tooltip-location="top" class="btn btn-sm btn-danger"  style="border-radius: 2px !important; padding: 4px; "><i class="fa fa-file-pdf-o bigger-120"></i></a> 
+			                        @if($info->as_gender == "Male")
+			                        	<a  href='{{url("hr/recruitment/employee/edit/$info->associate_id")}}' target="_blank" data-tooltip="Edit Profile" data-tooltip-location="top" class="btn btn-sm btn-info"  style="border-radius: 2px !important; padding: 4px;"><i class="fa fa-male bigger-120">&nbsp</i><i class="fa fa-edit bigger-100" style="font-size: 10px;"></i></a>
+			                        @else
+			                        	<a  href='{{url("hr/recruitment/employee/edit/$info->associate_id")}}' target="_blank" data-tooltip="Edit Profile" data-tooltip-location="top" class="btn btn-sm btn-info"  style="border-radius: 2px !important; padding: 4px;"><i class="fa fa-female bigger-120">&nbsp</i><i class="fa fa-edit bigger-100" style="font-size: 10px;"></i></a>
+			                        @endif
+			                        <a  href='{{url("hr/recruitment/operation/medical_info_edit/$info->associate_id")}}' target="_blank" data-tooltip="Edit Medical Info" data-tooltip-location="left" class="btn btn-sm btn-warning" style="border-radius: 2px !important; padding: 4px;"><i class="fa fa-user-md bigger-120">&nbsp</i><i class="fa fa-edit bigger-100" style="font-size: 10px;"></i></a>
+			                    </div>
+			                    @endif
+			                </div>
+		                  </div>
+		               </div>
+		            </div>
+		        </div>
+      		</div>
+  			<div class="col-lg-8">
+  				<div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+		            <div class="iq-card-body">
+		            	<div class="row">
+		            		<div class="col-12">
+		            			<div class="progress pos-rel" data-percent="{{$per_complete}}%">
+									<div class="progress-bar" style="width:{{$per_complete}}%;">This profile is {{$per_complete}}% complete.</div>
 								</div>
-
-								<div class="space-6"></div>
-								<div class="profile-contact-info">
-									<div class="align-left">
-										<p style="text-align: center;">{{ $info->hr_designation_name }}, {{ $info->hr_department_name }}</p>
-										<p style="text-align: center;">{{ $info->hr_unit_name }}</p>
-									</div>
-								</div>
-							</div><!-- /.col -->
-
-							<div class="col-xs-12 col-sm-9">
-								<div class="col-xs-12">
-								   <div class="profile-user-info">
-								   		<div class="progress pos-rel" data-percent="{{$per_complete}}%">
-											<div class="progress-bar" style="width:{{$per_complete}}%;">This profile is {{$per_complete}}% complete.</div>
-										</div>
-								   	
-								   </div>
-								   <div class="profile-user-info">
-									 <div class="profile-info-name " style="border:0;">
-									 	Today's Status:  
-									 </div>
-									 @if($status['status']==2)
-									    <span class="label label-warning "> Leave </span>
-									    <span class="label label-success "> {{ $status['type'] }} </span>
-									 @elseif($status['status']==1)
-									    <span class="label label-success"> Present </span>
-									 @else
-									    <span class="label label-danger "> Absent </span>
-									 @endif
-
-									</div>
-
-								</div>
-								<div class="col-sm-6">
-									<div class="profile-user-info">
-												<div class="profile-info-row">
-													<div class="profile-info-name"> Associate Id </div>
-													<div class="profile-info-value">
-														<span> {{ $info->associate_id }} </span>
-													</div>
-												</div>
-												<div class="profile-info-row">
-													<div class="profile-info-name"> Gender </div>
-													<div class="profile-info-value">
-														<span> {{ $info->as_gender }} </span>
-													</div>
-												</div>
-
-												<div class="profile-info-row">
-													<div class="profile-info-name"> Date of Birth </div>
-													<div class="profile-info-value">
-														<span>
-															{{ (!empty($info->as_dob)?(date("d-M-Y",strtotime($info->as_dob))):null) }}
-														</span>
-													</div>
-												</div>
-												@if(auth()->user()->canany(['Advance Info List','Manage Employee']) || $user->hasRole('Super Admin'))
-												<div class="profile-info-row">
-													<div class="profile-info-name"> Contact NUmber </div>
-													<div class="profile-info-value">
-														<span> {{ $info->as_contact }} </span>
-													</div>
-												</div>
-												@endif
-												<div class="profile-info-row">
-													<div class="profile-info-name"> OT Status </div>
-													<div class="profile-info-value">
-														<span> @if($info->as_ot == 0) Non OT @else OT @endif </span>
-													</div>
-												</div>
-
-
-												<div class="profile-info-row">
-													<div class="profile-info-name"> Joining Date </div>
-													<div class="profile-info-value">
-														<span>
-															{{ (!empty($info->as_doj)?(date("d-M-Y",strtotime($info->as_doj))):null) }}
-														</span>
-													</div>
-												</div>
-
-
-												<div class="profile-info-row">
-													<div class="profile-info-name"> Status</div>
-													<div class="profile-info-value">
-														<span>@if($info->as_status == 1) Active @else Inactive @endif </span>
-													</div>
-												</div>
-
-									</div>
-
-
-								</div>
-
-								<div class="col-sm-6">
-									<div class="profile-user-info">
-
-												<div class="profile-info-row">
-													<div class="profile-info-name"> Employee Type </div>
-													<div class="profile-info-value">
-														<span> {{ $info->hr_emp_type_name }} </span>
-													</div>
-												</div>
-
-												<div class="profile-info-row">
-													<div class="profile-info-name"> Area </div>
-													<div class="profile-info-value">
-														<span> {{ $info->hr_area_name }} </span>
-													</div>
-												</div>
-
-												<div class="profile-info-row">
-													<div class="profile-info-name"> Section </div>
-													<div class="profile-info-value">
-														<span> {{ $info->hr_section_name }} </span>
-													</div>
-												</div>
-
-												<div class="profile-info-row">
-													<div class="profile-info-name"> Sub Section </div>
-													<div class="profile-info-value">
-														<span> {{ $info->hr_subsec_name }} </span>
-													</div>
-												</div>
-
-												<div class="profile-info-row">
-													<div class="profile-info-name"> Floor </div>
-													<div class="profile-info-value">
-														<span> {{ $info->hr_floor_name }} </span>
-													</div>
-												</div>
-
-
-												<div class="profile-info-row">
-													<div class="profile-info-name"> Line </div>
-													<div class="profile-info-value">
-														<span> {{ $info->hr_line_name }} </span>
-													</div>
-												</div>
-
-
-												<div class="profile-info-row">
-													<div class="profile-info-name"> Shift </div>
-													<div class="profile-info-value">
-														<span> {{ $roasterShift!=null?$roasterShift.' (Changed)':$info->as_shift_id.' (Default)' }} </span>
-													</div>
-												</div>
-											</div>
-								</div>
-								
-									<div class="col-sm-12">
-										<div class="profile-user-info">
-										   <div class="profile-info-row">
-													<div class="profile-info-name">Current Station</div>
-													<div class="profile-info-value">
-														<table class="table">
-															<body>
-																<tr>
-															        <td>Floor</td>
-															        <td>Line</td>
-															        <td>Start</td>
-															        <td>End</td>
-															        <td>Changed by</td>
-															    </tr>
-															    @if($station)
-																<tr>
-																	<td>{{ $station->hr_floor_name }}</td>
-																	<td>{{ $station->hr_line_name }}</td>
-																	<td>{{ $station->start_date }}</td>
-																	<td>{{ $station->end_date }}</td>
-																	<td>{{ $station->as_name }}-{{ $station->updated_by }}</td>
-																</tr>
-																@else
-																<tr><td colspan="5"> No data found!</td></tr>
-																@endif
-															</body>
-														</table>
-													</div>
-												</div>
+		            		</div>
+		            		<div class="col-6">
+								<div class="profile-user-info">
 											
+									<div class="profile-info-row">
+										<div class="profile-info-name"> Gender </div>
+										<div class="profile-info-value">
+											<span> {{ $info->as_gender }} </span>
 										</div>
 									</div>
-								
-								<div class="space-10"></div>
-								<div class="panel-heading">
-										<h4 class="panel-title" style="text-align: right; color: #428bca;">
-											<a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#bangla">
-												
-												 কর্মকর্তা/কর্মচারীর তথ্যাবলী বাংলায় দেখুন &nbsp; 
-												 <i class="ace-icon fa fa-angle-down bigger-120" data-icon-hide="ace-icon fa fa-angle-up" data-icon-show="ace-icon fa fa-angle-down"></i>
-											</a>
-										</h4>
-									</div>
 
-									<div class="panel-collapse collapse" id="bangla"> 
-										<div class="panel-body">
-
-										<div class="row">
-										    <hr>
-											<div class="col-xs-12 col-sm-6">
-												<div class="profile-user-info"> 
-													<div class="profile-user-info">  
-														<div class="profile-info-row">
-															<div class="profile-info-name"> নাম </div>
-															<div class="profile-info-value">
-																<span> {{ $info->hr_bn_associate_name }} </span>
-															</div>
-														</div>
-														<div class="profile-info-row">
-															<div class="profile-info-name"> ইউনিট </div>
-															<div class="profile-info-value">
-																<span> {{ $info->hr_unit_name_bn }} </span>
-															</div>
-														</div>
-														<div class="profile-info-row">
-															<div class="profile-info-name"> ডিপার্টমেন্ট </div>
-															<div class="profile-info-value">
-																<span> {{ $info->hr_department_name_bn }} </span>
-															</div>
-														</div>
-														<div class="profile-info-row">
-															<div class="profile-info-name"> পদবি </div>
-															<div class="profile-info-value">
-																<span> {{ $info->hr_designation_name_bn }} </span>
-															</div>
-														</div>
-														<div class="profile-info-row">
-															<div class="profile-info-name"> যোগদানের তারিখ  </div>
-															<div class="profile-info-value">
-																<span> {{ str_replace(array(1,2,3,4,5,6,7,8,9,0), array('১','২','৩','৪','৫','৬','৭','৮','৯','০'), $info->as_doj) }} </span>
-															</div>
-														</div>
-														<div class="profile-info-row">
-															<div class="profile-info-name"> পিতার নাম </div>
-															<div class="profile-info-value">
-																<span> {{ $info->hr_bn_father_name }} </span>
-															</div>
-														</div>
-														<div class="profile-info-row">
-															<div class="profile-info-name"> মাতার নাম </div>
-															<div class="profile-info-value">
-																<span> {{ $info->hr_bn_mother_name }} </span>
-															</div>
-														</div>
-														<div class="profile-info-row">
-															<div class="profile-info-name"> স্বামী/স্ত্রীর নাম </div>
-															<div class="profile-info-value">
-																<span> {{ $info->hr_bn_spouse_name }} </span>
-															</div>
-														</div>
-												    </div>
-												</div>
-												
-											</div>
-											<div class="col-xs-12 col-sm-6">
-												<div class="profile-user-info">
-													<h5>স্থায়ী ঠিকানা </h5>
-													<div class="profile-info-row">
-														<div class="profile-info-name"> গ্রাম  </div>
-														<div class="profile-info-value">
-															<span> {{ $info->hr_bn_permanent_village }} </span>
-														</div>
-													</div>
-													<div class="profile-info-row">
-														<div class="profile-info-name"> ডাকঘর  </div>
-														<div class="profile-info-value">
-															<span> {{ $info->hr_bn_permanent_po }} </span>
-														</div>
-													</div> 
-													<div class="profile-info-row">
-														<div class="profile-info-name"> উপজেলা  </div>
-														<div class="profile-info-value">
-															<span> {{ $info->permanent_upazilla_bn }} </span>
-														</div>
-													</div>
-													<div class="profile-info-row">  
-														<div class="profile-info-name"> জেলা  </div>
-														<div class="profile-info-value">
-															<span> {{ $info->permanent_district_bn }} </span>
-														</div>
-													</div>
-													<h5>বর্তমান ঠিকানা </h5>  
-													<div class="profile-info-row">
-														<div class="profile-info-name"> রোড নং  </div>
-														<div class="profile-info-value">
-															<span> {{ $info->hr_bn_present_road }} </span>
-														</div>
-													</div>
-													<div class="profile-info-row">
-														<div class="profile-info-name"> বাড়ি নং  </div>
-														<div class="profile-info-value">
-															<span> {{ $info->hr_bn_present_house }} </span>
-														</div>
-													</div> 
-													<div class="profile-info-row">
-														<div class="profile-info-name"> ডাকঘর  </div>
-														<div class="profile-info-value">
-															<span> {{ $info->hr_bn_present_po }} </span>
-														</div>
-													</div>
-													<div class="profile-info-row">
-														<div class="profile-info-name"> উপজেলা  </div>
-														<div class="profile-info-value">
-															<span> {{ $info->present_upazilla_bn }} </span>
-														</div> 
-													</div>
-													<div class="profile-info-row">  
-														<div class="profile-info-name"> জেলা  </div>
-														<div class="profile-info-value">
-															<span> {{ $info->present_district_bn }} </span>
-														</div>
-													</div>
-												</div>
-											</div>
-
-
-										</div>
-												 
-											
+									<div class="profile-info-row">
+										<div class="profile-info-name"> Date of Birth </div>
+										<div class="profile-info-value">
+											<span>
+												{{ (!empty($info->as_dob)?(date("d-M-Y",strtotime($info->as_dob))):null) }}
+											</span>
 										</div>
 									</div>
-								
-							</div><!-- /.col -->
-						</div>
-						{{-- acl permission --}}
-						
+									@if(auth()->user()->canany(['Advance Info List','Manage Employee']) || auth()->user()->hasRole('Super Admin'))
+									<div class="profile-info-row">
+										<div class="profile-info-name"> Contact  </div>
+										<div class="profile-info-value">
+											<span> {{ $info->as_contact }} </span>
+										</div>
+									</div>
+									@endif
+									<div class="profile-info-row">
+										<div class="profile-info-name"> OT Status </div>
+										<div class="profile-info-value">
+											<span> @if($info->as_ot == 0) Non OT @else OT @endif </span>
+										</div>
+									</div>
+
+
+									<div class="profile-info-row">
+										<div class="profile-info-name"> Joining Date </div>
+										<div class="profile-info-value">
+											<span>
+												{{ (!empty($info->as_doj)?(date("d-M-Y",strtotime($info->as_doj))):null) }}
+											</span>
+										</div>
+									</div>
+
+
+									<div class="profile-info-row">
+										<div class="profile-info-name"> Status</div>
+										<div class="profile-info-value">
+											<span>@if($info->as_status == 1) Active @else Inactive @endif </span>
+										</div>
+									</div>
+
+								</div>
+							</div>
+
+							<div class="col-6">
+								<div class="profile-user-info">
+
+									<div class="profile-info-row">
+										<div class="profile-info-name"> Type </div>
+										<div class="profile-info-value">
+											<span> {{ $info->hr_emp_type_name }} </span>
+										</div>
+									</div>
+
+									<div class="profile-info-row">
+										<div class="profile-info-name"> Area </div>
+										<div class="profile-info-value">
+											<span> {{ $info->hr_area_name }} </span>
+										</div>
+									</div>
+
+									<div class="profile-info-row">
+										<div class="profile-info-name"> Section </div>
+										<div class="profile-info-value">
+											<span> {{ $info->hr_section_name }} </span>
+										</div>
+									</div>
+
+									<div class="profile-info-row">
+										<div class="profile-info-name"> Sub Section </div>
+										<div class="profile-info-value">
+											<span> {{ $info->hr_subsec_name }} </span>
+										</div>
+									</div>
+
+									<div class="profile-info-row">
+										<div class="profile-info-name"> Floor </div>
+										<div class="profile-info-value">
+											<span> {{ $info->hr_floor_name }} </span>
+										</div>
+									</div>
+
+
+									<div class="profile-info-row">
+										<div class="profile-info-name"> Line </div>
+										<div class="profile-info-value">
+											<span> {{ $info->hr_line_name }} </span>
+										</div>
+									</div>
+
+
+									<div class="profile-info-row">
+										<div class="profile-info-name"> Shift </div>
+										<div class="profile-info-value">
+											<span> {{ $roasterShift!=null?$roasterShift.' (Changed)':$info->as_shift_id.' (Default)' }} </span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-12">
+								<div class="profile-user-info">
+								   	<div class="profile-info-row">
+										<div class="profile-info-name">Current Station</div>
+										<div class="profile-info-value">
+											<table class="table">
+												<body>
+													<tr>
+												        <td>Floor</td>
+												        <td>Line</td>
+												        <td>Start</td>
+												        <td>End</td>
+												        <td>Changed by</td>
+												    </tr>
+												    @if($station)
+													<tr>
+														<td>{{ $station->hr_floor_name }}</td>
+														<td>{{ $station->hr_line_name }}</td>
+														<td>{{ $station->start_date }}</td>
+														<td>{{ $station->end_date }}</td>
+														<td>{{ $station->as_name }}-{{ $station->updated_by }}</td>
+													</tr>
+													@else
+													<tr><td colspan="5"> No data found!</td></tr>
+													@endif
+												</body>
+											</table>
+										</div>
+									</div>
+									
+								</div>
+							</div>
+		            	</div>
+		            </div>
+		        </div>
+  			</div>
+  			<div class="col-12">
+  				<div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+  					<div class="p-3">
+  						
+	  					<ul class="nav nav-pills mb-2 mt-2" id="pills-tab" role="tablist">
+							<li class="nav-item" class="active">
+								<a data-toggle="tab" class="nav-link active" role="tab" aria-controls="home" aria-selected="true" href="#info">
+									<i class="green ace-icon fa fa-user bigger-120"></i>
+									Advance Info
+								</a>
+							</li>
+							@if(auth()->user()->canany(['Salary Sheet','Salary Report','Assign Benefit']) || auth()->user()->hasRole('Super Admin'))
+							<li class="nav-item">
+								<a data-toggle="tab" class="nav-link" role="tab" aria-controls="home" aria-selected="true" href="#benefit">
+									<i class="orange ace-icon fa fa-gift bigger-120"></i>
+									Benefits
+								</a>
+							</li>
+							@endif
+
+							<li class="nav-item">
+								<a data-toggle="tab" class="nav-link" role="tab" aria-controls="home" aria-selected="true" href="#employment">
+									<i class="blue ace-icon fa fa-users bigger-120"></i>
+									Employment History
+								</a>
+							</li>
+							@if(auth()->user()->canany(['Salary Sheet','Salary Report']) || auth()->user()->hasRole('Super Admin'))
+							<li class="nav-item">
+								<a data-toggle="tab" class="nav-link" role="tab" aria-controls="home" aria-selected="true" href="#salary">
+									<i class="pink ace-icon fa fa-money bigger-120"></i>
+									Salary Record
+								</a>
+							</li>
+							@endif
+
+							<li class="nav-item">
+								<a data-toggle="tab" class="nav-link" role="tab" aria-controls="home" aria-selected="true" href="#loan">
+									<i class="pink ace-icon fa fa-money bigger-120"></i>
+									Loan History
+								</a>
+							</li>
+							<li class="nav-item">
+								<a data-toggle="tab" class="nav-link" role="tab" aria-controls="home" aria-selected="true" href="#leave">
+									<i class="orange ace-icon fa fa-list bigger-120"></i>
+									Leave History
+								</a>
+							</li>
+							@if(auth()->user()->canany(['Query Attendance','Attendance Report','Manual Attendance Report']) || auth()->user()->hasRole('Super Admin'))
+							<li class="nav-item">
+								<a data-toggle="tab" class="nav-link" role="tab" aria-controls="home" aria-selected="true" id="attload" href="#attendance">
+									<i class="orange ace-icon fa fa-list bigger-120"></i>
+									Attendance History
+								</a>
+							</li>
+							@endif
+
+							<li class="nav-item">
+								<a data-toggle="tab" class="nav-link" role="tab" aria-controls="home" aria-selected="true" href="#discipline">
+									<i class="blue ace-icon fa fa-file bigger-120"></i>
+									Disciplinary Record
+								</a>
+							</li>
+
+							
+						</ul>
+						<hr>
 						<div class="tabbable">
-							<ul class="nav nav-tabs">
-								<li class="active">
-									<a data-toggle="tab" href="#info">
-										<i class="green ace-icon fa fa-user bigger-120"></i>
-										Advance Info
-									</a>
-								</li>
-								@if(auth()->user()->canany(['Salary Sheet','Salary Report','Assign Benefit']) || $user->hasRole('Super Admin'))
-								<li>
-									<a data-toggle="tab" href="#benefit">
-										<i class="orange ace-icon fa fa-gift bigger-120"></i>
-										Benefits
-									</a>
-								</li>
-								@endif
-
-								<li>
-									<a data-toggle="tab" href="#employment">
-										<i class="blue ace-icon fa fa-users bigger-120"></i>
-										Employment History
-									</a>
-								</li>
-								@if(auth()->user()->canany(['Salary Sheet','Salary Report']) || $user->hasRole('Super Admin'))
-								<li>
-									<a data-toggle="tab" href="#salary">
-										<i class="pink ace-icon fa fa-money bigger-120"></i>
-										Salary Record
-									</a>
-								</li>
-								@endif
-
-								<li>
-									<a data-toggle="tab" href="#loan">
-										<i class="pink ace-icon fa fa-money bigger-120"></i>
-										Loan History
-									</a>
-								</li>
-								<li>
-									<a data-toggle="tab" href="#leave">
-										<i class="orange ace-icon fa fa-list bigger-120"></i>
-										Leave History
-									</a>
-								</li>
-								@if(auth()->user()->canany(['Query Attendance','Attendance Report','Manual Attendance Report']) || $user->hasRole('Super Admin'))
-								<li>
-									<a data-toggle="tab" id="attload" href="#attendance">
-										<i class="orange ace-icon fa fa-list bigger-120"></i>
-										Attendance History
-									</a>
-								</li>
-								@endif
-
-								<li>
-									<a data-toggle="tab" href="#discipline">
-										<i class="blue ace-icon fa fa-file bigger-120"></i>
-										Disciplinary Record
-									</a>
-								</li>
-
-								
-							</ul>
-
-							<div class="tab-content no-border" style="border-left: 1px solid #d1d1d1;">
+							
+							<div class="tab-content no-border" >
 								<div id="info" class="tab-pane in active">
 									<!-- /.row -->
 
 									
-									@if(auth()->user()->canany(['Advance Info List','Manage Employee']) || $user->hasRole('Super Admin'))
+									@if(auth()->user()->canany(['Advance Info List','Manage Employee']) || auth()->user()->hasRole('Super Admin'))
 									<div class="row">
-										<div class="col-xs-12 col-sm-6">
+										<div class="col-xs-12 col-sm-5">
 										
 											<div class="widget-box transparent">
 												<div class="widget-header widget-header-small">
@@ -636,7 +463,7 @@ table th {
 											</div>
 										</div>
 
-										<div class="col-xs-12 col-sm-6">
+										<div class="col-xs-12 col-sm-4">
 											<div class="widget-box transparent">
 												<div class="widget-header widget-header-small header-color-blue2">
 													<h4 class="widget-title smaller">
@@ -833,69 +660,7 @@ table th {
 												</div>
 											</div>
 										</div>
-									</div>
-									<div class="row">
-										<div class="col-xs-12 col-sm-6">
-											<div class="widget-box transparent">
-												<div class="widget-header widget-header-small header-color-blue2">
-													<h4 class="widget-title smaller">
-														Education History
-													</h4>
-												</div>
-
-												<div class="widget-body">
-													<div class="widget-main padding-16">
-													@if(!empty($educations) && count($educations) >0)
-													<table class="table table-compact">  
-														<tbody>
-														@foreach($educations as $education)
-								                            <tr> 
-									                            <td>
-									                            	<strong>Lavel of Education:</strong> {{ $education->education_level_title }}
-									                            	<br>
-
-									                            	<strong>Institute:</strong> {{ $education->education_institute_name }}
-									                            </td>
-									                        	<td>
-									                            	<strong>Exam/Degree Title:</strong> 
-								                            		{{ $education->education_degree_title }} 
-									                            	<br>
-									                            	@if(!in_array($education->education_level_id, [1,2,8]))
-										                            	<strong>Concentration/Major/Group:</strong> 
-										                            	{{ $education->education_major_group_concentation }} 
-										                            @endif
-
-									                            	@if(in_array($education->education_level_id, [8]))
-										                            	<strong>Concentration/Major/Group:</strong> 
-										                            	{{ $education->education_degree_id_2 }} 
-									                            	@endif
-									                            </td> 
-									                        	<td>
-									                            	<strong>Year:</strong> {{ $education->education_passing_year }} 
-
-									                            	<br/>
-
-									                            	<strong>Result:</strong> {{ $education->education_result_title }} <br/>
-
-									                            	@if(in_array($education->education_result_id, [1,2,3]))
-										                            	<strong>Marks:</strong> {{ $education->education_result_marks }}  <br/>
-									                            	@elseif(in_array($education->education_result_id,[4]))
-										                            	<strong>CGPA:</strong> {{ $education->education_result_cgpa }}  <br/>
-										                            	<strong>Scale:</strong> {{ $education->education_result_scale }}
-										                            @endif 
-									                            </td>
-									                        </tr> 
-														@endforeach  
-														</tbody>
-													</table>
-													@else 
-													No records found!
-													@endif 
-													</div>
-												</div>
-											</div>
-										</div>
-										<div class="col-xs-12 col-sm-6">
+										<div class="col-xs-12 col-sm-3">
 											<div class="widget-box transparent">
 												<div class="widget-header widget-header-small header-color-blue2">
 													<h4 class="widget-title smaller">
@@ -1020,13 +785,76 @@ table th {
 												</div>
 											</div>
 										</div>
+									</div>
+									<div class="row">
+										<div class="col-xs-12 col-sm-12">
+											<div class="widget-box transparent">
+												<div class="widget-header widget-header-small header-color-blue2">
+													<h4 class="widget-title smaller">
+														Education History
+													</h4>
+												</div>
+
+												<div class="widget-body">
+													<div class="widget-main padding-16">
+													@if(!empty($educations) && count($educations) >0)
+													<table class="table table-compact">  
+														<tbody>
+														@foreach($educations as $education)
+								                            <tr> 
+									                            <td>
+									                            	<strong>Lavel of Education:</strong> {{ $education->education_level_title }}
+									                            	<br>
+
+									                            	<strong>Institute:</strong> {{ $education->education_institute_name }}
+									                            </td>
+									                        	<td>
+									                            	<strong>Exam/Degree Title:</strong> 
+								                            		{{ $education->education_degree_title }} 
+									                            	<br>
+									                            	@if(!in_array($education->education_level_id, [1,2,8]))
+										                            	<strong>Concentration/Major/Group:</strong> 
+										                            	{{ $education->education_major_group_concentation }} 
+										                            @endif
+
+									                            	@if(in_array($education->education_level_id, [8]))
+										                            	<strong>Concentration/Major/Group:</strong> 
+										                            	{{ $education->education_degree_id_2 }} 
+									                            	@endif
+									                            </td> 
+									                        	<td>
+									                            	<strong>Year:</strong> {{ $education->education_passing_year }} 
+
+									                            	<br/>
+
+									                            	<strong>Result:</strong> {{ $education->education_result_title }} <br/>
+
+									                            	@if(in_array($education->education_result_id, [1,2,3]))
+										                            	<strong>Marks:</strong> {{ $education->education_result_marks }}  <br/>
+									                            	@elseif(in_array($education->education_result_id,[4]))
+										                            	<strong>CGPA:</strong> {{ $education->education_result_cgpa }}  <br/>
+										                            	<strong>Scale:</strong> {{ $education->education_result_scale }}
+										                            @endif 
+									                            </td>
+									                        </tr> 
+														@endforeach  
+														</tbody>
+													</table>
+													@else 
+													No records found!
+													@endif 
+													</div>
+												</div>
+											</div>
+										</div>
+										
 										
 									</div>
 									@else
 										You are not permitted to see!
 									@endif
 								</div><!-- /#home -->
-								@if(auth()->user()->canany(['Salary Sheet','Salary Report','Assign Benefit']) || $user->hasRole('Super Admin'))
+								@if(auth()->user()->canany(['Salary Sheet','Salary Report','Assign Benefit']) || auth()->user()->hasRole('Super Admin'))
 								<div id="benefit" class="tab-pane">
 								    <div class="widget-box transparent">
 												<div class="widget-header widget-header-small">
@@ -1092,7 +920,7 @@ table th {
 									
 								</div><!-- /#feed -->
 								@endif
-								@if(auth()->user()->canany(['Query Attendance','Attendance Report','Manual Attendance Report']) || $user->hasRole('Super Admin'))
+								@if(auth()->user()->canany(['Query Attendance','Attendance Report','Manual Attendance Report']) || auth()->user()->hasRole('Super Admin'))
 								<div id="attendance" class="tab-pane">
                     				<div class="row"> 
                     				   <div class="col-sm-offset-2 col-sm-8">
@@ -1503,7 +1331,7 @@ table th {
 										
 									  </div>
 								</div>
-								@if(auth()->user()->canany(['Salary Sheet','Salary Report']) || $user->hasRole('Super Admin'))
+								@if(auth()->user()->canany(['Salary Sheet','Salary Report']) || auth()->user()->hasRole('Super Admin'))
 								<div id="salary" class="tab-pane">
 								    <div class="widget-box transparent">
 										
@@ -1568,18 +1396,20 @@ table th {
 								</div>
 								@endif
 							</div>
-
-
-						
 						</div>
-					</div>
-				</div>
-			</div>
-		</div><!-- /.page-content -->
+  					</div>
+
+  				</div>
+  			</div>
+      	</div>
 	</div>
 </div>
 @push('js')
-<script src="{{ asset('assets/js/fullcalendar.min.js') }}"></script>  
+<script src="{{ asset('assets/js/moment.min.js') }}"></script>  
+<script src="{{ asset('assets/fullcalendar/core/main.js') }}"></script>
+<script src="{{ asset('assets/fullcalendar/daygrid/main.js') }}"></script>
+<script src="{{ asset('assets/fullcalendar/timegrid/main.js') }}"></script>
+<script src="{{ asset('assets/fullcalendar/list/main.js') }}"></script> 
 <script type="text/javascript">
 var _token = $('input[name="_token"]').val();
 function errorMsgRepeter(id, check, text){

@@ -7,6 +7,7 @@ use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Contracts\Auth\Access\Gate;
 use App\Models\Employee;
 use App\Models\UserActivity;
 use App\Models\UserLog;
@@ -86,5 +87,12 @@ class User extends Authenticatable
     {
         $managements = explode(",", $this->management_restriction);
         return (!empty($managements[0])?$managements:[]);
+    }
+
+    public function canany(array $abilities, $arguments = []) {
+        return collect($abilities)->reduce(function($canAccess, $ability) use ($arguments) {
+          // if this user has access to any of the previously checked abilities, or the current ability, return true
+          return $canAccess || app(Gate::class)->forUser($this)->check($ability, $arguments);
+        }, false);
     }
 }
