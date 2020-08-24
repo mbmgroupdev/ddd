@@ -213,13 +213,13 @@ class DailyActivityReportController extends Controller
         // dd($input);
         // return $input;
         try {
-            $areaid       = isset($request['area'])?$request['area']:'';
-            $otnonot      = isset($request['otnonot'])?$request['otnonot']:'';
-            $departmentid = isset($request['department'])?$request['department']:'';
-            $lineid       = isset($request['line_id'])?$request['line_id']:'';
-            $florid       = isset($request['floor_id'])?$request['floor_id']:'';
-            $section      = isset($request['section'])?$request['section']:'';
-            $subSection   = isset($request['subSection'])?$request['subSection']:'';
+            $input['area']       = isset($request['area'])?$request['area']:'';
+            $input['otnonot']    = isset($request['otnonot'])?$request['otnonot']:'';
+            $input['department'] = isset($request['department'])?$request['department']:'';
+            $input['line_id']    = isset($request['line_id'])?$request['line_id']:'';
+            $input['floor_id']   = isset($request['floor_id'])?$request['floor_id']:'';
+            $input['section']    = isset($request['section'])?$request['section']:'';
+            $input['subSection'] = isset($request['subSection'])?$request['subSection']:'';
 
             $getEmployee = array();
             $format = $request['report_group'];
@@ -255,26 +255,26 @@ class DailyActivityReportController extends Controller
                 $attData->where('emp.associate_id', 'LIKE', '%'.$input['employee'] .'%');
             }
             $attData->where('emp.as_unit_id',$request['unit'])
-            ->when(!empty($areaid), function ($query) use($areaid){
-               return $query->where('emp.as_area_id',$areaid);
+            ->when(!empty($input['area']), function ($query) use($input){
+               return $query->where('emp.as_area_id',$input['area']);
             })
-            ->when(!empty($departmentid), function ($query) use($departmentid){
-               return $query->where('emp.as_department_id',$departmentid);
+            ->when(!empty($input['department']), function ($query) use($input){
+               return $query->where('emp.as_department_id',$input['department']);
             })
-            ->when(!empty($lineid), function ($query) use($lineid){
-               return $query->where('emp.as_line_id', $lineid);
+            ->when(!empty($input['line_id']), function ($query) use($input){
+               return $query->where('emp.as_line_id', $input['line_id']);
             })
-            ->when(!empty($florid), function ($query) use($florid){
-               return $query->where('emp.as_floor_id',$florid);
+            ->when(!empty($input['floor_id']), function ($query) use($input){
+               return $query->where('emp.as_floor_id',$input['floor_id']);
             })
-            ->when($request['otnonot']!=null, function ($query) use($otnonot){
-               return $query->where('emp.as_ot',$otnonot);
+            ->when($request['otnonot']!=null, function ($query) use($input){
+               return $query->where('emp.as_ot',$input['otnonot']);
             })
-            ->when(!empty($section), function ($query) use($section){
-               return $query->where('emp.as_section_id', $section);
+            ->when(!empty($input['section']), function ($query) use($input){
+               return $query->where('emp.as_section_id', $input['section']);
             })
-            ->when(!empty($subSection), function ($query) use($subSection){
-               return $query->where('emp.as_subsection_id', $subSection);
+            ->when(!empty($input['subSection']), function ($query) use($input){
+               return $query->where('emp.as_subsection_id', $input['subSection']);
             });
             if($input['report_type'] == 'ot' || $input['report_type'] == 'working_hour' || $input['report_type'] == 'late'){
                 $attData->leftjoin(DB::raw('(' . $employeeData_sql. ') AS emp'), function($join) use ($employeeData) {
@@ -346,7 +346,6 @@ class DailyActivityReportController extends Controller
             }
                 
             $getEmployee = $attData->get();
-            // dd($getEmployee);
             if($input['report_format'] == 1 && $input['report_group'] != null){
                 $totalEmployees = array_sum(array_column($getEmployee->toArray(),'total'));
             }else{
@@ -381,7 +380,7 @@ class DailyActivityReportController extends Controller
             }
         } catch (\Exception $e) {
             $bug = $e->getMessage();
-            // return $bug;
+            return $bug;
             return 'error';
         }
     }
