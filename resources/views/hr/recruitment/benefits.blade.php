@@ -22,17 +22,9 @@
                 <div class="panel-heading">
                     <h6>
                     Benefits 
-                        @if(request()->get("associate_id"))
-                            <div class="btn-group pull-right"> 
-                                <?php $ass_id = request()->get("associate_id"); ?>
-                                <a href='{{ url("hr/recruitment/employee/show/$ass_id") }}' target="_blank" class="btn btn-sm btn-success" title="Profile"><i class="glyphicon glyphicon-user"></i></a>
-                                <a href='{{ url("hr/recruitment/employee/edit/$ass_id") }}' class="btn btn-sm btn-success" title="Basic Info"><i class="glyphicon glyphicon-bold"></i></a>
-                                <a href='{{ url("hr/recruitment/operation/advance_info_edit/$ass_id") }}' class="btn btn-sm btn-info" title="Advance Info"><i class="glyphicon  glyphicon-font"></i></a>
-                                <a href='{{ url("hr/recruitment/operation/benefits?associate_id=$ass_id") }}' class="btn btn-sm btn-primary" title="Benefits"><i class="fa fa-usd"></i></a>
-                                <a href='{{ url("hr/ess/medical_incident?associate_id=$ass_id") }}' class="btn btn-sm btn-warning" title="Medical Incident"><i class="fa fa-stethoscope"></i></a>
-                                <a href='{{ url("hr/operation/servicebook?associate_id=$ass_id") }}' class="btn btn-sm btn-danger" title="Service Book"><i class="fa fa-book"></i></a>
-                            </div>
-                        @endif
+                        <div id="buttons" class="pull-right">
+                            
+                        </div>
                     </h6>
                 </div> 
                 <div class="panel-body"> 
@@ -108,13 +100,12 @@
                                 @php $user = auth()->user(); @endphp
                                 <div class="user-details-block">
                                       <div class="user-profile text-center">
-                                            <img class="avatar-130 img-fluid" src="{{ asset('assets/images/user/09.jpg') }} ">
+                                            <img id="avatar" class="avatar-130 img-fluid" src="{{ asset('assets/images/user/09.jpg') }} " onerror="this.onerror=null;this.src='{{ asset("assets/images/user/09.jpg") }}';">
                                       </div>
                                       <div class="text-center mt-3">
-                                         <h4><b>Selected User</b></h4>
-                                         <p class="mb-0">
+                                         <h4><b id="user-name">Selected User</b></h4>
+                                         <p class="mb-0" id="designation">
                                             Employee designation</p>
-                                         <p class="mb-0">Joined Status</p>
                                          
                                       </div>
                                    </div>
@@ -129,39 +120,42 @@
 
 @push('js')
 <script type="text/javascript">  
-function drawNewBtn(associate_id)
+function draw_new_button(associate_id)
 {
     var url = "{{ url("") }}";
     var newUrl = "<div class=\"btn-group\">"+ 
-        "<a href='"+url+'/hr/recruitment/employee/edit/'+associate_id+"'  class=\"btn btn-sm btn-success\" title=\"Basic Info\"><i class=\"glyphicon glyphicon-bold\"></i></a>"+
-        "<a href='"+url+'/hr/recruitment/operation/advance_info_edit/'+associate_id+"'  class=\"btn btn-sm btn-info\" title=\"Advance Info\"><i class=\"glyphicon  glyphicon-font\"></i></a>"+
-        "<a href='"+url+'/hr/recruitment/operation/benefits?associate_id='+associate_id+"' class=\"btn btn-sm btn-primary\" title=\"Benefits\"><i class=\"fa fa-usd\"></i></a>"+
-        "<a href='"+url+'/hr/ess/medical_incident?associate_id='+associate_id+"'  class=\"btn btn-sm btn-warning\" title=\"Medical Incident\"><i class=\"fa fa-stethoscope\"></i></a>"+
-        "<a href='"+url+'/hr/operation/servicebook?associate_id='+associate_id+"' class=\"btn btn-sm btn-danger\" title=\"Service Book\"><i class=\"fa fa-book\"></i></a>"+
+        "<a href='"+url+'/hr/recruitment/employee/edit/'+associate_id+"'  class=\"btn btn-sm btn-success\" title=\"Basic Info\"><i class=\"las la-address-card\"></i></a>"+
+        "<a href='"+url+'/hr/recruitment/operation/advance_info_edit/'+associate_id+"'  class=\"btn btn-sm btn-info\" title=\"Advance Info\"><i class=\"las la-user-tie\"></i></a>"+
+        "<a href='"+url+'/hr/recruitment/operation/benefits?associate_id='+associate_id+"' class=\"btn btn-sm btn-primary\" title=\"Benefits\"><i class=\"las la-gifts\"></i></a>"+
+        "<a href='"+url+'/hr/ess/medical_incident?associate_id='+associate_id+"'  class=\"btn btn-sm btn-warning\" title=\"Medical Incident\"><i class=\"las la-stethoscope\"></i></a>"+
+        "<a href='"+url+'/hr/operation/servicebook?associate_id='+associate_id+"' class=\"btn btn-sm btn-danger\" title=\"Service Book\"><i class=\"las la-address-book\"></i></a>"+
     "</div>"; 
-    $("#newBtn").html(newUrl);
+    $("#buttons").html(newUrl);
 }
-
-$(window).load(function(){ 
-    let associate_id = '{{ request()->get("associate_id") }}';
-    if (associate_id)
-    drawNewBtn(associate_id);
-});
-
 
 $(document).ready(function(){
     //get current benifit when id selected
-    var id_selected= $('#ben_as_id');
-    id_selected.on('change', function(){
+    let associate_id = '{{ request()->get("associate_id") }}';
+    if (associate_id){ 
+        get_benefit(associate_id) 
+    }
+    $(document).on('change','#ben_as_id', function(){
+        get_benefit($(this).val());
+    }); 
+
+    function get_benefit(associate_id)
+    {
         $.ajax({
             url: '{{ url("hr/recruitment/get_benefit_by_id") }}',
             data: {
-                id: id_selected.val()
+                id: associate_id
             },
             success: function(result)
             {  
-                drawNewBtn(id_selected.val());
-                //-----------------------------
+                draw_new_button(associate_id);
+                $('#avatar').attr('src',result.employee.as_pic);
+                $('#user-name').text(result.employee.as_name);
+                $('#designation').text(result.employee.designation.hr_designation_name);
 
                 if (result.benefit)
                 {
@@ -174,16 +168,6 @@ $(document).ready(function(){
                     $('#ben_transport').val(result.benefit['ben_transport']);
                     $('#ben_food').val(result.benefit['ben_food']);
 
-                    // Fixed Salary
-
-                    $('#ben_joining_salary_fixed').val(result.benefit['ben_joining_salary']);
-                    $('#ben_cash_amount_fixed').val(result.benefit['ben_cash_amount']);
-                    $('#ben_bank_amount_fixed').val(result.benefit['ben_bank_amount']);
-                    $('#ben_basic_fixed').val(result.benefit['ben_basic']);
-                    $('#ben_house_rent_fixed').val(result.benefit['ben_house_rent']);
-                    $('#ben_medical_fixed').val(result.benefit['ben_medical']);
-                    $('#ben_transport_fixed').val(result.benefit['ben_transport']);
-                    $('#ben_food_fixed').val(result.benefit['ben_food']);
                 }else{
                     $('#ben_joining_salary').val(0);
                     $('#ben_cash_amount').val(0);
@@ -193,17 +177,6 @@ $(document).ready(function(){
                     $('#ben_medical').val(0);
                     $('#ben_transport').val(0);
                     $('#ben_food').val(0);
-
-                    // Fixed Salary
-
-                    $('#ben_joining_salary_fixed').val(0);
-                    $('#ben_cash_amount_fixed').val(0);
-                    $('#ben_bank_amount_fixed').val(0);
-                    $('#ben_basic_fixed').val(0);
-                    $('#ben_house_rent_fixed').val(0);
-                    $('#ben_medical_fixed').val(0);
-                    $('#ben_transport_fixed').val(0);
-                    $('#ben_food_fixed').val(0);
                 }
             },
             error:function(xhr)
@@ -211,7 +184,7 @@ $(document).ready(function(){
                 console.log('No previous salary');
             }
         });
-    }); 
+    }
 
     $('#ben_joining_salary').on('change', function(){
         var basic_percent= '{{ $structure->basic }}';
@@ -227,7 +200,6 @@ $(document).ready(function(){
         var house= parseFloat(salary-sub-basic).toFixed(2);
         $('#ben_house_rent').val(house);
 
-   
     });
 
     $('#ben_cash_amount').on('change', function(){
@@ -420,9 +392,6 @@ $(document).ready(function(){
    });
 
 });
-</script>
-
-
 </script>
 @endpush
 @endsection

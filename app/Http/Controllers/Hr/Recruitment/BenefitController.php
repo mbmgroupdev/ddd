@@ -9,7 +9,7 @@ use App\Models\Hr\Designation;
 use App\Models\Hr\SalaryStructure;
 use App\Models\Hr\Unit;
 use App\Models\Hr\EmpType;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use App\Models\Hr\Increment;
 use App\Models\Hr\Promotion;
 use App\Models\Hr\FixedSalary;
@@ -24,11 +24,8 @@ class BenefitController extends Controller
 {
     public function benefits(Request $request)
     {
-        //ACL::check(["permission" => "hr_recruitment_op_benefit"]);
-        #-----------------------------------------------------------#
+        
         $id=$request->associate_id;
-
-
         $structure= DB::table('hr_salary_structure')->where('status', 1)->select(['hr_salary_structure.*'])->first();
 
 
@@ -37,8 +34,6 @@ class BenefitController extends Controller
 
     public function benefitStore(Request $request)
     {
-        //ACL::check(["permission" => "hr_recruitment_op_benefit"]);
-        #-----------------------------------------------------------#
         $user= Auth::user()->associate_id;
         $validator= Validator::make($request->all(), [
             'ben_as_id'           => 'unique:hr_benefits|max:10|min:10|alpha_num',
@@ -115,8 +110,7 @@ class BenefitController extends Controller
 
     public function benefitList()
     {
-        //ACL::check(["permission" => "hr_payroll_benefit_list"]);
-        #-----------------------------------------------------------#
+        
         $unitList= Unit::whereIn('hr_unit_id', auth()->user()->unit_permissions())
             ->pluck('hr_unit_name', 'hr_unit_id');
 
@@ -125,8 +119,7 @@ class BenefitController extends Controller
 
     public function benefitListData()
     {
-        //ACL::check(["permission" => "hr_payroll_benefit_list"]);
-        #-----------------------------------------------------------#
+        
         $data = DB::table('hr_benefits AS b')
                 ->where('b.ben_status',1)
                 ->select(
@@ -142,7 +135,7 @@ class BenefitController extends Controller
                 ->leftJoin('hr_as_basic_info as a', 'a.associate_id', '=', 'b.ben_as_id')
                 ->leftJoin('hr_unit AS u', 'u.hr_unit_id', 'a.as_unit_id')
                 ->whereIn('a.as_unit_id', auth()->user()->unit_permissions())
-                ->whereNotIn('a.as_id', auth()->user()->management_permissions()) // restricted for management
+                ->whereNotIn('a.as_id', auth()->user()->management_permissions()) 
                 ->orderBy('b.ben_id', 'desc')
                 ->get();
 
@@ -164,10 +157,6 @@ class BenefitController extends Controller
 
     public function benefitEdit($id)
     {
-        //ACL::check(["permission" => "hr_payroll_benefit_list"]);
-        #-----------------------------------------------------------#
-
-        // check if associate id is management restricted or not
 
         $get_as_id = Employee::where('associate_id', $id)->first(['as_id']);
         $m_restriction=  auth()->user()->management_permissions(); //dd($m_restriction);
@@ -390,6 +379,7 @@ class BenefitController extends Controller
 
     public function getBenefitByID(Request $request)
     {
+        $result['employee'] = Employee::where('associate_id',$request->id)->first()->toArray();
         $result['benefit']= DB::table('hr_benefits')
                     ->where('ben_as_id', $request->id)
                     ->select('hr_benefits.*')
@@ -403,7 +393,7 @@ class BenefitController extends Controller
             $result['flag']= false;
         }
 
-        return $result;
+        return response()->json($result);
     }
 
     public function showIncrementForm()
