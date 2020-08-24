@@ -92,7 +92,7 @@ class BenefitController extends Controller
 
                     }
 
-                    $this->logFileWrite("Benefits Entry Saved", $benefits->ben_id);
+                    log_file_write("Benefits Entry Saved", $benefits->ben_id);
 
                     return back()
                         ->withInput()
@@ -311,7 +311,7 @@ class BenefitController extends Controller
                                 'updated_at'        => NOW()
                             ]);
                                $id=DB::table('hr_fixed_emp_salary')->where('as_id', $request->ben_as_id)->value('id');
-                               $this->logFileWrite("Fixed Salary Updated", $id );
+                               log_file_write("Fixed Salary Updated", $id );
 
                             }
                     // If  Fixed Salary  Not exists then insert
@@ -333,13 +333,13 @@ class BenefitController extends Controller
                             $fixSalary->created_at          = date('Y-m-d H:i:s');
                             $fixSalary->save();
 
-                            $this->logFileWrite("Fixed Salary Saved", $fixSalary->id);
+                            log_file_write("Fixed Salary Saved", $fixSalary->id);
                     }
 
             }
 
             $id = DB::table('hr_benefits')->where('ben_as_id', $request->ben_as_id)->value('ben_id');
-            $this->logFileWrite("Benefits Entry Updated", $id);
+            log_file_write("Benefits Entry Updated", $id);
 
             return back()
                 ->with('success', 'Benefit Updated Successfully!');
@@ -363,7 +363,7 @@ class BenefitController extends Controller
                 $data->save();
 
                 $id = $data->id;
-                $this->logFileWrite("Other Benefits Entry Saved", $id);
+                log_file_write("Other Benefits Entry Saved", $id);
             }
 
             return back()
@@ -514,7 +514,7 @@ class BenefitController extends Controller
             $increment->created_at = date('Y-m-d H:i:s') ;
             $increment->save();
 
-            $this->logFileWrite("Increment Entry Saved", $increment->id);
+            log_file_write("Increment Entry Saved", $increment->id);
 
 
             //Keeping the not given increment amount---- SalaryAdjustMaster, SalaryAdjustDetails
@@ -600,7 +600,7 @@ class BenefitController extends Controller
                           "amount_type"         => $request->amount_type
                     ]);
 
-        $this->logFileWrite("Increment Updated", $request->increment_id);
+        log_file_write("Increment Updated", $request->increment_id);
         return back()
             ->with('success', "Increment updated Successfully!");
     }
@@ -676,7 +676,7 @@ class BenefitController extends Controller
                         ]);
 
                 $id = Benefits::where('ben_as_id', $increment->associate_id)->value('ben_id');
-                $this->logFileWrite("Jobs Benefits Updated", $id );
+                log_file_write("Jobs Benefits Updated", $id );
 
                 Increment::where('associate_id', $increment->associate_id)
                             ->where('status', 0)
@@ -843,7 +843,7 @@ class BenefitController extends Controller
 
             if ( $store->save())
             {
-                $this->logFileWrite("Associate Promoted Saved", $store->id);
+                log_file_write("Associate Promoted Saved", $store->id);
                 return back()
                     ->with('success', 'Associate Promoted Successfully!');
             }
@@ -895,7 +895,7 @@ class BenefitController extends Controller
                         'effective_date'         => $request->effective_date,
                     ]);
 
-            $this->logFileWrite("Promotion Updated", $request->promotion_id);
+            log_file_write("Promotion Updated", $request->promotion_id);
 
                 return back()
                     ->with('success', 'Promotion updated Successfully!');
@@ -920,14 +920,14 @@ class BenefitController extends Controller
                 ]);
 
                 $id = Employee::where("associate_id", $item->associate_id)->value('as_id');
-                // $this->logFileWrite("Employee Designation Updated", $id);
+                // log_file_write("Employee Designation Updated", $id);
 
                 Promotion::where("id", $item->id)
                 ->update([
                     'status' => 1
                 ]);
 
-                // $this->logFileWrite("Promotion Status Updated", $item->id);
+                // log_file_write("Promotion Status Updated", $item->id);
             }
         }
     }
@@ -956,20 +956,23 @@ class BenefitController extends Controller
         {
 
             $query = DB::table("hr_benefits AS ben")
-                ->select("b.associate_id", "b.as_doj", "b.as_designation_id", "d.hr_designation_name")
+                ->select("b.associate_id", "b.as_doj", "b.as_designation_id", "d.hr_designation_name",'b.as_name','b.as_pic')
                 ->leftJoin("hr_as_basic_info AS b", "b.associate_id", "=", "ben.ben_as_id")
                 ->leftJoin("hr_designation AS d", "d.hr_designation_id", "=", "b.as_designation_id")
                 ->where("b.associate_id",  $request->associate_id);
 
             if ($query->exists())
             {
-                $date = $query->first()->as_doj;
+                $info = $query->first();
+                $date = $info->as_doj;
                 $data['eligible_date'] = date("Y-m-d", strtotime("$date + 1 year"));
-                $data['previous_designation'] = $query->first()->hr_designation_name;
-                $data['previous_designation_id'] = $query->first()->as_designation_id;
+                $data['as_name'] = $info->as_name;
+                $data['as_pic'] = $info->as_pic??'assets/images/user/09.jpg';
+                $data['previous_designation'] = $info->hr_designation_name;
+                $data['previous_designation_id'] = $info->as_designation_id;
 
                 //update designations
-                $position = Designation::where("hr_designation_id", "=", $query->first()->as_designation_id)->value('hr_designation_position');
+                $position = Designation::where("hr_designation_id", "=", $info->as_designation_id)->value('hr_designation_position');
                 $designations = Designation::where('hr_designation_position', ">", $position)
                 ->where('hr_designation_status', 1)
                 ->orderBy('hr_designation_position', 'ASC')

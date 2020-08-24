@@ -18,81 +18,68 @@
 
 		<div class="page-content"> 
             
-                        @include('inc/message')
-                        <div class="output alert hide"></div>
+            @include('inc/message')
             @can('Manage Promotion') 
-            <div class="panel panel-info">
-                <div class="panel panel-heading"><h6>Promotion</h6></div>
-                <div class="row" style="padding: 15px; ">
-                        <!-- PAGE CONTENT BEGINS -->
+            <div class="panel">
+                <div class="panel-heading"><h6>Promotion</h6></div>
                          
-                        {{ Form::open(['url'=>'hr/payroll/promotion', 'class'=>'form-horizontal']) }}
-                    <div class="col-sm-5">
-     
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label no-padding-right" for="associate_id"> Associate's ID <span style="color: red; vertical-align: top;">&#42;</span> </label>
-                                <div class="col-sm-8">
-                                    {{ Form::select('associate_id', [], null, ['placeholder'=>'Select Associate\'s ID', 'id'=>'associate_id', 'class'=> 'associates no-select col-xs-12', 'data-validation'=>'required', 'data-validation-error-msg' => 'The Associate\'s ID field is required']) }}  
-                                </div>
+                {{ Form::open(['url'=>'hr/payroll/promotion', 'class'=>'form-horizontal p-3']) }}
+                    <div class="row justify-content-center">
+                        
+                        <div class="col-4">
+         
+                            <div class="form-group has-float-label has-required select-search-group">
+                                {{ Form::select('associate_id', [], null, ['placeholder'=>'Select Associate\'s ID', 'id'=>'associate_id', 'class'=> 'img-associates']) }}
+                                <label  for="associate_id"> Associate's ID </label>
                             </div>
 
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label no-padding-right" for="previous_designation"> Previous Designation </label>
-                                <div class="col-sm-8">
-                                    <input type="hidden" name="previous_designation_id">
-                                    <input type="text" name="previous_designation" id="previous_designation" placeholder="No Previous Designation Found" class="col-xs-12" data-validation="required" readonly />
-                                </div>
+                            <div class="form-group has-float-label has-required ">
+                                <input type="hidden" name="previous_designation_id">
+                                <input type="text" name="previous_designation" id="previous_designation" placeholder="No Previous Designation Found"  readonly  class="form-control" />
+                                <label  for="previous_designation"> Previous Designation </label>
                             </div>
 
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label no-padding-right" for="current_designation_id"> Promoted Designation </label>
-                                <div class="col-sm-8"> 
-                                    {{ Form::select('current_designation_id', $designationList, null, ['placeholder'=>'Select Promoted Designation', 'id'=>'current_designation_id', 'class'=> 'col-xs-12',  'data-validation'=>'required']) }}  
-                                </div>
-                            </div>
-                    </div>
-                    <div class="col-sm-2"></div>
-                    <div class="col-sm-5">
-
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label no-padding-right" for="eligible_date"> Eligible Date </label>
-                                <div class="col-sm-8">
-                                    <input type="text" name="eligible_date" palceholder="Y-m-d" id="eligible_date" class="datepicker col-xs-12" data-validation="required" readonly />
-                                </div>
+                            <div class="form-group has-float-label has-required select-search-group">
+                                {{ Form::select('current_designation_id', $designationList, null, ['placeholder'=>'Select Promoted Designation', 'id'=>'current_designation_id']) }}  
+                                <label for="current_designation_id"> Promoted Designation </label>
                             </div>
 
+                            <div class="form-group has-float-label  has-required">
+                                <input type="date" name="eligible_date" palceholder="Y-m-d" id="eligible_date" class="form-control "  readonly />
+                                <label  for="eligible_date"> Eligible Date </label>
+                            </div>
+
+                            <div class="form-group has-float-label has-required">
+                                <input type="date" name="effective_date" id="effective_date" class=" form-control filter" value="" />
+                                <label  for="effective_date"> Effective Date </label>
+                            </div>
                             <div class="form-group">
-                                <label class="col-sm-4 control-label no-padding-right" for="effective_date"> Effective Date </label>
-                                <div class="col-sm-8">
-                                    <input type="text" name="effective_date" id="effective_date" class="datepicker col-xs-12 filter" value="" />
-                                </div>
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="fa fa-check"></i> Save
+                                </button>
                             </div>
      
-                            
-                        <!-- PAGE CONTENT ENDS -->
+                        </div>
+                        <div class="col-4 benefit-employee">
+                            <div class="user-details-block">
+                                  <div class="user-profile text-center">
+                                        <img id="avatar" class="avatar-130 img-fluid" src="{{ asset('assets/images/user/09.jpg') }} " onerror="this.onerror=null;this.src='{{ asset("assets/images/user/09.jpg") }}';">
+                                  </div>
+                                  <div class="text-center mt-3">
+                                     <h4><b id="user-name">Selected User</b></h4>
+                                     <p class="mb-0" id="designation">
+                                        Employee designation</p>
+                                     
+                                  </div>
+                               </div>
+                        </div>
                     </div>
-                            <div class="col-sm-12 responsive-hundred">
-                            <div class="clearfix form-actions">
-                                <div class="col-md-offset-4 col-md-4 text-center"> 
-                                    <button class="btn btn-sm btn-success" type="submit">
-                                        <i class="ace-icon fa fa-check bigger-110"></i> Submit
-                                    </button>
-
-                                    &nbsp; &nbsp; &nbsp;
-                                    <button class="btn btn-sm" type="reset">
-                                        <i class="ace-icon fa fa-undo bigger-110"></i> Reset
-                                    </button>
-                                </div>
-                            </div>
-                            </div>
-                            <!-- /.row --> 
                           
-                        {{ Form::close() }}
-            </div>   
-            </div> 
+                {{ Form::close() }}
+            </div>
             @endcan        
             <!-- /.col -->
-            <div class="responsive-hundred">
+            {{-- <div class="responsive-hundred">
                <div class="widget-box widget-color-blue">
                 <table id="dataTables" class="table table-striped table-bordered">
                         <thead>
@@ -121,12 +108,13 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
+            </div> --}}
           
           
 		</div><!-- /.page-content -->
 	</div>
 </div> 
+@push('js')
 <script type="text/javascript">
 $(document).ready(function()
 {  
@@ -150,51 +138,10 @@ $(document).ready(function()
     $('#dataTables').DataTable({
             pagingType: "full_numbers" ,
     });
-    function formatState (state) {
-        //console.log(state.element);
-        if (!state.id) {
-            return state.text;
-        }
-        var baseUrl = "/user/pages/images/flags";
-        var $state = $(
-        '<span><img /> <span></span></span>'
-        );
-        // Use .text() instead of HTML string concatenation to avoid script injection issues
-        var targetName = state.name;
-        $state.find("span").text(targetName);
-        // $state.find("img").attr("src", baseUrl + "/" + state.element.value.toLowerCase() + ".png");
-        return $state;
-    };
-    // Associate Search
-    $('select.associates').select2({
-        templateSelection:formatState,
-        placeholder: 'Select Associate\'s ID',
-        ajax: {
-            url: '{{ url("hr/payroll/promotion-associate-search") }}',
-            dataType: 'json',
-            delay: 250,
-            data: function (params) {
-                return { 
-                    keyword: params.term
-                }; 
-            },
-            processResults: function (data) { 
-                return {
-                    results:  $.map(data, function (item) {
-                        return {
-                            text: $("<span><img src='"+(item.as_pic ==null?'/assets/images/avatars/profile-pic.jpg':item.as_pic)+"' height='50px' width='auto'/> " + item.associate_name + "</span>"),
-                            id: item.associate_id,
-                            name: item.associate_name
-                        }
-                    }) 
-                };
-          },
-          cache: true
-        }
-    }); 
+    
 
     //Associate Information 
-    $("body").on('change', ".associates", function(){
+    $("body").on('change', ".img-associates", function(){
         $.ajax({
             url: '{{ url("hr/payroll/promotion-associate-info") }}',
             type: 'get',
@@ -202,8 +149,13 @@ $(document).ready(function()
             data: {associate_id: $(this).val()},
             success: function(data)
             { 
+                console.log(data);
                 if (data.status)
                 { 
+                    $('#avatar').attr('src',data.as_pic);
+                    $('#user-name').text(data.as_name);
+                    $('#designation').text(data.previous_designation);
+
                     $("select[name=current_designation_id").html("").append(data.designation);
                     $('select[name=current_designation_id').trigger('change'); 
 
@@ -229,4 +181,5 @@ $(document).ready(function()
 
 });
 </script>
+@endpush
 @endsection

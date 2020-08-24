@@ -97,7 +97,6 @@
                                 </div>
                             </div> 
                             <div class="col-4 benefit-employee">
-                                @php $user = auth()->user(); @endphp
                                 <div class="user-details-block">
                                       <div class="user-profile text-center">
                                             <img id="avatar" class="avatar-130 img-fluid" src="{{ asset('assets/images/user/09.jpg') }} " onerror="this.onerror=null;this.src='{{ asset("assets/images/user/09.jpg") }}';">
