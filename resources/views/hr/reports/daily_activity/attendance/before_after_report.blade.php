@@ -16,7 +16,7 @@
 			<div class="top_summery_section">
 				@if($input['report_format'] == 0 || ($input['report_format'] == 1 && $format != null))
 				<div class="page-header">
-		            <h2 style="margin:4px 10px; font-weight: bold; text-align: center;">{{ $input['date']}} Absent Report </h2>
+		            <h2 style="margin:4px 10px; font-weight: bold; text-align: center;">Before Absent After Present </h2>
 		            <h4 style="margin:4px 10px; font-weight: bold; text-align: center;">@if($input['report_format'] == 0) Details @else Summary @endif Report</h4>
 		            <div class="row">
 		            	<div class="col-5">
@@ -53,12 +53,24 @@
 		            	</div>
 		            	<div class="col-4 no-padding">
 		            		<div class="row">
+		                		<div class="col-4 pr-0">
+		                			<h4 style="margin:4px 5px; margin: 0; padding: 0"><font style="font-weight: bold; font-size: 12px;">Absent Date: </font></h4>
+		                		</div>
+		                		<div class="col-8 pl-0">
+		                			<h4 style="margin:4px 5px; margin: 0; padding: 0">&nbsp;&nbsp;{{ $input['absent_date'] }}</h4>
+		                		</div>
+		                		<div class="col-4 pr-0">
+		                			<h4 style="margin:4px 5px; margin: 0; padding: 0"><font style="font-weight: bold; font-size: 12px;">Present Date: </font></h4>
+		                		</div>
+		                		<div class="col-8 pl-0">
+		                			<h4 style="margin:4px 5px; margin: 0; padding: 0">&nbsp;&nbsp;{{ $input['present_date'] }}</h4>
+		                		</div>
 		                		
 		                		<div class="col-4 pr-0">
 		                			<h4 style="margin:4px 5px; margin: 0; padding: 0"><font style="font-weight: bold; font-size: 12px;">Total Employee: </font></h4>
 		                		</div>
 		                		<div class="col-8 pl-0">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0">&nbsp;&nbsp;{{ $totalEmployees }}</h4>
+		                			<h4 style="margin:4px 5px; margin: 0; padding: 0">&nbsp;&nbsp;{{ count($getEmployee) }}</h4>
 		                		</div>
 		                	</div>
 		            	</div>
@@ -102,7 +114,8 @@
 		        </div>
 		        @else
 		        <div class="page-header-summery">
-        			<h2>{{ $input['date']}} Employee Absent Summary Report </h2>
+        			
+        			<h2>Before Absent After Present Summary Report </h2>
         			<h4>Unit: {{ $unit[$input['unit']]['hr_unit_name'] }}</h4>
         			<h4>Area: {{ $area[$input['area']]['hr_area_name'] }}</h4>
         			@if($input['department'] != null)
@@ -125,7 +138,9 @@
         			<h4>Line: {{ $line[$input['line_id']]['hr_line_name'] }}</h4>
         			@endif
 
-        			<h4>Total Absent Employee: <b>{{ $totalEmployees }}</b></h4>
+        			<h4>Absent Date: <b>{{ $input['absent_date'] }}</b></h4>
+        			<h4>Present Date: <b>{{ $input['present_date'] }}</b></h4>
+        			<h4>Total Employee: <b>{{ count($getEmployee) }}</b></h4>
 		            		
 		        </div>
 		        @endif
@@ -163,7 +178,7 @@
 			                @endif
 			                <tr>
 			                    <th>Sl</th>
-			                    {{-- <th>Photo</th> --}}
+			                    <th>Photo</th>
 			                    <th>Associate ID</th>
 			                    <th>Name & Phone</th>
 			                    <th>Designation</th>
@@ -183,7 +198,7 @@
 			            	@if($head == '')
 			            	<tr>
 			            		<td>{{ ++$i }}</td>
-				            	{{-- <td><img src="{{ $employee->as_pic }}" class='small-image' onError='this.onerror=null;this.src="/assets/images/avatars/avatar2.png"' style="height: 40px; width: auto;"></td> --}}
+				            	<td><img src="{{ $employee->as_pic }}" class='small-image' onError='this.onerror=null;this.src="{{ ($employee->as_gender == 'Female'?asset('assets/images/user/1.jpg'):asset('assets/images/user/09.jpg')) }}";' style="height: 40px; width: auto;"></td>
 				            	<td>{{ $employee->associate_id }}</td>
 				            	<td>
 				            		<b>{{ $employee->as_name }}</b>
@@ -201,7 +216,7 @@
 			            	@if($group == $employee->$format)
 			            	<tr>
 			            		<td>{{ ++$i }}</td>
-				            	{{-- <td><img src="{{ $employee->as_pic }}" class='small-image' onError='this.onerror=null;this.src="/assets/images/avatars/avatar2.png"' style="height: 40px; width: auto;"></td> --}}
+				            	<td><img src="{{ $employee->as_pic }}" class='small-image' onError='this.onerror=null;this.src="{{ ($employee->as_gender == 'Female'?asset('assets/images/user/1.jpg'):asset('assets/images/user/09.jpg')) }}";' style="height: 40px; width: auto;"></td>
 				            	<td>{{ $employee->associate_id }}</td>
 				            	<td>
 				            		<b>{{ $employee->as_name }}</b>
@@ -220,13 +235,13 @@
 			            @endforeach
 			            @else
 				            <tr>
-				            	<td colspan="8" class="text-center">No Data Found!</td>
+				            	<td colspan="9" class="text-center">No Data Found!</td>
 				            </tr>
 			            @endif
 			            </tbody>
 			            <tfoot>
 			            	<tr>
-			            		<td colspan="6"></td>
+			            		<td colspan="7"></td>
 			            		<td><b>Total Employee</b></td>
 			            		<td><b>{{ $i }}</b></td>
 			            	</tr>
@@ -291,7 +306,13 @@
 				            </tr>
 							@endif
 						</tbody>
-						
+						<tfoot>
+							<tr>
+								<td></td>
+								<td style="text-align: right"><b>Total Employee</b></td>
+								<td><b>{{ $totalEmployee }}</b></td>
+							</tr>
+						</tfoot>
 					</table>
 				@endif
 			</div>

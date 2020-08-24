@@ -105,7 +105,7 @@ class DailyActivityReportController extends Controller
                     if($input['report_format'] == 1 && $input['report_group'] != null){
                         $attData->select('emp.'.$input['report_group'], DB::raw('count(*) as total'))->groupBy('emp.'.$input['report_group']);
                     }else{
-                        $attData->select('emp.as_id', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_contact', 'emp.as_section_id');
+                        $attData->select('emp.as_id', 'emp.as_gender', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_contact', 'emp.as_section_id');
                     }
                 $getEmployee = $attData->get();
                 if($format != null && count($getEmployee) > 0 && $input['report_format'] == 0){
@@ -249,6 +249,12 @@ class DailyActivityReportController extends Controller
                 $attData = DB::table('hr_leave AS a')
                 ->whereRaw('? between leave_from and leave_to', [$request['date']])
                 ->where('a.leave_status',1);
+            }elseif($input['report_type'] == 'before_absent_after_present'){
+                $absentData = $this->getAbsentEmployeeFromDate($input);
+                $tableName = get_att_table($request['unit']).' AS a';
+                $attData = DB::table($tableName)
+                ->whereDate('a.in_date', $request['present_date'])
+                ->whereIn('a.as_id', $absentData);
             }
             // employee check
             if($input['report_format'] == 0 && !empty($input['employee'])){
@@ -276,7 +282,7 @@ class DailyActivityReportController extends Controller
             ->when(!empty($input['subSection']), function ($query) use($input){
                return $query->where('emp.as_subsection_id', $input['subSection']);
             });
-            if($input['report_type'] == 'ot' || $input['report_type'] == 'working_hour' || $input['report_type'] == 'late'){
+            if($input['report_type'] == 'ot' || $input['report_type'] == 'working_hour' || $input['report_type'] == 'late' || $input['report_type'] == 'before_absent_after_present'){
                 $attData->leftjoin(DB::raw('(' . $employeeData_sql. ') AS emp'), function($join) use ($employeeData) {
                     $join->on('a.as_id', '=', 'emp.as_id')->addBinding($employeeData->getBindings());
                 });
@@ -301,7 +307,7 @@ class DailyActivityReportController extends Controller
                     $attData->select($groupBy, DB::raw('count(*) as total'), DB::raw('sum(ot_hour) as groupOt'))->groupBy($groupBy)->orderBy('a.ot_hour','desc');
                     $totalOtHour =  array_sum(array_column($attData->get()->toArray(),'groupOt'));
                 }else{
-                    $attData->select('emp.as_id', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_contact', 'emp.as_section_id', 'a.in_time', 'a.out_time', 'a.ot_hour')->orderBy('a.ot_hour','desc');
+                    $attData->select('emp.as_id', 'emp.as_gender', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_contact', 'emp.as_section_id', 'a.in_time', 'a.out_time', 'a.ot_hour')->orderBy('a.ot_hour','desc');
                     $totalOtHour = $attData->sum("a.ot_hour");
                     
                 }
@@ -326,7 +332,7 @@ class DailyActivityReportController extends Controller
                     $attData->select($groupBy, DB::raw('count(*) as total'), DB::raw('sum((TIMESTAMPDIFF(minute, in_time, out_time) - s.hr_shift_break_time)) as groupHourDuration'))->groupBy($groupBy)->orderBy('groupHourDuration','desc');
                     $totalWorkingMinute =  array_sum(array_column($attData->get()->toArray(),'groupHourDuration'));
                 }else{
-                    $attData->select('emp.as_id', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_contact', 'emp.as_section_id', 'a.in_time', 'a.out_time', 's.hr_shift_break_time', 'a.ot_hour')->orderBy('a.ot_hour','desc');
+                    $attData->select('emp.as_id', 'emp.as_gender', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_contact', 'emp.as_section_id', 'a.in_time', 'a.out_time', 's.hr_shift_break_time', 'a.ot_hour')->orderBy('a.ot_hour','desc');
                     $attData->addSelect(DB::raw('(TIMESTAMPDIFF(minute, in_time, out_time) - s.hr_shift_break_time) as hourDuration'));
                     $totalWorkingMinute =  array_sum(array_column($attData->get()->toArray(),'hourDuration'));
                     
@@ -341,7 +347,7 @@ class DailyActivityReportController extends Controller
                     $attData->select('emp.'.$input['report_group'], DB::raw('count(*) as total'))->groupBy('emp.'.$input['report_group']);
                     
                 }else{
-                    $attData->select('emp.as_id', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_contact', 'emp.as_section_id');
+                    $attData->select('emp.as_id', 'emp.as_gender', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_contact', 'emp.as_section_id');
                 }
             }
                 
@@ -377,11 +383,51 @@ class DailyActivityReportController extends Controller
                 return view('hr.reports.daily_activity.attendance.working_hour_report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees', 'totalValue', 'totalAvgHour'));
             }elseif($input['report_type'] == 'late'){
                 return view('hr.reports.daily_activity.attendance.late_report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees'));
+            }elseif($input['report_type'] == 'before_absent_after_present'){
+                return view('hr.reports.daily_activity.attendance.before_after_report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees'));
             }
         } catch (\Exception $e) {
             $bug = $e->getMessage();
             return $bug;
             return 'error';
         }
+    }
+    public function getAbsentEmployeeFromDate($input)
+    {
+        // employee basic sql binding
+        $employeeData = DB::table('hr_as_basic_info');
+        $employeeData_sql = $employeeData->toSql();
+
+        $queryData = Absent::select('emp.as_id')
+        ->where('hr_unit',$input['unit'])
+        ->whereDate('date', $input['absent_date'])
+
+        ->when(!empty($input['area']), function ($query) use($input){
+           return $query->where('emp.as_area_id',$input['area']);
+        })
+        ->when(!empty($input['department']), function ($query) use($input){
+           return $query->where('emp.as_department_id',$input['department']);
+        })
+        ->when(!empty($input['line_id']), function ($query) use($input){
+           return $query->where('emp.as_line_id', $input['line_id']);
+        })
+        ->when(!empty($input['floor_id']), function ($query) use($input){
+           return $query->where('emp.as_floor_id',$input['floor_id']);
+        })
+        ->when($input['otnonot']!=null, function ($query) use($input){
+           return $query->where('emp.as_ot',$input['otnonot']);
+        })
+        ->when(!empty($input['section']), function ($query) use($input){
+           return $query->where('emp.as_section_id', $input['section']);
+        })
+        ->when(!empty($input['subSection']), function ($query) use($input){
+           return $query->where('emp.as_subsection_id', $input['subSection']);
+        });
+        $queryData->leftjoin(DB::raw('(' . $employeeData_sql. ') AS emp'), function($join) use ($employeeData) {
+            $join->on('emp.associate_id','hr_absent.associate_id')->addBinding($employeeData->getBindings());
+        });
+        
+        $absentData = $queryData->pluck('emp.as_id')->toArray();
+        return $absentData;
     }
 }

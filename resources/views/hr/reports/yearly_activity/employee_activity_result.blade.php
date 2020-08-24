@@ -9,7 +9,7 @@
            </div>
            <div class="body_content_section">
            	<div class="body_section" id="">
-           		<table class="table table-bordered">
+           		<table class="table table-bordered table-hover table-head">
            			<thead>
            				<tr>
            					<th>Month</th>
