@@ -56,7 +56,7 @@
                                     <div class="col-6">
                                          <a id="generate" class="btn btn-primary" href="{{ url('hr/recruitment/job-application?associate_id=%ASSOCIATE_ID%') }}">Generate</a>
                                          @if(!empty(Request::get('associate_id')))
-                                         <button type="submit" onclick="printMe('job_application')" title="Print" class="btn btn-warning">
+                                         <button type="button" onclick="printMe('job_application')" title="Print" class="btn btn-warning">
                                                 <i class="fa fa-print"></i> 
                                         </button> 
                                         

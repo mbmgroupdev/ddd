@@ -28,15 +28,15 @@ class MonthlyActivityReportController extends Controller
         // return $input;
         try {
             $yearMonth = explode('-', $input['month']);
-            $month = date('m', strtotime($yearMonth[0]));
-            $year = $yearMonth[1];
-            $areaid       = isset($request['area'])?$request['area']:'';
-            $otnonot      = isset($request['otnonot'])?$request['otnonot']:'';
-            $departmentid = isset($request['department'])?$request['department']:'';
-            $lineid       = isset($request['line_id'])?$request['line_id']:'';
-            $florid       = isset($request['floor_id'])?$request['floor_id']:'';
-            $section      = isset($request['section'])?$request['section']:'';
-            $subSection   = isset($request['subSection'])?$request['subSection']:'';
+            $month = $yearMonth[1];
+            $year = $yearMonth[0];
+            $input['area']       = isset($request['area'])?$request['area']:'';
+            $input['otnonot']    = isset($request['otnonot'])?$request['otnonot']:'';
+            $input['department'] = isset($request['department'])?$request['department']:'';
+            $input['line_id']    = isset($request['line_id'])?$request['line_id']:'';
+            $input['floor_id']   = isset($request['floor_id'])?$request['floor_id']:'';
+            $input['section']    = isset($request['section'])?$request['section']:'';
+            $input['subSection'] = isset($request['subSection'])?$request['subSection']:'';
 
             // employee basic sql binding
             $employeeData = DB::table('hr_as_basic_info');
@@ -51,26 +51,26 @@ class MonthlyActivityReportController extends Controller
             ->where('s.year', $year)
             ->where('s.month', $month)
             ->whereBetween('s.gross', [$input['min_sal'], $input['max_sal']])
-            ->when(!empty($areaid), function ($query) use($areaid){
-               return $query->where('emp.as_area_id',$areaid);
+            ->when(!empty($input['area']), function ($query) use($input){
+               return $query->where('emp.as_area_id',$input['area']);
             })
-            ->when(!empty($departmentid), function ($query) use($departmentid){
-               return $query->where('emp.as_department_id',$departmentid);
+            ->when(!empty($input['department']), function ($query) use($input){
+               return $query->where('emp.as_department_id',$input['department']);
             })
-            ->when(!empty($lineid), function ($query) use($lineid){
-               return $query->where('emp.as_line_id', $lineid);
+            ->when(!empty($input['line_id']), function ($query) use($input){
+               return $query->where('emp.as_line_id', $input['line_id']);
             })
-            ->when(!empty($florid), function ($query) use($florid){
-               return $query->where('emp.as_floor_id',$florid);
+            ->when(!empty($input['floor_id']), function ($query) use($input){
+               return $query->where('emp.as_floor_id',$input['floor_id']);
             })
-            ->when($request['otnonot']!=null, function ($query) use($otnonot){
-               return $query->where('emp.as_ot',$otnonot);
+            ->when($request['otnonot']!=null, function ($query) use($input){
+               return $query->where('emp.as_ot',$input['otnonot']);
             })
-            ->when(!empty($section), function ($query) use($section){
-               return $query->where('emp.as_section_id', $section);
+            ->when(!empty($input['section']), function ($query) use($input){
+               return $query->where('emp.as_section_id', $input['section']);
             })
-            ->when(!empty($subSection), function ($query) use($subSection){
-               return $query->where('emp.as_subsection_id', $subSection);
+            ->when(!empty($input['subSection']), function ($query) use($input){
+               return $query->where('emp.as_subsection_id', $input['subSection']);
             });
             $queryData->leftjoin(DB::raw('(' . $employeeData_sql. ') AS emp'), function($join) use ($employeeData) {
                 $join->on('emp.associate_id','s.as_id')->addBinding($employeeData->getBindings());
@@ -79,7 +79,7 @@ class MonthlyActivityReportController extends Controller
                 $queryData->select('emp.'.$input['report_group'], DB::raw('count(*) as total'), DB::raw('sum(total_payable) as groupSalary'))->groupBy('emp.'.$input['report_group']);
 
             }else{
-                $queryData->select('emp.as_id', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_section_id', 's.total_payable');
+                $queryData->select('emp.as_id','emp.as_gender', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_section_id', 's.total_payable');
                 $totalSalary = round($queryData->sum("s.total_payable"));
             }
             $getEmployee = $queryData->get();
