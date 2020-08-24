@@ -37,96 +37,81 @@
                       <!-- Display Erro/Success Message -->
                     @include('inc/message')
                     
-                    <form class="form-horizontal" role="form" method="post" action="{{ url('hr/payroll/increment')  }}" enctype="multipart/form-data">
-                        <div class="col-sm-12 no-padding no-margin">
-                            <div class="col-sm-7">
-                                <!-- PAGE CONTENT BEGINS -->
-                                <!-- <h1 align="center">Add New Employee</h1> -->
-                               
-                                {{ csrf_field() }} 
+                    <form class="form-horizontal p-3" role="form" method="post" action="{{ url('hr/payroll/increment')  }}" enctype="multipart/form-data">
+                        {{ csrf_field() }} 
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-group has-float-label select-search-group">
+                                    {{ Form::select('unit', $unitList, null, ['placeholder'=>'Select Unit', 'class'=> ' filter form-control']) }}
+                                    <label for="hr_unit_name" >Unit </label>
+                                </div>
 
-                                    <div class="form-group">
-                                        <label class="col-sm-4 control-label no-padding-right" for="hr_unit_name" >Unit </label>
-                                        <div class="col-sm-8">
-                                            {{ Form::select('unit', $unitList, null, ['placeholder'=>'Select Unit', 'class'=> 'col-xs-12 filter']) }}
+                                <div class="form-group has-float-label select-search-group">
+                                    {{ Form::select('emp_type', $employeeTypes, null, ['placeholder'=>'Select Associate Type', 'class'=> ' filter form-control']) }} 
+                                    <label  for="hr_unit_name" >Associate Type </label>
+                                </div>
+
+                                <div class="form-group has-float-label select-search-group">
+                                    {{ Form::select('increment_type', $typeList, null, ['placeholder'=>'Select Increment Type','class'=>'form-control']) }}
+                                    <label  for="hr_unit_name" >Increment Type </label>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        
+                                        <div class="form-group has-float-label has-required">
+                                            <input type="date" name="applied_date" id="applied_date" class="form-control  " placeholder="Enter Date"  />
+                                            <label for="applied_date"> Applied Date </label>
                                         </div>
                                     </div>
-
-                                    <div class="form-group">
-                                        <label class="col-sm-4 control-label no-padding-right" for="hr_unit_name" >Associate Type </label>
-                                        <div class="col-sm-8">
-                                            {{ Form::select('emp_type', $employeeTypes, null, ['placeholder'=>'Select Associate Type', 'class'=> 'col-xs-12 filter']) }} 
+                                    <div class="col-6">
+                                        
+                                        <div class="form-group has-float-label ">
+                                            <label for="effective_date"> Effective Date </label>
+                                            <input type="date" name="effective_date" id="effective_date" class="form-control  " placeholder="Enter Date" />
                                         </div>
                                     </div>
-
-                                    <div class="form-group">
-                                        <label class="col-sm-4 control-label no-padding-right" for="hr_unit_name" >Increment Type </label>
-                                        <div class="col-sm-8">
-                                            {{ Form::select('increment_type', $typeList, null, ['placeholder'=>'Select Increment Type', 'class'=> 'col-xs-12']) }}
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group has-float-label has-required">
+                                            <input type="text" name="increment_amount" id="increment_amount" placeholder="Increment Amount/Percentage" class="form-control" required/>
+                                            <label  for="increment_amount">Amount </label>
                                         </div>
+                                        
                                     </div>
-
-                                    {{-- <div class="form-group">
-                                        <label class="col-sm-4 control-label no-padding-right" for="elligible_date"> Elligible Date </label>
-                                        <div class="col-sm-8">
-                                            <input type="text" name="elligible_date" id="elligible_date" class="datepicker col-xs-12 " placeholder="Enter Date"  />
-                                        </div>
-                                    </div> --}}
-                                    <div class="form-group">
-                                        <label class="col-sm-4 control-label no-padding-right" for="applied_date"> Applied Date </label>
-                                        <div class="col-sm-8">
-                                            <input type="text" name="applied_date" id="applied_date" class="datepicker col-xs-12 " placeholder="Enter Date"  />
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label class="col-sm-4 control-label no-padding-right" for="effective_date"> Effective Date </label>
-                                        <div class="col-sm-8">
-                                            <input type="text" name="effective_date" id="effective_date" class="datepicker col-xs-12 " placeholder="Enter Date" />
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label class="col-sm-4 control-label no-padding-right" for="increment_amount"> Increment Amount/Percentage  </label>
-                                        <div class="col-sm-5">
-                                            <input type="text" name="increment_amount" id="increment_amount" placeholder="Increment Amount/Percentage" class="col-xs-12" data-validation="required number length" data-validation-length="1-11" data-validation-allowing="float"/>
-                                        </div>
-                                        <div class="col-sm-3" style="padding-left: 0px !important;">
-                                            <select class="col-xs-12 no-padding" data-validation="required" id="amount_type" name="amount_type">
+                                    <div class="col-6">
+                                        <div class="form-group has-float-label select-search-group has-required">
+                                            <select class="form-control" data-validation="required" id="amount_type" name="amount_type">
                                                 <option value="">Select Amount Type</option>
                                                 <option value="1">Increased Amount</option>
                                                 <option value="2">Percent</option>
                                             </select>
-                                        </div>
-                                    </div> 
-
-                                    
-                                    <div class="clearfix form-actions responsive-hundred">
-                                        <div class="align-center"> 
-                                            <button class="btn btn-xs btn-success" type="submit">
-                                                <i class="ace-icon fa fa-check bigger-110"></i> Submit
-                                            </button>
-
-                                            &nbsp; &nbsp; &nbsp;
-                                            <button class="btn btn-xs" type="reset">
-                                                <i class="ace-icon fa fa-undo bigger-110"></i> Reset
-                                            </button>
+                                            <label>Type</label>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <!-- /.row --> 
-                                 
-                                <!-- PAGE CONTENT ENDS -->
+                                
+                                <div class="clearfix form-actions responsive-hundred">
+                                    <div class="align-center"> 
+                                        <button class="btn  btn-primary" type="submit">
+                                            <i class="ace-icon fa fa-check bigger-110"></i> Submit
+                                        </button>
+
+                                        &nbsp; &nbsp; &nbsp;
+                                        <button class="btn" type="reset">
+                                            <i class="ace-icon fa fa-undo bigger-110"></i> Reset
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
 
-                            <!-- Table -->
-
-                            <div class="col-sm-5">
-                                <div class="row">
-                                    <div class="col-sm-6 text-center" style="background-color: lightcoral; color: #fff;">
+                            <div class="col-6">
+                                <div class="row m-0">
+                                    <div class="col-6 text-center" style="background-color: lightcoral; color: #fff;">
                                         <p style="padding-top: 8px;">Selected Employee: <span id="selectEmp" style="font-weight: bold;"></span></p>
                                     </div>
-                                    <div class="col-sm-6 text-center" style="background-color: #87B87F; color: #fff;">
+                                    <div class="col-6 text-center" style="background-color: #87B87F; color: #fff;">
                                         <p style="padding-top: 8px;">Total Employee: <span id="totalEmp" style="font-weight: bold;"></span></p>
                                     </div>
                                 </div>
@@ -134,7 +119,7 @@
                                     <table id="AssociateTable" class="table header-fixed1 table-compact table-bordered" >
                                         <thead>
                                             <tr>
-                                                <th style='position: sticky; top: -1px; text-align: center;'><input type="checkbox" id="checkAll" style="zoom: 1.5;" /></th>
+                                                <th style='position: sticky; top: -1px; text-align: center;'><input type="checkbox" id="checkAll" style="height:10px !important;" /></th>
                                                 <th style='position: sticky; top: -1px;'>Associate ID</th>
                                                 <th style='position: sticky; top: -1px;'>Associate Name</th>
                                             </tr>
@@ -153,19 +138,19 @@
                 </div>
             </div> 
             @endcan
-            <div class="col-sm-12 widget-box widget-color-blue dv" style="padding-left: 0px; border-radius: 2px; ">
+            {{-- <div class="col-12 widget-box widget-color-blue dv" style="padding-left: 0px; border-radius: 2px; ">
                 <div class="row">
-                    <div class="col-sm-4">
+                    <div class="col-4">
                         <button class="btn btn-xs btn-primary"  id="increment_list_button">Increment List</button>
                     </div>
-                    <div class="col-sm-4" style="text-align: center; color: blue;">
+                    <div class="col-4" style="text-align: center; color: blue;">
                         <h4 class="no-margin no-padding">Lists</h4>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-4">
                         <button class="btn btn-xs btn-primary pull-right"  id="arear_salary_list_button">Arear Salary List</button>
                     </div>
                 </div>
-                <div id="increment_list_div" class="col-sm-12 table-responsive"  hidden="hidden" style="margin-top: 10px;">
+                <div id="increment_list_div" class="col-12 table-responsive"  hidden="hidden" style="margin-top: 10px;">
                     <table id="dataTables" class="table table-striped table-bordered" style="width: 100% !important;">
                         <thead>
                             <tr>
@@ -196,7 +181,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div id="arear_salary_list_div" class="col-sm-12 table-responsive"  hidden="hidden" style="margin-top: 10px;">
+                <div id="arear_salary_list_div" class="col-12 table-responsive"  hidden="hidden" style="margin-top: 10px;">
                     <table id="dataTables2" class="table table-striped table-bordered" style="width: 100% !important;">
                         <thead>
                             <tr>
@@ -281,12 +266,12 @@
                     </table>
                 </div>
             </div>
-          
+           --}}
 
 		</div><!-- /.page-content -->
 	</div>
 </div>
-
+@push('js')
 <script type="text/javascript"> 
 $(document).ready(function(){
     var totalempcount = 0;
@@ -296,7 +281,7 @@ $(document).ready(function(){
     }); 
     $('#dataTables2').DataTable({
             pagingType: "full_numbers",
-            dom: "<'row'<'col-sm-2'l><'col-sm-4'i><'col-sm-3 text-center'B><'col-sm-3'f>>tp",
+            dom: "<'row'<'col-2'l><'col-4'i><'col-3 text-center'B><'col-3'f>>tp",
             buttons: [
                 {
                     extend: 'print',
@@ -455,4 +440,5 @@ $(document).ready(function(){
 
 });
 </script>
+@endpush
 @endsection

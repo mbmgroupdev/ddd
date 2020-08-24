@@ -1202,11 +1202,11 @@ table th {
 												@endforeach 
 											@else 
 											    <div class="row">
-													<div class="col-xs-2">
+													<div class="col-2">
 														<strong>{{ date('Y') }}</strong>
 													</div>
 
-													<div class="col-xs-10">
+													<div class="col-10">
 														<table class="table" style="border:1px solid #6EAED1">
 															<thead>
 															<tr>
@@ -1336,43 +1336,32 @@ table th {
 								    <div class="widget-box transparent">
 										
 		                                <div class="widget-header widget-header-small">
-			                                <h4 class="widget-title center smaller">
+			                                <h4 class="widget-title text-center">
 												Generate Salary Report
 											</h4>
 										</div>
 
-
-	                                    <div class="space-10"></div>
-
-		                                 <div class="row choice_1_div" id="choice_1_div" name="choice_1_div">
+		                                 <div class="row mt-3" id="choice_1_div" name="choice_1_div">
 						                    <div class="col-sm-2 no-padding">
 						                       <input type="hidden" value="{{ $info->associate_id }}" id="as_id" name="as_id">
 						                        
 						                    </div>
 						                    <div class="col-sm-3 no-padding">
-						                        <label class="col-sm-4 control-label no-padding-right align-left" for="month_number">Form<span class="text-red">&#42;</span></label>
-						                        <div class="col-sm-7">
-						                            <input type="text" name="form-date" id="form-date" class="col-xs-12 monthYearpicker" value="" data-validation="required" placeholder=" Month-Year" />
-						                            <span class="text-red" id="error_form_date_f"></span>
-						                        </div>
+						                    	<div class="form-group has-required has-float-label">
+						                    		
+							                        <input type="month" name="form-date" id="form-date" class="form-control" value="" />
+							                        <label  for="month_number">Form</label>
+						                    	</div>
+						           
 						                    </div>
 						                    <div class="col-sm-3 no-padding">
-						                        <label class="col-sm-4 control-label no-padding-right align-left" for="month_number">To<span class="text-red">&#42;</span></label>
-						                        <div class="col-sm-7">
-						                            <input type="text" name="to-date" id="to-date" class="col-xs-12 monthYearpicker" value="" data-validation="required" placeholder=" Month-Year" />
-						                            <span class="text-red" id="error_to_date_f"></span>
-						                        </div>
+						                    	<div class="form-group has-required has-float-label">
+							                        <label  for="month_number">To</label>
+							                        <input type="month" name="to-date" id="to-date" class="form-control" value="" />
+						                        </div>   
 						                    </div>
 						                    <div class="col-sm-2">
-						                        <button onclick="individual()" class="btn btn-primary choice_1_generate_btn" id="choice_1_generate_btn" name="choice_1_generate_btn" style="height: 28px;
-						                        border: none;
-						                        color: white;
-						                        text-align: center;
-						                        text-decoration: none;
-						                        display: inline-block;
-						                        padding-top: 3px;
-						                        font-size: 12px;
-						                        cursor: pointer;" ><span class="glyphicon glyphicon-pencil"></span>&nbsp Generate</button>
+						                        <button onclick="individual()" class="btn btn-primary choice_1_generate_btn" id="choice_1_generate_btn" name="choice_1_generate_btn" ></span> Generate</button>
 						                    </div>
 
 						                </div>
