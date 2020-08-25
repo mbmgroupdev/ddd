@@ -16,7 +16,7 @@
 			<div class="top_summery_section">
 				@if($input['report_format'] == 0 || ($input['report_format'] == 1 && $format != null))
 				<div class="page-header">
-		            <h2 style="margin:4px 10px; font-weight: bold; text-align: center;">{{ $input['month']}} Salary Report </h2>
+		            <h2 style="margin:4px 10px; font-weight: bold; text-align: center;">{{ date('M Y', strtotime($input['month'])) }} Salary Report </h2>
 		            <h4 style="margin:4px 10px; font-weight: bold; text-align: center;">@if($input['report_format'] == 0) Details @else Summary @endif Report</h4>
 		            <div class="row">
 		            	<div class="col-5">
@@ -138,6 +138,7 @@
 		        </div>
 		        @endif
 			</div>
+
 			<div class="content_list_section">
 				@if($input['report_format'] == 0)
 					@foreach($uniqueGroups as $group)
@@ -333,11 +334,7 @@
 		               			<thead>
 		               				<tr>
 		               					<th>Month</th>
-		               					<th>Absent</th>
-		               					<th>Late</th>
-		               					<th>Leave</th>
-		               					<th>Holiday</th>
-		               					<th>OT Hour</th>
+		               					<th>Salary</th>
 		               				</tr>
 		               			</thead>
 		               			<tbody id="body_result_section">
@@ -387,7 +384,7 @@
         $(".inner_body").show();
         // ajax call
         $.ajax({
-            url: '/hr/reports/employee-yearly-activity-report-modal',
+            url: '/hr/reports/employee-yearly-salary-modal',
             type: "GET",
             data: {
                 as_id: associateId
@@ -413,31 +410,6 @@
         });
         // 
         
-    });
-    $("#confirm-disbursed").click(function() {
-        let associate_id = $("#modal-associateId").val();
-        let month = $("#modal-month").val();
-        let year = $("#modal-year").val();
-        let select_id = $("#modal-id").val();
-        //alert(id);
-        var _token = $('input[name="_token"]').val();
-
-        $.ajax({
-            url: '/hr/reports/employee-salary-disbursed',
-            type: "post",
-            data: { _token : _token,
-                as_id: associate_id,
-                year: year,
-                month: month
-            },
-            success: function(response){
-                console.log(response);
-                if(response.status === 'success'){
-                    $("#"+select_id).html( $.trim(response.value) ).effect('highlight',{},2500);
-                }
-
-            }
-        });
     });
 
     $(".cancel_details").click(function() {

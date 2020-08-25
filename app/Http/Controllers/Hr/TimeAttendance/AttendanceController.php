@@ -92,16 +92,16 @@ class AttendanceController extends Controller
 
         #-----------------------------------------------------------#
         $unitList  = Unit::where('hr_unit_status', '1')
-            ->whereIn('hr_unit_id', auth()->user()->unit_permissions())
-            ->pluck('hr_unit_name', 'hr_unit_id');
-            $floorList= [];
-            $lineList= [];
-            $areaList  = DB::table('hr_area')->where('hr_area_status', '1')->pluck('hr_area_name', 'hr_area_id');
-            $deptList= [];
-            $sectionList= [];
-            $subSectionList= [];
+        ->whereIn('hr_unit_id', auth()->user()->unit_permissions())
+        ->pluck('hr_unit_name', 'hr_unit_id');
+        $floorList= [];
+        $lineList= [];
+        $areaList  = DB::table('hr_area')->where('hr_area_status', '1')->pluck('hr_area_name', 'hr_area_id');
+        $deptList= [];
+        $sectionList= [];
+        $subSectionList= [];
 
-        return view('hr/timeattendance/attendance_report', compact('unitList','floorList','lineList','areaList','deptList','sectionList','subSectionList'));
+        return view('hr/operation/attendance/index', compact('unitList','floorList','lineList','areaList','deptList','sectionList','subSectionList'));
     }
 
    public function makeAbsent(Request $request)
