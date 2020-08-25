@@ -112,7 +112,7 @@ class HrMonthlySalary extends Model
             ->where('as_id', $asId)
             ->where('year', $year)
             ->orderBy('month', 'asc')
-            ->get()
-            ->groupBy('month');
+            ->groupBy('month')
+            ->get();
     }
 }

@@ -160,7 +160,7 @@
                       <div class="form-group row">
                           <label class="col-sm-4 control-label no-padding-right" for="ot_hour"> OT Hour: </label>
                           <div class="col-sm-8 no-padding-right">
-                             <input  name="ot_range" id="ot_hour" placeholder="OT hour" class="col-xs-12  form-control" style="height: 30px; font-size: 12px;" />
+                             <input  name="ot_range" id="ot_hour" placeholder="OT Hour" class="col-xs-12  form-control" style="height: 30px; font-size: 12px;" />
                           </div>
                        </div>
                        
@@ -293,72 +293,72 @@
           }
         }
       });
-    }
+  }
 
-    setTimeout(function () {
+  setTimeout(function () {
 
-     if($('#type').val() != 'Absent'){
-       var type = 'out';
-       if(updatedRow.data().in_time == null){
-         var type = 'in';
+   if($('#type').val() != 'Absent'){
+     var type = 'out';
+     if(updatedRow.data().in_time == null){
+       var type = 'in';
+     }
+     //console.log('{{ Auth::user()->hasRole('super user')}}');
+
+     $.ajax({
+       url : "{{ url('hr/attendance/save_from_report') }}",
+       type: 'get',
+       data: {
+         unit : updatedRow.data().as_unit_id,
+         associate_id:updatedRow.data().associate_id,
+         date:updatedRow.data().att_date,
+         in_punch_new:updatedRow.data().in_punch,
+         out_punch_new:updatedRow.data().out_punch,
+         ot_new:updatedRow.data().ot,
+         type:type
+       },
+       success: function(data)
+       {
+        console.log(data);
+        $('#'+updatedRow.data().associate_id+index+'_in').css('background-color','yellow');
+        $('#'+updatedRow.data().associate_id+index+'_out').css('background-color','yellow');
+        $('#'+updatedRow.data().associate_id+index+'_ot').css('background-color','yellow');
+         toastr.success(' ','Attendance Udated Successfully.');
+         // $('#dataTables').DataTable().ajax.reload()
+       },
+       error: function()
+       {
+         toastr.error('Please Try Again Later.','Something Went Wrong!!');
        }
-       //console.log('{{ Auth::user()->hasRole('super user')}}');
+     });
+   }else{
 
-       $.ajax({
-         url : "{{ url('hr/attendance/save_from_report') }}",
-         type: 'get',
-         data: {
-           unit : updatedRow.data().as_unit_id,
-           associate_id:updatedRow.data().associate_id,
-           date:updatedRow.data().att_date,
-           in_punch_new:updatedRow.data().in_punch,
-           out_punch_new:updatedRow.data().out_punch,
-           ot_new:updatedRow.data().ot,
-           type:type
-         },
-         success: function(data)
-         {
-          console.log(data);
-          $('#'+updatedRow.data().associate_id+index+'_in').css('background-color','yellow');
-          $('#'+updatedRow.data().associate_id+index+'_out').css('background-color','yellow');
-          $('#'+updatedRow.data().associate_id+index+'_ot').css('background-color','yellow');
-           toastr.success(' ','Attendance Udated Successfully.');
-           // $('#dataTables').DataTable().ajax.reload()
-         },
-         error: function()
-         {
-           toastr.error('Please Try Again Later.','Something Went Wrong!!');
-         }
-       });
-     }else{
-
-       $.ajax({
-         url : "{{ url('hr/attendance/save_from_report_absent') }}",
-         type: 'get',
-         data: {
-           unit : updatedRow.data().as_unit_id,
-           associate_id:updatedRow.data().associate_id,
-           date:updatedRow.data().att_date,
-           in_punch_new:updatedRow.data().in_punch,
-           out_punch_new:updatedRow.data().out_punch,
-           ot_new:updatedRow.data().ot
-         },
-         success: function(data)
-         {
-          $('#'+updatedRow.data().associate_id+index+'_in').css('background-color','yellow');
-          $('#'+updatedRow.data().associate_id+index+'_out').css('background-color','yellow');
-          $('#'+updatedRow.data().associate_id+index+'_ot').css('background-color','yellow');
-           toastr.success(' ','Attendance Updated Successfully.');
-           //$('#dataTables').DataTable().ajax.reload()
-         },
-         error: function()
-         {
-           toastr.error('Please Try Again Later.','Something Went Wrong!!');
-         }
-       });
-     }
-     },1000);
-     }
+     $.ajax({
+       url : "{{ url('hr/attendance/save_from_report_absent') }}",
+       type: 'get',
+       data: {
+         unit : updatedRow.data().as_unit_id,
+         associate_id:updatedRow.data().associate_id,
+         date:updatedRow.data().att_date,
+         in_punch_new:updatedRow.data().in_punch,
+         out_punch_new:updatedRow.data().out_punch,
+         ot_new:updatedRow.data().ot
+       },
+       success: function(data)
+       {
+        $('#'+updatedRow.data().associate_id+index+'_in').css('background-color','yellow');
+        $('#'+updatedRow.data().associate_id+index+'_out').css('background-color','yellow');
+        $('#'+updatedRow.data().associate_id+index+'_ot').css('background-color','yellow');
+         toastr.success(' ','Attendance Updated Successfully.');
+         //$('#dataTables').DataTable().ajax.reload()
+       },
+       error: function()
+       {
+         toastr.error('Please Try Again Later.','Something Went Wrong!!');
+       }
+     });
+   }
+   },1000);
+  }
 
    $(document).ready(function(){
 
