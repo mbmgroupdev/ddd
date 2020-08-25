@@ -10,22 +10,24 @@ use DataTables, DB, Auth, ACL, stdClass;
 
 class AttendanceOperationController extends Controller
 {
+
     public function attendanceReportData(Request $request)
     {
-    	$data = [];
-		$designation = designation_by_id();
-		$shiftData = shift_by_code();
+        $data = [];
+        $designation = designation_by_id();
+        $shiftData = shift_by_code();
         $type = $request->type;
-    	$input = $request->all();
-    	if($type == 'All' || $type == 'Present' || $type == 'Present(Intime Empty)' || $type == 'Present(Outtime Empty)' || $type == 'Present (Halfday)' || $type == 'Present (Late)' || $type == 'Present (Late(Outtime Empty))'){
-    		$data = $this->getAllAtendanceData($request->all());
-    	}elseif($type == 'Absent'){
-    		$data = $this->getAbsentData($request->all());
-    	}else{
+        $input = $request->all();
+        if($type == 'All' || $type == 'Present' || $type == 'Present(Intime Empty)' || $type == 'Present(Outtime Empty)' || $type == 'Present (Halfday)' || $type == 'Present (Late)' || $type == 'Present (Late(Outtime Empty))'){
+            $data = $this->getAllAtendanceData($request->all());
+        }elseif($type == 'Absent'){
+            $data = $this->getAbsentData($request->all());
+        }else{
             $data = [];
         }
-    	$date = isset($request->report_from)?$request->report_from:date('Y-m-d');
-    	// return $data[0]->shift;
+        $date = isset($request->report_from)?$request->report_from:date('Y-m-d');
+        
+        // return $data[0]->shift;
         return DataTables::of($data)->addIndexColumn()
         ->addColumn('edit_jobcard', function($data) {
           //dd($data);exit;
@@ -78,7 +80,7 @@ class AttendanceOperationController extends Controller
             return $designation[$data->as_designation_id]['hr_designation_name']??'';
         })
         ->addColumn('hr_shift_name', function ($data) use ($shiftData) {
-        	return $shiftData[$data->hr_shift_code]['hr_shift_name']??'';
+            return $shiftData[$data->hr_shift_code]['hr_shift_name']??'';
         })
         ->addColumn('att_status', function ($data) use ($date) {
             // if(isset($data->reportType) && $data->reportType == 'all'){
@@ -181,7 +183,7 @@ class AttendanceOperationController extends Controller
 
         ->addColumn('ot', function ($data) {
           if ($data->as_ot == 1){
-            /**/
+            
             $expdata = explode('.',$data->ot_hour);
             return !empty($expdata[1])?$expdata[0].':'.($expdata[1]=='50'?'30':'00'):$data->ot_hour;
           }else{

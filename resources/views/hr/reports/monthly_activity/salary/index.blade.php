@@ -167,6 +167,7 @@
     </div>
 </div>
 @push('js')
+<script src="{{ asset('assets/js/popper.min.js')}}"></script>
 <script src="{{ asset('assets/js/moment.min.js')}}"></script>
 <script type="text/javascript">
     $(document).ready(function(){   
