@@ -1,6 +1,46 @@
 @extends('hr.layout')
 @section('title', 'Leave List')
 @section('main-content')
+@push('css')
+<style type="text/css">
+    {{-- removing the links in print and adding each page header --}}
+    /*a[href]:after { content: none !important; }
+    thead {display: table-header-group;}
+    input::-webkit-input-placeholder {
+        color: black;
+        font-weight: bold;
+        font-size: 12px;
+    }
+    input:-moz-placeholder {
+        color: black;
+        font-weight: bold;
+        font-size: 12px;
+    }
+    input:-ms-input-placeholder {
+        color: black;
+        font-weight: bold;
+        font-size: 12px;
+    }
+    th{
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .dataTables_wrapper .dt-buttons {
+        text-align: center;
+        padding-left: 20%;
+    }
+    
+    
+    .dataTables_processing {
+        top: 200px !important;
+        z-index: 11000 !important;
+        border: 0px !important;
+        box-shadow: none !important;
+        background: transparent !important;
+    }*/
+</style>
+@endpush
 <div class="main-content">
     <div class="main-content-inner">
         <div class="breadcrumbs ace-save-state" id="breadcrumbs">
@@ -21,43 +61,33 @@
             @include('inc/message')
             <div class="panel panel-info">
                 <div class="panel-heading"><h6>All Leaves<a href="{{ url('hr/timeattendance/leave-entry')}}" class="pull-right btn  btn-primary">Leave Entry</a></h6></div> 
-                  <div class="panel-body">
+                <div class="panel-body">
 
-                    <div class="row">
-                         <!-- Display Erro/Success Message -->
-                        <div class="col-xs-12 worker-list">
-                            <!-- PAGE CONTENT BEGINS -->
-                            </br>
-                            <!-- Display Erro/Success Message -->
-                            <table id="dataTables" class="table table-striped table-bordered" style="width: 100%; overflow-x: auto; display: block; ">
-                                <thead>
-                                    <tr>
-                                        <th width="10%">Associate ID</th>
-                                        <th width="20%">Name</th>
-                                        <th width="20%">Unit</th>
-                                        <th width="10%">Leave Type</th>
-                                        <th width="20%">Leave Duration</th>
-                                        <th width="10%">Leave Status</th>
-                                        <th width="20%">Action</th>
-                                    </tr>
-                                </thead> 
-                                 <tfoot>
-                                    <tr>
-                                        <th width="10%">Associate ID</th>
-                                        <th width="20%">Name</th>
-                                        <th width="20%">Unit</th>
-                                        <th width="10%">Leave Type</th>
-                                        <th width="20%">Leave Duration</th>
-                                        <th width="10%">Leave Status</th>
-                                        <th width="20%">Action</th>
-                                    </tr>
-                                </tfoot> 
-                            </table> 
-                            <!-- PAGE CONTENT ENDS -->
-                        </div>
-                        <!-- /.col -->
-                    </div>
-                   </div>
+                    <table id="dataTables" class="table table-striped table-bordered" style="width: 100%; overflow-x: auto; display: block; ">
+                        <thead>
+                            <tr>
+                                <th width="10%">Associate ID</th>
+                                <th width="20%">Name</th>
+                                <th width="20%">Unit</th>
+                                <th width="10%">Leave Type</th>
+                                <th width="20%">Leave Duration</th>
+                                <th width="10%">Leave Status</th>
+                                <th width="20%">Action</th>
+                            </tr>
+                        </thead> 
+                         <tfoot>
+                            <tr>
+                                <th width="10%">Associate ID</th>
+                                <th width="20%">Name</th>
+                                <th width="20%">Unit</th>
+                                <th width="10%">Leave Type</th>
+                                <th width="20%">Leave Duration</th>
+                                <th width="10%">Leave Status</th>
+                                <th width="20%">Action</th>
+                            </tr>
+                        </tfoot> 
+                    </table>
+                </div>
             </div>
         </div><!-- /.page-content -->
     </div>
