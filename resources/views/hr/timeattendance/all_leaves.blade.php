@@ -1,52 +1,6 @@
 @extends('hr.layout')
-@section('title', '')
+@section('title', 'Leave List')
 @section('main-content')
-@push('css')
-<style type="text/css">
-    {{-- removing the links in print and adding each page header --}}
-    a[href]:after { content: none !important; }
-    thead {display: table-header-group;}
-
-    /*making place holder custom*/
-    input::-webkit-input-placeholder {
-        color: black;
-        font-weight: bold;
-        font-size: 12px;
-    }
-    input:-moz-placeholder {
-        color: black;
-        font-weight: bold;
-        font-size: 12px;
-    }
-    input:-ms-input-placeholder {
-        color: black;
-        font-weight: bold;
-        font-size: 12px;
-    }
-    th{
-        font-size: 12px;
-        font-weight: bold;
-    }
-
-    .dataTables_wrapper .dt-buttons {
-        text-align: center;
-        padding-left: 425px;
-    }
-    .dataTables_length{
-        float: left;
-    }
-    .dataTables_filter{
-        float: right;
-    }
-    .dataTables_processing {
-        top: 200px !important;
-        z-index: 11000 !important;
-        border: 0px !important;
-        box-shadow: none !important;
-        background: transparent !important;
-    }
-</style>
-@endpush
 <div class="main-content">
     <div class="main-content-inner">
         <div class="breadcrumbs ace-save-state" id="breadcrumbs">
@@ -64,9 +18,9 @@
         </div>
 
         <div class="page-content"> 
-                    @include('inc/message')
+            @include('inc/message')
             <div class="panel panel-info">
-                <div class="panel-heading"><h6>All Leaves<a href="{{ url('hr/timeattendance/leave_worker')}}" class="pull-right btn btn-xx btn-info">Leave Entry</a></h6></div> 
+                <div class="panel-heading"><h6>All Leaves<a href="{{ url('hr/timeattendance/leave-entry')}}" class="pull-right btn  btn-primary">Leave Entry</a></h6></div> 
                   <div class="panel-body">
 
                     <div class="row">
@@ -108,7 +62,7 @@
         </div><!-- /.page-content -->
     </div>
 </div>
-
+@push('js')
 <script type="text/javascript">
 $(document).ready(function(){ 
     var searchable = [0,1,4];
@@ -245,4 +199,5 @@ $(document).ready(function(){
     }); 
 });
 </script>
+@endpush
 @endsection

@@ -139,7 +139,8 @@ class LeaveApplicationController extends Controller
     }
 
    
-    public function associatesLeave(Request $request){
+    public function associatesLeave(Request $request)
+    {
         $info = Employee::select(
                         'as_id',
                         'associate_id',
@@ -147,12 +148,13 @@ class LeaveApplicationController extends Controller
                         'as_gender',
                         'as_name',
                         'as_oracle_code',
-                        'as_doj'
+                        'as_doj',
+                        'as_pic'
                     )
                     ->where('associate_id', $request->associate_id)
                     ->orWhere('as_oracle_code', $request->associate_id)
                     ->first();
-        $table = $this->getTableName($info->as_unit_id);
+        $table = get_att_table($info->as_unit_id).' AS a';
 
         $leaves = DB::table('hr_leave')
                 ->select(
@@ -170,6 +172,7 @@ class LeaveApplicationController extends Controller
                 ->where(DB::raw("YEAR(leave_from)"),date('Y'))
                 ->where("leave_ass_id", $request->associate_id)
                 ->first();
+
         $earnleaves = DB::table("hr_leave") 
                     ->select(
                         DB::raw("
@@ -185,7 +188,7 @@ class LeaveApplicationController extends Controller
                     ->where('a.as_id',$info->as_id)
                     ->groupBy(DB::raw('Year(in_time)'))
                     ->get();
-        //dd($yearAtt);
+
 
         $earnedTotal = 0;
         if($yearAtt!= null){
@@ -216,7 +219,7 @@ class LeaveApplicationController extends Controller
                     )
                     ->where('associate_id', $request->associate_id)
                     ->first();
-        $table = $this->getTableName($info->as_unit_id);
+        $table = get_att_table($info->as_unit_id).' AS a';
         $statement = [];
         $statement['stat'] = "false";
         // Earned Leave Restriction
@@ -336,7 +339,7 @@ class LeaveApplicationController extends Controller
                     )
                     ->where('associate_id', $request->associate_id)
                     ->first();
-        $table = $this->getTableName($info->as_unit_id);
+        $table = get_att_table($info->as_unit_id).' AS a';
         $statement = [];
         $statement['stat'] = "false";
         if(isset($request->usertype) && $request->usertype == 'ess'){
@@ -486,7 +489,7 @@ class LeaveApplicationController extends Controller
                     ->where('associate_id', $request->associate_id)
                     ->first();
 
-        $table = $this->getTableName($info->as_unit_id);
+        $table = get_att_table($info->as_unit_id).' AS a';
         $statement = [];
         $statement['stat'] = "false";
         if(isset($request->usertype) && $request->usertype == 'ess'){
@@ -634,7 +637,7 @@ class LeaveApplicationController extends Controller
                     )
                     ->where('associate_id', $request->associate_id)
                     ->first();
-        $table = $this->getTableName($info->as_unit_id);
+        $table = get_att_table($info->as_unit_id).' AS a';
 
         $from_date   = new \DateTime($request->from_date);
         $to_date     = new \DateTime($request->to_date);

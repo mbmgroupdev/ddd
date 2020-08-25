@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Hr\Operation;
 
-use App\Helpers\Custom;
 use App\Http\Controllers\Controller;
 use App\Models\Hr\Absent;
 use Illuminate\Http\Request;
@@ -17,7 +16,7 @@ class AttendanceRollbackController extends Controller
     public function getDate(Request $request)
     {
         $input = $request->all();
-        $tableName = Custom::unitWiseAttendanceTableName($input['unit']);
+        $tableName = get_att_table($input['unit']);
         try {
             $getAtt = DB::table($tableName)
             ->select('in_time')
@@ -39,7 +38,7 @@ class AttendanceRollbackController extends Controller
     public function process(Request $request)
     {
     	$input = $request->all();
-    	$tableName = Custom::unitWiseAttendanceTableName($input['unit']);
+    	$tableName = get_att_table($input['unit']);
     	DB::beginTransaction();
     	try {
     		// date wise attendance table data delete
