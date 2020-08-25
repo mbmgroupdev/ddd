@@ -319,21 +319,31 @@ input[type="date" i] {
 
 
 .dataTables_wrapper .dt-buttons {
-  float:right;
+  padding-left: 20%;
   text-align:center;
 }
 .dataTables_length{
   float:left;
 }
 .dataTables_filter{
-  display: none;
-}
+        float: right;
+    }
+
 .dataTables_processing {
   /* top: 85% !important; */
   z-index: 11000 !important;
   border: 0px !important;
   box-shadow: none !important;
   background: transparent !important;
+}
+div.dataTables_wrapper div.dataTables_info {
+    padding-top: 0 !important;
+    white-space: nowrap;
+    display: inline-block !important;
+}
+div.dataTables_wrapper div.dataTables_paginate{
+    display: inline-block !important;
+    float: right;
 }
 .my-input-class {
   padding: 3px 6px;
