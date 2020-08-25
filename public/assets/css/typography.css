@@ -380,7 +380,11 @@ Alert
 .alert-secondary { color: #a09e9e; border-color: #d6d8d5; background-color: #f1f2f1; }
 .alert-success { color: #27b345; border-color: #b2efb2; background-color: #eefff2; }
 .alert-danger { color: #f14336; border-color: #f7c6c6; background-color: #fff5f4; }
-.alert-warning { color: #fbc647; border-color: #fff2b2; background-color: #fffcf3; }
+.alert-warning {
+    color: #f16d2f;
+    border-color: #f16d2f;
+    background-color: #fffcf352;
+}
 .alert-info { color: #6ce6f4; border-color: #b2f1ff; background-color: #e5fafc; }
 .alert-light { color: #a09e9e; border-color: #d6d8d5; background-color: #e9edf4; }
 .alert-dark { color: #3f414d; border-color: #c3c8c8; background-color: #f0efef; }

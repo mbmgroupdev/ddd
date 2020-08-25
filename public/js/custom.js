@@ -105,4 +105,22 @@ $(function() {
         myWindow.print();
         myWindow.close();
     } 
+
+
+    $(document).on("change", ".file-type-validation", function () {
+        var allow = $(this).data('file-allow'),
+            f_name = $(this).val(),
+            ext = f_name.substring(f_name.lastIndexOf('.')+1);
+        if ($.inArray( ext, allow) == -1) {
+            $(this).val('');
+            if($(this).parent().find('.file-input-error').length){
+                $(this).parent().find('.file-input-error').text('Only '+allow.toString()+' type files are allowed!')
+            }else{
+                $(this).parent().append('<p class="file-input-error">Only '+allow.toString()+' type files are allowed!</p>')
+            }
+        }
+        else{
+            $(this).parent().find('.file-input-error').remove();
+        }
+    });
 });

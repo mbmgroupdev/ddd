@@ -1,5 +1,5 @@
 @extends('hr.layout')
-@section('title', 'Workers Leave')
+@section('title', 'Employees Leave')
 @section('main-content')
 @push('css')
 <style type="text/css">
@@ -22,7 +22,7 @@
                 <li>
                     <a href="#"> Time & Attendance </a>
                 </li>
-                <li class="active"> Workers Leave </li>
+                <li class="active"> Employee's Leave </li>
             </ul><!-- /.breadcrumb -->
         </div>
         <div class="page-content"> 
@@ -30,100 +30,98 @@
                 <div class="panel-heading page-headline-bar">
                     <h6>
                         Leave Entry
-                        <a href="{{ url('hr/timeattendance/all_leaves') }}" class="btn btn-info btn-sm pull-right" rel='tooltip' data-tooltip-location='left' data-tooltip='Leave List'>
-                            <i class="fa fa-list"></i>
+                        <a href="{{ url('hr/timeattendance/all_leaves') }}" class="btn btn-primary pull-right" rel='tooltip' data-tooltip-location='left' data-tooltip='Leave List'>
+                            <i class="fa fa-list"> Leave List</i>
                         </a>
                     </h6>
                  </div> 
                 <div class="panel-body">
                     <div class="row">
-                        <div class="col-sm-6" style="padding-top: 20px;border-right: 1px solid #d1d1d1;">
-                            @include('inc/message')
+                        @include('inc/message')
+                        <div class="col-6" style="padding-top: 20px;border-right: 1px solid #d1d1d1;">
                             {{ Form::open(['url'=>'hr/timeattendance/leave_worker', 'class'=>'form-horizontal', 'files' => true]) }}
-                                <div class="form-group">
-                                    <label class="col-sm-4 control-label no-padding-right" for="leave_ass_id"> Associate's ID <span style="color: red; vertical-align: top;">&#42;</span> </label>
-                                    <div class="col-sm-8">
-                                        {{ Form::select('leave_ass_id', [], null, ['placeholder'=>'Select Associate\'s ID', 'id'=>'leave_ass_id', 'class'=> 'associates no-select col-xs-12', 'data-validation'=>'required', 'data-validation-error-msg' => 'The Associate\'s ID field is required']) }}  
+                                <div class="form-group has-required has-float-label select-search-group">
+                                    {{ Form::select('leave_ass_id', [], null, ['placeholder'=>'Select Associate\'s ID', 'id'=>'leave_ass_id', 'class'=> 'associates form-control', 'required'=>'required']) }}  
+                                    <label for="leave_ass_id"> Associate's ID </label>
+                                </div>
+                                <div class="form-group has-required has-float-label select-search-group">
+                                    <select name="leave_type" id="leave_type" class="form-control"  required="required" >
+                                        <option value="">Select Leave Type</option>
+                                        <option value="Casual">Casual</option>
+                                        <option value="Earned">Earned</option>
+                                        <option value="Sick">Sick</option> 
+                                        <option value="Maternity">Maternity</option>
+                                        <option value="Special">Special</option> 
+                                    </select>
+                                    <label for="leave_type">Leave Type</label>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-6">
+                                        
+                                        <div class="form-group has-required has-float-label mb-0">
+                                            <input type="text" name="leave_from" id="leave_from" class="form-control" required />
+                                            <label  for="leave_from">Leave From </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div id="multipleDateAccept" class="form-group has-required has-float-label mb-0">
+                                            <input type="text" name="leave_to" id="leave_to" class="form-control" required />
+                                            <label  for="leave_from">Leave From </label>
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="col-12">
+                                        <p id="select_day" style="font-size:12px;width: 100%;"></p>
+                                        <p style="font-size:12px;width: 100%;">Date format must be <span style="color: red">YYYY-MM-DD</span></p>
+                                    </div>
+                                </div>
+                                <div class="form-group has-required has-float-label">
+                                    <label  for="leave_applied_date"> Applied Date  </label>
+                                    <input type="date" name="leave_applied_date" id="leave_applied_date" class="form-control" required placeholder="YYYY-MM-DD"   value="{{date('Y-m-d')}}"/>
+                                </div>
+                                <div class="form-group  file-zone mb-0">
+                                    <label  for="file"> Supporting File </label>
+                                    <input type="file" name="leave_supporting_file" class="file-type-validation" data-file-allow='["docx","doc","pdf","jpeg","png","jpg"]' autocomplete="off" />
+                                    <div class="invalid-feedback" role="alert">
+                                        <strong>Select a file</strong>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label no-padding-right" for="leave_type">Leave Type <span style="color: red; vertical-align: top;">&#42;</span></label>
-                                    <div class="col-sm-8">
-                                        <select name="leave_type" id="leave_type" class="col-xs-12 no-select"  data-validation="required" data-validation-error-msg="Leave type is required" >
-                                            <option value="">Select Leave Type</option>
-                                            <option value="Casual">Casual</option>
-                                            <option value="Earned">Earned</option>
-                                            <option value="Sick">Sick</option> 
-                                            <option value="Maternity">Maternity</option>
-                                            <option value="Special">Special</option> 
-                                        </select>
-                                    </div>
+                                    <span id="file_upload_error" class="text-danger" style="; font-size: 12px;">Only <strong>docx, doc, pdf, jpeg, jpg or png</strong> file supported(<1 MB).</span>
+                                    
                                 </div>
-                                <!-- <div class="form-group">
-                                    <label class="col-sm-4 control-label no-padding-right" for="multipleDate"> Multiple Date</label>
-                                    <div class="col-sm-8"> 
-                                        <input id="multipleDate" class="ace ace-switch ace-switch-6" type="checkbox">
-                                        <span class="lbl" style="margin:6px 0 0 0"></span>
-                                    </div>
-                                </div> -->
-                                <div class="form-group">
-                                    <label class="col-sm-4 control-label no-padding-right" for="leave_from">Leave Date <span style="color: red; vertical-align: top;">&#42;</span></label>
-                                    <div class="col-sm-8">
-                                            <div class="col-sm-6 no-padding-left input-icon">
-                                            <input type="text" name="leave_from" id="leave_from" class="col-xs-12" data-validation="required date"  data-validation-format="yyyy-mm-dd"  placeholder="YYYY-MM-DD" />
-                                            </div>
-                                            <div class="col-sm-6 no-padding-right input-icon-right" id="multipleDateAccept">
-                                            <input type="text" name="leave_to" id="leave_to" class="col-xs-12" data-validation="required date"  data-validation-format="yyyy-mm-dd" placeholder="YYYY-MM-DD" /> 
-                                            </div>
-                                            <label id="select_day" style="font-size:12px;width: 100%;"></label>
-                                            <label style="font-size:12px;width: 100%;">Date format must be <span style="color: red">YYYY-MM-DD</span></label>
-                                    </div>
+                                
+                                <div class="form-group has-float-label">
+                                    <label for="leave_comment"> Note </label>
+                                    <textarea name="leave_comment" id="leave_comment" class="form-control" placeholder="Description"></textarea>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label no-padding-right" for="leave_applied_date"> Applied Date <span style="color: red; vertical-align: top;">&#42;</span> </label>
-                                    <div class="col-sm-8">
-                                        <input type="text" name="leave_applied_date" id="leave_applied_date" class="col-xs-12 text-center" data-validation="required date" placeholder="YYYY-MM-DD"  data-validation-format="yyyy-mm-dd" value="{{date('Y-m-d')}}"/>
-                                    </div>
-                                </div>
-                                <div class="form-group" style="padding-top: 10px;">
-                                    <label class="col-sm-4 control-label no-padding-right no-padding-top" for="leave_supporting_file">Supporting File<br> <span>(pdf|doc|docx|jpg|jpeg|png)</span> </label>
-                                    <div class="col-sm-8">
-                                        <input type="file" name="leave_supporting_file" id="leave_supporting_file" data-validation="mime size" data-validation-allowing="docx,doc,pdf,jpeg,png,jpg" data-validation-max-size="1M"
-                                        data-validation-error-msg-size="You can not upload file larger than 1MB" data-validation-error-msg-mime="You can only upload docx, doc, pdf, jpeg, jpg or png type file">
-                                        <span id="file_upload_error" class="red" style="display: none; font-size: 14px;">Only <strong>docx, doc, pdf, jpeg, jpg or png</strong> file supported(<1 MB).</span>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-4 control-label no-padding-right" for="leave_comment"> Note </label>
-                                    <div class="col-sm-8">
-                                        <textarea name="leave_comment" id="leave_comment" class="col-xs-12" placeholder="Description"  data-validation="length" data-validation-length="0-1024" data-validation-allowing=" -" data-validation-error-msg="The Description has to be an alphanumeric value between 2-1024 characters"></textarea>
-                                    </div>
-                                </div>
-                                <div class="space-4"></div>
-                                <div class="space-4"></div>
-                                <div class="clearfix form-actions">
-                                    <div class=" text-center" style="padding-left: 53px;">
-                                        <button class="btn btn-sm btn-success" type="submit" id="leave_entry" disabled="disabled">
-                                            <i class="ace-icon fa fa-check bigger-110"></i> Submit
-                                        </button>
-                                        &nbsp; &nbsp; &nbsp;
-                                        <button class="btn btn-sm" type="reset">
-                                            <i class="ace-icon fa fa-undo bigger-110"></i> Reset
-                                        </button>
-                                    </div>
+                                    <button class="btn  btn-primary" type="submit" id="leave_entry" disabled="disabled">
+                                        <i class="fa fa-check bigger-110"></i> Submit
+                                    </button>
+                                    &nbsp; &nbsp; &nbsp;
+                                    <button class="btn " type="reset">
+                                        <i class="fa fa-undo bigger-110"></i> Reset
+                                    </button>
                                 </div>
                             {{ Form::close() }}
                         </div>
-                        <div class="col-sm-6">
-                            <h5 class="center history-title" >
-                                    Leave History {{date('Y')}}
-                            </h5>
+                        <div class="col-6">
                             <div class="center" id="associate-leave">
-                                <br>
-                                <br>
-                                <br>
-                                <h4>Basic Leave</h4>
-                                <hr>
+                                <div class="user-details-block benefit-employee">
+                                      <div class="user-profile text-center mt-0">
+                                            <img id="avatar" class="avatar-130 img-fluid" src="{{ asset('assets/images/user/09.jpg') }} " onerror="this.onerror=null;this.src='{{ asset("assets/images/user/09.jpg") }}';">
+                                      </div>
+                                      <div class="text-center mt-3">
+                                         <h4><b id="user-name">Selected User</b></h4>
+                                        <p class="mb-0" id="designation">
+                                            Associate ID: ----------</p>
+                                        <p class="mb-0" id="designation">
+                                            Oracle ID: ----------</p>
+                                         
+                                      </div>
+                                </div>
+                                <h5 class="center">Leave log {{date('Y')}}</h5>
                                 <table class="table table-bordered table-stripped" >
                                     <thead>
                                     <tr>
@@ -182,6 +180,8 @@
         </div><!-- /.page-content -->
     </div>
 </div>
+
+@push('js')
 <script type="text/javascript">
 $(document).ready(function()
 {
@@ -237,6 +237,7 @@ $(document).ready(function()
         //multipleDateAccept.children().val('');
         multipleDateAccept.toggleClass('hide');
     });*/
+
     $("#leave_type").on("change", function(e){
         if(!($("#leave_ass_id").val())){
             toastr.options.progressBar = true ;
@@ -303,7 +304,8 @@ $(document).ready(function()
             });
         }
     }); 
-//Dates entry alerts....
+
+
     $('#leave_from').on('keyup',function(){
         var leave_from = $('#leave_from').val();
         //validate date format using regex
@@ -419,7 +421,7 @@ $(document).ready(function()
             toastr.error('Please select associates and leave type!');
         }
     });
-//Dates entry alerts end...
+
    //file upload validation
     $("#leave_supporting_file").change(function () {
         var fileExtension = ['pdf','doc','docx','jpg','jpeg','png'];
@@ -433,4 +435,5 @@ $(document).ready(function()
     });
 });
 </script>
+@endpush
 @endsection

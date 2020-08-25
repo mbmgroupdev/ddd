@@ -1,13 +1,21 @@
-<br>
-<br>
-<br>
-<h5> Associate's Name: {{$info->as_name}} </h5>
-<h6> Associate's ID: {{$info->associate_id}} </h6>
-@if($info->as_doj != null)
-<h6> Oracle ID: {{$info->as_oracle_code}} </h6>
-@endif
-<h6> Date of Join: {{$info->as_doj}} </h6>
-<hr>
+<div class="user-details-block benefit-employee">
+      <div class="user-profile text-center mt-0">
+      		@if($info->as_pic)
+            	<img id="avatar" class="avatar-130 img-fluid" src="{{ asset($info->as_pic) }} " onerror="this.onerror=null;this.src='{{ asset("assets/images/user/09.jpg") }}';">
+            @else
+            	<img id="avatar" class="avatar-130 img-fluid" src="{{ asset("assets/images/user/09.jpg") }}" onerror="this.onerror=null;this.src='{{ asset("assets/images/user/09.jpg") }}';">
+            @endif
+      </div>
+      <div class="text-center mt-3">
+         <h4><b id="user-name">{{$info->as_name}}</b></h4>
+        <p class="mb-0" id="designation">
+            Associate ID: {{$info->associate_id}}</p>
+        <p class="mb-0" id="designation">
+            Oracle ID: {{$info->as_oracle_code}}</p>
+         
+      </div>
+</div>
+<h5 class="center">Leave log {{date('Y')}}</h5>
 	<?php 
 		$display='';
 		if($info->as_gender =='Male')

@@ -249,6 +249,9 @@ table.table-head th {
     max-height: 400px;
     overflow-y: scroll;
 }
+.pt-35{
+    padding-top: 35px;
+}
 p{
     margin-bottom: 0;
 }
@@ -279,6 +282,42 @@ input[type="date" i] {
   padding:5px;
   font-size:11px;
 }
+
+.file-zone{
+    border: 1px solid #d1d1d1;
+    border-radius: 10px;
+    padding: 10px;
+    background: #f1feff;
+    position: relative;
+}
+
+.file-zone label{
+    position: absolute;
+    cursor: text;
+    opacity: 1;
+    -webkit-transition: all .2s;
+    transition: all .2s;
+    top: -.5em;
+    left: 12px;
+    z-index: 3;
+    line-height: 1;
+    padding: 0 1px;
+    background: #fff;
+}
+.file-zone.has-required label:before {
+    content: "*";
+    color: red;
+}
+.file-input-error{
+    color:red;
+}
+
+.was-validated .form-control:invalid + .select2-container--default .select2-selection--single, 
+.form-control.is-invalid + .select2-container--default .select2-selection--single{
+    border-color: #e3342f !important;
+}
+
+
 .dataTables_wrapper .dt-buttons {
   float:right;
   text-align:center;
@@ -343,3 +382,4 @@ input[type="date" i] {
   width: 410px !important;
   height: 330px !important;
 }
+

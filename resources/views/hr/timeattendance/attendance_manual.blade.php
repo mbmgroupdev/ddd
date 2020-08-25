@@ -10,11 +10,11 @@
         .form-actions {margin-bottom: 0px; margin-top: 0px; padding: 0px 25px 0px;background-color: unset; border-top: unset;}
         .bulk_form_top{margin-bottom: 20px;}
         .select2{width: 100% !important;}
-        .alert-icon { width: 40px; height: 40px; display: inline-block;border-radius: 100%;}
-        .alert-icon i { width: 40px; height: 40px; display: block; text-align: center; line-height: 40px; font-size: 20px; color: #FFF;}
+        .alert-icon { width: 30px; height: 30px; display: inline-block;border-radius: 100%;}
+        .alert-icon i { width: 30px; height: 30px; display: block; text-align: center; line-height: 30px; font-size: 20px; color: #FFF;}
         .fa-info-circle:before { content: "\f05a";}
-        .alert-warning .alert-icon { background-color: #e19b0b;}
-        .notification-info { margin-left: 56px; margin-top: -40px;}
+        .alert-warning .alert-icon { background-color: #f16d2f;}
+        .notification-info { margin-left: 20px;}
         a{cursor: pointer;}
         .alert {padding: 8px 15px;}
         .att_rollback .panel-title {margin-top: 3px; margin-bottom: 3px;}
@@ -42,222 +42,150 @@
                 <li class="active">Attendance Upload</li>
             </ul><!-- /.breadcrumb -->
         </div>
+        <div class="col-xs-12">
+            <!-- Display Erro/Success Message -->
+            @include('inc.notify')
+            @php
+                if(\Session::has('success')) {
 
-        <div class="page-content"> 
-            <div class="row">
-                <div class="col-xs-12">
-                    <!-- Display Erro/Success Message -->
-                    @include('inc.notify')
-                    @php
-                        if(\Session::has('success')) {
+                    \Session::forget('success');
+                }
+            @endphp
+        </div>
+        <div id="accordion" class="accordion-style panel-group">
+            <div class="panel panel-info">
+                
+                <div class="panel-heading file-section">
+                    <h1 class="panel-title">
+                        <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#fill-upload">
+                            <i data-icon-hide="ace-icon fa fa-angle-down" data-icon-show="ace-icon fa fa-angle-right" class="ace-icon fa fa-angle-down bigger-110"></i>
+                            &nbsp; Bulk Upload
+                        </a>
 
-                            \Session::forget('success');
-                        }
-                    @endphp
+                    </h1>
                 </div>
-                <br>
-                <div id="accordion" class="accordion-style panel-group">
-                    <div class="panel panel-info">
+
+                <div class="panel-collapse in collapse show" id="fill-upload">
+                    <div class="panel-body">
+                            
+                        <div class="msg row justify-content-center" id="top-msg">
+                            <div class="alert alert-warning col-4">
+                                <span class="alert-icon"><i class="fa fa-info-circle"></i></span>
+                                <div class="notification-info">
+                                    Before File Upload, define holiday and assign shift roster.  <br>
+                                    <a target="_blank" href="{{ url('/hr/timeattendance/shift_assign')}}" class="btn  btn-primary">Shift Assign</a>
+                                    <a target="_blank" href="{{ url('/hr/timeattendance/operation/yearly_holidays/create')}}" class="btn  btn-primary">Define Holiday </a>
+                                </div>
+                            </div>
+                        </div>
                         
-                        <div class="panel-heading file-section">
-                            <h1 class="panel-title">
-                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#fill-upload">
-                                    <i class="ace-icon fa fa-angle-down bigger-110" data-icon-hide="ace-icon fa fa-angle-down" data-icon-show="ace-icon fa fa-angle-right"></i>
-                                    &nbsp; Bulk Upload
-                                </a>
-                            </h1>
-                        </div>
-
-                        <div class="panel-collapse collapse in" id="fill-upload">
-                            <div class="panel-body">
-                                <div class="col-sm-offset-3 col-sm-6">
-                                    
-                                    <div class="msg" id="top-msg">
-                                        <div class="alert alert-warning ">
-                                            <span class="alert-icon"><i class="fa fa-info-circle"></i></span>
-                                            <div class="notification-info">
-                                                <h6 class="">Before File Upload, Confirm Shift is Assigned & Holiday is Defined.  </h6>
-                                                <a target="_blank" href="{{ URL::to('/hr/timeattendance/shift_assign')}}" class="btn btn-xs btn-info">Shift assign</a>
-                                                <a target="_blank" href="{{ URL::to('/hr/timeattendance/operation/yearly_holidays/create')}}" class="btn btn-xs btn-info">Holiday define</a>
-                                                
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-
-                                <div class="col-sm-offset-3 col-sm-6">
-                                    <div id="msg" class="alert alert-block alert-success" style="display:none;"> </div>
-
-                                    {{ Form::open(['url'=>'hr/timeattendance/attendance_manual/import', 'files' => true,  'class'=>'form-horizontal']) }}
-                                    
-                                        <div class="form-group required bulk_form_top">
-                                            <label class="col-sm-4 control-label" for="unit"> Unit Name </label>
-                                            <div class="col-sm-8"> 
-                                                {{ Form::select('unit', $unitList, null, ['placeholder'=>'Select Unit Name', 'id'=>'unit', 'class'=> 'col-xs-12', 'data-validation'=>'required', 'data-validation-error-msg' => 'The Unit Name field is required']) }}  
-                                            </div>
-                                        </div>
-                                        <div class="form-group required bulk_form_top" id="choose-device" style="display: none;">
-                                            <label class="col-sm-4 control-label" for="device"> Select Device  </label>
-                                            <div class="col-sm-8"> 
-                                                {{ Form::select('device', ['1' => 'Old', '2' => 'Automation (New)'], null, ['placeholder'=>'Select AQL Unit Device', 'id'=>'device', 'class'=> 'col-xs-12', 'data-validation'=>'required', 'data-validation-error-msg' => 'The Device field is required']) }}  
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group required">
-                                            <label class="col-sm-4 control-label no-padding-right no-padding-top" for="file"> File <br><span>(only <strong>.csv</strong> or <strong>.txt</strong> or <strong>.xls</strong> file supported)</span></label>
-                                            <div class="col-sm-8">
-                                                <input type="file" name="file" id="file" class="col-xs-12 no-padding-left" data-validation-allowing="csv, txt" autocomplete="off" required />
-                                                <span id="file_upload_error" class="red" style="display: none; font-size: 14px;">only <strong>.csv</strong> or <strong>.txt</strong> or <strong>.xls</strong> file supported.</span>
-                                            </div>
-                                        </div> 
-                                    
-                                        <div class="clearfix form-actions bulk_form_button">
-                                            <div class="col-sm-offset-4 col-sm-8 "> 
-                                                <button class="btn btn-xs" type="reset">
-                                                    <i class="ace-icon fa fa-undo bigger-110"></i> Reset
-                                                </button>
-                                                &nbsp; &nbsp; &nbsp;
-                                                <button type="submit" class="btn btn-info btn-xs" id="upload" type="button">
-                                                    <i class="ace-icon fa fa-check bigger-110"></i> Upload
-                                                </button>
-                                                
-                                            </div>
-                                        </div>
-                                    
-                                
-                                    {{ Form::close() }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="panel panel-info">
-                        <div class="panel-heading file-section">
-                            <h1 class="panel-title">
-                                <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#file-rollback" aria-expanded="false">
-                                    <i class="bigger-110 ace-icon fa fa-angle-right" data-icon-hide="ace-icon fa fa-angle-down" data-icon-show="ace-icon fa fa-angle-right"></i>
-                                    &nbsp;Attendance file rollback
-                                </a>
-                            </h1>
-                        </div>
-
-                        <div class="panel-collapse collapse" id="file-rollback" aria-expanded="false">
-                            <div class="panel-body">
-                                @php
-                                    $today = date('Y-m-d');
-                                    $yesterday = date('Y-m-d',strtotime("-1 days"));
-                                    $twoDaysAgo = date('Y-m-d',strtotime("-2 days"));
-                                @endphp
-                                <div class="form-horizontal" id="rollback-content-content">
-                                    <div class="col-sm-offset-3 col-sm-6 no-padding-left">
-                                        <form role="form" method="post" action="{{ url('hr/operation/attendance-rollback') }}" id="searchform" >
-                                            {{ csrf_field() }} 
-                                            <div class="panel panel-info">
-                                                <div class="panel-body">
-                                                    <h3 class="header smaller lighter green">
-                                                        <i class="ace-icon fa fa-bullhorn"></i>
-                                                        All <span class="text-red" style="vertical-align: top;">&#42;</span>  required
-                                                    </h3>
-                                                    <div class="form-group">
-                                                        <label class="col-sm-3 control-label" for="unit1"> Unit <span class="text-red" style="vertical-align: top;">&#42;</span> : </label>
-                                                        <div class="col-sm-9">
-                                                            {{ Form::select('unit', ['1' => 'MBM GARMENTS LTD.', '2' => 'CUTTING EDGE INDUSTRIES LTD.', '8' => 'CUTTING EDGE INDUSTRIES LTD. (WASHING PLANT)', '3' => 'ABSOLUTE QUALITYWEAR LTD.'], null, ['placeholder'=>'Select Unit', 'id'=>'rollback-unit', 'style'=>'width:100%;', 'data-validation'=>'required', 'data-validation-error-msg'=>'The Unit field is required', 'required']) }}
-                                                            <span class="text-red" id="error_unit_s"></span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="check-date" id="rollback-date-content" style="display: none">
-                                                        <div class="form-group">
-                                                            <label class="col-sm-3 control-label no-padding-right align-left" for="month_number">Day <span class="text-red" style="vertical-align: top;">&#42;</span> :</label>
-                                                            <div class="col-sm-9">
-                                                                <input type="text" name="day" class="form-control" id="last-day" value="" required readonly>
-                                                                <!-- {{ Form::select('day', [$today => 'Today', $yesterday => 'Yesterday', $twoDaysAgo => 'Day Before Yesterday'], $today, ['placeholder'=>'Select day', 'id'=>'month_number', 'required', 'data-validation'=>'required', 'data-validation-error-msg'=>'The Day field is required', 'required']) }} -->
-                                                            </div>
-                                                            
-                                                        </div>
-                                                        
-                                                        <div class="form-group">
-                                                            <div class="col-sm-offset-3 col-sm-6 ">
-                                                                <button type="submit" class="btn btn-primary btn-xs"
-                                                                style=" " ><span class="glyphicon glyphicon-pencil"></span>&nbsp
-                                                                Process</button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div id="rollback-content-loader">
-                                                        <img src='{{ asset("assets/img/loader-box.gif")}}' class="center-loader">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </form>
+                        {{ Form::open(['url'=>'hr/timeattendance/attendance_manual/import', 'files' => true,  'class'=>'form-horizontal needs-validation form' , "novalidate" => "novalidate"]) }}
+                            <div class="row mt-5 justify-content-center">
+                                <div class="col-4">
+                                    <div class="form-group has-float-label select-search-group has-required">
+                                        {{ Form::select('unit', $unitList, null, ['placeholder'=>'Select Unit Name', 'id'=>'unit', 'class'=> 'form-control', 'required'=>'required']) }}  
+                                        <label for="unit"> Unit Name </label>
+                                        <div class="invalid-feedback">
+                                          Please select unit!
+                                       </div>
                                     </div>
                                     
+                                    <div class="form-group has-float-label select-search-group" id="choose-device" style="display:none;">
+                                        <div class="div">
+                                            
+                                            {{ Form::select('device', ['1' => 'Old', '2' => 'Automation (New)'], null, ['placeholder'=>'Select AQL Unit Device', 'id'=>'device', 'class'=> 'form-control' ]) }}  
+                                        </div>
+                                        <label  for="device"> Select Device  </label>
+                                        <div class="invalid-feedback" role="alert">
+                                            Select a device
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group has-required file-zone">
+                                        <label  for="file"> File </label>
+                                        <input type="file" name="file" class="file-type-validation" data-file-allow='["csv", "txt", "xlsx", "xls"]' autocomplete="off" required />
+                                        <div class="invalid-feedback" role="alert">
+                                            <strong>Select a file</strong>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-primary" id="upload" type="button">
+                                            <i class="fa fa-check bigger-110"></i> Upload
+                                        </button>
+                                        
+                                    </div> 
                                 </div>
-                                
                             </div>
-                        </div>
+                            
+                        
+                        {{ Form::close() }}
                     </div>
                 </div>
-                <!-- /.col -->
             </div>
-        </div><!-- /.page-content -->
+            <div class="panel panel-info">
+                <div class="panel-heading file-section">
+                    <h1 class="panel-title">
+                        <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#file-rollback" aria-expanded="false">
+                            <i class="bigger-110 ace-icon fa fa-angle-right" data-icon-hide="ace-icon fa fa-angle-down" data-icon-show="ace-icon fa fa-angle-right"></i>
+                            &nbsp;Attendance file rollback
+                        </a>
+                    </h1>
+                </div>
+
+                <div class="panel-collapse collapse" id="file-rollback" aria-expanded="false">
+                    <div class="panel-body">
+                        @php
+                            $today = date('Y-m-d');
+                            $yesterday = date('Y-m-d',strtotime("-1 days"));
+                            $twoDaysAgo = date('Y-m-d',strtotime("-2 days"));
+                        @endphp
+                        <form role="form" method="post" action="{{ url('hr/operation/attendance-rollback') }}" id="searchform" class="form-horizontal needs-validation form" novalidate >
+                            {{ csrf_field() }} 
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-group has-required has-float-label select-search-group">
+                                        {{ Form::select('unit', $unitList, null, ['placeholder'=>'Select Unit', 'id'=>'rollback-unit', 'style'=>'width:100%;', 'required'=>'required']) }}
+                                        <label for="rollback-unit"> Unit </label>
+                                    </div>
+                                </div>
+                                <div class="check-date col-6" id="rollback-date-content" style="display: none">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            
+                                            <div class="form-group has-required has-float-label">
+                                                <input type="text" name="day" class="form-control" id="last-day" value="" required readonly>
+                                                <label for="month_number">Day </label>
+                                            </div>
+                                            
+                                        </div>
+                                        <div class="col-6">
+                                            
+                                            <div class="form-group">
+                                                <button type="submit" class="btn btn-primary"
+                                                style=" " ><span class="glyphicon glyphicon-pencil"></span>
+                                                Process</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="rollback-content-loader">
+                                </div>
+                            </div>
+                        </form>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 @push('js')
 <script>
-if (sessionStorage.getItem("msg")!=null) {
-    $('#msg').show().html(sessionStorage.getItem("msg"));
-    sessionStorage.removeItem("msg");
-};
+    if (sessionStorage.getItem("msg")!=null) {
+        $('#msg').show().html(sessionStorage.getItem("msg"));
+        sessionStorage.removeItem("msg");
+    };
 
-</script>
-
-<script type="text/javascript">
-    $(document).ready(function(){
-
-        function stringEndsWithValidExtension(stringToCheck, acceptableExtensionsArray, required) {
-            if (required == false && stringToCheck.length == 0) { return true; }
-            for (var i = 0; i < acceptableExtensionsArray.length; i++) {
-                if (stringToCheck.toLowerCase().endsWith(acceptableExtensionsArray[i].toLowerCase())) { return true; }
-            }
-            return false;
-        }
-
-
-        String.prototype.startsWith = function (str) { return (this.match("^" + str) == str) }
-
-        String.prototype.endsWith = function (str) { return (this.match(str + "$") == str) }
-
-        var file=$("#upload");
-        file.on('click',function ()
-         {
-            if (!stringEndsWithValidExtension($("#file").val(), [".csv", ".txt", "txt", ".xls"], false)) {
-                alert("Only allowed file types are .csv and .txt and .xls");
-                return false;
-            }
-            return true;
-        });
-    });
-</script>
-<script type="text/javascript">
-    $(document).ready(function(){
-   
-        $("#file").change(function () {
-            var fileExtension = ['csv','txt', 'xls'];
-            var f_name = $(this).val();
-            // if ($.inArray($(this).val().split('.').pop().toLowerCase(), fileExtension) == -1) {
-            if ($.inArray( f_name.substr(f_name.length-3, f_name.length-1).toLowerCase(), fileExtension) == -1) {
-                $('#file_upload_error').show();
-                $(this).val('');
-            }
-            else{
-                    $('#file_upload_error').hide();
-                }
-        });
-    });
-</script>
-
-<script>
     $('#unit').on('change',function(e){
         var unit =  e.target.value;
         if(unit == 3){
@@ -267,9 +195,13 @@ if (sessionStorage.getItem("msg")!=null) {
         }
 
     });
+
+
+
     // rollback process
-    $("#rollback-unit").on('change', function(e){
-        var unit =  e.target.value;
+    $(document).on('change',"#rollback-unit", function(e){
+        console.log('hi');
+        var unit =  $(this).val();
         if(!(unit)){
             $("#rollback-date-content").hide();
             $("#rollback-content-loader").html("<p class='text-center text-red'>Please select unit</p>").show();
@@ -278,7 +210,7 @@ if (sessionStorage.getItem("msg")!=null) {
             $("#rollback-date-content").hide();
             $("#rollback-content-loader").show().html(loader);
             $.ajax({
-                url : "{{ URL::to('/hr/operation/attendance-rollback-get-date')}}",
+                url : "{{ url('/hr/operation/attendance-rollback-get-date')}}",
                 type: 'GET',
                 data: {
                     unit: unit
