@@ -1085,7 +1085,7 @@ class AttendanceController extends Controller
        $table = $this->getTableName($request->unit);
        $tableNmae = explode(' ',$table);
        $userInfo = DB::table('hr_as_basic_info')->where('associate_id',$request->associate_id)->first();
-       return $request->associate_id;
+       
         $intime = date('Y-m-d', strtotime($request->date))." ".date('H:i:s', strtotime($request->in_punch_new));
         if(strtotime($request->in_punch_new) > strtotime($request->out_punch_new))
         {

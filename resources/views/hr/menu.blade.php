@@ -60,7 +60,7 @@
                   <a href="{{ url('hr/timeattendance/attendance-upload') }}"><i class="las la-fingerprint"></i>Attendance Upload</a>
                </li>
                <li class="@if($segment3 == 'leave-entry') active @endif">
-                  <a href="{{ url('hr/timeattendance/leave-entry') }}"><i class="las la-file-alt"></i>Workers Leave</a>
+                  <a href="{{ url('hr/timeattendance/leave-entry') }}"><i class="las la-file-alt"></i>Employee Leave</a>
                </li>
             </ul>
          </li>
@@ -113,15 +113,16 @@
                <li class="@if($segment3 == 'attendance-operation') active @endif">
                   <a href="{{ url('hr/operation/attendance-operation') }}"><i class="las la-fingerprint"></i> Attendance Operation</a>
                </li>
+               <li class="@if($segment3 == 'multiple_emp_shift_assign') active @endif">
+                  <a href="{{ url('hr/operation/multiple_emp_shift_assign') }}"><i class="las la-tasks"></i> Employee Shift Change</a>
+               </li>
                <li class="@if($segment3 == 'shift_roaster_define') active @endif">
                   <a href="{{ url('hr/operation/shift_roaster_define') }}"><i class="las la-tasks"></i> Define Shift Roster</a>
                </li>
                <li class="@if($segment3 == 'shift_assign') active @endif">
-                  <a href="{{ url('hr/operation/shift_assign') }}"><i class="las la-tasks"></i>Shift Assign</a>
+                  <a href="{{ url('hr/operation/shift_assign') }}"><i class="las la-tasks"></i>Shift Roster Assign</a>
                </li>
-               <li class="@if($segment3 == '') active @endif">
-                  <a href="{{ url('') }}"><i class="las la-tasks"></i>Roster Assign</a>
-               </li>
+               
                <li class="@if($segment3 == 'holiday-roster') active @endif">
                   <a href="{{ url('hr/operation/holiday-roster') }}"><i class="las la-stream"></i>Holiday Roster</a>
                </li>
@@ -149,6 +150,15 @@
                <li class="@if($segment3 == 'maternity-leave-payment') active @endif">
                   <a href="{{ url('hr/operation/maternity-leave-payment') }}"><i class="las la-file-invoice-dollar"></i>Maternity Payment</a>
                </li>
+               <li class="@if($segment3 == 'new_card') active @endif">
+                  <a href="{{ url('hr/timeattendance/new_card') }}"><i class="las la-list-ul"></i>Line Change</a>
+               </li>
+               <li class="@if($segment3 == 'location_change') active @endif">
+                  <a href="{{ url('hr/operation/location_change/list') }}"><i class="las la-list-ul"></i>Outside Work</a>
+               </li>
+               <li class="@if($segment4 == 'idcard') active @endif">
+                  <a href="{{ url('hr/recruitment/employee/idcard') }}"><i class="las la-list-ul"></i>ID Card</a>
+               </li>
             </ul>
          </li>
          <li>
@@ -164,7 +174,7 @@
                <li><a href="{{ url('hr/reports/employee-yearly-activity') }}"><i class="las la-fingerprint"></i>Employee Yearly Activity</a></li>
                <li><a href="{{ url('hr/reports/monthy_increment') }}"><i class="las la-chart-area"></i>Increment Report</a></li>
                <li><a href="{{ url('') }}"><i class="las la-chart-area"></i>Promotion Report</a></li>
-               <li><a href="{{ url('hr/operation/location_change/list') }}"><i class="las la-list-ul"></i>Outside List</a></li>
+               
                
                <li><a href="{{ url('hr/reports/leave_log') }}"><i class="las la-calendar-alt"></i>Leave Log</a></li>
                <li><a href="{{ url('hr/reports/event_history') }}"><i class="las la-calendar-alt"></i>Event History</a></li>
