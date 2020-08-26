@@ -86,11 +86,8 @@
                                     </div>
                                 </div>
                                 <div id="not_eligible_show" class="col-12">
-                                    <div class="form-group  has-float-label" >
-                                        <label></label>
-                                        <div class="col-sm-6">
-                                            <label class="col-xs-12 no-padding no-margin" style="color: red;">Sorry Not Eligible (Service < 1 Year)</label>
-                                        </div>
+                                    <div class="form-group" >
+                                        <label style="color: red;">Sorry Not Eligible (Service < 1 Year)</label>
                                     </div>
                                 </div>
                                 
@@ -158,7 +155,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-12">
-                                    <button type="button" class="btn btn-danger" id="pay_button"  disabled="disabled">Pay Benefits</button>
+                                    <button type="button" class="btn btn-primary" id="pay_button"  disabled="disabled">Pay Benefits</button>
                                 </div>
                             </div>
                             
@@ -171,17 +168,21 @@
                                     
                                     <div class="col-6">
                                         
-                                        <div class="user-details-block">
+                                        <div class="user-details-block" style="border-left: 1px solid #d1d1d1;">
                                             <div class="user-profile text-center mt-0">
                                                 <img id="avatar" class="avatar-130 img-fluid" src="{{ asset('assets/images/user/09.jpg') }} " onerror="this.onerror=null;this.src='{{ asset("assets/images/user/09.jpg") }}';">
                                             </div>
                                             <div class="text-center mt-3">
-                                             <h4><b id="name">Selected User</b></h4>
-                                             <p class="mb-0" >
-                                                Associate ID: <span id="associate_id"></span>
-                                             </p>
+                                             <h4><b id="name">-------------</b></h4>
                                              <p class="mb-0" id="designation">
-                                                Employee designation</p>
+                                                --------------------------</p>
+                                             <p class="mb-0" >
+                                                Oracle ID: <span id="oracle_id" class="text-success">-------------</span>
+                                             </p>
+                                             <p class="mb-0" >
+                                                Associate ID: <span id="associate_id" class="text-success">-------------</span>
+                                             </p>
+                                             <p  class="mb-0">Department: <span id="department" class="text-success">------------------------</span> </p>
                                              
                                             </div>
                                         </div>
@@ -189,49 +190,42 @@
                                     <div class="col-6">
                                         <ul class="speciality-list m-0 p-0">
                                             <li class="d-flex mb-4 align-items-center">
-                                               <div class="user-img img-fluid"><a href="#" class="iq-bg-primary"><i class="ri-award-fill"></i></a></div>
+                                               <div class="user-img img-fluid"><a href="#" class="iq-bg-primary"><i class="las f-18 la-city"></i></a></div>
                                                <div class="media-support-info ml-3">
                                                   <h6>Unit</h6>
                                                   <p id="unit" class="mb-0">------------------------</p>
                                                </div>
                                             </li>
                                             <li class="d-flex mb-4 align-items-center">
-                                               <div class="user-img img-fluid"><a href="#" class="iq-bg-warning"><i class="ri-award-fill"></i></a></div>
-                                               <div class="media-support-info ml-3">
-                                                  <h6>Department</h6>
-                                                  <p id="department" class="mb-0">------------------------</p>
-                                               </div>
-                                            </li>
-                                            <li class="d-flex mb-4 align-items-center">
-                                               <div class="user-img img-fluid"><a href="#" class="iq-bg-info"><i class="ri-award-fill"></i></a></div>
+                                               <div class="user-img img-fluid"><a href="#" class="iq-bg-info"><i class="las f-18 la-calendar-day"></i></a></div>
                                                <div class="media-support-info ml-3">
                                                   <h6>Date of Joining</h6>
                                                   <p id="doj" class="mb-0">------------------------</p>
                                                </div>
                                             </li>
                                             <li class="d-flex mb-4 align-items-center">
-                                               <div class="user-img img-fluid"><a href="#" class="iq-bg-info"><i class="ri-award-fill"></i></a></div>
+                                               <div class="user-img img-fluid"><a href="#" class="iq-bg-warning"><i class="las f-18 la-dollar-sign"></i></a></div>
                                                <div class="media-support-info ml-3">
                                                   <h6>Salary</h6>
-                                                  <p class="mb-0">Gross:  <strong class="text-danger" id="gross_salary">0</strong> Basic: <strong class="text-success" id="basic_salary">0</strong></p>
+                                                  <p class="mb-0">Gross:  <span class="text-danger" id="gross_salary">0</span> Basic: <span class="text-success" id="basic_salary">0</span></p>
                                                </div>
                                             </li>
                                             <li class="d-flex mb-4 align-items-center">
-                                               <div class="user-img img-fluid"><a href="#" class="iq-bg-info"><i class="ri-award-fill"></i></a></div>
+                                               <div class="user-img img-fluid"><a href="#" class="iq-bg-info"><i class="las f-18 la-database"></i></a></div>
                                                <div class="media-support-info ml-3">
                                                   <h6>Earned Leave</h6>
-                                                  <p class="mb-0">Total:  <strong class="text-danger" id="total_earn_leave">0</strong class="text-danger"> Enjoyed: <strong class="text-danger" id="enjoyed_earn_leave">0</strong class="text-danger"> Remained: <strong class="text-danger" id="remained_earn_leave"></strong class="text-success">0</p>
+                                                  <p class="mb-0">Total:  <span class="text-danger" id="total_earn_leave">0</span class="text-danger"> Enjoyed: <span class="text-warning" id="enjoyed_earn_leave">0</span > <br>Remained: <span class="text-success" id="remained_earn_leave">0</span></p>
                                                </div>
                                             </li>
                                             <li class="d-flex mb-4 align-items-center">
-                                               <div class="user-img img-fluid"><a href="#" class="iq-bg-info"><i class="ri-award-fill"></i></a></div>
+                                               <div class="user-img img-fluid"><a href="#" class="iq-bg-warning"><i class="las f-18 la-history"></i></a></div>
                                                <div class="media-support-info ml-3">
                                                   <h6>Total Service</h6>
-                                                  <p id="total_service" class="mb-0">Total:  <span id="total_earn_leave"><span style="color: darkblue; font-weight: 800; padding: 5px; border-radius: 10px; padding-left: 0px;" id="service_Y"></span>
+                                                  <p id="total_service" class="mb-0">Total:  <span id="total_earn_leave"><span style="color: darkblue; font-weight: 800; padding: 5px; border-radius: 10px; padding-left: 0px;" id="service_Y">0</span>
                                                        <span style="color: darkblue;">Year/s</span>
-                                                       <span style="color: forestgreen; font-weight: 800; padding: 5px; border-radius: 10px;" id="service_m"></span>
+                                                       <span style="color: forestgreen; font-weight: 800; padding: 5px; border-radius: 10px;" id="service_m">0</span>
                                                        <span style="color: forestgreen;">Month/s</span>
-                                                       <span style="color: maroon; font-weight: 800; padding: 5px; border-radius: 10px;" id="service_d"></span>
+                                                       <span style="color: maroon; font-weight: 800; padding: 5px; border-radius: 10px;" id="service_d">0</span>
                                                        <span style="color: maroon;">Day/s</span></p>
                                                </div>
                                             </li>
@@ -249,9 +243,9 @@
 
         <div class="panel panel-success" id="voucher" hidden="hidden">
             <div class="panel-heading">
-                <h5>Voucher
-                    <button class="btn btn-xx btn-info pull-right printVoucher" style="border-radius: 2px;" data-tooltip="Print" Data-tooltip-location="left"><i class="fa fa-print"></i> Print</button>
-                </h5>
+                <h6>Voucher
+                    <button class="btn  btn-danger pull-right printVoucher" style="border-radius: 2px;" data-tooltip="Print" Data-tooltip-location="left"><i class="fa fa-print"></i> Print</button>
+                </h6>
             </div>
             <div class="panel-body">
                 <div class="col-sm-12 print_div" style="border:1px solid grey;"  id="print_div">
@@ -312,7 +306,7 @@
                                 <thead>
                                     <tr style="border: 1px solid darkgrey; padding: 5px;">
                                         <th style="border: 1px solid darkgrey; padding: 5px;  text-align: left; width: 40%;  padding-left: 30px;">সুযোগ-সুবিধা সমুহ </th>
-                                        <th style="border: 1px solid darkgrey; padding: 5px;  text-align: left;  padding-left: 30px;">টাকার পরিমান</th>
+                                        <th style="border: 1px solid darkgrey; padding: 5px;  text-align: center;  padding-left: 30px;">টাকার পরিমান</th>
                                     </tr>
                                 </thead>
                                 <tbody id="the_payble_body_print">
@@ -320,7 +314,7 @@
                                         <td style="border: 1px solid darkgrey; padding: 5px; padding-left: 30px;">
                                             আহরিত ছুটির হিসাব বাবদ
                                         </td>
-                                        <td style="border: 1px solid darkgrey; padding: 5px;  padding-left: 30px;" id="earn_leave_print_value">
+                                        <td style="border: 1px solid darkgrey; padding: 5px;  padding-left: 30px; text-align: right;" id="earn_leave_print_value">
                                                     ৳
                                         </td>
                                     </tr>
@@ -328,7 +322,7 @@
                                         <td style="border: 1px solid darkgrey; padding: 5px; padding-left: 30px;">
                                             সেবা বাবদ     
                                         </td>
-                                        <td style="border: 1px solid darkgrey; padding: 5px;  padding-left: 30px;" id="service_benefit_print_value">
+                                        <td style="border: 1px solid darkgrey; padding: 5px;  padding-left: 30px;text-align: right" id="service_benefit_print_value">
                                                     ৳
                                         </td>
                                     </tr>
@@ -336,7 +330,7 @@
                                         <td style="border: 1px solid darkgrey; padding: 5px; padding-left: 30px;">
                                             জীবিকা ভাতা বাবদ
                                         </td>
-                                        <td style="border: 1px solid darkgrey; padding: 5px;  padding-left: 30px;" id="subsistence_allowance_print_value">
+                                        <td style="border: 1px solid darkgrey; padding: 5px;  padding-left: 30px;text-align: right" id="subsistence_allowance_print_value">
                                                     ৳
                                         </td>
                                     </tr>
@@ -344,7 +338,7 @@
                                         <td style="border: 1px solid darkgrey; padding: 5px; padding-left: 30px;">
                                             নোটিশ পে বাবদ
                                         </td>
-                                        <td style="border: 1px solid darkgrey; padding: 5px;  padding-left: 30px;" id="notice_pay_print_value">
+                                        <td style="border: 1px solid darkgrey; padding: 5px;  padding-left: 30px;text-align: right" id="notice_pay_print_value">
                                                     ৳
                                         </td>
                                     </tr>
@@ -352,7 +346,7 @@
                                         <td style="border: 1px solid darkgrey; padding: 5px; padding-left: 30px;">
                                             অবসান সুবিধা বাবদ
                                         </td>
-                                        <td style="border: 1px solid darkgrey; padding: 5px;  padding-left: 30px;" id="termination_benefit_print_value">
+                                        <td style="border: 1px solid darkgrey; padding: 5px;  padding-left: 30px;text-align: right;" id="termination_benefit_print_value">
                                                     ৳
                                         </td>
                                     </tr>
@@ -360,7 +354,7 @@
                                         <td style="border: 1px solid darkgrey; padding: 5px; padding-left: 30px;">
                                             স্বাভাবিক মৃত্যু
                                         </td>
-                                        <td style="border: 1px solid darkgrey; padding: 5px;  padding-left: 30px;" id="natural_death_print_value">
+                                        <td style="border: 1px solid darkgrey; padding: 5px;  padding-left: 30px;text-align: right;" id="natural_death_print_value">
                                                     ৳
                                         </td>
                                     </tr>
@@ -369,13 +363,13 @@
                                         <td style="border: 1px solid darkgrey; padding: 5px; padding-left: 30px;">
                                             কর্তব্যরত অবস্থায় এবং দুর্ঘটনায় মৃত্যু
                                         </td>
-                                        <td style="border: 1px solid darkgrey; padding: 5px;  padding-left: 30px;" id="on_duty_and_acci_death_print_value">
+                                        <td style="border: 1px solid darkgrey; padding: 5px;  padding-left: 30px;text-align: right;" id="on_duty_and_acci_death_print_value">
                                                     ৳
                                         </td>
                                     </tr>
                                     <tr style="border: 1px solid darkgrey; padding: 5px;">
                                         <th style="border: 1px solid darkgrey; padding: 5px; text-align: right; color: maroon;">মোট</th>
-                                        <th style="border: 1px solid darkgrey; padding: 5px; text-align: left; color: maroon;  padding-left: 30px;" id="grand_toal_print_value"> ৳</th>
+                                        <th style="border: 1px solid darkgrey; padding: 5px; text-align: left; color: maroon;  padding-left: 30px;text-align: right;" id="grand_toal_print_value"> ৳</th>
                                     </tr>
                                 </tbody>
                             </table>
@@ -540,6 +534,7 @@
                     {
                         // console.log(data);
                         $('#associate_id').text(data['associate_id']);
+                        $('#oracle_id').text(data['as_oracle_code']);
                         $('#name').text(data['as_name']);
                         $('#unit').text(data['hr_unit_name']);
                         // $('#location').text(data['hr_location_name']);
@@ -548,10 +543,10 @@
                         $('#doj').text(data['as_doj']);
                         if(data['as_pic'] == null){
                             if(data['as_gender'] == 'Male'){
-                                $('#avatar').attr('src',url+'/assets/images/user/1.jpg');   
+                                $('#avatar').attr('src',url+'/assets/images/user/09.jpg');   
                             }
                             else{
-                                $('#avatar').attr('src',url+'/assets/images/user/09.jpg');   
+                                $('#avatar').attr('src',url+'/assets/images/user/1.jpg');   
                             }
                         }
                         else{
@@ -641,11 +636,12 @@
                 });
             }
             else{
-                $('#associate_id').text('');
-                $('#name').text('Selected Employee');
+                $('#associate_id').text('-------------');
+                $('#oracle_id').text('-------------');
+                $('#name').text('-------------');
                 $('#unit').text('------------------------');
                 $('#department').text('------------------------');
-                $('#designation').text('Employee designation');
+                $('#designation').text('------------------------');
                 $('#doj').text('------------------------');
                 $('#avatar').attr('src','/assets/images/user/09.jpg'); 
                 $('#service_Y').html('0');
