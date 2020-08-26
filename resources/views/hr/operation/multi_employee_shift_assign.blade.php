@@ -1,9 +1,8 @@
 @extends('hr.layout')
-@section('title', 'Add Role')
+@section('title', 'Employee Shift Change')
 @section('main-content')
 @push('css')
     <style>
-        .form-group {overflow: hidden;}
         table.header-fixed1 tbody {max-height: 500px; overflow-y: scroll;}
         input[type=checkbox] {
 		    transform: scale(1.5);
@@ -23,149 +22,128 @@
                 <li>
                     <a href="#"> Operation </a>
                 </li>
-                <li class="active">Multiple Employee Shift Change </li>
+                <li class="active">Employee Shift Change </li>
             </ul><!-- /.breadcrumb --> 
         </div>
 
-        <div class="page-content"> 
-            <div class="row">
-                <div class="panel panel-info">
-                    <div class="panel-heading">
-                        <h6>Multiple Employee Shift Change </h6>
-                    </div>
-                    
-                    <div class="panel-body">
-                        @include('inc/message')
-                        <form role="form" method="POST" action="{{ url('hr/operation/multi_emp_shift_status_save') }}" enctype="multipart/form-data"> 
-                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                            <div class="col-sm-12 no-padding">
-                                <div class="col-sm-6 no-padding-left">
-                                    <div class="panel panel-warning">
-                                        <div class="panel-body">
-                                            <div class="col-sm-6 no-padding-left" style="">
-                                                <div class="form-group required">
-                                                    <label class="col-sm-12 control-label no-padding-right" for="unit">Unit </label>
-                                                    <div class="col-sm-12">
-                                                        {{ Form::select('unit', $unitList, null, ['placeholder'=>'Select Unit','id'=>'unit_shift', 'class'=> 'form-control', 'data-validation'=> 'required']) }} 
-                                                    </div>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label class="col-sm-12 control-label no-padding-right" for="area">Area </label>
-                                                    <div class="col-sm-12"> 
-                                                        {{ Form::select('area', $areaList, null, ['placeholder'=>'Select Area','id'=>'area_shift', 'class'=> 'form-control', 'disabled']) }} 
-                                                    </div>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label class="col-sm-12 control-label no-padding-right" for="department">Department </label>
-                                                    <div class="col-sm-12">
-                                                        <select name="department" id="department_shift" class= "form-control filter" disabled ><option value="">Select Department</option></select>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label class="col-sm-12 control-label no-padding-right" for="section">Section </label>
-                                                    <div class="col-sm-12">
-                                                        {{ Form::select('section', [], null, ['placeholder'=>'Select Section','id'=>'section_shift', 'class'=> 'form-control filter','disabled']) }} 
-                                                    </div>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label class="col-sm-12 control-label no-padding-right" for="subsection">Sub Section </label>
-                                                    <div class="col-sm-12">
-                                                        {{ Form::select('subsection', [], null, ['placeholder'=>'Select Sub Section','id'=>'subsection_shift', 'class'=> 'form-control filter', 'disabled']) }} 
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-sm-6 no-padding">
-
-                                                <div class="form-group">
-                                                    <label class="col-sm-12 control-label no-padding-right" for="emp_type">Employee Type </label>
-                                                    <div class="col-sm-12" style="">
-                                                        {{ Form::select('emp_type', $employeeTypes, null, ['placeholder'=>'Select Employee Type', 'class'=> 'form-control filter']) }} 
-                                                    </div>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label class="col-sm-12 control-label no-padding-right" for="otnonot">OT/Non-OT </label>
-                                                    <div class="col-sm-12">
-                                                        <select name="otnonot" id="otnonot" class="form-control filter">
-                                                            <option value="">Select OT/Non-OT</option>
-                                                            <option value="0">Non-OT</option>
-                                                            <option value="1">OT</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="form-group">
-                                                    <label class="col-sm-12 control-label no-padding-right" for="current_shift" style="color: maroon;">Current Shift <span style="color: red;"> *</span></label>
-                                                    <div class="col-sm-12">
-                                                        <select class="col-sm-12  filter" id="current_shift" name="current_shift"  disabled="disabled">
-                                                            <option value="">Select</option>
-                                                        </select> 
-                                                    </div>
-                                                </div>
-                                                
-                                                <div class="form-group">
-                                                    <label class="col-sm-12 control-label no-padding-right" for="target_shift" style="color: maroon;">Target Shift <span style="color: red;"> *</span></label>
-                                                    <div class="col-sm-12">
-                                                        <select class="col-sm-12" id="target_shift" name="target_shift" required="required" disabled="disabled">
-                                                        	<option value="">Select</option>
-
-                                                        </select>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                            <div class="col-sm-offset-4 col-sm-4">
-                                                <div class="form-group"> 
-                                                    <div class="col-sm-12">
-                                                    <button type="submit" id="formSubmit" class="btn btn-primary btn-sm" style="width: 100%; margin-top: 10px; border-radius: 2px;">
-                                                        Submit
-                                                    </button> 
-                                                    </div>
-                                                </div>
-                                            </div> 
-                                        </div>
-                                    </div>
-                                </div> 
-                                <!-- tables -->
-                                <div class="col-sm-6 no-padding">
-                                    <div class="panel panel-warning">
-                                        <div class="panel-body">
-                                            <div class="row">
-                                                <div class="col-sm-6 text-center" style="background-color: lightcoral; color: #fff;">
-                                                    <p style="padding-top: 8px;">Selected Employee: <span id="selectEmp" style="font-weight: bold;"></span></p>
-                                                </div>
-                                                <div class="col-sm-6 text-center" style="background-color: #87B87F; color: #fff;">
-                                                    <p style="padding-top: 8px;">Total Employee: <span id="totalEmp" style="font-weight: bold;"></span></p>
-                                                </div>
-                                            </div>
-                                            <div style="height: 400px; overflow: auto;">
-                                                <table id="AssociateTable" class="table header-fixed1 table-compact table-bordered">
-                                                    <thead>
-                                                        <tr>
-                                                            <th style='position: sticky; top: -1px;'><input type="checkbox" id="checkAll"/></th>
-                                                            <th style='position: sticky; top: -1px;'>Image</th>
-                                                            <th style='position: sticky; top: -1px;'>Associate ID</th>
-                                                            <th style='position: sticky; top: -1px;'>Name</th>
-                                                            <th style='position: sticky; top: -1px;'>Current Shift</th>
-                                                        </tr>
-                                                        <tr>
-                                                            <th colspan="5" id="user_filter" style='position: sticky; top: -1px;'></th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody id="user_info">
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
+        
+        <div class="panel panel-info">
+            
+            
+            <div class="panel-body">
+                @include('inc/message')
+                <div class="row">
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-3"> 
+                                <div class="form-group has-required has-float-label select-search-group">
+                                    {{ Form::select('unit', $unitList, null, ['placeholder'=>'Select Unit','id'=>'unit_shift', 'class'=> 'form-control', 'required'=> 'required']) }} 
+                                    <label  for="unit">Unit </label>
                                 </div>
-                            </div>
-                        </form>
+                                <div class="form-group has-required has-float-label select-search-group">
+                                    {{ Form::select('area', $areaList, null, ['placeholder'=>'Select Area','id'=>'area_shift', 'class'=> 'form-control filter', 'disabled']) }} 
+                                    <label  for="area">Area </label>
+                                </div>
+                             </div>
+                            <div class="col-3">
+                                <div class="form-group has-float-label select-search-group">
+                                    {{ Form::select('emp_type', $employeeTypes, null, ['placeholder'=>'Select Employee Type', 'class'=> 'form-control filter']) }} 
+                                    <label  for="emp_type">Employee Type </label>
+                                </div>
+                                <div class="form-group has-float-label select-search-group">
+                                    <select name="department" id="department_shift" class= "form-control filter" disabled ><option value="">Select Department</option></select>
+                                    <label  for="department">Department </label>
+                                </div>
+                             </div>
+                            <div class="col-3"> 
+                                <div class="form-group has-float-label select-search-group">
+                                    {{ Form::select('section', [], null, ['placeholder'=>'Select Section','id'=>'section_shift', 'class'=> 'form-control filter','disabled']) }} 
+                                    <label  for="section">Section </label>
+                                </div>
+                                <div class="form-group has-float-label select-search-group">
+                                    {{ Form::select('subsection', [], null, ['placeholder'=>'Select Sub Section','id'=>'subsection_shift', 'class'=> 'form-control filter', 'disabled']) }}
+                                    <label  for="subsection">Sub Section </label>
+                                </div>
+                             </div>
+                            <div class="col-3"> 
+                                <div class="form-group has-float-label select-search-group">
+                                    <select name="otnonot" id="otnonot" class="form-control filter">
+                                        <option value="">Select OT/Non-OT</option>
+                                        <option value="0">Non-OT</option>
+                                        <option value="1">OT</option>
+                                    </select>
+                                    <label  for="otnonot">OT/Non-OT </label>
+                                </div>
+                                    
+                                <div class="form-group has-float-label select-search-group">
+                                    <select class="col-sm-12  filter" id="current_shift" name="current_shift"  disabled="disabled">
+                                        <option value="">Select</option>
+                                    </select> 
+                                    <label  for="current_shift" style="color: maroon;">Current Shift </label>
+                                </div>
+                                <div class="form-group">
+                                </div>
+                             </div>
+                        </div>
+                        
                     </div>
                 </div>
             </div>
-        </div><!-- /.page-content -->
+        </div>
+
+        <div class="panel panel-info">
+            <div class="panel-body">
+                <form role="form" method="POST" action="{{ url('hr/operation/multi_emp_shift_status_save') }}" enctype="multipart/form-data" class="row"> 
+                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                    <div class="col-6">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-6 text-center" style="background-color: lightcoral; color: #fff;">
+                                    <p style="padding-top: 8px;">Selected Employee: <span id="selectEmp" style="font-weight: bold;"></span></p>
+                                </div>
+                                <div class="col-sm-6 text-center" style="background-color: #87B87F; color: #fff;">
+                                    <p style="padding-top: 8px;">Total Employee: <span id="totalEmp" style="font-weight: bold;"></span></p>
+                                </div>
+                            </div>
+                            <div class="row" style="height: 400px; overflow: auto;">
+                                <table id="AssociateTable" class="table header-fixed1 table-compact table-bordered col-sm-12">
+                                    <thead>
+                                       
+                                        <tr>
+                                            <th class="sticky-th" ><input type="checkbox" id="checkAll"/></th>
+                                            <th class="sticky-th">Image</th>
+                                            <th class="sticky-th">Associate ID</th>
+                                            <th class="sticky-th">Name</th>
+                                            <th class="sticky-th">Current Shift</th>
+                                        </tr>
+                                         <tr>
+                                            <th class="sticky-th" colspan="5" id="user_filter" style="top: 40px;"></th>
+                                        </tr>
+                                        
+                                    </thead>
+                                    <tbody id="user_info">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 pt-5">
+                        <div class="form-group has-required has-float-label select-search-group">
+                            <select class="form-control" id="target_shift" name="target_shift" required="required" disabled="disabled">
+                                <option value="">Select</option>
+
+                            </select>
+                            <label  for="target_shift" style="color: maroon;">Target Shift </label>
+                        </div>
+                        <div class="form-group"> 
+                            <button type="submit" id="formSubmit" class="btn btn-primary pull-right" >
+                                Change Shift
+                            </button> 
+                        </div>
+                    </div>
+                </form>  
+            </div>
+        </div>
     </div>
 </div>
 @push('js')
@@ -350,7 +328,7 @@ $(document).ready(function(){
     /// area on change department select
 
     $('#area_shift').on('change', function(){
-        userInfo.html('<th colspan="5" style=\"text-align: center; font-size: 14px; color: green;\">Please Choose Department</th>');
+        //userInfo.html('<th colspan="5" style=\"text-align: center; font-size: 14px; color: green;\">Please Choose Department</th>');
         $( "#department_shift" ).prop( "disabled", false );
 
         // console.log($(this).val());
