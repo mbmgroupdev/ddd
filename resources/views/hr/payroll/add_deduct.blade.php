@@ -39,32 +39,31 @@
                                 <div class="panel-heading"><h6>Salary Adjustment</h6></div>
 
                                 <div class="panel-body">
-                                    {{ Form::open(['url'=>'hr/payroll/add_deduct', 'files' => true,  'class'=>'form-horizontal']) }}
+                                    <div class="row justify-content-center">
+                                        <div class="col-5">
+                                            
+                                            {{ Form::open(['url'=>'hr/payroll/add_deduct', 'files' => true,  'class'=>'form-horizontal']) }}
+                                                <p class="mb-5">(only<strong class="text-danger">.xls/xlsx</strong> file supported.)</span> <a href="{{ url('hr/payroll/sample_file') }}" >Download Sample File </a></p>
+                                                <div class="form-group  file-zone">
+                                                    <label  for="file"> Salary Add/Deduct File</label>
+                                                    <input type="file" id="file_upload" name="file" class="file-type-validation" data-file-allow='["xls","xlsx"]' autocomplete="off" />
+                                                    <div class="invalid-feedback" role="alert">
+                                                        <strong>Select a file</strong>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <button class="btn " type="reset">
+                                                        <i class="ace-icon fa fa-undo bigger-110"></i> Reset
+                                                    </button>
+                                                    &nbsp; &nbsp; &nbsp;
+                                                    <button type="submit" class="btn btn-primary" id="upload" type="button">
+                                                        <i class="ace-icon fa fa-check bigger-110"></i> Upload
+                                                    </button>
+                                                </div>
 
-
-                                        <div class="form-group">
-                                            <label class="col-12" for="file">Salary Add/Deduct File <span style="font-size: 9px">(only<strong class="text-danger">.xls/xlsx</strong> file supported.)</span> <a href="{{ url('hr/payroll/sample_file') }}" >Download Sample File </a></label>
-                                            <div class="col-sm-8">
-                                                <input type="file" name="file" id="file_upload" class="col-xs-12" data-validation="required" data-validation-allowing="xls,xlsx" style="margin-top: 3%;" />
-                                                 <span id="file_upload_error" class="red" style="display: none; font-size: 14px;">Only <strong>xls or xlsx</strong> file supported.</span>
-                                            </div>
-                                        </div>
-
-                                    <div class="clearfix form-actions bulk_form_button">
-                                        <div class="col-sm-offset-4 col-sm-8 no-padding">
-                                            <button class="btn " type="reset">
-                                                <i class="ace-icon fa fa-undo bigger-110"></i> Reset
-                                            </button>
-                                            &nbsp; &nbsp; &nbsp;
-                                            <button type="submit" class="btn btn-primary" id="upload" type="button">
-                                                <i class="ace-icon fa fa-check bigger-110"></i> Upload
-                                            </button>
-
+                                            {{ Form::close() }}
                                         </div>
                                     </div>
-
-
-                                    {{ Form::close() }}
                                 </div>
 
                             </div>
