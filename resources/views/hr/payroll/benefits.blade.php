@@ -26,21 +26,20 @@
         </div>
 
         
+        @include('inc/message')
         <div class="panel panel-success" style="">
-            <div class="panel-heading">
-                <h5>
+            <div class="panel-heading page-headline-bar">
+                <h6>
                     End of Job Benefits
-                    <div class="pull-right"><a href="{{url('hr/payroll/given_benefits_list')}}" target="_blank" class="btn btn-xs pull-right" style="background-color: teal !important;border-radius: 2px;border-color: teal !important;">Benefit List <i class="fa fa-list bigger-120"></i></a></div>
-                </h5>
+                    <a href="{{url('hr/payroll/given_benefits_list')}}" target="_blank" class="btn btn-primary pull-right" >Benefit List <i class="fa fa-list bigger-120"></i></a>
+                </h6>
             </div>
             <div class="panel-body">
-                <!-- Display Erro/Success Message -->
-                @include('inc/message')
                 <div class="row">
-                    <div class="col-6">
+                    <div class="col-4">
                         {{Form::open(['url'=>'hr/payroll/benefits_save', 'class'=>'form-horizontal'])}}
                             <div class="row">
-                                <div class="col-6">
+                                <div class="col-12">
                                     
                                     <div class="form-group has-required has-float-label select-search-group">
                                         <select id="benefit_on" name="benefit_on" class="form-control" required="required">
@@ -54,8 +53,12 @@
                                         <label>Benefit Type</label>
                                     </div>
                                 </div>
-                                <div  class="col-6">
-                                    <div id="death_reason_div" class="form-group has-required has-float-label select-search-group" >
+                                
+                                
+                                
+
+                                <div  id="death_reason_div" class="col-12">
+                                    <div  class="form-group has-required has-float-label select-search-group" >
                                         
                                         <select  name="death_reason" class="form-control death_reason"  required="required">
                                            <option value="none">Select One</option>
@@ -65,14 +68,16 @@
                                         <label >Death Reason</label>
                                     </div>
                                 </div>
-                                <div id="suspension_days_div" class="col-6">
+                                <div id="suspension_days_div" class="col-12">
                                     <div class="form-group has-required has-float-label" >
                                         
-                                        <input type="text" class="col-xs-12" name="suspension_days" id="suspension_days" value="0" required="required">
+                                        <input type="text" class="form-control" name="suspension_days" id="suspension_days" value="0" required="required">
                                         <label >Suspension Days</label>
                                     </div>
                                 </div>
-                                <div class="col-6">
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
                                     <div class="form-group has-required has-float-label emp select-search-group" style="pointer-events: none;">
                                         
                                         {{ Form::select('associate',  [Request::get('associate') => Request::get('associate')], Request::get('associate'), ['placeholder'=>'Select Associate\'s ID', 'id'=>'associate', 'class'=> 'associates form-control', 'data-validation'=>'required']) }}
@@ -80,55 +85,43 @@
                                         
                                     </div>
                                 </div>
-                                <div class="col-6">
-                                    <div class="form-group  has-float-label" id="not_eligible_show">
+                                <div id="not_eligible_show" class="col-12">
+                                    <div class="form-group  has-float-label" >
                                         <label></label>
                                         <div class="col-sm-6">
                                             <label class="col-xs-12 no-padding no-margin" style="color: red;">Sorry Not Eligible (Service < 1 Year)</label>
                                         </div>
                                     </div>
                                 </div>
-                                <div id="earn_leave_div" class="col-6">
-                                    <div class="form-group  has-float-label" >
-                                        
-                                        <input class="form-control" type="text" name="earn_leave_due" id="earn_leave_due" readonly="readonly">
-                                        <label>Earn Leave</label>
-                                    </div>
-                                </div>
-                                <div id="service_benefit_div" class="col-6">
-                                    <div class="form-group  has-float-label" >
-                                        <input class="form-control" type="text" name="service_benefit" id="service_benefit" readonly="readonly">
-                                        <label>Service Benefits</label>
-                                    </div>
-                                </div>
-                                <div id="subsistence_allowance_div" class="col-6">
+                                
+                                <div id="subsistence_allowance_div" class="col-12">
                                     <div class="form-group  has-float-label" >
                                         <input class="form-control" type="text" name="subsistence_allowance" id="subsistence_allowance" readonly="readonly">
                                         <label>Subsistence Allowance</label>
                                     </div>
                                 </div>
-                                <div id="notice_pay_div" class="col-6">
+                                <div id="notice_pay_div" class="col-12">
                                     <div class="form-group  has-float-label" >
                                         <input class="form-control" type="text" name="notice_pay" id="notice_pay" readonly="readonly">
                                         <label>Notice Pay</label>
                                         
                                     </div>
                                 </div>
-                                <div id="termination_benefit_div" class="col-6">
+                                <div id="termination_benefit_div" class="col-12">
                                     <div class="form-group  has-float-label" >
                                         
                                         <input class="form-control" type="text" name="termination_benefit" id="termination_benefit" readonly="readonly">
                                         <label>Termination Benefit</label>
                                     </div>
                                 </div>
-                                <div id="natural_death_benefit_div" class="col-6">
+                                <div id="natural_death_benefit_div" class="col-12">
                                     <div class="form-group  has-float-label" >
                                         
                                         <input class="form-control" type="text" name="natural_death_benefit" id="natural_death_benefit" readonly="readonly">
                                         <label>Natural Death Benefits</label>
                                     </div>
                                 </div>
-                                <div id="on_duty_and_accidental_death_on_duty_div" class="col-6">
+                                <div id="on_duty_and_accidental_death_on_duty_div" class="col-12">
                                     <div class="form-group  has-float-label" >
                                         
                                         <input class="form-control" type="text" name="on_duty_and_accidental_death_on_duty" id="on_duty_and_accidental_death_on_duty" readonly="readonly">
@@ -136,7 +129,26 @@
                                     </div>
 
                                 </div>
-                                <div id="total_benefit_amount_div" class="col-6">
+                                
+                            </div>
+                            <div class="row">
+                                <div id="earn_leave_div" class="col-12">
+                                    <div class="form-group  has-float-label" >
+                                        
+                                        <input class="form-control" type="text" name="earn_leave_due" id="earn_leave_due" readonly="readonly">
+                                        <label>Earn Leave</label>
+                                    </div>
+                                </div>
+                                <div id="service_benefit_div" class="col-12">
+                                    <div class="form-group  has-float-label" >
+                                        <input class="form-control" type="text" name="service_benefit" id="service_benefit" readonly="readonly">
+                                        <label>Service Benefits</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div id="total_benefit_amount_div" class="col-12">
                                     <div class="form-group  has-float-label" >
                                         
                                         <input class="form-control" type="text" name="total_benefit_amount" id="total_benefit_amount" readonly="readonly" style="background-color: antiquewhite !important;" value="0">
@@ -144,101 +156,90 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row no-padding no-margin">
-                                <div class="col-sm-11">
-                                    <button type="button" class="btn btn-sm btn-danger pull-right" id="pay_button" style="border-radius: 2px;" disabled="disabled">Pay</button>
-                                </div>
-                                <div class="col-sm-1 no-padding">
-                                    <span id="loader" hidden="hidden">
-                                        <i class="fa fa-refresh fa-spin bigger-240" style="color: forestgreen; padding: 10px;"></i>
-                                    </span>
-                                    
+                            <div class="row">
+                                <div class="col-12">
+                                    <button type="button" class="btn btn-danger" id="pay_button"  disabled="disabled">Pay Benefits</button>
                                 </div>
                             </div>
                             
                         {{Form::close()}}
                     </div>
-                    <div class="col-sm-6">
-                        <div class="panel panel-info" id="basic_info_div">
-                            <div class="panel-heading"><h5>Basic Information</h5></div>
+                    <div class="col-8">
+                        <div class=" panel-info" id="basic_info_div">
                             <div class="panel-body">
                                 <div class="row">
-                                    <div class="col-sm-6 no-margin no-padding pull-right" id="picture">
+                                    
+                                    <div class="col-6">
+                                        
+                                        <div class="user-details-block">
+                                            <div class="user-profile text-center mt-0">
+                                                <img id="avatar" class="avatar-130 img-fluid" src="{{ asset('assets/images/user/09.jpg') }} " onerror="this.onerror=null;this.src='{{ asset("assets/images/user/09.jpg") }}';">
+                                            </div>
+                                            <div class="text-center mt-3">
+                                             <h4><b id="name">Selected User</b></h4>
+                                             <p class="mb-0" >
+                                                Associate ID: <span id="associate_id"></span>
+                                             </p>
+                                             <p class="mb-0" id="designation">
+                                                Employee designation</p>
+                                             
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <ul class="speciality-list m-0 p-0">
+                                            <li class="d-flex mb-4 align-items-center">
+                                               <div class="user-img img-fluid"><a href="#" class="iq-bg-primary"><i class="ri-award-fill"></i></a></div>
+                                               <div class="media-support-info ml-3">
+                                                  <h6>Unit</h6>
+                                                  <p id="unit" class="mb-0">------------------------</p>
+                                               </div>
+                                            </li>
+                                            <li class="d-flex mb-4 align-items-center">
+                                               <div class="user-img img-fluid"><a href="#" class="iq-bg-warning"><i class="ri-award-fill"></i></a></div>
+                                               <div class="media-support-info ml-3">
+                                                  <h6>Department</h6>
+                                                  <p id="department" class="mb-0">------------------------</p>
+                                               </div>
+                                            </li>
+                                            <li class="d-flex mb-4 align-items-center">
+                                               <div class="user-img img-fluid"><a href="#" class="iq-bg-info"><i class="ri-award-fill"></i></a></div>
+                                               <div class="media-support-info ml-3">
+                                                  <h6>Date of Joining</h6>
+                                                  <p id="doj" class="mb-0">------------------------</p>
+                                               </div>
+                                            </li>
+                                            <li class="d-flex mb-4 align-items-center">
+                                               <div class="user-img img-fluid"><a href="#" class="iq-bg-info"><i class="ri-award-fill"></i></a></div>
+                                               <div class="media-support-info ml-3">
+                                                  <h6>Salary</h6>
+                                                  <p class="mb-0">Gross:  <strong class="text-danger" id="gross_salary">0</strong> Basic: <strong class="text-success" id="basic_salary">0</strong></p>
+                                               </div>
+                                            </li>
+                                            <li class="d-flex mb-4 align-items-center">
+                                               <div class="user-img img-fluid"><a href="#" class="iq-bg-info"><i class="ri-award-fill"></i></a></div>
+                                               <div class="media-support-info ml-3">
+                                                  <h6>Earned Leave</h6>
+                                                  <p class="mb-0">Total:  <strong class="text-danger" id="total_earn_leave">0</strong class="text-danger"> Enjoyed: <strong class="text-danger" id="enjoyed_earn_leave">0</strong class="text-danger"> Remained: <strong class="text-danger" id="remained_earn_leave"></strong class="text-success">0</p>
+                                               </div>
+                                            </li>
+                                            <li class="d-flex mb-4 align-items-center">
+                                               <div class="user-img img-fluid"><a href="#" class="iq-bg-info"><i class="ri-award-fill"></i></a></div>
+                                               <div class="media-support-info ml-3">
+                                                  <h6>Total Service</h6>
+                                                  <p id="total_service" class="mb-0">Total:  <span id="total_earn_leave"><span style="color: darkblue; font-weight: 800; padding: 5px; border-radius: 10px; padding-left: 0px;" id="service_Y"></span>
+                                                       <span style="color: darkblue;">Year/s</span>
+                                                       <span style="color: forestgreen; font-weight: 800; padding: 5px; border-radius: 10px;" id="service_m"></span>
+                                                       <span style="color: forestgreen;">Month/s</span>
+                                                       <span style="color: maroon; font-weight: 800; padding: 5px; border-radius: 10px;" id="service_d"></span>
+                                                       <span style="color: maroon;">Day/s</span></p>
+                                               </div>
+                                            </li>
+                                         </ul>
                                         
                                     </div>
+                                    
                                 </div>
-                                <div class="row" style="margin-top: 10px;">
-                                    <table class="table table-striped table-responsive" style="display: block; height: 300px !important; width: 100%; overflow-y: scroll !important;">
-                                        <thead>
-                                            <tr>
-                                                <th style="width:10%"></th>
-                                                <th style="width:20%"></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                               <td>Associate ID</td> 
-                                               <td id="associate_id"></td> 
-                                            </tr>
-                                            <tr>
-                                               <td>Name</td> 
-                                               <td id="name"></td> 
-                                            </tr>
-                                            <tr>
-                                               <td>Unit</td> 
-                                               <td id="unit"></td> 
-                                            </tr>
-                                            {{-- <tr>
-                                               <td>Location</td> 
-                                               <td id="location"></td> 
-                                            </tr> --}}
-                                            <tr>
-                                               <td>Department</td> 
-                                               <td id="department"></td> 
-                                            </tr>
-                                            <tr>
-                                               <td>Designation</td> 
-                                               <td id="designation"></td> 
-                                            </tr>
-                                            <tr>
-                                               <td>Date of Joining</td> 
-                                               <td id="doj"></td> 
-                                            </tr>
-                                            <tr>
-                                               <td>Gross Salary</td> 
-                                               <td id="gross_salary"></td> 
-                                            </tr>
-                                            <tr>
-                                               <td>Basic</td> 
-                                               <td id="basic_salary"></td> 
-                                            </tr>
-                                            <tr>
-                                               <td>Total Service Days</td> 
-                                               <td id="total_service">
-                                                   <span style="color: darkblue; font-weight: 800; padding: 5px; border-radius: 10px; padding-left: 0px;" id="service_Y"></span>
-                                                   <span style="color: darkblue;">Year/s</span>
-                                                   <span style="color: forestgreen; font-weight: 800; padding: 5px; border-radius: 10px;" id="service_m"></span>
-                                                   <span style="color: forestgreen;">Month/s</span>
-                                                   <span style="color: maroon; font-weight: 800; padding: 5px; border-radius: 10px;" id="service_d"></span>
-                                                   <span style="color: maroon;">Day/s</span>
-                                               </td> 
-                                            </tr>
-                                            <tr>
-                                                <td>Total Earn Leaves</td>
-                                                <td id="total_earn_leave"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Enjoyed Earn Leaves</td>
-                                                <td id="enjoyed_earn_leave"></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Remained Earn Leaves</td>
-                                                <td id="remained_earn_leave"></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                
                             </div>
                         </div>
                     </div>
@@ -246,37 +247,6 @@
             </div>
         </div>
 
-            {{-- Voucher portion --}}
-          <?php
-            class BanglaConverter {
-                    public static $bn = array("১", "২", "৩", "৪", "৫", "৬", "৭", "৮", "৯", "০");
-                    public static $en = array("1", "2", "3", "4", "5", "6", "7", "8", "9", "0");
-
-                    public static $bn_al = array("এ", "বি", "সি", "ডি", "ই", "এফ", "জি", "এইচ", "আই", "জে","কে","এল",   "এম",   "এন",   "ও",    "পি",   "কিউ",  "আর",   "এস",   "টি",   "ইউ",   "ভি",   "ডব্লু",    "এক্স", "ওয়াই", "জেড",  
-                                                        );
-                    public static $en_al_cap = array("A", "B", "C", "D", "E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z");
-                    public static $en_al_sm = array("a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z");
-
-                    public static $month_number = array("1","2","3","4","5","6","7","8","9","10","11","12");
-                    public static $month_name_bn = array("জানুয়ারী","ফেব্রুয়ারী","মার্চ","এপ্রিল","মে","জুন","জুলাই","অগাস্ট","সেপ্টেম্বর","অক্টোবর","নভেম্বর","ডিসেম্বর");
-                    
-                    public static function bn2en($number) {
-                        return str_replace(self::$bn, self::$en, $number);
-                    }
-                    
-                    public static function en2bn($number) {
-                        return str_replace(self::$en, self::$bn, $number);
-                    }
-
-                    public static function en2bn_alph($str) {
-                        return str_replace(self::$en_al_cap, self::$bn_al, $str);
-                    }
-
-                    public static function en2bn_month($month_num) {
-                        return str_replace(self::$month_number, self::$month_name_bn, $month_num);
-                    }
-                }
-            ?>
         <div class="panel panel-success" id="voucher" hidden="hidden">
             <div class="panel-heading">
                 <h5>Voucher
@@ -288,7 +258,7 @@
                     <h1 style="text-align: center; color: forestgreen;" id="unit_print"></h1>
                     <h5 style="text-align: center; " id="unit_addr_print"></h5>
                     <h5 class="pull-right" style="margin-left: 80%;">তারিখঃ<?php
-                        echo BanglaConverter::en2bn(date('d-m-Y'));
+                        echo eng_to_bn(date('d-m-Y'));
 
                     ?></h5>
 
@@ -578,14 +548,14 @@
                         $('#doj').text(data['as_doj']);
                         if(data['as_pic'] == null){
                             if(data['as_gender'] == 'Male'){
-                                $('#picture').html('<img  src=\"'+url+'/assets/images/employee/male.jpg\" style="height: 70px; width: 60px;" class="pull-right">');   
+                                $('#avatar').attr('src',url+'/assets/images/user/1.jpg');   
                             }
                             else{
-                                $('#picture').html('<img  src=\"'+url+'/assets/images/employee/female.jpg\" style="height: 70px; width: 60px;" class="pull-right">');   
+                                $('#avatar').attr('src',url+'/assets/images/user/09.jpg');   
                             }
                         }
                         else{
-                            $('#picture').html('<img  src='+url+data['as_pic']+' style="height: 70px; width: 60px;" class="pull-right">');   
+                            $('#avatar').attr('src', url+data['as_pic']);   
                         }
                         $('#service_Y').html(data['service_years']);
                         $('#service_m').html(data['service_months']);
@@ -672,28 +642,26 @@
             }
             else{
                 $('#associate_id').text('');
-                $('#name').text('');
-                $('#unit').text('');
-                // $('#location').text('');
-                $('#department').text('');
-                $('#designation').text('');
-                $('#doj').text('');
-                $('#picture').html('');
-                $('#service_Y').html('');
-                $('#service_m').html('');
-                $('#service_d').html('');
-                $('#gross_salary').text('');
-                $('#basic_salary').text('');
-                $('#total_earn_leave').text('');
-                $('#enjoyed_earn_leave').text('');
-                $('#remained_earn_leave').text('');
+                $('#name').text('Selected Employee');
+                $('#unit').text('------------------------');
+                $('#department').text('------------------------');
+                $('#designation').text('Employee designation');
+                $('#doj').text('------------------------');
+                $('#avatar').attr('src','/assets/images/user/09.jpg'); 
+                $('#service_Y').html('0');
+                $('#service_m').html('0');
+                $('#service_d').html('0');
+                $('#gross_salary').text('0');
+                $('#basic_salary').text('0');
+                $('#total_earn_leave').text('0');
+                $('#enjoyed_earn_leave').text('0');
+                $('#remained_earn_leave').text('0');
             }
 
         });
 
-        $('#pay_button').on('click', function(){
+        $(document).on('click','#pay_button', function(){
             $('#loader').removeAttr('hidden');
-
             $.ajax({
                 url: '{{url('hr/payroll/save_benefit_data')}}',
                 type: 'get',
@@ -713,7 +681,7 @@
 
                 },
                 success: function(data){
-                    console.log(data);
+                    console.log('done');
                     if(data == 1){
                         swal("Data Saved. Please Print Out the Voucher", "", "success");
                         $('#loader').attr('hidden', 'hidden');

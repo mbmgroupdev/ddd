@@ -266,11 +266,12 @@ class BenefitsCalculationController extends Controller
     }
 
 
-    public function saveBenefits(Request $request){
+    public function saveBenefits(Request $request)
+    {
     	try{
-            // dd($request->all());exit;
             $ck = HrAllGivenBenefits::storeBenefits($request->all());
-            if($ck == 1){
+            
+            if($ck == 'success'){
                 if($request->benefit_on == 'on_resign'){
                     $status = 2;
                 }
@@ -285,15 +286,15 @@ class BenefitsCalculationController extends Controller
                 }
                 //updating employee status....
                 DB::table('hr_as_basic_info')
-                        ->where('associate_id', $request->associate_id)
-                        ->update([
-                             'as_status' => $status  
-                        ]);
+                ->where('associate_id', $request->associate_id)
+                ->update([
+                     'as_status' => $status  
+                ]);
 
                 return 1;
             }
         }catch(\Exception $e){
-            return back()->with($e->getMessage());
+            return 'failed';
         }
     }
 
