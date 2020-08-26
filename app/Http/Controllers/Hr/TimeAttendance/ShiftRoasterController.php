@@ -654,14 +654,15 @@ class ShiftRoasterController extends Controller
         $department  = $request->post("department");
         $section     = $request->post("section");
         $subsection  = $request->post("subsection");
-        $month       = $request->post("month");
-        $month       = date("m", strtotime($month));
-        $year        = $request->year;
         $type        = $request->emptype;
-
+        // year month section
+        $yearMonth = explode('-', $request->post("month"));
+        $month = $yearMonth[1];
+        $year = $yearMonth[0];
         // last day and first day of the selected month
         $firstDay = date($year.'-'.$month.'-01');
         $lastDay  = date($year.'-'.$month.'-t');
+        return $lastDay;
 
         $data = Employee::select([
                 'hr_as_basic_info.as_id',
@@ -714,7 +715,7 @@ class ShiftRoasterController extends Controller
 
         $userPluck = $data->pluck('associate_id');
         $data = $data->orderBy('hr_as_basic_info.as_id', 'ASC')->get();
-
+        // return $data;
         // holiday planner
         $holidayCheck = DB::table("hr_yearly_holiday_planner")
                 ->whereBetween('hr_yhp_dates_of_holidays', [$firstDay,$lastDay])
@@ -728,7 +729,7 @@ class ShiftRoasterController extends Controller
         // holiday roaster
         $holidayRoasterAll = HolidayRoaster::where('status', 1)->whereIn('as_id',$userPluck)->whereBetween('date',[$firstDay,$lastDay])->get()->groupBy('as_id')->toArray();
 
-        // return $holidayRoasterAll;
+        return $holidayRoasterAll;
 
         foreach($data as $k=>$dd) {
             for($i=1; $i<=31; $i++) {
@@ -917,6 +918,281 @@ class ShiftRoasterController extends Controller
             ])
             ->make(true);
     }
+
+    /*public function getRoasterDatatableData(Request $request)
+    {
+        $unit  = $request->post("unit");
+        $floor = $request->post("floor_id");
+        $line  = $request->post("line_id");
+        $area  = $request->post("area");
+        $otnonot     = $request->post("otnonot");
+        $department  = $request->post("department");
+        $section     = $request->post("section");
+        $subsection  = $request->post("subsection");
+        $type        = $request->emptype;
+        // year month section
+        $yearMonth = explode('-', $request->post("month"));
+        $month = $yearMonth[1];
+        $year = $yearMonth[0];
+        // return $month;
+        // last day and first day of the selected month
+        $firstDay = date($year.'-'.$month.'-01');
+        $lastDay  = date($year.'-'.$month.'-t');
+
+        $data = Employee::select([
+                'hr_as_basic_info.as_id',
+                'hr_as_basic_info.associate_id',
+                'hr_as_basic_info.as_name',
+                'hr_as_basic_info.as_line_id',
+                'hr_as_basic_info.as_shift_id',
+                'hr_as_basic_info.shift_roaster_status',
+                'd.hr_designation_name',
+                'l.hr_line_name',
+                'f.hr_floor_name',
+                's.*'
+            ])
+            ->where('hr_as_basic_info.as_unit_id', $unit)
+            ->where('hr_as_basic_info.as_status', 1)
+            // ->where('hr_as_basic_info.as_ot', 0)
+            // ->where('hr_as_basic_info.associate_id', '15F700039P')
+            ->when(!empty($floor), function($q) use($floor){
+                $q->where('hr_as_basic_info.as_floor_id', $floor);
+            })
+            ->when($otnonot!=null, function($q) use($otnonot){
+                $q->where('hr_as_basic_info.as_ot', $otnonot);
+            })
+            ->when(!empty($line), function($q) use($line){
+                $q->where('hr_as_basic_info.as_line_id', $line);
+            })
+            ->when(!empty($area), function($q) use($area){
+                $q->where('hr_as_basic_info.as_area_id', $area);
+            })
+            ->when(!empty($department), function($q) use($department){
+                $q->where('hr_as_basic_info.as_department_id', $department);
+            })
+            ->when(!empty($type), function($q) use($type){
+                $q->where('hr_as_basic_info.as_emp_type_id', $type);
+            })
+            ->when(!empty($section), function($q) use($section){
+                $q->where('hr_as_basic_info.as_section_id', $section);
+            })
+            ->when(!empty($subsection), function($q) use($subsection){
+                $q->where('hr_as_basic_info.as_subsection_id', $subsection);
+            })
+            ->leftJoin('hr_line AS l','l.hr_line_id','hr_as_basic_info.as_line_id')
+            ->leftJoin('hr_designation AS d','d.hr_designation_id','hr_as_basic_info.as_designation_id')
+            ->leftJoin('hr_floor AS f','f.hr_floor_id','hr_as_basic_info.as_floor_id')
+            ->leftJoin('hr_shift_roaster AS s', function($q) use($month,$year) {
+                $q->on('hr_as_basic_info.associate_id','=','s.shift_roaster_associate_id');
+                $q->where('s.shift_roaster_month', (int)$month);
+                $q->where('s.shift_roaster_year', (int)$year);
+            });
+
+        $userPluck = $data->pluck('associate_id');
+        $data = $data->orderBy('hr_as_basic_info.as_id', 'ASC')->get();
+        // return $data;
+        // holiday planner
+        $holidayCheck = DB::table("hr_yearly_holiday_planner")
+                ->whereBetween('hr_yhp_dates_of_holidays', [$firstDay,$lastDay])
+                ->where('hr_yhp_status', 1)
+                ->where('hr_yhp_unit', $unit);
+
+        // holiday planner pluck
+        $holidayCheckComment = $holidayCheck->pluck('hr_yhp_comments','hr_yhp_dates_of_holidays');
+        $holidayCheckStatus  = $holidayCheck->pluck('hr_yhp_open_status','hr_yhp_dates_of_holidays');
+
+        // holiday roaster
+        $holidayRoasterAll = HolidayRoaster::where('status', 1)->whereIn('as_id',$userPluck)->whereBetween('date',[$firstDay,$lastDay])->get()->groupBy('as_id')->toArray();
+
+        return $holidayRoasterAll;
+
+        foreach($data as $k=>$dd) {
+            for($i=1; $i<=31; $i++) {
+                if(strlen($i) < 2) {
+                    $i = '0'.$i;
+                }
+                $dateF = date((int)$year.'-'.(int)$month.'-'.$i);
+
+                if(isset($holidayRoasterAll[$dd->associate_id])) {
+                    if(array_search($dateF, array_column($holidayRoasterAll[$dd->associate_id], 'date')) !== false) {
+                        $rosterKey = array_search($dateF, array_column($holidayRoasterAll[$dd->associate_id], 'date'));
+                        if(isset($holidayRoasterAll[$dd->associate_id][$rosterKey])) {
+                            $hRoster = 'hRoster'.(int)$i;
+                            $dd->$hRoster = $holidayRoasterAll[$dd->associate_id][$rosterKey]['remarks'];
+                        }
+                    }
+                } else {
+                    if($dd->shift_roaster_status == 0) {
+                        // check holiday planner
+                        if(isset($holidayCheckStatus[$dateF])){
+                            // check 0 for Holiday
+                            if($holidayCheckStatus[$dateF] == 0) {
+                                $hplanner = 'hPlanner'.(int)$i;
+                                $dd->$hplanner = true;
+                            }
+                        }
+                    }
+                }
+
+                // set shift default day
+                $ddefault = 'defaultDay'.(int)$i;
+                $dd->$ddefault = true;
+                $day = 'day_'.(int)$i;
+                if($dd->$day != null) {
+                    $dd->$ddefault = false;
+                }
+            }
+        }
+
+        return DataTables::of($data)->addIndexColumn()
+            ->addColumn("name", function($data){
+                return $data->as_name;
+            })
+            ->addColumn("associate", function($data){
+                return $data->associate_id;
+            })
+            ->addColumn("designation", function($data){
+                return $data->hr_designation_name;
+            })
+            ->addColumn("line", function($data){
+                return $data->hr_line_name;
+            })
+            ->addColumn("floor", function($data){
+                return $data->hr_floor_name;
+            })
+            ->addColumn("day_1", function($data) use($year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll){
+                return $this->datatableReturnColumn('day_1', '01', $data, $year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll);
+            })
+            ->addColumn("day_2", function($data) use($year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll){
+                return $this->datatableReturnColumn('day_2', '02', $data, $year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll);
+            })
+            ->addColumn("day_3", function($data) use($year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll){
+                return $this->datatableReturnColumn('day_3', '03', $data, $year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll);
+            })
+            ->addColumn("day_4", function($data) use($year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll){
+                return $this->datatableReturnColumn('day_4', '04', $data, $year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll);
+            })
+            ->addColumn("day_5", function($data) use($year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll){
+                return $this->datatableReturnColumn('day_5', '05', $data, $year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll);
+            })
+            ->addColumn("day_6", function($data) use($year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll){
+                return $this->datatableReturnColumn('day_6', '06', $data, $year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll);
+            })
+            ->addColumn("day_7", function($data) use($year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll){
+                return $this->datatableReturnColumn('day_7', '07', $data, $year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll);
+            })
+            ->addColumn("day_8", function($data) use($year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll){
+                return $this->datatableReturnColumn('day_8', '08', $data, $year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll);
+            })
+            ->addColumn("day_9", function($data) use($year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll){
+                return $this->datatableReturnColumn('day_9', '09', $data, $year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll);
+            })
+            ->addColumn("day_10", function($data) use($year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll){
+                return $this->datatableReturnColumn('day_10', '10', $data, $year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll);
+            })
+            ->addColumn("day_11", function($data) use($year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll){
+                return $this->datatableReturnColumn('day_11', '11', $data, $year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll);
+            })
+            ->addColumn("day_12", function($data) use($year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll){
+                return $this->datatableReturnColumn('day_12', '12', $data, $year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll);
+            })
+            ->addColumn("day_13", function($data) use($year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll){
+                return $this->datatableReturnColumn('day_13', '13', $data, $year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll);
+            })
+            ->addColumn("day_14", function($data) use($year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll){
+                return $this->datatableReturnColumn('day_14', '14', $data, $year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll);
+            })
+            ->addColumn("day_15", function($data) use($year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll){
+                return $this->datatableReturnColumn('day_15', '15', $data, $year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll);
+            })
+            ->addColumn("day_16", function($data) use($year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll){
+                return $this->datatableReturnColumn('day_16', '16', $data, $year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll);
+            })
+            ->addColumn("day_17", function($data) use($year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll){
+                return $this->datatableReturnColumn('day_17', '17', $data, $year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll);
+            })
+            ->addColumn("day_18", function($data) use($year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll){
+                return $this->datatableReturnColumn('day_18', '18', $data, $year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll);
+            })
+            ->addColumn("day_19", function($data) use($year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll){
+                return $this->datatableReturnColumn('day_19', '19', $data, $year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll);
+            })
+            ->addColumn("day_20", function($data) use($year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll){
+                return $this->datatableReturnColumn('day_20', '20', $data, $year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll);
+            })
+            ->addColumn("day_21", function($data) use($year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll){
+                return $this->datatableReturnColumn('day_21', '21', $data, $year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll);
+            })
+            ->addColumn("day_22", function($data) use($year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll){
+                return $this->datatableReturnColumn('day_22', '22', $data, $year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll);
+            })
+            ->addColumn("day_23", function($data) use($year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll){
+                return $this->datatableReturnColumn('day_23', '23', $data, $year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll);
+            })
+            ->addColumn("day_24", function($data) use($year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll){
+                return $this->datatableReturnColumn('day_24', '24', $data, $year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll);
+            })
+            ->addColumn("day_25", function($data) use($year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll){
+                return $this->datatableReturnColumn('day_25', '25', $data, $year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll);
+            })
+            ->addColumn("day_26", function($data) use($year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll){
+                return $this->datatableReturnColumn('day_26', '26', $data, $year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll);
+            })
+            ->addColumn("day_27", function($data) use($year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll){
+                return $this->datatableReturnColumn('day_27', '27', $data, $year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll);
+            })
+            ->addColumn("day_28", function($data) use($year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll){
+                return $this->datatableReturnColumn('day_28', '28', $data, $year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll);
+            })
+            ->addColumn("day_29", function($data) use($year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll){
+                return $this->datatableReturnColumn('day_29', '29', $data, $year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll);
+            })
+            ->addColumn("day_30", function($data) use($year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll){
+                return $this->datatableReturnColumn('day_30', '30', $data, $year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll);
+            })
+            ->addColumn("day_31", function($data) use($year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll){
+                return $this->datatableReturnColumn('day_31', '31', $data, $year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll);
+            })
+            ->rawColumns([
+                'name',
+                'associate',
+                'designation',
+                'line',
+                'floor',
+                'day_1',
+                'day_2',
+                'day_3',
+                'day_4',
+                'day_5',
+                'day_6',
+                'day_7',
+                'day_8',
+                'day_9',
+                'day_10',
+                'day_11',
+                'day_12',
+                'day_13',
+                'day_14',
+                'day_15',
+                'day_16',
+                'day_17',
+                'day_18',
+                'day_19',
+                'day_20',
+                'day_21',
+                'day_22',
+                'day_23',
+                'day_24',
+                'day_25',
+                'day_26',
+                'day_27',
+                'day_28',
+                'day_29',
+                'day_30',
+                'day_31'
+            ])
+            ->make(true);
+    }*/
 
     public function getRoasterData(Request $request)
     {
