@@ -199,7 +199,7 @@
 <script src="{{ asset('plugins/DataTables/datatables.min.js') }}"></script>
 <script src="{{ asset('assets/js/dataTables.cellEdit.js') }}"></script>
 <script type="text/javascript">
-    $(document).ready(function(){   
+    $(document).ready(function(){  
         var loader = '<div class="panel"><div class="panel-body"><p style="text-align:center;margin:100px;"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>';
         
         // change unit
@@ -309,8 +309,8 @@
             var out_time = updatedRow.data().out_punch;
 
             var in_time = updatedRow.data().in_punch;
-            var associateId = updatedRow.data().associate_id;
-             console.log(updatedRow.data().att_date);
+            var associateId = stripHtml(updatedRow.data().associate_id);
+             // console.log(updatedRow.data().att_date);
             var ths =$(this);
             var hr_shift_start_time = updatedRow.data().hr_shift_start_time;
             var hr_shift_end_time = updatedRow.data().hr_shift_end_time;
@@ -337,7 +337,7 @@
                 if(hr_shift_start_time){
                   if(data.s_ot) {
                     // console.log('sss');
-                    $('#'+updatedRow.data().associate_id+index+'_ot').text(data.n_ot);
+                    $('#'+stripHtml(updatedRow.data().associate_id)+index+'_ot').text(data.n_ot);
                     updatedRow.data().ot = data.s_ot;
                   } else {
                     // $('#'+updatedRow.data().associate_id+'_ot').text(0);
@@ -362,7 +362,7 @@
              type: 'get',
              data: {
                unit : updatedRow.data().as_unit_id,
-               associate_id:updatedRow.data().associate_id,
+               associate_id:stripHtml(updatedRow.data().associate_id),
                date:updatedRow.data().att_date,
                in_punch_new:updatedRow.data().in_punch,
                out_punch_new:updatedRow.data().out_punch,
@@ -372,9 +372,9 @@
              success: function(data)
              {
               console.log(data);
-              $('#'+updatedRow.data().associate_id+index+'_in').css('background-color','yellow');
-              $('#'+updatedRow.data().associate_id+index+'_out').css('background-color','yellow');
-              $('#'+updatedRow.data().associate_id+index+'_ot').css('background-color','yellow');
+              $('#'+stripHtml(updatedRow.data().associate_id)+index+'_in').css('background-color','yellow');
+              $('#'+stripHtml(updatedRow.data().associate_id)+index+'_out').css('background-color','yellow');
+              $('#'+stripHtml(updatedRow.data().associate_id)+index+'_ot').css('background-color','yellow');
                toastr.success(' ','Attendance Udated Successfully.');
                // $('#dataTables').DataTable().ajax.reload()
              },
@@ -390,7 +390,7 @@
              type: 'get',
              data: {
                unit : updatedRow.data().as_unit_id,
-               associate_id:updatedRow.data().associate_id,
+               associate_id:stripHtml(updatedRow.data().associate_id),
                date:updatedRow.data().att_date,
                in_punch_new:updatedRow.data().in_punch,
                out_punch_new:updatedRow.data().out_punch,
@@ -398,9 +398,9 @@
              },
              success: function(data)
              {
-              $('#'+updatedRow.data().associate_id+index+'_in').css('background-color','yellow');
-              $('#'+updatedRow.data().associate_id+index+'_out').css('background-color','yellow');
-              $('#'+updatedRow.data().associate_id+index+'_ot').css('background-color','yellow');
+              $('#'+stripHtml(updatedRow.data().associate_id)+index+'_in').css('background-color','yellow');
+              $('#'+stripHtml(updatedRow.data().associate_id)+index+'_out').css('background-color','yellow');
+              $('#'+stripHtml(updatedRow.data().associate_id)+index+'_ot').css('background-color','yellow');
                toastr.success(' ','Attendance Updated Successfully.');
                //$('#dataTables').DataTable().ajax.reload()
              },
@@ -560,9 +560,10 @@
 
          createdRow: function ( row, data, index ) {
             var td_index = data.DT_RowIndex;
-            $('td', row).eq(7).attr('id', data.associate_id+td_index+'_in');
-            $('td', row).eq(8).attr('id', data.associate_id+td_index+'_out');
-            $('td', row).eq(9).attr('id', data.associate_id+td_index+'_ot');
+            var associateId = stripHtml(data.associate_id);
+            $('td', row).eq(7).attr('id', associateId+td_index+'_in');
+            $('td', row).eq(8).attr('id', associateId+td_index+'_out');
+            $('td', row).eq(9).attr('id', associateId+td_index+'_ot');
          },
          initComplete: function () {
            var api =  this.api();
@@ -663,6 +664,14 @@
          }
        });
     });
+  function stripHtml(html){
+    // Create a new div element
+    var temporalDivElement = document.createElement("div");
+    // Set the HTML content with the providen
+    temporalDivElement.innerHTML = html;
+    // Retrieve the text property of the element (cross-browser support)
+    return temporalDivElement.textContent || temporalDivElement.innerText || "";
+  }
   
 </script>
 @endpush
