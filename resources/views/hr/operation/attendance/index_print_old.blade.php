@@ -1,37 +1,24 @@
 @extends('hr.layout')
 @section('title', 'Attendance Operation')
 @push('css')
-  
   <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-datetimepicker.min.css') }}" />
   <link rel="stylesheet" href="{{ asset('plugins/DataTables/datatables.css')}}">
   <link rel="stylesheet" href="{{ asset('assets/css/editor.dataTables.min.css') }}" />
   <style>
-    #dataTables th:nth-child(2) input{
-      width: 80px !important;
-    }
     #dataTables th:nth-child(3) input{
-      width: 65px !important;
+      width: 78px !important;
     }
     #dataTables th:nth-child(4) input{
       width: 65px !important;
     }
-    #dataTables th:nth-child(5) input{
-      width: 90px !important;
-    }
-    #dataTables th:nth-child(6) input, #dataTables th:nth-child(7) input{
+    #dataTables th:nth-child(7) input, #dataTables th:nth-child(8) input{
       width: 62px !important;
     }
-    #dataTables th:nth-child(8) input, #dataTables th:nth-child(9) input{
-      width: 62px !important;
-    }
-    #dataTables th:nth-child(11){
-      width: 120px !important;
+    #dataTables th:nth-child(9) input, #dataTables th:nth-child(10) input{
+      width: 65px !important;
     }
     table.dataTable {
       border-spacing: 1px;
-    }
-    .badge {
-      font-size: 100%;
     }
   </style>
 @endpush
@@ -161,27 +148,31 @@
                 <div class="col">
                   @php $lock = salary_lock_date();@endphp
                    <input type="hidden" value="{{ $lock }}" id="lock_data">
-                    <div class="table d-table hide">
-                      <div class="iq-card">
-                        <div class="iq-card-body">
-                          <table id="dataTables" class="table table-striped table-bordered table-head table-responsive w-100" style="">
-                             <thead>
-                                <tr>
-                                   <th>Sl.</th>
-                                   {{-- <th>Job Card</th> --}}
-                                   <th>Associate ID</th>
-                                   <th>Oracle ID</th>
-                                   <th>Name</th>
-                                   <th>Designation</th>
-                                   <th>Shift</th>
-                                   <th>Date</th>
-                                   <th>In Time</th>
-                                   <th>Out Time</th>
-                                   <th>OT</th>
-                                   <th>Status</th>
-                                </tr>
-                             </thead>
-                          </table>
+                   <div class="iq-card">
+                     <div class="iq-card-body">
+                       <div class="table d-table hide">
+                          <div class="panel">
+                            <div class="panel-body">
+                              <table id="dataTables" class="table table-striped table-bordered table-head table-responsive" style="">
+                                 <thead>
+                                    <tr>
+                                       <th>Sl.</th>
+                                       <th>Job Card</th>
+                                       <th>Associate ID</th>
+                                       <th>Oracle ID</th>
+                                       <th>Name</th>
+                                       <th>Designation</th>
+                                       <th>Shift</th>
+                                       <th>Date</th>
+                                       <th>In Time</th>
+                                       <th>Out Time</th>
+                                       <th>OT</th>
+                                       <th>Status</th>
+                                    </tr>
+                                 </thead>
+                              </table>
+                            </div>
+                          </div>
                        </div>
                      </div>
                    </div>
@@ -412,7 +403,7 @@
          }
          },1000);
         }
-        var searchable = [1,2,3,4,5,6,7,8];
+        var searchable = [2,3,4,5,6,7,8,9];
         var selectable = []; //use 4,5,6,7,8,9,10,11,....and * for all
         var dropdownList = {};
 
@@ -535,7 +526,7 @@
          },
          messageBottom: null,
              exportOptions: {
-               columns: [0,1,2,5,6,7,8,9],
+               columns: [0,2,5,6,7,8,9,10],
                stripHtml: false
              },
 
@@ -544,7 +535,7 @@
 
          columns: [
            { data: 'DT_RowIndex', name: 'DT_RowIndex' },
-           // { data: 'edit_jobcard', name: 'edit_jobcard' },
+           { data: 'edit_jobcard', name: 'edit_jobcard' },
            { data: 'associate_id',  name: 'associate_id' },
            { data: 'oracle_id',  name: 'oracle_id' },
            { data: 'as_name', name: 'as_name' },
@@ -560,9 +551,9 @@
 
          createdRow: function ( row, data, index ) {
             var td_index = data.DT_RowIndex;
-            $('td', row).eq(7).attr('id', data.associate_id+td_index+'_in');
-            $('td', row).eq(8).attr('id', data.associate_id+td_index+'_out');
-            $('td', row).eq(9).attr('id', data.associate_id+td_index+'_ot');
+            $('td', row).eq(8).attr('id', data.associate_id+td_index+'_in');
+            $('td', row).eq(9).attr('id', data.associate_id+td_index+'_out');
+            $('td', row).eq(10).attr('id', data.associate_id+td_index+'_ot');
          },
          initComplete: function () {
            var api =  this.api();
@@ -613,7 +604,7 @@
        dTable.MakeCellsEditable({
          "onUpdate": myCallbackFunction,
          "inputCss":'my-input-class',
-         "columns": [7,8],
+         "columns": [8,9],
          "allowNulls": {
            "columns": [3],
            "errorClass": 'error'
@@ -624,12 +615,12 @@
          },
          "inputTypes": [
            {
-             "column": 7,
+             "column": 8,
              "type": "text",
              "options":null
            },
            {
-             "column": 8,
+             "column": 9,
              "type": "text",
              "options":null
            }
@@ -641,17 +632,6 @@
          var from= $("#report_from").val();
          var to= $("#report_to").val();
          var unit= $("#unit").val();
-         // var floor_id = $("#floor_id").val();
-         // var line_id = $("#line_id").val();
-         // var area = $("#area").val();
-         // var department = $("#department").val();
-         // var section = $("#section").val();
-         // var subSection = $("#subSection").val();
-         // var type = $("#type").val();
-         // var ot_hour = $("#ot_hour").val();
-         // setTimeout(function () {
-         //   var condition = $("#condition").val();
-         // },100);
 
          if(to == "" || from == "" || unit == "")
          {
