@@ -26,10 +26,10 @@ class AttendanceOperationController extends Controller
             $data = [];
         }
         $date = isset($request->report_from)?$request->report_from:date('Y-m-d');
-        
+
         // return $data[0]->shift;
         return DataTables::of($data)->addIndexColumn()
-        ->addColumn('edit_jobcard', function($data) {
+        /*->addColumn('edit_jobcard', function($data) {
           //dd($data);exit;
             $date = '';
             if ($data->in_time != null) {
@@ -50,9 +50,28 @@ class AttendanceOperationController extends Controller
             list($year,$month,$day) = explode('-',$date);
             $url = 'hr/reports/job_card?associate='.$data->associate_id.'&month='.$month.'&year='.$year;
             return '<a href="'.url($url).'" target="blank">Job Card</a>';
-        })
+        })*/
         ->addColumn('associate_id', function($data) {
-            return $data->associate_id;
+            // return $data->associate_id;
+            $date = '';
+            if ($data->in_time != null) {
+                $date = date('Y-F-d', strtotime($data->in_time));
+            } elseif($data->in_time == null && $data->out_time == null && $data->status == 'Absent' ){
+                $date = date('Y-F-d', strtotime($data->date));
+            } elseif($data->in_time == null && $data->out_time == null && $data->status != 'Absent' && $data->status != 'Holiday' ){
+                $date = date('Y-F-d', strtotime($data->leave_from));
+            } elseif($data->in_time == null && $data->out_time == null && $data->status == 'Holiday' ){
+
+                $date = date('Y-F-d', strtotime($data->dates));
+            }
+
+            else {
+                $date = date('Y-F-d', strtotime($data->out_time));
+            }
+
+            list($year,$month,$day) = explode('-',$date);
+            $url = 'hr/reports/job_card?associate='.$data->associate_id.'&month='.$month.'&year='.$year;
+            return '<a href="'.url($url).'" target="blank">'.$data->associate_id.'</a>';
         })
         ->addColumn('att_date', function ($data) use ($date) {
             if ($data->in_time != null) {
@@ -112,50 +131,50 @@ class AttendanceOperationController extends Controller
             }
 
             if(($data->status == 'Casual Leave' || $data->status == 'Maternity Leave' || $data->status == 'Sick Leave')){
-               return '<span class="label label-md label-warning">'.$data->leave_type.' Leave</span>';
+               return '<span class="inline badge badge-warning">'.$data->leave_type.' Leave</span>';
             }
             if($data->status == 'Absent') {
 
-               return '<span class="label label-md label-danger">Absent</span>';
+               return '<span class="inline badge badge-danger">Absent</span>';
             }
             if($data->status == 'Holiday') {
-               return '<span class="label label-md label-danger">Holiday</span>';
+               return '<span class="inline badge badge-danger">Holiday</span>';
             }
             if($data->status == 'Present (Late)' || $data->status == 'Present (Halfday)'){
 
                if($data->in_time == null){
-                 return '<span class="label label-md label-warning">Late</span><span class="label label-sm label-success">Present</span> <button class="btn btn-xs btn-round btn-danger make-absent" >Make Absent</button>';
+                 return '<span class="inline badge badge-warning">Late</span><span class="inline badge badge-primary">Present</span> <button class="inline btn btn-xs btn-round btn-danger make-absent" >Make Absent</button>';
                }elseif ($data->out_time == null && $data->remarks != 'HD') {
-                 return '<span class="label label-md label-warning">Late</span><span class="label label-sm label-success">Present</span> <button class="btn btn-xs btn-round btn-danger make-halfday" >Make Halfday</button>';
+                 return '<span class="inline badge badge-warning">Late</span><span class="inline badge badge-primary">Present</span> <button class="inline btn btn-xs btn-round btn-danger make-halfday" >Make Halfday</button>';
                }elseif ($data->out_time == null && $data->remarks == 'HD') {
                  $time = explode(' ',$data->in_time);
                  if(strtotime($time[1]) >(strtotime($data->hr_shift_start_time)+180)){
-                   return '<span class="label label-md label-warning">Late</span><span class="label label-md  label-success">Present</span> <span class="label label-md  label-danger">Halfday</span>';
+                   return '<span class="inline badge badge-warning">Late</span><span class="badge badge-primary">Present</span> <span class="inline badge badge-danger">Halfday</span>';
 
                  } else {
-                   return '<span class="label label-md  label-success">Present</span> <span class="label label-md  label-danger">Halfday</span>';
+                   return '<span class="inline badge badge-primary">Present</span> <span class="inline badge badge-danger">Halfday</span>';
 
                  }
                }
                else{
-                 return '<span class="label label-md label-warning">Late</span><span class="label label-sm label-success">Present</span>';
+                 return '<span class="inline badge badge-warning">Late</span><span class="inline badge badge-primary">Present</span>';
                }
             }
             if($data->status == 'Present' || $data->status == 'Present (Halfday)') {
                if($data->in_time == null){
-                 return '<span class="label label-md  label-success">Present</span> <button class="btn btn-xs btn-round btn-danger make-absent" >Make Absent</button>';
+                 return '<span class="inline badge badge-primary">Present</span> <button class="inline btn btn-xs btn-round btn-danger make-absent" >Make Absent</button>';
                }elseif ($data->out_time == null && $data->remarks != 'HD') {
-                 return '<span class="label label-md  label-success">Present</span> <button class="btn btn-xs btn-round btn-danger make-halfday" >Make Halfday</button>';
+                 return '<span class="inline badge badge-primary">Present</span> <button class="inline btn btn-xs btn-round btn-danger make-halfday" >Make Halfday</button>';
                }elseif ($data->out_time == null && $data->remarks == 'HD') {
                  $time = explode(' ',$data->in_time);
                  if(strtotime($time[1]) >(strtotime($data->hr_shift_start_time)+180)){
-                   return '<span class="label label-md label-warning">Late</span><span class="label label-md  label-success">Present</span> <span class="label label-md  label-danger">Halfday</span>';
+                   return '<span class="inline badge badge-warning">Late</span><span class=" inline badge badge-primary">Present</span> <span class="inline badge badge-danger">Halfday</span>';
                  } else {
-                   return '<span class="label label-md  label-success">Present</span> <span class="label label-md  label-danger">Halfday</span>';
+                   return '<span class="inline badge badge-primary">Present</span> <span class="inline badge badge-danger">Halfday</span>';
                  }
                }
                else{
-                 return '<span class="label label-md label-success">Present</span>';
+                 return '<span class="inline badge badge-primary">Present</span>';
                }
             }
         })
@@ -190,7 +209,7 @@ class AttendanceOperationController extends Controller
             return 'Non OT';
           }
         })
-        ->rawColumns(['edit_jobcard','associate_id','ot','hr_designation_name','hr_shift_name', 'in_punch', 'out_punch', 'att_date','att_status','oracle_id'])
+        ->rawColumns(['associate_id','ot','hr_designation_name','hr_shift_name', 'in_punch', 'out_punch', 'att_date','att_status','oracle_id'])
         ->make(true);
     }
 
@@ -201,7 +220,9 @@ class AttendanceOperationController extends Controller
         $employeeToSql = $getEmployee->toSql();
 
     	if(in_array($request['unit'], [1,4,5,9])){
-    		$attData = AttendanceMBM::select('hr_attendance_mbm.*', 'b.as_oracle_code', 'b.as_id', 'b.associate_id', 'b.as_name', 'b.as_designation_id')
+    		$tableName = get_att_table($request['unit']);
+            $attData = DB::table($tableName)
+            ->select('hr_attendance_mbm.*', 'b.as_ot', 'b.as_oracle_code', 'b.as_id', 'b.associate_id', 'b.as_name', 'b.as_designation_id')
         	->whereBetween('in_time', [date('Y-m-d',strtotime($request['report_from']))." "."00:00:00", date('Y-m-d',strtotime($request['report_to']))." "."23:59:59"]);
         	if($request['type'] == 'All'){
         		$attData->addSelect(DB::raw("'all' as reportType"));
@@ -211,8 +232,10 @@ class AttendanceOperationController extends Controller
         		$attData->where('remarks', '!=', 'DSI');
         		$attData->whereNotNull('out_time');
         	}elseif($request['type'] == 'Present(Intime Empty)'){
-        		$attData->whereNull('in_time');
-        		$attData->orWhere('remarks', 'DSI');
+                $attData->where(function ($query) {
+                   $query->whereNull('in_time')
+                         ->orWhere('remarks', 'DSI');
+                });
         		$attData->whereNotNull('out_time');
         		$attData->addSelect(DB::raw("'present' as reportType"));
         	}elseif($request['type'] == 'Present(Outtime Empty)'){
@@ -256,9 +279,7 @@ class AttendanceOperationController extends Controller
         if($request['line_id'] != null){
             $attData->where('b.as_line_id', $request['line_id']);
         }
-        if($request['otnonot'] != null){
-            $attData->where('b.as_ot', $request['otnonot']);
-        }
+        
         if($request['otnonot'] != null){
             $attData->where('b.as_ot', $request['otnonot']);
         }
