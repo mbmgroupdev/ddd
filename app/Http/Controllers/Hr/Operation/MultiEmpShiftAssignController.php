@@ -162,7 +162,7 @@ class MultiEmpShiftAssignController extends Controller
       		$list_emp .= $as_id.', ';
       	}
       	// dd($list_emp);
-      	$this->logFileWrite('Shift Assign Updated for: ', $list_emp);
+      	log_file_write('Shift Assign Updated for: ', $list_emp);
       	return back()->with('success', 'Shift Assign Updated');
       }
     }

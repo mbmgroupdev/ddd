@@ -401,3 +401,10 @@ div.dataTables_wrapper div.dataTables_paginate{
 .hide{
   display: none !important;
 }
+.sticky-th {
+    position: sticky;
+    background: #fff;
+    z-index: 1;
+    vertical-align: middle!important;
+    top: -1px;
+}
