@@ -16,6 +16,9 @@ li{
 .iq-top-navbar {
     margin: 10px 30px;
 }
+.w-100{
+  width: 100%;
+}
 .avatar-130{
 	border-radius: 50%;
 }
@@ -125,6 +128,9 @@ li{
 }
 .custom-control-inline {
     display: inline-block;
+}
+.inline{
+    display: inline !important;
 }
 .btn-100{
     width:100px;
@@ -319,7 +325,7 @@ input[type="date" i] {
 
 
 .dataTables_wrapper .dt-buttons {
-  padding-left: 20%;
+  padding-left: 28%;
   text-align:center;
 }
 .dataTables_length{
@@ -392,4 +398,6 @@ div.dataTables_wrapper div.dataTables_paginate{
   width: 410px !important;
   height: 330px !important;
 }
-
+.hide{
+  display: none !important;
+}
