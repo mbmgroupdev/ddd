@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Hr\Unit;
 use App\Models\Hr\Section;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use DB, PDF;
 
 class IncrementReportController extends Controller

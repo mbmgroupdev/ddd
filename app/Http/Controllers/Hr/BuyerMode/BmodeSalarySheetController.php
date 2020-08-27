@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Hr\Benefits;
 use App\Models\Hr\Area;
 use App\Models\Hr\Department;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use App\Models\Hr\Floor;
 use App\Models\Hr\HrMonthlySalary;
 use App\Models\Hr\Section;

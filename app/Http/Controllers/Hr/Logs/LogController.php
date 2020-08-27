@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Hr\DesignationUpdateLog;
 use App\Models\Hr\Designation;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use DB, DataTables;
 
 class LogController extends Controller

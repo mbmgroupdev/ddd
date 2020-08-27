@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Hr\Reports;
 
 use App\Http\Controllers\Controller;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use App\Models\Hr\HolidayRoaster;
 use App\Models\Hr\Leave;
 use Illuminate\Http\Request;

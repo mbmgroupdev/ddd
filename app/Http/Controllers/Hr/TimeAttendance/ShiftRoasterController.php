@@ -5,7 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Hr\Area;
 use App\Models\Hr\Department;
 use App\Models\Hr\EmpType;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use App\Models\Hr\Floor;
 use App\Models\Hr\HolidayRoaster;
 use App\Models\Hr\Line;

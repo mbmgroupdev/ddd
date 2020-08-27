@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Hr;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use App\Models\Hr\AdvaneInfo;
 use App\Models\Hr\Ot;
 use App\Models\Hr\Unit;

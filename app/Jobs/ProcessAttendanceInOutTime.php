@@ -5,7 +5,7 @@ namespace App\Jobs;
 use App\Helpers\EmployeeHelper;
 use App\Jobs\ProcessUnitWiseSalary;
 use App\Models\Hr\Absent;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use App\Models\Hr\HolidayRoaster;
 use App\Models\Hr\HrLateCount;
 use App\Models\Hr\Shift;

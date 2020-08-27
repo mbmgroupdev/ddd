@@ -7,7 +7,7 @@ use App\Jobs\ProcessMonthlySalary;
 use App\Jobs\ProcessUnitWiseSalary;
 use App\Models\Hr\Absent;
 use App\Models\Hr\Benefits;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use App\Models\Hr\Leave;
 use App\Models\Hr\LeaveApproval;
 use App\Models\Hr\SalaryAdjustDetails;

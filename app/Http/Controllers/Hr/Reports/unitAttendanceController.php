@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Hr\Reports;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Hr\DashboardController as DashboardController;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use App\Models\Hr\EmployeeBengali;
 use App\Models\Hr\Nominee;
 use App\Models\Hr\EmpType;

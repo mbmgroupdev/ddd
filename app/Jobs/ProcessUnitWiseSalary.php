@@ -5,7 +5,7 @@ namespace App\Jobs;
 use App\Models\Hr\Absent;
 use App\Models\Hr\AttendanceBonusConfig;
 use App\Models\Hr\Benefits;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use App\Models\Hr\HolidayRoaster;
 use App\Models\Hr\HrMonthlySalary;
 use App\Models\Hr\Leave;

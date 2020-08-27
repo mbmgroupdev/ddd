@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Hr\TimeAttendance;
 
 use App\Http\Controllers\Controller;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use App\Models\Hr\Floor;
 use App\Models\Hr\Line;
 use App\Models\Hr\Shift;

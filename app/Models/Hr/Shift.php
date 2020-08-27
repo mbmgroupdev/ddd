@@ -2,7 +2,7 @@
 
 namespace App\Models\Hr;
 
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use App\Models\Hr\Shift;
 use App\Models\Hr\Unit;
 use Awobaz\Compoships\Compoships;

@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Hr\AttandancedataTemp;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
