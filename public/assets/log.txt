@@ -1,3 +1,9 @@
+2020-08-27 18:06:48 "17F005001B" Training Entry Saved 
+2020-08-27 17:13:50 "17F005001B" Bonus Type "Special" added for 08-2020 5
+2020-08-27 17:13:41 "17F005001B" Bonus Type Deleted 4
+2020-08-27 17:13:36 "17F005001B" Bonus Type Deleted 3
+2020-08-27 17:06:24 "17F005001B" Bonus Type added for 2020-08- 3
+2020-08-27 16:23:08 "17F005001B" Increment Entry Saved 4740
 2020-08-27 11:41:55 "17F005001B" Training Activated 1
 2020-08-27 11:41:50 "17F005001B" Training Inactivated 1
 2020-08-27 11:06:48 "17F005001B" Training Entry Saved 

@@ -60,7 +60,7 @@
                                     <div class="profile-info-name"> Total OT</div>
 
                                     <div class="profile-info-value">
-                                        <span>{{ Custom::numberToTime($unit['ot_hour']) }} 
+                                        <span>{{ num_to_time($unit['ot_hour']) }} 
                                     Hour</span>
                                     </div>
                                 </div>

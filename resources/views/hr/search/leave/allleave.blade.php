@@ -66,13 +66,11 @@
 						</div>
 					</div>
 				</div>
-			
+			</div>
 			@if($request['type'] == 'month' || $request['type'] == 'date')
 				@if(count($leave_type_list_count) > 0)
-					<br>
-					<p class="alert alert-info">Leave Type</p>
 				@endif
-				<div class="row">
+				<div class="row justify-content-center">
 				@php
 					$lCount = 0;
 				@endphp
@@ -96,8 +94,8 @@
 				@endforeach
 				</div>
 			@endif
-        </div>
-		<div class="row">
+        
+		<div class="row justify-content-center">
 			@if($request['type'] == 'year')
 				@php
 					$lCount = 0;

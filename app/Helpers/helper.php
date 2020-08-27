@@ -169,6 +169,50 @@ if(!function_exists('log_file_write')){
     }
 }
 
+if(!function_exists('get_unit_name_by_id')){
+    function get_unit_name_by_id($id)
+    {
+        $unit_name = '';
+        if(is_numeric($id)) {
+            $unit = unit_by_id();
+            $unit_name = $unit[$id]->hr_unit_short_name??'';
+           
+        } 
+
+        return $unit_name;
+    }
+}
+
+if(!function_exists('emp_status_name')){
+    function emp_status_name($status)
+    {
+        $name = '';
+        if($status == 2) {
+            $name = 'resign';
+        } else if($status == 3) {
+            $name = 'terminate';
+        } else if($status == 4) {
+            $name = 'suspend';
+        } else if($status == 5) {
+            $name = 'left';
+        } else if($status == 6) {
+            $name = 'maternity';
+        }
+        return $name;
+    }
+}
+
+if(!function_exists('num_to_time')){
+    function num_to_time($number){
+        $number = round($number,1);
+        $hour = explode(".", $number);
+        if(isset($hour[1])){
+            return $hour[0].':'.round($hour[1]*6);   
+        }else
+            return $hour[0];
+    }
+}
+
 
 
 
@@ -378,6 +422,8 @@ if(!function_exists('unit_by_id')){
 
     }
 }
+
+
 
 if(!function_exists('line_by_id')){
     function line_by_id()

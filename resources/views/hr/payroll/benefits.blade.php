@@ -168,7 +168,7 @@
                                     
                                     <div class="col-6">
                                         
-                                        <div class="user-details-block" style="border-left: 1px solid #d1d1d1;">
+                                        <div class="user-details-block" style="border-left: 1px solid #d1d1d1;padding-top: 3.5rem;">
                                             <div class="user-profile text-center mt-0">
                                                 <img id="avatar" class="avatar-130 img-fluid" src="{{ asset('assets/images/user/09.jpg') }} " onerror="this.onerror=null;this.src='{{ asset("assets/images/user/09.jpg") }}';">
                                             </div>
