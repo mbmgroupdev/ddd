@@ -25,70 +25,69 @@
         <!-- <h4 class="center">MBM Group</h4> -->
         
     	<div class="row choice_2_div" id="choice_2_div" name="choice_2_div">
-	        <div class="row">
+	        
 	            
-				<div class="search_unit col-xs-6 col-sm-3 pricing-box">
-					<div class="widget-box widget-color-green2">
-						<div class="widget-header">
-							<h5 class="widget-title bigger lighter">Total Unit</h5>
-						</div>
+			<div class="search_unit col-xs-6 col-sm-3 pricing-box">
+				<div class="widget-box widget-color-green2">
+					<div class="widget-header">
+						<h5 class="widget-title bigger lighter">Total Unit</h5>
+					</div>
 
-						<div class="widget-body" >
-							<div class="widget-main center">
-								<span class="infobox-data-number">{{$lineInfo->unit}}</span>
-							</div>
+					<div class="widget-body" >
+						<div class="widget-main center">
+							<span class="infobox-data-number">{{$lineInfo->unit}}</span>
 						</div>
 					</div>
 				</div>
-				<div class="col-xs-6 col-sm-3 pricing-box">
-					<div class="widget-box widget-color-green2 search_line">
-						<div class="widget-header">
-								<h5 class="widget-title bigger lighter">
-									Line
-								</h5>
-						</div>
-
-						<div class="widget-body" >
-							<div class="widget-main center">
-								<span class="infobox-data-number">{{$lineInfo->line}}</span>
-							</div>
-						</div>
-					</div>
-				</div>
-                <div class="col-xs-6 col-sm-3 pricing-box">
-                    <div class="widget-box widget-color-green2 search_emp">
-                        <div class="widget-header">
-                                <h5 class="widget-title bigger lighter">
-                                    Total Employee
-                                </h5>
-                        </div>
-
-                        <div class="widget-body" >
-                            <div class="widget-main center">
-                                <span class="infobox-data-number">{{$lineInfo->emp}}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xs-6 col-sm-3 pricing-box">
-                    <div class="widget-box widget-color-green2 line_change">
-                        <div class="widget-header">
-                                <h5 class="widget-title bigger lighter">
-                                    Line Change
-                                </h5>
-                        </div>
-
-                        <div class="widget-body" >
-                            <div class="widget-main center">
-                                <span class="infobox-data-number"> {{ $lineInfo->line_change }}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-				
-				
 			</div>
+			<div class="col-xs-6 col-sm-3 pricing-box">
+				<div class="widget-box widget-color-green2 search_line">
+					<div class="widget-header">
+							<h5 class="widget-title bigger lighter">
+								Line
+							</h5>
+					</div>
+
+					<div class="widget-body" >
+						<div class="widget-main center">
+							<span class="infobox-data-number">{{$lineInfo->line}}</span>
+						</div>
+					</div>
+				</div>
+			</div>
+            <div class="col-xs-6 col-sm-3 pricing-box">
+                <div class="widget-box widget-color-green2 search_emp">
+                    <div class="widget-header">
+                            <h5 class="widget-title bigger lighter">
+                                Total Employee
+                            </h5>
+                    </div>
+
+                    <div class="widget-body" >
+                        <div class="widget-main center">
+                            <span class="infobox-data-number">{{$lineInfo->emp}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-6 col-sm-3 pricing-box">
+                <div class="widget-box widget-color-green2 line_change">
+                    <div class="widget-header">
+                            <h5 class="widget-title bigger lighter">
+                                Line Change
+                            </h5>
+                    </div>
+
+                    <div class="widget-body" >
+                        <div class="widget-main center">
+                            <span class="infobox-data-number"> {{ $lineInfo->line_change }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+				
+			
         </div>
     </div>
 </div>

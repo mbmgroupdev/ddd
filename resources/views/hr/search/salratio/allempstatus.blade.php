@@ -29,127 +29,126 @@
     <p class="search-title">Search results of  {{ $showTitle }}</p>
     <div class="panel-body">
     	<div class="row choice_2_div" id="choice_2_div" name="choice_2_div">
-	        <div class="row">
-	        	<div class="col-xs-4  col-sm-4 pricing-box">
-					<div class="widget-box widget-color-green2">
-						<div class="widget-header">
-							<h5 class="widget-title bigger">
-								Status
-							</h5>
-						</div>
 
-						<div class="widget-body">
-							<div class="widget-main center" style="min-height:220px;">
-								<table class="table table-bordered  table-hover" style="margin:0!important;cursor:pointer;">
-									<thead>
-										<tr>
-											<th>Status</th>
-											<th>Employee</th>
-											<th>Salary</th>
-										</tr>
-									</thead>
-			           	        	<tbody>
-			           	        	@php  
-			           	        		$saved = 0;
-			           	        	@endphp
-
-					        		@foreach($statusSalary as $status)
-					        			<tr style="color:#ff0000;">
-											<th>{{ucfirst(Custom::getEmpStatusName($status->as_status))}}</th>
-											<th>{{$status->employee}}</th>
-											<th>{{$status->total_payable}}</th>
-										</tr>
-										@php $saved += $status->total_payable; @endphp       
-									@endforeach
-									@if(!empty($joinedSalary))
-										<tr style="color:#076305;">
-											<th>New Employee</th>
-											<th>{{$joinedSalary->employee}}</th>
-											<th>{{$joinedSalary->total_payable}}</th>
-										</tr> 
-										@php $joined = $joinedSalary->total_payable ;@endphp
-								    @else
-								    	@php $joined = 0 ;@endphp
-									@endif
-									@if(count($statusSalary)< 1 && empty($joinedSalary))
-										<tr><td colspan="3"> No Data Found</td> </tr>
-									@endif
-
-									
-									</tbody>
-								</table>
-							</div>
-						</div>
+        	<div class="col-xs-4  col-sm-4 pricing-box">
+				<div class="widget-box widget-color-green2">
+					<div class="widget-header">
+						<h5 class="widget-title bigger">
+							Status
+						</h5>
 					</div>
-				</div>
-				<div class="col-xs-4  col-sm-4 pricing-box">
-					<div class="widget-box widget-color-green2">
-						<div class="widget-header">
-							<h5 class="widget-title bigger">
-								Salary Ratio
-							</h5>
-						</div>
 
-						<div class="widget-body">
-							<div class="widget-main center" style="min-height:220px;">
-								@php 
-		           	        		$rest = $saved-$joined;
-		           	        		if($rest>=0){
-		           	        			$graph_status = 1;
-		           	        			$stat = 'Saved Amount';
-		           	        			$net = $joined;
-		           	        		}else{
-		           	        			$graph_status = 0;
-		           	        			$stat = 'Extra Amount';
-		           	        			$net = $saved;
-		           	        		}
-		           	        		$ratio = abs($rest); 
-		           	        		$total = $ratio+$net;
-		           	        		if($total==0){$total=1;}
-		           	        		$net_per = round(($net/$total)*100,2);
-		           	        		$net_star = round(($ratio/$total)*100,2);
+					<div class="widget-body">
+						<div class="widget-main center" style="min-height:220px;">
+							<table class="table table-bordered  table-hover" style="margin:0!important;cursor:pointer;">
+								<thead>
+									<tr>
+										<th>Status</th>
+										<th>Employee</th>
+										<th>Salary</th>
+									</tr>
+								</thead>
+		           	        	<tbody>
+		           	        	@php  
+		           	        		$saved = 0;
 		           	        	@endphp
-		           	        	<div class="profile-info-row">
-                                    <div class="profile-info-name"> Salary Payable </div>
 
-                                    <div class="profile-info-value">
-                                        <span> {{$net}}</span>
-                                    </div>
-                                </div>
-                                <div class="profile-info-row">
-                                    <div class="profile-info-name"> {{$stat}}  </div>
+				        		@foreach($statusSalary as $status)
+				        			<tr style="color:#ff0000;">
+										<th>{{ucfirst(Custom::getEmpStatusName($status->as_status))}}</th>
+										<th>{{$status->employee}}</th>
+										<th>{{$status->total_payable}}</th>
+									</tr>
+									@php $saved += $status->total_payable; @endphp       
+								@endforeach
+								@if(!empty($joinedSalary))
+									<tr style="color:#076305;">
+										<th>New Employee</th>
+										<th>{{$joinedSalary->employee}}</th>
+										<th>{{$joinedSalary->total_payable}}</th>
+									</tr> 
+									@php $joined = $joinedSalary->total_payable ;@endphp
+							    @else
+							    	@php $joined = 0 ;@endphp
+								@endif
+								@if(count($statusSalary)< 1 && empty($joinedSalary))
+									<tr><td colspan="3"> No Data Found</td> </tr>
+								@endif
 
-                                    <div class="profile-info-value">
-                                        <span>{{$ratio}}</span>
-                                    </div>
-                                </div>
-                                <br>
-                                <br>
-		           	        	Payable : {{$stat}}
-		           	        	<hr>
-		           	        	<span class="infobox-data-number" style="font-size: 35px;">{{$net_per}} : {{$net_star}}  </span>
-
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-xs-4  col-sm-4 pricing-box">
-					<div class="widget-box widget-color-green2">
-						<div class="widget-header">
-							<h5 class="widget-title bigger">
-								Salary Prediction
-							</h5>
-						</div>
-
-						<div class="widget-body">
-							<div class="widget-main center" style="min-height:220px;">
-								<canvas id="doughnut-chart"  height="180"></canvas>
-							</div>
+								
+								</tbody>
+							</table>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+			<div class="col-xs-4  col-sm-4 pricing-box">
+				<div class="widget-box widget-color-green2">
+					<div class="widget-header">
+						<h5 class="widget-title bigger">
+							Salary Ratio
+						</h5>
+					</div>
+
+					<div class="widget-body">
+						<div class="widget-main center" style="min-height:220px;">
+							@php 
+	           	        		$rest = $saved-$joined;
+	           	        		if($rest>=0){
+	           	        			$graph_status = 1;
+	           	        			$stat = 'Saved Amount';
+	           	        			$net = $joined;
+	           	        		}else{
+	           	        			$graph_status = 0;
+	           	        			$stat = 'Extra Amount';
+	           	        			$net = $saved;
+	           	        		}
+	           	        		$ratio = abs($rest); 
+	           	        		$total = $ratio+$net;
+	           	        		if($total==0){$total=1;}
+	           	        		$net_per = round(($net/$total)*100,2);
+	           	        		$net_star = round(($ratio/$total)*100,2);
+	           	        	@endphp
+	           	        	<div class="profile-info-row">
+                                <div class="profile-info-name"> Salary Payable </div>
+
+                                <div class="profile-info-value">
+                                    <span> {{$net}}</span>
+                                </div>
+                            </div>
+                            <div class="profile-info-row">
+                                <div class="profile-info-name"> {{$stat}}  </div>
+
+                                <div class="profile-info-value">
+                                    <span>{{$ratio}}</span>
+                                </div>
+                            </div>
+                            <br>
+                            <br>
+	           	        	Payable : {{$stat}}
+	           	        	<hr>
+	           	        	<span class="infobox-data-number" style="font-size: 35px;">{{$net_per}} : {{$net_star}}  </span>
+
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-xs-4  col-sm-4 pricing-box">
+				<div class="widget-box widget-color-green2">
+					<div class="widget-header">
+						<h5 class="widget-title bigger">
+							Salary Prediction
+						</h5>
+					</div>
+
+					<div class="widget-body">
+						<div class="widget-main center" style="min-height:220px;">
+							<canvas id="doughnut-chart"  height="180"></canvas>
+						</div>
+					</div>
+				</div>
+			</div>
+	</div>
     </div>
 </div>
 @php

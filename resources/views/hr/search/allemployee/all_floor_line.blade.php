@@ -38,34 +38,30 @@
     <p class="search-title">Search results of  {{ $showTitle }}</p>
     <div class="panel-body">
         <div class="row choice_2_div" id="choice_2_div" name="choice_2_div">
-            <div class="row">
-            	<div class="col-sm-12">
-                    @foreach($line_list as $k=>$line)
-                        <div class="search-result-div col-xs-12 col-sm-3 widget-container-col ui-sortable">
-                            <div class="widget-box widget-color-green2 light-border ui-sortable-handle" id="widget-box-6">
-                                <div class="widget-header">
-                                    <a href="#" class="white search_section" data-line="{{ $line->hr_line_id }}">
-                                        <h5 class="widget-title smaller">  {{ $line->hr_line_name }} </h5></a>
-                                </div>
+            @foreach($line_list as $k=>$line)
+                <div class="search-result-div col-xs-12 col-sm-3 widget-container-col ui-sortable">
+                    <div class="widget-box widget-color-green2 light-border ui-sortable-handle" id="widget-box-6">
+                        <div class="widget-header">
+                            <a href="#" class="white search_section" data-line="{{ $line->hr_line_id }}">
+                                <h5 class="widget-title smaller">  {{ $line->hr_line_name }} </h5></a>
+                        </div>
 
-                                <div class="widget-body">
-                                    <div class="widget-main padding-6">
-                                        
-                                        <div class="profile-info-row search_all_employee" data-id="{{$unitId}}" data-floor="{{$line->hr_line_floor_id}}" data-line="{{$line->hr_line_id}}">
-                                            <div class="profile-info-name"> Total Employee </div>
+                        <div class="widget-body">
+                            <div class="widget-main padding-6">
+                                
+                                <div class="profile-info-row search_all_employee" data-id="{{$unitId}}" data-floor="{{$line->hr_line_floor_id}}" data-line="{{$line->hr_line_id}}">
+                                    <div class="profile-info-name"> Total Employee </div>
 
-                                            <div class="profile-info-value">
-                                                <span>{{ $lineEmpCount[$line->hr_line_id] }}</span>
-                                            </div>
-                                        </div>
-                                        
+                                    <div class="profile-info-value">
+                                        <span>{{ $lineEmpCount[$line->hr_line_id] }}</span>
                                     </div>
                                 </div>
+                                
                             </div>
                         </div>
-                    @endforeach
-				</div>
-            </div>
+                    </div>
+                </div>
+            @endforeach
         </div>
     </div>
 </div>

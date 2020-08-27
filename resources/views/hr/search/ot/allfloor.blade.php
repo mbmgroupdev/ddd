@@ -29,55 +29,53 @@
         <!-- <h4 class="center">MBM Group</h4> -->
         
         <div class="row choice_2_div" id="choice_2_div" name="choice_2_div">
-            <div class="row">
-            	<div class="col-sm-12">
-                    @foreach($floor_data as $k=>$floor)
-                        
-                        <div class="search-result-div col-xs-12 col-sm-3 widget-container-col ui-sortable">
-                            <div class="widget-box widget-color-green2 light-border ui-sortable-handle" id="widget-box-6">
-                                <div class="widget-header">
-                                    <a href="#" class="white search_section" data-floor="{{ $floor['id'] }}">
-                                        <h5 class="widget-title smaller">  {{ $floor['name'] }} </h5></a>
-                                </div>
+            
+            @foreach($floor_data as $k=>$floor)
+                
+                <div class="search-result-div col-xs-12 col-sm-3 widget-container-col ui-sortable">
+                    <div class="widget-box widget-color-green2 light-border ui-sortable-handle" id="widget-box-6">
+                        <div class="widget-header">
+                            <a href="#" class="white search_section" data-floor="{{ $floor['id'] }}">
+                                <h5 class="widget-title smaller">  {{ $floor['name'] }} </h5></a>
+                        </div>
 
-                                <div class="widget-body">
-                                    <div class="widget-main padding-6">
-                                        <a href="#" class="search_section" data-floor="{{ $floor['id'] }}">
-                                            <div class="profile-info-row">
-                                                <div class="profile-info-name"> Section </div>
+                        <div class="widget-body">
+                            <div class="widget-main padding-6">
+                                <a href="#" class="search_section" data-floor="{{ $floor['id'] }}">
+                                    <div class="profile-info-row">
+                                        <div class="profile-info-name"> Section </div>
 
-                                                <div class="profile-info-value">
-                                                    <span>{{$section_count}}</span>
-                                                </div>
-                                            </div>
-                                        </a>
-                                        <!-- <a href="#" class="search_emp" data-floor="{{ $floor['id'] }}"> -->
-                                            <div class="profile-info-row  search_ot_hour" data-floor="{{ $floor['id'] }}">
-                                                <div class="profile-info-name"> Total Employee </div>
-
-                                                <div class="profile-info-value">
-                                                    <span>{{ $floor['employee']}}</span>
-                                                </div>
-                                            </div>
-                                      <!--   </a> -->
-                                        <div class=" profile-info-row search_emp" data-floor="{{ $floor['id'] }}">
-                                            <div class="profile-info-name"> Total OT</div>
-
-                                            <div class="profile-info-value">
-                                                <span>{{ Custom::numberToTime($floor['ot_hour']) }} 
-                                            Hour</span>
-                                            </div>
+                                        <div class="profile-info-value">
+                                            <span>{{$section_count}}</span>
                                         </div>
-                                        <div class="search_ot_shift" data-floor="{{ $floor['id'] }}">View Shift</div>
-                                       
+                                    </div>
+                                </a>
+                                <!-- <a href="#" class="search_emp" data-floor="{{ $floor['id'] }}"> -->
+                                    <div class="profile-info-row  search_ot_hour" data-floor="{{ $floor['id'] }}">
+                                        <div class="profile-info-name"> Total Employee </div>
+
+                                        <div class="profile-info-value">
+                                            <span>{{ $floor['employee']}}</span>
+                                        </div>
+                                    </div>
+                              <!--   </a> -->
+                                <div class=" profile-info-row search_emp" data-floor="{{ $floor['id'] }}">
+                                    <div class="profile-info-name"> Total OT</div>
+
+                                    <div class="profile-info-value">
+                                        <span>{{ Custom::numberToTime($floor['ot_hour']) }} 
+                                    Hour</span>
                                     </div>
                                 </div>
+                                <div class="search_ot_shift" data-floor="{{ $floor['id'] }}">View Shift</div>
+                               
                             </div>
                         </div>
-                        
-                    @endforeach
-				</div>
-            </div>
+                    </div>
+                </div>
+                
+            @endforeach
+				
         </div>
     </div>
 </div>

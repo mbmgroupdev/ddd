@@ -26,83 +26,79 @@
         <!-- <h4 class="center">MBM Group</h4> -->
         
     	<div class="row choice_2_div" id="choice_2_div" name="choice_2_div">
-	        <div class="row">
-	            
-				<div class="search_unit col-sm-offset-1 col-xs-6 col-sm-3 pricing-box">
-					<div class="widget-box widget-color-green2">
-						<div class="widget-header">
-							<h5 class="widget-title bigger lighter">Total Unit</h5>
-						</div>
+			<div class="search_unit col-xs-6 col-sm-3 pricing-box">
+				<div class="widget-box widget-color-green2">
+					<div class="widget-header">
+						<h5 class="widget-title bigger lighter">Total Unit</h5>
+					</div>
 
-						<div class="widget-body" style="height:100px;">
-							<div class="widget-main center" style="margin: 34px 0;">
-								<span class="infobox-data-number">{{ count($unit_list) }}</span>
-							</div>
+					<div class="widget-body" style="height:100px;">
+						<div class="widget-main center" style="margin: 34px 0;">
+							<span class="infobox-data-number">{{ count($unit_list) }}</span>
 						</div>
 					</div>
 				</div>
-				<div class="col-xs-6 col-sm-3 pricing-box">
-					<div class="widget-box widget-color-green2 search_emp">
-						<div class="widget-header">
-								<h5 class="widget-title bigger lighter">
-									Total Employee
-								</h5>
-						</div>
-
-						<div class="widget-body" style="height:100px;">
-							<div class="widget-main center" style="margin: 34px 0;">
-								<span class="infobox-data-number">{{ $salary->employee }}</span>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				
-
-				<div class="col-xs-6 col-sm-4 pricing-box">
-					<div class="widget-box widget-color-green2" >
-						<div class="widget-header search_emp">
-								<h5 class="widget-title bigger lighter">Salary</h5>
-						</div>
-
-						<div class="widget-body">
-							<div class="widget-main">
-								<a href="#" class="search_emp" data-salstatus='salary'>
-                                    <div class="profile-info-row">
-                                        <div class="profile-info-name"> Salary Payable  </div>
-
-                                        <div class="profile-info-value">
-                                            <span>{{ $salary->salary_payable }} </span>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a href="#" class="search_emp" data-salstatus='ot'>
-                                    <div class="profile-info-row">
-                                        <div class="profile-info-name"> OT Payable </div>
-
-                                        <div class="profile-info-value">
-                                            <span>{{ $salary->ot_payable }} </span>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a href="#" class="search_emp" >
-                                    <div class="profile-info-row row-sum">
-                                        <div class="profile-info-name"> Total Payable</div>
-
-                                        <div class="profile-info-value">
-                                            <span class="infobox-data-number">{{ $salary->total_payable}} </span>
-                                        </div>
-                                    </div>
-                                </a>
-
-
-							</div>
-						</div>
-					</div>
-				</div>
-				
-				
 			</div>
+			<div class="col-xs-6 col-sm-3 pricing-box">
+				<div class="widget-box widget-color-green2 search_emp">
+					<div class="widget-header">
+							<h5 class="widget-title bigger lighter">
+								Total Employee
+							</h5>
+					</div>
+
+					<div class="widget-body" style="height:100px;">
+						<div class="widget-main center" style="margin: 34px 0;">
+							<span class="infobox-data-number">{{ $salary->employee }}</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			
+
+			<div class="col-xs-6 col-sm-4 pricing-box">
+				<div class="widget-box widget-color-green2" >
+					<div class="widget-header search_emp">
+							<h5 class="widget-title bigger lighter">Salary</h5>
+					</div>
+
+					<div class="widget-body">
+						<div class="widget-main">
+							<a href="#" class="search_emp" data-salstatus='salary'>
+                                <div class="profile-info-row">
+                                    <div class="profile-info-name"> Salary Payable  </div>
+
+                                    <div class="profile-info-value">
+                                        <span>{{ $salary->salary_payable }} </span>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="#" class="search_emp" data-salstatus='ot'>
+                                <div class="profile-info-row">
+                                    <div class="profile-info-name"> OT Payable </div>
+
+                                    <div class="profile-info-value">
+                                        <span>{{ $salary->ot_payable }} </span>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="#" class="search_emp" >
+                                <div class="profile-info-row row-sum">
+                                    <div class="profile-info-name"> Total Payable</div>
+
+                                    <div class="profile-info-value">
+                                        <span class="infobox-data-number">{{ $salary->total_payable}} </span>
+                                    </div>
+                                </div>
+                            </a>
+
+
+						</div>
+					</div>
+				</div>
+			</div>
+			
         </div>
     </div>
 </div>

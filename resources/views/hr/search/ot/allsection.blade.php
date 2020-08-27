@@ -33,54 +33,52 @@
 
         <!-- <h4 class="center">MBM Group</h4> -->
         <div class="row choice_2_div" id="choice_2_div" name="choice_2_div">
-            <div class="row">
-            	<div class="col-sm-12">
-                    @foreach($section_data as $k=>$section)
-                        
-                        <div class="search-result-div col-xs-12 col-sm-3 widget-container-col ui-sortable">
-                            <div class="widget-box widget-color-green2 light-border ui-sortable-handle" id="widget-box-6">
-                                <div class="widget-header">
-                                    <a href="#" class="white search_subsection" data-section="{{ $section['id'] }}">
-                                        <h5 class="widget-title smaller">  {{ $section['name'] }} </h5></a>
-                                </div>
+            
+            @foreach($section_data as $k=>$section)
+                
+                <div class="search-result-div col-xs-12 col-sm-3 widget-container-col ui-sortable">
+                    <div class="widget-box widget-color-green2 light-border ui-sortable-handle" id="widget-box-6">
+                        <div class="widget-header">
+                            <a href="#" class="white search_subsection" data-section="{{ $section['id'] }}">
+                                <h5 class="widget-title smaller">  {{ $section['name'] }} </h5></a>
+                        </div>
 
-                                <div class="widget-body">
-                                    <div class="widget-main padding-6">
-                                        <a href="#" class="search_subsection" data-section="{{ $section['id'] }}">
-                                            <div class="profile-info-row">
-                                                <div class="profile-info-name"> Subsection </div>
+                        <div class="widget-body">
+                            <div class="widget-main padding-6">
+                                <a href="#" class="search_subsection" data-section="{{ $section['id'] }}">
+                                    <div class="profile-info-row">
+                                        <div class="profile-info-name"> Subsection </div>
 
-                                                <div class="profile-info-value">
-                                                    <span>{{ $section['subsection'] }}</span>
-                                                </div>
-                                            </div>
-                                        </a>
-                                        
-                                            <div class="profile-info-row  search_ot_hour" data-section="{{ $section['id'] }}">
-                                                <div class="profile-info-name"> Total Employee </div>
-
-                                                <div class="profile-info-value">
-                                                    <span>{{ $section['employee']}}</span>
-                                                </div>
-                                            </div>
-                                        <div class=" profile-info-row search_emp" data-section="{{ $section['id'] }}">
-                                            <div class="profile-info-name"> Total OT</div>
-
-                                            <div class="profile-info-value">
-                                                <span>{{ Custom::numberToTime($section['ot_hour']) }} 
-                                            Hour</span>
-                                            </div>
+                                        <div class="profile-info-value">
+                                            <span>{{ $section['subsection'] }}</span>
                                         </div>
-                                        <div class="search_ot_shift" data-section="{{ $section['id'] }}">View Shift</div>
-                                       
+                                    </div>
+                                </a>
+                                
+                                    <div class="profile-info-row  search_ot_hour" data-section="{{ $section['id'] }}">
+                                        <div class="profile-info-name"> Total Employee </div>
+
+                                        <div class="profile-info-value">
+                                            <span>{{ $section['employee']}}</span>
+                                        </div>
+                                    </div>
+                                <div class=" profile-info-row search_emp" data-section="{{ $section['id'] }}">
+                                    <div class="profile-info-name"> Total OT</div>
+
+                                    <div class="profile-info-value">
+                                        <span>{{ Custom::numberToTime($section['ot_hour']) }} 
+                                    Hour</span>
                                     </div>
                                 </div>
+                                <div class="search_ot_shift" data-section="{{ $section['id'] }}">View Shift</div>
+                               
                             </div>
                         </div>
-                        
-                    @endforeach
-				</div>
-            </div>
+                    </div>
+                </div>
+                
+            @endforeach
+				
         </div>
     </div>
 </div>

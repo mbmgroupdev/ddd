@@ -1,4 +1,4 @@
-<br>
+
 <style type="text/css">
 
     @media only screen and (max-width: 1280px) {
@@ -15,7 +15,6 @@
     }
 </style>
 <div class="panel panel-info col-sm-12">
-    <br>
     <div class="breadcrumbs ace-save-state" id="breadcrumbs">
         <ul class="breadcrumb">
             <li>
@@ -48,81 +47,79 @@
     <p class="search-title">Search results of  {{ $showTitle }}</p>
     <div class="panel-body">
         <div class="row choice_2_div" id="choice_2_div" name="choice_2_div">
-            <div class="row">
-            	<div class="col-sm-12">
-                    @php
-                        $count = 0;
-                    @endphp
-                    @foreach($subsection_list as $k=>$subsection)
-                        @if($count == 0)
-                            <div class="row">
-                        @endif
-                        @php
-                            $count++;
-                        @endphp
-                        <div class="search-result-div col-xs-12 col-sm-3 widget-container-col ui-sortable">
-                            <div class="widget-box widget-color-green2 light-border ui-sortable-handle" id="widget-box-6">
-                                <div class="widget-header">
-                                    <a href="#" class="white">
-                                        <h5 class="widget-title smaller">  {{ $subsection->hr_subsec_name }} </h5></a>
-                                </div>
+            
+            @php
+                $count = 0;
+            @endphp
+            @foreach($subsection_list as $k=>$subsection)
+                @if($count == 0)
+                    <div class="row">
+                @endif
+                @php
+                    $count++;
+                @endphp
+                <div class="search-result-div col-xs-12 col-sm-3 widget-container-col ui-sortable">
+                    <div class="widget-box widget-color-green2 light-border ui-sortable-handle" id="widget-box-6">
+                        <div class="widget-header">
+                            <a href="#" class="white">
+                                <h5 class="widget-title smaller">  {{ $subsection->hr_subsec_name }} </h5></a>
+                        </div>
 
-                                <div class="widget-body">
-                                    <div class="widget-main padding-6">
-                                        {{-- <a href="#" class="search_emp" data-subsection="{{ $subsection->hr_subsec_id }}" data-leavetype="all">
-                                            <div class="profile-info-row">
-                                                <div class="profile-info-name"> Total Employee </div>
+                        <div class="widget-body">
+                            <div class="widget-main padding-6">
+                                {{-- <a href="#" class="search_emp" data-subsection="{{ $subsection->hr_subsec_id }}" data-leavetype="all">
+                                    <div class="profile-info-row">
+                                        <div class="profile-info-name"> Total Employee </div>
 
-                                                <div class="profile-info-value">
-                                                    <span>{{ count($subsection->getSubSectionWiseEmp($request1['unit'],$request1['area'],$request1['department'],$request1['floor'],$request1['section'],$subsection->hr_subsec_id)) }}</span>
-                                                </div>
-                                            </div>
-                                        </a> --}}
-                                        @php
-                                            $totalLeaveCount = 0;
-                                            $empArry = [];
-                                        @endphp
-                                        @foreach($subsection_leave_wise[$subsection->hr_subsec_id] as $type=>$subsection_leave)
-                                        @php
-                                            foreach($subsection_leave as $k=>$scleave) {
-                                                $empArry[$subsection->hr_subsec_id][$type][$scleave->leave_ass_id] = $scleave->leave_ass_id;
-                                            }
-                                            $totalLeaveCount += count($empArry[$subsection->hr_subsec_id][$type]);
-                                        @endphp
-                                        <a href="#" class="search_emp" data-subsection="{{ $subsection->hr_subsec_id }}" data-leavetype="{{ $type }}">
-                                            <div class="profile-info-row">
-                                                <div class="profile-info-name"> {{ $type }} Leave </div>
-
-                                                <div class="profile-info-value">
-                                                    <span>{{ count($empArry[$subsection->hr_subsec_id][$type]) }}</span>
-                                                </div>
-                                            </div>
-                                        </a>
-                                        @endforeach
-                                        <a href="#" data-subsection="{{ $subsection->hr_subsec_id }}">
-                                            <div class="profile-info-row" style="background: lightcyan; font-weight: bold;">
-                                                <div class="profile-info-name"> Total Leave </div>
-
-                                                <div class="profile-info-value after-load">
-                                                    <span>{{ $totalLeaveCount }}</span>
-                                                </div>
-                                            </div>
-                                        </a>
+                                        <div class="profile-info-value">
+                                            <span>{{ count($subsection->getSubSectionWiseEmp($request1['unit'],$request1['area'],$request1['department'],$request1['floor'],$request1['section'],$subsection->hr_subsec_id)) }}</span>
+                                        </div>
                                     </div>
-                                </div>
+                                </a> --}}
+                                @php
+                                    $totalLeaveCount = 0;
+                                    $empArry = [];
+                                @endphp
+                                @foreach($subsection_leave_wise[$subsection->hr_subsec_id] as $type=>$subsection_leave)
+                                @php
+                                    foreach($subsection_leave as $k=>$scleave) {
+                                        $empArry[$subsection->hr_subsec_id][$type][$scleave->leave_ass_id] = $scleave->leave_ass_id;
+                                    }
+                                    $totalLeaveCount += count($empArry[$subsection->hr_subsec_id][$type]);
+                                @endphp
+                                <a href="#" class="search_emp" data-subsection="{{ $subsection->hr_subsec_id }}" data-leavetype="{{ $type }}">
+                                    <div class="profile-info-row">
+                                        <div class="profile-info-name"> {{ $type }} Leave </div>
+
+                                        <div class="profile-info-value">
+                                            <span>{{ count($empArry[$subsection->hr_subsec_id][$type]) }}</span>
+                                        </div>
+                                    </div>
+                                </a>
+                                @endforeach
+                                <a href="#" data-subsection="{{ $subsection->hr_subsec_id }}">
+                                    <div class="profile-info-row" style="background: lightcyan; font-weight: bold;">
+                                        <div class="profile-info-name"> Total Leave </div>
+
+                                        <div class="profile-info-value after-load">
+                                            <span>{{ $totalLeaveCount }}</span>
+                                        </div>
+                                    </div>
+                                </a>
                             </div>
                         </div>
-                        @if($count == 4)
-                            </div>
-                        @endif
-                        @php
-                            if($count == 4){
-                                $count = 0;
-                            }
-                        @endphp
-                    @endforeach
-				</div>
-            </div>
+                    </div>
+                </div>
+                @if($count == 4)
+                    </div>
+                @endif
+                @php
+                    if($count == 4){
+                        $count = 0;
+                    }
+                @endphp
+            @endforeach
+				
         </div>
     </div>
 </div>

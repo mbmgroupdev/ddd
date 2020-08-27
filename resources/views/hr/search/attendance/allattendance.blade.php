@@ -26,89 +26,73 @@
     <p class="search-title">Search results of  {{ $showTitle }}</p>
     <div class="panel-body">
     	<div class="row choice_2_div" id="choice_2_div" name="choice_2_div">
-	        <div class="row">
-				<div class="col-xs-3 col-sm-2 pricing-box">
-					<div class="widget-box widget-color-dark search_unit">
-						<div class="widget-header">
-							<h5 class="widget-title bigger lighter">Total Unit</h5>
-						</div>
+			<div class="col-xs-3 col-sm-2 pricing-box">
+				<div class="widget-box widget-color-dark search_unit">
+					<div class="widget-header">
+						<h5 class="widget-title bigger lighter">Total Unit</h5>
+					</div>
 
-						<div class="widget-body">
-							<div class="widget-main center">
-								<span class="infobox-data-number">{{ count($unit_list) }}</span>
-							</div>
+					<div class="widget-body">
+						<div class="widget-main center">
+							<span class="infobox-data-number">{{ count($unit_list) }}</span>
 						</div>
 					</div>
 				</div>
+			</div>
 
-				{{-- <div class="col-xs-3 col-sm-2 pricing-box">
-					<div class="widget-box widget-color-orange search_allemp">
-						<div class="widget-header">
-							<h5 class="widget-title bigger lighter">
-								Total Employee
-							</h5>
-						</div>
+			
 
-						<div class="widget-body">
-							<div class="widget-main center">
-								<span class="infobox-data-number">{{ count($employee_list) }}</span>
-							</div>
-						</div>
+			<div class="col-xs-3 col-sm-2 pricing-box">
+				<div class="widget-box widget-color-blue search_allemp" data-attstatus="present">
+					<div class="widget-header">
+						<h5 class="widget-title bigger lighter">Total Present</h5>
 					</div>
-				</div> --}}
 
-				<div class="col-xs-3 col-sm-2 pricing-box">
-					<div class="widget-box widget-color-blue search_allemp" data-attstatus="present">
-						<div class="widget-header">
-							<h5 class="widget-title bigger lighter">Total Present</h5>
-						</div>
-
-						<div class="widget-body">
-							<div class="widget-main center after-load">
-								<span class="infobox-data-number" id="tPresent">{{ $attResultCount['present'] }}</span>
-							</div>
+					<div class="widget-body">
+						<div class="widget-main center after-load">
+							<span class="infobox-data-number" id="tPresent">{{ $attResultCount['present'] }}</span>
 						</div>
 					</div>
 				</div>
+			</div>
 
-				<div class="col-xs-3 col-sm-2 pricing-box">
-					<div class="widget-box widget-color-green2 search_allemp" data-attstatus="absent">
-						<div class="widget-header">
-							<h5 class="widget-title bigger lighter">Total Absent</h5>
-						</div>
+			<div class="col-xs-3 col-sm-2 pricing-box">
+				<div class="widget-box widget-color-green2 search_allemp" data-attstatus="absent">
+					<div class="widget-header">
+						<h5 class="widget-title bigger lighter">Total Absent</h5>
+					</div>
 
-						<div class="widget-body">
-							<div class="widget-main center after-load">
-								<span class="infobox-data-number" id="tAbsent">{{ $attResultCount['absent'] }}</span>
-							</div>
+					<div class="widget-body">
+						<div class="widget-main center after-load">
+							<span class="infobox-data-number" id="tAbsent">{{ $attResultCount['absent'] }}</span>
 						</div>
 					</div>
 				</div>
+			</div>
 
-				<div class="col-xs-3 col-sm-2 pricing-box search_allemp" data-attstatus="leave">
-					<div class="widget-box widget-color-red">
-						<div class="widget-header">
-							<h5 class="widget-title bigger lighter">Total Leave</h5>
-						</div>
+			<div class="col-xs-3 col-sm-2 pricing-box search_allemp" data-attstatus="leave">
+				<div class="widget-box widget-color-red">
+					<div class="widget-header">
+						<h5 class="widget-title bigger lighter">Total Leave</h5>
+					</div>
 
-						<div class="widget-body">
-							<div class="widget-main center after-load">
-								<span class="infobox-data-number" id="tLeave">{{ $attResultCount['leave'] }}</span>
-							</div>
+					<div class="widget-body">
+						<div class="widget-main center after-load">
+							<span class="infobox-data-number" id="tLeave">{{ $attResultCount['leave'] }}</span>
 						</div>
 					</div>
 				</div>
+			</div>
 
-				<div class="col-xs-3 col-sm-2 pricing-box search_allemp" data-attstatus="late">
-					<div class="widget-box widget-color-grey">
-						<div class="widget-header">
-							<h5 class="widget-title bigger lighter">Total Late</h5>
-						</div>
+			<div class="col-xs-3 col-sm-2 pricing-box search_allemp" data-attstatus="late">
+				<div class="widget-box widget-color-grey">
+					<div class="widget-header">
+						<h5 class="widget-title bigger lighter">Total Late</h5>
+					</div>
 
-						<div class="widget-body">
-							<div class="widget-main center after-load">
-								<span class="infobox-data-number" id="tLate">{{ $attResultCount['late'] }}</span>
-							</div>
+					<div class="widget-body">
+						<div class="widget-main center after-load">
+							<span class="infobox-data-number" id="tLate">{{ $attResultCount['late'] }}</span>
 						</div>
 					</div>
 				</div>

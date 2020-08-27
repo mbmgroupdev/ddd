@@ -14,134 +14,128 @@
     <div class="panel-body">
         <!-- <h4 class="center">MBM Group</h4> -->
     	<div class="row choice_2_div" id="choice_2_div" name="choice_2_div">
-	        <div class="row">
-	           	<div class="col-sm-offset-1 col-sm-10">
-	           	    <div class="row">
-	           	    	<div class="col-sm-4 col-xs-12">
-	           	    		
-							<div class="search_unit col-sm-12 pricing-box" style="padding:0;">
-								<div class="widget-box widget-color-dark">
-									<div class="widget-header">
-										<h5 class="widget-title bigger lighter">Total Unit</h5>
-									</div>
+	        
+   	    	<div class="col-sm-3 col-xs-12">
+   	    		
+				<div class="search_unit col-sm-12 pricing-box" style="padding:0;">
+					<div class="widget-box widget-color-dark">
+						<div class="widget-header">
+							<h5 class="widget-title bigger lighter">Total Unit</h5>
+						</div>
 
-									<div class="widget-body">
-										<div class="widget-main center">
-											<span class="infobox-data-number">{{ count($unit_list) }}</span>
-										</div>
-									</div>
-								</div>
+						<div class="widget-body">
+							<div class="widget-main center">
+								<span class="infobox-data-number">{{ count($unit_list) }}</span>
 							</div>
-
-							<div class="search_ot_hour col-sm-12 pricing-box" style="padding:0;">
-								<div class="widget-box widget-color-orange ">
-									<div class="widget-header">
-											<h5 class="widget-title bigger lighter">
-												Total Employee
-											</h5>
-									</div>
-
-									<div class="widget-body">
-										<div class="widget-main center">
-											<span class="infobox-data-number">{{ $employee }}</span>
-										</div>
-									</div>
-								</div>
-							</div>
-
-							<div class=" search_emp col-sm-12 pricing-box" style="padding:0;">
-								<div class="widget-box widget-color-green2 ">
-									<div class="widget-header">
-											<h5 class="widget-title bigger lighter">Total OT</h5>
-									</div>
-
-									<div class="widget-body">
-										<div class="widget-main center">
-											<span class="infobox-data-number">
-											{{ Custom::numberToTime($ot_data['dayot']) }} 
-											Hour
-										</div>
-									</div>
-								</div>
-							</div>
-	           	    	</div>
-	           	    	<div class="col-sm-8 col-xs-12">	           	    		
-							<div class="widget-box widget-color-green2">
-								<div class="widget-header">
-									<h5 class="widget-title bigger lighter">Over Time (Hour)</h5>
-								</div>
-
-								<div class="widget-body">
-									<div class="widget-main center" id="ot">
-										<canvas id="otgraph" style="height:300px!important;"></canvas>
-										<script type="text/javascript">
-											$(function(){
-										        var ctxL = document.getElementById("otgraph").getContext('2d');
-
-										        var myLineChart = new Chart(ctxL, {
-										            type: 'line',
-										            data: {
-
-										                labels: [ '{{ $ot_data['day2'] }}','{{ $ot_data['day1'] }}','{{ $ot_data['day'] }}'],
-										                datasets: [{ 
-												        data: [{{ $ot_data['dayot2'] }},{{ $ot_data['dayot1'] }},{{ $ot_data['dayot'] }}],
-												        label: "Over Time (Hour)",
-												        borderColor: "#3e95cd",
-												        fill: false
-												      }
-												    ]
-										            },
-										            options: {
-												        scales: {
-                                                            yAxes: [{
-                                                                ticks: {
-                                                                    beginAtZero: true
-                                                                },
-                                                                afterFit: function(scale) {
-                                                                   scale.width = 80  //<-- set value as you wish 
-                                                                },
-                                                                scaleLabel: {
-                                                                    display: true,
-                                                                    labelString: 'Hour(s)'
-                                                                  }
-                                                            }],
-                                                            xAxes: [{
-                                                                scaleLabel: {
-                                                                    display: true,
-                                                                    labelString: 'Date'
-                                                                  }
-                                                            }]
-                                                        },
-												        layout: {
-												            padding: {
-												                left: 0,
-												                right: 50,
-												                top: 0,
-												                bottom: 0
-												            }
-												        },
-													    legend: {
-												            display: true,
-												            position: 'bottom'
-												        }
-												    }
-										        });
-										    });
-										</script>
-									</div>
-								</div>
-							</div>
-	           	    	</div>
-	           	    	
-	           	    </div>
-			  	</div>
-			</div>
-			<div class="space-20"></div>
-			<div class="row">
-				<div class="col-sm-offset-3 col-sm-6">
+						</div>
+					</div>
 				</div>
-			</div>
+
+				<div class="search_ot_hour col-sm-12 pricing-box" style="padding:0;">
+					<div class="widget-box widget-color-orange ">
+						<div class="widget-header">
+								<h5 class="widget-title bigger lighter">
+									Total Employee
+								</h5>
+						</div>
+
+						<div class="widget-body">
+							<div class="widget-main center">
+								<span class="infobox-data-number">{{ $employee }}</span>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class=" search_emp col-sm-12 pricing-box" style="padding:0;">
+					<div class="widget-box widget-color-green2 ">
+						<div class="widget-header">
+								<h5 class="widget-title bigger lighter">Total OT</h5>
+						</div>
+
+						<div class="widget-body">
+							<div class="widget-main center">
+								<span class="infobox-data-number">
+								{{ Custom::numberToTime($ot_data['dayot']) }} 
+								Hour
+							</div>
+						</div>
+					</div>
+				</div>
+   	    	</div>
+   	    	<div class="col-sm-6 col-xs-12">	           	    		
+				<div class="widget-box widget-color-green2">
+					<div class="widget-header">
+						<h5 class="widget-title bigger lighter">Over Time (Hour)</h5>
+					</div>
+
+					<div class="widget-body">
+						<div class="widget-main center" id="ot">
+							<canvas id="otgraph" style="height:300px!important;"></canvas>
+							<script type="text/javascript">
+								$(function(){
+							        var ctxL = document.getElementById("otgraph").getContext('2d');
+
+							        var myLineChart = new Chart(ctxL, {
+							            type: 'line',
+							            data: {
+
+							                labels: [ '{{ $ot_data['day2'] }}','{{ $ot_data['day1'] }}','{{ $ot_data['day'] }}'],
+							                datasets: [{ 
+									        data: [{{ $ot_data['dayot2'] }},{{ $ot_data['dayot1'] }},{{ $ot_data['dayot'] }}],
+									        label: "Over Time (Hour)",
+									        borderColor: "#3e95cd",
+									        fill: false
+									      }
+									    ]
+							            },
+							            options: {
+									        scales: {
+                                                yAxes: [{
+                                                    ticks: {
+                                                        beginAtZero: true
+                                                    },
+                                                    afterFit: function(scale) {
+                                                       scale.width = 80  //<-- set value as you wish 
+                                                    },
+                                                    scaleLabel: {
+                                                        display: true,
+                                                        labelString: 'Hour(s)'
+                                                      }
+                                                }],
+                                                xAxes: [{
+                                                    scaleLabel: {
+                                                        display: true,
+                                                        labelString: 'Date'
+                                                      }
+                                                }]
+                                            },
+									        layout: {
+									            padding: {
+									                left: 0,
+									                right: 50,
+									                top: 0,
+									                bottom: 0
+									            }
+									        },
+										    legend: {
+									            display: true,
+									            position: 'bottom'
+									        }
+									    }
+							        });
+							    });
+							</script>
+						</div>
+					</div>
+				</div>
+   	    	</div>
+	           	    	
         </div>
+		<div class="row">
+			<div class="col-sm-offset-3 col-sm-6">
+			</div>
+		</div>
     </div>
 </div>
 <div id="printOutputSection" style="display: none;"></div>
