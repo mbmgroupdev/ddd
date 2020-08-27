@@ -36,64 +36,63 @@
     <p class="search-title">Search results of  {{ $showTitle }}</p>
     <div class="panel-body">
     	<div class="row choice_2_div" id="choice_2_div" name="choice_2_div">
-	        <div class="row">
-        		@php
-        			$totalCount = 0;
-        		@endphp
-	        	@if(!empty($locationList))
-		        	@foreach($locationList as $location=>$llist)
-						<div class="col-xs-4 col-sm-3 pricing-box outside_emp" data-id="{{$location}}">
-							<div class="widget-box widget-color-green2">
-								<div class="widget-header">
-									<h5 class="widget-title bigger lighter">{{Custom::getUnitName($location)}}</h5>
-								</div>
-
-								<div class="widget-body">
-									<div class="widget-main center">
-										<span class="infobox-data-number">
-										@php
-											$list = array_column($llist, 'as_id');
-											$count = count(array_unique($list));
-											$totalCount += $count;
-											echo $count;
-										@endphp
-										</span>
-									</div>
-								</div>
-							</div>
-						</div>
-					@endforeach
-				@else
-					<div class="col-xs-4 col-sm-3 pricing-box">
+	        
+    		@php
+    			$totalCount = 0;
+    		@endphp
+        	@if(!empty($locationList))
+	        	@foreach($locationList as $location=>$llist)
+					<div class="col-xs-4 col-sm-3 pricing-box outside_emp" data-id="{{$location}}">
 						<div class="widget-box widget-color-green2">
 							<div class="widget-header">
-								<h5 class="widget-title bigger lighter">No Data Found</h5>
+								<h5 class="widget-title bigger lighter">{{Custom::getUnitName($location)}}</h5>
 							</div>
 
 							<div class="widget-body">
 								<div class="widget-main center">
-									<span class="infobox-data-number">0</span>
+									<span class="infobox-data-number">
+									@php
+										$list = array_column($llist, 'as_id');
+										$count = count(array_unique($list));
+										$totalCount += $count;
+										echo $count;
+									@endphp
+									</span>
 								</div>
 							</div>
 						</div>
 					</div>
-				@endif
-				@if($request['type'] == 'date')
-					<div class="col-xs-4 col-sm-3 pricing-box outside_emp_date_total" data-request="{{htmlspecialchars(json_encode($request), ENT_QUOTES, 'UTF-8')}}">
-						<div class="widget-box widget-color-dark">
-							<div class="widget-header">
-								<h5 class="widget-title bigger lighter">Total</h5>
-							</div>
+				@endforeach
+			@else
+				<div class="col-xs-4 col-sm-3 pricing-box">
+					<div class="widget-box widget-color-green2">
+						<div class="widget-header">
+							<h5 class="widget-title bigger lighter">No Data Found</h5>
+						</div>
 
-							<div class="widget-body">
-								<div class="widget-main center">
-									<span class="infobox-data-number">{{$totalCount}}</span>
-								</div>
+						<div class="widget-body">
+							<div class="widget-main center">
+								<span class="infobox-data-number">0</span>
 							</div>
 						</div>
 					</div>
-				@endif
-			</div>
+				</div>
+			@endif
+			@if($request['type'] == 'date')
+				<div class="col-xs-4 col-sm-3 pricing-box outside_emp_date_total" data-request="{{htmlspecialchars(json_encode($request), ENT_QUOTES, 'UTF-8')}}">
+					<div class="widget-box widget-color-dark">
+						<div class="widget-header">
+							<h5 class="widget-title bigger lighter">Total</h5>
+						</div>
+
+						<div class="widget-body">
+							<div class="widget-main center">
+								<span class="infobox-data-number">{{$totalCount}}</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			@endif
 		</div>
     </div>
 </div>

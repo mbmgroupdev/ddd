@@ -26,42 +26,31 @@
                 @include('inc/message')
             <div class="panel panel-info">
                 <div class="panel-heading">
-                    <h6>Training List<a href="{{ url('hr/training/add_training')}}" class="pull-right btn btn-xx btn-info">Add Training</a></h6>
+                    <h6>Training List<a href="{{ url('hr/training/add_training')}}" class="pull-right btn  btn-primary">Add Training</a></h6>
                 </div>
                 <div class="panel-body">
 
-                    <div class="row">
-                          <!-- Display Erro/Success Message -->
-                        <div class="col-xs-12 no-padding-left no-padding-right">
-                            <!-- PAGE CONTENT BEGINS -->
-                            <div class="col-xs-12 worker-list">
-                            <!-- PAGE CONTENT BEGINS --> 
-                                <table id="dataTables" class="table table-striped table-bordered"  style="overflow-x: auto; width: 100%;">
-                                    <thead>
-                                        <tr>
-                                            <th>Sl. No</th>
-                                            <th>Training Name</th>
-                                            <th>Trainer Name</th>
-                                            <th>Schedule Date</th>
-                                            <th>Schedule Time</th>
-                                            <th>Description</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>  
-                                </table>
-                                <!-- PAGE CONTENT ENDS -->
-                            </div><!-- /.col -->
-
-                            <!-- PAGE CONTENT ENDS -->
-                        </div>
-                        <!-- /.col -->
-                    </div>
+                    <table id="dataTables" class="table table-striped table-bordered"  style="overflow-x: auto; width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>Sl. No</th>
+                                <th>Training Name</th>
+                                <th>Trainer Name</th>
+                                <th>Schedule Date</th>
+                                <th>Schedule Time</th>
+                                <th>Description</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>  
+                    </table>
+                               
                 </div>
             </div>
         </div><!-- /.page-content -->
     </div>
 </div>
 
+@push('js')
 <script type="text/javascript">
 $(document).ready(function(){ 
 
@@ -71,7 +60,7 @@ $(document).ready(function(){
         responsive: true,
         serverSide: true,
         pagingType: "full_numbers",
-        dom: "<'row'<'col-sm-2'l><'col-sm-3'i><'col-sm-4 text-center'B><'col-sm-3'f>>tp", 
+        dom: "lBftip", 
         buttons: [  
             {
                 extend: 'copy', 
@@ -127,4 +116,5 @@ $(document).ready(function(){
     }); 
 });
 </script>
+@endpush
 @endsection 

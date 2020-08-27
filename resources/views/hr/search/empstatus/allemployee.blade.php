@@ -20,7 +20,6 @@
         float:left;
     }
 </style>
-<br>
 <div class="panel panel-info col-sm-12">
     <br>
     <div class="breadcrumbs ace-save-state" id="breadcrumbs">

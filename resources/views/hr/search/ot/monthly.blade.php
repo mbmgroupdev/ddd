@@ -28,51 +28,48 @@
     <p class="search-title">Search results of  {{ $showTitle }}</p>
     <div class="panel-body">
         <!-- <h4 class="center">MBM Group</h4> -->
-    	<div class="row choice_2_div" id="choice_2_div" name="choice_2_div">
-	        <div class="row">
-	           	    		
-				<div class="search_unit col-sm-offset-1 col-sm-3 pricing-box" >
-					<div class="widget-box widget-color-green2">
-						<div class="widget-header">
-							<h5 class="widget-title bigger lighter">Total Unit</h5>
-						</div>
+    	<div class="row choice_2_div" id="choice_2_div" name="choice_2_div">       	    		
+			<div class="search_unit col-sm-offset-1 col-sm-3 pricing-box" >
+				<div class="widget-box widget-color-green2">
+					<div class="widget-header">
+						<h5 class="widget-title bigger lighter">Total Unit</h5>
+					</div>
 
-						<div class="widget-body">
-							<div class="widget-main center">
-								<span class="infobox-data-number">{{ count($unit_list) }}</span>
-							</div>
+					<div class="widget-body">
+						<div class="widget-main center">
+							<span class="infobox-data-number">{{ count($unit_list) }}</span>
 						</div>
 					</div>
 				</div>
+			</div>
 
-				<div class="search_emp col-sm-3 pricing-box" >
-					<div class="widget-box widget-color-green2 ">
-						<div class="widget-header">
-								<h5 class="widget-title bigger lighter">
-									Total Employee
-								</h5>
-						</div>
+			<div class="search_emp col-sm-3 pricing-box" >
+				<div class="widget-box widget-color-green2 ">
+					<div class="widget-header">
+							<h5 class="widget-title bigger lighter">
+								Total Employee
+							</h5>
+					</div>
 
-						<div class="widget-body">
-							<div class="widget-main center">
-								<span class="infobox-data-number">{{ $employee }}</span>
-							</div>
+					<div class="widget-body">
+						<div class="widget-main center">
+							<span class="infobox-data-number">{{ $employee }}</span>
 						</div>
 					</div>
 				</div>
+			</div>
 
-				<div class=" search_emp col-sm-4 pricing-box" >
-					<div class="widget-box widget-color-green2 ">
-						<div class="widget-header">
-								<h5 class="widget-title bigger lighter">Total OT</h5>
-						</div>
+			<div class=" search_emp col-sm-4 pricing-box" >
+				<div class="widget-box widget-color-green2 ">
+					<div class="widget-header">
+							<h5 class="widget-title bigger lighter">Total OT</h5>
+					</div>
 
-						<div class="widget-body">
-							<div class="widget-main center">
-								<span class="infobox-data-number">
-								{{ Custom::numberToTime($otTotal) }} 
-								Hour
-							</div>
+					<div class="widget-body">
+						<div class="widget-main center">
+							<span class="infobox-data-number">
+							{{ Custom::numberToTime($otTotal) }} 
+							Hour
 						</div>
 					</div>
 				</div>

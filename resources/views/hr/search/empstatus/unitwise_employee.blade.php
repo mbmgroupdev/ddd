@@ -1,26 +1,4 @@
-<style>
-    .dataTables_wrapper .dataTables_processing {
-        position: absolute;
-        top: 30%;
-        left: 50%;
-        width: 30%;
-        height: 80px;
-        margin-left: -20%;
-        margin-top: -25px;
-        padding-top: 20px;
-        text-align: center;
-        font-size: 1.7em;
-        background-color:White;
-    }
-    .dataTables_wrapper .dt-buttons {
-        float:right;
-        text-align:center;
-    }
-    .dataTables_length{
-        float:left;
-    }
-</style>
-<br>
+
 <div class="panel panel-info col-sm-12">
     <br>
     <div class="breadcrumbs ace-save-state" id="breadcrumbs">

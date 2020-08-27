@@ -13,7 +13,6 @@
         #printOutputSection {display: block;}
     }
 </style>
-<br>
 <div class="panel panel-info col-sm-12 col-xs-12">
 	<br>
 	<div class="breadcrumbs ace-save-state" id="breadcrumbs">
@@ -37,60 +36,59 @@
     <p class="search-title">Search results of  {{ $showTitle }}</p>
     <div class="panel-body">
     	<div class="row choice_2_div" id="choice_2_div" name="choice_2_div">
-	        <div class="row">
-        		@php
-        			$totalCount = 0;
-        		@endphp
-	        	@if(!empty($empList))
-		        	@foreach($empList as $statusType=>$elist)
-						<div class="col-xs-4 col-sm-3 pricing-box emp_status" data-id="{{$statusType}}">
-							<div class="widget-box widget-color-green2">
-								<div class="widget-header">
-									<h5 class="widget-title bigger lighter">
-										{{ucfirst(Custom::getEmpStatusName($statusType))}}
-									</h5>
-								</div>
-
-								<div class="widget-body">
-									<div class="widget-main center">
-										<span class="infobox-data-number">
-										@php
-											$count = count($elist);
-											$totalCount += $count;
-											echo $count;
-										@endphp
-										</span>
-									</div>
-								</div>
+	        
+        	@php
+    			$totalCount = 0;
+    		@endphp
+        	@if(!empty($empList))
+	        	@foreach($empList as $statusType=>$elist)
+					<div class="col-xs-4 col-sm-3 pricing-box emp_status" data-id="{{$statusType}}">
+						<div class="widget-box widget-color-green2">
+							<div class="widget-header">
+								<h5 class="widget-title bigger lighter">
+									{{ucfirst(Custom::getEmpStatusName($statusType))}}
+								</h5>
 							</div>
-						</div>
-					@endforeach
-				@else
 
-				@endif
-				<div class="col-xs-4 col-sm-3 pricing-box emp_status" data-id="join">
-					<div class="widget-box widget-color-green2">
-						<div class="widget-header">
-							<h5 class="widget-title bigger lighter">Join</h5>
-						</div>
-
-						<div class="widget-body">
-							<div class="widget-main center">
-								<span class="infobox-data-number">{{count($empActiveList)}}</span>
+							<div class="widget-body">
+								<div class="widget-main center">
+									<span class="infobox-data-number">
+									@php
+										$count = count($elist);
+										$totalCount += $count;
+										echo $count;
+									@endphp
+									</span>
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-				<div class="col-xs-4 col-sm-3 pricing-box">
-					<div class="widget-box widget-color-dark search_unit">
-						<div class="widget-header">
-							<h5 class="widget-title bigger lighter">Total</h5>
-						</div>
+				@endforeach
+			@else
 
-						<div class="widget-body">
-							<div class="widget-main center">
-								<span class="infobox-data-number">{{$totalCount+count($empActiveList)}}</span>
-							</div>
+			@endif
+			<div class="col-xs-4 col-sm-3 pricing-box emp_status" data-id="join">
+				<div class="widget-box widget-color-green2">
+					<div class="widget-header">
+						<h5 class="widget-title bigger lighter">Join</h5>
+					</div>
+
+					<div class="widget-body">
+						<div class="widget-main center">
+							<span class="infobox-data-number">{{count($empActiveList)}}</span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-xs-4 col-sm-3 pricing-box">
+				<div class="widget-box widget-color-dark search_unit">
+					<div class="widget-header">
+						<h5 class="widget-title bigger lighter">Total</h5>
+					</div>
+
+					<div class="widget-body">
+						<div class="widget-main center">
+							<span class="infobox-data-number">{{$totalCount+count($empActiveList)}}</span>
 						</div>
 					</div>
 				</div>

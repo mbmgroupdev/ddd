@@ -19,63 +19,63 @@
         <div class="page-content"> 
             @include('inc/message')
             <div class="panel panel-info">
-                <div class="panel-heading"><h6>Disciplinary Record<a href="{{ url('hr/performance/operation/disciplinary_list')}}" class="pull-right btn btn-xx btn-info">Record List</a></h6></div> 
+                <div class="panel-heading"><h6>Disciplinary Record<a href="{{ url('hr/performance/operation/disciplinary_list')}}" class="pull-right btn btn-xx btn-primary">Record List</a></h6></div> 
                 <div class="panel-body"> 
                     {{ Form::open(['url'=>'hr/performance/operation/disciplinary_form', 'class'=>'form']) }}
 
                         <input type="hidden" name="gaid" value="{{ Request::get('gaid') }}"> 
                         <div class="row justify-content-center">
-                            <div class="col-sm-4">
-                                
-                                <div class="user-details-block mb-3">
-                                    <div class="user-profile text-center mt-0">
-                                        <img id="off_avatar" class="avatar-130 img-fluid" src="{{ asset('assets/images/user/09.jpg') }} " onerror="this.onerror=null;this.src='{{ asset("assets/images/user/09.jpg") }}';">
+                            <div class="col-sm-9">
+                                <div class="row">
+                                    
+                                    <div class="col-sm-6">
+                                        
+                                        <div class="user-details-block mb-3 mt-custom-4">
+                                            <div class="user-profile text-center mt-0">
+                                                <img id="off_avatar" class="avatar-130 img-fluid" src="{{ asset('assets/images/user/09.jpg') }} " onerror="this.onerror=null;this.src='{{ asset("assets/images/user/09.jpg") }}';">
+                                            </div>
+                                            <div class="text-center mt-3">
+                                             <h4><b id="off_name">-------------</b></h4>
+                                             <p class="mb-0" id="off_designation">
+                                                --------------------------</p>
+                                             <p class="mb-0" >
+                                                Oracle ID: <span id="off_oracle_id" class="text-success">-------------</span>
+                                             </p>
+                                             <p  class="mb-0">Department: <span id="off_department" class="text-success">------------------------</span> </p>
+                                             
+                                             </div>
+                                        </div>
+                                        <div class="form-group has-float-label has-required select-search-group ml-custom-5 mr-custom-5">
+                                            {{ Form::select('dis_re_offender_id', [(!empty($appeal->hr_griv_appl_offender_as_id)?$appeal->hr_griv_appl_offender_as_id:null) => (!empty($appeal->offender)?$appeal->offender:null)], (!empty($appeal->hr_griv_appl_offender_as_id)?$appeal->hr_griv_appl_offender_as_id:null), ['placeholder'=>'Select Offender\'s Name or ID', 'id'=>'dis_re_offender_id', 'class'=> 'associates  ', 'required'=>'required', 'data-type'=>'off_']) }}
+                                            <label  for="dis_re_offender_id"> Offender ID </label>
+                                        </div>
+                                        
                                     </div>
-                                    <div class="text-center mt-3">
-                                     <h4><b id="off_name">-------------</b></h4>
-                                     <p class="mb-0" id="designation">
-                                        --------------------------</p>
-                                     <p class="mb-0" >
-                                        Oracle ID: <span id="off_oracle_id" class="text-success">-------------</span>
-                                     </p>
-                                     <p class="mb-0" >
-                                        Associate ID: <span id="off_associate_id" class="text-success">-------------</span>
-                                     </p>
-                                     <p  class="mb-0">Department: <span id="off_department" class="text-success">------------------------</span> </p>
-                                     
-                                     </div>
-                                </div>
-                                <div class="form-group has-float-label has-required select-search-group ml-4 mr-4">
-                                    {{ Form::select('dis_re_offender_id', [(!empty($appeal->hr_griv_appl_offender_as_id)?$appeal->hr_griv_appl_offender_as_id:null) => (!empty($appeal->offender)?$appeal->offender:null)], (!empty($appeal->hr_griv_appl_offender_as_id)?$appeal->hr_griv_appl_offender_as_id:null), ['placeholder'=>'Select Offender\'s Name or ID', 'id'=>'dis_re_offender_id', 'class'=> 'associates  ', 'required'=>'required']) }}
-                                    <label  for="dis_re_offender_id"> Offender ID </label>
-                                </div>
-                                
-                            </div>
-                            <div class="col-sm-4">
-                                
-                                <div class="user-details-block mb-3">
-                                    <div class="user-profile text-center mt-0">
-                                        <img id="gri_avatar" class="avatar-130 img-fluid" src="{{ asset('assets/images/user/09.jpg') }} " onerror="this.onerror=null;this.src='{{ asset("assets/images/user/09.jpg") }}';">
+                                    <div class="col-sm-6">
+                                        
+                                        <div class="user-details-block mb-3">
+                                            <div class="user-profile text-center mt-0 mt-custom-4">
+                                                <img id="gri_avatar" class="avatar-130 img-fluid" src="{{ asset('assets/images/user/09.jpg') }} " onerror="this.onerror=null;this.src='{{ asset("assets/images/user/09.jpg") }}';">
+                                            </div>
+                                            <div class="text-center mt-3">
+                                             <h4><b id="gri_name">-------------</b></h4>
+                                             <p class="mb-0" id="gri_designation">
+                                                --------------------------</p>
+                                             <p class="mb-0" >
+                                                Oracle ID: <span id="gri_oracle_id" class="text-success">-------------</span>
+                                             </p>
+                                             
+                                             <p  class="mb-0">Department: <span id="gri_department" class="text-success">------------------------</span> </p>
+                                             
+                                             </div>
+                                        </div>
+                                        <div class="form-group has-float-label has-required select-search-group ml-custom-5 mr-custom-5">
+                                            {{ Form::select('dis_re_griever_id', [(!empty($appeal->hr_griv_associate_id)?$appeal->hr_griv_associate_id:null) => (!empty($appeal->griever)?$appeal->griever:null)], (!empty($appeal->hr_griv_associate_id)?$appeal->hr_griv_associate_id:null), ['placeholder'=>'Select Associate\'s ID', 'id'=>'dis_re_griever_id', 'class'=> 'associates ', 'data-type'=>'gri_']) }}  
+                                            <label  for="dis_re_griever_id"> Griever ID (Optional) </label>
+                                        </div> 
+                                        
                                     </div>
-                                    <div class="text-center mt-3">
-                                     <h4><b id="gri_name">-------------</b></h4>
-                                     <p class="mb-0" id="designation">
-                                        --------------------------</p>
-                                     <p class="mb-0" >
-                                        Oracle ID: <span id="gri_oracle_id" class="text-success">-------------</span>
-                                     </p>
-                                     <p class="mb-0" >
-                                        Associate ID: <span id="gri_associate_id" class="text-success">-------------</span>
-                                     </p>
-                                     <p  class="mb-0">Department: <span id="gri_department" class="text-success">------------------------</span> </p>
-                                     
-                                     </div>
                                 </div>
-                                <div class="form-group has-float-label has-required select-search-group ml-4 mr-4">
-                                    {{ Form::select('dis_re_griever_id', [(!empty($appeal->hr_griv_associate_id)?$appeal->hr_griv_associate_id:null) => (!empty($appeal->griever)?$appeal->griever:null)], (!empty($appeal->hr_griv_associate_id)?$appeal->hr_griv_associate_id:null), ['placeholder'=>'Select Associate\'s ID', 'id'=>'dis_re_griever_id', 'class'=> 'associates ']) }}  
-                                    <label  for="dis_re_griever_id"> Griever ID (Optional) </label>
-                                </div> 
-                                
                             </div>
                             <div class="col-sm-3">
                                 <div class="form-group has-float-label has-required ">
@@ -103,8 +103,8 @@
                                     <label >Date of Execution To</label>
                                 </div>
                                 <div class="form-group has-float-label">
-                                    <button class="btn btn-sm btn-success" type="submit">
-                                        <i class="fa fa-check bigger-110"></i> Submit
+                                    <button class="btn pull-right btn-primary" type="submit">
+                                        <i class="fa fa-check"></i> Submit
                                     </button>
 
                                 </div>
@@ -117,50 +117,41 @@
         </div><!-- /.page-content -->
     </div>
 </div>
+@push('js')
 <script type="text/javascript">
 $(document).ready(function()
 {
-    function formatState (state) {
-        //console.log(state.element);
-        if (!state.id) {
-            return state.text;
-        }
-        var baseUrl = "/user/pages/images/flags";
-        var $state = $(
-        '<span><img /> <span></span></span>'
-        );
-        // Use .text() instead of HTML string concatenation to avoid script injection issues
-        var targetName = state.name;
-        $state.find("span").text(targetName);
-        // $state.find("img").attr("src", baseUrl + "/" + state.element.value.toLowerCase() + ".png");
-        return $state;
-    };
-
-    $('select.associates').select2({
-        templateSelection:formatState,
-        ajax: {
-            url: '{{ url("hr/associate-search") }}',
+    $('body').on('change', '.associates', function(){
+        var type = $(this).data('type');
+        $.ajax({
+            url: '{{ url("hr/associate") }}',
             dataType: 'json',
-            delay: 250,
-            data: function (params) {
-                return { 
-                    keyword: params.term
-                }; 
+            data: {associate_id: $(this).val()},
+            success: function(data)
+            {
+                $('#'+type+'oracle_id').text(data.as_oracle_code);
+                $('#'+type+'name').text(data.as_name);
+                $('#'+type+'department').text(data.hr_department_name);
+                $('#'+type+'designation').text(data.hr_designation_name);
+                if(data.as_pic == null){
+                    if(data.as_gender == 'Male'){
+                        $('#'+type+'avatar').attr('src',url+'/assets/images/user/09.jpg');   
+                    }
+                    else{
+                        $('#'+type+'avatar').attr('src',url+'/assets/images/user/1.jpg');   
+                    }
+                }
+                else{
+                    $('#'+type+'avatar').attr('src', url+data.as_pic);  
+                }
             },
-            processResults: function (data) { 
-                return {
-                    results:  $.map(data, function (item) {
-                        return {
-                            text: $("<span><img src='"+(item.as_pic ==null?'/assets/images/avatars/profile-pic.jpg':item.as_pic)+"' height='50px' width='auto'/> " + item.associate_name + "</span>"),
-                            id: item.associate_id,
-                            name: item.associate_name
-                        }
-                    }) 
-                };
-          },
-          cache: true
-        }
+            error: function(xhr)
+            {
+                alert('failed...');
+            }
+        });
     });
+
 
     //date validation------------------
     $('#dis_re_doe_from').on('dp.change',function(){
@@ -184,4 +175,5 @@ $(document).ready(function()
     //date validation end---------------
 });
 </script>
+@endpush
 @endsection

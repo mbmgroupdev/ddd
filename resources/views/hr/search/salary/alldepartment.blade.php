@@ -26,67 +26,65 @@
        <!-- <h4 class="center">MBM Group</h4> -->
         
         <div class="row choice_2_div" id="choice_2_div" name="choice_2_div">
-            <div class="row">
-                <div class="col-sm-12">
-                    @foreach($department_list as $k=>$department)
-                    
-                        <div class="search-result-div col-xs-12 col-sm-3 widget-container-col ui-sortable">
-                            <div class="widget-box widget-color-green2 light-border ui-sortable-handle" id="widget-box-6">
-                                <div class="widget-header">
-                                    <a href="#" class="white search_floor" data-department="{{ $department->hr_department_id }}">
-                                        <h5 class="widget-title smaller">  {{ $department->hr_department_name }} </h5></a>
-                                </div>
 
-                                <div class="widget-body">
-                                    <div class="widget-main padding-6">
-                                        <a href="#" class="search_floor" data-department="{{ $department->hr_department_id }}">
-                                            <div class="profile-info-row">
-                                                <div class="profile-info-name">Floor </div>
 
-                                                <div class="profile-info-value after-load" id="{{ $department->hr_department_id }}_floor">
-                                                    <span>0</span>
-                                                </div>
-                                            </div>
-                                        </a>
-                                        <a href="#" class="search_emp" data-department="{{ $department->hr_department_id }}">
-                                            <div class="profile-info-row">
-                                                <div class="profile-info-name"> Total Employee </div>
+            @foreach($department_list as $k=>$department)
+            
+                <div class="search-result-div col-xs-12 col-sm-3 widget-container-col ui-sortable">
+                    <div class="widget-box widget-color-green2 light-border ui-sortable-handle" id="widget-box-6">
+                        <div class="widget-header">
+                            <a href="#" class="white search_floor" data-department="{{ $department->hr_department_id }}">
+                                <h5 class="widget-title smaller">  {{ $department->hr_department_name }} </h5></a>
+                        </div>
 
-                                                <div class="profile-info-value after-load" id="{{ $department->hr_department_id }}_emp">
-                                                    <span>0</span>
-                                                </div>
-                                            </div>
-                                        </a>
-                                        <div class="profile-info-row search_emp" data-department="{{ $department->hr_department_id  }}" data-salstatus='salary'>
-                                            <div class="profile-info-name"> Salary Payable </div>
+                        <div class="widget-body">
+                            <div class="widget-main padding-6">
+                                <a href="#" class="search_floor" data-department="{{ $department->hr_department_id }}">
+                                    <div class="profile-info-row">
+                                        <div class="profile-info-name">Floor </div>
 
-                                            <div class="profile-info-value after-load" id="{{ $department->hr_department_id }}_s">
-                                                <span>0</span>
-                                            </div>
+                                        <div class="profile-info-value after-load" id="{{ $department->hr_department_id }}_floor">
+                                            <span>0</span>
                                         </div>
-                                        <div class="profile-info-row search_emp" data-department="{{ $department->hr_department_id  }}" data-salstatus='ot'>
-                                            <div class="profile-info-name"> OT Payable </div>
+                                    </div>
+                                </a>
+                                <a href="#" class="search_emp" data-department="{{ $department->hr_department_id }}">
+                                    <div class="profile-info-row">
+                                        <div class="profile-info-name"> Total Employee </div>
 
-                                            <div class="profile-info-value after-load" id="{{ $department->hr_department_id }}_o">
-                                                <span>0</span>
-                                            </div>
+                                        <div class="profile-info-value after-load" id="{{ $department->hr_department_id }}_emp">
+                                            <span>0</span>
                                         </div>
-                                        <div class="profile-info-row search_emp" data-department="{{ $department->hr_department_id  }}">
-                                            <div class="profile-info-name"> Total Payable </div>
+                                    </div>
+                                </a>
+                                <div class="profile-info-row search_emp" data-department="{{ $department->hr_department_id  }}" data-salstatus='salary'>
+                                    <div class="profile-info-name"> Salary Payable </div>
 
-                                            <div class="profile-info-value after-load" id="{{ $department->hr_department_id }}_t">
-                                                <span>0</span>
-                                            </div>
-                                        </div>
-                                        
+                                    <div class="profile-info-value after-load" id="{{ $department->hr_department_id }}_s">
+                                        <span>0</span>
                                     </div>
                                 </div>
+                                <div class="profile-info-row search_emp" data-department="{{ $department->hr_department_id  }}" data-salstatus='ot'>
+                                    <div class="profile-info-name"> OT Payable </div>
+
+                                    <div class="profile-info-value after-load" id="{{ $department->hr_department_id }}_o">
+                                        <span>0</span>
+                                    </div>
+                                </div>
+                                <div class="profile-info-row search_emp" data-department="{{ $department->hr_department_id  }}">
+                                    <div class="profile-info-name"> Total Payable </div>
+
+                                    <div class="profile-info-value after-load" id="{{ $department->hr_department_id }}_t">
+                                        <span>0</span>
+                                    </div>
+                                </div>
+                                
                             </div>
                         </div>
-                   
-                    @endforeach
+                    </div>
                 </div>
-            </div>
+           
+            @endforeach
         </div>
     </div>
 </div>

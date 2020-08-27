@@ -13,9 +13,8 @@
         #printOutputSection {display: block;}
     }
 </style>
-<br>
 <div class="panel panel-info col-sm-12 col-xs-12">
-	<br>
+
 	<div class="breadcrumbs ace-save-state" id="breadcrumbs">
         <ul class="breadcrumb">
             <li>
@@ -29,7 +28,7 @@
     <p class="search-title">Search results of  {{ $showTitle }}</p>
     <div class="panel-body">
     	<div class="row choice_2_div" id="choice_2_div" name="choice_2_div">
-	        <div class="row">
+	        
 				<div class="col-sm-offset-3 col-xs-4 col-sm-3 pricing-box">
 					<div class="widget-box widget-color-dark search_unit">
 						<div class="widget-header">
@@ -44,21 +43,7 @@
 					</div>
 				</div>
 
-				{{-- <div class="col-xs-4 col-sm-3 pricing-box">
-					<div class="widget-box widget-color-orange search_emp" data-leavetype="all">
-						<div class="widget-header">
-							<h5 class="widget-title bigger lighter">
-								Total Employee
-							</h5>
-						</div>
-
-						<div class="widget-body">
-							<div class="widget-main center">
-								<span class="infobox-data-number">{{ count($employee_list) }}</span>
-							</div>
-						</div>
-					</div>
-				</div> --}}
+				
 
 				<div class="col-xs-4 col-sm-3 pricing-box">
 					<div class="widget-box widget-color-red">
@@ -81,7 +66,7 @@
 						</div>
 					</div>
 				</div>
-			</div>
+			
 			@if($request['type'] == 'month' || $request['type'] == 'date')
 				@if(count($leave_type_list_count) > 0)
 					<br>
@@ -111,75 +96,75 @@
 				@endforeach
 				</div>
 			@endif
-			<div class="row">
-				@if($request['type'] == 'year')
+        </div>
+		<div class="row">
+			@if($request['type'] == 'year')
+				@php
+					$lCount = 0;
+				@endphp
+				@foreach($leave_type_list as $type=>$leave_type)
 					@php
-						$lCount = 0;
+						$totalEachMonthLeaveCount = 0;
 					@endphp
-					@foreach($leave_type_list as $type=>$leave_type)
-						@php
-							$totalEachMonthLeaveCount = 0;
-						@endphp
-						@foreach($leave_type as $monthName=>$leave_type1)
-						@php
-							$lCount++;
-						@endphp
-							<div class="col-xs-4 col-sm-3 pricing-box" data-attstatus="{{ strtolower($monthName) }}">
-								<div class="widget-box widget-color-{{ $lCount % 2 == 0? 'red':'orange' }}">
-									<div class="widget-header">
-										<h5 class="widget-title bigger lighter">Total Leave in <span style="font-size: 15px; color: #000; font-weight: bold">{{ $monthName }}</span> </h5>
-									</div>
+					@foreach($leave_type as $monthName=>$leave_type1)
+					@php
+						$lCount++;
+					@endphp
+						<div class="col-xs-4 col-sm-3 pricing-box" data-attstatus="{{ strtolower($monthName) }}">
+							<div class="widget-box widget-color-{{ $lCount % 2 == 0? 'red':'orange' }}">
+								<div class="widget-header">
+									<h5 class="widget-title bigger lighter">Total Leave in <span style="font-size: 15px; color: #000; font-weight: bold">{{ $monthName }}</span> </h5>
+								</div>
 
-									<div class="widget-body">
-										<div class="widget-main center">
-											<span class="infobox-data-number" id="t{{ $monthName }}">
-												@if(count($leave_type1)>0)
+								<div class="widget-body">
+									<div class="widget-main center">
+										<span class="infobox-data-number" id="t{{ $monthName }}">
+											@if(count($leave_type1)>0)
+												@php
+													$totalEachMonthLeaveCount1 = 0;
+												@endphp
+												@foreach($leave_type1 as $type1=>$leave_type2)
 													@php
-														$totalEachMonthLeaveCount1 = 0;
+														$totalEachMonthLeaveCount += $leave_type2;
+														$totalEachMonthLeaveCount1 += $leave_type2;
 													@endphp
-													@foreach($leave_type1 as $type1=>$leave_type2)
-														@php
-															$totalEachMonthLeaveCount += $leave_type2;
-															$totalEachMonthLeaveCount1 += $leave_type2;
-														@endphp
-														<a href="#">
-				                                            <div class="profile-info-row">
-				                                                <div class="profile-info-name"> Total {{ $type1 }} </div>
-				                                                <div class="profile-info-value">
-				                                                    <span>{{ $leave_type2 }}</span>
-				                                                </div>
-				                                            </div>
-				                                        </a>
-													@endforeach
-														<a href="#">
-				                                            <div class="profile-info-row">
-				                                                <div class="profile-info-name"> Total Leave </div>
-				                                                <div class="profile-info-value">
-				                                                    <span>{{ $totalEachMonthLeaveCount1 }}</span>
-				                                                </div>
-				                                            </div>
-				                                        </a>
-												@else
+													<a href="#">
+			                                            <div class="profile-info-row">
+			                                                <div class="profile-info-name"> Total {{ $type1 }} </div>
+			                                                <div class="profile-info-value">
+			                                                    <span>{{ $leave_type2 }}</span>
+			                                                </div>
+			                                            </div>
+			                                        </a>
+												@endforeach
 													<a href="#">
 			                                            <div class="profile-info-row">
 			                                                <div class="profile-info-name"> Total Leave </div>
 			                                                <div class="profile-info-value">
-			                                                    <span>0</span>
+			                                                    <span>{{ $totalEachMonthLeaveCount1 }}</span>
 			                                                </div>
 			                                            </div>
 			                                        </a>
-												@endif
-											</span>
-										</div>
+											@else
+												<a href="#">
+		                                            <div class="profile-info-row">
+		                                                <div class="profile-info-name"> Total Leave </div>
+		                                                <div class="profile-info-value">
+		                                                    <span>0</span>
+		                                                </div>
+		                                            </div>
+		                                        </a>
+											@endif
+										</span>
 									</div>
 								</div>
 							</div>
-						@endforeach
+						</div>
 					@endforeach
-					<input type="hidden" id="totalYearlyLeave" value="{{ $totalEachMonthLeaveCount }}">
-				@endif
-			</div>
-        </div>
+				@endforeach
+				<input type="hidden" id="totalYearlyLeave" value="{{ $totalEachMonthLeaveCount }}">
+			@endif
+		</div>
     </div>
 </div>
 <div id="printOutputSection" style="display: none;"></div>

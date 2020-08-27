@@ -26,22 +26,20 @@
     <p class="search-title">Search results of  {{ $showTitle }}</p>
     <div class="panel-body">
     	<div class="row choice_2_div" id="choice_2_div" name="choice_2_div">
-	        <div class="row">
-				<div class="col-sm-offset-4 col-xs-offset-4 col-xs-4 col-sm-4 pricing-box">
-					<div class="widget-box widget-color-dark search_unit">
-						<div class="widget-header">
-							<h5 class="widget-title bigger lighter">Total Unit</h5>
-						</div>
+			<div class="col-sm-offset-4 col-xs-offset-4 col-xs-4 col-sm-4 pricing-box">
+				<div class="widget-box widget-color-dark search_unit">
+					<div class="widget-header">
+						<h5 class="widget-title bigger lighter">Total Unit</h5>
+					</div>
 
-						<div class="widget-body">
-							<div class="widget-main center">
-								<span class="infobox-data-number">{{ count($unit_list) }}</span>
-							</div>
-							<div class="widget-main center">
-                                <span class="infobox-data-number"> <h6>Total Employee: {{ $employee_count }}</h6>
-                                </span>
-                            </div>
+					<div class="widget-body">
+						<div class="widget-main center">
+							<span class="infobox-data-number">{{ count($unit_list) }}</span>
 						</div>
+						<div class="widget-main center">
+                            <span class="infobox-data-number"> <h6>Total Employee: {{ $employee_count }}</h6>
+                            </span>
+                        </div>
 					</div>
 				</div>
 			</div>

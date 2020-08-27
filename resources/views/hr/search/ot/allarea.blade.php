@@ -24,51 +24,49 @@
     <div class="panel-body">
         <!-- <h4 class="center">MBM Group</h4> -->
         <div class="row choice_2_div" id="choice_2_div" name="choice_2_div">
-            <div class="row">
-            	<div class="col-sm-12">
-                    @foreach($area_data as $k=>$area)
-                        
-                        <div class="search-result-div col-xs-12 col-sm-3 widget-container-col ui-sortable">
-                            <div class="widget-box widget-color-green2 light-border ui-sortable-handle" id="widget-box-6">
-                                <div class="widget-header search_dept" data-area="{{ $area['id'] }}">
-                                        <h5 class="widget-title smaller">  {{ $area['name'] }} </h5>
-                                </div>
+            
+            @foreach($area_data as $k=>$area)
+                
+                <div class="search-result-div col-xs-12 col-sm-3 widget-container-col ui-sortable">
+                    <div class="widget-box widget-color-green2 light-border ui-sortable-handle" id="widget-box-6">
+                        <div class="widget-header search_dept" data-area="{{ $area['id'] }}">
+                                <h5 class="widget-title smaller">  {{ $area['name'] }} </h5>
+                        </div>
 
-                                <div class="widget-body">
-                                    <div class="widget-main padding-6">
-                                        <a href="#" class="search_dept" data-area="{{ $area['id'] }}">
-                                            <div class="profile-info-row">
-                                                <div class="profile-info-name"> Department </div>
+                        <div class="widget-body">
+                            <div class="widget-main padding-6">
+                                <a href="#" class="search_dept" data-area="{{ $area['id'] }}">
+                                    <div class="profile-info-row">
+                                        <div class="profile-info-name"> Department </div>
 
-                                                <div class="profile-info-value">
-                                                    <span>{{ $area['dept'] }}</span>
-                                                </div>
-                                            </div>
-                                        </a>
-                                            <div class="profile-info-row search_ot_hour " data-area="{{ $area['id'] }}">
-                                                <div class="profile-info-name" > Total Employee </div>
-
-                                                <div class="profile-info-value">
-                                                    <span>{{ $area['employee']}}</span>
-                                                </div>
-                                            </div>
-                                        <div class="profile-info-row search_emp" data-area="{{ $area['id'] }}">
-                                            <div class="profile-info-name"> Total OT</div>
-
-                                            <div class="profile-info-value">
-                                                <span>{{ Custom::numberToTime($area['ot_hour']) }} 
-                                            Hour</span>
-                                            </div>
+                                        <div class="profile-info-value">
+                                            <span>{{ $area['dept'] }}</span>
                                         </div>
-                                        <div class="search_ot_shift" data-area="{{ $area['id'] }}">View Shift</div>
+                                    </div>
+                                </a>
+                                    <div class="profile-info-row search_ot_hour " data-area="{{ $area['id'] }}">
+                                        <div class="profile-info-name" > Total Employee </div>
+
+                                        <div class="profile-info-value">
+                                            <span>{{ $area['employee']}}</span>
+                                        </div>
+                                    </div>
+                                <div class="profile-info-row search_emp" data-area="{{ $area['id'] }}">
+                                    <div class="profile-info-name"> Total OT</div>
+
+                                    <div class="profile-info-value">
+                                        <span>{{ Custom::numberToTime($area['ot_hour']) }} 
+                                    Hour</span>
                                     </div>
                                 </div>
+                                <div class="search_ot_shift" data-area="{{ $area['id'] }}">View Shift</div>
                             </div>
                         </div>
-                        
-                    @endforeach
+                    </div>
                 </div>
-            </div>
+                
+            @endforeach
+                
         </div>
     </div>
 </div>

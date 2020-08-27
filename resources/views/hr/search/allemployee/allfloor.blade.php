@@ -40,40 +40,38 @@
     <p class="search-title">Search results of  {{ $showTitle }}</p>
     <div class="panel-body">
         <div class="row choice_2_div" id="choice_2_div" name="choice_2_div">
-            <div class="row">
-            	<div class="col-sm-12">
-                    @foreach($floor_list as $k=>$floor)
-                        <div class="search-result-div col-xs-12 col-sm-3 widget-container-col ui-sortable">
-                            <div class="widget-box widget-color-green2 light-border ui-sortable-handle" id="widget-box-6">
-                                <div class="widget-header">
-                                    <a href="#" class="white search_section" data-floor="{{ $floor->hr_floor_id }}">
-                                        <h5 class="widget-title smaller">  {{ $floor->hr_floor_name }} </h5></a>
-                                </div>
 
-                                <div class="widget-body">
-                                    <div class="widget-main padding-6">
-                                        <div class="profile-info-row">
-                                            <div class="profile-info-name"> Total Section </div>
+            @foreach($floor_list as $k=>$floor)
+                <div class="search-result-div col-xs-12 col-sm-3 widget-container-col ui-sortable">
+                    <div class="widget-box widget-color-green2 light-border ui-sortable-handle" id="widget-box-6">
+                        <div class="widget-header">
+                            <a href="#" class="white search_section" data-floor="{{ $floor->hr_floor_id }}">
+                                <h5 class="widget-title smaller">  {{ $floor->hr_floor_name }} </h5></a>
+                        </div>
 
-                                            <div class="profile-info-value">
-                                                <span>{{ $floor->getSectionCount($request1['area'],$request1['department']) }}</span>
-                                            </div>
-                                        </div>
-                                        <div class="profile-info-row">
-                                            <div class="profile-info-name"> Total Employee </div>
+                        <div class="widget-body">
+                            <div class="widget-main padding-6">
+                                <div class="profile-info-row">
+                                    <div class="profile-info-name"> Total Section </div>
 
-                                            <div class="profile-info-value">
-                                                <span>{{ $floorEmpCount[$floor->hr_floor_id] }}</span>
-                                            </div>
-                                        </div>
-                                        
+                                    <div class="profile-info-value">
+                                        <span>{{ $floor->getSectionCount($request1['area'],$request1['department']) }}</span>
                                     </div>
                                 </div>
+                                <div class="profile-info-row">
+                                    <div class="profile-info-name"> Total Employee </div>
+
+                                    <div class="profile-info-value">
+                                        <span>{{ $floorEmpCount[$floor->hr_floor_id] }}</span>
+                                    </div>
+                                </div>
+                                
                             </div>
                         </div>
-                    @endforeach
-				</div>
-            </div>
+                    </div>
+                </div>
+            @endforeach
+				
         </div>
     </div>
 </div>

@@ -1,5 +1,5 @@
 @extends('hr.layout')
-@section('title', 'Add Role')
+@section('title', 'Disciplinary Record List')
 @section('main-content')
 @push('css')
 <style type="text/css">
@@ -12,14 +12,11 @@
         <div class="breadcrumbs ace-save-state" id="breadcrumbs">
             <ul class="breadcrumb">
                 <li>
-                    <i class="ace-icon fa fa-home home-icon"></i>
+                    <i class=" fa fa-home home-icon"></i>
                     <a href="#">Human Resource</a>
                 </li>
                 <li>
                     <a href="#">Performance </a>
-                </li>
-                <li >
-                    <a href="#"> Operation </a>
                 </li>
                 <li class="active"> Disciplinary Record List</li>
             </ul><!-- /.breadcrumb --> 
@@ -28,36 +25,28 @@
         <div class="page-content"> 
                 @include('inc/message')
             <div class="panel panel-info">
-                <div class="panel-heading"><h6>Disciplinary List<a href="{{ url('hr/performance/operation/disciplinary_form')}}" class="pull-right btn btn-xx btn-info">Disciplinary Form</a></h6></div> 
+                <div class="panel-heading"><h6>Disciplinary List<a href="{{ url('hr/performance/operation/disciplinary_form')}}" class="pull-right btn btn-primary">Disciplinary Form</a></h6></div> 
                 <div class="panel-body">
 
-                    <div class="row">
-                        <!-- Display Erro/Success Message -->
-                        <div class="col-xs-12 worker-list">
-                            <!-- PAGE CONTENT BEGINS -->
-                            </br>
-                            <!-- Display Erro/Success Message -->
-                            <table id="dataTables" class="table table-striped table-bordered" style="display:table;overflow-x: auto;white-space: nowrap; width: 100%;">
-                                <thead>
-                                    <tr>
-                                        <th>SL. No</th>
-                                        <th>Offender ID</th>
-                                        <th>Griever ID</th>
-                                        <th>Reason</th>
-                                        <th>Action</th>
-                                        <th>Requested Remedy</th>
-                                        <th>Discussed Date</th>
-                                        <th>Date of Execution</th> 
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
+                    
+                    <!-- Display Erro/Success Message -->
+                    <table id="dataTables" class="table table-striped table-bordered" style="display:table;overflow-x: auto; width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>SL. No</th>
+                                <th>Offender ID</th>
+                                <th>Griever ID</th>
+                                <th>Reason</th>
+                                <th>Action</th>
+                                <th>Requested Remedy</th>
+                                <th>Discussed Date</th>
+                                <th>Date of Execution</th> 
+                                <th>Action</th>
+                            </tr>
+                        </thead>
 
-                            </table>
+                    </table>
 
-                            <!-- PAGE CONTENT ENDS -->
-                        </div>
-                        <!-- /.col -->
-                    </div>
                 </div>
             </div>
         </div><!-- /.page-content -->
@@ -65,7 +54,7 @@
 </div> 
 
 
-
+@push('js')
 <script type="text/javascript">
 $(document).ready(function(){  
 
@@ -75,7 +64,7 @@ $(document).ready(function(){
         responsive: true,
         serverSide: true,
         pagingType: "full_numbers",
-        dom: "<'row'<'col-sm-2'l><'col-sm-4'i><'col-sm-3 text-center'B><'col-sm-3'f>>tp", 
+        dom: "lBftrip", 
         buttons: [  
             {
                 extend: 'copy', 
@@ -134,4 +123,5 @@ $(document).ready(function(){
     }); 
 });
 </script>
+@endpush
 @endsection

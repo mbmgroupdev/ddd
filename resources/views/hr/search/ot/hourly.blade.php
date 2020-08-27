@@ -87,147 +87,140 @@
     <div class="panel-body">
         <!-- <h4 class="center">MBM Group</h4> -->
     	<div class="row choice_2_div" id="choice_2_div" name="choice_2_div">
-	        <div class="row">
-	           	<div class="col-sm-offset-1 col-sm-10">
-	           	    <center>
-	           	    	<h3>
-	           	    	@if(isset($data['shift']))
-	           	    		{{$data['unit']->hr_unit_name}} - {{$data['shift']->hr_shift_name??''}} Shift 
-	           	    	@else
-	           	    	   MBM Garments Ltd.
-	           	    	@endif
-	           	    	<span style="font-size:13px;font-weight:400;">(Hourly Employee Count)</span>
-	           	    	</h3>
-	           	    </center>
-	           	    <hr>
-	           	    <div class="row">
-	           	        <div class="col-sm-4 col-xs-12">
-	           	        	<div class="widget-box widget-color-green2">
-								<div class="widget-header">
-									<h5 class="widget-title bigger lighter">Employee Count</h5>
-								</div>
+           	<div class="col-sm-10">
+           	    <center>
+           	    	<h3>
+           	    	@if(isset($data['shift']))
+           	    		{{$data['unit']->hr_unit_name}} - {{$data['shift']->hr_shift_name??''}} Shift 
+           	    	@else
+           	    	   MBM Garments Ltd.
+           	    	@endif
+           	    	<span style="font-size:13px;font-weight:400;">(Hourly Employee Count)</span>
+           	    	</h3>
+           	    </center>
+           	    <hr>
+           	    <div class="row">
+           	        <div class="col-sm-4 col-xs-12">
+           	        	<div class="widget-box widget-color-green2">
+							<div class="widget-header">
+								<h5 class="widget-title bigger lighter">Employee Count</h5>
+							</div>
 
-								<div class="widget-body">
-									<div class="widget-main center" style="">
-					           	        <table class="table table-bordered  table-hover" style="margin:0!important;height:286px;cursor:pointer;">
-					           	        	<tbody>
-					           	        		<tr class="search_emp" data-hour="1">
-					           	        			<td>1 Hour</td>
-					           	        			<td>{{$ot_data['1']}}</td>
-					           	        		</tr>
-					           	        		<tr class="search_emp" data-hour="2">
-					           	        			<td>2 Hour</td>
-					           	        			<td>{{$ot_data['2']}}</td>
-					           	        		</tr>
-					           	        		<tr class="search_emp" data-hour="3">
-					           	        			<td>3 Hour</td>
-					           	        			<td>{{$ot_data['3']}}</td>
-					           	        		</tr>	           	        		
-					           	        		<tr class="search_emp" data-hour="4">
-					           	        			<td>4 Hour</td>
-					           	        			<td>{{$ot_data['4']}}</td>
-					           	        		</tr>
-					           	        		<tr class="search_emp" data-hour="5">
-					           	        			<td>5 Hour</td>
-					           	        			<td>{{$ot_data['5']}}</td>
-					           	        		</tr>
-					           	        		<tr class="search_emp" data-hour="6">
-					           	        			<td>6 Hour</td>
-					           	        			<td>{{$ot_data['6']}}</td>
-					           	        		</tr>
-					           	        		<tr class="search_emp" data-hour="7">
-					           	        			<td>7 Hour</td>
-					           	        			<td>{{$ot_data['7']}}</td>
-					           	        		</tr>
-					           	        		<tr class="search_emp" data-hour="8">
-					           	        			<td>8 Hour</td>
-					           	        			<td>{{$ot_data['8']}}</td>
-					           	        		</tr>
-					           	        	</tbody>
-					           	        </table>
-									</div>
+							<div class="widget-body">
+								<div class="widget-main center" style="">
+				           	        <table class="table table-bordered  table-hover" style="margin:0!important;height:286px;cursor:pointer;">
+				           	        	<tbody>
+				           	        		<tr class="search_emp" data-hour="1">
+				           	        			<td>1 Hour</td>
+				           	        			<td>{{$ot_data['1']}}</td>
+				           	        		</tr>
+				           	        		<tr class="search_emp" data-hour="2">
+				           	        			<td>2 Hour</td>
+				           	        			<td>{{$ot_data['2']}}</td>
+				           	        		</tr>
+				           	        		<tr class="search_emp" data-hour="3">
+				           	        			<td>3 Hour</td>
+				           	        			<td>{{$ot_data['3']}}</td>
+				           	        		</tr>	           	        		
+				           	        		<tr class="search_emp" data-hour="4">
+				           	        			<td>4 Hour</td>
+				           	        			<td>{{$ot_data['4']}}</td>
+				           	        		</tr>
+				           	        		<tr class="search_emp" data-hour="5">
+				           	        			<td>5 Hour</td>
+				           	        			<td>{{$ot_data['5']}}</td>
+				           	        		</tr>
+				           	        		<tr class="search_emp" data-hour="6">
+				           	        			<td>6 Hour</td>
+				           	        			<td>{{$ot_data['6']}}</td>
+				           	        		</tr>
+				           	        		<tr class="search_emp" data-hour="7">
+				           	        			<td>7 Hour</td>
+				           	        			<td>{{$ot_data['7']}}</td>
+				           	        		</tr>
+				           	        		<tr class="search_emp" data-hour="8">
+				           	        			<td>8 Hour</td>
+				           	        			<td>{{$ot_data['8']}}</td>
+				           	        		</tr>
+				           	        	</tbody>
+				           	        </table>
 								</div>
 							</div>
-	           	       	
-	           	        </div>
-	           	    	
-	           	    	
-	           	    	<div class="col-sm-8 col-xs-12">	           	    		
-							<div class="widget-box widget-color-green2">
-								<div class="widget-header">
-									<h5 class="widget-title bigger lighter">Over Time (Hour)</h5>
-								</div>
+						</div>
+           	       	
+           	        </div>
+           	    	
+           	    	
+           	    	<div class="col-sm-8 col-xs-12">	           	    		
+						<div class="widget-box widget-color-green2">
+							<div class="widget-header">
+								<h5 class="widget-title bigger lighter">Over Time (Hour)</h5>
+							</div>
 
-								<div class="widget-body">
-									<div class="widget-main center">
-										<canvas id="otgraph" style="height:300px!important;"></canvas>
-										<script type="text/javascript">
-											$(function(){
-										        var ctxL = document.getElementById("otgraph").getContext('2d');
+							<div class="widget-body">
+								<div class="widget-main center">
+									<canvas id="otgraph" style="height:300px!important;"></canvas>
+									<script type="text/javascript">
+										$(function(){
+									        var ctxL = document.getElementById("otgraph").getContext('2d');
 
-										        var myLineChart = new Chart(ctxL, {
-										            type: 'line',
-										            data: {
+									        var myLineChart = new Chart(ctxL, {
+									            type: 'line',
+									            data: {
 
-										                labels: ['1','2','3','4','5','6','7','8'],
-										                datasets: [{ 
-												        data: [{{$ot_data['1']}},{{$ot_data['2']}},{{$ot_data['3']}},{{$ot_data['4']}},{{$ot_data['5']}},{{$ot_data['6']}},{{$ot_data['7']}},{{$ot_data['8']}}],
-												        label: "Over Time (Hour)",
-												        borderColor: "#3e95cd",
-												        fill: false
-												      }
-												    ]
-										            },
-										            options: {
-												        scales: {
-                                                            yAxes: [{
-                                                                ticks: {
-                                                                    beginAtZero: true
-                                                                },
-                                                                afterFit: function(scale) {
-                                                                   scale.width = 80  //<-- set value as you wish 
-                                                                },
-                                                                scaleLabel: {
-                                                                    display: true,
-                                                                    labelString: 'Employee(s)'
-                                                                  }
-                                                            }],
-                                                            xAxes: [{
-                                                                scaleLabel: {
-                                                                    display: true,
-                                                                    labelString: 'Hour(s)'
-                                                                  }
-                                                            }]
-                                                        },
-												        layout: {
-												            padding: {
-												                left: 0,
-												                right: 50,
-												                top: 0,
-												                bottom: 0
-												            }
-												        },
-													    legend: {
-												            display: true,
-												            position: 'bottom'
-												        }
-												    }
-										        });
-										    });
-										</script>
-									</div>
+									                labels: ['1','2','3','4','5','6','7','8'],
+									                datasets: [{ 
+											        data: [{{$ot_data['1']}},{{$ot_data['2']}},{{$ot_data['3']}},{{$ot_data['4']}},{{$ot_data['5']}},{{$ot_data['6']}},{{$ot_data['7']}},{{$ot_data['8']}}],
+											        label: "Over Time (Hour)",
+											        borderColor: "#3e95cd",
+											        fill: false
+											      }
+											    ]
+									            },
+									            options: {
+											        scales: {
+                                                        yAxes: [{
+                                                            ticks: {
+                                                                beginAtZero: true
+                                                            },
+                                                            afterFit: function(scale) {
+                                                               scale.width = 80  //<-- set value as you wish 
+                                                            },
+                                                            scaleLabel: {
+                                                                display: true,
+                                                                labelString: 'Employee(s)'
+                                                              }
+                                                        }],
+                                                        xAxes: [{
+                                                            scaleLabel: {
+                                                                display: true,
+                                                                labelString: 'Hour(s)'
+                                                              }
+                                                        }]
+                                                    },
+											        layout: {
+											            padding: {
+											                left: 0,
+											                right: 50,
+											                top: 0,
+											                bottom: 0
+											            }
+											        },
+												    legend: {
+											            display: true,
+											            position: 'bottom'
+											        }
+											    }
+									        });
+									    });
+									</script>
 								</div>
 							</div>
-	           	    	</div>
-	           	    	
-	           	    </div>
-			  	</div>
-			</div>
-			<div class="space-20"></div>
-			<div class="row">
-				<div class="col-sm-offset-3 col-sm-6">
-				</div>
-			</div>
+						</div>
+           	    	</div>
+           	    	
+           	    </div>
+		  	</div>
         </div>
     </div>
 </div>

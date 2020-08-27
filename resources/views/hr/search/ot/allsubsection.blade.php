@@ -34,44 +34,42 @@
     <div class="panel-body">
        <!--  <h4 class="center">MBM Group</h4> -->
         <div class="row choice_2_div" id="choice_2_div" name="choice_2_div">
-            <div class="row">
-            	<div class="col-sm-12">
-                    @foreach($subsection_data as $k=>$subsection)
-                        
-                        <div class="search-result-div col-xs-12 col-sm-3 widget-container-col ui-sortable">
-                            <div class="widget-box widget-color-green2 light-border ui-sortable-handle" id="widget-box-6">
-                                <div class="widget-header">
-                                    <a href="#" class="white search_emp" data-subsection="{{ $subsection['id'] }}">
-                                        <h5 class="widget-title smaller">  {{ $subsection['name'] }} </h5></a>
-                                </div>
+    
+            @foreach($subsection_data as $k=>$subsection)
+                
+                <div class="search-result-div col-xs-12 col-sm-3 widget-container-col ui-sortable">
+                    <div class="widget-box widget-color-green2 light-border ui-sortable-handle" id="widget-box-6">
+                        <div class="widget-header">
+                            <a href="#" class="white search_emp" data-subsection="{{ $subsection['id'] }}">
+                                <h5 class="widget-title smaller">  {{ $subsection['name'] }} </h5></a>
+                        </div>
 
-                                <div class="widget-body">
-                                    <div class="widget-main padding-6">
-                                        
-                                            <div class="profile-info-row  search_ot_hour" data-subsection="{{ $subsection['id'] }}">
-                                                <div class="profile-info-name"> Total Employee </div>
+                        <div class="widget-body">
+                            <div class="widget-main padding-6">
+                                
+                                    <div class="profile-info-row  search_ot_hour" data-subsection="{{ $subsection['id'] }}">
+                                        <div class="profile-info-name"> Total Employee </div>
 
-                                                <div class="profile-info-value">
-                                                    <span>{{ $subsection['employee']}}</span>
-                                                </div>
-                                            </div>
-                                        <div class=" profile-info-row search_emp" data-subsection="{{ $subsection['id'] }}">
-                                            <div class="profile-info-name"> Total OT</div>
-
-                                            <div class="profile-info-value">
-                                                <span>{{ Custom::numberToTime($subsection['ot_hour']) }} 
-                                            Hour</span>
-                                            </div>
+                                        <div class="profile-info-value">
+                                            <span>{{ $subsection['employee']}}</span>
                                         </div>
-                                        <div class="search_ot_shift" data-subsection="{{ $subsection['id'] }}">View Shift</div>
+                                    </div>
+                                <div class=" profile-info-row search_emp" data-subsection="{{ $subsection['id'] }}">
+                                    <div class="profile-info-name"> Total OT</div>
+
+                                    <div class="profile-info-value">
+                                        <span>{{ Custom::numberToTime($subsection['ot_hour']) }} 
+                                    Hour</span>
                                     </div>
                                 </div>
+                                <div class="search_ot_shift" data-subsection="{{ $subsection['id'] }}">View Shift</div>
                             </div>
                         </div>
-                        
-                    @endforeach
-				</div>
-            </div>
+                    </div>
+                </div>
+                
+            @endforeach
+				
         </div>
     </div>
 </div>

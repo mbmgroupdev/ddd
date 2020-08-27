@@ -25,66 +25,63 @@
         <!-- <h4 class="center">MBM Group</h4> -->
          
         <div class="row choice_2_div" id="choice_2_div" name="choice_2_div">
-            <div class="row">
-            	<div class="col-sm-12">
-                    @foreach($area_list as $k=>$area)
-                        
-                            <div class="search-result-div col-xs-12 col-sm-3 widget-container-col ui-sortable">
-                                <div class="widget-box widget-color-green2 light-border ui-sortable-handle" id="widget-box-6">
-                                    <div class="widget-header">
-                                        <a href="#" class="white search_dept" data-area="{{ $area->hr_area_id }}">
-                                            <h5 class="widget-title smaller">  {{ $area->hr_area_name }} </h5></a>
-                                    </div>
+            
+            @foreach($area_list as $k=>$area)
+                
+                <div class="search-result-div col-xs-12 col-sm-3 widget-container-col ui-sortable">
+                    <div class="widget-box widget-color-green2 light-border ui-sortable-handle" id="widget-box-6">
+                        <div class="widget-header">
+                            <a href="#" class="white search_dept" data-area="{{ $area->hr_area_id }}">
+                                <h5 class="widget-title smaller">  {{ $area->hr_area_name }} </h5></a>
+                        </div>
 
-                                    <div class="widget-body">
-                                        <div class="widget-main padding-6">
-                                            <a href="#" class="search_dept" data-area="{{ $area->hr_area_id }}">
-                                                <div class="profile-info-row">
-                                                    <div class="profile-info-name"> Department </div>
+                        <div class="widget-body">
+                            <div class="widget-main padding-6">
+                                <a href="#" class="search_dept" data-area="{{ $area->hr_area_id }}">
+                                    <div class="profile-info-row">
+                                        <div class="profile-info-name"> Department </div>
 
-                                                    <div class="profile-info-value after-load" id="{{ $area->hr_area_id }}_dept">
-                                                        <span> </span>
-                                                    </div>
-                                                </div> 
-                                            </a>
-                                            <a href="#" class="search_emp" data-area="{{ $area->hr_area_id }}">
-                                                <div class="profile-info-row">
-                                                    <div class="profile-info-name"> Total Employee </div>
-
-                                                    <div class="profile-info-value after-load" id="{{ $area->hr_area_id }}_emp">
-                                                        <span></span>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                            <div class="profile-info-row search_emp" data-area="{{ $area->hr_area_id  }}" data-salstatus='salary'>
-                                                <div class="profile-info-name"> Salary Payable </div>
-
-                                                <div class="profile-info-value after-load" id="{{ $area->hr_area_id }}_s">
-                                                    <span>0</span>
-                                                </div>
-                                            </div>
-                                            <div class="profile-info-row search_emp" data-area="{{ $area->hr_area_id  }}" data-salstatus='ot'>
-                                                <div class="profile-info-name"> OT Payable </div>
-
-                                                <div class="profile-info-value after-load" id="{{ $area->hr_area_id }}_o">
-                                                    <span>0</span>
-                                                </div>
-                                            </div>
-                                            <div class="profile-info-row search_emp" data-area="{{ $area->hr_area_id  }}">
-                                                <div class="profile-info-name"> Total Payable </div>
-
-                                                <div class="profile-info-value after-load" id="{{ $area->hr_area_id }}_t">
-                                                    <span>0</span>
-                                                </div>
-                                            </div>
+                                        <div class="profile-info-value after-load" id="{{ $area->hr_area_id }}_dept">
+                                            <span> </span>
                                         </div>
+                                    </div> 
+                                </a>
+                                <a href="#" class="search_emp" data-area="{{ $area->hr_area_id }}">
+                                    <div class="profile-info-row">
+                                        <div class="profile-info-name"> Total Employee </div>
+
+                                        <div class="profile-info-value after-load" id="{{ $area->hr_area_id }}_emp">
+                                            <span></span>
+                                        </div>
+                                    </div>
+                                </a>
+                                <div class="profile-info-row search_emp" data-area="{{ $area->hr_area_id  }}" data-salstatus='salary'>
+                                    <div class="profile-info-name"> Salary Payable </div>
+
+                                    <div class="profile-info-value after-load" id="{{ $area->hr_area_id }}_s">
+                                        <span>0</span>
+                                    </div>
+                                </div>
+                                <div class="profile-info-row search_emp" data-area="{{ $area->hr_area_id  }}" data-salstatus='ot'>
+                                    <div class="profile-info-name"> OT Payable </div>
+
+                                    <div class="profile-info-value after-load" id="{{ $area->hr_area_id }}_o">
+                                        <span>0</span>
+                                    </div>
+                                </div>
+                                <div class="profile-info-row search_emp" data-area="{{ $area->hr_area_id  }}">
+                                    <div class="profile-info-name"> Total Payable </div>
+
+                                    <div class="profile-info-value after-load" id="{{ $area->hr_area_id }}_t">
+                                        <span>0</span>
                                     </div>
                                 </div>
                             </div>
-                        
-                    @endforeach
+                        </div>
+                    </div>
                 </div>
-            </div>
+            
+            @endforeach
         </div>
     </div>
 </div>

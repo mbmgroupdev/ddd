@@ -1,4 +1,4 @@
-<br>
+
 <style type="text/css">
 
     @media only screen and (max-width: 1280px){
@@ -34,62 +34,60 @@
     <p class="search-title">Search results of  {{ $showTitle }}</p>
     <div class="panel-body">
         <div class="row choice_2_div" id="choice_2_div" name="choice_2_div">
-            <div class="row">
-                <div class="col-sm-12">
-                    @foreach($unit_list as $k=>$unit)
+            
+            @foreach($unit_list as $k=>$unit)
+                
+            <div class="search-result-div col-xs-12 col-sm-3 widget-container-col ui-sortable">
+                <div class="widget-box widget-color-green2 light-border ui-sortable-handle children" id="widget-box-6">
+                    <div class="widget-header">
+                        <a href="#" class="white">
+                            <h5 class="widget-title smaller">  {{ $unit->hr_unit_name }} </h5></a>
+                    </div>
+                    
+
+                    <div class="widget-body" style="height: 183px;">
+                        <div class="widget-main padding-6">
+                            {{-- <div class="profile-info-row">
+                                <div class="profile-info-name"> Employee </div>
+
+                                <div class="profile-info-value">
+                                    <span>{{ count($empList[$unit->hr_unit_id])+count($empActiveList[$unit->hr_unit_id]) }}</span>
+                                </div>
+                            </div> --}}
                         
-                    <div class="search-result-div col-xs-12 col-sm-3 widget-container-col ui-sortable">
-                        <div class="widget-box widget-color-green2 light-border ui-sortable-handle children" id="widget-box-6">
-                            <div class="widget-header">
-                                <a href="#" class="white">
-                                    <h5 class="widget-title smaller">  {{ $unit->hr_unit_name }} </h5></a>
-                            </div>
-                            
+                        <div class="profile-info-row unit_emp_list" data-id="join" data-unit="{{$unit->hr_unit_id}}">
+                            <div class="profile-info-name">Joined</div>
 
-                            <div class="widget-body" style="height: 183px;">
-                                <div class="widget-main padding-6">
-                                    {{-- <div class="profile-info-row">
-                                        <div class="profile-info-name"> Employee </div>
-
-                                        <div class="profile-info-value">
-                                            <span>{{ count($empList[$unit->hr_unit_id])+count($empActiveList[$unit->hr_unit_id]) }}</span>
-                                        </div>
-                                    </div> --}}
-                                
-                                <div class="profile-info-row unit_emp_list" data-id="join" data-unit="{{$unit->hr_unit_id}}">
-                                    <div class="profile-info-name">Joined</div>
-
-                                    <div class="profile-info-value">
-                                        <span>{{count($empActiveList[$unit->hr_unit_id]) }}</span>
-                                    </div>
-                                </div>
-                                @if(!empty($empList[$unit->hr_unit_id]))
-                                    @foreach($empList[$unit->hr_unit_id] as $statusType=>$elist)
-                                        <div class="profile-info-row unit_emp_list" data-id="{{$statusType}}" data-unit="{{$unit->hr_unit_id}}">
-                                            <div class="profile-info-name">
-                                                {{ucfirst(Custom::getEmpStatusName($statusType))}}
-                                            </div>
-
-                                            <div class="profile-info-value">
-                                                    @php
-                                                        $count = count($elist);
-                                                        echo $count;
-                                                    @endphp
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                @elseif(!empty($empActiveList[$unit->hr_unit_id]))   
-
-                                @endif
-                                    
-                                </div>
+                            <div class="profile-info-value">
+                                <span>{{count($empActiveList[$unit->hr_unit_id]) }}</span>
                             </div>
                         </div>
+                        @if(!empty($empList[$unit->hr_unit_id]))
+                            @foreach($empList[$unit->hr_unit_id] as $statusType=>$elist)
+                                <div class="profile-info-row unit_emp_list" data-id="{{$statusType}}" data-unit="{{$unit->hr_unit_id}}">
+                                    <div class="profile-info-name">
+                                        {{ucfirst(Custom::getEmpStatusName($statusType))}}
+                                    </div>
+
+                                    <div class="profile-info-value">
+                                            @php
+                                                $count = count($elist);
+                                                echo $count;
+                                            @endphp
+                                    </div>
+                                </div>
+                            @endforeach
+                        @elseif(!empty($empActiveList[$unit->hr_unit_id]))   
+
+                        @endif
+                            
+                        </div>
                     </div>
-                        
-                    @endforeach
                 </div>
             </div>
+                
+            @endforeach
+                
         </div>
     </div>
 </div>

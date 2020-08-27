@@ -65,7 +65,7 @@
                  Line
             </li>
         </ul><!-- /.breadcrumb -->
-        <a href="#" id="printButton" class="btn btn-xs btn-info pull-right" onclick='printDiv({{json_encode($line_list)}},"{{$showTitle}}")'>Print</a>
+        <a href="#" id="printButton" class="btn btn-info pull-right" onclick='printDiv({{json_encode($line_list)}},"{{$showTitle}}")'>Print</a>
     </div>
     <hr>
     <p class="search-title">Search results of  {{ $showTitle }}</p>
