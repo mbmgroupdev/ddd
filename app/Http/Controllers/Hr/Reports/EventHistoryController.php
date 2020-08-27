@@ -96,7 +96,7 @@ class EventHistoryController extends Controller
                             })
                             ->addColumn('action', function($data){
                                 $action_button= "<div class=\"btn-group\">  
-                                    <button data-book-id=".$data->id." class=\"btn btn-xs btn-success\" data-toggle=\"modal\" style=\"height:25px; width:26px;\" data-target=\"#myModal\">
+                                    <button data-book-id=".$data->id." class=\"btn btn-sm btn-success\" data-toggle=\"modal\" data-target=\"#myModal\">
                                         <i class=\"ace-icon fa fa-eye bigger-120\"></i>
 
                                     </button> ";

@@ -1,90 +1,91 @@
 @extends('hr.layout')
-@section('title', 'Add Role')
+@section('title', 'Attendance Summary Report')
 @section('main-content')
 @push('css')
-    <style>
-        html {
-         scroll-behavior: smooth;
-        }
-        #load{
-            width:100%;
-            height:100%;
-            position:fixed;
-            z-index:9999;
-            background:url({{asset('assets/rubel/img/loader.gif')}}) no-repeat 35% 70%  rgba(192,192,192,0.1);
-            visibility: hidden;
+<style>
+   html {
+     scroll-behavior: smooth;
+    }
+    #load{
+        width:100%;
+        height:100%;
+        position:fixed;
+        z-index:9999;
+        background:url({{asset('assets/img/loader.gif')}}) no-repeat 35% 70%  rgba(192,192,192,0.1);
+        visibility: hidden;
 
-        }
-        .tbl-header{
-            border: 1px solid;
-            font-weight: bold;
-        }
-        .tbl-header th{
-            border-color: #31708f;
-            padding: 10px !important;
-            font-size: 12px;
-        }
-        .grand_total{
-            /*font-weight: bold;*/
-            font-size: 12px;
-            color: #fff;
-            height: 20px;
-            padding: 5px !important;
-        }
-        .grand_total td{
-            /*font-weight: bold;*/
-            font-size: 12px;
-            color: #fff;
-            height: 20px;
-            padding: 5px !important;
-        }
+    }
+    .tbl-header{
+        border: 1px solid;
+        font-weight: bold;
+    }
+    .tbl-header th{
+        border-color: #31708f;
+        padding: 10px !important;
+        font-size: 12px;
+    }
+    .grand_total{
+        /*font-weight: bold;*/
+        font-size: 12px;
+        color: #fff;
+        height: 20px;
+        padding: 5px !important;
+    }
+    .grand_total td{
+        /*font-weight: bold;*/
+        font-size: 12px;
+        color: #fff;
+        height: 20px;
+        padding: 5px !important;
+    }
 
-        tbody>tr>td{
-            padding-left: 10px !important;
-            padding-top: 5px !important;
-            padding-bottom: 5px !important;
-            padding-right: 10px !important;
-        }
-    </style>
+    tbody>tr>td{
+        padding-left: 10px !important;
+        padding-top: 5px !important;
+        padding-bottom: 5px !important;
+        padding-right: 10px !important;
+    }
+</style>
 @endpush
 <div class="main-content">
-    <div class="main-content-inner">
-        <div class="breadcrumbs ace-save-state" id="breadcrumbs">
-            <ul class="breadcrumb">
-                <li>
-                    <i class="ace-icon fa fa-home home-icon"></i>
-                    <a href="#">Human Resource</a>
-                </li>
-                <li>
-                    <a href="#">Reports</a>
-                </li>
-                <li class="active"> Attendance Summary Report</li>
-            </ul><!-- /.breadcrumb -->
-        </div>
-        <div class="page-content">
-            <div id="load"></div>
-            <?php $type='attendance_2'; ?>
-            @include('hr/reports/attendance_radio')
-            <div class="page-header">
-                <h1>Reports<small><i class="ace-icon fa fa-angle-double-right"></i> Attendance Report</small></h1>
-            </div>
-            <div class="row">
+  <div class="main-content-inner">
+    <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+      <ul class="breadcrumb">
+        <li>
+          <i class="ace-icon fa fa-home home-icon"></i>
+          <a href="#">Human Resource</a>
+        </li>
+        <li>
+          <a href="#">Reports</a>
+        </li>
+        <li class="active"> Attendance Summary Report</li>
+      </ul><!-- /.breadcrumb -->
+    </div>
 
+    <div class="page-content">
+        <div id="load"></div>
+        <div class="row">
+            <div class="col">
                 <form role="form"  id="searchform" method="get" action="{{ url('hr/reports/attendance_report_2') }}">
-                    <div class="col-sm-10">
-                        <div class="form-group">
-                            <div class="col-sm-4" style="padding-bottom: 10px;">
-                                {{ Form::select('unit', $unitList, request()->unit, ['placeholder'=>'Select Unit', 'id'=>'unit',  'style'=>'width:100%', 'data-validation'=>'required', 'data-validation-error-msg'=>'The Unit field is required']) }}
-                            </div>
-                            <div class="col-sm-4" style="padding-bottom: 40px;">
-                                <input type="text" name="date" id="date" class="datepicker col-xs-12" value="{{ request()->date }}" data-validation="required" autocomplete="off" placeholder="Y-m-d" style="height: 32px;" />
-                            </div>
-                            <div class="col-sm-4">
-                                <button id="report" type="button" class="btn btn-primary btn-sm">
-                                    <i class="fa fa-search"></i>
-                                    Search
-                                </button>
-                                <div class="buttons hide" style="display: initial;">
+                    <div class="panel">
+                        
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="form-group has-float-label has-required select-search-group">
+                                        {{ Form::select('unit', $unitList, request()->unit, ['placeholder'=>'Select Unit', 'id'=>'unit', 'class'=> ' no-select col-xs-12','style', 'required'=>'required']) }}
+                                        <label  for="unit"> Unit </label>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group has-float-label has-required select-search-group">
+                                        <input type="date" class=" form-control" id="date" name="date" placeholder="Y" required="required" value="{{ request()->date??date('Y-m-d') }}" autocomplete="off" />
+                                        <label  for="date"> Date </label>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <button type="submit" class="btn btn-primary btn-sm" id="report"><i class="fa fa-save"></i> Generate</button>
+                                    <div class="buttons hide inline" style="display: initial;">
     
                                     <button type="button" onClick="printMe('PrintArea')" class="btn btn-warning btn-sm" title="Print">
                                         <i class="fa fa-print"></i>
@@ -93,55 +94,28 @@
                                     </button>
                                     
                                 </div>
-                                
+                                </div>
                             </div>
                         </div>
                     </div>
                 </form>
+                <!-- PAGE CONTENT ENDS -->
             </div>
-
-            <!-- Display Erro/Success Message -->
-            @include('inc/message')
-            <div class="row" id="html-2-pdfwrapper">
-                <div class="col-xs-12">
-                    <div id="generate-report" style="margin:15px;">
-                        
-                    </div>
-                    
-                </div>
+            <!-- /.col -->
+        </div>
+        <div class="row">
+            <div class="col" id="html-2-pdfwrapper">
+                <div class="result-data" id="generate-report"></div>
             </div>
-
-        </div><!-- /.page-content -->
-    </div>
+        </div>
+    </div><!-- /.page-content -->
+  </div>
 </div>
+@push('js')
 <script type="text/javascript">
-    const loader = '<p style="text-align:center;margin:100px;"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p>';
+    const loader = '<div class="panel"><div class="panel-body"><p style="text-align:center;margin:100px;"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>';
 
     $(document).ready(function(){
-        $('select.associates').select2({
-            placeholder: 'Select Associate\'s ID',
-            ajax: {
-                url: '{{ url("hr/associate-search") }}',
-                dataType: 'json',
-                delay: 250,
-                data: function (params) {
-                    return {
-                        keyword: params.term
-                    };
-                },
-                processResults: function (data) {
-                    return {
-                        results:  $.map(data, function (item) {
-                            return {
-                                text: item.associate_name,
-                                id: item.associate_id
-                            }
-                        })
-                    };
-              },
-              cache: true
-            }
-        });
 
         $('#excel').click(function(){
             var url='data:application/vnd.ms-excel,' + encodeURIComponent($('#html-2-pdfwrapper').html())
@@ -193,7 +167,7 @@
             $("#generate-report").html(loader);
             $.ajax({
                 url : "{{ url('hr/reports/get_att_summary') }}",
-                type: 'post',
+                type: 'get',
                 data: {unit : unit, date : date},
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                 success: function(data)
@@ -221,4 +195,5 @@
     }
 
 </script>
+@endpush
 @endsection
