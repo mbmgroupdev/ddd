@@ -3,7 +3,7 @@
 namespace App\Models\Hr;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 
 class Outsides extends Model
 {

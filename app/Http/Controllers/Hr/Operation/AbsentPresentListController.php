@@ -8,7 +8,7 @@ use App\Jobs\ProcessAttendanceInOutTime;
 use App\Jobs\ProcessAttendanceIntime;
 use App\Jobs\BuyerManualAttandenceProcess;
 use App\Models\Hr\Shift;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use App\Models\Hr\Unit;
 use App\Models\Hr\Benefits;
 use App\Helpers\Attendance2;

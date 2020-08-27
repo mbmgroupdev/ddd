@@ -8,7 +8,7 @@ use Auth, DB, Session,PDF;
 use App\Models\Hr\Increment;
 use App\Models\Hr\promotion;
 use App\Models\Hr\HrMonthlySalary;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 
 class TestProfileController extends Controller
 {

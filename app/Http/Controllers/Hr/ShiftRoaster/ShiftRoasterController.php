@@ -9,7 +9,7 @@ use App\Jobs\ProcessUnitWiseSalary;
 use App\Models\Hr\Area;
 use App\Models\Hr\Department;
 use App\Models\Hr\EmpType;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use App\Models\Hr\Section;
 use App\Models\Hr\Shift;
 use App\Models\Hr\Subsection;

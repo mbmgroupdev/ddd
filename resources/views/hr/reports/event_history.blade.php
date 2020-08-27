@@ -1,35 +1,9 @@
-
 @extends('hr.layout')
-@section('title', 'Add Role')
-@section('main-content')
+@section('title', 'Event History')
 @push('css')
-<style type="text/css">
-    {{-- removing the links in print and adding each page header --}}
-    a[href]:after { content: none !important; }
-    thead {display: table-header-group;}
-
-    /*making place holder custom*/
-    input::-webkit-input-placeholder {
-        color: black;
-        font-weight: bold;
-        font-size: 12px;
-    }
-    input:-moz-placeholder {
-        color: black;
-        font-weight: bold;
-        font-size: 12px;
-    }
-    input:-ms-input-placeholder {
-        color: black;
-        font-weight: bold;
-        font-size: 12px;
-    }
-    th{
-        font-size: 12px;
-        font-weight: bold;
-    }
-</style>
+  <link rel="stylesheet" href="{{ asset('plugins/DataTables/datatables.css')}}">
 @endpush
+@section('main-content')
 <div class="main-content">
     <div class="main-content-inner">
         <div class="breadcrumbs ace-save-state" id="breadcrumbs">
@@ -38,19 +12,22 @@
                     <i class="ace-icon fa fa-home home-icon"></i>
                     <a href="#">Human Resource</a>
                 </li>
-                <li class="active">Event History</li>
-            </ul><!-- /.breadcrumb --> 
+                <li>
+                    <a href="#">Reports</a>
+                </li>
+                <li class="active"> Event History</li>
+            </ul>
         </div>
 
         <div class="page-content"> 
             <div class="row">
-                <!-- Display Erro/Success Message -->
-                @include('inc/message')
-                <div class="col-xs-12 worker-list">
-                    <!-- PAGE CONTENT BEGINS --> 
-                    <table id="dataTables" class="table table-striped table-bordered" style="width: 100%; overflow-x: auto;">
-                        <thead>
-                            <tr>
+                <div class="col-12">
+                  <div class="iq-card">
+                    
+                    <div class="iq-card-body">
+                       <table id="dataTables" class="table table-hover table-borderd table-head">
+                          <thead>
+                             <tr>
                                 <th>SL</th>
                                 <th>Associate ID</th>
                                 <th>Type</th>
@@ -60,70 +37,84 @@
                                 {{-- <th>Previous Event</th> --}}
                                 <th>View</th>
                             </tr>
-                        </thead>
-                    </table>
-
-                    <!-- PAGE CONTENT ENDS -->
+                          </thead>
+                       </table>
+                    </div>
+                 </div>
                 </div>
-                        <!-- Modal -->
-                        <div id="myModal" class="modal fade" role="dialog">
-                          <div class="modal-dialog">
-                            <!-- Modal content-->
-                            <div class="modal-content">
-                              <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                <h4 class="modal-title">Detail</h4>
+                <!-- /.col -->
+            </div>
+            <!-- Modal -->
+            
+            <div class="item_details_section">
+              <div class="overlay-modal overlay-modal-details" style="margin-left: 0px; display: none;">
+                <div class="item_details_dialog show_item_details_modal" style="min-height: 115px;">
+                  <div class="fade-box-details fade-box">
+                    <div class="inner_gray clearfix">
+                      <div class="inner_gray_text text-center" id="heading">
+                       <h5 class="no_margin text-white">Change Details</h5>   
+                      </div>
+                      <div class="inner_gray_close_button">
+                        <a class="cancel_details item_modal_close" role="button" rel='tooltip' data-tooltip-location='left' data-tooltip="Close Modal">Close</a>
+                      </div>
+                    </div>
+
+                    <div class="inner_body" id="modal-details-content" style="display: none">
+                      <div class="inner_body_content">
+                        <div class="modal-body">
+                          <div class="row">
+                            <div class="col-sm-2"></div>
+                            <div class="col-sm-3">Employee ID:</div>
+                            <div class="col-sm-6" id="employee_id" style="font-weight: bold;">Enter</div>
+                          </div>
+                          <div class="row">
+                              <div class="col-sm-12">
+                              <table class="table table-bordered">
+                                  <tr>
+                                      <td></td>
+                                      <td style="font-weight: bold;">Before Status</td>
+                                      <td style="font-weight: bold;">After Status</td>
+                                  </tr>
+                                  <tr>
+                                      <td style="font-weight: bold;">In Time</td>
+                                      <td id="in_time_before"></td>
+                                      <td id="in_time_after"></td>
+                                  </tr>
+                                  <tr>
+                                      <td style="font-weight: bold;">Out Time</td>
+                                      <td id="out_time_before"></td>
+                                      <td id="out_time_after"></td>
+                                  </tr>
+                                  <tr>
+                                      <td style="font-weight: bold;">OT Hour</td>
+                                      <td id="ot_hour_before"></td>
+                                      <td id="ot_hour_after"></td>
+                                  </tr>
+                                  <tr>
+                                      <td style="font-weight: bold;">Late Status</td>
+                                      <td id="late_status_before"></td>
+                                      <td id="late_status_after"></td>
+                                  </tr>
+                              </table>
                               </div>
-                              <div class="modal-body">
-                                    <div class="row">
-                                      <div class="col-sm-2"></div>
-                                      <div class="col-sm-2">Employee ID:</div>
-                                      <div class="col-sm-6" id="employee_id" style="font-weight: bold;">Enter</div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-sm-offset-2 col-sm-8">
-                                        <table class="table table-bordered">
-                                            <tr>
-                                                <td></td>
-                                                <td style="font-weight: bold;">Before Status</td>
-                                                <td style="font-weight: bold;">After Status</td>
-                                            </tr>
-                                            <tr>
-                                                <td style="font-weight: bold;">In Time</td>
-                                                <td id="in_time_before"></td>
-                                                <td id="in_time_after"></td>
-                                            </tr>
-                                            <tr>
-                                                <td style="font-weight: bold;">Out Time</td>
-                                                <td id="out_time_before"></td>
-                                                <td id="out_time_after"></td>
-                                            </tr>
-                                            <tr>
-                                                <td style="font-weight: bold;">OT Hour</td>
-                                                <td id="ot_hour_before"></td>
-                                                <td id="ot_hour_after"></td>
-                                            </tr>
-                                            <tr>
-                                                <td style="font-weight: bold;">Late Status</td>
-                                                <td id="late_status_before"></td>
-                                                <td id="late_status_after"></td>
-                                            </tr>
-                                        </table>
-                                        </div>
-                                    </div>
-                              </div>
-                              <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                              </div>
-                            </div>
                           </div>
                         </div>
-                        <!--Modal end-->
-            </div>
-            <br>
+                      </div>
+                      <div class="inner_buttons">
+                        <a class="cancel_modal_button cancel_details" role="button"> Close </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          </div>
+            <!--Modal end-->
         </div><!-- /.page-content -->
     </div>
 </div>
+   
+@push('js')
+<script src="{{ asset('plugins/DataTables/datatables.min.js') }}"></script>
 <script type="text/javascript">
 $(document).ready(function()
 {
@@ -146,64 +137,91 @@ $(document).ready(function()
                   'X-CSRF-TOKEN': '{{ csrf_token() }}'
             } 
         },
-        dom: "<'row'<'col-sm-2'l><'col-sm-4'i><'col-sm-3 text-center'B><'col-sm-3'f>>tp", 
-        buttons: [  
-            {
-                extend: 'copy', 
-                className: 'btn-sm btn-info',
-                title: 'Event History',
-                header: false,
-                footer: true,
-                exportOptions: {
-                    columns: ':visible'
-                }
-            }, 
-            {
-                extend: 'csv', 
-                className: 'btn-sm btn-success',
-                title: 'Event History',
-                header: false,
-                footer: true,
-                exportOptions: {
-                    columns: ':visible'
-                }
-            }, 
-            {
-                extend: 'excel', 
-                className: 'btn-sm btn-warning',
-                title: 'Event History',
-                header: false,
-                footer: true,
-                exportOptions: {
-                    columns: ':visible'
-                }
-            }, 
-            {
-                extend: 'pdf', 
-                className: 'btn-sm btn-primary',
-                title: 'Event History',
-                header: false,
-                footer: true,
-                pageSize: 'A4',
-                orientation: 'landscape', 
-                exportOptions: {
-                    columns: ':visible'
-                }
-            }, 
-            {
-                extend: 'print', 
-                className: 'btn-sm btn-default',
-                title: 'Event History',
-                header: true,
-                footer: false,
-                pageSize: 'A4',
-                orientation: 'landscape',
-                exportOptions: {
-                    columns: [ 0, 1, 2, 3, 4, 5 ],
-                    stripHtml: false
-                } 
-            } 
-        ], 
+        dom: 'lBfrtip',
+         buttons: [
+           {
+             extend: 'copy',
+             className: 'btn-sm btn-info text-center',
+             exportOptions: {
+               columns: ':visible'
+             }
+           },
+           {
+             extend: 'csv',
+             className: 'btn-sm btn-success',
+             exportOptions: {
+               columns: ':visible'
+             }
+           },
+           {
+             extend: 'excel',
+             className: 'btn-sm btn-warning',
+             exportOptions: {
+               columns: ':visible'
+             }
+           },
+           {
+             extend: 'pdf',
+             className: 'btn-sm btn-primary',
+             exportOptions: {
+               columns: ':visible'
+             }
+           },
+           {
+
+
+             extend: 'print',
+             className: 'btn-sm btn-default print',
+             title: '<h2 class="text-center">'+ $("#type").val() +'</h2><br>',
+             orientation: 'landscape',
+             pageSize: 'LEGAL',
+             alignment: "center",
+             // header:true,
+             messageTop: function () {
+             //printCounter++;
+                 return '<style>'+
+                   'input::-webkit-input-placeholder {'+
+                   'color: black;'+
+                   'font-weight: bold;'+
+                   'font-size: 12px;'+
+                   '}'+
+                   'input:-moz-placeholder {'+
+                   'color: black;'+
+                   'font-weight: bold;'+
+                   'font-size: 12px;'+
+                   '}'+
+                   'input:-ms-input-placeholder {'+
+                   'color: black;'+
+                   'font-weight: bold;'+
+                   'font-size: 12px;'+
+                   '}'+
+                   'th{'+
+                   'font-size: 12px !important;'+
+                   'color: black !important;'+
+                   'font-weight: bold !important;'+
+                   '}</style>'+
+                   '<h2 class="text-center">'+'Unit: '+$("#unit option:selected").text()+'</h2>'+
+                   '<h4 class="text-center">'+'Report Type: '+$("#type option:selected").text()+'</h2>'+
+                   '<h4 class="text-center">'+'Report Date: '+$("#report_from").val()+' '+'To'+' '+$("#report_to").val()+'</h4>'+
+                   '<h4 class="text-center">'+'Total: '+dTable.data().length+'</h4>'+
+                   '<h4 class="text-center">'+'Printed At: '+new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate()+'</h4><br>'
+                   ;
+
+             // if ( printCounter === 1 ) {
+             //     return $("#type").val();
+             // }
+             // else {
+             //     return 'You have printed this document '+printCounter+' times';
+             // }
+         },
+         messageBottom: null,
+             exportOptions: {
+               columns: [0,1,2,5,6,7,8,9],
+               stripHtml: false
+             },
+
+           }
+         ],
         columns: [ 
             { data: 'DT_RowIndex', name: 'DT_RowIndex' }, 
             { data: 'user_id',  name: 'user_id' }, 
@@ -258,16 +276,18 @@ $(document).ready(function()
         }
     });
 
-});
-</script>
-
-<script type="text/javascript">
-$(document).ready(function()
-{
-    $('#myModal').on('shown.bs.modal', function (e) {
-      
-        var id = $(e.relatedTarget).data('book-id');
-        console.log(id);
+    var loaderModal = '<td class="text-center" colspan="6"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:50px;"></i></td>';
+    $(".overlay-modal, .item_details_dialog").css("opacity", 0);
+    /*Remove inline styles*/
+    $(".overlay-modal, .item_details_dialog").removeAttr("style");
+    /*Set min height to 90px after  has been set*/
+    detailsheight = $(".item_details_dialog").css("min-height", "115px");
+    
+    $(document).on('click','.log-details',function(e){
+        var id = $(this).data('book-id');
+        $(".overlay-modal-details").show();
+        $(".inner_body").show();
+        // console.log(id);
         $.ajax({
             url : "{{ url('hr/reports/event_history_detail') }}",
             type: 'get',
@@ -275,6 +295,7 @@ $(document).ready(function()
             dataType: 'json',
             success: function(data)
             {
+              // console.log(data);
                 // if(typeof variable !== 'undefined')
                 var before = JSON.parse(data.previous_event);
                 var after = JSON.parse(data.modified_event);
@@ -291,7 +312,30 @@ $(document).ready(function()
                 
             }
         });
-    })
-});
+        /*Animate Dialog*/
+        $(".show_item_details_modal").css("width", "225").animate({
+          "opacity" : 1,
+          height : detailsheight,
+          width : "40%"
+        }, 600, function() {
+          /*When animation is done show inside content*/
+          $(".fade-box").show();
+        });
+        // 
+        
+    });
+    
+
+    $(".cancel_details").click(function() {
+        $(".overlay-modal-details, .show_item_details_modal").fadeOut("slow", function() {
+          /*Remove inline styles*/
+
+          $(".overlay-modal, .item_details_dialog").removeAttr("style");
+          $('body').css('overflow', 'unset');
+        });
+    });
+
+}); 
 </script>
+@endpush
 @endsection

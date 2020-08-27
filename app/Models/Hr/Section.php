@@ -47,4 +47,14 @@ class Section extends Model
     {
     	return Subsection::where(['hr_subsec_area_id' => $areaId, 'hr_subsec_department_id' => $departmentId, 'hr_subsec_section_id' => $sectionId, 'hr_subsec_status' => 1])->count();
     }
+
+    public function subsection()
+    {
+        return $this->hasMany('App\Models\Hr\Subsection', 'hr_subsec_section_id', 'hr_section_id');
+    }
+
+    public static function getSelectedSectionIdName($dep_id){
+        return Section::select(['hr_section_id','hr_section_name'])->where('hr_section_department_id',$dep_id)->get();
+    } 
+
 }

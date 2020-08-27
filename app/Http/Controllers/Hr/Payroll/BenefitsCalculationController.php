@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Hr\Payroll;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use App\Models\Hr\HrAllGivenBenefits;
 use DB, Response, Auth, Exception, DataTables;
 

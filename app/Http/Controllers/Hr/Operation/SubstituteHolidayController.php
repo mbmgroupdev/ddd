@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Hr\Operation;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 
 use DB, Response, Validator;
 

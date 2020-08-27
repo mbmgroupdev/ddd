@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Hr\Training;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use App\Models\Hr\Training;
 use App\Models\Hr\TrainingAssign;
 use App\Models\Hr\TrainingNames;

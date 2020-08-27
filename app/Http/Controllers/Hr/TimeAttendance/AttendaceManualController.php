@@ -5,7 +5,7 @@ use App\Helpers\EmployeeHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Hr\Attendace;
 use App\Models\Hr\AttendaceManual;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use App\Models\Hr\HolidayRoaster;
 use App\Models\Hr\Shift;
 use App\Models\Hr\Unit;

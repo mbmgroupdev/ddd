@@ -4,7 +4,7 @@ namespace App\Jobs;
 
 use App\Models\Hr\Benefits;
 use App\Models\Hr\AttendanceBonus;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use App\Models\Hr\HrMonthlySalary;
 use App\Models\Hr\SalaryAddDeduct;
 use Carbon\Carbon;

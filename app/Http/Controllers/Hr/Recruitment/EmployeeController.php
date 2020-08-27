@@ -13,7 +13,7 @@ use App\Models\Hr\Designation;
 use App\Models\Hr\DesignationUpdateLog;
 use App\Models\Hr\EducationLevel;
 use App\Models\Hr\EmpType;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use App\Models\Hr\EmployeeBengali;
 use App\Models\Hr\Floor;
 use App\Models\Hr\HrMonthlySalary;

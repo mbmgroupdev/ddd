@@ -2,7 +2,7 @@
 
 namespace App\Models\Hr;
 
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use App\Models\Hr\ShiftRoaster;
 use Illuminate\Database\Eloquent\Model;
 

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Hr\Ess;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Hr\Leave;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use Auth, DB, Validator, ACL,DateTime, DatePeriod, DateInterval, stdClass;
 
 class LeaveApplicationController extends Controller

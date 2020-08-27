@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Hr\Setup;
 
 use App\Helpers\Custom;
 use App\Http\Controllers\Controller;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use App\Models\Hr\Shift;
 use App\Models\Hr\ShiftRoaster;
 use App\Models\Hr\Unit;

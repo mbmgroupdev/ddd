@@ -2,9 +2,11 @@
 
 namespace App\Models\Hr;
 
+use App\Models\Employee;
+use App\Models\Hr\Unit;
+use DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use DB;
 
 class Unit extends Model
 {
@@ -23,8 +25,38 @@ class Unit extends Model
         return Unit::pluck('hr_unit_name', 'hr_unit_id'); 
        
     }
+    
+    public static function unitWithSelectedId($id){
+      return Unit::where('hr_unit_id', $id)->get();
+    }
+
+    public static function unitName($id)
+    {
+      $unitName= Unit::where('hr_unit_id',$id)->first(['hr_unit_name']); 
+      return $unitName;
+    }
+
+    public static function getUnitNameBangla($id)
+    {
+      $unitName= Unit::where('hr_unit_id',$id)->first(['hr_unit_name_bn']); 
+      return $unitName;
+    }
 
 
+    public function getUnitWiseEmp($unitId)
+    {
+      $where = [
+        'as_status' => 1,
+        'as_unit_id' => $unitId
+      ];
+      return Employee::where($where)->get();
+    }
+
+    public static function unitListAsObject()
+    {
+      $unitList = Unit::select('hr_unit_name', 'hr_unit_id')->get(); 
+      return $unitList;
+    }
     public static function getActiveUnit()
     {
     	return DB::table('hr_unit')->where('hr_unit_status', 1)->get();

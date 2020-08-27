@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Hr\Reports;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use App\Models\Hr\Floor;
 use App\Models\Hr\Line;
 use App\Models\Hr\Shift;
@@ -96,9 +96,8 @@ class EventHistoryController extends Controller
                             })
                             ->addColumn('action', function($data){
                                 $action_button= "<div class=\"btn-group\">  
-                                    <button data-book-id=".$data->id." class=\"btn btn-xs btn-success\" data-toggle=\"modal\" style=\"height:25px; width:26px;\" data-target=\"#myModal\">
+                                    <button data-book-id=".$data->id." class=\"btn btn-sm btn-success log-details\">
                                         <i class=\"ace-icon fa fa-eye bigger-120\"></i>
-
                                     </button> ";
                                 $action_button.= "</div>";
                                 return $action_button;

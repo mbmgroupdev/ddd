@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Hr\Recruitment;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Hr\IDGenerator as IDGenerator;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use App\Models\Hr\AdvanceInfo;
 use App\Models\Hr\MedicalInfo;
 use App\Models\Hr\Worker;

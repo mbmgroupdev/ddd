@@ -4,7 +4,7 @@ namespace App\Jobs;
 
 use App\Jobs\ProcessMonthlySalary;
 use App\Jobs\ProcessUnitWiseSalary;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use App\Models\Hr\HolidayRoaster;
 use App\Models\Hr\YearlyHolyDay;
 use Carbon\Carbon;
