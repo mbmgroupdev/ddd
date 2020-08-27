@@ -398,9 +398,7 @@ div.dataTables_wrapper div.dataTables_paginate{
   width: 410px !important;
   height: 330px !important;
 }
-.hide{
-  display: none !important;
-}
+.hide{display: none !important;}
 .sticky-th {
     position: sticky;
     background: #fff;
@@ -408,3 +406,5 @@ div.dataTables_wrapper div.dataTables_paginate{
     vertical-align: middle!important;
     top: -1px;
 }
+.f-18{font-size: 18px;}
+.h-35{height: 35px;}
