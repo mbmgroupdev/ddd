@@ -11,7 +11,7 @@ use App\Models\Hr\Department;
 use App\Models\Hr\Floor;
 use App\MOdels\Hr\Benefits;
 use App\Models\Hr\AttendanceBonus;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use App\Models\Hr\HrMonthlySalary;
 use App\Jobs\BuyerAttandenceProcess;
 use App\Jobs\BuyerSalaryProcess;

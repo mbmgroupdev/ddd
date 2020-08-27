@@ -9,7 +9,7 @@ use App\Models\Hr\HrMonthlySalary;
 use App\Models\Hr\SalaryAddDeduct;
 use App\Models\Hr\AttendaceManual;
 use App\Models\Hr\Department;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use App\Models\Hr\Floor;
 use App\Models\Hr\Section;
 use App\Models\Hr\Subsection;

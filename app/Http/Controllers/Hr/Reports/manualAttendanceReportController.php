@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Hr\AttendaceManual;
 use App\Models\Hr\YearlyHolyDay;
 use App\Models\Hr\Attendace;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use App\Models\Hr\Leave;
 use App\Models\Hr\Shift;
 use App\Models\Hr\Unit;

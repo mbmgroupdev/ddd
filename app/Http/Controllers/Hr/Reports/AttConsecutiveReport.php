@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Hr\Reports;
 use App\Http\Controllers\Controller;
 use App\Models\Hr\Area;
 use App\Models\Hr\Attendace;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use App\Models\Hr\Section;
 use App\Models\Hr\Subsection;
 use App\Models\Hr\Unit;

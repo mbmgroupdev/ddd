@@ -19,7 +19,7 @@ use App\Models\Hr\MapCostArea;
 use App\Models\Hr\MapCostDepartment;
 use App\Models\Hr\MapCostSection;
 use App\Models\Hr\MapCostSubSection;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use DB, ACL, Validator,Auth,DataTables;
 class CostMappingController extends Controller
 {

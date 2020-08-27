@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Hr\Reports;
 use App\Http\Controllers\Controller;
 use App\Models\Hr\Absent;
 use App\Models\Hr\Department;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use App\Models\Hr\Increment;
 use App\Models\Hr\Leave;
 use App\Models\Hr\Unit;

@@ -45,58 +45,69 @@
                 <!-- /.col -->
             </div>
             <!-- Modal -->
-            <div id="myModal" class="modal fade" role="dialog">
-              <div class="modal-dialog">
-                <!-- Modal content-->
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Detail</h4>
-                  </div>
-                  <div class="modal-body">
-                        <div class="row">
-                          <div class="col-sm-2"></div>
-                          <div class="col-sm-2">Employee ID:</div>
-                          <div class="col-sm-6" id="employee_id" style="font-weight: bold;">Enter</div>
+            
+            <div class="item_details_section">
+              <div class="overlay-modal overlay-modal-details" style="margin-left: 0px; display: none;">
+                <div class="item_details_dialog show_item_details_modal" style="min-height: 115px;">
+                  <div class="fade-box-details fade-box">
+                    <div class="inner_gray clearfix">
+                      <div class="inner_gray_text text-center" id="heading">
+                       <h5 class="no_margin text-white">Change Details</h5>   
+                      </div>
+                      <div class="inner_gray_close_button">
+                        <a class="cancel_details item_modal_close" role="button" rel='tooltip' data-tooltip-location='left' data-tooltip="Close Modal">Close</a>
+                      </div>
+                    </div>
+
+                    <div class="inner_body" id="modal-details-content" style="display: none">
+                      <div class="inner_body_content">
+                        <div class="modal-body">
+                          <div class="row">
+                            <div class="col-sm-2"></div>
+                            <div class="col-sm-3">Employee ID:</div>
+                            <div class="col-sm-6" id="employee_id" style="font-weight: bold;">Enter</div>
+                          </div>
+                          <div class="row">
+                              <div class="col-sm-12">
+                              <table class="table table-bordered">
+                                  <tr>
+                                      <td></td>
+                                      <td style="font-weight: bold;">Before Status</td>
+                                      <td style="font-weight: bold;">After Status</td>
+                                  </tr>
+                                  <tr>
+                                      <td style="font-weight: bold;">In Time</td>
+                                      <td id="in_time_before"></td>
+                                      <td id="in_time_after"></td>
+                                  </tr>
+                                  <tr>
+                                      <td style="font-weight: bold;">Out Time</td>
+                                      <td id="out_time_before"></td>
+                                      <td id="out_time_after"></td>
+                                  </tr>
+                                  <tr>
+                                      <td style="font-weight: bold;">OT Hour</td>
+                                      <td id="ot_hour_before"></td>
+                                      <td id="ot_hour_after"></td>
+                                  </tr>
+                                  <tr>
+                                      <td style="font-weight: bold;">Late Status</td>
+                                      <td id="late_status_before"></td>
+                                      <td id="late_status_after"></td>
+                                  </tr>
+                              </table>
+                              </div>
+                          </div>
                         </div>
-                        <div class="row">
-                            <div class="col-sm-offset-2 col-sm-8">
-                            <table class="table table-bordered">
-                                <tr>
-                                    <td></td>
-                                    <td style="font-weight: bold;">Before Status</td>
-                                    <td style="font-weight: bold;">After Status</td>
-                                </tr>
-                                <tr>
-                                    <td style="font-weight: bold;">In Time</td>
-                                    <td id="in_time_before"></td>
-                                    <td id="in_time_after"></td>
-                                </tr>
-                                <tr>
-                                    <td style="font-weight: bold;">Out Time</td>
-                                    <td id="out_time_before"></td>
-                                    <td id="out_time_after"></td>
-                                </tr>
-                                <tr>
-                                    <td style="font-weight: bold;">OT Hour</td>
-                                    <td id="ot_hour_before"></td>
-                                    <td id="ot_hour_after"></td>
-                                </tr>
-                                <tr>
-                                    <td style="font-weight: bold;">Late Status</td>
-                                    <td id="late_status_before"></td>
-                                    <td id="late_status_after"></td>
-                                </tr>
-                            </table>
-                            </div>
-                        </div>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      </div>
+                      <div class="inner_buttons">
+                        <a class="cancel_modal_button cancel_details" role="button"> Close </a>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+          </div>
             <!--Modal end-->
         </div><!-- /.page-content -->
     </div>
@@ -265,10 +276,18 @@ $(document).ready(function()
         }
     });
 
-    $('#myModal').on('shown.bs.modal', function (e) {
-      
-        var id = $(e.relatedTarget).data('book-id');
-        console.log(id);
+    var loaderModal = '<td class="text-center" colspan="6"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:50px;"></i></td>';
+    $(".overlay-modal, .item_details_dialog").css("opacity", 0);
+    /*Remove inline styles*/
+    $(".overlay-modal, .item_details_dialog").removeAttr("style");
+    /*Set min height to 90px after  has been set*/
+    detailsheight = $(".item_details_dialog").css("min-height", "115px");
+    
+    $(document).on('click','.log-details',function(e){
+        var id = $(this).data('book-id');
+        $(".overlay-modal-details").show();
+        $(".inner_body").show();
+        // console.log(id);
         $.ajax({
             url : "{{ url('hr/reports/event_history_detail') }}",
             type: 'get',
@@ -276,6 +295,7 @@ $(document).ready(function()
             dataType: 'json',
             success: function(data)
             {
+              // console.log(data);
                 // if(typeof variable !== 'undefined')
                 var before = JSON.parse(data.previous_event);
                 var after = JSON.parse(data.modified_event);
@@ -292,7 +312,28 @@ $(document).ready(function()
                 
             }
         });
-    })
+        /*Animate Dialog*/
+        $(".show_item_details_modal").css("width", "225").animate({
+          "opacity" : 1,
+          height : detailsheight,
+          width : "40%"
+        }, 600, function() {
+          /*When animation is done show inside content*/
+          $(".fade-box").show();
+        });
+        // 
+        
+    });
+    
+
+    $(".cancel_details").click(function() {
+        $(".overlay-modal-details, .show_item_details_modal").fadeOut("slow", function() {
+          /*Remove inline styles*/
+
+          $(".overlay-modal, .item_details_dialog").removeAttr("style");
+          $('body').css('overflow', 'unset');
+        });
+    });
 
 }); 
 </script>

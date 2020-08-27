@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Jobs\ProcessAttendanceIntime;
 use App\Jobs\ProcessAttendanceOuttime;
 use App\Jobs\ProcessEmployeeAbsent;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use App\Models\Hr\HolidayRoaster;
 use App\Models\Hr\YearlyHolyDay;
 use Carbon\Carbon;

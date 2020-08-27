@@ -11,7 +11,7 @@ use App\Jobs\ProcessAttendanceIntime;
 use App\Jobs\ProcessAttendanceOuttime;
 use App\Jobs\ProcessUnitWiseSalary;
 use App\Models\Hr\AttendanceMBM;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use App\Models\Hr\HrLateCount;
 use App\Models\Hr\Shift;
 use App\Models\Hr\Unit;

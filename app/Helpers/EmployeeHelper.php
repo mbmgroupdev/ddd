@@ -4,7 +4,7 @@ namespace App\Helpers;
 use App\Helpers\Custom;
 use App\Jobs\ProcessUnitWiseSalary;
 use App\Models\Hr\Absent;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use App\Models\Hr\HolidayRoaster;
 use App\Models\Hr\Leave;
 use App\Models\Hr\YearlyHolyDay;

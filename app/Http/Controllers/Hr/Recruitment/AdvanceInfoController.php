@@ -22,7 +22,7 @@ use App\Models\Hr\Area;
 use App\Models\Hr\Department;
 use App\Models\Hr\Designation;
 use App\Models\Hr\Section;
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use DB, Validator, Image,DataTables, Session, ACL;
 
 class AdvanceInfoController extends Controller

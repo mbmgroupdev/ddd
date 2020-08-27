@@ -1,11 +1,11 @@
 <?php
 
 namespace App\Models;
-use Awobaz\Compoships\Compoships;
-
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Employee;
 use App\Models\Hr\Leave;
+use Awobaz\Compoships\Compoships;
 use DB;
+use Illuminate\Database\Eloquent\Model;
 
 class Employee extends Model
 {
@@ -20,7 +20,7 @@ class Employee extends Model
         'as_doj', 'created_at', 'updated_at'
     ];
 
-    /*public static function getEmployeeAssociateIdWise($as_id)
+    public static function getEmployeeAssociateIdWise($as_id)
     {
     	return Employee::where('associate_id', $as_id)->first();
     }
@@ -39,12 +39,12 @@ class Employee extends Model
     {
         return Employee::select('as_id', 'as_name', 'associate_id')->get();
     }
-    */
+    
     public function designation()
     {
     	return $this->belongsTo('App\Models\Hr\Designation', 'as_designation_id', 'hr_designation_id');
     }
-    /*
+    
     public function benefits()
     {
         return $this->hasOne(Benefits::class, 'ben_as_id', 'associate_id');
@@ -237,7 +237,7 @@ class Employee extends Model
         ->where('as_unit_id', $unitId)
         ->get();
     }
-    */
+    
     public  function today_status()
     {
         $today = date('Y-m-d');
