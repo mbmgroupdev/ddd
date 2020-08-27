@@ -1,12 +1,15 @@
 @extends('hr.layout')
-@section('title', 'Add Role')
+@section('title', 'Yearly Employee Leave')
 @section('main-content')
 @push('css')
-  <style>
-    html {
-     scroll-behavior: smooth;
-    }
-  </style>
+<style>
+   .modal-h3{
+    margin:5px 0;
+   }
+   strong{
+    font-size: 14px;
+   }
+</style>
 @endpush
 <div class="main-content">
   <div class="main-content-inner">
@@ -17,159 +20,173 @@
           <a href="#">Human Resource</a>
         </li>
         <li>
-          <a href="#">Operations</a>
+          <a href="#">Reports</a>
         </li>
-        <li class="active"> Leave Log</li>
+        <li class="active"> Yearly Employee Leave Log</li>
       </ul><!-- /.breadcrumb -->
     </div>
 
-    <div class="page-content"> 
-       {{-- <div id="load"></div>  --}} 
-            <?php $type='leave_log'; ?>
-                @include('hr/reports/operations_radio')            
-      <div class="page-header">
-        <h1>Operations<small><i class="ace-icon fa fa-angle-double-right"></i> Leave Log</small></h1>
-            </div>
-            <div class="row">
+    <div class="page-content">
+        <div class="row">
+            <div class="col">
                 <form role="form" method="get" action="{{ url('hr/reports/leave_log') }}" id="searchform" >
-                    <div class="col-sm-12 responsive-hundred"> 
-                        <div class="form-group">
-                            <div class="col-sm-3" style="padding-bottom: 10px;">
-                                {{ Form::select('associate', [Request::get('associate') => Request::get('associate')], Request::get('associate'), ['placeholder'=>'Select Associate\'s ID', 'id'=>'associate', 'class'=> 'associates no-select col-xs-12', 'data-validation'=>'required']) }}  
-                            </div> 
-                            <div class="col-sm-3" style="padding-bottom: 50px;">
-                                <input type="text" name="year" id="year" value="{{ Request::get('year') }}" class="yearpicker col-xs-12" data-validation="required" placeholder="Year" style="height: 32px;" />
-                            </div>
-                            <div class="col-sm-5" style="padding-bottom: 10px;">
-                                <button type="submit" class="btn btn-primary btn-sm">
-                                    <i class="fa fa-search"></i>
-                                    Search
-                                </button>
-                                @if (!empty($info)) 
-                                <button type="button" onClick="printMe1('PrintArea')" class="btn btn-warning btn-sm" title="Print">
-                                    <i class="fa fa-print"></i> 
-                                </button> 
-                                <a href="{{request()->fullUrl()}}&pdf=true" target="_blank" class="btn btn-danger btn-sm" title="PDF">
-                                    <i class="fa fa-file-pdf-o"></i> 
-                                </a>
-                                <button type="button"  id="excel"  class="showprint btn btn-success btn-sm" title="Excel"><i class="fa fa-file-excel-o" style="font-size:14px"></i>
-                               </button>
-                                @endif
+                    <div class="panel">
+                        
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="form-group has-float-label has-required select-search-group">
+                                        {{ Form::select('associate', [Request::get('associate') => Request::get('associate')], Request::get('associate'), ['placeholder'=>'Select Associate\'s ID', 'id'=>'associate', 'class'=> 'associates no-select col-xs-12','style', 'required'=>'required']) }}
+                                        <label  for="associate"> Associate's ID </label>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group has-float-label has-required select-search-group">
+                                        <input type="year" class="report_date form-control" id="year" name="year" placeholder="Y" required="required" value="{{ date('Y') }}" autocomplete="off" />
+                                        
+                                        <label  for="year"> Year </label>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <button type="submit" class="btn btn-primary btn-sm activityReportBtn"><i class="fa fa-save"></i> Generate</button>
+                                    <div id="print_pdf" class="custom-control-inline" style="display: none;">
+                                        @if (!empty($info)) 
+                                        <button type="button" onClick="printMe1('PrintArea')" class="inline btn btn-warning btn-sm" title="Print">
+                                            <i class="fa fa-print"></i> 
+                                        </button> 
+                                        <a href="{{request()->fullUrl()}}&pdf=true" target="_blank" class="inline btn btn-danger btn-sm" title="PDF">
+                                            <i class="fa fa-file-pdf-o"></i> 
+                                        </a>
+                                        <button type="button"  id="excel"  class="showprint inline btn btn-success btn-sm" title="Excel"><i class="fa fa-file-excel-o" style="font-size:14px"></i>
+                                       </button>
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </form>
+                <!-- PAGE CONTENT ENDS -->
             </div>
+            <!-- /.col -->
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="panel">
+                    <div class="panel-body">
+                        <div id="leave_content_section" class="row">
+                            <!-- Display Erro/Success Message -->
+                            @include('inc/message')
 
-            <div id="leave_content_section" class="row">
-                <!-- Display Erro/Success Message -->
-                @include('inc/message')
-
-                <div class="col-sm-offset-1 col-sm-10 col-xs-12" id="PrintArea" style="padding-top: 20px;">
-                    @if(!empty($info))
-                    <div id="html-2-pdfwrapper" class="col-sm-12" style="margin:20px auto">
-                        <div class="col-sm-12 text-center page-header" style="margin-bottom: 15px;">
-                            <h3 {{-- style="margin:4px 10px;text-align:center;font-weight:600" --}}>{{ $info->unit }}</h3>
-                            <h5 {{-- style="margin:4px 10px;text-align:center;font-weight:600" --}}>Leave Log</h5>
-                            <h5 {{-- style="margin:4px 10px;text-align:center;font-weight:600" --}}>For The Year : {{ request()->year }}</h5>
-                        </div>
-                        <table class="table" style="width:100%;border:1px solid #ccc;margin-bottom:0;font-size:14px;text-align:left;"  cellpadding="5">
-                            <tr>
-                                <th style="width:40%">
-                                   <p style="margin:0;padding:4px 10px"><strong>Name </strong>: {{ $info->name }}</p>
-                                   <p style="margin:0;padding:4px 10px"><strong>ID </strong>: {{ $info->associate }}</p>
-                                </th>
-                                <th style="text-align: right;">
-                                   <p style="margin:0;padding:4px 10px"><strong>Designation </strong>: {{ $info->designation }} </p> 
-                                   <p style="margin:0;padding:4px 10px"><strong>Section </strong>: {{ $info->section }} </p> 
-                                   <p style="margin:0;padding:4px 10px"><strong>Date of Join </strong>: {{ date("d-m-Y", strtotime($info->doj)) }}</p> 
-                                </th>
-                            </tr> 
-                        </table>
+                            <div class="offset-1 col-sm-10 col-xs-12" id="PrintArea" style="padding-top: 20px;">
+                                @if(!empty($info))
+                                <div id="html-2-pdfwrapper" class="col-sm-12" style="margin:20px auto">
+                                    <div class="col-sm-12 text-center page-header" style="margin-bottom: 15px;">
+                                        <h3 {{-- style="margin:4px 10px;text-align:center;font-weight:600" --}}>{{ $info->unit }}</h3>
+                                        <h5 {{-- style="margin:4px 10px;text-align:center;font-weight:600" --}}>Leave Log</h5>
+                                        <h5 {{-- style="margin:4px 10px;text-align:center;font-weight:600" --}}>For The Year : {{ request()->year }}</h5>
+                                    </div>
+                                    <table class="table" style="width:100%;border:1px solid #ccc;margin-bottom:0;font-size:14px;text-align:left;"  cellpadding="5">
+                                        <tr>
+                                            <th style="width:40%">
+                                               <p style="margin:0;padding:4px 10px"><strong>Name </strong>: {{ $info->name }}</p>
+                                               <p style="margin:0;padding:4px 10px"><strong>ID </strong>: {{ $info->associate }}</p>
+                                            </th>
+                                            <th style="text-align: right;">
+                                               <p style="margin:0;padding:4px 10px"><strong>Designation </strong>: {{ $info->designation }} </p> 
+                                               <p style="margin:0;padding:4px 10px"><strong>Section </strong>: {{ $info->section }} </p> 
+                                               <p style="margin:0;padding:4px 10px"><strong>Date of Join </strong>: {{ date("d-m-Y", strtotime($info->doj)) }}</p> 
+                                            </th>
+                                        </tr> 
+                                    </table>
 
 
-                        <table class="table" style="width:100%;border:1px solid #ccc;font-size:13px;display: block;overflow-x: auto;white-space: nowrap;"  cellpadding="2" cellspacing="0" border="1" align="center"> 
-                          <thead>
-                            <tr>
-                              <th rowspan="2" width="30%">Month</th>
-                              <th colspan="3" width="30%">Casual Leave</th>
-                              <th colspan="3" width="30%">Medical Leave</th>
-                              <th colspan="3" width="30%">Meternity Leave</th>
-                              <th colspan="3" width="30%">Earn Leave</th>
-                            </tr> 
-                            <tr>
-                              <th>Due</th>
-                              <th>Enjoyed</th>
-                              <th>Balance</th>
-                              <th>Due</th>
-                              <th>Enjoyed</th>
-                              <th>Balance</th>
-                              <th>Due</th>
-                              <th>Enjoyed</th>
-                              <th>Balance</th>
-                              <th>Due</th>
-                              <th>Enjoyed</th>
-                              <th>Balance</th>
-                            </tr> 
-                          </thead>
-                          <tbody>
-                            <?php
-                            $casual_due     = 10;
-                            $casual_enjoyed = 0;
-                            $casual_balance = 0;
-                            $medical_due     = 14;
-                            $medical_enjoyed = 0;
-                            $medical_balance = 0;
-                            $maternity_due     = 112;
-                            $maternity_enjoyed = 0;
-                            $maternity_balance = 0;
-                            $earned_due     = $earned_due?$earned_due:0;
-                            $earned_enjoyed = 0;
-                            $earned_balance = 0;
-                            ?>
-                            @if(!empty($leaves) && sizeof($leaves) > 0)
-                            @foreach($leaves as $leave)
-                            <?php
-                                $casual_due     = $casual_due-$casual_enjoyed;
-                                $casual_enjoyed = $leave->casual?$leave->casual:0;
-                                $casual_balance = $casual_due-$casual_enjoyed;
-                                $medical_due     = $medical_due-$medical_enjoyed;
-                                $medical_enjoyed = $leave->medical?$leave->medical:0;
-                                $medical_balance = $medical_due-$medical_enjoyed;
-                                $maternity_due     = $maternity_due-$maternity_enjoyed;
-                                $maternity_enjoyed = $leave->maternity?$leave->maternity:0;
-                                $maternity_balance = $maternity_due-$maternity_enjoyed;
-                                $earned_due     = $earned_due-$earned_enjoyed;
-                                $earned_enjoyed = $leave->earned?$leave->earned:0;
-                                $earned_balance = $earned_due-$earned_enjoyed;
-                            ?>
-                            <tr> 
-                              <th>{{ $leave->month_name }}</th>
-                              <th>{{ $casual_due }}</th>
-                              <th>{{ $casual_enjoyed }}</th>
-                              <th>{{ $casual_balance }}</th>
-                              <th>{{ $medical_due }}</th>
-                              <th>{{ $medical_enjoyed }}</th>
-                              <th>{{ $medical_balance }}</th>
-                              <th>{{ $maternity_due }}</th>
-                              <th>{{ $maternity_enjoyed }}</th>
-                              <th>{{ $maternity_balance }}</th>  
-                              <th>{{ $earned_due }}</th>
-                              <th>{{ $earned_enjoyed }}</th>
-                              <th>{{ $earned_balance }}</th>   
-                            </tr> 
-                            @endforeach
-                            @endif
-                          </tbody>
-                        </table>
+                                    <table class="table" style="width:100%;border:1px solid #ccc;font-size:13px;display: block;overflow-x: auto;white-space: nowrap;"  cellpadding="2" cellspacing="0" border="1" align="center"> 
+                                      <thead>
+                                        <tr>
+                                          <th rowspan="2" width="30%">Month</th>
+                                          <th colspan="3" width="30%">Casual Leave</th>
+                                          <th colspan="3" width="30%">Medical Leave</th>
+                                          <th colspan="3" width="30%">Meternity Leave</th>
+                                          <th colspan="3" width="30%">Earn Leave</th>
+                                        </tr> 
+                                        <tr>
+                                          <th>Due</th>
+                                          <th>Enjoyed</th>
+                                          <th>Balance</th>
+                                          <th>Due</th>
+                                          <th>Enjoyed</th>
+                                          <th>Balance</th>
+                                          <th>Due</th>
+                                          <th>Enjoyed</th>
+                                          <th>Balance</th>
+                                          <th>Due</th>
+                                          <th>Enjoyed</th>
+                                          <th>Balance</th>
+                                        </tr> 
+                                      </thead>
+                                      <tbody>
+                                        <?php
+                                        $casual_due     = 10;
+                                        $casual_enjoyed = 0;
+                                        $casual_balance = 0;
+                                        $medical_due     = 14;
+                                        $medical_enjoyed = 0;
+                                        $medical_balance = 0;
+                                        $maternity_due     = 112;
+                                        $maternity_enjoyed = 0;
+                                        $maternity_balance = 0;
+                                        $earned_due     = $earned_due?$earned_due:0;
+                                        $earned_enjoyed = 0;
+                                        $earned_balance = 0;
+                                        ?>
+                                        @if(!empty($leaves) && sizeof($leaves) > 0)
+                                        @foreach($leaves as $leave)
+                                        <?php
+                                            $casual_due     = $casual_due-$casual_enjoyed;
+                                            $casual_enjoyed = $leave->casual?$leave->casual:0;
+                                            $casual_balance = $casual_due-$casual_enjoyed;
+                                            $medical_due     = $medical_due-$medical_enjoyed;
+                                            $medical_enjoyed = $leave->medical?$leave->medical:0;
+                                            $medical_balance = $medical_due-$medical_enjoyed;
+                                            $maternity_due     = $maternity_due-$maternity_enjoyed;
+                                            $maternity_enjoyed = $leave->maternity?$leave->maternity:0;
+                                            $maternity_balance = $maternity_due-$maternity_enjoyed;
+                                            $earned_due     = $earned_due-$earned_enjoyed;
+                                            $earned_enjoyed = $leave->earned?$leave->earned:0;
+                                            $earned_balance = $earned_due-$earned_enjoyed;
+                                        ?>
+                                        <tr> 
+                                          <th>{{ $leave->month_name }}</th>
+                                          <th>{{ $casual_due }}</th>
+                                          <th>{{ $casual_enjoyed }}</th>
+                                          <th>{{ $casual_balance }}</th>
+                                          <th>{{ $medical_due }}</th>
+                                          <th>{{ $medical_enjoyed }}</th>
+                                          <th>{{ $medical_balance }}</th>
+                                          <th>{{ $maternity_due }}</th>
+                                          <th>{{ $maternity_enjoyed }}</th>
+                                          <th>{{ $maternity_balance }}</th>  
+                                          <th>{{ $earned_due }}</th>
+                                          <th>{{ $earned_enjoyed }}</th>
+                                          <th>{{ $earned_balance }}</th>   
+                                        </tr> 
+                                        @endforeach
+                                        @endif
+                                      </tbody>
+                                    </table>
+                                </div>
+                                @endif
+                            </div>
+                        </div> 
                     </div>
-                    @endif
                 </div>
             </div>
-
+        </div>
     </div><!-- /.page-content -->
   </div>
 </div>
+@push('js')
 <script type="text/javascript"> 
 
     $(document).ready(function(){
@@ -243,7 +260,6 @@
       if (state == 'complete') {
           setTimeout(function(){
              document.getElementById('interactive');
-             document.getElementById('load').style.visibility="hidden";
              document.getElementById('leave_content_section').style.visibility="visible";
              document.getElementById('leave_content_section').scrollIntoView();
           },1000);
@@ -262,4 +278,5 @@
     }
  
 </script>
+@endpush
 @endsection

@@ -662,7 +662,7 @@ class ShiftRoasterController extends Controller
         // last day and first day of the selected month
         $firstDay = date($year.'-'.$month.'-01');
         $lastDay  = date($year.'-'.$month.'-t');
-        return $lastDay;
+        // return $lastDay;
 
         $data = Employee::select([
                 'hr_as_basic_info.as_id',
@@ -729,7 +729,7 @@ class ShiftRoasterController extends Controller
         // holiday roaster
         $holidayRoasterAll = HolidayRoaster::where('status', 1)->whereIn('as_id',$userPluck)->whereBetween('date',[$firstDay,$lastDay])->get()->groupBy('as_id')->toArray();
 
-        return $holidayRoasterAll;
+        // return $holidayRoasterAll;
 
         foreach($data as $k=>$dd) {
             for($i=1; $i<=31; $i++) {

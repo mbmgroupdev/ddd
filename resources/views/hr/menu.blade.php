@@ -169,14 +169,14 @@
                
                <li><a href="{{ url('hr/reports/daily-attendance-activity') }}"><i class="las la-fingerprint"></i>Daily Attendance</a></li>
                <li><a href="{{ url('hr/operation/absent_present_list') }}"><i class="las la-fingerprint"></i>Attendance Consecutive</a></li>
-               <li><a href="{{ url('hr/reports/group_attendance') }}"><i class="las la-fingerprint"></i>Group Attendance</a></li>
+               {{-- <li><a href="{{ url('hr/reports/group_attendance') }}"><i class="las la-fingerprint"></i>Group Attendance</a></li> --}}
                <li><a href="{{ url('hr/reports/monthly-salary') }}"><i class="las la-fingerprint"></i>Monthly Salary</a></li>
                <li><a href="{{ url('hr/reports/employee-yearly-activity') }}"><i class="las la-fingerprint"></i>Employee Yearly Activity</a></li>
                <li><a href="{{ url('hr/reports/monthy_increment') }}"><i class="las la-chart-area"></i>Increment Report</a></li>
                <li><a href="{{ url('') }}"><i class="las la-chart-area"></i>Promotion Report</a></li>
                
                
-               <li><a href="{{ url('hr/reports/leave_log') }}"><i class="las la-calendar-alt"></i>Leave Log</a></li>
+               <li><a href="{{ url('hr/reports/leave_log') }}"><i class="las la-calendar-alt"></i>Yearly Leave Log</a></li>
                <li><a href="{{ url('hr/reports/event_history') }}"><i class="las la-calendar-alt"></i>Event History</a></li>
             </ul>
          </li>
