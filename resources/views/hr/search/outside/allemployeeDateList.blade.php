@@ -38,7 +38,7 @@
                                         <td>{{$k+1}}</td>
                                         <td>{{$data['as_id']}}</td>
                                         <td>{{$data['basic']['as_name']}}</td>
-                                        <td>{{Custom::getUnitName($data['requested_location'])}}</td>
+                                        <td>{{get_unit_name_by_id($data['requested_location'])}}</td>
                                         <td>{{$data['start_date']}}</td>
                                         <td>{{$data['end_date']}}</td>
                                         <td>{{\Carbon\Carbon::parse($data['end_date'])->diffInDays($data['start_date'])+1}}</td>

@@ -26,7 +26,7 @@
         if(!empty($locationList)){
         	foreach($locationList as $location=>$llist) {
 				$list = array_column($llist, 'as_id');
-				$resultLocationList[Custom::getUnitName($location)] = count(array_unique($list));
+				$resultLocationList[get_unit_name_by_id($location)] = count(array_unique($list));
         	}
     	}
     	@endphp
@@ -45,7 +45,7 @@
 					<div class="col-xs-4 col-sm-3 pricing-box outside_emp" data-id="{{$location}}">
 						<div class="widget-box widget-color-green2">
 							<div class="widget-header">
-								<h5 class="widget-title bigger lighter">{{Custom::getUnitName($location)}}</h5>
+								<h5 class="widget-title bigger lighter">{{get_unit_name_by_id($location)}}</h5>
 							</div>
 
 							<div class="widget-body">

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Hr\Search;
 
-use App\Helpers\Custom;
 use App\Http\Controllers\Controller;
 use App\Models\Hr\Area;
 use App\Models\Hr\Attendace;
@@ -274,21 +273,21 @@ class EmployeeStatusSearchController extends Controller
             if($request->status == 'join') {
                 $dataList = $this->getActiveEmpFromDate($request->data,$request->data['type']);
             } else {
-                $dataList = $this->getEmpstatusFromDate($request->data,$request->data['type'],Custom::getEmpStatusName($request->status));
+                $dataList = $this->getEmpstatusFromDate($request->data,$request->data['type'],emp_status_name($request->status));
             }
         }
         if($request->data['type'] == 'month') {
             if($request->status == 'join') {
                 $dataList = $this->getActiveEmpFromDate($request->data,$request->data['type']);
             } else {
-                $dataList = $this->getEmpstatusFromDate($request->data,$request->data['type'],Custom::getEmpStatusName($request->status));
+                $dataList = $this->getEmpstatusFromDate($request->data,$request->data['type'],emp_status_name($request->status));
             }
         }
         if($request->data['type'] == 'date') {
             if($request->status == 'join') {
                 $dataList = $this->getActiveEmpFromDate($request->data['date'],$request->data['type']);
             } else {
-                $dataList = $this->getEmpstatusFromDate($request->data['date'],$request->data['type'],Custom::getEmpStatusName($request->status));
+                $dataList = $this->getEmpstatusFromDate($request->data['date'],$request->data['type'],emp_status_name($request->status));
             }
         }
         // return $dataList;
@@ -388,21 +387,21 @@ class EmployeeStatusSearchController extends Controller
             if($request->status == 'join') {
                 $dataList = $this->getActiveEmpFromDate($request->data,$request->data['type'],$request->unit);
             } else {
-                $dataList = $this->getEmpstatusFromDate($request->data,$request->data['type'],Custom::getEmpStatusName($request->status),null,null,$request->unit);
+                $dataList = $this->getEmpstatusFromDate($request->data,$request->data['type'],emp_status_name($request->status),null,null,$request->unit);
             }
         }
         if($request->data['type'] == 'month') {
             if($request->status == 'join') {
                 $dataList = $this->getActiveEmpFromDate($request->data,$request->data['type'],$request->unit);
             } else {
-                $dataList = $this->getEmpstatusFromDate($request->data,$request->data['type'],Custom::getEmpStatusName($request->status),null,null,$request->unit);
+                $dataList = $this->getEmpstatusFromDate($request->data,$request->data['type'],emp_status_name($request->status),null,null,$request->unit);
             }
         }
         if($request->data['type'] == 'date') {
             if($request->status == 'join') {
                 $dataList = $this->getActiveEmpFromDate($request->data['date'],$request->data['type'],$request->unit);
             } else {
-                $dataList = $this->getEmpstatusFromDate($request->data['date'],$request->data['type'],Custom::getEmpStatusName($request->status),null,null,$request->unit);
+                $dataList = $this->getEmpstatusFromDate($request->data['date'],$request->data['type'],emp_status_name($request->status),null,null,$request->unit);
             }
         }
         // return $dataList;
