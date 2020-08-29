@@ -45,7 +45,7 @@
             <div class="col-sm-8"> 
                 <div class="panel panel-info"> 
                     <div class="panel-body">
-                        <table id="dataTables" class="table table-striped table-bordered">
+                        <table id="global-datatable" class="table table-striped table-bordered">
                             <thead>
                                 <tr>
                                     <th>Degree</th>

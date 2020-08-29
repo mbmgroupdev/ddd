@@ -100,7 +100,7 @@ table th {
 								</div>
 		            		</div>
 		            		<div class="col-6">
-								<div class="profile-user-info">
+								<div class="profile-user-info adv-info">
 											
 									<div class="profile-info-row">
 										<div class="profile-info-name"> Gender </div>
@@ -154,7 +154,7 @@ table th {
 							</div>
 
 							<div class="col-6">
-								<div class="profile-user-info">
+								<div class="profile-user-info adv-info">
 
 									<div class="profile-info-row">
 										<div class="profile-info-name"> Type </div>
@@ -321,15 +321,15 @@ table th {
 									<div class="row">
 										<div class="col-xs-12 col-sm-5">
 										
-											<div class="widget-box transparent">
-												<div class="widget-header widget-header-small">
+											<div class=" transparent">
+												<div class="">
 													<h4 class="widget-title smaller">
 														About Me
 													</h4>
 												</div>
 
-												<div class="widget-body">
-												<div class="profile-user-info">
+												<div class="">
+												<div class="profile-user-info adv-info">
 
 												<div class="profile-info-row">
 													<div class="profile-info-name"> Job Status</div>
@@ -464,14 +464,14 @@ table th {
 										</div>
 
 										<div class="col-xs-12 col-sm-4">
-											<div class="widget-box transparent">
-												<div class="widget-header widget-header-small header-color-blue2">
+											<div class=" transparent">
+												<div class=" header-color-blue2">
 													<h4 class="widget-title smaller">
 														Files
 													</h4>
 												</div>
 
-												<div class="widget-body">
+												<div class="">
 													<div class="widget-main padding-16">
 													<div class="profile-info-row">
 													<div class="profile-info-name">Job Application</div>
@@ -661,14 +661,14 @@ table th {
 											</div>
 										</div>
 										<div class="col-xs-12 col-sm-3">
-											<div class="widget-box transparent">
-												<div class="widget-header widget-header-small header-color-blue2">
+											<div class=" transparent">
+												<div class=" header-color-blue2">
 													<h4 class="widget-title smaller">
 														Medical Info
 													</h4>
 												</div>
 
-												<div class="widget-body">
+												<div class="">
 													<div class="widget-main padding-16">
 													<div class="profile-user-info">
 														<div class="profile-info-row">
@@ -788,14 +788,14 @@ table th {
 									</div>
 									<div class="row">
 										<div class="col-xs-12 col-sm-12">
-											<div class="widget-box transparent">
-												<div class="widget-header widget-header-small header-color-blue2">
+											<div class=" transparent">
+												<div class=" header-color-blue2">
 													<h4 class="widget-title smaller">
 														Education History
 													</h4>
 												</div>
 
-												<div class="widget-body">
+												<div class="">
 													<div class="widget-main padding-16">
 													@if(!empty($educations) && count($educations) >0)
 													<table class="table table-compact">  
@@ -856,14 +856,14 @@ table th {
 								</div><!-- /#home -->
 								@if(auth()->user()->canany(['Salary Sheet','Salary Report','Assign Benefit']) || auth()->user()->hasRole('Super Admin'))
 								<div id="benefit" class="tab-pane">
-								    <div class="widget-box transparent">
-												<div class="widget-header widget-header-small">
+								    <div class=" transparent">
+												<div class="">
 													<h4 class="widget-title smaller">
 														Benefits
 													</h4>
 												</div>
 
-												<div class="widget-body">
+												<div class="">
 								                <div class="profile-user-info">
 
 												<div class="profile-info-row">
@@ -924,15 +924,15 @@ table th {
 								<div id="attendance" class="tab-pane">
                     				<div class="row"> 
                     				   <div class="col-sm-offset-2 col-sm-8">
-										<div class="widget-box transparent">
-											<div class="widget-header widget-header-small">
+										<div class=" transparent">
+											<div class="">
 												<h4 class="widget-title smaller">
 
 													Attendance History
 												</h4>
 											</div>
 
-					                        <div class="widget-body">
+					                        <div class="">
 					                            <div id="attcal" class="widget-main no-padding">
 					                            <br>
 					                            <br>
@@ -953,14 +953,14 @@ table th {
 								<div id="employment" class="tab-pane">
                     						<div class="row"> 
 							                    <div class="col-sm-6">
-													<div class="widget-box transparent">
-												<div class="widget-header widget-header-small">
+													<div class=" transparent">
+												<div class="">
 													<h4 class="widget-title smaller">
 														Promotion History
 													</h4>
 												</div>
 
-								                        <div class="widget-body">
+								                        <div class="">
 								                            <div class="widget-main no-padding">
 								                            
 								                                <table class="table" >
@@ -996,14 +996,14 @@ table th {
 							                    </div>
 							                     
 							                    <div class="col-sm-6">
-													<div class="widget-box transparent">
-												<div class="widget-header widget-header-small">
+													<div class=" transparent">
+												<div class="">
 													<h4 class="widget-title smaller">
 														Increment History
 													</h4>
 												</div>
 
-								                        <div class="widget-body">
+								                        <div class="">
 								                            <div class="widget-main no-padding">
 								                            
 								                                <table class="table" >
@@ -1058,8 +1058,8 @@ table th {
 								</div><!-- /#friends -->
 
 								<div id="loan" class="tab-pane">
-									<div class="widget-box transparent">
-												<div class="widget-header widget-header-small">
+									<div class=" transparent">
+												<div class="">
 													<h4 class="widget-title smaller">
 														Loan History
 													</h4>
@@ -1098,8 +1098,8 @@ table th {
 								</div><!-- /#pictures -->
 
 								<div id="leave" class="tab-pane">
-								     <div class="widget-box transparent">
-												<div class="widget-header widget-header-small">
+								     <div class=" transparent">
+												<div class="">
 													<h4 class="widget-title smaller">
 														Leave History
 													</h4>
@@ -1289,8 +1289,8 @@ table th {
 								     </div>
 								</div>
 								<div id="discipline" class="tab-pane">
-								      <div class="widget-box transparent">
-												<div class="widget-header widget-header-small">
+								      <div class=" transparent">
+												<div class="">
 													<h4 class="widget-title smaller">
 														Disciplinary Record
 													</h4>
@@ -1333,9 +1333,9 @@ table th {
 								</div>
 								@if(auth()->user()->canany(['Salary Sheet','Salary Report']) || auth()->user()->hasRole('Super Admin'))
 								<div id="salary" class="tab-pane">
-								    <div class="widget-box transparent">
+								    <div class=" transparent">
 										
-		                                <div class="widget-header widget-header-small">
+		                                <div class="">
 			                                <h4 class="widget-title text-center">
 												Generate Salary Report
 											</h4>

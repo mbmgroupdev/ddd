@@ -59,7 +59,7 @@
                     <div class="panel-body">
                     
                         
-                        <table id="dataTables"class="table table-striped table-bordered" style="display: block;width: 100%;">
+                        <table id="global-datatable"class="table table-striped table-bordered" style="display: block;width: 100%;">
                             <thead>
                                 <tr>
                                     <th style="width: 20%;">Associate Type</th>

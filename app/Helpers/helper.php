@@ -213,6 +213,19 @@ if(!function_exists('num_to_time')){
     }
 }
 
+if(!function_exists('emp_profile_picture')){
+    function emp_profile_picture($employee)
+    {
+        $default = ($employee->as_gender == 'Female'?'/assets/images/user/1.jpg':'/assets/images/user/09.jpg');
+
+        if($employee->as_pic != null && file_exists($employee->as_pic)){
+            $image = $employee->as_pic;
+        }else{
+            $image = $default;
+        }
+        return $image;
+    }
+}
 
 
 
