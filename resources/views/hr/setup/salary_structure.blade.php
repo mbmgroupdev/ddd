@@ -62,7 +62,7 @@
             <div class="col-sm-8">
                 <div class="panel panel-info">
                     <div class="panel-body">  
-                        <table id="dataTables" class="table table-striped table-bordered">
+                        <table id="global-datatable" class="table table-striped table-bordered">
                                 <thead>
                                     <tr>
                                         <th>Basic</th>
@@ -90,18 +90,5 @@
                 
     </div>
 </div>
-@push('js')
-<script type="text/javascript">
-$(document).ready(function(){ 
 
-    $('#dataTables').DataTable({
-        paging: false, 
-
-        "sDom": 'lftip'
-
-    }); 
-
-});
-</script>
-@endpush
 @endsection

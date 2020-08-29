@@ -108,7 +108,7 @@
                         <div class="tab-pane fade active show" id="active" role="tabpanel" aria-labelledby="active-tab">
                          
                             <div class="table-responsive">
-                                <table id="dataTables" class="table table-striped table-bordered" style="display: block;width: 100%;">
+                                <table id="global-datatable" class="table table-striped table-bordered" style="display: block;width: 100%;">
                                     <thead>
                                         <tr>
                                             <th style="width: 10%;">Area Name</th>
@@ -141,7 +141,7 @@
                         </div>
                         <div class="tab-pane fade" id="trash" role="tabpanel" aria-labelledby="trash-tab">
                             <div class="table-responsive">
-                                <table id="dataTables" class="table table-striped table-bordered" style="display: block;width: 100%;">
+                                <table id="global-trash" class="table table-striped table-bordered" style="display: block;width: 100%;">
                                     <thead>
                                         <tr>
                                             <th style="width: 10%;">Area Name</th>

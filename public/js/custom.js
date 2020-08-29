@@ -124,9 +124,15 @@ $(function() {
         }
     }); 
 
-    $('#dataTables').DataTable({
+    $('#global-datatable').DataTable({
         pagingType: "full_numbers" ,
         "sDom": 'lftip'
 
     }); 
+    $('#global-trash').DataTable({
+        pagingType: "full_numbers" ,
+        "sDom": 'lftip'
+
+    });
+
 });

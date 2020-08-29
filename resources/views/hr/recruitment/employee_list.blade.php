@@ -1,61 +1,7 @@
 @extends('hr.layout')
 @section('title', 'Employee List')
 @section('main-content')
-@push('css')
-<style type="text/css">
-    .dataTables_wrapper .dataTables_processing {
-        position: absolute;
-        top: 30%;
-        left: 50%;
-        width: 30%;
-        height: 80px;
-        margin-left: -20%;
-        margin-top: -25px;
-        padding-top: 20px;
-        text-align: center;
-        font-size: 1.7em;
-        background-color:White;
-    }
-    /*.dataTables_wrapper .dt-buttons {
-        float:right;
-        text-align:center;
-    }
-    .dataTables_length{
-        float:left;
-    }
-    .dataTables_filter{
-        display: none;
-    }*/
-</style>
-@endpush
-@push('css')
-<style type="text/css">
-    {{-- removing the links in print and adding each page header --}}
-    a[href]:after { content: none !important; }
-    thead {display: table-header-group;}
 
-    /*making place holder custom*/
-    input::-webkit-input-placeholder {
-        color: black;
-        font-weight: bold;
-        font-size: 12px;
-    }
-    input:-moz-placeholder {
-        color: black;
-        font-weight: bold;
-        font-size: 12px;
-    }
-    input:-ms-input-placeholder {
-        color: black;
-        font-weight: bold;
-        font-size: 12px;
-    }
-    th{
-        font-size: 12px;
-        font-weight: bold;
-    }
-</style>
-@endpush
 <div class="main-content">
 	<div class="main-content-inner">
 		<div class="breadcrumbs ace-save-state" id="breadcrumbs">
@@ -71,8 +17,81 @@
 			</ul><!-- /.breadcrumb -->
 		</div>
 
+        @include('inc/message')
 		<div class="page-content">
-            @include('inc/message')
+            {{-- <div class="panel">
+		    	<div class="panel-body">
+		    		
+			    	<div class="row justify-content-center">
+	                   <div class="col-md-3">
+	                      <div class="training-block d-flex align-items-center">
+	                         <div class="rounded-circle iq-card-icon iq-bg-primary">
+	                            <i class="fa fa-user"></i>
+	                         </div>
+	                         <div class="ml-3">
+	                            <h5 class="">Total Employee</h5>
+	                            <p class="mb-0">{{ ($reportCount->employee->total?$reportCount->employee->total:0) }}</p>
+	                         </div>
+	                      </div>
+	                   </div>
+	                   <div class="col-md-3">
+	                      <div class="training-block d-flex align-items-center">
+	                         <div class="rounded-circle iq-card-icon iq-bg-primary">
+	                            <i class="fa fa-user"></i>
+	                         </div>
+	                         <div class="ml-3">
+	                            <h5 class="">Today's Join</h5>
+	                            <p class="mb-0">{{ ($reportCount->employee->todays_join?$reportCount->employee->todays_join:0) }}</p>
+	                         </div>
+	                      </div>
+	                   </div>
+	                   <div class="col-md-3">
+	                      <div class="training-block d-flex align-items-center">
+	                         <div class="rounded-circle iq-card-icon iq-bg-primary">
+	                            <i class="fa fa-user"></i>
+	                         </div>
+	                         <div class="ml-3">
+	                            <h5 class="">Males</h5>
+	                            <p class="mb-0">{{ ($reportCount->employee->males?$reportCount->employee->males:0) }}</p>
+	                         </div>
+	                      </div>
+	                   </div>
+	                   <div class="col-md-3">
+	                      <div class="training-block d-flex align-items-center">
+	                         <div class="rounded-circle iq-card-icon iq-bg-primary">
+	                            <i class="fa fa-user"></i>
+	                         </div>
+	                         <div class="ml-3">
+	                            <h5 class="">Females</h5>
+	                            <p class="mb-0">{{ ($reportCount->employee->females?$reportCount->employee->females:0) }}</p>
+	                         </div>
+	                      </div>
+	                   </div>
+	                   <div class="col-md-3">
+	                      <div class="training-block d-flex align-items-center">
+	                         <div class="rounded-circle iq-card-icon iq-bg-primary">
+	                            <i class="fa fa-user"></i>
+	                         </div>
+	                         <div class="ml-3">
+	                            <h5 class="">OT</h5>
+	                            <p class="mb-0">{{ ($reportCount->employee->ot?$reportCount->employee->ot:0) }}</p>
+	                         </div>
+	                      </div>
+	                   </div>
+	                   <div class="col-md-3">
+	                      <div class="training-block d-flex align-items-center">
+	                         <div class="rounded-circle iq-card-icon iq-bg-primary">
+	                            <i class="fa fa-user"></i>
+	                         </div>
+	                         <div class="ml-3">
+	                            <h5 class="">Non OT</h5>
+	                            <p class="mb-0">{{ ($reportCount->employee->non_ot?$reportCount->employee->non_ot:0) }}</p>
+	                         </div>
+	                      </div>
+	                   </div>
+	                </div>
+		    	</div>
+		    </div> --}}
  			<div class="panel ">
                 
                 <div class="panel-body pb-0">
@@ -112,50 +131,28 @@
 		            </form>
 		        </div>
 		    </div>
+		    
 
 			<div class="panel ">	
 				<div class="panel-heading"><h6>Employee List</h6></div> 	
-				<div class="col-12 pt-3 pb-3">
-					<div class="widget-header">
-						<div class="row">
-							<ul class="list-unstyled col-4">
-								<li><strong>Total Employee:</strong>
-								{{ ($reportCount->employee->total?$reportCount->employee->total:0) }}</li>
-								<li><strong>Today's Join:</strong>
-								{{ ($reportCount->employee->todays_join?$reportCount->employee->todays_join:0) }}</li>
-							</ul>
-							<ul class="list-unstyled col-4">
-								<li><strong>Males:</strong>
-								{{ ($reportCount->employee->males?$reportCount->employee->males:0) }}</li>
-								<li><strong>Females:</strong>
-								{{ ($reportCount->employee->females?$reportCount->employee->females:0) }}</li>
-							</ul>
-							<ul class="list-unstyled col-4">
-								<li><strong>Non OT:</strong>
-								{{ ($reportCount->employee->non_ot?$reportCount->employee->non_ot:0) }}</li>
-								<li><strong>OT:</strong>
-								{{ ($reportCount->employee->ot?$reportCount->employee->ot:0) }}</li>
-							</dl>
-						</div>
-					</div>
-				</div>
 				
-				<div class="col-12 worker-list">
+				
+				<div class="col-12 worker-list pb-3 pt-3">
 					<table id="dataTables" class="table table-striped table-bordered" style="display: block;overflow-x: auto;white-space: nowrap; width: 100%;">
 						<thead>
 							<tr>
 								<th>ID</th>
 								<th>Action</th>
-								<th>Status</th>
 								<th>Associate ID</th>
+								<th>Name</th>
+								<th>Designation</th>
+								<th>Status</th>
 								<th>Oracle ID</th>
 								<th>RFID</th>
-								<th>Name</th>
 								<th>Employee Type</th>
 								<th id="floor">Floor</th>
 								<th id="line">Line</th>
 								<th>Department</th>
-								<th>Designation</th>
 								<th>Gender</th>
 								<th>OT Status</th>
 							</tr>
@@ -241,18 +238,18 @@ $(document).ready(function()
 		    columns: [
 		        {data:'serial_no', name: 'serial_no'},
 		        {data:'action', name: 'action', orderable: false, searchable: false},
-		        {data:'as_status', name: 'as_status'},
 		        {data:'associate_id', name: 'associate_id'},
+		        {data:'as_name',  name: 'as_name'},
+		        {data:'hr_designation_name', name: 'hr_designation_name', orderable: false},
+		        {data:'as_status', name: 'as_status'},
 		        {data:'as_oracle_code', name: 'as_oracle_code'},
 		        {data:'as_rfid_code', name: 'as_rfid_code'},
-		        {data:'as_name',  name: 'as_name'},
 		        {data:'hr_emp_type_name', name: 'hr_emp_type_name', orderable: false},
 		        {data:'hr_floor_name', name: 'hr_floor_name', orderable: false},
 		        {data:'hr_line_name',  name: 'hr_line_name', orderable: false},
 
 
 		        {data:'hr_department_name',  name: 'hr_department_name', orderable: false},
-		        {data:'hr_designation_name', name: 'hr_designation_name', orderable: false},
 
 		        {data:'as_gender', name: 'as_gender', orderable: false,},
 		        {data:'as_ot', name: 'as_ot', orderable: false}

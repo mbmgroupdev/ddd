@@ -76,7 +76,7 @@
                     
                     <div class="panel panel-info pb-3">
                         <div class="panel-body">
-                            <table id="dataTables" class="table table-striped table-bordered" style="display: block;overflow-x: auto;width: 100%;" >
+                            <table id="global-datatable" class="table table-striped table-bordered" style="display: block;overflow-x: auto;width: 100%;" >
                                 <thead>
                                     <th width="20%">Bonus for</th>
                                     <th width="20%">Month</th>
@@ -256,18 +256,6 @@
 
     });
 
-$(document).ready(function(){ 
-
-    $('#dataTables').DataTable({
-       // "scrollY": true,
-       // "scrollX": true
-       pagingType: "full_numbers" ,
-        // searching: false,
-        // "lengthChange": false,
-        // 'sDom': 't' 
-        "sDom": 'lftrip'
-    });
-});
 </script>
 @endpush
 @endsection

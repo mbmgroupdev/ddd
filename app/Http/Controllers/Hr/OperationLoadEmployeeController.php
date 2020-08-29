@@ -79,12 +79,7 @@ class OperationLoadEmployeeController extends Controller
         		}else{
         			$shiftCode = $employee->as_shift_id.' - Default';
         		}
-        		$defaultImage = ($employee->as_gender == 'Female'?'/assets/images/user/1.jpg':'/assets/images/user/09.jpg');
-        		if($employee->as_pic != null && file_exists($employee->as_pic)){
-        			$image = $employee->as_pic;
-        		}else{
-        			$image = $defaultImage;
-        		}
+                $image = emp_profile_picture($employee);
         		$data['total'] += 1;
                 $data['result'].= "<tr class='add'><td><input type='checkbox' value='$employee->associate_id' name='assigned[$employee->as_id]'/></td><td><span class=\"lbl\"> <img src='".$image."' class='small-image' onError='this.onerror=null;this.src=\"$defaultImage\";' style='height:40px;width:auto'> </span></td><td><span class=\"lbl\"> $employee->associate_id</span></td><td>$employee->as_name </td><td>$shiftCode </td></tr>";
         	}
