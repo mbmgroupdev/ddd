@@ -362,7 +362,7 @@ p{
     text-align:left; margin-bottom: 10px;
 }
 .table td {
-  padding: 0.40rem 0.75rem;
+    padding: 3px 10px;
 }
 input[type="date" i] {
   padding:5px;
@@ -568,6 +568,25 @@ div#choice_2_div {
 }
 .search-result-div:nth-child(4n) {
     padding-right: 15px !important;
+}
+.app-loader{
+    display: none;
+    position: fixed;
+    height: 100vh;
+    background: #000;
+    z-index: 1000;
+    width: 100%;
+    top: 0;
+    opacity: 0.6;
+    padding: 30%;
+    text-align: center;
+}
+.app-loader i{
+    position: fixed;
+    top: 50%;
+    color: #d29100;
+    text-align: center;
+    font-size: 80px;
 }
 #printButton.btn-info {
     margin-top: -30px;

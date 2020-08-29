@@ -318,7 +318,7 @@
                     @yield('content')
                 </main>
                 <!-- Footer -->
-                {{-- <footer class="bg-white iq-footer">
+                <footer class="bg-white iq-footer">
                    <div class="container-fluid">
                       <div class="row">
                          <div class="col-lg-6">
@@ -332,8 +332,11 @@
                          </div>
                       </div>
                    </div>
-                </footer> --}}
+                </footer>
                 <!-- Footer END -->
+            </div>
+            <div class="app-loader">
+                <i class="fa fa-spinner fa-spin"></i>
             </div>
             
 

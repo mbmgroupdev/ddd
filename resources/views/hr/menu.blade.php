@@ -204,24 +204,17 @@
             </ul>
          </li>
          
-         <li>
+         <li class="@if($segment2 == 'setup') active @endif">
             <a href="#settings" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="las la-cog"></i><span>Settings</span><i class="las la-angle-right iq-arrow-right"></i></a>
             <ul id="settings" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+               <li class="@if($segment3 == 'unit' || $segment3 == 'location' || $segment3 == 'floor' || $segment3 == 'line' || $segment3 == 'shift' || $segment3 == 'department' || $segment3 == 'section' || $segment3 == 'subsection') active @endif"><a  href="{{ url('hr/setup/unit') }}"><i class="las la-city"></i>Library Setup</a></li>
                {{-- <li><a href="{{ url('') }}"><i class="ri-file-list-fill"></i>Basic Settings</a></li> --}}
-               <li><a href="{{ url('hr/setup/salary_structure') }}"><i class="las la-coins"></i>Salary Structure</a></li>
-               <li><a href="{{ url('hr/setup/bonus_type') }}"><i class="las la-gifts"></i>Bonus</a></li>
-               <li><a href="{{ url('hr/setup/attendancebonus') }}"><i class="las la-gifts"></i>Attendance Bonus</a></li>
-               <li><a href="{{ url('hr/settings/unit') }}"><i class="las la-city"></i>Unit</a></li>
-               <li><a href="{{ url('hr/setup/location') }}"><i class="las la-city"></i>Location</a></li>
-               <li><a href="{{ url('hr/setup/floor') }}"><i class="las la-city"></i>Floor</a></li>
-               <li><a href="{{ url('hr/setup/line') }}"><i class="las la-city"></i>Line</a></li>
-               <li><a href="{{ url('hr/setup/shift') }}"><i class="las la-city"></i>Shift</a></li>
-               <li><a href="{{ url('hr/setup/department') }}"><i class="las la-city"></i>Department</a></li>
-               <li><a href="{{ url('hr/setup/section') }}"><i class="las la-city"></i>Section</a></li>
-               <li><a href="{{ url('hr/setup/subsection') }}"><i class="las la-city"></i>Sub Section</a></li>
-               <li><a href="{{ url('hr/setup/designation') }}"><i class="las la-user-tie"></i>Designation</a></li>
-               <li><a href="{{ url('hr/setup/education_title') }}"><i class="las la-school"></i>Education</a></li>
-               <li><a href="{{ url('hr/setup/loan_type') }}"><i class="las la-comment-dollar"></i>Loan</a></li>
+               <li class="@if($segment3 == 'salary_structure') active @endif"><a  href="{{ url('hr/setup/salary_structure') }}"><i class="las la-coins"></i>Salary Structure</a></li>
+               <li class="@if($segment3 == 'bonus_type') active @endif"><a  href="{{ url('hr/setup/bonus_type') }}"><i class="las la-gifts"></i>Bonus</a></li>
+               <li class="@if($segment3 == 'attendancebonus') active @endif"><a  href="{{ url('hr/setup/attendancebonus') }}"><i class="las la-gifts"></i>Attendance Bonus</a></li>
+               <li class="@if($segment3 == 'designation') active @endif"><a  href="{{ url('hr/setup/designation') }}"><i class="las la-user-tie"></i>Designation</a></li>
+               <li class="@if($segment3 == 'education_title') active @endif"><a  href="{{ url('hr/setup/education_title') }}"><i class="las la-school"></i>Education</a></li>
+               <li class="@if($segment3 == 'loan_type') active @endif"><a  href="{{ url('hr/setup/loan_type') }}"><i class="las la-comment-dollar"></i>Loan</a></li>
             </ul>
          </li>
       </ul>
