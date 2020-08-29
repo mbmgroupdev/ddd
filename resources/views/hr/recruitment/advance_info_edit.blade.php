@@ -278,26 +278,24 @@
                                            
                                             
                                         </div>
-                                        <div class="col-sm-4">
+                                        <div class="col-sm-4 form-group-file">
                                             
                                             <div class="form-group ">
-                                                <label class="col-sm-3 control-label no-padding-right no-padding-top" for="emp_adv_info_birth_cer">Birth Certificate<br> <span>(pdf|doc|docx|jpg|jpeg|png)</span> </label>
-                                                <div class="col-sm-9">
+                                                <label  for="emp_adv_info_birth_cer">Birth Certificate<br><span class="text-danger">(pdf|doc|docx|jpg|jpeg|png)</span></label>
                                                     @if(!empty($advance->emp_adv_info_birth_cer))
                                                     <a href="{{ url($advance->emp_adv_info_birth_cer) }}" class="btn btn-xs btn-primary" target="_blank" title="View"><i class="fa fa-eye"></i> View</a>
                                                     <a href="{{ url($advance->emp_adv_info_birth_cer) }}" class="btn btn-xs btn-success" target="_blank" download title="Download"><i class="fa fa-download"></i> Download</a>
                                                     @else
                                                         <strong class="text-danger">No file found!</strong>
                                                     @endif
-                                                    <input type="file" name="emp_adv_info_birth_cer" id="emp_adv_info_birth_cer" data-validation="mime" data-validation-allowing="docx,doc,pdf,jpeg,png,jpg"  data-validation-error-msg-mime="You can only upload docx, doc, pdf, jpeg, jpg or png type file">
-                                                    <span id="file_upload_error1" class="red" style="display: none; font-size: 13px;">Only <strong>docx, doc, pdf, jpeg, jpg or png </strong>type file supported(<1MB).</span>
-
-                                                </div>
+                                                    <div class="file-zone-emp">
+                                                        <input type="file" class="file-type-validation" name="emp_adv_info_birth_cer" id="emp_adv_info_birth_cer"  data-validation-allowing="docx,doc,pdf,jpeg,png,jpg">
+                                                        <span id="file_upload_error1" class="red" style="display: none; font-size: 13px;">Only <strong>docx, doc, pdf, jpeg, jpg or png </strong>type file supported(<1MB).</span>
+                                                    </div>
                                             </div>
 
                                             <div class="form-group ">
-                                                <label class="col-sm-3 control-label no-padding-right no-padding-top" for="emp_adv_info_city_corp_cer">City Corp. Certificate <br><span>(pdf|doc|docx|jpg|jpeg|png)</span> </label>
-                                                <div class="col-sm-9">
+                                                <label  for="emp_adv_info_city_corp_cer">City Corp. Certificate <br><span class="text-danger">(pdf|doc|docx|jpg|jpeg|png)</span> </label>
                                                     @if(!empty($advance->emp_adv_info_city_corp_cer))
                                                     <a href="{{ url($advance->emp_adv_info_city_corp_cer) }}" class="btn btn-xs btn-primary" target="_blank" title="View">
                                                         <i class="fa fa-eye"></i>
@@ -310,15 +308,15 @@
                                                     @else
                                                         <strong class="text-danger">No file found!</strong>
                                                     @endif
-                                                    <input type="file" name="emp_adv_info_city_corp_cer" id="emp_adv_info_city_corp_cer" data-validation="mime " data-validation-allowing="docx,doc,pdf,jpeg,png,jpg" data-validat data-validation-error-msg-mime="You can only upload docx, doc, pdf, jpeg, jpg or png type file">
-                                                    <span id="file_upload_error2" class="red" style="display: none; font-size: 13px;">Only <strong>docx, doc, pdf, jpeg, jpg or png </strong>type file supported(<1MB).</span>
+                                                    <div class="file-zone-emp">
+                                                        <input type="file" class="file-type-validation" name="emp_adv_info_city_corp_cer" id="emp_adv_info_city_corp_cer"  data-validation-allowing="docx,doc,pdf,jpeg,png,jpg" data-validat data-validation-error-msg-mime="You can only upload docx, doc, pdf, jpeg, jpg or png type file">
+                                                        <span id="file_upload_error2" class="red" style="display: none; font-size: 13px;">Only <strong>docx, doc, pdf, jpeg, jpg or png </strong>type file supported(<1MB).</span>
 
-                                                </div>
+                                                    </div>
                                             </div>
 
                                             <div class="form-group ">
-                                                <label class="col-sm-3 control-label no-padding-right no-padding-top" for="emp_adv_info_police_veri">Police Verification<br><span> (pdf|doc|docx|jpg|jpeg|png)</span> </label>
-                                                <div class="col-sm-9">
+                                                <label  for="emp_adv_info_police_veri">Police Verification<br><span class="text-danger"> (pdf|doc|docx|jpg|jpeg|png)</span> </label>
                                                     @if(!empty($advance->emp_adv_info_police_veri))
                                                     <a href="{{ url($advance->emp_adv_info_police_veri) }}" class="btn btn-xs btn-primary" target="_blank" title="View">
                                                         <i class="fa fa-eye"></i>
@@ -331,14 +329,14 @@
                                                     @else
                                                         <strong class="text-danger">No file found!</strong>
                                                     @endif
-                                                    <input type="file" name="emp_adv_info_police_veri" id="emp_adv_info_police_veri" data-validation="mime " data-validation-allowing="docx,doc,pdf,jpeg,png,jpg" data-validat data-validation-error-msg-mime="You can only upload docx, doc, pdf, jpeg, jpg or png type file">
-                                                    <span id="file_upload_error3" class="red" style="display: none; font-size: 13px;">Only <strong>docx, doc, pdf, jpeg, jpg or png </strong>type file supported(<1MB).</span>
-                                                </div>
+                                                    <div class="file-zone-emp">
+                                                        <input type="file" class="file-type-validation" name="emp_adv_info_police_veri" id="emp_adv_info_police_veri"  data-validation-allowing="docx,doc,pdf,jpeg,png,jpg" data-validat data-validation-error-msg-mime="You can only upload docx, doc, pdf, jpeg, jpg or png type file">
+                                                        <span id="file_upload_error3" class="red" style="display: none; font-size: 13px;">Only <strong>docx, doc, pdf, jpeg, jpg or png </strong>type file supported(<1MB).</span>
+                                                    </div>
                                             </div>
                                             
                                             <div class="form-group ">
-                                                <label class="col-sm-3 control-label no-padding-right no-padding-top" for="emp_adv_info_job_app">Job Application<br><span> (pdf|doc|docx|jpg|jpeg|png)</span> </label>
-                                                <div class="col-sm-9">
+                                                <label  for="emp_adv_info_job_app">Job Application<br><span class="text-danger"> (pdf|doc|docx|jpg|jpeg|png)</span> </label>
                                                     @if(!empty($advance->emp_adv_info_job_app))
                                                     <a href="{{ url($advance->emp_adv_info_job_app) }}" class="btn btn-xs btn-primary" target="_blank" title="View">
                                                         <i class="fa fa-eye"></i>
@@ -351,17 +349,16 @@
                                                     @else
                                                         <strong class="text-danger">No file found!</strong>
                                                     @endif
-                                                    <input name="emp_adv_info_job_app" type="file" id="as_job_appl"
-                                                    data-validation="mime "
-                                                    data-validation-allowing="docx,doc,pdf,jpeg,png,jpg"
-                                                    data-validation-error-msg-mime="You can only upload docx, doc, pdf, jpeg, jpg or png type file">
-                                                    <span id="file_upload_error4" class="red" style="display: none; font-size: 13px;">Only <strong>docx, doc, pdf, jpeg, jpg or png </strong>type file supported(<1MB).</span>
-                                                </div>
+                                                    <div class="file-zone-emp">
+                                                        <input name="emp_adv_info_job_app" type="file" class="file-type-validation" id="as_job_appl"
+                                                        
+                                                        data-validation-allowing="docx,doc,pdf,jpeg,png,jpg">
+                                                        <span id="file_upload_error4" class="red" style="display: none; font-size: 13px;">Only <strong>docx, doc, pdf, jpeg, jpg or png </strong>type file supported(<1MB).</span>
+                                                    </div>
                                             </div>
 
                                             <div class="form-group ">
-                                                <label class="col-sm-3 control-label no-padding-right no-padding-top" for="emp_adv_info_cv">Curriculum Vitae<br><span> (pdf|doc|docx|jpg|jpeg|png)</span> </label>
-                                                <div class="col-sm-9">
+                                                <label  for="emp_adv_info_cv">Curriculum Vitae<br><span class="text-danger"> (pdf|doc|docx|jpg|jpeg|png)</span> </label>
                                                     @if(!empty($advance->emp_adv_info_cv))
                                                     <a href="{{ url($advance->emp_adv_info_cv) }}" class="btn btn-xs btn-primary" target="_blank" title="View">
                                                         <i class="fa fa-eye"></i>
@@ -374,18 +371,18 @@
                                                     @else
                                                         <strong class="text-danger">No file found!</strong>
                                                     @endif
-                                                    <input name="emp_adv_info_cv" type="file" id="as_cv"
-                                                    data-validation="mime "
-                                                    data-validation-allowing="docx,doc,pdf,jpeg,png,jpg"
-                                                    data-validation-error-msg-mime="You can only upload docx, doc, pdf, jpeg, jpg or png type file">
-                                                    <span id="file_upload_error5" class="red" style="display: none; font-size: 13px;">Only <strong>docx, doc, pdf, jpeg, jpg or png </strong>type file supported(<1MB).</span>
-                                                </div>
+                                                    <div class="file-zone-emp">
+                                                        <input name="emp_adv_info_cv" type="file" class="file-type-validation" id="as_cv"
+                                                        
+                                                        data-validation-allowing="docx,doc,pdf,jpeg,png,jpg">
+                                                        <span id="file_upload_error5" class="red" style="display: none; font-size: 13px;">Only <strong>docx, doc, pdf, jpeg, jpg or png </strong>type file supported(<1MB).</span>
+                                                    </div>
                                             </div>
 
                                             
                             
                                             <div class="form-group ">
-                                                <label  for="emp_adv_info_finger_print">Finger Print <br><span>(jpg|jpeg|png)</span></label>
+                                                <label  for="emp_adv_info_finger_print">Finger Print <br><span class="text-danger">(jpg|jpeg|png)</span></label>
                                                     @if(!empty($advance->emp_adv_info_finger_print))
                                                     <a href="{{ url($advance->emp_adv_info_finger_print) }}" class="btn btn-xs btn-primary" target="_blank" title="View">
                                                         <i class="fa fa-eye"></i>
@@ -398,17 +395,16 @@
                                                     @else
                                                         <strong class="text-danger">No file found!</strong>
                                                     @endif
-                                                    <div class="file-zone mb-0">  
-                                                        <input name="emp_adv_info_finger_print" type="file" id="finger_print"
-                                                        data-validation="mime "
+                                                    <div class="file-zone-emp mb-0">  
+                                                        <input name="emp_adv_info_finger_print" type="file" class="file-type-validation" id="finger_print"
+                                                        
                                                         data-file-allow="jpeg,png,jpg" >
                                                         <span id="file_upload_error6" class="red" style="display: none; font-size: 13px;">Only <strong>jpeg, jpg or png </strong>type file supported(<512kb).</span>
                                                     </div>
                                             </div>
                             
                                             <div class="form-group ">
-                                                <label  for="emp_adv_info_signature">Signature<br><span> (jpg|jpeg|png)</span> </label>
-                                                <div class="col-sm-9">
+                                                <label  for="emp_adv_info_signature">Signature<br><span class="text-danger"> (jpg|jpeg|png)</span> </label>
                                                     @if(!empty($advance->emp_adv_info_signature))
                                                     <a href="{{ url($advance->emp_adv_info_signature) }}" class="btn btn-xs btn-primary" target="_blank" title="View">
                                                         <i class="fa fa-eye"></i>
@@ -421,17 +417,17 @@
                                                     @else
                                                         <strong class="text-danger">No file found!</strong>
                                                     @endif
-                                                    <input name="emp_adv_info_signature" type="file" id="Signature"
-                                                    data-validation="mime "
-                                                    data-validation-allowing="jpeg,png,jpg"
-                                                    data-validation-error-msg-mime="You can only upload jpeg, jpg or png images">
-                                                    <span id="file_upload_error7" class="red" style="display: none; font-size: 13px;">Only <strong>jpeg, jpg or png </strong>type file supported(<512kb).</span>
-                                                </div>
+                                                    <div class="file-zone-emp">
+                                                        <input name="emp_adv_info_signature" type="file" class="file-type-validation" id="Signature"
+                                                        
+                                                        data-validation-allowing="jpeg,png,jpg"
+                                                        data-validation-error-msg-mime="You can only upload jpeg, jpg or png images">
+                                                        <span id="file_upload_error7" class="red" style="display: none; font-size: 13px;">Only <strong>jpeg, jpg or png </strong>type file supported(<512kb).</span>
+                                                    </div>
                                             </div>
 
                                             <div class="form-group ">
-                                                <label  for="emp_adv_info_auth_sig">Authority Signature<br><span> (jpg|jpeg|png)</span></label>
-                                                <div class="col-sm-9">
+                                                <label  for="emp_adv_info_auth_sig">Authority Signature<br><span class="text-danger"> (jpg|jpeg|png)</span></label>
                                                     @if(!empty($advance->emp_adv_info_auth_sig))
                                                     <a href="{{ url($advance->emp_adv_info_auth_sig) }}" class="btn btn-xs btn-primary" target="_blank" title="View">
                                                         <i class="fa fa-eye"></i>
@@ -444,12 +440,12 @@
                                                     @else
                                                         <strong class="text-danger">No file found!</strong>
                                                     @endif
-                                                    <input name="emp_adv_info_auth_sig" type="file" id="authority_signature" 
-                                                    data-validation="mime "
-                                                    data-validation-allowing="jpeg,png,jpg"
-                                                    data-validation-error-msg-mime="You can only upload jpeg, jpg or png images">
-                                                    <span id="file_upload_error8" class="red" style="display: none; font-size: 13px;">Only <strong>jpeg, jpg or png </strong>type file supported(<512kb).</span>
-                                                </div>
+                                                    <div class="file-zone-emp">
+                                                        <input name="emp_adv_info_auth_sig" type="file" class="file-type-validation" id="authority_signature" 
+                                                        
+                                                        data-validation-allowing="jpeg,png,jpg">
+                                                        <span id="file_upload_error8" class="red" style="display: none; font-size: 13px;">Only <strong>jpeg, jpg or png </strong>type file supported(<512kb).</span>
+                                                    </div>
                                             </div>
                                             <div class="form-group ">
                                                 <button name="approve" class="btn btn-success" type="submit">
@@ -466,92 +462,74 @@
                                <form class="form-horizontal" role="form" method="POST" action="{{ url('hr/recruitment/operation/education_info')}}" enctype="multipart/form-data">
                                     <div class="row">
                                         {{ csrf_field() }} 
-                                        <div class="col-sm-6" style="margin-left: 40px;"> 
+                                        <div class="col-sm-4" > 
 
-                                            <div class="form-group ">
+                                            <div class="form-group has-float-label">
+                                                <input type="text" name="education_as_id" placeholder="Associate's ID" class="form-control" value="{{ (!empty($advance->emp_adv_info_as_id)?$advance->emp_adv_info_as_id:(request()->route('emp_adv_info_as_id'))) }}" readonly /> 
                                                 <label  for="emp_adv_info_as_id"> Associate's ID </label>
-                                                <div class="col-sm-9">
-                                                    <input type="text" name="education_as_id" placeholder="Associate's ID" class="col-xs-12" value="{{ (!empty($advance->emp_adv_info_as_id)?$advance->emp_adv_info_as_id:(request()->route('emp_adv_info_as_id'))) }}" readonly /> 
-                                                </div>
                                             </div>  
 
-                                            <div class="form-group ">
-                                                <label class="col-sm-3 control-label" for="education_level_id"> Education Level </label>
-                                                <div class="col-sm-9">
-                                                    {{ Form::select('education_level_id', $levelList, null, ['placeholder'=>'Select Education Level', 'id'=>'education_level_id', 'style'=> 'width:100%', 'data-validation'=> 'required']) }}
-                                                </div>
+                                            <div class="form-group has-float-label select-search-group">
+                                                {{ Form::select('education_level_id', $levelList, null, ['placeholder'=>'Select Education Level', 'id'=>'education_level_id', 'required'=> 'required']) }}
+                                                <label for="education_level_id"> Education Level </label>
                                             </div>
 
-                                            <div class="form-group hide" id="degrreforPhd">
-                                            <label  for="education_degree_id_1"> Exam/Degree Title </label>
-                                            <div class="col-sm-9"> 
-                                            {{ Form::select('education_degree_id_1', [], null, ['id'=>'education_degree_id_1','style'=> 'width:100%']) }} 
-                                            </div>
+                                            <div class="form-group hide has-float-label select-search-group" id="degrreforPhd">
+                                                {{ Form::select('education_degree_id_1', [], null, ['id'=>'education_degree_id_1']) }}
+                                                <label  for="education_degree_id_1"> Exam/Degree Title </label>
                                             </div>
 
-                                            <div class="form-group hide" id="PhdTitle">
-                                            <label  for="education_degree_id_2">Exam/Degree Title</label>
-                                            <div class="col-sm-9">
-                                            <input name="education_degree_id_2" type="text" id="education_degree_id_2" placeholder="Exam/Degree Title" class="col-xs-12"  data-validation="length custom required" data-validation-length="0-255" data-validation-allowing=" -$&" data-validation-error-msg="Exam/Degree Title is invalid"/>
-                                            </div>
+                                            <div class="form-group hide has-float-label" id="PhdTitle">
+                                                <input name="education_degree_id_2" type="text" id="education_degree_id_2" placeholder="Exam/Degree Title" class="form-control"/>
+                                                <label  for="education_degree_id_2">Exam/Degree Title</label>
                                             </div>
 
-                                            <div class="form-group hide" id="major">
-                                            <label  for="education_major_group_concentation">Concentration/ Major/Group </label>
-                                            <div class="col-sm-9">
-                                            <input name="education_major_group_concentation" type="text" id="education_major_group_concentation" placeholder="Concentration/ Major/Group" class="col-xs-12"  data-validation="required length custom"  data-validation-allowing=" -$&" data-validation-error-msg="Concentration/ Major/Group Name invalid"/>
-                                            </div>
-                                            </div>
-
-                                            <div class="form-group ">
-                                            <label  for="education_institute_name">Institute Name </label>
-                                            <div class="col-sm-9">
-                                            <input name="education_institute_name" type="text" id="education_institute_name" placeholder="Institute Name" class="col-xs-12"  data-validation="length custom required" data-validation-length="0-255" data-validation-allowing=" -$&" data-validation-error-msg="Institute Name is invalid"/>
-                                            </div>
+                                            <div class="form-group hide has-float-label" id="major">
+                                                <label  for="education_major_group_concentation">Concentration/ Major/Group </label>
+                                                <input name="education_major_group_concentation" type="text" id="education_major_group_concentation" placeholder="Concentration/ Major/Group" class="form-control"  required="required" />
+                                            
                                             </div>
 
                                             <div class="form-group has-float-label">
-                                            <label class="col-sm-3 control-label" for="education_result_id"> Result </label>
-                                            <div class="col-sm-9">
-                                            {{ Form::select('education_result_id', $resultList, null, ['placeholder'=>'Select Education Level', 'id'=>'education_result_id', 'style'=> 'width:100%', 'data-validation'=> 'required']) }}
+                                                <label  for="education_institute_name">Institute Name </label>
+                                                <input name="education_institute_name" type="text" id="education_institute_name" placeholder="Institute Name" class="form-control"  required="required" />
                                             </div>
+
+                                            <div class="form-group has-float-label select-search-group">
+                                                {{ Form::select('education_result_id', $resultList, null, ['placeholder'=>'Select Education Level', 'id'=>'education_result_id',  'required'=> 'required']) }}
+                                                <label  for="education_result_id"> Result </label>
                                             </div>
 
                                             <div class="hide" id="cgpa_scale">
+                                                <div class="form-group has-float-label">
+                                                    <input type="text" name="education_result_cgpa" id="education_result_cgpa" placeholder="CGPA" class="form-control" required="required" />
+                                                    <label  for="education_result_cgpa"> CGPA </label>
+                                                </div>
+                                            </div>
+
                                             <div class="form-group has-float-label">
-                                            <label  for="education_result_cgpa"> CGPA </label>
-                                            <div class="col-sm-9">
-                                                <input type="text" name="education_result_cgpa" id="education_result_cgpa" placeholder="CGPA" class="col-xs-12" data-validation="required number"  data-validation-allowing="float" data-validation-error-msg="Invalid CGPA"/>
-                                            </div>
-                                            </div>
-
-                                            <div class="form-group has-float-label">
-                                            <label  for="education_result_scale"> Scale </label>
-                                            <div class="col-sm-9">
-                                                <input type="text" name="education_result_scale" id="education_result_scale" placeholder="Scale" class="col-xs-12" data-validation="required number" data-validation-error-msg="Invalid Scale"/>
-                                            </div>
-                                            </div>
+                                                <input type="text" name="education_result_scale" id="education_result_scale" placeholder="Scale" class="form-control" required="required"/>
+                                                <label  for="education_result_scale"> Scale </label>
                                             </div>
 
 
-                                            <div class="form-group hide" id="division_mark">
-                                            <label  for="education_result_marks"> Marks(%) </label>
-                                            <div class="col-sm-9">
-                                            <input type="text" name="education_result_marks" id="education_result_marks" placeholder="Marks" class="col-xs-12" data-validation="required number" data-validation-error-msg="Invalid Marks"/>
+                                            <div class="form-group hide has-float-label" id="division_mark">
+                                                <input type="text" name="education_result_marks" id="education_result_marks" placeholder="Marks" class="form-control" required="required" />
+                                                <label  for="education_result_marks"> Marks(%) </label>
                                             </div>
                                         </div>
+                                        <div class="col-sm-4" >
 
-                                        <div class="form-group has-float-label">
-                                        <label class="col-sm-3 control-label" for="education_level_title"> Passing Year </label>
-                                        <div class="col-sm-9">
-                                        <select style="width: 100%" name="education_passing_year" id="education_passing_year" data-validation="required">
-                                            <option value="">Selecet Passing Year</option>
-                                            @for($year=1950; $year<=date('Y') ; $year++)
-                                            <option value="{{ $year }}">{{ $year }}</option>
-                                            @endfor
-                                        </select>
-                                        </div>
-                                        </div>
+                                            <div class="form-group has-float-label select-search-group">
+                                                
+                                                <select  name="education_passing_year" id="education_passing_year" data-validation="required">
+                                                    <option value="">Selecet Passing Year</option>
+                                                    @for($year=1950; $year<=date('Y') ; $year++)
+                                                    <option value="{{ $year }}">{{ $year }}</option>
+                                                    @endfor
+                                                </select>
+                                                <label  for="education_level_title"> Passing Year </label>
+                                            </div>
                                         </div>
 
                                         <div class="col-sm-6">
@@ -561,11 +539,6 @@
                                         </table>
                                         </div>
                                     </div>
-                                    <div class="space-4"></div>
-                                    <div class="space-4"></div>
-                                    <div class="space-4"></div>
-                                    <div class="space-4"></div>
-                                    <div class="space-4"></div>
                                     <div class="clearfix form-actions">
                                         <div class="col-md-offset-4 col-md-4">
                                             <button class="btn btn-sm btn-success" type="submit">
@@ -819,37 +792,6 @@ $(document).ready(function()
 
 
     var associate_id = '{{ (request()->route("emp_adv_info_as_id")) }}';
-
-    $('.dropZone').ace_file_input({
-        style: 'well',
-        btn_choose: 'Drop files here or click to choose',
-        btn_change: null,
-        no_icon: 'ace-icon fa fa-cloud-upload',
-        droppable: true,
-        thumbnail: 'fit'//large | fit
-        //,icon_remove:null//set null, to hide remove/reset button
-        /**,before_change:function(files, dropped) {
-            //Check an example below
-            //or examples/file-upload.html
-            return true;
-        }*/
-        /**,before_remove : function() {
-            return true;
-        }*/
-        ,
-        preview_error : function(filename, error_code) {
-            //name of the file that failed
-            //error_code values
-            //1 = 'FILE_LOAD_FAILED',
-            //2 = 'IMAGE_LOAD_FAILED',
-            //3 = 'THUMBNAIL_FAILED'
-            //alert(error_code);
-        }
-
-    }).on('change', function(){
-        //console.log($(this).data('ace_input_files'));
-        //console.log($(this).data('ace_input_method'));
-    });
 
     $('select.associates').select2({
         placeholder: 'Select Associate\'s ID',
