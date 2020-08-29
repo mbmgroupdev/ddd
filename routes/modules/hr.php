@@ -341,7 +341,7 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 	Route::get('hr/timeattendance/shifttable', 'Hr\TimeAttendance\ShiftRoasterController@shiftTable');
 	Route::get('hr/timeattendance/get_associate_by_type_unit_shift', 'Hr\TimeAttendance\ShiftRoasterController@getAssociateByTypeUnitShift');
 	Route::get('hr/timeattendance/get_associate_by_type_unit_shift_roster_ajax', 'Hr\TimeAttendance\ShiftRoasterController@getAssociateByTypeUnitShiftRosterAjax');
-
+	Route::get('hr/operation/shift_assign_date_wise_employee', 'Hr\OperationLoadEmployeeController@getShiftEmployee');
 	//leave list
 	Route::get('hr/timeattendance/all_leaves', 'Hr\TimeAttendance\AllLeavesController@allLeaves')->middleware(['permission:Leave List']);
 	Route::post('hr/timeattendance/all_leaves_data', 'Hr\TimeAttendance\AllLeavesController@allLeavesData')->middleware(['permission:Leave List']);
@@ -350,13 +350,14 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 	Route::get('hr/timeattendance/leave_delete/{id}', 'Hr\TimeAttendance\AllLeavesController@deleteLeave')->middleware(['permission:Manage Leave']);
 	Route::get('hr/timeattendance/leave_approve/{id}', 'Hr\TimeAttendance\AllLeavesController@leaveView')->middleware(['permission:Leave Approve']);
 	Route::post('hr/timeattendance/leave_approve/approve_reject', 'Hr\TimeAttendance\AllLeavesController@leaveStatus')->middleware(['permission:Leave Approve']);
-
-// shift Roaster
-Route::get('hr/operation/holiday-roster', 'Hr\ShiftRoaster\ShiftRoasterController@index')->middleware(['permission:Holiday Roster']);
-Route::get('hr/shift_roaster/roaster_view', 'Hr\ShiftRoaster\ShiftRoasterController@viewRoaster')->middleware(['permission:Holiday Roster']);
-Route::post('hr/shift_roaster/save_roaster', 'Hr\ShiftRoaster\ShiftRoasterController@saveRoaster')->middleware(['permission:Holiday Roster']);
-Route::get('hr/shift_roaster/roaster_view_data', 'Hr\ShiftRoaster\ShiftRoasterController@getRoasterData');
-Route::get('hr/shift_roaster/roaster_save_changes', 'Hr\ShiftRoaster\ShiftRoasterController@roasterSaveChanges');
+	// shift roster assign section
+	Route::post('/hr/operation/shift_roster_assign_action', 'Hr\Operation\ShiftRosterController@assignMulti');
+	// shift Roaster
+	Route::get('hr/operation/holiday-roster', 'Hr\ShiftRoaster\ShiftRoasterController@index')->middleware(['permission:Holiday Roster']);
+	Route::get('hr/shift_roaster/roaster_view', 'Hr\ShiftRoaster\ShiftRoasterController@viewRoaster')->middleware(['permission:Holiday Roster']);
+	Route::post('hr/shift_roaster/save_roaster', 'Hr\ShiftRoaster\ShiftRoasterController@saveRoaster')->middleware(['permission:Holiday Roster']);
+	Route::get('hr/shift_roaster/roaster_view_data', 'Hr\ShiftRoaster\ShiftRoasterController@getRoasterData');
+	Route::get('hr/shift_roaster/roaster_save_changes', 'Hr\ShiftRoaster\ShiftRoasterController@roasterSaveChanges');
 	//Leave approval for worker
 	Route::get('hr/timeattendance/leave-entry',  'Hr\TimeAttendance\LeaveWorkerController@showForm')->middleware(['permission:Manage Leave']);
 	Route::post('hr/timeattendance/leave_worker',  'Hr\TimeAttendance\LeaveWorkerController@saveData')->middleware(['permission:Manage Leave']);

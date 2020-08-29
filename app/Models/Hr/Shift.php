@@ -19,6 +19,11 @@ class Shift extends Model
     	return Shift::where('hr_shift_id', $id)->first();
     }
 
+    public static function getShiftNameGetId($id)
+    {
+        return Shift::select('hr_shift_name')->where('hr_shift_id', $id)->pluck('hr_shift_name')->first();
+    }
+
     public static function checkExistsTimeWiseShift($data)
     {
     	return Shift::

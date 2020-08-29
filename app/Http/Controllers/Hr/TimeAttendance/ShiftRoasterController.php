@@ -35,7 +35,7 @@ class ShiftRoasterController extends Controller
         // $subsectionList = Subsection::where('hr_subsec_status',1)->pluck('hr_subsec_name','hr_subsec_id');
         $areaList = Area::where('hr_area_status',1)->pluck('hr_area_name','hr_area_id');
         // dd($sectionList, $subsectionList);
-        return view('hr/timeattendance/shift_assign', compact('shiftList', 'employeeTypes', 'unitList','areaList'));
+        return view('hr/operation/shift_roster_assign', compact('shiftList', 'employeeTypes', 'unitList','areaList'));
     }
 
     public function getAssociateByTypeUnitShift(Request $request)
@@ -90,6 +90,7 @@ class ShiftRoasterController extends Controller
         ->whereIn('as_unit_id', auth()->user()->unit_permissions())
         // ->limit(5)
         ->get();
+
         // show user id
         $shiftCode = null;
         if ($request->shift != null)
@@ -116,50 +117,54 @@ class ShiftRoasterController extends Controller
 
         foreach($employees as $employee)
         {
-            $todayShift = DB::table('hr_shift_roaster')
-            ->where('shift_roaster_associate_id', $employee->associate_id)
-            ->where('shift_roaster_year', $filter_year)
-            ->where('shift_roaster_month', $filter_month)
-            ->pluck('day_'.$filter_day)
-            ->first();
-            $shift_code = null;
+            if($employee->as_shift_id != null){
+                $todayShift = DB::table('hr_shift_roaster')
+                ->where('shift_roaster_associate_id', $employee->associate_id)
+                ->where('shift_roaster_year', $filter_year)
+                ->where('shift_roaster_month', $filter_month)
+                ->pluck('day_'.$filter_day)
+                ->first();
+                $shift_code = null;
 
-            if(!$todayShift){
-                if($shiftCode) {
-                    if($shiftCode->hr_shift_code == $employee->shift['hr_shift_code']) {
-                        $shift_code = $shiftCode->hr_shift_name.' - Default';
-                        $data['shiftDefaultCount'][$shiftCode->hr_shift_name][$shiftCode->hr_shift_code][] = $employee->shift['hr_shift_name'].' - Default';
+                if(!$todayShift){
+                    if($shiftCode) {
+                        if($shiftCode->hr_shift_code == $employee->shift['hr_shift_code']) {
+                            $shift_code = $shiftCode->hr_shift_name.' - Default';
+                            $data['shiftDefaultCount'][$shiftCode->hr_shift_name][$shiftCode->hr_shift_code][] = $employee->shift['hr_shift_name'].' - Default';
+                        }
+                    } else {
+                        $empShift = Shift::where('hr_shift_code',$employee->shift['hr_shift_code'])->first();
+                        if($empShift) {
+                            $shift_code = $employee->shift['hr_shift_name'].' - Default';
+                            $data['shiftDefaultCount'][$empShift->hr_shift_name][$empShift->hr_shift_code][] = $employee->shift['hr_shift_name'].' - Default';
+                        }
                     }
-                } else {
-                    $empShift = Shift::where('hr_shift_code',$employee->shift['hr_shift_code'])->first();
-                    if($empShift) {
-                        $shift_code = $employee->shift['hr_shift_name'].' - Default';
-                        $data['shiftDefaultCount'][$empShift->hr_shift_name][$empShift->hr_shift_code][] = $employee->shift['hr_shift_name'].' - Default';
+                }else{
+                    // $data['shiftRosterCount2'][] = $todayShift.' - Changed';
+                    if($shiftCode) {
+                        if($todayShift == $shiftCode->hr_shift_name) {
+                            $shift_code = $todayShift.' - Changed';
+                        }
+                    } else {
+                        $empShift = Shift::where('hr_shift_name',$todayShift)->first();
+                        if($empShift) {
+                            $shift_code = $todayShift.' - Changed';
+                            $data['shiftRosterCount'][$empShift->hr_shift_name][$empShift->hr_shift_code][] = $todayShift.' - Changed';
+                        }
                     }
                 }
-            }else{
-                // $data['shiftRosterCount2'][] = $todayShift.' - Changed';
-                if($shiftCode) {
-                    if($todayShift == $shiftCode->hr_shift_name) {
-                        $shift_code = $todayShift.' - Changed';
-                    }
+
+                if($shift_code != null) {
+                    $data['total'] += 1;
+                    $image = ($employee->as_pic == null?'/assets/images/avatars/profile-pic.jpg': $employee->as_pic);
+                    $data['result'].= "<tr class='add'>
+                        <td><input type='checkbox' value='$employee->associate_id' name='assigned[$employee->as_id]'/></td><td><span class=\"lbl\"> <img src='".$image."' class='small-image' onError='this.onerror=null;this.src=\"/assets/images/avatars/avatar2.png\"'> </span></td><td><span class=\"lbl\"> $employee->associate_id</span></td>
+                        <td>$employee->as_name </td><td>$shift_code </td></tr>";
                 } else {
-                    $empShift = Shift::where('hr_shift_name',$todayShift)->first();
-                    if($empShift) {
-                        $shift_code = $todayShift.' - Changed';
-                        $data['shiftRosterCount'][$empShift->hr_shift_name][$empShift->hr_shift_code][] = $todayShift.' - Changed';
-                    }
+                    // $data['no_shift_code'] = $employee->associate_id;
                 }
             }
-            if($shift_code != null) {
-                $data['total'] += 1;
-                $image = ($employee->as_pic == null?'/assets/images/avatars/profile-pic.jpg': $employee->as_pic);
-                $data['result'].= "<tr class='add'>
-                    <td><input type='checkbox' value='$employee->associate_id' name='assigned[$employee->as_id]'/></td><td><span class=\"lbl\"> <img src='".$image."' class='small-image' onError='this.onerror=null;this.src=\"/assets/images/avatars/avatar2.png\"'> </span></td><td><span class=\"lbl\"> $employee->associate_id</span></td>
-                    <td>$employee->as_name </td><td>$shift_code </td></tr>";
-            } else {
-                // $data['no_shift_code'] = $employee->associate_id;
-            }
+
         }
         return $data;
     }

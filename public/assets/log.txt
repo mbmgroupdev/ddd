@@ -1,3 +1,5 @@
+2020-08-27 15:43:22 "17F005001B" Shift Assign Updated for:  1, 
+2020-08-27 15:42:17 "17F005001B" Shift Assign Updated for:  1, 
 2020-08-27 11:41:55 "17F005001B" Training Activated 1
 2020-08-27 11:41:50 "17F005001B" Training Inactivated 1
 2020-08-27 11:06:48 "17F005001B" Training Entry Saved 
