@@ -15,10 +15,10 @@ class UnitController extends Controller
 
     public function unit()
     {
-        //ACL::check(["permission" => "hr_setup"]);
-        #-----------------------------------------------------------#
-        $units= Unit::all();
-    	return view('hr/setup/unit', compact('units'));
+        $units= Unit::get();
+        $trashed= Unit::onlyTrashed();
+
+        return view('hr/settings/unit', compact('units','trashed'));
     }
 
     public function unitStore(Request $request)

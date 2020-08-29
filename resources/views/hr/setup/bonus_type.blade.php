@@ -75,7 +75,6 @@
                 <div class="col-sm-7">
                     
                     <div class="panel panel-info pb-3">
-                      <div class="panel-heading"><h6>Bonus Library List</h6></div> 
                         <div class="panel-body">
                             <table id="dataTables" class="table table-striped table-bordered" style="display: block;overflow-x: auto;width: 100%;" >
                                 <thead>
