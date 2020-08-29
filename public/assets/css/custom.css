@@ -620,3 +620,9 @@ div#choice_2_div {
 #v-pills-tab .nav-link{
     text-align: left;
 }
+.form-group-file label{
+    display: block;
+}
+.h-min-400{
+    min-height: 400px;
+}
