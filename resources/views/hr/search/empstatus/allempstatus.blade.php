@@ -26,7 +26,7 @@
         $resultEmpList = [];
         if(!empty($empList)){
         	foreach($empList as $type=>$list) {
-				$resultEmpList[ucfirst(Custom::getEmpStatusName($type))] = count($list);
+				$resultEmpList[ucfirst(emp_status_name($type))] = count($list);
         	}
     	}
     	@endphp
@@ -46,7 +46,7 @@
 						<div class="widget-box widget-color-green2">
 							<div class="widget-header">
 								<h5 class="widget-title bigger lighter">
-									{{ucfirst(Custom::getEmpStatusName($statusType))}}
+									{{ucfirst(emp_status_name($statusType))}}
 								</h5>
 							</div>
 

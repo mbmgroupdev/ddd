@@ -68,7 +68,7 @@
 					<div class="widget-body">
 						<div class="widget-main center">
 							<span class="infobox-data-number">
-							{{ Custom::numberToTime($otTotal) }} 
+							{{ num_to_time($otTotal) }} 
 							Hour
 						</div>
 					</div>

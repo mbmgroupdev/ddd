@@ -39,9 +39,9 @@
                 <li>Employee Join</li>
             @else
                 @php
-                    $reportStatus = ucfirst(Custom::getEmpStatusName($status));
+                    $reportStatus = ucfirst(emp_status_name($status));
                 @endphp
-                <li>{{ucfirst(Custom::getEmpStatusName($status))}}</li>
+                <li>{{ucfirst(emp_status_name($status))}}</li>
             @endif
             <li class="active"> Employee List</li>
         </ul><!-- /.breadcrumb -->
@@ -58,7 +58,7 @@
                                 <th>Sl. No</th>
                                 <th>Associate ID</th>
                                 <th>Name</th>
-                                <th>Date of {{$status == 'join'?'Join':ucfirst(Custom::getEmpStatusName($status))}}</th>
+                                <th>Date of {{$status == 'join'?'Join':ucfirst(emp_status_name($status))}}</th>
                             </tr>
                         </thead>
                     </table>

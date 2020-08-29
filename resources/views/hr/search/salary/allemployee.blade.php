@@ -72,7 +72,7 @@
         
         <div class="row choice_2_div" id="choice_2_div" name="choice_2_div">
                 <div class="col-sm-12">
-                    <table id="dataTables" class="table table-striped table-bordered">
+                    <table id="dataTables" class="table table-striped table-bordered" style="width:100%;">
                         <thead>
                             <tr>
                                 <th>Sl</th>

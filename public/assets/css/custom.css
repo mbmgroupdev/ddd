@@ -51,7 +51,7 @@ hr {
     }
     .search-result-all{margin: 0;}
     .search-result-div{}
-    #searchContent .panel-info{min-height: 300px;}
+    #searchContent .panel-info{min-height: 300px;padding-bottom: 20px;}
     
     @media only screen and (max-width: 767px) {
         #form_search_div{margin-top: 50px;}
@@ -258,6 +258,9 @@ table th input{
     border-radius: 5px !important;
     text-align: center !important;
 }
+.choice_2_div table th input{
+    width: 100px;
+}
 .panel-heading{
     padding: 10px 15px;
     border-bottom: 1px solid transparent;
@@ -359,7 +362,7 @@ p{
     text-align:left; margin-bottom: 10px;
 }
 .table td {
-  padding: 0.40rem 0.75rem;
+    padding: 3px 10px;
 }
 input[type="date" i] {
   padding:5px;
@@ -501,10 +504,11 @@ div.dataTables_wrapper div.dataTables_paginate{
     box-shadow: none;
     margin: 3px 0;
 }
-.widget-color-green2>.widget-header {
+.widget-box>.widget-header {
     background: var(--theme-color);
     border-color: var(--theme-color);
     border-radius: 10px 10px 0 0;
+    text-align: center;
 }
 .widget-header {
     -webkit-box-sizing: content-box;
@@ -564,6 +568,25 @@ div#choice_2_div {
 }
 .search-result-div:nth-child(4n) {
     padding-right: 15px !important;
+}
+.app-loader{
+    display: none;
+    position: fixed;
+    height: 100vh;
+    background: #000;
+    z-index: 1000;
+    width: 100%;
+    top: 0;
+    opacity: 0.6;
+    padding: 30%;
+    text-align: center;
+}
+.app-loader i{
+    position: fixed;
+    top: 50%;
+    color: #d29100;
+    text-align: center;
+    font-size: 80px;
 }
 #printButton.btn-info {
     margin-top: -30px;

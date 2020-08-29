@@ -1,0 +1,1466 @@
+<div id="generate-report" class="result-data"><div id="PrintArea">
+    <div class="panel">
+        <div class="panel-body">
+            <p>Run Time:&nbsp;Thursday&nbsp;August &nbsp;27 &nbsp;2020 &nbsp;04:08 pm</p>
+            <h2 class="center">MBM GARMENTS LTD.</h2>
+            <h4 class="center">Attendance Summary Report: 2020-06-23</h4>
+            <table class="table table-bordered table-hover table-head" width="100%" cellpadding="0" cellspacing="0">
+                <tbody><tr>
+                    <th width="25%" style="text-align: left; padding: 5px;"> Summary : </th>
+                    <td width="15%" style="border: 1px; text-align: center; padding: 5px;">Employee</td>
+                    <td width="15%" style="border: 1px; text-align: center; padding: 5px;">Present</td>
+                    <td width="15%" style="border: 1px; text-align: center; padding: 5px;">Absent</td>
+                    <td width="15%" style="border: 1px; text-align: center; padding: 5px;">Leave</td>
+                    <td width="15%" style="border: 1px; text-align: center; padding: 5px;">Holiday</td>
+
+                </tr>
+            
+
+                <tr>
+                    
+                    <th width="25%" style="text-align: left; padding: 5px;">NON OT Employee : </th>
+                    <td width="15%" style="text-align: center; padding: 5px;">1338</td>
+                    <td width="15%" style="text-align: center; padding: 5px;">1202</td>
+                    <td width="15%" style="text-align: center; padding: 5px;">130</td>
+                    <td width="15%" style="text-align: center; padding: 5px;">1</td>
+                    <td width="15%" style="text-align: center; padding: 5px;"></td>
+
+                </tr>
+                <tr>
+                    <th width="25%" style="text-align: left; padding: 5px;">OT Employee : </th>
+                    <td width="15%" style="text-align: center; padding: 5px;">344</td>
+                    <td width="15%" style="text-align: center; padding: 5px;">223</td>
+                    <td width="15%" style="text-align: center; padding: 5px;">116</td>
+                    <td width="15%" style="text-align: center; padding: 5px;">1</td>
+                    <td width="15%" style="text-align: center; padding: 5px;"></td>
+
+                </tr>
+                <tr>
+                    <th bgcolor="#C2C2C2" width="25%" style="text-align: left; padding: 5px;">Total:</th>
+                    <td bgcolor="#C2C2C2" width="15%" style="text-align: center; padding: 5px;">1682</td>
+                    <td bgcolor="#C2C2C2" width="15%" style="text-align: center; padding: 5px;">1425</td>
+                    <td bgcolor="#C2C2C2" width="15%" style="text-align: center; padding: 5px;">246</td>
+                    <td bgcolor="#C2C2C2" width="15%" style="text-align: center; padding: 5px;">2</td>
+                    <td bgcolor="#C2C2C2" width="15%" style="text-align: center; padding: 5px;"></td>
+
+                </tr>
+            </tbody></table>
+            <div style="margin: 10px;"></div>
+            <h3 style="margin-top: 20px; margin-bottom: 20px;">OT Holder List:</h3>
+            <div class=" non_ot_holder_list">
+                <table class="table table-bordered table-hover table-head" cellpadding="0" cellspacing="0" border="1" width="100%">
+                    <thead>
+                        <tr class="alert-info tbl-header">
+                            <th style="text-align: center; padding: 10px;">Sl</th>
+                            <th style="text-align: center; padding: 10px;">Area</th>
+                            <th style="text-align: center; padding: 10px;">Section</th>
+                            <th style="text-align: center; padding: 10px;">Sub Section</th>
+                            <th width="7%" style="text-align: center; padding: 10px;">Enroll</th>
+                            <th width="7%" style="text-align: center; padding: 10px;">Present</th>
+                            <th width="7%" style="text-align: center; padding: 10px;">Absent</th>
+                            <th width="7%" style="text-align: center; padding: 10px;">Leave</th>
+                            <th width="7%" style="text-align: center; padding: 10px;">Holiday</th>
+                            <th width="7%" style="text-align: center; padding: 10px;">Absent%</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                                                                                                                                                                                                                                                                                                                                                                                                    
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">1</th>
+                                        <th style="text-align: center; padding: 10px;">Office</th>
+                                        <th style="text-align: center; padding: 10px;">ADMIN</th>
+                                        <th style="text-align: center; padding: 10px;">CLEANER</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">30</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">29</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#d65c14;color:#fff;">
+                                                <span style="font-size:14px;">3</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                            
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">2</th>
+                                        <th style="text-align: center; padding: 10px;">Office</th>
+                                        <th style="text-align: center; padding: 10px;">ADMIN</th>
+                                        <th style="text-align: center; padding: 10px;">SECURITY</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">16</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">14</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">2</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#d65c14;color:#fff;">
+                                                <span style="font-size:14px;">13</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">3</th>
+                                        <th style="text-align: center; padding: 10px;">Office</th>
+                                        <th style="text-align: center; padding: 10px;">ADMIN</th>
+                                        <th style="text-align: center; padding: 10px;">COOKER</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">10</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">10</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#28a745;color:#fff;">
+                                                <span style="font-size:14px;">0</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                            
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">4</th>
+                                        <th style="text-align: center; padding: 10px;">Office</th>
+                                        <th style="text-align: center; padding: 10px;">ADMIN</th>
+                                        <th style="text-align: center; padding: 10px;">TRAINER</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#28a745;color:#fff;">
+                                                <span style="font-size:14px;">0</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">5</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">CUTTING</th>
+                                        <th style="text-align: center; padding: 10px;">CATTER</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">90</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">64</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">26</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#d65c14;color:#fff;">
+                                                <span style="font-size:14px;">29</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">6</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">CUTTING</th>
+                                        <th style="text-align: center; padding: 10px;">LABOR</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#28a745;color:#fff;">
+                                                <span style="font-size:14px;">0</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                                                                                                                                                                                            
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">7</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">SEWING</th>
+                                        <th style="text-align: center; padding: 10px;">IRON</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">48</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">46</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">2</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#d65c14;color:#fff;">
+                                                <span style="font-size:14px;">4</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                            
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">8</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">SEWING</th>
+                                        <th style="text-align: center; padding: 10px;">OPERATOR</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">692</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">635</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">56</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#d65c14;color:#fff;">
+                                                <span style="font-size:14px;">8</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                            
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">9</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">SEWING</th>
+                                        <th style="text-align: center; padding: 10px;">HELPER</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">3</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">3</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#28a745;color:#fff;">
+                                                <span style="font-size:14px;">0</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                                                                    
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">10</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">SEWING</th>
+                                        <th style="text-align: center; padding: 10px;">INPUT MAN &amp; LABOR</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">33</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">32</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#d65c14;color:#fff;">
+                                                <span style="font-size:14px;">3</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                            
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">11</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">SEWING</th>
+                                        <th style="text-align: center; padding: 10px;">MACING</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">2</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">2</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#28a745;color:#fff;">
+                                                <span style="font-size:14px;">0</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                        
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">12</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">FINISHING</th>
+                                        <th style="text-align: center; padding: 10px;">FOLDING</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">19</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">17</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">2</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#d65c14;color:#fff;">
+                                                <span style="font-size:14px;">11</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                            
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">13</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">FINISHING</th>
+                                        <th style="text-align: center; padding: 10px;">FINISHING ASSISTANT</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">164</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">150</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">14</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#d65c14;color:#fff;">
+                                                <span style="font-size:14px;">9</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                                                                    
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">14</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">FINISHING</th>
+                                        <th style="text-align: center; padding: 10px;">IRON MAN</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">24</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">24</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#28a745;color:#fff;">
+                                                <span style="font-size:14px;">0</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                            
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">15</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">FINISHING</th>
+                                        <th style="text-align: center; padding: 10px;">INPUT MAN &amp; LABOR</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#dc3545;color:#fff;">
+                                                <span style="font-size:14px;">100</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">16</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">SAMPLE</th>
+                                        <th style="text-align: center; padding: 10px;">SAMPLE</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">22</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">22</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#28a745;color:#fff;">
+                                                <span style="font-size:14px;">0</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                        
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">17</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">ALL</th>
+                                        <th style="text-align: center; padding: 10px;">ALL PRODUCTION</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#28a745;color:#fff;">
+                                                <span style="font-size:14px;">0</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                                                                                                                                
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">18</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">QUALITY CONTROL</th>
+                                        <th style="text-align: center; padding: 10px;">CUTTING-QI</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">8</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">5</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">3</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#d65c14;color:#fff;">
+                                                <span style="font-size:14px;">38</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                            
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">19</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">QUALITY CONTROL</th>
+                                        <th style="text-align: center; padding: 10px;">SEWING-QI</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">13</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">12</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#d65c14;color:#fff;">
+                                                <span style="font-size:14px;">8</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                                                                                                                                                                            
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">20</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">QUALITY CONTROL</th>
+                                        <th style="text-align: center; padding: 10px;">ALL QUALITY</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">73</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">65</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">8</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#d65c14;color:#fff;">
+                                                <span style="font-size:14px;">11</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                                                                                                                                
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">21</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">WET PROCESS</th>
+                                        <th style="text-align: center; padding: 10px;">WET PROCESS</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">10</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">7</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">3</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#d65c14;color:#fff;">
+                                                <span style="font-size:14px;">30</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">22</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">DRY PROCESS</th>
+                                        <th style="text-align: center; padding: 10px;">ALL WASHING</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">55</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">43</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">7</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            5</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#d65c14;color:#fff;">
+                                                <span style="font-size:14px;">13</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">23</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">LOADING-UNLOADING</th>
+                                        <th style="text-align: center; padding: 10px;">LOADING-UNLOADING</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">12</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">12</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#28a745;color:#fff;">
+                                                <span style="font-size:14px;">0</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">24</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">PRINTER</th>
+                                        <th style="text-align: center; padding: 10px;">PRINTER</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">8</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">5</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">3</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#d65c14;color:#fff;">
+                                                <span style="font-size:14px;">38</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">25</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">ETP</th>
+                                        <th style="text-align: center; padding: 10px;">ETP</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">2</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">2</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#28a745;color:#fff;">
+                                                <span style="font-size:14px;">0</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <tr class="label-info grand_total">
+                            <td colspan="4" style="padding:5px;">Grand Total: </td>
+                            <td style="text-align: right; padding: 5px;" id="grand_e"> 1338 </td>
+                            <td style="text-align: right; padding: 5px;" id="grand_p"> 2404</td>
+                            <td style="text-align: right; padding: 5px;" id="grand_a"> 130</td>
+                            <td style="text-align: right; padding: 5px;" id="grand_l"> 1</td>
+                            <td style="text-align: right; padding: 5px;" id="grand_h"> 5</td>
+                            <td style="text-align: right; padding: 5px;"></td>
+                            
+                        </tr>
+                     
+                    </tbody>
+                </table>
+            </div>
+            <div style="margin: 10px;"></div>
+            <h3 style="margin-top: 20px; margin-bottom: 20px;">Non-OT Holder List:</h3>
+            <div class="non_ot_holder_list">
+                <table class="table table-bordered table-hover table-head" cellpadding="0" cellspacing="0" border="1" width="100%">
+                    <thead>
+                        <tr class="alert-info tbl-header">
+                            <th style="text-align: center; padding: 10px;">Sl</th>
+                            <th style="text-align: center; padding: 10px;">Area</th>
+                            <th style="text-align: center; padding: 10px;">Section</th>
+                            <th style="text-align: center; padding: 10px;">Sub Section</th>
+                            <th width="7%" style="text-align: center; padding: 10px;">Enroll</th>
+                            <th width="7%" style="text-align: center; padding: 10px;">Present</th>
+                            <th width="7%" style="text-align: center; padding: 10px;">Absent</th>
+                            <th width="7%" style="text-align: center; padding: 10px;">Leave</th>
+                            <th width="7%" style="text-align: center; padding: 10px;">Holiday</th>
+                            <th width="7%" style="text-align: center; padding: 10px;">Absent%</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                                                                                                                                                                                    
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">1</th>
+                                        <th style="text-align: center; padding: 10px;">Office</th>
+                                        <th style="text-align: center; padding: 10px;">ADMIN</th>
+                                        <th style="text-align: center; padding: 10px;">ADMIN</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">12</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">10</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">2</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#d65c14;color:#fff;">
+                                                <span style="font-size:14px;">17</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                            
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">2</th>
+                                        <th style="text-align: center; padding: 10px;">Office</th>
+                                        <th style="text-align: center; padding: 10px;">ADMIN</th>
+                                        <th style="text-align: center; padding: 10px;">TRANSPORT</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">29</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">5</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">24</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#dc3545;color:#fff;">
+                                                <span style="font-size:14px;">83</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                            
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">3</th>
+                                        <th style="text-align: center; padding: 10px;">Office</th>
+                                        <th style="text-align: center; padding: 10px;">ADMIN</th>
+                                        <th style="text-align: center; padding: 10px;">CLEANER</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">3</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">2</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#dc3545;color:#fff;">
+                                                <span style="font-size:14px;">67</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                            
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">4</th>
+                                        <th style="text-align: center; padding: 10px;">Office</th>
+                                        <th style="text-align: center; padding: 10px;">ADMIN</th>
+                                        <th style="text-align: center; padding: 10px;">SECURITY</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">5</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">2</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">3</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#dc3545;color:#fff;">
+                                                <span style="font-size:14px;">60</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                            
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">5</th>
+                                        <th style="text-align: center; padding: 10px;">Office</th>
+                                        <th style="text-align: center; padding: 10px;">ADMIN</th>
+                                        <th style="text-align: center; padding: 10px;">FIRST AID</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#28a745;color:#fff;">
+                                                <span style="font-size:14px;">0</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                            
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">6</th>
+                                        <th style="text-align: center; padding: 10px;">Office</th>
+                                        <th style="text-align: center; padding: 10px;">ADMIN</th>
+                                        <th style="text-align: center; padding: 10px;">LIFT OPERATOR</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#28a745;color:#fff;">
+                                                <span style="font-size:14px;">0</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                            
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">7</th>
+                                        <th style="text-align: center; padding: 10px;">Office</th>
+                                        <th style="text-align: center; padding: 10px;">ADMIN</th>
+                                        <th style="text-align: center; padding: 10px;">CARPENTER &amp; PAINTER</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">5</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">5</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#28a745;color:#fff;">
+                                                <span style="font-size:14px;">0</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                            
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">8</th>
+                                        <th style="text-align: center; padding: 10px;">Office</th>
+                                        <th style="text-align: center; padding: 10px;">ADMIN</th>
+                                        <th style="text-align: center; padding: 10px;">COOKER</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">2</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">2</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#28a745;color:#fff;">
+                                                <span style="font-size:14px;">0</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                            
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">9</th>
+                                        <th style="text-align: center; padding: 10px;">Office</th>
+                                        <th style="text-align: center; padding: 10px;">ADMIN</th>
+                                        <th style="text-align: center; padding: 10px;">TRAINER</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">6</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">4</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">2</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#d65c14;color:#fff;">
+                                                <span style="font-size:14px;">33</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                                                                                                                                                                                                                                        
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">10</th>
+                                        <th style="text-align: center; padding: 10px;">Office</th>
+                                        <th style="text-align: center; padding: 10px;">COMPLIANCE</th>
+                                        <th style="text-align: center; padding: 10px;">COMPLIANCE</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#dc3545;color:#fff;">
+                                                <span style="font-size:14px;">100</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                        
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">11</th>
+                                        <th style="text-align: center; padding: 10px;">Office</th>
+                                        <th style="text-align: center; padding: 10px;">PERSONNEL</th>
+                                        <th style="text-align: center; padding: 10px;">PERSONNEL</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">4</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">2</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            2</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#d65c14;color:#fff;">
+                                                <span style="font-size:14px;">50</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                        
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">12</th>
+                                        <th style="text-align: center; padding: 10px;">Office</th>
+                                        <th style="text-align: center; padding: 10px;">MARKETING</th>
+                                        <th style="text-align: center; padding: 10px;">MARKETING</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">3</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">3</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#dc3545;color:#fff;">
+                                                <span style="font-size:14px;">100</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                        
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">13</th>
+                                        <th style="text-align: center; padding: 10px;">Office</th>
+                                        <th style="text-align: center; padding: 10px;">MERCHANDISING</th>
+                                        <th style="text-align: center; padding: 10px;">MERCHANDISER</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">13</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">10</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">3</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#d65c14;color:#fff;">
+                                                <span style="font-size:14px;">23</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                        
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">14</th>
+                                        <th style="text-align: center; padding: 10px;">Office</th>
+                                        <th style="text-align: center; padding: 10px;">ALL</th>
+                                        <th style="text-align: center; padding: 10px;">ALL MERCHANDISE</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">3</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">3</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#28a745;color:#fff;">
+                                                <span style="font-size:14px;">0</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                                                                                                                                                                                            
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">15</th>
+                                        <th style="text-align: center; padding: 10px;">Office</th>
+                                        <th style="text-align: center; padding: 10px;">FINANCE</th>
+                                        <th style="text-align: center; padding: 10px;">FINANCE</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">10</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">3</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">7</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#dc3545;color:#fff;">
+                                                <span style="font-size:14px;">70</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                                                                                                                                                                                            
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">16</th>
+                                        <th style="text-align: center; padding: 10px;">Office</th>
+                                        <th style="text-align: center; padding: 10px;">PURCHASE</th>
+                                        <th style="text-align: center; padding: 10px;">PURCHASE</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">2</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#d65c14;color:#fff;">
+                                                <span style="font-size:14px;">50</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                        
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">17</th>
+                                        <th style="text-align: center; padding: 10px;">Office</th>
+                                        <th style="text-align: center; padding: 10px;">ALL</th>
+                                        <th style="text-align: center; padding: 10px;">ALL FINANCE</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">2</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#d65c14;color:#fff;">
+                                                <span style="font-size:14px;">50</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                        
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">18</th>
+                                        <th style="text-align: center; padding: 10px;">Office</th>
+                                        <th style="text-align: center; padding: 10px;">ALL </th>
+                                        <th style="text-align: center; padding: 10px;">ALL HRM</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">2</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#d65c14;color:#fff;">
+                                                <span style="font-size:14px;">50</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                        
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">19</th>
+                                        <th style="text-align: center; padding: 10px;">Office</th>
+                                        <th style="text-align: center; padding: 10px;">SOFTWARE</th>
+                                        <th style="text-align: center; padding: 10px;">SOFTWARE &amp; DATABASE ADMINISTRATOR</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">5</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">5</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#dc3545;color:#fff;">
+                                                <span style="font-size:14px;">100</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                        
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">20</th>
+                                        <th style="text-align: center; padding: 10px;">Office</th>
+                                        <th style="text-align: center; padding: 10px;">NETWORK</th>
+                                        <th style="text-align: center; padding: 10px;">NETWORK AND HARDWARE</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">4</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            2</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#d65c14;color:#fff;">
+                                                <span style="font-size:14px;">25</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                                                                                    
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">21</th>
+                                        <th style="text-align: center; padding: 10px;">Office</th>
+                                        <th style="text-align: center; padding: 10px;">EXPORT</th>
+                                        <th style="text-align: center; padding: 10px;">EXPORT</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">2</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">2</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#dc3545;color:#fff;">
+                                                <span style="font-size:14px;">100</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                        
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">22</th>
+                                        <th style="text-align: center; padding: 10px;">Office</th>
+                                        <th style="text-align: center; padding: 10px;">IMPORT</th>
+                                        <th style="text-align: center; padding: 10px;">IMPORT</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">18</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">3</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">15</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#dc3545;color:#fff;">
+                                                <span style="font-size:14px;">83</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                        
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">23</th>
+                                        <th style="text-align: center; padding: 10px;">Office</th>
+                                        <th style="text-align: center; padding: 10px;">C&amp;F</th>
+                                        <th style="text-align: center; padding: 10px;">C&amp;F</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#dc3545;color:#fff;">
+                                                <span style="font-size:14px;">100</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                                                                                                                                                                                            
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">24</th>
+                                        <th style="text-align: center; padding: 10px;">Office</th>
+                                        <th style="text-align: center; padding: 10px;">ALL </th>
+                                        <th style="text-align: center; padding: 10px;">ALL COMMERCIAL</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">5</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">2</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">3</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#dc3545;color:#fff;">
+                                                <span style="font-size:14px;">60</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                        
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">25</th>
+                                        <th style="text-align: center; padding: 10px;">Office</th>
+                                        <th style="text-align: center; padding: 10px;">PROJECT MANAGEMENT</th>
+                                        <th style="text-align: center; padding: 10px;">PROJECT MANAGEMENT</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">4</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">4</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#dc3545;color:#fff;">
+                                                <span style="font-size:14px;">100</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">26</th>
+                                        <th style="text-align: center; padding: 10px;">Office</th>
+                                        <th style="text-align: center; padding: 10px;">INTERNAL AUDIT</th>
+                                        <th style="text-align: center; padding: 10px;">INTERNAL AUDIT</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#dc3545;color:#fff;">
+                                                <span style="font-size:14px;">100</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                                                                                                                                                                                                                                                        
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">27</th>
+                                        <th style="text-align: center; padding: 10px;">Office</th>
+                                        <th style="text-align: center; padding: 10px;">ALL</th>
+                                        <th style="text-align: center; padding: 10px;">ALL</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">3</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">3</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#dc3545;color:#fff;">
+                                                <span style="font-size:14px;">100</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                                                                            
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">28</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">CUTTING</th>
+                                        <th style="text-align: center; padding: 10px;">CATTER</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">9</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">8</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#d65c14;color:#fff;">
+                                                <span style="font-size:14px;">11</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                                                                                                                                                                            
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">29</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">CUTTING</th>
+                                        <th style="text-align: center; padding: 10px;">ALL CATTER</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">11</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">9</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">2</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#d65c14;color:#fff;">
+                                                <span style="font-size:14px;">18</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">30</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">SEWING</th>
+                                        <th style="text-align: center; padding: 10px;">IRON</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#28a745;color:#fff;">
+                                                <span style="font-size:14px;">0</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                            
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">31</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">SEWING</th>
+                                        <th style="text-align: center; padding: 10px;">OPERATOR</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">8</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">7</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#d65c14;color:#fff;">
+                                                <span style="font-size:14px;">13</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">32</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">FINISHING</th>
+                                        <th style="text-align: center; padding: 10px;">FOLDING</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#28a745;color:#fff;">
+                                                <span style="font-size:14px;">0</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                            
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">33</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">FINISHING</th>
+                                        <th style="text-align: center; padding: 10px;">FINISHING ASSISTANT</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#dc3545;color:#fff;">
+                                                <span style="font-size:14px;">100</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">34</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">EMBROIDERY</th>
+                                        <th style="text-align: center; padding: 10px;">EMBROIDERY</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">4</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">4</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#28a745;color:#fff;">
+                                                <span style="font-size:14px;">0</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                        
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">35</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">PRODUCTION COUNTER</th>
+                                        <th style="text-align: center; padding: 10px;">PRODUCTION COUNTER</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#28a745;color:#fff;">
+                                                <span style="font-size:14px;">0</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                        
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">36</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">SAMPLE</th>
+                                        <th style="text-align: center; padding: 10px;">SAMPLE</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">4</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">4</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#28a745;color:#fff;">
+                                                <span style="font-size:14px;">0</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                        
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">37</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">ALL</th>
+                                        <th style="text-align: center; padding: 10px;">ALL PRODUCTION</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">7</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">5</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">2</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#d65c14;color:#fff;">
+                                                <span style="font-size:14px;">29</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">38</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">QUALITY CONTROL</th>
+                                        <th style="text-align: center; padding: 10px;">FINISHING-QI</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#28a745;color:#fff;">
+                                                <span style="font-size:14px;">0</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                            
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">39</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">QUALITY CONTROL</th>
+                                        <th style="text-align: center; padding: 10px;">ALL QUALITY</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">32</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">28</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">4</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#d65c14;color:#fff;">
+                                                <span style="font-size:14px;">13</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                            
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">40</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">QUALITY CONTROL</th>
+                                        <th style="text-align: center; padding: 10px;">FINAL AUDITOR</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">6</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">6</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#28a745;color:#fff;">
+                                                <span style="font-size:14px;">0</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                        
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">41</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">WET PROCESS</th>
+                                        <th style="text-align: center; padding: 10px;">WET PROCESS</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">3</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">3</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#28a745;color:#fff;">
+                                                <span style="font-size:14px;">0</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">42</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">DRY PROCESS</th>
+                                        <th style="text-align: center; padding: 10px;">ALL WASHING</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">27</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">25</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">2</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#d65c14;color:#fff;">
+                                                <span style="font-size:14px;">7</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                                                                                                                                
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">43</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">IE</th>
+                                        <th style="text-align: center; padding: 10px;">IE</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">4</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">2</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#d65c14;color:#fff;">
+                                                <span style="font-size:14px;">50</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                        
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">44</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">ELECTRICIAN</th>
+                                        <th style="text-align: center; padding: 10px;">ELECTRICIAN</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">9</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">8</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">1</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#d65c14;color:#fff;">
+                                                <span style="font-size:14px;">11</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                        
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">45</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">MECHANIC</th>
+                                        <th style="text-align: center; padding: 10px;">MECHANIC</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">14</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">11</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">3</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#d65c14;color:#fff;">
+                                                <span style="font-size:14px;">21</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">46</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">ALL</th>
+                                        <th style="text-align: center; padding: 10px;">STORE ALL</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">11</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">9</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">2</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#d65c14;color:#fff;">
+                                                <span style="font-size:14px;">18</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">47</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">LINE CHIEF</th>
+                                        <th style="text-align: center; padding: 10px;">LINE CHIEF</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">9</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">6</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">3</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#d65c14;color:#fff;">
+                                                <span style="font-size:14px;">33</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                                                                                    
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">48</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">SUPERVISOR</th>
+                                        <th style="text-align: center; padding: 10px;">SUPERVISOR</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">19</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">14</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">5</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#d65c14;color:#fff;">
+                                                <span style="font-size:14px;">26</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                        
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">49</th>
+                                        <th style="text-align: center; padding: 10px;">Factory</th>
+                                        <th style="text-align: center; padding: 10px;">TECHNICAL GROUP</th>
+                                        <th style="text-align: center; padding: 10px;">TECHNICAL GROUP</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">11</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">11</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#28a745;color:#fff;">
+                                                <span style="font-size:14px;">0</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                    <tr>
+                                        <th style="text-align: center; padding: 10px;">50</th>
+                                        <th style="text-align: center; padding: 10px;">General Utilities</th>
+                                        <th style="text-align: center; padding: 10px;">BOIL &amp; GEN. OPERATOR</th>
+                                        <th style="text-align: center; padding: 10px;">BOIL &amp; GEN. OPERATOR</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">4</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">4</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        <th width="7%" style="text-align: center; padding: 10px;">0</th>
+                                        
+                                        <th width="7%" style="text-align: center; padding: 10px;">
+                                            0</th>
+                                                                                <th width="7%" style="text-align: center; padding: 5px;background-color:#28a745;color:#fff;">
+                                                <span style="font-size:14px;">0</span>%
+                                        </th>
+                                        
+                                    </tr>
+                                                                                                                                                <tr class="label-info grand_total">
+                            <td colspan="4" style="padding:5px;">Grand Total: </td>
+                            <td style="text-align: right; padding: 5px;" id="grand_e"> 344 </td>
+                            <td style="text-align: right; padding: 5px;" id="grand_p"> 446</td>
+                            <td style="text-align: right; padding: 5px;" id="grand_a"> 116</td>
+                            <td style="text-align: right; padding: 5px;" id="grand_l"> 1</td>
+                            <td style="text-align: right; padding: 5px;" id="grand_h"> 4</td>
+                            <td style="text-align: right; padding: 5px;"></td>
+                            
+                        </tr>
+                     
+                    </tbody>
+                </table>
+            </div> 
+        </div>
+    </div>
+</div></div>

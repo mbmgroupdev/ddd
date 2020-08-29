@@ -122,5 +122,11 @@ $(function() {
         else{
             $(this).parent().find('.file-input-error').remove();
         }
-    });
+    }); 
+
+    $('#dataTables').DataTable({
+        pagingType: "full_numbers" ,
+        "sDom": 'lftip'
+
+    }); 
 });

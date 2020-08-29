@@ -28,7 +28,7 @@
                 <a href="#" class="search_all"> MBM Group </a>
             </li>
             <li>Location</li>
-            <li>{{Custom::getUnitName($location)}}</li>
+            <li>{{get_unit_name_by_id($location)}}</li>
             <li class="active"> Employee List</li>
         </ul><!-- /.breadcrumb -->
     </div>

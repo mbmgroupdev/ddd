@@ -55,7 +55,7 @@
 
 				        		@foreach($statusSalary as $status)
 				        			<tr style="color:#ff0000;">
-										<th>{{ucfirst(Custom::getEmpStatusName($status->as_status))}}</th>
+										<th>{{ucfirst(emp_status_name($status->as_status))}}</th>
 										<th>{{$status->employee}}</th>
 										<th>{{$status->total_payable}}</th>
 									</tr>

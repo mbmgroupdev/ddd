@@ -1,5 +1,3 @@
-
-
 <div class="panel panel-info col-sm-12">
     <div class="breadcrumbs ace-save-state" id="breadcrumbs">
         <ul class="breadcrumb">
