@@ -342,6 +342,7 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 	Route::get('hr/timeattendance/get_associate_by_type_unit_shift', 'Hr\TimeAttendance\ShiftRoasterController@getAssociateByTypeUnitShift');
 	Route::get('hr/timeattendance/get_associate_by_type_unit_shift_roster_ajax', 'Hr\TimeAttendance\ShiftRoasterController@getAssociateByTypeUnitShiftRosterAjax');
 	Route::get('hr/operation/shift_assign_date_wise_employee', 'Hr\OperationLoadEmployeeController@getShiftEmployee');
+	Route::get('hr/operation/holiday_roster_assign_employee', 'Hr\OperationLoadEmployeeController@getHolidayRosterEmployee');
 	//leave list
 	Route::get('hr/timeattendance/all_leaves', 'Hr\TimeAttendance\AllLeavesController@allLeaves')->middleware(['permission:Leave List']);
 	Route::post('hr/timeattendance/all_leaves_data', 'Hr\TimeAttendance\AllLeavesController@allLeavesData')->middleware(['permission:Leave List']);

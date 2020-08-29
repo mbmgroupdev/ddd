@@ -62,7 +62,7 @@
               <div class="panel-heading"><h6>Increment Type List</h6></div> 
                 <div class="panel-body">  
                 <div class="col-sm-offset-2 col-sm-8">
-                    <table id="dataTables" class="table table-striped table-bordered">
+                    <table id="global-datatable" class="table table-striped table-bordered">
                         <thead>
                             <tr>
                                 <th>Increment Type</th>
@@ -90,17 +90,5 @@
 		</div><!-- /.page-content -->
 	</div>
 </div>
-<script type="text/javascript">
-$(document).ready(function(){ 
 
-    $('#dataTables').DataTable({
-        pagingType: "full_numbers" ,
-        // searching: false,
-        // "lengthChange": false,
-        // 'sDom': 't' 
-        "sDom": '<"F"tp>'
-
-    }); 
-});
-</script>
 @endsection

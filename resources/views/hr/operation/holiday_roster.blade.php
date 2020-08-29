@@ -77,12 +77,12 @@
                                     <label  for="otnonot">OT/Non-OT </label>
                                 </div>
                                 <div class="form-group has-float-label select-search-group">
-                                    <select class="form-control" id="current_status" name="current_status">
+                                    <select class="form-control" id="emp_status" name="emp_status">
                                         <option value="">Select Status</option>
                                         <option value="0" >Shift</option>
                                         <option value="1">Roster</option>
                                     </select> 
-                                    <label  for="current_status" style="color: maroon;">Employee Status </label>
+                                    <label  for="emp_status" style="color: maroon;">Employee Status </label>
                                 </div>
                                 <div class="form-group has-float-label select-search-group">
                                     <select class="form-control" id="dayType" name="searchtype">
@@ -284,7 +284,7 @@ $(document).ready(function(){
         "sDom": '<"F"tp>'
     });
     //Filter User
-    $("body").on("keyup", "#AssociateSearch", function() {
+    $("body").on("keyup", "#AssociateSearch", function(e) {
         if(e.keyCode == 13){
             var value = $(this).val().toLowerCase();
             // $('#AssociateTable tr input:checkbox').prop('checked', false);
@@ -316,6 +316,7 @@ $(document).ready(function(){
     var area = $("select[name=area]");
     var department = $("select[name=department]");
     var type = $("select[name=searchtype]");
+    var emp_status = $("select[name=emp_status]");
     var doj = $("#doj");
     var condition = $("select[name=condition]");
     $(".filter").on('click', function(){
@@ -325,7 +326,7 @@ $(document).ready(function(){
         userInfo.html('<th colspan="6" style=\"text-align: center; font-size: 14px; color: green;\">Searching Please Wait...</th>');
 
         $.ajax({
-            url: '{{ url("hr/timeattendance/get_associate_by_type_unit_shift_roster_ajax") }}',
+            url: '{{ url("hr/operation/holiday_roster_assign_employee") }}',
             data: {
                 emp_type: emp_type.val(),
                 otnonot: otnonot.val(),
@@ -337,6 +338,7 @@ $(document).ready(function(){
                 department : department.val(),
                 dates:$('#dates').val(),
                 type:type.val(),
+                shift_roster_status:emp_status.val(),
                 status:$("select[name=status]").val(),
                 doj:doj.val(),
                 condition: condition.val()

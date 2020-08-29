@@ -69,7 +69,7 @@
             <div class="col-sm-8">
                 <div class="panel panel-info">
                     <div class="panel-body table-responsive"  style="margin-bottom: 5px;">
-                        <table id="dataTables" class="table table-bordered  table-hover">
+                        <table id="global-datatable" class="table table-bordered  table-hover">
                             <thead>
                                 <tr>
                                     <th>SL.</th>
@@ -108,13 +108,7 @@
 <script type="text/javascript">
 $(document).ready(function(){ 
 
-    $('#dataTables').DataTable({
-        pagingType: "full_numbers" ,
-        searching: true,
-        // "lengthChange": false,
-        // 'sDom': 't' 
-        "sDom": 'lftip'
-    }); 
+  
     var _token = $('input[name="_token"]').val();
     $('#unit_id').on('change',function(){
         $.ajax({

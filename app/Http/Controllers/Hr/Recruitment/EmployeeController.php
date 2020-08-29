@@ -227,31 +227,21 @@ class EmployeeController extends Controller
         ));
     }
 
-    //get employee data
+
     public function getData(Request $request)
     {
-           // $m_restriction=  auth()->user()->management_permissions(); //dd($m_restriction);
-        //ACL::check(["permission" => "hr_recruitment_employer_list"]);
-        #-----------------------------------------------------------#
-        // auth()->user()->assignRole('power user 3');
-        if(auth()->user()->hasRole('power user 3')){
-          $cantacces = ['power user 2','advance user 2'];
-        }elseif (auth()->user()->hasRole('power user 2')) {
-          $cantacces = ['power user 3','advance user 2'];
-        }elseif (auth()->user()->hasRole('advance user 2')) {
-          $cantacces = ['power user 3','power user 2'];
-        }else{
-          $cantacces = [];
-        }
+        
+        $cantacces = [];
         $userIdNotAccessible = DB::table('roles')
                   ->whereIn('name',$cantacces)
                   ->leftJoin('model_has_roles','roles.id','model_has_roles.role_id')
                   ->pluck('model_has_roles.model_id');
 
-            $asIds = DB::table('users')
+        $asIds = DB::table('users')
                      ->whereIn('id',$userIdNotAccessible)
                      ->pluck('associate_id');
-            //dd($asIds);exit;
+        
+
         $data = DB::table('hr_as_basic_info AS b')
             ->select([
                 DB::raw('b.as_id AS serial_no'),
@@ -276,15 +266,17 @@ class EmployeeController extends Controller
             ->leftJoin('hr_line AS l', 'l.hr_line_id', '=', 'b.as_line_id')
             ->leftJoin('hr_department AS dp', 'dp.hr_department_id', '=', 'b.as_department_id')
             ->leftJoin('hr_designation AS dg', 'dg.hr_designation_id', '=', 'b.as_designation_id')
-            ->where('b.as_unit_id', $request->unit)
+            //->where('b.as_unit_id', $request->unit)
             ->whereNotIn('b.associate_id',$asIds)
             ->where(function ($query) use ($request) {
                 if($request->otnonot != null){
                     $query->where('b.as_ot', '=', $request->otnonot);
                 }
-            })->where(function ($query) use ($request) {
                 if($request->emp_type != ""){
                     $query->where('b.as_emp_type_id', '=', $request->emp_type);
+                }
+                if($request->unit != ""){
+                    $query->where('b.as_unit_id', '=', $request->unit);
                 }
             })
             ->whereNotIn('as_id', auth()->user()->management_permissions())
@@ -294,8 +286,6 @@ class EmployeeController extends Controller
         
         return Datatables::of($data)
             ->editColumn('as_ot', function($user){
-
-               //$ot_id= "<span style='display:none;>". $user->as_ot ."-</span>";
                 if($user->as_ot==1){
                     $ot_id2="OT";
                 }
@@ -328,7 +318,6 @@ class EmployeeController extends Controller
             })
             ->editColumn('action', function ($user) {
 
-                // $return = "<div class=\"btn-group\" style=\"width:104px\">" . ($user->as_status?"<span class='btn btn-xs disabled btn-info'>Active</span>":"<span class='btn btn-xs disabled btn-warning'>Inactive</span>");
                 $return = "<a href=".url('hr/recruitment/employee/show/'.$user->associate_id)." class=\"btn btn-xs btn-success\" data-toggle=\"tooltip\" title=\"View\">
                         <i class=\"ace-icon fa fa-eye bigger-120\"></i>
                     </a>
@@ -1217,7 +1206,6 @@ class EmployeeController extends Controller
             'as_subsection_id'  => 'required',
             'as_shift_id'       => 'required',
             'as_doj'            => 'required|date',
-            'associate_id'      => 'required|max:10|min:10',
             'temp_id'           => 'required|max:6|min:6',
             'as_name'           => 'required|max:128',
             'as_gender'         => 'required|max:10',
