@@ -34,7 +34,7 @@ class ShiftRoasterController extends Controller
       // $subsectionList = Subsection::where('hr_subsec_status',1)->pluck('hr_subsec_name','hr_subsec_id');
       $areaList = Area::where('hr_area_status',1)->pluck('hr_area_name','hr_area_id');
       // dd($sectionList, $subsectionList);
-      return view('hr/shiftroaster/roaster', compact('shiftList', 'employeeTypes', 'unitList','areaList'));
+      return view('hr/operation/holiday_roster', compact('shiftList', 'employeeTypes', 'unitList','areaList'));
 
     }
 

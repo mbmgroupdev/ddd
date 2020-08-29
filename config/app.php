@@ -233,6 +233,10 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'Image' => Intervention\Image\Facades\Image::class,
 
+        // custom
+        'Custom'  => App\Helpers\Custom::class,
+        'EmployeeHelper'  => App\Helpers\EmployeeHelper::class,
+
     ],
 
 ];

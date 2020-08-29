@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 class ShiftRoaster extends Model
 {
     protected $table= 'hr_shift_roaster';
+    protected $primaryKey = 'shift_roaster_id';
+    protected $guarded = [];
 
     public $timestamps= false;
 
