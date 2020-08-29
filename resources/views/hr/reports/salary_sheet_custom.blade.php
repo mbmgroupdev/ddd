@@ -467,7 +467,7 @@
             $('#setFlug').val(0);
             processbar(0);
             $.ajax({
-                url: url+'/hr/reports/salary-sheet-custom-individual-search',
+                url: '{{ url("/hr/reports/salary-sheet-custom-individual-search") }}',
                 type: "GET",
                 data: {
                   _token : _token,
@@ -524,7 +524,7 @@
             processbar(0);
             $.ajax({
                 type: "post",
-                url: url+'/hr/reports/salary-sheet-employee-wise',
+                url: '{{ url("hr/reports/salary-sheet-employee-wise") }}',
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
                 },
@@ -616,7 +616,7 @@
             };
             setTimeout(() => {
                 $.ajax({
-                    url: url+'/hr/reports/ajax_get_employees',
+                    url: '{{ url("/hr/reports/ajax_get_employees") }}',
                     type: "GET",
                     dataType : 'html',
                     data: dataObj,

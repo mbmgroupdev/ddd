@@ -2,7 +2,7 @@
 @section('title', 'Shift Roster Summary')
 @push('css')
   <link rel="stylesheet" href="{{ asset('plugins/DataTables/datatables.css')}}">
-  <link rel="stylesheet" href="{{ asset('assets/css/editor.dataTables.min.css') }}" />
+  {{-- <link rel="stylesheet" href="{{ asset('assets/css/editor.dataTables.min.css') }}" /> --}}
   
 @endpush
 @section('main-content')
@@ -131,7 +131,7 @@
                        <li><span class="color-label lib-holiday"></span><span class="lib-label"> Holiday/Weekend</span></li>
                        <li><span class="color-label lib-ot"></span><span class="lib-label"> OT</span></li>
                     </ul>
-                    <table id="dataTables" class="table table-bordered table-striped" style="width: 100%; overflow-x: auto; display: block; ">
+                    <table id="dataTablesShift" class="table table-bordered table-striped" style="width: 100%; overflow-x: auto; display: block; ">
                         <thead>
                             <tr>
                                 <th>Id</th>
@@ -187,7 +187,7 @@
 
 <script src="{{ asset('assets/js/moment.min.js') }}"></script>
 <script src="{{ asset('plugins/DataTables/datatables.min.js') }}"></script>
-<script src="{{ asset('assets/js/dataTables.cellEdit.js') }}"></script>
+{{-- <script src="{{ asset('assets/js/dataTables.cellEdit.js') }}"></script> --}}
 <script type="text/javascript">
   function getCellId(iteration){
       return 5+iteration;
@@ -304,7 +304,7 @@
         var selectable = []; //use 4,5,6,7,8,9,10,11,....and * for all
         var dropdownList = {};
         var td = 0;
-        var datatable = $('#dataTables').DataTable({
+        var datatable = $('#dataTablesShift').DataTable({
             order: [], //reset auto order
             lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
             processing: true,
@@ -322,7 +322,7 @@
               url: '{!! url('hr/timeattendance/shift_roaster_datatable') !!}',
               beforeSend: function(){
                 // Here, manually add the loading message.
-                $('#dataTables > tbody').html(
+                $('#dataTablesShift > tbody').html(
                   '<div class="row"><div class="col-sm-12 text-center"><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span></div></div>'
                 );
               },
