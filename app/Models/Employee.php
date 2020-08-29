@@ -3,6 +3,7 @@
 namespace App\Models;
 use App\Models\Employee;
 use App\Models\Hr\Leave;
+use App\Models\Hr\Shift;
 use Awobaz\Compoships\Compoships;
 use DB;
 use Illuminate\Database\Eloquent\Model;

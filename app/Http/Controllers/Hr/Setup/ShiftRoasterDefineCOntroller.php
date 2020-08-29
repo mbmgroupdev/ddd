@@ -34,7 +34,7 @@ class ShiftRoasterDefineCOntroller extends Controller
         // $subsectionList = Subsection::where('hr_subsec_status',1)->pluck('hr_subsec_name','hr_subsec_id');
         $areaList = Area::where('hr_area_status',1)->pluck('hr_area_name','hr_area_id');
         // dd($sectionList, $subsectionList);
-        return view('hr/setup/shift_roaster_define', compact('shiftList', 'employeeTypes', 'unitList','areaList'));
+        return view('hr/operation/shift_roaster_define', compact('shiftList', 'employeeTypes', 'unitList','areaList'));
     }
 
     public function getAssociateByTypeUnitShiftRoaster(Request $request)
