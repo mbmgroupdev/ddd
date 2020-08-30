@@ -171,7 +171,8 @@ class ShiftRoasterController extends Controller
 
     public function getAssociateByTypeUnitShiftRosterAjax(Request $request)
     {
-      // $input = $request->all();
+      $input = $request->all();
+      // return $input;
       $otCondition = '';
       if(!empty($request->doj) && $request->condition == 'Equal')
       {
@@ -1337,42 +1338,48 @@ class ShiftRoasterController extends Controller
     public function shiftTable(Request $request)
     {
         $list = "";
+        $input = $request->all();
         // return $request->all();
         if (!empty($request->unit_id))
         {   
-            $year  = date('Y');
-            $month = date('n');
+            $year  = date('Y', strtotime($input['searchDate']));
+            $month = date('n', strtotime($input['searchDate']));
             // $year  = 2020;
             // $month = 2;
-            $filter_day   = date('j');
+            $filter_day   = date('j', strtotime($input['searchDate']));
             $column = 'day_'.$filter_day;
+            // employee
+            $employeeData = DB::table('hr_as_basic_info');
+            $employeeDataSql = $employeeData->toSql();
 
-            $shiftRoster = ShiftRoaster::select($column, DB::raw('count(*) as total'))
-            ->with(array('employee'=>function($query) use ($request){
-                $query->where('as_unit_id', $request->unit_id);
-            }))
-            ->where($column, '!=', null)
-            ->where('shift_roaster_year', $year)
-            ->where('shift_roaster_month', $month)
-            ->groupBy($column)
-            ->get()
-            ->keyBy($column);
+            $queryData = ShiftRoaster::select('hr_shift_roaster.'.$column, DB::raw('count(*) as total'));
+            $queryData->leftjoin(DB::raw('(' . $employeeDataSql. ') AS emp'), function($join) use ($employeeData) {
+                $join->on('emp.as_id','hr_shift_roaster.shift_roaster_user_id')->addBinding($employeeData->getBindings());
+            });
+            $queryData->where('emp.as_unit_id', $input['unit_id'])
+            ->whereNotNull('hr_shift_roaster.'.$column)
+            ->where('hr_shift_roaster.shift_roaster_year', $year)
+            ->where('hr_shift_roaster.shift_roaster_month', $month);
+            $shiftRoster = $queryData->groupBy('hr_shift_roaster.'.$column)->get()->keyBy($column);
 
             // return $shiftRoster;
             $assignedEmployee = 0;
             $defaultEmployee = 0;
+            $totalEmployee = 0;
             // employee unit id
             $table = 'hr_as_basic_info';
             $getUnit = DB::table('hr_as_basic_info')
-            ->rightJoin('hr_shift', function($join) use ($table)
-            {
-                $join->on($table . '.as_shift_id', '=',  'hr_shift.hr_shift_name');
-                $join->on($table . '.as_unit_id','=', 'hr_shift.hr_shift_unit_id');
-            })
-            ->select('hr_shift.hr_shift_start_time','hr_shift.hr_shift_end_time','hr_shift.hr_shift_break_time','as_shift_id', DB::raw('count(*) as defaultTotal'))
+            ->select('hr_shift.hr_shift_start_time','hr_shift.hr_shift_end_time','hr_shift.hr_shift_break_time','hr_as_basic_info.as_unit_id','hr_as_basic_info.as_shift_id', DB::raw('count(*) as defaultTotal'))
             ->where('hr_as_basic_info.as_unit_id', $request->unit_id)
+            ->whereNotNull('hr_as_basic_info.as_shift_id')
+            ->where('hr_as_basic_info.as_status', 1)
+            ->leftJoin('hr_shift', function($q) {
+                 $q->on('hr_shift.hr_shift_name', 'hr_as_basic_info.as_shift_id')
+                   ->on('hr_shift.hr_shift_id', DB::raw("(select max(hr_shift_id) from hr_shift WHERE hr_shift.hr_shift_name = hr_as_basic_info.as_shift_id AND hr_shift.hr_shift_unit_id = hr_as_basic_info.as_unit_id )"));
+             })
             ->groupBy('hr_as_basic_info.as_shift_id')
             ->get();
+            // return ($getUnit);
             foreach ($getUnit as $key => $value) {
                 $cBreak = $hours = intdiv($value->hr_shift_break_time, 60).':'. ($value->hr_shift_break_time % 60);
                 $cBreak = strtotime(date("H:i", strtotime($cBreak)));
@@ -1381,6 +1388,7 @@ class ShiftRoasterController extends Controller
                 $minute = $cShifEnd + $cBreak;
                 $shiftEndTime = gmdate("H:i:s",$minute);
                 $defaultEmployee = $value->defaultTotal - (isset($shiftRoster[$value->as_shift_id])?$shiftRoster[$value->as_shift_id]->total:0);
+                $totalEmployee += $value->defaultTotal;
                 $changeEmployee = (isset($shiftRoster[$value->as_shift_id])?$shiftRoster[$value->as_shift_id]->total:0);
                 $list   .= "<tr><td> $value->as_shift_id </td>
                       <td> $value->hr_shift_start_time </td>
@@ -1395,104 +1403,11 @@ class ShiftRoasterController extends Controller
                      </tr>
                       ";
             }
-            
-
-            return $list;
-
-
-
-
-            $totalEmployee = Employee::where(['as_unit_id'=>$request->unit_id,'as_status'=>1])->pluck('associate_id');
-            // return $totalEmployee;
-            $desList  = Shift::where('hr_shift_unit_id', $request->unit_id)
-                        ->get();
-
-            // return $totalEmployee;
-            $shifts = DB::select("SELECT
-                s1.hr_shift_id,
-                s1.hr_shift_name,
-                s1.hr_shift_code,
-                s1.hr_shift_start_time,
-                s1.hr_shift_end_time,
-                s1.hr_shift_break_time
-                FROM hr_shift s1
-                LEFT JOIN hr_shift s2
-                ON (s1.hr_shift_unit_id = s2.hr_shift_unit_id AND s1.hr_shift_name = s2.hr_shift_name AND s1.hr_shift_id < s2.hr_shift_id)
-                LEFT JOIN hr_unit AS u
-                ON u.hr_unit_id = s1.hr_shift_unit_id
-                WHERE s2.hr_shift_id IS NULL AND s1.hr_shift_unit_id= $request->unit_id
-            ");
-
-            $checkRoaster = 0;
-            $checkDefault = 0;
-            $assignedEmployee = 0;
-            $defaultEmployee = 0;
-
-            $filter_year  = date('Y');
-            $filter_month = date('n');
-            $filter_day   = date('j');
-            if($request->searchDate != null) {
-                $filter_year = date('Y', strtotime($request->searchDate));
-                $filter_month = date('n', strtotime($request->searchDate));
-                $filter_day = date('j', strtotime($request->searchDate));
-            }
-            // return $shifts;
-            foreach ($shifts as  $value)
-            {
-                $column = 'day_'.$filter_day;
-                $code = $value->hr_shift_name;
-
-
-                $checkRoaster = DB::table('hr_shift_roaster')
-                                ->where('shift_roaster_year', $filter_year)
-                                ->where('shift_roaster_month', $filter_month)
-                                ->where($column,$code)
-                                ->whereIn('shift_roaster_associate_id',$totalEmployee)->count();
-
-                $shiftEmpList = DB::table('hr_as_basic_info')
-                ->where(['as_unit_id'=>$request->unit_id,'as_status'=>1,'as_shift_id'=>$value->hr_shift_name])->get();
-                $shiftEmpCount = 0;
-                if($shiftEmpList) {
-                    foreach($shiftEmpList as $shiftEmp) {
-                        $empCheckRoaster = DB::table('hr_shift_roaster')
-                                ->where('shift_roaster_year',date('Y'))
-                                ->where('shift_roaster_month',date('n'))
-                                ->where($column,'!=',null)
-                                ->where('shift_roaster_associate_id',$shiftEmp->associate_id)->first();
-                        if (!$empCheckRoaster) {
-                            $shiftEmpCount += 1;
-                        }
-                    }
-                }
-
-                $assignedEmployee   += $checkRoaster;
-                $checkDefault       = $shiftEmpCount;
-                $defaultEmployee    += $checkDefault;
-                $cBreak = $hours = intdiv($value->hr_shift_break_time, 60).':'. ($value->hr_shift_break_time % 60);
-                $cBreak = strtotime(date("H:i", strtotime($cBreak)));
-                $cShifEnd = strtotime(date("H:i", strtotime($value->hr_shift_end_time)));
-                // $cBreak = ($value->hr_shift_break_time % 60);
-                $minute = $cShifEnd + $cBreak;
-                $shiftEndTime = gmdate("H:i:s",$minute);
-                $letters = preg_replace('/[^a-zA-Z]/', '', $code);
-                $list   .= "<tr><td> $value->hr_shift_name </td>
-                          <td> $value->hr_shift_start_time </td>
-                          <td> $value->hr_shift_break_time </td>
-                          <td> $shiftEndTime </td>
-                          <td>$checkDefault</td>
-                          <td>$checkRoaster</td>
-                         </tr>
-                          ";
-            }
-            $totalEmployeeCount = $assignedEmployee+ $defaultEmployee;
-            $list.= "<tr><td colspan='4'> SubTotal</td>
-                      <td>$defaultEmployee</td>
-                      <td>$assignedEmployee</td>
-                     </tr><tr><td colspan='4'> Total</td>
-                      <td colspan='2'><p class='text-center'>$totalEmployeeCount</p></td>
+            $list.= "<tr><td colspan='4'> Total</td>
+                      <td colspan='2'><p class='text-center'>$totalEmployee</p></td>
                      </tr>
                       ";
-
+        
             return $list;
         }
         return "unit Empty";

@@ -7,6 +7,7 @@ use App\Models\Employee;
 use App\Models\Hr\Shift;
 use App\Models\Hr\ShiftRoaster;
 use Illuminate\Http\Request;
+use DB;
 
 class ShiftRosterController extends Controller
 {
@@ -14,9 +15,10 @@ class ShiftRosterController extends Controller
     {
     	$input = $request->all();
     	$data['type'] = 'error';
+    	DB::beginTransaction();
     	try {
     		$shift = Shift::getShiftNameGetId($input['target_shift']);
-    		foreach ($input->associate_id as $key => $ass_id) {
+    		foreach ($input['associate'] as $key => $ass_id) {
                 for($j=$input['start_day']; $j<=$input['end_day']; $j++)
                 {
                     $day= "day_".$j;
@@ -31,21 +33,23 @@ class ShiftRosterController extends Controller
                         $getId = $roster->shift_roaster_id;
                     }else{
                     	$getBasic = Employee::getEmployeeAssociateIdWise($ass_id);
-                        $getId = ShiftRoaster::insertGetId([
+                        $getId = ShiftRoaster::create([
                             'shift_roaster_associate_id' => $ass_id,
                             'shift_roaster_user_id' => $getBasic->as_id,
                             'shift_roaster_year' => date('Y'),
                             'shift_roaster_month' => date('n'),
                             $day => $shift
-                        ]);
+                        ])->shift_roaster_id;
                     }
                     log_file_write("Shift Roster Day Wise Updated", $getId);
                 }
             }
+            DB::commit();
             $data['type'] = 'success';
             $data['message'] = "Shift Roster Assign Successfully Done";
     		return $data;
     	} catch (\Exception $e) {
+    		DB::rollback();
     		$data['message'] = $e->getMessage();
     		return $data;
     	}

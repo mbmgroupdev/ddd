@@ -3145,7 +3145,7 @@ if (jQuery('#chartdiv').length) {
 
 
 // calender js
-if (jQuery('#calendar').length) {
+/*if (jQuery('#calendar').length) {
     document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -3267,7 +3267,7 @@ if (jQuery('#calendar1').length) {
 
         calendar1.render();
     });
-}
+}*/
 
 // Chart Apex js
 if (jQuery('#apex-basic').length) {

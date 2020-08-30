@@ -1,77 +1,36 @@
 <?php
+
 namespace App\Http\Controllers\Hr\Timeattendance;
 use Illuminate\Http\Request;
 
 use App\Http\Controllers\Controller;
-
 use App\Models\Hr\YearlyHolyDay;
-
 use App\Models\Hr\Unit;
-
 use Validator, DB, ACL, DataTables,Response;
 
-
-
 class YearlyHolidayController extends Controller
-
 {
-
     public function index()
-
     {
-
-        //ACL::check(["permission" => "hr_time_op_holiday"]);
-
-        #-----------------------------------------------------------#
         $unit=Unit::pluck('hr_unit_short_name');
         return view("hr/timeattendance/yearly_holiday_list", compact('unit'));
-
     }
 
-
-
     public function getAll()
-
     {
-
-        //ACL::check(["permission" => "hr_time_op_holiday"]);
-
-        #-----------------------------------------------------------#
-
         DB::statement(DB::raw('set @serial_no=0'));
 
         $data = DB::table('hr_yearly_holiday_planner AS h')
             ->select(
-                DB::raw('@serial_no := @serial_no + 1 AS serial_no'),
                 'h.*',
-                'u.hr_unit_short_name'
+                'u.hr_unit_name'
             )
             ->leftJoin('hr_unit AS u', 'u.hr_unit_id', '=', 'h.hr_yhp_unit')
             ->whereIn('u.hr_unit_id', auth()->user()->unit_permissions())
             ->orderBy('h.hr_yhp_dates_of_holidays', 'desc')
             ->get();
 
-        return Datatables::of($data)
-
-            // ->addColumn('action', function ($data) {
-            //     if (!$data->hr_yhp_status)
-            //     {
-            //         return "<div class=\"btn-group\">
-            //             <span class='btn btn-xs btn-danger disabled'>Disabled</span>
-            //             <a onclick=\"return confirm('Are you sure?')\" href=".url('hr/timeattendance/operation/yearly_holidays/'.$data->hr_yhp_id."/enable")." class=\"btn btn-xs btn-success\" data-toggle=\"tooltip\" title=\"Enable Now\">
-            //                 <i class=\"ace-icon fa fa-check bigger-120\"></i>
-            //             </a></div>";
-            //     }
-            //     else
-            //     {
-            //         return "<div class=\"btn-group\">
-            //             <span class='btn btn-xs btn-success disabled'>Enable</span>
-            //             <a onclick=\"return confirm('Are you sure?')\" href=".url('hr/timeattendance/operation/yearly_holidays/'.$data->hr_yhp_id."/disable")." class=\"btn btn-xs btn-danger\" data-toggle=\"tooltip\" title=\"Disable Now\">
-            //                 <i class=\"ace-icon fa fa-times bigger-120\"></i>
-            //             </a></div>";
-            //     }
-            // })
-
+        return Datatables::of($data)->addIndexColumn()
             ->addColumn('action', function ($data) {
                     if ($data->hr_yhp_comments !='Weekend')
                     {
@@ -121,7 +80,7 @@ class YearlyHolidayController extends Controller
 
             })
 
-            ->rawColumns(['serial_no', 'open_status', 'action','date'])
+            ->rawColumns(['hr_unit_name','open_status', 'action','date'])
 
             ->toJson();
 
@@ -291,79 +250,34 @@ class YearlyHolidayController extends Controller
 
 
     public function getHolidays(Request $request){
-
-
-
+        $input = $request->all();
+        $month = date('m', strtotime($input['month_year']));
+        $year = date('Y', strtotime($input['month_year']));
         $date = date_parse($request->month);
-
         $month_id= $date['month'];
-
-
-
         $workdays = array();
-
         $type = CAL_GREGORIAN;
-
-        $month_id = date_parse($request->month);
-
-        $month= $date['month'];
-
-        $year = $request->year;
-
+        $month_id = date_parse($month);
         $day_count = cal_days_in_month($type, $month, $year);
-
-
-
         $weekend_count= count($request->weekdays);
-
         $weekends= $request->weekdays;
-
-
-
         $data='<legend>Weekend Dates</legend>';
 
         for ($i = 1; $i <= $day_count; $i++) {
-
-
-
             $date = $year.'/'.$month.'/'.$i;
-
             $date= date('Y-m-d', strtotime($date));
-
             $get_name = date('l', strtotime($date));
-
            if(in_array($get_name, $weekends))
-
            {
-
-            // echo $date. " ";
-
-            //dates create start
-
-            $data.='<div class="form-group">
-
-                        <div class="col-sm-12">
-
-                            <input type="date" name="hr_yhp_dates_of_holidays[]" value="'. $date . '" class="col-xs-5 col-sm-3" data-validation="required" readonly/>
-
-
-
-                            <input type="text" name="hr_yhp_comments[]" class="col-xs-5 col-sm-3" value="Weekend" placeholder="Holiday Name" data-validation="required" readonly/>
-
-                        </div>
-
-                    </div>';
-
-
-
-            //dates create end
-
+                $data.='<div class="form-group">
+                    <div class="row">
+                        <input type="date" name="hr_yhp_dates_of_holidays[]" value="'. $date . '" class="form-control col" data-validation="required" readonly/>
+                        <input type="text" name="hr_yhp_comments[]" class="form-control col" value="Weekend" placeholder="Holiday Name" data-validation="required" readonly/>
+                    </div>
+                </div>';
            }
-
         }
-
         return $data;
-
     }
 
 

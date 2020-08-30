@@ -342,6 +342,7 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 	Route::get('hr/timeattendance/get_associate_by_type_unit_shift', 'Hr\TimeAttendance\ShiftRoasterController@getAssociateByTypeUnitShift');
 	Route::get('hr/timeattendance/get_associate_by_type_unit_shift_roster_ajax', 'Hr\TimeAttendance\ShiftRoasterController@getAssociateByTypeUnitShiftRosterAjax');
 	Route::get('hr/operation/shift_assign_date_wise_employee', 'Hr\OperationLoadEmployeeController@getShiftEmployee');
+	Route::get('hr/operation/holiday_roster_assign_employee', 'Hr\OperationLoadEmployeeController@getHolidayRosterEmployee');
 	//leave list
 	Route::get('hr/timeattendance/all_leaves', 'Hr\TimeAttendance\AllLeavesController@allLeaves')->middleware(['permission:Leave List']);
 	Route::post('hr/timeattendance/all_leaves_data', 'Hr\TimeAttendance\AllLeavesController@allLeavesData')->middleware(['permission:Leave List']);
@@ -352,6 +353,9 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 	Route::post('hr/timeattendance/leave_approve/approve_reject', 'Hr\TimeAttendance\AllLeavesController@leaveStatus')->middleware(['permission:Leave Approve']);
 	// shift roster assign section
 	Route::post('/hr/operation/shift_roster_assign_action', 'Hr\Operation\ShiftRosterController@assignMulti');
+	// holiday roster assign
+	Route::post('hr/operation/holiday_roster_assign_action', 'Hr\Operation\HolidayRosterController@assignMulti');
+
 	// shift Roaster
 	Route::get('hr/operation/holiday-roster', 'Hr\ShiftRoaster\ShiftRoasterController@index')->middleware(['permission:Holiday Roster']);
 	Route::get('hr/shift_roaster/roaster_view', 'Hr\ShiftRoaster\ShiftRoasterController@viewRoaster')->middleware(['permission:Holiday Roster']);
@@ -379,7 +383,7 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 	Route::post('hr/timeattendance/operation/without_pay_edit', 'Hr\TimeAttendance\WithoutPayController@updateData');
 
 	//Yearly Holiday Planner
-	Route::get('hr/timeattendance/operation/yearly_holidays', 'Hr\TimeAttendance\YearlyHolidayController@index')->middleware(['permission:Yearly Holiday']);
+	Route::get('hr/operation/yearly_holidays', 'Hr\TimeAttendance\YearlyHolidayController@index')->middleware(['permission:Yearly Holiday']);
 	Route::post('hr/timeattendance/operation/yearly_holidays/data', 'Hr\TimeAttendance\YearlyHolidayController@getAll')->middleware(['permission:Yearly Holiday']);
 
 	Route::get('hr/operation/yearly-holidays/create', 'Hr\TimeAttendance\YearlyHolidayController@create')->middleware(['permission:Yearly Holiday']);
