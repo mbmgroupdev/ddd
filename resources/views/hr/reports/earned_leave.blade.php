@@ -83,7 +83,7 @@
                   </div> 
                   
                  </div> 
-                  <div id="loading" class="col-md-offset-4 text-center col-sm-4" style="margin-top:10%;">
+                  <div id="loading-wrap" class="col-md-offset-4 text-center col-sm-4" style="margin-top:10%;">
                  
 
                   </div>

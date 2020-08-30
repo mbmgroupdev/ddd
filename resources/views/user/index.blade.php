@@ -253,7 +253,7 @@
 
                                  </div>
                               </div>
-                              <div class="col-md-6">
+                              {{-- <div class="col-md-6">
                                  <div class="training-block d-flex align-items-center">
                                     <div class="rounded-circle iq-card-icon iq-bg-primary">
                                        <img src="{{ asset('assets/images/page-img/35.png') }}" class="img-fluid" alt="icon">
@@ -263,7 +263,7 @@
                                        <p class="mb-0">395 kcal / h</p>
                                     </div>
                                  </div>
-                              </div>
+                              </div> --}}
                            </div>
                         </div>
                      </div>
@@ -272,7 +272,7 @@
                      <div class="iq-card">
                         <div class="iq-card-header d-flex justify-content-between p-0 bg-white">
                            <div class="iq-header-title">
-                              <h4 class="card-title text-primary">Activity Statistic</h4>
+                              <h4 class="card-title text-primary">Attendance History</h4>
                            </div>
                         </div>
                         <div class="iq-card-body p-0">
