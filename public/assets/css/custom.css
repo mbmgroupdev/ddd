@@ -626,3 +626,6 @@ div#choice_2_div {
 .h-min-400{
     min-height: 400px;
 }
+table.dataTable {
+  border-spacing: 1px;
+}

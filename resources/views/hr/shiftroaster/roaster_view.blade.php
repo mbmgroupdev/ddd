@@ -1,5 +1,5 @@
 @extends('hr.layout')
-@section('title', '')
+@section('title', 'Holiday Roster List')
 @section('main-content')
 @push('css')
 <style>
@@ -107,190 +107,183 @@
     <div class="page-content">
       <div class="panel panel-info">
         <div class="panel-heading">
-          <h6>Holiday Roster <a href="{{ url('/hr/shift_roaster/index')}}" target="_blank" class="btn btn-info btn-xx pull-right"> <i class="fa fa-plus"></i> Holiday Roster assign</a></h6>
+          <h6>Holiday Roster <a href="{{ url('/hr/operation/holiday-roster')}}" target="_blank" class="btn btn-info btn-sm pull-right"> <i class="fa fa-plus"></i> Holiday Roster assign</a></h6>
         </div>
         <div class="panel-body">
-          <form class="widget-container-col" role="form" id="attendanceReport" method="get" action="#">
+          <form class="row" role="form" id="holidayRosterReport" method="get" action="#">
             <div class="widget-box ui-sortable-handle">
               <div class="widget-body">
                 <div class="row" style="padding: 10px 20px">
                   <div class="col-md-12">
-                    <!-- <div class="col-sm-3">
+                    
+                    <div class="col-sm-3">
+                      <div class="form-group">
+                        <label class="col-sm-5 control-label no-padding-right" for="unit"> Unit <span style="color: red; vertical-align: text-top;">*</span></label>
+                        <div class="col-sm-7 no-padding-right">
+                          {{ Form::select('unit', $unitList, null, ['placeholder'=>'Select Unit', 'id'=>'unit',  'class'=>'col-xs-12', 'data-validation'=>'required', 'data-validation-error-msg'=>'The Unit field is required']) }}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-3 " >
+                      <label class="col-sm-5 control-label no-padding-right" for="area"> Floor  </label>
+                      <div class="col-sm-7 no-padding-right" >
+                        {{ Form::select('floor_id',$floorList , null, ['placeholder'=>'Select Floor', 'id'=>'floor_id', 'class'=> 'col-xs-12']) }}
+                      </div>
+                    </div>
+                    <div class="col-sm-3 " >
+                      <label class="col-sm-5 control-label no-padding-right" for="area"> Line  </label>
+                      <div class="col-sm-7 no-padding-right" >
+                        {{ Form::select('line_id', $lineList, null, ['placeholder'=>'Select Line', 'id'=>'line_id', 'class'=> 'col-xs-12']) }}
+                      </div>
+                    </div>
+                    <div class="col-sm-3 " >
+                      <label class="col-sm-5 control-label no-padding-right" for="area"> Area </label>
+                      <div class="col-sm-7 no-padding-right" >
+                        {{ Form::select('area', $areaList, null, ['placeholder'=>'Select Area', 'id'=>'area','class'=> 'col-xs-12','style'=> 'width:100%', 'data-validation-error-msg'=>'The Area field is required']) }}
+                      </div>
+                    </div>
+                  </div>
+                  <br><br>
+                  <div class="col-md-12">
+                    <br>
+                    <div class="col-sm-3 " >
+                      <label class="col-sm-5 control-label no-padding-right" for="area"> Department  </label>
+                      <div class="col-sm-7 no-padding-right" >
+                        {{ Form::select('department', $deptList, null, ['placeholder'=>'Select Department ', 'id'=>'department','class'=> 'col-xs-12', 'style'=> 'width:100%','data-validation-error-msg'=>'The Department field is required']) }}
+                      </div>
+                    </div>
+                    <div class="col-sm-3 " >
+                      <label class="col-sm-5 control-label no-padding-right" for="area"> Section  </label>
+                      <div class="col-sm-7 no-padding-right" >
+                        {{ Form::select('section', $sectionList, null, ['placeholder'=>'Select Section ', 'id'=>'section', 'style'=> 'width:100%', 'data-validation'=>'required', 'data-validation-optional' =>'true', 'data-validation-error-msg'=>'The Department field is required']) }}
+                      </div>
+                    </div>
+                    <div class="col-sm-3 " >
+                      <label class="col-sm-5 control-label no-padding-right" for="area"> Sub Section  </label>
+                      <div class="col-sm-7 no-padding-right" >
+                        {{ Form::select('subSection', $subSectionList,null, ['placeholder'=>'Select Sub-Section ', 'id'=>'subSection', 'style'=> 'width:100%', 'data-validation'=>'required', 'data-validation-optional' =>'true', 'data-validation-error-msg'=>'The Department field is required']) }}
+                      </div>
+                    </div>
+                    <div class="col-sm-3 " >
+                      <label class="col-sm-5 control-label no-padding-right" for="type"> Report Type <span style="color: red; vertical-align: text-top;">*</span> </label>
+                      <div class="col-sm-7 no-padding-right" >
+                        <?php
+                          $types=['Holiday'=>'Holiday','General'=>'General','OT'=>'OT','Substitute'=>'Substitute']
+                        ?>
+                          {{ Form::select('type', $types, null, ['placeholder'=>'Select Type','id'=>'type', 'class'=> 'form-control', 'data-validation'=> 'required']) }}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-12">
+                    <br>
+                    <div class="col-sm-3">
+                      <div class="form-group">
+                        <label class="col-sm-5 control-label no-padding-right" for="month"> Month <span style="color: red; vertical-align: text-top;">*</span></label>
+                        <div class="col-sm-7 no-padding-right">
+                          @php
+                            $month = date('m');
+                            $year = date('Y');
+                          @endphp
+                          <!-- <input name="report_from" id="report_from" placeholder="m" autocomplete="off" class="col-xs-12 date-picker form-control" data-validation="required" data-validation-format="mm" style="height: 30px; font-size: 12px;" /> -->
+                          {{ Form::select('month', ['01' => 'January', '02' => 'February', '03' => 'March', '04' => 'April', '05' => 'May', '06' => 'June', '07' => 'July', '08' => 'August', '09' => 'September', '10' => 'October', '11' => 'November', '12' => 'December'], $month, ['placeholder'=>'Select Month', 'id'=>'month', 'required','class'=> 'form-control', 'data-validation'=>'required', 'data-validation-error-msg'=>'The Month field is required', 'required']) }}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-3">
+                      <div class="form-group">
+                        <label class="col-sm-5 control-label no-padding-right" for="year"> Year <span style="color: red; vertical-align: text-top;">*</span></label>
+                        <div class="col-sm-7 no-padding-right">
+                          <input  name="year" id="year" autocomplete="off" placeholder="Select Year" class="col-xs-12 yearpicker form-control" data-validation-format="yyyy-mm-dd" data-validation="required" value="{{ $year }}" style="height: 30px; font-size: 12px;" />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-3">
+                      <div class="form-group">
+                        <label class="col-sm-5 control-label no-padding-right" for="report_to"> Day </label>
+                        <div class="col-sm-7 no-padding-right">
+                          {{ Form::select('day', ['Sat' => 'Saturday', 'Sun' => 'Sunday', 'Mon' => 'Monday', 'Tue' => 'Tuesday', 'Wed' => 'Wednsday', 'Thu' => 'Thursday', 'Fri' => 'Friday'], null, ['placeholder'=>'Select Day', 'id'=>'day', 'class'=> 'form-control','data-validation-error-msg'=>'The Month field is required']) }}
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- <div class="col-sm-3 ot_hour_div">
                     <div class="form-group">
-                    <label class="col-sm-4 control-label no-padding-right" for="associate_id">Associate</label>
-                    <div class="col-sm-8">
-                    {{ Form::select('associate_id', [], null, ['placeholder'=>'Select Associate\'s ID', 'id'=>'associate_id', 'class'=> 'associates no-select col-xs-12']) }}
+                    <label class="col-sm-5 control-label no-padding-right" for="ot_hour"> OT Hour </label>
+                    <div class="col-sm-7 no-padding-right">
+                    <input  name="ot_range" id="ot_hour" placeholder="OT hour" class="col-xs-12  form-control" style="height: 30px; font-size: 12px;" />
                   </div>
                 </div>
-              </div> -->
-              <div class="col-sm-3">
-                <div class="form-group">
-                  <label class="col-sm-5 control-label no-padding-right" for="unit"> Unit <span style="color: red; vertical-align: text-top;">*</span></label>
-                  <div class="col-sm-7 no-padding-right">
-                    {{ Form::select('unit', $unitList, null, ['placeholder'=>'Select Unit', 'id'=>'unit',  'class'=>'col-xs-12', 'data-validation'=>'required', 'data-validation-error-msg'=>'The Unit field is required']) }}
-                  </div>
-                </div>
-              </div>
-              <div class="col-sm-3 " >
-                <label class="col-sm-5 control-label no-padding-right" for="area"> Floor  </label>
-                <div class="col-sm-7 no-padding-right" >
-                  {{ Form::select('floor_id',$floorList , null, ['placeholder'=>'Select Floor', 'id'=>'floor_id', 'class'=> 'col-xs-12']) }}
-                </div>
-              </div>
-              <div class="col-sm-3 " >
-                <label class="col-sm-5 control-label no-padding-right" for="area"> Line  </label>
-                <div class="col-sm-7 no-padding-right" >
-                  {{ Form::select('line_id', $lineList, null, ['placeholder'=>'Select Line', 'id'=>'line_id', 'class'=> 'col-xs-12']) }}
-                </div>
-              </div>
-              <div class="col-sm-3 " >
-                <label class="col-sm-5 control-label no-padding-right" for="area"> Area </label>
-                <div class="col-sm-7 no-padding-right" >
-                  {{ Form::select('area', $areaList, null, ['placeholder'=>'Select Area', 'id'=>'area','class'=> 'col-xs-12','style'=> 'width:100%', 'data-validation-error-msg'=>'The Area field is required']) }}
-                </div>
-              </div>
-            </div>
-            <br><br>
-            <div class="col-md-12">
-              <br>
-              <div class="col-sm-3 " >
-                <label class="col-sm-5 control-label no-padding-right" for="area"> Department  </label>
-                <div class="col-sm-7 no-padding-right" >
-                  {{ Form::select('department', $deptList, null, ['placeholder'=>'Select Department ', 'id'=>'department','class'=> 'col-xs-12', 'style'=> 'width:100%','data-validation-error-msg'=>'The Department field is required']) }}
-                </div>
-              </div>
-              <div class="col-sm-3 " >
-                <label class="col-sm-5 control-label no-padding-right" for="area"> Section  </label>
-                <div class="col-sm-7 no-padding-right" >
-                  {{ Form::select('section', $sectionList, null, ['placeholder'=>'Select Section ', 'id'=>'section', 'style'=> 'width:100%', 'data-validation'=>'required', 'data-validation-optional' =>'true', 'data-validation-error-msg'=>'The Department field is required']) }}
-                </div>
-              </div>
-              <div class="col-sm-3 " >
-                <label class="col-sm-5 control-label no-padding-right" for="area"> Sub Section  </label>
-                <div class="col-sm-7 no-padding-right" >
-                  {{ Form::select('subSection', $subSectionList,null, ['placeholder'=>'Select Sub-Section ', 'id'=>'subSection', 'style'=> 'width:100%', 'data-validation'=>'required', 'data-validation-optional' =>'true', 'data-validation-error-msg'=>'The Department field is required']) }}
-                </div>
-              </div>
-              <div class="col-sm-3 " >
-                <label class="col-sm-5 control-label no-padding-right" for="type"> Report Type <span style="color: red; vertical-align: text-top;">*</span> </label>
-                <div class="col-sm-7 no-padding-right" >
-                  <?php
-                    $types=['Holiday'=>'Holiday','General'=>'General','OT'=>'OT','Substitute'=>'Substitute']
-                  ?>
-                    {{ Form::select('type', $types, null, ['placeholder'=>'Select Type','id'=>'type', 'class'=> 'form-control', 'data-validation'=> 'required']) }}
-                </div>
-              </div>
-            </div>
-            <div class="col-sm-12">
-              <br>
-              <div class="col-sm-3">
-                <div class="form-group">
-                  <label class="col-sm-5 control-label no-padding-right" for="month"> Month <span style="color: red; vertical-align: text-top;">*</span></label>
-                  <div class="col-sm-7 no-padding-right">
-                    @php
-                      $month = date('m');
-                      $year = date('Y');
-                    @endphp
-                    <!-- <input name="report_from" id="report_from" placeholder="m" autocomplete="off" class="col-xs-12 date-picker form-control" data-validation="required" data-validation-format="mm" style="height: 30px; font-size: 12px;" /> -->
-                    {{ Form::select('month', ['01' => 'January', '02' => 'February', '03' => 'March', '04' => 'April', '05' => 'May', '06' => 'June', '07' => 'July', '08' => 'August', '09' => 'September', '10' => 'October', '11' => 'November', '12' => 'December'], $month, ['placeholder'=>'Select Month', 'id'=>'month', 'required','class'=> 'form-control', 'data-validation'=>'required', 'data-validation-error-msg'=>'The Month field is required', 'required']) }}
-                  </div>
-                </div>
-              </div>
-              <div class="col-sm-3">
-                <div class="form-group">
-                  <label class="col-sm-5 control-label no-padding-right" for="year"> Year <span style="color: red; vertical-align: text-top;">*</span></label>
-                  <div class="col-sm-7 no-padding-right">
-                    <input  name="year" id="year" autocomplete="off" placeholder="Select Year" class="col-xs-12 yearpicker form-control" data-validation-format="yyyy-mm-dd" data-validation="required" value="{{ $year }}" style="height: 30px; font-size: 12px;" />
-                  </div>
-                </div>
-              </div>
-              <div class="col-sm-3">
-                <div class="form-group">
-                  <label class="col-sm-5 control-label no-padding-right" for="report_to"> Day </label>
-                  <div class="col-sm-7 no-padding-right">
-                    {{ Form::select('day', ['Sat' => 'Saturday', 'Sun' => 'Sunday', 'Mon' => 'Monday', 'Tue' => 'Tuesday', 'Wed' => 'Wednsday', 'Thu' => 'Thursday', 'Fri' => 'Friday'], null, ['placeholder'=>'Select Day', 'id'=>'day', 'class'=> 'form-control','data-validation-error-msg'=>'The Month field is required']) }}
-                  </div>
-                </div>
-              </div>
+                </div>  -->
 
-              <!-- <div class="col-sm-3 ot_hour_div">
-              <div class="form-group">
-              <label class="col-sm-5 control-label no-padding-right" for="ot_hour"> OT Hour </label>
-              <div class="col-sm-7 no-padding-right">
-              <input  name="ot_range" id="ot_hour" placeholder="OT hour" class="col-xs-12  form-control" style="height: 30px; font-size: 12px;" />
+                <div class="col-sm-3 ot">
+                  <!-- <div class="form-group">
+                      <label class="col-sm-5 control-label no-padding-right" for="ot_hour"> OT Hour </label>
+                      <div class="col-sm-7 no-padding-right">
+                      <input  name="ot_range" id="ot_hour" placeholder="OT hour" class="col-xs-12  form-control" style="height: 30px; font-size: 12px;" />
+                    </div>
+                  </div> -->
+                  <div class="form-group">
+                    <label class="col-sm-5 control-label no-padding-right" for="date"> Date </label>
+                    <div class="col-sm-7 no-padding-right">
+                      <input  name="report_to" id="date" placeholder="Y-m-d" class="col-xs-12 datepicker form-control" data-validation-format="yyyy-mm-dd" style="height: 30px; font-size: 12px;" />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-          </div>  -->
 
-          <div class="col-sm-3 ot">
-            <!-- <div class="form-group">
-                <label class="col-sm-5 control-label no-padding-right" for="ot_hour"> OT Hour </label>
-                <div class="col-sm-7 no-padding-right">
-                <input  name="ot_range" id="ot_hour" placeholder="OT hour" class="col-xs-12  form-control" style="height: 30px; font-size: 12px;" />
-              </div>
-            </div> -->
-            <div class="form-group">
-              <label class="col-sm-5 control-label no-padding-right" for="date"> Date </label>
-              <div class="col-sm-7 no-padding-right">
-                <input  name="report_to" id="date" placeholder="Y-m-d" class="col-xs-12 datepicker form-control" data-validation-format="yyyy-mm-dd" style="height: 30px; font-size: 12px;" />
-              </div>
-            </div>
           </div>
         </div>
       </div>
+      <div class="">
+        <h4 class="row" style="padding:0px 53px">
+          <div class="col-sm-11 text-right" style="">
+            <span style="font-size: 16px; font-weight: bold; color: red;" id="over_time"></span>
+          </div>
 
+          <div class="col-sm-1">
+            <button type="submit" class="btn btn-primary btn-sm holidayRosterReport">
+              <i class="fa fa-search"></i>
+              Search
+            </button>
+          </div>
+        </h4>
+      </div>
     </div>
+  </form>
+
+  <div class="row">
+    <!-- Display Erro/Success Message -->
+    @include('inc/message')
+    <div class="col-sm-12">
+      <!-- PAGE CONTENT BEGINS -->
+      <br>
+      <div class="table d-table hide table-responsive" >
+        <table id="dataTables" class="table table-striped table-bordered" style="display: auto; overflow-x: auto;white-space: nowrap; width: 100% !important;">
+          <thead>
+            <tr>
+              <!-- <th>Sl. No</th> -->
+              <th>Picture</th>
+              <th>Oracle ID</th>
+              <th>Associate ID</th>
+              <th>Unit</th>
+              <th>Name</th>
+              <th>Contact</th>
+              <th>Section</th>
+              <th>Designation</th>
+              <th>Dates</th>
+              <th>Total</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+      <!-- PAGE CONTENT ENDS -->
+    </div>
+    <!-- /.col -->
   </div>
-</div>
-<div class="">
-  <h4 class="row" style="padding:0px 53px">
-    <div class="col-sm-11 text-right" style="">
-      <span style="font-size: 16px; font-weight: bold; color: red;" id="over_time"></span>
-    </div>
-
-    <div class="col-sm-1">
-      <button type="submit" class="btn btn-primary btn-sm attendanceReport">
-        <i class="fa fa-search"></i>
-        Search
-      </button>
-    </div>
-  </h4>
-</div>
-</div>
-</form>
-
-<div class="row">
-  <!-- Display Erro/Success Message -->
-  @include('inc/message')
-  <div class="col-sm-12">
-    <!-- PAGE CONTENT BEGINS -->
-    <br>
-    <div class="table d-table hide table-responsive" >
-      <table id="dataTables" class="table table-striped table-bordered" style="display: auto; overflow-x: auto;white-space: nowrap; width: 100% !important;">
-        <thead>
-          <tr>
-            <!-- <th>Sl. No</th> -->
-            <th>Picture</th>
-            <th>Oracle ID</th>
-            <th>Associate ID</th>
-            <th>Unit</th>
-            <th>Name</th>
-            <th>Contact</th>
-            <th>Section</th>
-            <th>Designation</th>
-            <th>Dates</th>
-            <th>Total</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-      </table>
-    </div>
-    <!-- PAGE CONTENT ENDS -->
-  </div>
-  <!-- /.col -->
-</div>
-<!-- div for summary -->
-</div><!-- /.page-content -->
+  <!-- div for summary -->
+  </div><!-- /.page-content -->
 </div>
 <div class="modal fade" id="calendarModal" tabindex="-1" role="dialog" aria-labelledby="calendarModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -366,6 +359,7 @@
 </div>
 </div>
 @push('js')
+<script src="{{ asset('assets/js/moment.min.js') }}"></script>
 <script src="{{ asset('assets/js/fullcalendar.min.js') }}"></script>
 <script type="text/javascript">
 
@@ -604,16 +598,16 @@ $(document).ready(function(){
         success: function(data)
         {
           //$("#floor_id").html(data);
-          toastr.success(' ','Attendance Udated Successfully.');
+          toastr.success(' ','Attendance Update Successfully.');
           $('#calendarModal').modal('hide');
           dTable.draw();
         },
         error: function()
         {
-          alert('failed...');
+          $.notify('failed', 'error');
         }
       });
-      // alert('failed...');
+      $.notify('failed', 'error');
     }else{
       alert('Please Select Report Type');
     }
@@ -763,7 +757,7 @@ setTimeout(function(){
      });
   });
 
-  $('#attendanceReport').on('submit', function(e)
+  $('#holidayRosterReport').on('submit', function(e)
   {
     e.preventDefault();
     var from= $("#report_from").val();
@@ -803,7 +797,7 @@ setTimeout(function(){
       },
       error: function()
       {
-        alert('failed...');
+        $.notify('failed', 'error');
       }
     });
 
@@ -818,7 +812,7 @@ setTimeout(function(){
       },
       error: function()
       {
-        alert('failed...');
+        $.notify('failed', 'error');
       }
     });
   });
@@ -834,7 +828,7 @@ setTimeout(function(){
       },
       error: function()
       {
-        alert('failed...');
+        $.notify('failed', 'error');
       }
     });
   });
@@ -857,7 +851,7 @@ setTimeout(function(){
       },
       error: function()
       {
-        alert('failed...');
+        $.notify('failed', 'error');
       }
     });
   });
@@ -879,7 +873,7 @@ setTimeout(function(){
       },
       error: function()
       {
-        alert('failed...');
+        $.notify('failed', 'error');
       }
     });
   });

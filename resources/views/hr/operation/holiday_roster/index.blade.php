@@ -3,7 +3,7 @@
 @section('main-content')
 
 @push('css')
-    <link rel="stylesheet" href="{{ asset('assets/css/fullcalendar.min.css') }}">
+    
     <style>
         table.header-fixed1 tbody {max-height: 500px; overflow-y: scroll;}
         input[type=checkbox] {
@@ -14,6 +14,7 @@
             height: auto !important;
         }
     </style>
+    <link rel="stylesheet" href="{{ asset('assets/css/fullcalendar.min.css') }}">
 @endpush
 <div class="main-content">
     <div class="main-content-inner">
@@ -204,6 +205,7 @@
                                 </div>
                             </div>
                         </div>
+                        <input type="hidden" id="assignDates" name="assignDates" value="">
                         {{-- <div class="panel panel-warning" id="calendarSection" style="display: none;">
                             <div class="panel-heading"> <h6>Assign Date  <a id="substitute-remove" class="btn btn-xx btn-danger pull-right">Remove</a></div>
                             <div class="panel-body">
@@ -412,19 +414,77 @@ $(document).ready(function(){
     $('#formSubmit').on("click", function(e){
         var checkedBoxes = [];
         var checkedIds   = [];
+        var msg = '';
+        var flag = 0;
+        var calendar = $('#event-calendar');
+        var assignDates = $("input[name=assignDates]").val();
+        var type = $("select[name=type]").val();
+        var comment = $("input[name=comment]").val();
         $('input[type="checkbox"]:checked').each(function() {
             if(this.value != "on")
             {
                 checkedBoxes.push($(this).val());
-                checkedIds.push($(this).data('id'));
+                // checkedIds.push($(this).data('id'));
             }
         });
+        if(checkedBoxes.length === 0){
+            msg = "Please Select Employee At Least One";
+            flag = 1;
+        }
+        if(type == null || type == ''){
+            msg = "Please Select Target Day Type";
+            flag = 1;
+        }
+        if(assignDates.length === 0){
+            msg = "Please Select Action Date On The Calendar";
+            flag = 1;
+        }
 
-        //console.log(multiselect,singleselect);
+        if(flag === 0){
+            $(".app-loader").show();
+            $.ajax({
+                type: "POST",
+                url: '{{ url("/hr/operation/holiday_roster_assign_action") }}',
+                headers: {
+                  'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                },
+                data: {
+                    assigned: checkedBoxes,
+                    type: type,
+                    assignDates: assignDates,
+                    comment: comment
+                },
+                success: function(response)
+                {
+                    // console.log(response);
+                    if(response.type === 'success'){
+                        $('input[type="checkbox"]:checked').each(function() {
+                            $(this).prop("checked", false);
+                        });
+                        $("#selectEmp").text('0');
+                        $("#assignDates").val('');
+                        totalempcount = 0;
+                        // Clear all events
+                        calendar.fullCalendar( 'removeEvents', function(e){
+                            return true;
+                        });
+                        loadEmployeeSearchWise();
+                    }
+                    
+                    setTimeout(function(){
+                        $(".app-loader").hide();
+                    }, 2000);
 
-        // $('#event-calendar').find('multi').each(function() {
-        //    console.log($(this).data('date'));
-        // });
+                    $.notify(response.message, response.type);
+                },
+                error: function (reject) {
+                    $(".app-loader").hide();
+                    // console.log(reject)
+                }
+            });
+        }else{
+            $.notify(msg, 'error');
+        }
 
     });
 
