@@ -1,3 +1,4 @@
+@php dd($user) @endphp
 <ul class="nav nav-tabs"  role="tablist">
 	@foreach($permissions as $key => $module)
   	<li class="nav-item">
@@ -18,11 +19,8 @@
                           	<input type="checkbox" class="custom-control-input bg-success" id="Sl-{{$key}}-{{$count}}" >
                           	<label class="custom-control-label" for="Sl-{{$key}}-{{$count}}"></label>
                        	</div> --}}
-                       	<div class="custom-control custom-checkbox checkbox-icon custom-control-inline">
-                          <input type="checkbox" class="custom-control-input" id="Sl-{{$key}}-{{$count}}" >
-                          <label class="custom-control-label" for="Sl-{{$key}}-{{$count}}"><i class="fa fa-shield"></i></label>
-                       </div>
-	      				<a class="card-link @if($count != 1) collapsed @endif" data-toggle="collapse" href="#{{$key}}-{{$count}}">
+                       	<input type="checkbox" id="Sl-{{$key}}-{{$count}}" style="transform: scale(1.5);"> &nbsp;
+                            <a class="permission-item @if($count != 1) collapsed @endif" data-toggle="collapse" href="#{{$key}}-{{$count}}">
 	        				{{$key1}} <i class="fa fa-angle-double-right f-16"></i>
 	      				</a>
 	    			</div>

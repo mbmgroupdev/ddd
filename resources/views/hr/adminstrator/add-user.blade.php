@@ -1,19 +1,20 @@
 @extends('hr.layout')
-@section('title', 'Add Users')
+@section('title', 'Add User')
 @section('main-content')
    <div class="row">
       <div class="col-sm-12 col-lg-12">
-         <div class="iq-card">
-            <div class="iq-card-header d-flex justify-content-between">
-               <div class="iq-header-title">
-                  <h4 class="card-title">Add User</h4>
-               </div>
+         <div class="panel">
+            <div class="panel-heading">
+                  <h6 class="card-title">
+                     Add User
+                     <a class="pull-right btn btn-primary" href="{{url('hr/adminstrator/users')}}">User List</a>
+                  </h6>
             </div>
-            <div class="iq-card-body">   
+            <div class="panel-body">   
                <form class="needs-validation" novalidate method="post" action="{{url('hr/adminstrator/user/store')}}">
                   @csrf
                   <div class="row">
-                     <div class="col-sm-6">
+                     <div class="col-sm-4">
                         <div class="form-group has-float-label select-search-group">
                            {{ Form::select('associate_id', [], null, ['placeholder'=>'Select Associate ID', 'id'=>'associate_id', 'class'=> 'associates form-control']) }}
                            <label  for="associate_id"> Associate's ID </label>
@@ -35,14 +36,6 @@
                               Please enter email address!
                            </div>
                         </div>
-                        <div class="form-group">
-                           <span class="text-muted">Default password for user is </span><strong class="text-success">123456</strong >
-                           
-                        </div>
-                        
-                        
-                     </div>
-                     <div class="col-sm-6">
                         <div class="form-group has-float-label select-search-group">
                            {!! Form::select('role', $roles, old('role'), ['class' => 'form-control', 'required' => 'required','placeholder' => 'Select a role']) !!}
                            <label  for="role"> Role<span class="text-danger">*</span> </label>
@@ -50,6 +43,18 @@
                               Please select a role!
                            </div>
                         </div>
+                        <div class="form-group">
+                           <span class="text-muted">Default password for user is </span><strong class="text-success">123456</strong >
+                           
+                        </div>
+                        <div class="form-group">
+                           <button class="btn btn-primary btn-100" type="submit">Save</button>
+                        </div>
+                        
+                        
+                     </div>
+                     <div class="col-sm-3">
+                        
                         
                         <div class="form-group ">
                            <label  for="roles" >Unit Permission </label>
@@ -80,10 +85,28 @@
                         </div> --}}
                         
                         
-                        <div class="form-group text-right">
-                           <button class="btn btn-primary btn-100" type="submit">Save</button>
-                        </div>
+                        
                      </div>
+                    <div class="col-sm-5">
+                        <div class="user-details-block" >
+                            <div class="user-profile text-center mt-0">
+                                <img id="avatar" class="avatar-130 img-fluid" src="{{ asset('assets/images/user/09.jpg') }} " onerror="this.onerror=null;this.src='{{ asset("assets/images/user/09.jpg") }}';">
+                            </div>
+                            <div class="text-center mt-3">
+                             <h4><b id="emp-name">-------------</b></h4>
+                             <p class="mb-0" id="designation">
+                                --------------------------</p>
+                             <p class="mb-0" >
+                                Oracle ID: <span id="oracle_id" class="text-success">-------------</span>
+                             </p>
+                             <p class="mb-0" >
+                                Associate ID: <span id="associate_id_emp" class="text-success">-------------</span>
+                             </p>
+                             <p  class="mb-0">Department: <span id="department" class="text-success">------------------------</span> </p>
+                             
+                            </div>
+                        </div>
+                    </div>  
                   </div>
                </form>
 
@@ -91,4 +114,35 @@
          </div>
       </div>
    </div>
+@push('js')
+<script type="text/javascript">
+    $(document).on('change', '#associate_id', function(){ 
+        var url = '{{url("/")}}'; 
+        if( $(this).val() != ''){
+            $.ajax({
+                url : "{{ url('hr/timeattendance/station_as_info') }}",
+                type: 'json',
+                method: 'get',
+                data: {associate_id: $(this).val()},
+                success: function(data)
+                {
+                    $('#associate_id_emp').text(data['associate_id']);
+                    $('#oracle_id').text(data['as_oracle_code']);
+                    $('#name').val(data['as_name']);
+                    $('#emp-name').text(data['as_name']);
+                    $('#department').text(data['hr_department_name']);
+                    $('#designation').text(data['hr_designation_name']);
+                    
+                    $('#avatar').attr('src', url+data['as_pic']); 
+                },
+                error: function()
+                {
+                }
+            });
+        }
+
+    });
+
+</script>
+@endpush
 @endsection

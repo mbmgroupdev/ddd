@@ -150,11 +150,11 @@
                {{-- <li class="@if($segment3 == 'maternity-leave-payment') active @endif">
                   <a href="{{ url('hr/operation/maternity-leave-payment') }}"><i class="las la-file-invoice-dollar"></i>Maternity Payment</a>
                </li> --}}
-               <li class="@if($segment3 == 'new_card') active @endif">
-                  <a href="{{ url('hr/timeattendance/new_card') }}"><i class="las la-list-ul"></i>Line Change</a>
+               <li class="@if($segment3 == 'line-change') active @endif">
+                  <a href="{{ url('hr/operation/line-change') }}"><i class="las la-list-ul"></i>Line Change</a>
                </li>
                <li class="@if($segment3 == 'location_change') active @endif">
-                  <a href="{{ url('hr/operation/location_change/list') }}"><i class="las la-list-ul"></i>Outside Work</a>
+                  <a href="{{ url('hr/operation/location_change/entry') }}"><i class="las la-list-ul"></i>Outside Work</a>
                </li>
                {{-- <li class="@if($segment4 == 'idcard') active @endif">
                   <a href="{{ url('hr/recruitment/employee/idcard') }}"><i class="las la-list-ul"></i>ID Card</a>

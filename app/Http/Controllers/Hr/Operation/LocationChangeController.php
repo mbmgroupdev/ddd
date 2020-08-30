@@ -32,41 +32,12 @@ class LocationChangeController extends Controller
         // dd($requestList);
         return view('hr/operation/location_change_list', compact('requestList'));
     }
-    public function getTableName($unit)
-        {
-            $tableName = "";
-            //CEIL
-            if($unit == 2){
-               $tableName= "hr_attendance_ceil AS a";
-            }
-            //AQl
-            else if($unit == 3){
-                $tableName= "hr_attendance_aql AS a";
-            }
-            // MBM
-            else if($unit == 1 || $unit == 4 || $unit == 5 || $unit == 9){
-                $tableName= "hr_attendance_mbm AS a";
-            }
-            //HO
-            else if($unit == 6){
-                $tableName= "hr_attendance_ho AS a";
-            }
-            // CEW
-            else if($unit == 8){
-                $tableName= "hr_attendance_cew AS a";
-            }
-            else{
-                $tableName= "hr_attendance_mbm AS a";
-            }
-            return $tableName;
-        }
-
+    
     //approve Location
     public function approveLocation(Request $request){
         //dd($request->all());exit;
         $employee = Employee::where('associate_id',$request->as_id)->first();
-        $table = $this->getTableName($employee->as_unit_id);
-        $tableNmae = explode(' ',$table);
+        $table = get_att_table($employee->as_unit_id);
                     //dd($employee);exit;
         $id= $request->id;
         $start_date = $request->start_date;
@@ -88,7 +59,7 @@ class LocationChangeController extends Controller
                           $date = date('Y-m-d', strtotime("+".$i." day", strtotime($start_date)));
                           $outtime = date('H:i:s',strtotime($employee->shift['hr_shift_end_time'])+($employee->shift['hr_shift_break_time']*60));
                           //dd($outtime);exit;
-                          $lastPunchId = DB::table($tableNmae[0])
+                          $lastPunchId = DB::table($table)
                                          ->insertGetId([
                                              'as_id' => $employee->as_id,
                                              'in_date' => $date,
@@ -101,7 +72,7 @@ class LocationChangeController extends Controller
                                              'updated_by' => auth()->user()->associate_id,
                                              'updated_at' => NOW()
                                             ]);
-                                         $queue = (new ProcessAttendanceInOutTime($tableNmae[0], $lastPunchId, $employee->as_unit_id))
+                                         $queue = (new ProcessAttendanceInOutTime($table, $lastPunchId, $employee->as_unit_id))
                                     ->delay(Carbon::now()->addSeconds(2));
                                     dispatch($queue);
                         }
@@ -111,7 +82,7 @@ class LocationChangeController extends Controller
                           $date = date('Y-m-d', strtotime("+".$i." day", strtotime($start_date)));
                           $outtime = date('H:i:s',strtotime($employee->shift['hr_shift_end_time'])+($employee->shift['hr_shift_break_time']*60));
                           //dd($outtime);exit;
-                          $lastPunchId = DB::table($tableNmae[0])
+                          $lastPunchId = DB::table($table)
                                          ->insertGetId([
                                              'as_id' => $employee->as_id,
                                              'in_date' => $date,
@@ -124,7 +95,7 @@ class LocationChangeController extends Controller
                                              'updated_by' => auth()->user()->associate_id,
                                              'updated_at' => NOW()
                                             ]);
-                                         $queue = (new ProcessAttendanceIntime($tableNmae[0], $lastPunchId, $employee->as_unit_id))
+                                         $queue = (new ProcessAttendanceIntime($table, $lastPunchId, $employee->as_unit_id))
                                     ->delay(Carbon::now()->addSeconds(2));
                                     dispatch($queue);
 
@@ -136,7 +107,7 @@ class LocationChangeController extends Controller
                           $date = date('Y-m-d', strtotime("+".$i." day", strtotime($start_date)));
                           $outtime = date('H:i:s',strtotime($employee->shift['hr_shift_end_time'])+($employee->shift['hr_shift_break_time']*60));
                           //dd($outtime);exit;
-                          $lastPunchId = DB::table($tableNmae[0])
+                          $lastPunchId = DB::table($table)
                                          ->insertGetId([
                                              'as_id' => $employee->as_id,
                                              'in_date' => $date,
@@ -149,7 +120,7 @@ class LocationChangeController extends Controller
                                              'updated_by' => auth()->user()->associate_id,
                                              'updated_at' => NOW()
                                             ]);
-                                          $queue = (new ProcessAttendanceOuttime($tableNmae[0], $lastPunchId, $employee->as_unit_id))
+                                          $queue = (new ProcessAttendanceOuttime($table, $lastPunchId, $employee->as_unit_id))
                                     ->delay(Carbon::now()->addSeconds(2));
                                     dispatch($queue);
 
@@ -200,7 +171,8 @@ class LocationChangeController extends Controller
     }
 
     //store form data
-    public function storeData(Request $request){
+    public function storeData(Request $request)
+    {
         $validator= Validator::make($request->all(),[
             'employee_id'           => 'required',
             'requested_location'    => 'required',
@@ -213,120 +185,112 @@ class LocationChangeController extends Controller
                 ->withErrors($validator);
         }
         else{
-
-            //dd($request->all());exit;
             
             DB::beginTransaction();
             try {
                 $approved_on= date('Y-m-d H:i:s');
                 $applied_on= date('Y-m-d H:i:s');
                 $approved_by= auth()->user()->associate_id;
-                // $ids= [];
-                for($i=0; $i< sizeof($request->employee_id); $i++){
-                    $out= new Outsides();
-                    $out->as_id = $request->employee_id[$i];
-                    $out->start_date = $request->from_date[$i];
-                    $out->end_date = $request->to_date[$i];
-                    $out->requested_location = $request->requested_location[$i];
-                    $out->requested_place = $request->requested_place[$i];
-                    $out->type = $request->type[$i];
-                    $out->comment = $request->comment[$i];
-                    $out->status = 1;
-                    $out->applied_on = $request->applied_on;
-                    $out->approved_on = $request->approved_on;
-                    $out->approved_by = $request->approved_by;
-                    $out->save();
-                    $ids= $out->id;
 
-                    $employee = Employee::where('associate_id',$request->employee_id[$i])->first();
-                    $table = $this->getTableName($employee->as_unit_id);
-                    $tableNmae = explode(' ',$table);
-                                //dd($request->all());exit;
-                    
-                    $start_date = $request->from_date[$i];
-                    $end_date = $request->to_date[$i];
-                    $totalDays  = (date('d', strtotime($end_date))-date('d', strtotime($start_date)));
+                $out= new Outsides();
+                $out->as_id = $request->employee_id;
+                $out->start_date = $request->from_date;
+                $out->end_date = $request->to_date;
+                $out->requested_location = $request->requested_location;
+                $out->requested_place = $request->requested_place;
+                $out->type = $request->type;
+                $out->comment = $request->comment;
+                $out->status = 1;
+                $out->applied_on = $applied_on;
+                $out->approved_on = $approved_on;
+                $out->approved_by = $approved_by;
+                $out->save();
+                $ids= $out->id;
 
-                  if($request->type[$i] == 1){
-                        //1=full day                        
-                        for($j=0; $j<=$totalDays; $j++) {
-                          $date = date('Y-m-d', strtotime("+".$j." day", strtotime($start_date)));
-                          $outtime = date('H:i:s',strtotime($employee->shift['hr_shift_end_time'])+($employee->shift['hr_shift_break_time']*60));
-                          //dd($outtime);exit;
-                          $lastPunchId = DB::table($tableNmae[0])
-                                         ->insertGetId([
-                                             'as_id' => $employee->as_id,
-                                             'in_date' => $date,
-                                             'in_time' => $date.' '.$employee->shift['hr_shift_start_time'],
-                                             'out_time'=> $date.' '.$outtime,
-                                             'hr_shift_code' => $employee->shift['hr_shift_code'],
-                                             'ot_hour' => 0,
-                                             'late_status' => 0,
-                                             'remarks'=>'BM',
-                                             'updated_by' => auth()->user()->associate_id,
-                                             'updated_at' => NOW()
-                                            ]);
-                                $queue = (new ProcessAttendanceInOutTime($tableNmae[0], $lastPunchId, $employee->as_unit_id))
-                                    ->delay(Carbon::now()->addSeconds(2));
-                                    dispatch($queue);
-                        }
-                    }elseif($request->type[$i] == 2){
-                       //2=1st half 
-                         for($j=0; $j<=$totalDays; $j++) {                   
-                          $date = date('Y-m-d', strtotime("+".$j." day", strtotime($start_date)));
-                          $outtime = date('H:i:s',strtotime($employee->shift['hr_shift_end_time'])+($employee->shift['hr_shift_break_time']*60));
-                          //dd($outtime);exit;
-                          $lastPunchId = DB::table($tableNmae[0])
-                                         ->insertGetId([
-                                             'as_id' => $employee->as_id,
-                                             'in_date' => $date,
-                                             'in_time' => $date.' '.$employee->shift['hr_shift_start_time'],
-                                             'out_time'=> null,
-                                             'hr_shift_code' => $employee->shift['hr_shift_code'],
-                                             'ot_hour' => 0,
-                                             'late_status' => 0,
-                                             'remarks'=>'BM',
-                                             'updated_by' => auth()->user()->associate_id,
-                                             'updated_at' => NOW()
-                                            ]);
-                                         $queue = (new ProcessAttendanceIntime($tableNmae[0], $lastPunchId, $employee->as_unit_id))
-                                    ->delay(Carbon::now()->addSeconds(2));
-                                    dispatch($queue);
+                $employee = Employee::where('associate_id',$request->employee_id)->first();
+                $table = get_att_table($employee->as_unit_id);
+                
+                $start_date = $request->from_date;
+                $end_date = $request->to_date;
+                $totalDays  = (date('d', strtotime($end_date))-date('d', strtotime($start_date)));
 
-                        }
+              if($request->type == 1){
+                    //1=full day                        
+                    for($j=0; $j<=$totalDays; $j++) {
+                      $date = date('Y-m-d', strtotime("+".$j." day", strtotime($start_date)));
+                      $outtime = date('H:i:s',strtotime($employee->shift['hr_shift_end_time'])+($employee->shift['hr_shift_break_time']*60));
+                      //dd($outtime);exit;
+                      $lastPunchId = DB::table($table)
+                                     ->insertGetId([
+                                         'as_id' => $employee->as_id,
+                                         'in_date' => $date,
+                                         'in_time' => $date.' '.$employee->shift['hr_shift_start_time'],
+                                         'out_time'=> $date.' '.$outtime,
+                                         'hr_shift_code' => $employee->shift['hr_shift_code'],
+                                         'ot_hour' => 0,
+                                         'late_status' => 0,
+                                         'remarks'=>'BM',
+                                         'updated_by' => auth()->user()->associate_id,
+                                         'updated_at' => NOW()
+                                        ]);
+                            $queue = (new ProcessAttendanceInOutTime($table, $lastPunchId, $employee->as_unit_id))
+                                ->delay(Carbon::now()->addSeconds(2));
+                                dispatch($queue);
+                    }
+                }elseif($request->type == 2){
+                   //2=1st half 
+                     for($j=0; $j<=$totalDays; $j++) {                   
+                      $date = date('Y-m-d', strtotime("+".$j." day", strtotime($start_date)));
+                      $outtime = date('H:i:s',strtotime($employee->shift['hr_shift_end_time'])+($employee->shift['hr_shift_break_time']*60));
+                      //dd($outtime);exit;
+                      $lastPunchId = DB::table($table)
+                                     ->insertGetId([
+                                         'as_id' => $employee->as_id,
+                                         'in_date' => $date,
+                                         'in_time' => $date.' '.$employee->shift['hr_shift_start_time'],
+                                         'out_time'=> null,
+                                         'hr_shift_code' => $employee->shift['hr_shift_code'],
+                                         'ot_hour' => 0,
+                                         'late_status' => 0,
+                                         'remarks'=>'BM',
+                                         'updated_by' => auth()->user()->associate_id,
+                                         'updated_at' => NOW()
+                                        ]);
+                                     $queue = (new ProcessAttendanceIntime($table, $lastPunchId, $employee->as_unit_id))
+                                ->delay(Carbon::now()->addSeconds(2));
+                                dispatch($queue);
 
-                    }elseif($request->type[$i] == 3){
-                        //3=2nd half
-                        for($j=0; $j<=$totalDays; $j++) { 
-                          $date = date('Y-m-d', strtotime("+".$j." day", strtotime($start_date)));
-                          $outtime = date('H:i:s',strtotime($employee->shift['hr_shift_end_time'])+($employee->shift['hr_shift_break_time']*60));
-                          //dd($outtime);exit;
-                          $lastPunchId = DB::table($tableNmae[0])
-                                         ->insertGetId([
-                                             'as_id' => $employee->as_id,
-                                             'in_date' => $date,
-                                             'in_time' => null,
-                                             'out_time'=> $date.' '.$outtime,
-                                             'hr_shift_code' => $employee->shift['hr_shift_code'],
-                                             'ot_hour' => 0,
-                                             'late_status' => 0,
-                                             'remarks'=>'BM',
-                                             'updated_by' => auth()->user()->associate_id,
-                                             'updated_at' => NOW()
-                                            ]);
-                                          $queue = (new ProcessAttendanceOuttime($tableNmae[0], $lastPunchId, $employee->as_unit_id))
-                                    ->delay(Carbon::now()->addSeconds(2));
-                                    dispatch($queue);
-
-                        }                        
                     }
 
+                }elseif($request->type == 3){
+                    //3=2nd half
+                    for($j=0; $j<=$totalDays; $j++) { 
+                      $date = date('Y-m-d', strtotime("+".$j." day", strtotime($start_date)));
+                      $outtime = date('H:i:s',strtotime($employee->shift['hr_shift_end_time'])+($employee->shift['hr_shift_break_time']*60));
+                      //dd($outtime);exit;
+                      $lastPunchId = DB::table($table)
+                                     ->insertGetId([
+                                         'as_id' => $employee->as_id,
+                                         'in_date' => $date,
+                                         'in_time' => null,
+                                         'out_time'=> $date.' '.$outtime,
+                                         'hr_shift_code' => $employee->shift['hr_shift_code'],
+                                         'ot_hour' => 0,
+                                         'late_status' => 0,
+                                         'remarks'=>'BM',
+                                         'updated_by' => auth()->user()->associate_id,
+                                         'updated_at' => NOW()
+                                        ]);
+                                      $queue = (new ProcessAttendanceOuttime($table, $lastPunchId, $employee->as_unit_id))
+                                ->delay(Carbon::now()->addSeconds(2));
+                                dispatch($queue);
+
+                    }                        
                 }
 
-                $this->logFileWrite("Location Changed", $ids);
+                log_file_write("Location Changed for ".$employee->as_id, $ids);
                 DB::commit();
-                return back()
-                    ->with("success", "Outside Entry Successfull.");
+                return redirect()->back()->with("success", "Outside Entry Successfull.");
                 
             } catch (\Exception $e) {
                 DB::rollback();

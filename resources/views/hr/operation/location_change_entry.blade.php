@@ -1,20 +1,14 @@
 @extends('hr.layout')
-@section('title', 'Add Role')
+@section('title', 'Outside Entry')
 @section('main-content')
-@push('css')
-<style type="text/css">
-    .input_height{
-        height: 32px !important;
-    }
-</style>
-@endpush
+
 @section('content')
 <div class="main-content">
-    <div class="main-content-inner">
+    <div class="main-content-inner col-sm-12">
         <div class="breadcrumbs ace-save-state" id="breadcrumbs">
             <ul class="breadcrumb">
                 <li>
-                    <i class="ace-icon fa fa-home home-icon"></i>
+                    <i class="fa fa-home home-icon"></i>
                     <a href="#"> Human Resource </a>
                 </li> 
                 <li>
@@ -23,118 +17,111 @@
                 <li class="active">Outside Entry</li>
             </ul><!-- /.breadcrumb --> 
         </div>
+        @include('inc/message')
+        <div class="panel panel-info">
+            <div class="panel-heading station-card-content">
+                <h6 class="panel-title">
+                        Outside Entry
 
-        <div class="page-content"> 
-            <div class="page-header">
-                <h1>Opeartion<small><i class="ace-icon fa fa-angle-double-right"></i>Outside Entry</small></h1>
+                        <a class="pull-right btn btn-primary" href="{{url('hr/operation/location_change/list')}}">Outside List</a>
+                </h6>
             </div>
+            <div class="panel-body">
+                {{ Form::open(['url'=>'hr/operation/location_change/entry', 'class'=>'form-horizontal', 'method'=>'POST']) }}
+                    <div class="row"> 
+                        <div class="col-sm-3">
+                            <div class="form-group has-required has-float-label select-search-group">
+                                {{ Form::select('employee_id', [], null, ['placeholder'=>'Select Associate\'s ID', 'id'=>'employee_id', 'class'=> 'associates no-select form-control', 'required'=>'required']) }}  
+                                <label for="associate_id"> Associate's ID </label>
+                            </div> 
 
-            <div class="row">
-                <!-- Display Erro/Success Message -->
-                @include('inc/message')
-                <div class="col-sm-12 no-padding no-margin">
-                    <!-- PAGE CONTENT BEGINS -->
-                {{ Form::open(['url'=>'hr/operation/location_change/entry', 'class'=>'form-horizontal', 'method' => 'POST']) }}
-                <input type="hidden" name="applied_on" id="applied_on" value="{{date('Y-m-d H:i:s')}}">
-                <table id="unit_change_table" class="col-xs-12 table table-responsive table-striped table-bordered unit_change_table">
-                    <thead>
-                        <tr>
-                            <th colspan="6" class="align-center" style="background-color: #e6e8e6;border-right-width: 0px;"><h5>Outside Entry</h5></th>
-                            <th colspan="3" class="align-center" style="background-color: #e6e8e6;padding-left: 0px;padding-right: 0px;border-left-width: 0px;">
-                                <a href="{{url('hr/operation/location_change/list')}}"  class="btn btn-sm btn-info" style=" width: 200px; ">Outside List</a>
-                            </th>
-                        </tr>
-                        <tr>   
-                            <th>Employee ID</th>
-                            <th>Unit</th>
-                            <th>Changed Location</th>
-                            <th>Changed Place</th>
-                            <th>Type</th>
-                            <th>From Date</th>
-                            <th>To Date</th>
-                            <th>Comment</th>
-                            <th>#</th>
-                        </tr>
-                    </thead>
-                    <tbody  id="emp_unit_change_tbody" class="no-margin no-padding">
-                            <tr>
-                                <td>
-                                    <select class="col-xs-12 employee_id " id="employee_id" name="employee_id[]" required="required">
-                                        <option value="">Select Employee</option>
-                                        @if($employees)
-                                            @foreach($employees as $em)
-                                                <option value="{{$em->associate_id}}">{{$em->associate_id}} - {{$em->as_name}}</option>
-                                            @endforeach
-                                        @else
-                                            <option value="">No Data</option>
-                                        @endif
-                                    </select>
-                                </td>
-                                <td>
-                                    <input class="col-xs-12 previous_unit input_height" type="text" name="previous_unit[]" placeholder="Auto" readonly="readonly">
-                                </td>
-                                <td>
-                                    <select class="col-xs-12 requested_location " id="requested_location" name="requested_location[]" required="required">
-                                        <option value="">Select Location</option>
-                                         @if($locationList)
-                                            @foreach($locationList as $key =>  $value)
-                                                <option value="{{ $key }}">{{ $value }}</option>
-                                            @endforeach
-                                        @else
-                                            <option value="">No Data</option>
-                                        @endif
-                                    </select>
-                                </td>
-                                <td>
-                                   <input class="col-xs-12 input_height requested_place" type="text" name="requested_place[0]" value="" readonly="readonly"> 
-                                </td>
-                                <td>
-                                    <select class="col-xs-12 type" id="type" name="type[]" required="required">
-                                        <option value="">Select Type</option>
-                                        <option value="1">Full Day</option>
-                                        <option value="2">1st Half</option>
-                                        <option value="3">2nd Half</option>
-                                    </select>
-                                </td>
-                                <td>
-                                   <input class="col-xs-12  from_date input_height " type="date" name="from_date[]" required="required"> 
-                                </td>
-                                <td>
-                                   <input class="col-xs-12  to_date input_height " type="date" name="to_date[]" required="required"> 
-                                </td>
-                                <td>
-                                    <input class="col-xs-12 input_height " type="text" name="comment[]"> 
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-success btn-xs more_button" title="More" style=" height: 32px !important; width: -webkit-fill-available;"><b style="font-size: 14px;">+</b></button>
-                                </td>
-                            </tr>
-                    </tbody>
-                </table>
-                <div class="row no-padding no-margin" style=" background-color: whitesmoke;">
-                    <button class="pull-right btn btn-sm btn-success" type="submit"><i class="fa fa-check bigger-110"></i> Submit</button>
-                </div>
+                            
+                            <div class="form-group has-float-label select-search-group">
+                                <select class="col-xs-12 requested_location " id="requested_location" name="requested_location" required="required">
+                                    <option value="">Select Location</option>
+                                     @if($locationList)
+                                        @foreach($locationList as $key =>  $value)
+                                            <option value="{{ $key }}">{{ $value }}</option>
+                                        @endforeach
+                                    @else
+                                        <option value="">No Data</option>
+                                    @endif
+                                </select>
+                                <label> Requested Location </label>
+                            </div> 
+                            <div class="form-group has-required has-float-label select-search-group">
+                                <select class="col-xs-12 type" id="type" name="type" required="required">
+                                    <option value="">Select Type</option>
+                                    <option value="1">Full Day</option>
+                                    <option value="2">1st Half</option>
+                                    <option value="3">2nd Half</option>
+                                </select>
+                                <label for="floor_id">Type </label>
+                            </div> 
+                            
+                            <div class="form-group has-float-label">
+                                <textarea type="text" name="comment" class="form-control " ></textarea>
+                                <label> Comment </label>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="ace-icon fa fa-check bigger-110"></i> Submit
+                                </button>
+                            </div> 
+                            
 
-                </form>
-                </div>
+                        </div>
+                        <div class="col-sm-3">  
+                            <div class="form-group has-float-label">
+                                <input name="previous_unit" type="text" id="unit" class="form-control" readonly>
+                                <label> Unit </label>
+                            </div> 
+                            <div class="form-group has-float-label">
+                                <input type="text" id="requested_place" name="requested_place" class="form-control" readonly>
+                                <label> Requested Place </label>
+                            </div> 
+                            <div class="form-group has-float-label">
+                                <input type="date" name="from_date" id="start_date" class="datetimepicker form-control " placeholder="Start Date" required="required">
+                                <label for="shift_id">From Date </label>
+                            </div>
+                            <div class="form-group has-float-label">
+                                <input type="date" name="to_date" id="end_date"  class="datetimepicker form-control" placeholder="End Date" required="required">
+                                <label for="shift_id">To Date </label>
+                            </div> 
+                            
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="user-details-block" style="padding-top: 1rem;">
+                                <div class="user-profile text-center mt-0">
+                                    <img id="avatar" class="avatar-130 img-fluid" src="{{ asset('assets/images/user/09.jpg') }} " onerror="this.onerror=null;this.src='{{ asset("assets/images/user/09.jpg") }}';">
+                                </div>
+                                <div class="text-center mt-3">
+                                 <h4><b id="name">-------------</b></h4>
+                                 <p class="mb-0" id="designation">
+                                    --------------------------</p>
+                                 <p class="mb-0" >
+                                    Oracle ID: <span id="oracle_id" class="text-success">-------------</span>
+                                 </p>
+                                 <p class="mb-0" >
+                                    Associate ID: <span id="associate_id_emp" class="text-success">-------------</span>
+                                 </p>
+                                 <p  class="mb-0">Department: <span id="department" class="text-success">------------------------</span> </p>
+                                 
+                                </div>
+                            </div>
+                        </div>  
+               
+                    </div>
+                {{ Form::close() }}
             </div>
-
-        </div>  {{-- Page content end --}}
-    </div>   {{-- main-content-inner-end --}}
-</div> {{-- main-content-end --}}
+        </div>
+    </div>   
+</div> 
+@push('js')
 <script type="text/javascript">
     $(document).ready(function(){ 
 
-        // date picker
-        $('.datepicker').datepicker({
-          changeMonth: true,
-          changeYear: true,
-          yearRange: "-100:+0",
-          onSelect: function() {
-            // Keep in mind that maybe the $(this) now reference to something else so you need to serach for the relvent Node
-            handleInput($('.from_date'));
-          }
-        });
+        
 
         function handleInput(elm) {
           tmpval = elm.val();
@@ -148,27 +135,30 @@
         }
         //datepicker end
 
-        $('body').on('change', '.employee_id', function(){           
-            var emp_id = $(this).val();
-            var path = $(this).parent().next();
-            var path_for_salary_marked = $(this).parent().next().next().next().next().next();
-            // console.log(emp_id, path);
-            $.ajax({
-                url : "{{ url('hr/operation/get_unit') }}",
-                type: 'json',
-                method: 'get',
-                data: {emp_id: emp_id },
-                success: function(data)
-                {
-                    // console.log("Returned", data);
-                    path.find('.previous_unit').val(data['hr_unit_name']);
-                    path_for_salary_marked.find('.salary_marked_for').val(emp_id);
-                },
-                error: function()
-                {
-                    alert('No Unit');
-                }
-            });
+        $(document).on('change', '#employee_id', function(){ 
+            var url = '{{url("/")}}'; 
+            if( $(this).val() != ''){
+                $.ajax({
+                    url : "{{ url('hr/timeattendance/station_as_info') }}",
+                    type: 'json',
+                    method: 'get',
+                    data: {associate_id: $(this).val()},
+                    success: function(data)
+                    {
+                        $("#unit").val(data.unit);
+                        $('#associate_id_emp').text(data['associate_id']);
+                        $('#oracle_id').text(data['as_oracle_code']);
+                        $('#name').text(data['as_name']);
+                        $('#department').text(data['hr_department_name']);
+                        $('#designation').text(data['hr_designation_name']);
+                        
+                        $('#avatar').attr('src', url+data['as_pic']); 
+                    },
+                    error: function()
+                    {
+                    }
+                });
+            }
 
         });
 
@@ -191,83 +181,21 @@
         });
 
 
-        $('body').on('click', '.more_button', function(){
-            var more_tr = '<tr>\
-                                <td>\
-                                    <select class="col-xs-12 employee_id" id="employee_id" name="employee_id[]" required="required">\
-                                        <option value="">Select Employee</option>\
-                                        @if($employees)\
-                                            @foreach($employees as $em)\
-                                                <option value="{{$em->associate_id}}">{{$em->associate_id}} - {{$em->as_name}}</option>\
-                                            @endforeach\
-                                        @else\
-                                            <option value="">No Data</option>\
-                                        @endif\
-                                    </select>\
-                                </td>\
-                                <td>\
-                                    <input class="col-xs-12 previous_unit input_height" type="text" name="previous_unit[]" placeholder="Auto" readonly="readonly">\
-                                </td>\
-                                <td>\
-                                    <select class="col-xs-12 requested_location" id="requested_location" name="requested_location[]" required="required">\
-                                        <option value="">Select Location</option>\
-                                         @if($locationList)\
-                                            @foreach($locationList as $key => $value)\
-                                                <option value="{{ $key }}">{{ $value }}</option>\
-                                            @endforeach\
-                                        @else\
-                                            <option value="">No Data</option>\
-                                        @endif\
-                                    </select>\
-                                </td>\
-                                <td>\
-                                   <input class="col-xs-12 input_height requested_place" type="text" name="requested_place[]" readonly="readonly">\
-                                </td>\
-                                <td>\
-                                    <select class="col-xs-12 type" id="type" name="type[]" required="required">\
-                                        <option value="">Select Type</option>\
-                                        <option value="1">Full Day</option>\
-                                        <option value="2">1st Half</option>\
-                                        <option value="3">2nd Half</option>\
-                                    </select>\
-                                </td>\
-                                <td>\
-                                   <input class="col-xs-12  from_date input_height " type="date" name="from_date[]"  required="required">\
-                                </td>\
-                                <td>\
-                                   <input class="col-xs-12  to_date input_height " type="date" name="to_date[]"  required="required">\
-                                </td>\
-                                <td>\
-                                    <input class="col-xs-12 input_height " type="text" name="comment[]"> \
-                                </td>\
-                                <td>\
-                                    <button type="button" class="btn btn-danger btn-xs less_button"  style="padding-right: 6px;padding-left: 6px;" title="Delete"><i class="fa fa-trash"></i></button>\
-                                </td>\
-                            </tr>';
-
-                $('#emp_unit_change_tbody').append(more_tr);
-                $('select').select2();
-                // $('input').datepicker();
-
-        });
-
-        $('body').on('click', '.less_button', function(){
-            $(this).parent().parent().remove();
-        });
-
+     
         //on select outside location make place name mandatory
         $("body").on("change", ".requested_location", function(){
             
             if($(this).val()== "Outside"){
-                $(this).parent().next().find(".requested_place").prop("required", true);
-                $(this).parent().next().find(".requested_place").removeAttr("readonly");
+                $(this).parent().next().find("#requested_place").prop("required", true);
+                $(this).parent().next().find("#requested_place").removeAttr("readonly");
             }
             else{
-                $(this).parent().next().find(".requested_place").removeAttr("required", true);
-                $(this).parent().next().find(".requested_place").prop("readonly", "readonly");
+                $(this).parent().next().find("#requested_place").removeAttr("required", true);
+                $(this).parent().next().find("#requested_place").prop("readonly", "readonly");
             }
         });
   
     });
 </script>
+@endpush
 @endsection
