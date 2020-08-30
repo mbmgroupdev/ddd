@@ -59,7 +59,6 @@ class OperationLoadEmployeeController extends Controller
             ->where('shift_roaster_year', $year)
             ->where('shift_roaster_month', $month)
             ->whereIn('shift_roaster_user_id', $employees)
-            // ->pluck('day_'.$day)
             ->get()->keyBy('shift_roaster_user_id')->toArray();
 
             $data['filter'] = "<input type=\"text\" id=\"AssociateSearch\" placeholder=\"Search an Associate\" autocomplete=\"off\" class=\"form-control\"/>";
