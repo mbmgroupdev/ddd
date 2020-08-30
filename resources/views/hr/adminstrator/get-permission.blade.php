@@ -1,4 +1,3 @@
-@php dd($user) @endphp
 <ul class="nav nav-tabs"  role="tablist">
 	@foreach($permissions as $key => $module)
   	<li class="nav-item">
@@ -30,7 +29,7 @@
                                 @foreach($group as $key2 => $permission)
                                 <div class="col-sm-4">
                                 	<div class="custom-control custom-checkbox custom-checkbox-color-check custom-control-inline @if($user->hasDirectPermission($permission->name)) direct  @endif">
-		                              	<input type="checkbox" class="custom-control-input bg-success" id="perm-{{$permission->id}}" value="{{$permission->name}}" name="permissions[]" @if($user->hasPermissionTo($permission->name)) checked @if(!$user->hasDirectPermission($permission->name)) disabled="disabled" rel='tooltip' data-tooltip-location='top' data-tooltip='This permissons can not revoked here. Please change in Roles page'  @endif @endif>
+		                              	<input type="checkbox" class="permissions custom-control-input bg-success" id="perm-{{$permission->id}}" value="{{$permission->name}}" name="permissions[]" @if($user->hasPermissionTo($permission->name)) checked @if(!$user->hasDirectPermission($permission->name)) disabled="disabled" rel='tooltip' data-tooltip-location='top' data-tooltip='This permissons can not revoked here. Please change in Roles page'  @endif @endif>
 		                              	<label class="custom-control-label" for="perm-{{$permission->id}}">{{$permission->name}}</label>
 		                           	</div>
                                 </div>

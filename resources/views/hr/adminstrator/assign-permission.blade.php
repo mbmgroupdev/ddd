@@ -45,7 +45,7 @@
 					                              <input type="checkbox" class="custom-control-input bg-success" id="Sl-{{$key}}-{{$count}}" >
 					                              <label class="custom-control-label" for="Sl-{{$key}}-{{$count}}"></label>
 					                           </div> --}}
-					                           <input type="checkbox" id="Sl-{{$key}}-{{$count}}" style="transform: scale(1.5);"> &nbsp;
+					                           <input type="checkbox" id="Sl-{{$key}}-{{$count}}" style="transform: scale(1.5);" disabled title="Select user first!"> &nbsp;
 							      				<a class="permission-item card-link @if($count != 1) collapsed @endif" data-toggle="collapse" href="#{{$key}}-{{$count}}">
 							        				{{$key1}} 
 							      				</a>
@@ -56,7 +56,7 @@
 		                                                @foreach($group as $key2 => $permission)
 		                                                <div class="col-sm-4">
 		                                                	<div class="custom-control custom-checkbox custom-checkbox-color-check custom-control-inline">
-								                              	<input type="checkbox" class="custom-control-input bg-success" id="perm-{{$permission->id}}" value="{{$permission->name}}" name="permissions[]">
+								                              	<input type="checkbox" class="custom-control-input bg-success" id="perm-{{$permission->id}}" value="{{$permission->name}}" name="permissions[]" disabled title="Select user first!">
 								                              	<label class="custom-control-label" for="perm-{{$permission->id}}">{{$permission->name}}</label>
 								                           	</div>
 		                                                </div>
@@ -91,9 +91,9 @@
 	            },
 	            success: function(data)
 	            {
-	               $('.permission-gallery').html(data);
+	               $('#permission-gallery').html(data);
 	               $('.perm-group').each(function() {
-	                    if($(this).parent().parent().next().find('input:checkbox').not(':checked').length == 0){
+	                    if($(this).parent().next().find('input:checkbox').not(':checked').length == 0){
 	                        $(this).prop('checked', true);
 	                    }
 	                });
@@ -108,7 +108,7 @@
 	        });
 		});
 		$(document).on('change', '.permissions', function(){
-        if($('select.associates').val() != ''){
+        if($('select.users').val() != ''){
 
             var type = 'revoke';
             if($(this).is(':checked')){
@@ -117,7 +117,7 @@
             var data = {
                 type : type,
                 permission : $(this).val(),
-                id : $('select.associates').val()
+                id : $('select.users').val()
             }
             syncPermission(data);
         }else{
@@ -134,7 +134,7 @@
 
     function syncPermission(data){
         $.ajax({
-            url : "{{ url('users_management/user/sync-permission') }}",
+            url : "{{ url('hr/adminstrator/user/sync-permission') }}",
             type: 'get',
             data: data,
             success: function(res)

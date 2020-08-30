@@ -100,7 +100,7 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         $roles = Role::get()->pluck('name', 'name');
         $units = Unit::get();
-        $role = $user->roles()->first()->name;
+        $role = $user->roles()->first()->name??'';
 
         return view('hr.adminstrator.edit-user', compact('user','roles', 'units','role'));
     }
@@ -126,7 +126,9 @@ class UserController extends Controller
 
             $user = User::findOrFail($id);
             $user->name = $request->name;
-            $user->associate_id = $request->associate_id??'';
+            if($request->associate_id){
+                $user->associate_id = $request->associate_id;
+            }
             $user->unit_permissions = implode(",", $request->input("unit_permissions"));
 
             $user->save();
@@ -248,7 +250,8 @@ class UserController extends Controller
     public function getPermission(Request $request)
     {
         $user = User::where('associate_id', $request->id)->first();
-
+        //$test = $user->hasPermissionTo('Add User');
+        //dd($test);
         $permissions = Permission::orderBy('name','ASC')->get();
         $permissions = $permissions->groupBy(['module','groups']);
 

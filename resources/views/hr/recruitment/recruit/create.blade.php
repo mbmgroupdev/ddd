@@ -7,13 +7,13 @@
 @section('main-content')
    <div class="row">
       <div class="col-sm-12 col-lg-12">
-         <div class="iq-card">
-            <div class="iq-card-header d-flex justify-content-between">
-               <div class="iq-header-title">
-                  <h4 class="card-title">Recruitment Process</h4>
-               </div>
+         <div class="panel">
+            <div class="panel-heading">
+                  <h6>Recruitment Process
+                      <a class="btn btn-primary pull-right" href="{{url('')}}">Recruit List</a>
+                  </h6>
             </div>
-            <div class="iq-card-body">
+            <div class="panel-body">
                <div class="row">
                   <div class="col-sm-3">
                      <div class="stepwizard">
@@ -38,7 +38,8 @@
                      </div>
                   </div>
                   <div class="col-sm-9">
-                     <form action="{{ route('recruit.store') }}" method="POST" enctype="multipart/form-data" class="needs-validation form" novalidate>
+                     <form action="{{ route('recruit.store') }}" method="POST" enctype="multipart/form-data" >
+                        {{-- class="needs-validation form" novalidate --}}
                         @csrf
                         <div class="row setup-content" id="basic-info">
                            <div class="col-sm-12">
@@ -46,224 +47,201 @@
                                  <div class="form-card text-left">
                                     <div class="row">
                                        <div class="col-12">
-                                          <h3 class="mb-1">Basic Info:</h3>
+                                          <h3 class="mb-1 border-left-heading">Basic Information:</h3>
                                        </div>
                                     </div>
-                                    <div class="row form-card-details">
-                                       <div class="col-md-12">
-                                          <div class="card mb-2">
-                                             <div class="card-body row">
-                                                <div class="col-md-6">
-                                                   <div class="form-group has-float-label has-required select-search-group">
-                                                      <select name="worker_emp_type_id" class="form-control capitalize select-search @error('worker_emp_type_id') is-invalid @enderror" id="employeeType" required="" onchange="employeeTypeWiseDesignation(this.value)">
-                                                         <option selected="" disabled="" value="">Choose...</option>
-                                                         @foreach($getEmpType as $emptype)
-                                                         <option value="{{ $emptype->emp_type_id }}">{{ $emptype->hr_emp_type_name }}</option>
-                                                         @endforeach
-                                                      </select>
-                                                      <label for="employeeType">Employee Type</label>
-                                                   </div>
-                                                   @error('worker_emp_type_id')
-                                                     <span class="invalid-feedback" role="alert">
-                                                         <strong>{{ $message }}</strong>
-                                                     </span>
-                                                   @enderror
-                                                </div>
-                                                <div class="col-md-6">
-                                                   <div class="form-group has-float-label has-required select-search-group">
-                                                      <select name="worker_designation_id" class="form-control capitalize select-search @error('worker_designation_id') is-invalid @enderror" id="designation" required="" disabled>
-                                                         <option selected="" disabled="" value="">Choose...</option>
-                                                      </select>
-                                                      <label for="designation">Designation</label>
-                                                   </div>
-                                                   @error('worker_designation_id')
-                                                     <span class="invalid-feedback" role="alert">
-                                                         <strong>{{ $message }}</strong>
-                                                     </span>
-                                                   @enderror
-                                                </div>
-                                                <div class="col-md-6">
-                                                   <div class="form-group has-float-label has-required select-search-group">
-                                                      <select name="worker_unit_id" class="form-control capitalize select-search @error('worker_unit_id') is-invalid @enderror" id="unit" required="">
-                                                         <option selected="" disabled="" value="">Choose...</option>
-                                                         @foreach($getUnit as $unit)
-                                                         <option value="{{ $unit->hr_unit_id }}">{{ $unit->hr_unit_name }}</option>
-                                                         @endforeach
-                                                      </select>
-                                                      <label for="unit">Unit</label>
-                                                   </div>
-                                                   @error('worker_unit_id')
-                                                     <span class="invalid-feedback" role="alert">
-                                                         <strong>{{ $message }}</strong>
-                                                     </span>
-                                                   @enderror
-                                                </div>
-                                                <div class="col-md-6">
-                                                   <div class="form-group has-float-label has-required select-search-group">
-                                                      <select name="worker_area_id" class="form-control capitalize select-search @error('worker_area_id') is-invalid @enderror" id="area" required="" onchange="areaWiseDepartment(this.value)">
-                                                         <option selected="" disabled="" value="">Choose...</option>
-                                                         @foreach($getArea as $area)
-                                                         <option value="{{ $area->hr_area_id }}">{{ $area->hr_area_name }}</option>
-                                                         @endforeach
-                                                      </select>
-                                                      <label for="area">Area</label>
-                                                   </div>
-                                                   @error('worker_area_id')
-                                                     <span class="invalid-feedback" role="alert">
-                                                         <strong>{{ $message }}</strong>
-                                                     </span>
-                                                   @enderror
-                                                </div>
-                                                <div class="col-md-6">
-                                                   <div class="form-group has-float-label has-required select-search-group">
-                                                      <select name="worker_department_id" class="form-control capitalize select-search @error('worker_department_id') is-invalid @enderror" id="department" required="" disabled onchange="departmentWiseSection(this.value)">
-                                                         <option selected="" disabled="" value="">Choose...</option>
-                                                         
-                                                      </select>
-                                                      <label for="department">Department</label>
-                                                   </div>
-                                                   @error('worker_department_id')
-                                                     <span class="invalid-feedback" role="alert">
-                                                         <strong>{{ $message }}</strong>
-                                                     </span>
-                                                   @enderror
-                                                </div>
-                                                <div class="col-md-6">
-                                                   <div class="form-group has-float-label has-required select-search-group">
-                                                      <select name="worker_section_id" class="form-control capitalize select-search @error('worker_section_id') is-invalid @enderror" id="section" required="" disabled onchange="sectionWiseSubSection(this.value)">
-                                                         <option selected="" disabled="" value="">Choose...</option>
-                                                         
-                                                      </select>
-                                                      <label for="section">Section</label>
-                                                   </div>
-                                                   @error('worker_section_id')
-                                                     <span class="invalid-feedback" role="alert">
-                                                         <strong>{{ $message }}</strong>
-                                                     </span>
-                                                   @enderror
-                                                </div>
-                                                <div class="col-md-6">
-                                                   <div class="form-group has-float-label has-required select-search-group">
-                                                      <select name="worker_subsection_id" class="form-control capitalize select-search @error('worker_subsection_id') is-invalid @enderror" id="subSection" required="" disabled>
-                                                         <option selected="" disabled="" value="">Choose...</option>
-                                                         
-                                                      </select>
-                                                      <label for="subSection">Sub Section</label>
-                                                   </div>
-                                                   @error('worker_subsection_id')
-                                                     <span class="invalid-feedback" role="alert">
-                                                         <strong>{{ $message }}</strong>
-                                                     </span>
-                                                   @enderror
-                                                </div>
-                                                <div class="col-md-6">
-                                                   <div class="custom-control custom-switch">
-                                                      <input name="worker_ot" type="checkbox" class="custom-control-input @error('worker_ot') is-invalid @enderror" id="otHolder" value="{{ old('worker_ot')?old('worker_ot'):'1' }}">
-                                                      <label class="custom-control-label" for="otHolder">OT Holder</label>
-                                                   </div>
-                                                   @error('worker_ot')
-                                                     <span class="invalid-feedback" role="alert">
-                                                         <strong>{{ $message }}</strong>
-                                                     </span>
-                                                   @enderror
-                                                </div>
-                                                
-                                             </div>
-                                          </div>
-                                          <div class="card mb-3">
-                                             <div class="card-body row">
-                                                <div class="col-md-6">
-                                                   <div class="form-group has-float-label has-required">
-                                                      <input type="text" class="form-control @error('worker_name') is-invalid @enderror" id="associate-name" name="worker_name" placeholder="Type Associate Name" required="required" value="{{ old('worker_name') }}" autocomplete="off" />
-                                                      <label for="associate-name">Associate Name</label>
-                                                   </div>
-                                                   @error('worker_name')
-                                                     <span class="invalid-feedback" role="alert">
-                                                         <strong>{{ $message }}</strong>
-                                                     </span>
-                                                   @enderror
-                                                </div>
-                                                <div class="col-md-6">
-                                                   <div class="form-group has-float-label has-required">
-                                                      <input type="text" class="form-control @error('worker_contact') is-invalid @enderror" id="contactNo" name="worker_contact" placeholder="Type Contact Number" value="{{ old('worker_contact') }}" required="required" autocomplete="off" />
-                                                      <label for="contactNo">Contact No.</label>
-                                                   </div>
-                                                   @error('worker_contact')
-                                                     <span class="invalid-feedback" role="alert">
-                                                         <strong>{{ $message }}</strong>
-                                                     </span>
-                                                   @enderror
-                                                </div>
-                                                <div class="col-md-6">
-                                                   <div class="form-group has-float-label has-required">
-                                                      {{ Form::select('worker_gender', ['male'=>'Male', 'female'=>'Female', 'others'=>'Others'], old('worker_gender'), ['placeholder'=>'Select Gender', 'id'=>'gender', 'class'=> 'form-control' . ($errors->has('worker_gender') ? ' is-invalid' : ''), 'required']) }} 
-                                                      <label class="gender" for="gender">Gender</label>
-                                                   </div>
-                                                   @error('worker_gender')
-                                                     <span class="invalid-feedback" role="alert">
-                                                         <strong>{{ $message }}</strong>
-                                                     </span>
-                                                   @enderror
-                                                </div>
-                                                <div class="col-md-6">
-                                                   <div class="form-group has-float-label has-required">
-                                                      <input type="date" class="form-control @error('worker_dob') is-invalid @enderror" value="{{ old('worker_dob') }}" id="dob" name="worker_dob" required="required" autocomplete="off" />
-                                                      <label for="dob">Date Of Birth</label>
-                                                   </div>
-                                                   @error('worker_dob')
-                                                     <span class="invalid-feedback" role="alert">
-                                                         <strong>{{ $message }}</strong>
-                                                     </span>
-                                                   @enderror
-                                                </div>
-                                                <div class="col-md-6">
-                                                   <div class="form-group has-float-label has-required">
-                                                      <input type="date" class="form-control @error('worker_doj') is-invalid @enderror" value="{{ old('worker_doj') }}" id="doj" name="worker_doj" required="required" autocomplete="off" />
-                                                      <label for="doj">Date of Joining</label>
-                                                   </div>
-                                                   @error('worker_doj')
-                                                     <span class="invalid-feedback" role="alert">
-                                                         <strong>{{ $message }}</strong>
-                                                     </span>
-                                                   @enderror   
-                                                </div>
-                                                <div class="col-md-6">
-                                                   <div class="form-group has-float-label ">
-                                                      <input type="text" class="form-control @error('worker_nid') is-invalid @enderror" id="nid" value="{{ old('worker_nid') }}" name="worker_nid" placeholder="Type NID/Birth Certificate Number" autocomplete="off" />
-                                                      <label for="nid">NID/Birth Certificate</label>
-                                                   </div>
-                                                   @error('worker_nid')
-                                                     <span class="invalid-feedback" role="alert">
-                                                         <strong>{{ $message }}</strong>
-                                                     </span>
-                                                   @enderror
-                                                </div>
-                                                <div class="col-md-6">
-                                                   <div class="form-group has-float-label">
-                                                      <input type="text" class="form-control @error('as_oracle_code') is-invalid @enderror" id="oracleId" name="as_oracle_code" placeholder="Type Oracle ID" value="{{ old('as_oracle_code') }}" autocomplete="off" />
-                                                      <label for="oracleId">Oracle ID</label>
-                                                   </div>
-                                                   @error('as_oracle_code')
-                                                     <span class="invalid-feedback" role="alert">
-                                                         <strong>{{ $message }}</strong>
-                                                     </span>
-                                                   @enderror
-                                                </div>
-                                                <div class="col-md-6">
-                                                   <div class="form-group has-float-label">
-                                                      <input type="text" class="form-control @error('as_rfid') is-invalid @enderror" id="rfId" name="as_rfid" value="{{ old('as_rfid') }}" placeholder="Type RFID" autocomplete="off" />
-                                                      <label for="rfId">RFID</label>
-                                                   </div>
-                                                   @error('as_rfid')
-                                                     <span class="invalid-feedback" role="alert">
-                                                         <strong>{{ $message }}</strong>
-                                                     </span>
-                                                   @enderror
-                                                </div>
-                                             </div>
-                                          </div>
-                                       </div>
-                                       
+                                    <div class="row form-card-details pt-3">
+                                        <div class="col-sm-4">
+                                            <div class="form-group has-float-label has-required">
+                                              <input type="text" class="form-control @error('worker_name') is-invalid @enderror" id="associate-name" name="worker_name" placeholder="Type Associate Name" required="required" value="{{ old('worker_name') }}" autocomplete="off" />
+                                              <label for="associate-name">Associate Name</label>
+                                           </div>
+                                           @error('worker_name')
+                                             <span class="invalid-feedback" role="alert">
+                                                 <strong>{{ $message }}</strong>
+                                             </span>
+                                           @enderror
+
+                                           <div class="form-group has-float-label has-required">
+                                              <input type="text" class="form-control @error('worker_contact') is-invalid @enderror" id="contactNo" name="worker_contact" placeholder="Type Contact Number" value="{{ old('worker_contact') }}" required="required" autocomplete="off" />
+                                              <label for="contactNo">Contact No.</label>
+                                           </div>
+                                           @error('worker_contact')
+                                             <span class="invalid-feedback" role="alert">
+                                                 <strong>{{ $message }}</strong>
+                                             </span>
+                                           @enderror
+
+                                           <div class="form-group has-float-label has-required select-search-group">
+                                              {{ Form::select('worker_gender', ['male'=>'Male', 'female'=>'Female', 'others'=>'Others'], old('worker_gender'), ['placeholder'=>'Select Gender', 'id'=>'gender', 'class'=> 'form-control' . ($errors->has('worker_gender') ? ' is-invalid' : ''), 'required']) }} 
+                                              <label class="gender" for="gender">Gender</label>
+                                           </div>
+                                           @error('worker_gender')
+                                             <span class="invalid-feedback" role="alert">
+                                                 <strong>{{ $message }}</strong>
+                                             </span>
+                                           @enderror
+
+                                           <div class="form-group has-float-label has-required">
+                                              <input type="date" class="form-control @error('worker_dob') is-invalid @enderror" value="{{ old('worker_dob') }}" id="dob" name="worker_dob" required="required" autocomplete="off" />
+                                              <label for="dob">Date Of Birth</label>
+                                           </div>
+                                           @error('worker_dob')
+                                             <span class="invalid-feedback" role="alert">
+                                                 <strong>{{ $message }}</strong>
+                                             </span>
+                                           @enderror
+
+                                              
+
+                                           <div class="form-group has-float-label ">
+                                              <input type="text" class="form-control @error('worker_nid') is-invalid @enderror" id="nid" value="{{ old('worker_nid') }}" name="worker_nid" placeholder="Type NID/Birth Certificate Number" autocomplete="off" />
+                                              <label for="nid">NID/Birth Certificate</label>
+                                           </div>
+                                           @error('worker_nid')
+                                             <span class="invalid-feedback" role="alert">
+                                                 <strong>{{ $message }}</strong>
+                                             </span>
+                                           @enderror
+                                        </div>
+                                        <!-- basic location-->
+                                        <div class="col-sm-4">
+                                           <div class="form-group has-float-label has-required select-search-group">
+                                              <select name="worker_unit_id" class="form-control capitalize select-search @error('worker_unit_id') is-invalid @enderror" id="unit" required="">
+                                                 <option selected="" disabled="" value="">Choose...</option>
+                                                 @foreach($getUnit as $unit)
+                                                 <option value="{{ $unit->hr_unit_id }}">{{ $unit->hr_unit_name }}</option>
+                                                 @endforeach
+                                              </select>
+                                              <label for="unit">Unit</label>
+                                           </div>
+                                           @error('worker_unit_id')
+                                             <span class="invalid-feedback" role="alert">
+                                                 <strong>{{ $message }}</strong>
+                                             </span>
+                                           @enderror
+                                           <div class="form-group has-float-label has-required select-search-group">
+                                              <select name="worker_area_id" class="form-control capitalize select-search @error('worker_area_id') is-invalid @enderror" id="area" required="" onchange="areaWiseDepartment(this.value)">
+                                                 <option selected="" disabled="" value="">Choose...</option>
+                                                 @foreach($getArea as $area)
+                                                 <option value="{{ $area->hr_area_id }}">{{ $area->hr_area_name }}</option>
+                                                 @endforeach
+                                              </select>
+                                              <label for="area">Area</label>
+                                           </div>
+                                           @error('worker_area_id')
+                                             <span class="invalid-feedback" role="alert">
+                                                 <strong>{{ $message }}</strong>
+                                             </span>
+                                           @enderror
+                                           <div class="form-group has-float-label has-required select-search-group">
+                                              <select name="worker_department_id" class="form-control capitalize select-search @error('worker_department_id') is-invalid @enderror" id="department" required="" disabled onchange="departmentWiseSection(this.value)">
+                                                 <option selected="" disabled="" value="">Choose...</option>
+                                                 
+                                              </select>
+                                              <label for="department">Department</label>
+                                           </div>
+                                           @error('worker_department_id')
+                                             <span class="invalid-feedback" role="alert">
+                                                 <strong>{{ $message }}</strong>
+                                             </span>
+                                           @enderror
+                                           <div class="form-group has-float-label has-required select-search-group">
+                                              <select name="worker_section_id" class="form-control capitalize select-search @error('worker_section_id') is-invalid @enderror" id="section" required="" disabled onchange="sectionWiseSubSection(this.value)">
+                                                 <option selected="" disabled="" value="">Choose...</option>
+                                                 
+                                              </select>
+                                              <label for="section">Section</label>
+                                           </div>
+                                           @error('worker_section_id')
+                                             <span class="invalid-feedback" role="alert">
+                                                 <strong>{{ $message }}</strong>
+                                             </span>
+                                           @enderror
+                                           <div class="form-group has-float-label has-required select-search-group">
+                                              <select name="worker_subsection_id" class="form-control capitalize select-search @error('worker_subsection_id') is-invalid @enderror" id="subSection" required="" disabled>
+                                                 <option selected="" disabled="" value="">Choose...</option>
+                                                 
+                                              </select>
+                                              <label for="subSection">Sub Section</label>
+                                           </div>
+                                           @error('worker_subsection_id')
+                                             <span class="invalid-feedback" role="alert">
+                                                 <strong>{{ $message }}</strong>
+                                             </span>
+                                           @enderror
+                                        </div>
+                                        <div class="col-sm-4">
+                                           <div class="form-group has-float-label has-required select-search-group">
+                                              <select name="worker_emp_type_id" class="form-control capitalize select-search @error('worker_emp_type_id') is-invalid @enderror" id="employeeType" required="" onchange="employeeTypeWiseDesignation(this.value)">
+                                                 <option selected="" disabled="" value="">Choose...</option>
+                                                 @foreach($getEmpType as $emptype)
+                                                 <option value="{{ $emptype->emp_type_id }}">{{ $emptype->hr_emp_type_name }}</option>
+                                                 @endforeach
+                                              </select>
+                                              <label for="employeeType">Employee Type</label>
+                                           </div>
+                                           @error('worker_emp_type_id')
+                                             <span class="invalid-feedback" role="alert">
+                                                 <strong>{{ $message }}</strong>
+                                             </span>
+                                           @enderror
+
+                                           <div class="form-group has-float-label has-required select-search-group">
+                                              <select name="worker_designation_id" class="form-control capitalize select-search @error('worker_designation_id') is-invalid @enderror" id="designation" required="" disabled>
+                                                 <option selected="" disabled="" value="">Choose...</option>
+                                              </select>
+                                              <label for="designation">Designation</label>
+                                           </div>
+                                           @error('worker_designation_id')
+                                             <span class="invalid-feedback" role="alert">
+                                                 <strong>{{ $message }}</strong>
+                                             </span>
+                                           @enderror
+
+                                           <div class="form-group has-float-label has-required">
+                                              <input type="date" class="form-control @error('worker_doj') is-invalid @enderror" value="{{ old('worker_doj') }}" id="doj" name="worker_doj" required="required" autocomplete="off" />
+                                              <label for="doj">Date of Joining</label>
+                                           </div>
+                                           @error('worker_doj')
+                                             <span class="invalid-feedback" role="alert">
+                                                 <strong>{{ $message }}</strong>
+                                             </span>
+                                           @enderror
+
+                                           
+
+                                           <div class="form-group has-float-label">
+                                              <input type="text" class="form-control @error('as_oracle_code') is-invalid @enderror" id="oracleId" name="as_oracle_code" placeholder="Type Oracle ID" value="{{ old('as_oracle_code') }}" autocomplete="off" />
+                                              <label for="oracleId">Oracle ID</label>
+                                           </div>
+                                           @error('as_oracle_code')
+                                             <span class="invalid-feedback" role="alert">
+                                                 <strong>{{ $message }}</strong>
+                                             </span>
+                                           @enderror
+
+                                           <div class="form-group has-float-label">
+                                              <input type="text" class="form-control @error('as_rfid') is-invalid @enderror" id="rfId" name="as_rfid" value="{{ old('as_rfid') }}" placeholder="Type RFID" autocomplete="off" />
+                                              <label for="rfId">RFID</label>
+                                           </div>
+                                           @error('as_rfid')
+                                             <span class="invalid-feedback" role="alert">
+                                                 <strong>{{ $message }}</strong>
+                                             </span>
+                                           @enderror
+
+                                           <div class="custom-control custom-switch">
+                                              <input name="worker_ot" type="checkbox" class="custom-control-input @error('worker_ot') is-invalid @enderror" id="otHolder" value="{{ old('worker_ot')?old('worker_ot'):'1' }}">
+                                              <label class="custom-control-label" for="otHolder">OT Holder</label>
+                                           </div>
+                                           @error('worker_ot')
+                                             <span class="invalid-feedback" role="alert">
+                                                 <strong>{{ $message }}</strong>
+                                             </span>
+                                           @enderror
+                                        </div>
+                                        
                                     </div>
                                  </div>
                                  <button class="btn btn-success btn-lg text-center" type="button" id="saveSubmit"><i class="fa fa-save"></i> Save and New</button>
@@ -277,7 +255,7 @@
                                  <div class="form-card text-left">
                                     <div class="row">
                                        <div class="col-12">
-                                          <h3 class="mb-1">Medical Info:</h3>
+                                          <h3 class="mb-1 border-left-heading">Medical Info:</h3>
                                        </div>
                                     </div>
                                     <div class="row form-card-details">
@@ -318,7 +296,7 @@
                                                    @enderror
                                                 </div>
                                                 <div class="col-md-6">
-                                                   <div class="form-group has-float-label has-required">
+                                                   <div class="form-group has-float-label has-required select-search-group">
                                                       {{ Form::select('worker_blood_group', ['A+'=>'A+', 'A-'=>'A-', 'B+'=>'B+','B-'=>'B-', 'O+'=>'O+', 'O-'=>'O-', 'AB+'=>'AB+', 'AB-'=>'AB-'], old('worker_blood_group'), ['placeholder'=>'Select Blood Group', 'id'=>'bloodGroup', 'class'=> 'form-control' . ($errors->has('worker_blood_group') ? ' is-invalid' : ''), 'required']) }} 
 
                                                       <label for="bloodGroup">Blood Group</label>
@@ -341,7 +319,7 @@
                                                    @enderror
                                                 </div>
                                                 <div class="col-md-6">
-                                                   <div class="form-group has-float-label has-required">
+                                                   <div class="form-group has-float-label has-required select-search-group">
                                                       {{ Form::select('worker_doctor_age_confirm', ['18-20'=>'18-20', '21-25'=>'21-25', '26-30'=>'26-30','31-35'=>'31-35', '36-40'=>'36-40', '41-45'=>'41-45', '46-50'=>'46-50', '51-55'=>'51-55', '56-60'=>'56-60', '61-65'=>'61-65', '66-70'=>'66-70'], old('worker_doctor_age_confirm'), ['placeholder'=>'Select Blood Group', 'id'=>'age-confirmation', 'class'=> 'form-control' . ($errors->has('worker_doctor_age_confirm') ? ' is-invalid' : ''), 'required']) }}
                                                       <label for="age-confirmation">Doctor's Age Confirmation</label>
                                                    </div>
@@ -393,7 +371,7 @@
                                  <div class="form-card text-left">
                                     <div class="row">
                                        <div class="col-12">
-                                          <h3 class="mb-1">IE (Industrial Engineering):</h3>
+                                          <h3 class="mb-1 border-left-heading">IE (Industrial Engineering):</h3>
                                        </div>
                                     </div>
                                     <div class="row form-card-details">

@@ -62,17 +62,7 @@ Route::group(['middleware' => 'auth'], function(){
 	Route::post('users_management/permissions/edit/{id}', 'Users_Management\PermissionsController@update');
 	Route::get('users_management/permissions/delete/{id}', 'Users_Management\PermissionsController@destroy');
 
-	Route::group(['middleware' => 'permission:Manage Role'], function(){
-		Route::get('users_management/roles', 'Users_Management\RolesController@index');
-		Route::post('users_management/roles/store', 'Users_Management\RolesController@store');
-		Route::get('users_management/roles/edit/{id}', 'Users_Management\RolesController@edit');
-		Route::post('users_management/roles/edit/{id}', 'Users_Management\RolesController@update');
-		Route::post('users_management/roles/update', 'Users_Management\RolesController@update');
 
-		Route::get('users_management/roles/delete/{id}', 'Users_Management\RolesController@destroy'); 
-
-		Route::get('users_management/roles/create', 'Users_Management\RolesController@create');
-	});
 	//Top Management list
     Route::get('users_management/top_management','Users_Management\TopManagementController@topManagement');
     Route::get('users_management/top_management_list','Users_Management\TopManagementController@topManagementList');

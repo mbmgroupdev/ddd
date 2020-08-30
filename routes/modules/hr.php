@@ -23,7 +23,7 @@ Route::group(['prefix' => 'hr','namespace' => 'Hr'], function(){
 		Route::get('user/search', 'UserController@userSearch');
 
 		Route::get('role/create', 'RolesController@create');
-		Route::post('role/create', 'RolesController@store');
+		Route::post('role/store', 'RolesController@store');
 		Route::get('role/edit/{id}', 'RolesController@edit');
 		Route::post('role/edit/{id}', 'RolesController@update'); 
 		Route::get('role/delete/{id}', 'RolesController@destroy');
