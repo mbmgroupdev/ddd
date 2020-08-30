@@ -13,9 +13,7 @@
     overflow-y: auto;
     margin-bottom: 10px;
 }
-.card {
-    border: 1px solid #abc2c2;
-}
+
 .card-body {
     padding-bottom: 0;
 }

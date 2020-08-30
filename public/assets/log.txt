@@ -1,3 +1,12 @@
+2020-08-30 15:59:42 "17F005001B" Permission Appointment Letter revoked from 15H025007D 
+2020-08-30 15:59:34 "17F005001B" Permission Appointment Letter assigned to 15H025007D 
+2020-08-30 15:36:14 "17F005001B" Test1 - role created:  34
+2020-08-30 15:31:28 "17F005001B" User information updated 13
+2020-08-30 15:28:58 "17F005001B" User information updated 17
+2020-08-30 15:27:20 "17F005001B" User information updated 16
+2020-08-30 15:26:12 "17F005001B" User information updated 13
+2020-08-30 15:25:30 "17F005001B" Test - role created:  33
+2020-08-30 15:08:56 "17F005001B" New role entry: Test Role 32
 2020-08-30 12:49:58 "17F005001B" Location Changed for 12 11
 2020-08-30 12:47:42 "17F005001B" Location Changed for 4 9
 2020-08-30 11:27:30 17F005001B "Station Card Created" 5

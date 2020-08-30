@@ -654,3 +654,11 @@ a.permission-item.card-link {
     vertical-align: bottom;
     font-weight: 500;
 }
+
+.border-left-heading{
+    font-size: 14px;
+    font-weight: bold;
+    border-left: 3px solid #099dae;
+    line-height: 18px;
+    padding-left: 10px;
+}
