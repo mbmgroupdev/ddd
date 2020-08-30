@@ -59,6 +59,8 @@ Route::post('hr/user-dashboard/events', 'Hr\DashboardController@eventSettings');
 Route::get('hr/user/pdf', 'Hr\ProfileController@employeeProfile');
 Route::get('hr/user/attendance_calendar/{as_id}', 'Hr\ProfileController@attendanceCalendar');
 
+Route::get('hr/associate-info', 'Hr\Operation\LocationChangeController@getUnit');
+
 
 Route::get('hr/reports/salary-sheet-custom-individual-search', 'Hr\Reports\SalarySheetCustomController@individualSearch');
 Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMode\BmodeSalarySheetController@individualSearch');
@@ -311,8 +313,8 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 
 	Route::get("hr/timeattendance/station_card", "Hr\TimeAttendance\StationController@showList");
 	Route::get("hr/timeattendance/station_card_data", "Hr\TimeAttendance\StationController@listData");
-	Route::get("hr/timeattendance/new_card", "Hr\TimeAttendance\StationController@showForm")->middleware(['permission:Station Card']);
-	Route::post("hr/timeattendance/new_card", "Hr\TimeAttendance\StationController@saveForm")->middleware(['permission:Station Card']);
+	Route::get("hr/operation/line-change", "Hr\TimeAttendance\StationController@showForm")->middleware(['permission:Line Change']);
+	Route::post("hr/operation/line-change", "Hr\TimeAttendance\StationController@saveForm")->middleware(['permission:Line Change']);
 
 	Route::get("hr/timeattendance/station_card/{id}/delete", "Hr\TimeAttendance\StationController@stationDelete");
 	Route::get("hr/timeattendance/station_card/{id}/edit", "Hr\TimeAttendance\StationController@stationEdit");
@@ -327,7 +329,8 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 	Route::get("hr/timeattendance/new_card/multiple_emp_for_unit", "Hr\TimeAttendance\StationController@unitEmployees");
 	Route::get("hr/timeattendance/new_card/floor_for_unit", "Hr\TimeAttendance\StationController@getFloor");
 	Route::get("hr/timeattendance/station_multiple_as_info", "Hr\TimeAttendance\StationController@multipleAsInfo");
-	Route::post("hr/timeattendance/new_card_multiple", "Hr\TimeAttendance\StationController@saveFormMultiple");
+	Route::post("hr/operation/line-change-multiple", "Hr\TimeAttendance\StationController@saveFormMultiple");
+	Route::post("hr/operation/line-change-single", "Hr\TimeAttendance\StationController@saveFormSingle");
 
 	//shift assign
 	Route::get('hr/operation/shift_assign', 'Hr\TimeAttendance\ShiftRoasterController@shiftAssign')->middleware(['permission:Shift Assign']);
@@ -1206,7 +1209,8 @@ Route::post('hr/setup/buyer_template_update', 'Hr\Setup\BuyerModeSetupController
 	Route::get('hr/operation/location_change/reject/{id}', 'Hr\Operation\LocationChangeController@rejectLocation')->middleware(['permission:Manage Outside']);
 	Route::get('hr/operation/location_change/entry', 'Hr\Operation\LocationChangeController@showForm')->middleware(['permission:Manage Outside']);
 	Route::post('hr/operation/location_change/entry', 'Hr\Operation\LocationChangeController@storeData')->middleware(['permission:Manage Outside']);
-	Route::get('hr/operation/get_unit', 'Hr\Operation\LocationChangeController@getUnit');
+
+	
 
 	
 	//------Bouns Type Library

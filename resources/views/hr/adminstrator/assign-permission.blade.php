@@ -3,16 +3,20 @@
 @section('main-content')
    <div class="row">
       <div class="col-sm-12 col-lg-12">
-         <div class="iq-card">
-            <div class="iq-card-header d-flex justify-content-between">
-               <div class="iq-header-title">
-                  <h4 class="card-title">Assign Permission</h4>
-               </div>
+         <div class="panel">
+            <div class="panel-heading">
+                <h6>Assign Permission
+                	<div class="pull-right">
+                		
+	                	<a class="btn btn-primary" href="{{url('hr/adminstrator/user/create')}}"><i class="las la-user-tie f-18"></i> Add User</a> 
+	                	<a class="btn btn-primary" href="{{url('hr/adminstrator/role/create')}}"><i class="las la-shield-alt f-18"></i> Add Role</a>
+                	</div>
+                </h6>
             </div>
-            <div class="iq-card-body"> 
+            <div class="panel-body"> 
                 <div class="row justify-content-md-center mb-3">
                 	<div class="col-4">
-	                    {{ Form::select('user_id', [], null, ['placeholder'=>'Select Associate\'s ID', 'id'=>'user_id', 'class'=> 'associates form-control',]) }}
+	                    {{ Form::select('user_id', [], null, ['placeholder'=>'Select Associate\'s ID', 'id'=>'user_id', 'class'=> 'users form-control',]) }}
                 	</div>
                 </div>
                 <div class="row">
@@ -37,11 +41,12 @@
 					                              	<input type="checkbox" class="custom-control-input bg-success" id="Sl-{{$key}}-{{$count}}" >
 					                              	<label class="custom-control-label" for="Sl-{{$key}}-{{$count}}"></label>
 					                           	</div> --}}
-					                           	<div class="custom-control custom-checkbox checkbox-icon custom-control-inline">
-					                              <input type="checkbox" class="custom-control-input" id="Sl-{{$key}}-{{$count}}" >
-					                              <label class="custom-control-label" for="Sl-{{$key}}-{{$count}}"><i class="fa fa-shield"></i></label>
-					                           </div>
-							      				<a class="card-link @if($count != 1) collapsed @endif" data-toggle="collapse" href="#{{$key}}-{{$count}}">
+					                           	{{-- <div class="custom-control custom-checkbox custom-checkbox-color-check custom-control-inline">
+					                              <input type="checkbox" class="custom-control-input bg-success" id="Sl-{{$key}}-{{$count}}" >
+					                              <label class="custom-control-label" for="Sl-{{$key}}-{{$count}}"></label>
+					                           </div> --}}
+					                           <input type="checkbox" id="Sl-{{$key}}-{{$count}}" style="transform: scale(1.5);"> &nbsp;
+							      				<a class="permission-item card-link @if($count != 1) collapsed @endif" data-toggle="collapse" href="#{{$key}}-{{$count}}">
 							        				{{$key1}} 
 							      				</a>
 							    			</div>
@@ -75,29 +80,76 @@
       </div>
    </div>
    @push('js')
-   		<script type="text/javascript">
-   			$(document).on('change', 'select.associates', function(){
-		        $.ajax({
-		            url : "{{ url('hr/adminstrator/user/get-permission') }}",
-		            type: 'get',
-		            data: {
-		                id : $(this).val()
-		            },
-		            success: function(data)
-		            {
-		               $('.permission-gallery').html(data);
-		               $('.perm-group').each(function() {
-		                    if($(this).parent().parent().next().find('input:checkbox').not(':checked').length == 0){
-		                        $(this).prop('checked', true);
-		                    }
-		                });
-		            },
-		            error: function()
-		            {
-		                alert('failed...');
-		            }
-		        });
-		    });
-   		</script>
+   	<script type="text/javascript">
+   		$(document).on('change', 'select.users', function(){
+   			$('.app-loader').show();
+	        $.ajax({
+	            url : "{{ url('hr/adminstrator/user/get-permission') }}",
+	            type: 'get',
+	            data: {
+	                id : $(this).val()
+	            },
+	            success: function(data)
+	            {
+	               $('.permission-gallery').html(data);
+	               $('.perm-group').each(function() {
+	                    if($(this).parent().parent().next().find('input:checkbox').not(':checked').length == 0){
+	                        $(this).prop('checked', true);
+	                    }
+	                });
+	               $('.app-loader').hide();
+	            },
+	            error: function()
+	            {
+	            	$('.app-loader').hide();
+	                alert('failed...');
+
+	            }
+	        });
+		});
+		$(document).on('change', '.permissions', function(){
+        if($('select.associates').val() != ''){
+
+            var type = 'revoke';
+            if($(this).is(':checked')){
+                type = 'assign';
+            }
+            var data = {
+                type : type,
+                permission : $(this).val(),
+                id : $('select.associates').val()
+            }
+            syncPermission(data);
+        }else{
+            alert('Please select user first!')
+        }
+
+        /*$('.perm-group').each(function() {
+            if($(this).parent().parent().next().find('input:checkbox').not(':checked').length == 0){
+                $(this).prop('checked', true);
+            }
+        });*/
+        
+    });
+
+    function syncPermission(data){
+        $.ajax({
+            url : "{{ url('users_management/user/sync-permission') }}",
+            type: 'get',
+            data: data,
+            success: function(res)
+            {
+                toastr.options.progressBar = true ;
+                toastr.options.positionClass = 'toast-top-right';
+                toastr.success('Permission '+res+' user!');
+            },
+            error: function()
+            {
+                alert('failed...');
+            }
+        });
+
+    }
+   	</script>
    @endpush
 @endsection

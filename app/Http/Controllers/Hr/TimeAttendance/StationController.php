@@ -87,20 +87,25 @@ class StationController extends Controller
 
 	//get associate information of selected associate id
 
-	public function stationAssInfo(Request $request){
+	public function stationAssInfo(Request $request)
+	{
 		$data= DB::table('hr_as_basic_info AS b')
 					->where('b.associate_id', $request->associate_id)
 					->select([
-						'b.as_unit_id',
+						'b.*',
 						'b.as_shift_id',
 						"u.hr_unit_name",
 						"f.hr_floor_name",
-						"l.hr_line_name"
+						"l.hr_line_name",
+						"dp.hr_department_name",
+						"dg.hr_designation_name"
 					])
 
 					->leftJoin('hr_floor AS f', 'f.hr_floor_id', 'b.as_floor_id')
     				->leftJoin('hr_line AS l', 'l.hr_line_id', 'b.as_line_id')
     				->leftJoin('hr_unit AS u', 'u.hr_unit_id', 'b.as_unit_id')
+    				->leftJoin('hr_department AS dp', 'dp.hr_department_id', '=', 'b.as_department_id')
+            		->leftJoin('hr_designation AS dg', 'dg.hr_designation_id', '=', 'b.as_designation_id')
     				->first();
 
     	//get floor list
@@ -117,11 +122,18 @@ class StationController extends Controller
 
     		$floorList.= '<option value="'.$floor->hr_floor_id.'">'.$floor->hr_floor_name.'</option>';
     	}
+    	$return["associate_id"]= $data->associate_id;
     	$return["unit"]= $data->hr_unit_name;
     	$return["floor"]= $data->hr_floor_name;
     	$return["line"]= $data->hr_line_name;
     	$return["shift"]= $data->as_shift_id;
     	$return["floorList"]= $floorList;
+    	$return["as_pic"]= emp_profile_picture($data);
+    	$return["as_name"]= $data->as_name;
+    	$return["as_oracle_code"]= $data->as_oracle_code;
+    	$return["hr_department_name"]= $data->hr_department_name;
+    	$return["hr_designation_name"]= $data->hr_designation_name;
+
     	return $return;
 	}
 

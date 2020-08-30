@@ -15,87 +15,76 @@
                 <li class="active">Earned Leave Payment</li>
             </ul><!-- /.breadcrumb -->
         </div>
-
-        <div class="page-content">
-            <div class="row">
-                
-                    <div class="col-sm-12 no-padding-left"> 
-
-                        <div class="col-sm-12">
-                            <div class="form-group">
-                                <div class="col-sm-3" style="padding-bottom: 10px;">
-                                    {{ Form::select('unit', $unitList, null, ['placeholder'=>'Select Unit','id'=>'unitselect','class'=> 'form-control', 'data-validation'=>'required']) }}
-                                </div>
-                                <div class="col-sm-2" style="padding-bottom: 10px;">
-                             <!--        {{ Form::select('floor', $floorList, null, ['placeholder'=>'Select Floor','id'=>'floor','class'=> 'form-control', 'data-validation'=>'required']) }} -->
-
-
-                                     <select name="floor" id="floor" class="col-xs-12" data-validation="required" data-validation-error-msg='Action Type field is required' data-validation-has-keyup-event="true">
-                                        <option value="">Select Unit First</option> 
-                                    </select>
-                                </div>
-                                <div class="col-sm-2" style="padding-bottom: 10px;">
-                                    {{ Form::select('department', $departmentlist, null, ['placeholder'=>'Select Department','id'=>'department','class'=> 'form-control', 'data-validation'=>'required']) }}
-                                </div>
-                                <div class="col-sm-2 no-padding-left no-padding-right" style="padding-bottom: 40px;">
-                                    <div class="col-xs-6">
-                                    <input type="text" name="fromyear" id="fromyear" class="yearpicker col-xs-12" data-validation="required" placeholder="From" style="height: 33px;" />
-                                    </div>
-                                    <div class="col-xs-6">
-                                    <input type="text" name="toyear" id="toyear" class="yearpicker col-xs-12" data-validation="required" placeholder="To" style="    height: 33px;"/> 
-                                </div>
-                                 </div>
-                                 <div class="col-sm-3">
-                                    <button type="submit" id="search"class="btn btn-primary btn-sm">
-                                        <i class="fa fa-search"></i>
-                                        Search
-                                    </button>
-                                 
-                                    <button type="button" onClick="printMe1('PrintArea')" class="showprint btn btn-warning btn-sm" title="Print">
-                                   <i class="fa fa-print"></i>
-                                   </button>
-                                    <!--<button type="button" onclick="generate()" class="showprint btn btn-info btn-sm">
-                                    <i class="fa fa-file-pdf-o" style="font-size:14px"></i>
-                                   </button> -->
-                                    <button type="button"  id="excel"  class="showprint btn btn-success btn-sm" title="Excel"><i class="fa fa-file-excel-o" style="font-size:14px"></i>
-                                   </button>
-                                 
-                                 </div>
-                           
-                            </div>
-
+        @include('inc/message')
+        <div class="panel">
+            <div class="panel-heading">
+                <h6>Earned Leave Payment</h6>
+            </div>
+            <div class="panel-body">
+                <div class="row justify-content-center">
+                    <div class="col-sm-3">
+                        <div class="form-group has-required has-float-label select-search-group">
+                            
+                            {{ Form::select('unit', $unitList, null, ['placeholder'=>'Select Unit','id'=>'unitselect','class'=> 'form-control', 'required'=>'required']) }}
+                            <label>Unit</label>
                         </div>
-
                     </div>
+                    <div class="col-sm-3">
+                        <div class="form-group has-required has-float-label select-search-group">
+                            <select name="floor" id="floor" class="form-control" required="required" >
+                                <option value="">Select Unit First</option> 
+                            </select>
+                            <label>Floor</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group has-required has-float-label select-search-group">
+                            {{ Form::select('department', $departmentlist, null, ['placeholder'=>'Select Department','id'=>'department','class'=> 'form-control', 'required'=>'required']) }}
+                            <label>Department</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-sm-3">
+                        <div class="form-group has-required has-float-label ">
+                            <input type="number" placeholder="YYYY" min="1980" max="{{date('Y')}}" name="fromyear" id="fromyear" class="form-control" required="required"  />
+                            <label>Year From</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group has-required has-float-label ">
+                            <input type="number" placeholder="YYYY" min="1980" max="{{date('Y')}}" name="toyear" id="toyear" class="form-control" required="required" placeholder="To" /> 
+                            <label>Year To</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <button type="submit" id="search"class="btn btn-primary btn-sm">
+                            <i class="fa fa-search"></i>
+                            Search
+                        </button>
+                     
+                        <button type="button" onClick="printMe1('PrintArea')" class="showprint btn btn-warning btn-sm" title="Print">
+                       <i class="fa fa-print"></i>
+                       </button>
+                        <button type="button"  id="excel"  class="showprint btn btn-success btn-sm" title="Excel"><i class="fa fa-file-excel-o" style="font-size:14px"></i>
+                       </button>
+                             
+                    </div>
+                       
+                </div>
+            </div>
+        </div>
 
-             </div>
+        <div class="panel" id="PrintArea">
+            <div class="panel-body" id="html-2-pdfwrapper"> 
+                <div  id="form-element">
 
-            <div class="row">
-                <!-- Display Error/Success Message -->
-                @include('inc/message')
-                <div class="col-xs-12" id="PrintArea">
-                    <!-- PAGE CONTENT BEGINS -->
-              
-                 <div id="html-2-pdfwrapper"> 
-                  <div  id="form-element">
-                    <!--Table here--->
-
-                  </div> 
-                  
-                 </div> 
-                  <div id="loading-wrap" class="col-md-offset-4 text-center col-sm-4" style="margin-top:10%;">
-                 
-
-                  </div>
-                  
-                <!-- PAGE CONTENT ENDS -->
-               
-                <!-- /.col -->
+                </div> 
             </div> 
         </div><!-- /.page-content -->
     </div>
 </div>
-</div>
+@push('js')
 <script type="text/javascript">
 function printMe1(divName)
 { 
@@ -118,31 +107,7 @@ $('#excel').click(function(){
         return false
     })
 
-    $('select.associates').select2({
-        placeholder: 'Select Associate\'s ID',
-        ajax: {
-            url: '{{ url("hr/associate-search") }}',
-            dataType: 'json',
-            delay: 250,
-            data: function (params) {
-                return { 
-                    keyword: params.term
-                }; 
-            },
-            processResults: function (data) { 
-                return {
-                    results:  $.map(data, function (item) {
-                        return {
-                            text: item.associate_name,
-                            id: item.associate_id
-                        }
-                    }) 
-                };
-          },
-          cache: true
-        }
-    });
-
+   
  // Floor Based On Unit
      var floor_element = $("#floor");
      var basedonunit = $("#unitselect");
@@ -216,19 +181,23 @@ $('#excel').click(function(){
         $.ajax({
             url : "{{ url('hr/reports/earnleavepayment_table') }}",
             type: 'get',
-            data: {unit_id :un_id, dept_id:deprt_id, flr_id:floor_id, fromyr:from, toyear:to},
-                beforeSend: function(){
-                   $('#loading').show();
-                  },
-                complete: function(){
-                    $('#loading').hide();
-                   }, 
+            data: {
+                unit_id :un_id, 
+                dept_id:deprt_id, 
+                flr_id:floor_id, 
+                fromyr:from, 
+                toyear:to
+            },
+            beforeSend: function(){
+               $('.app-loader').show();
+            },
+            complete: function(){
+                $('.app-loader').hide();
+            }, 
 
             success: function(data)
             { 
                 $('#wait').show();
-                
-
                 action_element.html(data);
                 $('#wait').hide();
                 $('.showprint').show(); //show print button
@@ -243,8 +212,6 @@ $('#excel').click(function(){
 
 
 });
-  function attLocation(loc){
-    window.location = loc;
-   }
 </script>
+@endpush
 @endsection
