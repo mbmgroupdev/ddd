@@ -16,6 +16,12 @@
         .panel-body {
             padding: 10px 8px;
         }
+        h3 {
+            font-size: 1rem;
+        }
+        h2 {
+            font-size: 1.5rem;
+        }
     </style>
 @endpush
 <div class="main-content">
