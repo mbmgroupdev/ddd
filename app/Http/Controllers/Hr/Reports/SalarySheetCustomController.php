@@ -49,7 +49,7 @@ class SalarySheetCustomController extends Controller
             $data['salaryMin']      = Benefits::getSalaryRangeMin();
             $data['salaryMax']      = Benefits::getSalaryRangeMax();
             $data['getYear']       = HrMonthlySalary::select('year')->distinct('year')->orderBy('year', 'desc')->pluck('year');
-            return view('hr.reports.salary_sheet_custom', $data);
+            return view('hr.operation.salary.index', $data);
         } catch(\Exception $e) {
             return $e->getMessage();
         }
