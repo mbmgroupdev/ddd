@@ -6,13 +6,14 @@
 @section('main-content')
    <div class="row">
       <div class="col-sm-12 col-lg-12">
-         <div class="iq-card">
-            <div class="iq-card-header d-flex justify-content-between">
-               <div class="iq-header-title">
-                  <h4 class="card-title">All Users</h4>
-               </div>
+         <div class="panel">
+            <div class="panel-heading">
+                  <h6 >
+                     All User
+                     <a class="pull-right btn btn-primary" href="{{url('hr/adminstrator/user/create')}}">Add New</a>
+                  </h6>
             </div>
-            <div class="iq-card-body">
+            <div class="panel-body"> 
                <table id="users" class="table table-hover table-borderd">
                   <thead>
                      <tr>
