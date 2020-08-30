@@ -317,56 +317,6 @@ $(document).ready(function(){
         });
     }
 
-    $('#dataTables').DataTable({
-        order: [], //reset auto order
-        processing: true,
-        responsive: true,
-        serverSide: true,
-        pagingType: "full_numbers",
-        ajax: '{!! url("hr/timeattendance/all_leaves_data") !!}',
-        dom: "<'row'<'col-sm-2'l><'col-sm-4'i><'col-sm-3 text-center'B><'col-sm-3'f>>tp", 
-        buttons: [  
-            {
-                extend: 'copy', 
-                className: 'btn-sm btn-info',
-                exportOptions: {
-                    columns: ':visible'
-                }
-            }, 
-            {
-                extend: 'csv', 
-                className: 'btn-sm btn-success',
-                exportOptions: {
-                    columns: ':visible'
-                }
-            }, 
-            {
-                extend: 'excel', 
-                className: 'btn-sm btn-warning',
-                exportOptions: {
-                    columns: ':visible'
-                }
-            }, 
-            {
-                extend: 'pdf', 
-                className: 'btn-sm btn-primary', 
-                exportOptions: {
-                    columns: ':visible'
-                }
-            }, 
-            {
-                extend: 'print', 
-                className: 'btn-sm btn-default',
-                exportOptions: {
-                    columns: ':visible'
-                } 
-            } 
-        ], 
-        columns: [ 
-        ],  
-    }); 
- 
-
     var today = new Date();
     var start = today.getDate();
     var end = today.getDate();
@@ -482,7 +432,7 @@ $(document).ready(function(){
                 }
             });
         }else{
-            $.notify(msg, 'warning');
+            $.notify(msg, 'error');
         }
     });
 

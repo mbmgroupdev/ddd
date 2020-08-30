@@ -40,8 +40,11 @@ class JobCardController extends Controller
     $total_attend   = 0;
     $total_overtime = 0;
     $associate = $request->associate;
+    if(isset($request->month_year)){
+      $request->month = date('m', strtotime($request->month_year));
+      $request->year = date('Y', strtotime($request->month_year));
+    }
     $tempdate= "01-".$request->month."-".$request->year;
-
 
     $month = date("m", strtotime($tempdate));
     $year  = $request->year;

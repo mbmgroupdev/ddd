@@ -34,7 +34,7 @@ class ShiftRoasterController extends Controller
       // $subsectionList = Subsection::where('hr_subsec_status',1)->pluck('hr_subsec_name','hr_subsec_id');
       $areaList = Area::where('hr_area_status',1)->pluck('hr_area_name','hr_area_id');
       // dd($sectionList, $subsectionList);
-      return view('hr/operation/holiday_roster', compact('shiftList', 'employeeTypes', 'unitList','areaList'));
+      return view('hr/operation/holiday_roster/index', compact('shiftList', 'employeeTypes', 'unitList','areaList'));
 
     }
 
@@ -178,7 +178,7 @@ class ShiftRoasterController extends Controller
       $subSectionList= [];
 
 
-      return view('hr/shiftroaster/roaster_view', compact('unitList','floorList','lineList','areaList','deptList','sectionList','subSectionList'));
+      return view('hr/operation/holiday_roster/list', compact('unitList','floorList','lineList','areaList','deptList','sectionList','subSectionList'));
 
 
     }
@@ -261,9 +261,10 @@ class ShiftRoasterController extends Controller
 
     public function getRoasterData(Request $request)
     {
+      $input = $request->all();
+      // dd($input);
       $associate_id = isset($request->associate_id)?$request->associate_id:'';
       $month        = isset($request->month)?$request->month:'';
-      $year         = isset($request->year)?$request->year:'';
       $day          = isset($request->day)?$request->day:'';
       $unit         = isset($request->unit)?$request->unit:'';
       $areaid       = isset($request->area)?$request->area:'';
@@ -274,27 +275,28 @@ class ShiftRoasterController extends Controller
       $subSection   = isset($request->subSection)?$request->subSection:'';
       $sdate   = isset($request->date)?$request->date:'';
       
-      //dd($sdate);exit;
-        $datesday = [];
-        $str = $year.'-'.$month.'-';
+      // dd($sdate);exit;
+      $datesday = [];
+      $str = $month.'-';
+      $year = date('Y', strtotime($month));
+      $month = date('m', strtotime($month));
+      if(!empty($day)){
+         $d=cal_days_in_month(CAL_GREGORIAN,$month,$year);
+        for($i2=1; $i2<$d; $i2++)
+        {
 
-        if(!empty($day)){
-           $d=cal_days_in_month(CAL_GREGORIAN,$month,$year);
-          for($i2=1; $i2<$d; $i2++)
+          // echo '<br>',
+            $ddd = $str.$i2;
+          // echo '',
+            $date = date('Y M D', $time = strtotime($ddd) );
+
+          if(strpos($date, $day))
           {
-
-            // echo '<br>',
-              $ddd = $str.$i2;
-            // echo '',
-              $date = date('Y M D', $time = strtotime($ddd) );
-
-            if(strpos($date, $day))
-            {
-              $datesday[] = date('Y-m-d', strtotime($ddd) );
-            }
+            $datesday[] = date('Y-m-d', strtotime($ddd) );
           }
         }
-
+      }
+      // return $input;
       $query1 = DB::table('hr_as_basic_info AS b')
       ->select(
         "b.associate_id",
@@ -360,16 +362,6 @@ class ShiftRoasterController extends Controller
           $query1->where('hdr.date', $sdate);
         }
 
-        // if(!empty($otCondition)){
-        //   $query1->where('a.ot_hour',$otCondition,'0'.$request['ot_hour'].':00');
-        // }
-        //
-        // $query1->leftjoin(DB::raw('(' . $attData_sql. ') AS a'), function($join) use ($attData) {
-        //   $join->on('a.as_id', '=', 'b.as_id')->addBinding($attData->getBindings());
-        // });
-        // $query1->leftjoin(DB::raw('(' . $leaveData_sql. ') AS c'), function($join1) use ($leaveData) {
-        //   $join1->on('c.leave_ass_id', '=', 'b.associate_id')->addBinding($leaveData->getBindings()); ;
-        // });
         $query1->join('holiday_roaster AS hdr', 'hdr.as_id', 'b.associate_id');
         $query1->leftJoin('hr_designation AS dsg', 'dsg.hr_designation_id', 'b.as_designation_id');
         $query1->leftJoin("hr_unit AS u", "u.hr_unit_id", "=", "b.as_unit_id");
@@ -377,6 +369,7 @@ class ShiftRoasterController extends Controller
         $query1->leftJoin("hr_section AS sec", "sec.hr_section_id", "b.as_section_id");
 
         $employee_list = $query1->get();
+        // return $employee_list;
         $data =[];
         $asids = array_unique(array_column($employee_list->toArray(),'associate_id'),SORT_REGULAR);
         foreach ($asids as $k=>$asid) {
@@ -395,7 +388,7 @@ class ShiftRoasterController extends Controller
                 //if($ck < sizeof($employee_list)){ $dates .= ','; }
 
                 $rs->dates = $dates;
-                $rs->absent_count =$count;
+                $rs->day_count =$count;
                 $rs->as_oracle_code 		= $d->as_oracle_code;
                 $rs->associate_id     = $d->associate_id;
                 $rs->as_unit_id   		= $d->hr_unit_name;
@@ -417,27 +410,20 @@ class ShiftRoasterController extends Controller
 
         return DataTables::of($data)->addIndexColumn()
         ->addColumn('pic', function ($data) {
-          if(!empty($data->as_pic)){
-            return '<img src="'.$data->as_pic.'" style="width:40px;height:50px;">';
-          }else{
-            if($data->as_gender == 'Female'){
-              return '<img src="'.url('/').'/assets/images/employee/female-default.png" style="width:40px;height:50px;">';
-            }else{
-              return '<img src="'.url('/').'/assets/images/employee/male_default.png" style="width:40px;height:50px;">';
-            }
-
-          }
+          $image = emp_profile_picture($data);
+          return "<img src='".$image."' class='small-image' style='height:40px;width:auto'>";
         })
         ->editColumn('dates', function($data){
           return $data->dates;
         })
-        ->editColumn('absent_count', function($data){
-          return $data->absent_count;
+        ->editColumn('day_count', function($data){
+          return $data->day_count;
         })
         ->addColumn('actions', function($data){
-          return '<a href="#" class="btn btn-xs btn-primary" data-toggle="modal" data-target="#calendarModal" id="calendar-view">view</a>';
+          return '';
+          // return '<a href="#" class="btn btn-xs btn-primary" data-toggle="modal" data-target="#calendarModal" id="calendar-view">view</a>';
         })
-        ->rawColumns(['pic', 'dates', 'absent_count','actions'])
+        ->rawColumns(['pic', 'as_oracle_code', 'associate_id','hr_unit_name','as_name','cell', 'section', 'hr_designation_name', 'dates', 'day_count','actions'])
         ->make(true);
     }
 
