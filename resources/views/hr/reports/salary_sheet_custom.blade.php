@@ -1,7 +1,24 @@
 @extends('hr.layout')
-@section('title', 'Monthly Salary')
-
+@section('title', 'Salary Sheet')
 @section('main-content')
+@push('css')
+    <style>
+        .progress[data-percent]:after {
+            color: #000 !important;
+        }
+        @media only screen and (max-width: 771px) {
+            .choice_1_div .col-sm-4 {margin-bottom: 10px;}
+            .choice_1_div .col-sm-3 {margin-bottom: 40px;}
+        }
+        .salary-sheet-content .panel-title {margin-top: 3px; margin-bottom: 3px;}
+        .salary-sheet-content .panel-title a{font-size: 15px; display: block;}
+        .select2{width: 100% !important;}
+        .min_sal{height: auto !important;}
+        .max_sal{height: auto !important;}
+        h3.smaller {font-size: 13px;}
+        .header {margin-top: 0;}
+    </style>
+@endpush
 
 <div class="main-content">
     <div class="main-content-inner">
@@ -12,144 +29,265 @@
                     <a href="#">Human Resource</a>
                 </li>
                 <li>
-                    <a href="#">Operation</a>
+                    <a href="#">Operations</a>
                 </li>
-                <li class="active"> Monthly Salary</li>
-            </ul>
+                <li class="active"> Salary Sheet</li>
+            </ul><!-- /.breadcrumb -->
         </div>
-
-        <div class="page-content"> 
-            <div class="row">
-                <div class="col-12">
-                    <form class="" role="form" id="unitWise"> 
-                        <div class="panel">
-                            
-                            <div class="panel-body">
+        <div class="page-content">
+            <div id="accordion" class="accordion-style panel-group">
+                <div class="panel panel-info">
+                    <div class="panel-heading salary-sheet-content">
+                        <h2 class="panel-title">
+                            <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#individual" aria-expanded="false">
+                                <i class="bigger-110 ace-icon fa fa-angle-right" data-icon-hide="ace-icon fa fa-angle-down" data-icon-show="ace-icon fa fa-angle-right"></i>
+                                &nbsp;Employee Wise
+                            </a>
+                        </h2>
+                    </div>
+                
+                    <div class="panel-collapse collapse" id="individual" aria-expanded="false" style="height: 0px;">
+                        <div class="panel-body">
+                            <h3 class="header smaller lighter green">
+                                <i class="ace-icon fa fa-bullhorn"></i>
+                                All <span class="text-red" style="vertical-align: top;">&#42;</span>  required
+                            </h3>
+                            <form action="#" id="employee-wise">
                                 <div class="row">
-                                    <div class="col-3">
-                                        <div class="form-group has-float-label has-required select-search-group">
-                                            <select name="unit" class="form-control capitalize select-search" id="unit" required="">
-                                                <option selected="" value="">Choose...</option>
-                                                @foreach($unitList as $key => $value)
-                                                <option value="{{ $key }}">{{ $value }}</option>
-                                                @endforeach
-                                            </select>
-                                          <label for="unit">Unit</label>
-                                        </div>
-                                        <div class="form-group has-float-label select-search-group">
-                                            <select name="area" class="form-control capitalize select-search" id="area">
-                                                <option selected="" value="">Choose...</option>
-                                                @foreach($areaList as $key => $value)
-                                                <option value="{{ $key }}">{{ $value }}</option>
-                                                @endforeach
-                                            </select>
-                                            <label for="area">Area</label>
-                                        </div>
-                                        <div class="form-group has-float-label select-search-group">
-                                            <select name="department" class="form-control capitalize select-search" id="department" disabled>
-                                                <option selected="" value="">Choose...</option>
-                                            </select>
-                                            <label for="department">Department</label>
+                                    <div class="col-sm-10">
+                                        <div class="form-group no-padding">
+                                            <label class="col-sm-2 control-label no-padding align-right" for="emp_id">Employees <span class="text-red" style="vertical-align: top;">&#42;</span> : {{-- <span style="color: red">&#42;</span> --}}</label>
+                                            <div class="col-sm-10">
+                                                 {{ Form::select('as_id[]', [],'', ['id'=>'as_id', 'class'=> 'associates no-select col-xs-12', 'multiple'=>"multiple",'style', 'data-validation'=>'required']) }}
+                                                <span class="text-red" id="error_ac_id_f"></span>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-3">
-                                        <div class="form-group has-float-label select-search-group">
-                                            <select name="floor_id" class="form-control capitalize select-search" id="floor_id" disabled >
-                                                <option selected="" value="">Choose...</option>
-                                            </select>
-                                            <label for="floor_id">Floor</label>
-                                        </div>
-                                        <div class="form-group has-float-label select-search-group">
-                                            <select name="section" class="form-control capitalize select-search " id="section" disabled>
-                                                <option selected="" value="">Choose...</option>
-                                            </select>
-                                            <label for="section">Section</label>
-                                        </div>
-                                        <div class="form-group has-float-label select-search-group">
-                                            <select name="subSection" class="form-control capitalize select-search" id="subSection" disabled>
-                                                <option selected="" value="">Choose...</option> 
-                                            </select>
-                                            <label for="subSection">Sub Section</label>
-                                        </div>
-                                    </div> 
-                                    <div class="col-3">
-                                        <div class="form-group has-float-label select-search-group">
-                                            <select name="line_id" class="form-control capitalize select-search" id="line_id" disabled >
-                                                <option selected="" value="">Choose...</option>
-                                            </select>
-                                            <label for="line_id">Line</label>
-                                        </div>
-                                        <div class="form-group has-float-label select-search-group">
-                                            <select name="otnonot" class="form-control capitalize select-search" id="otnonot" >
-                                                <option selected="" value="">Choose...</option>
-                                                <option value="0">Non-OT</option>
-                                                <option value="1">OT</option>
-                                            </select>
-                                            <label for="otnonot">OT/Non-OT</label>
-                                        </div>
-                                        <div class="row">
-                                          <div class="col-5 pr-0">
-                                            <div class="form-group has-float-label has-required">
-                                              <input type="number" class="report_date min_sal form-control" id="min_sal" name="min_sal" placeholder="Min Salary" required="required" value="{{ $salaryMin }}" min="{{ $salaryMin}}" max="{{ $salaryMax}}" autocomplete="off" />
-                                              <label for="min_sal">Range From</label>
+                                    <div class="col-sm-2">
+                                        <div class="form-group no-padding">
+                                            <label class="col-sm-4 control-label no-padding align-right" for="form-date">Month <span class="text-red" style="vertical-align: top;">&#42;</span> : </label>
+                                            <div class="col-sm-8">
+                                                <input type="text" name="month" id="form-date" class="col-xs-12 monthYearpicker" value="" data-validation="required" placeholder=" Month-Year" />
+                                                <span class="text-red" id="error_form_date_f"></span>
                                             </div>
-                                          </div>
-                                          <div class="col-1 p-0">
-                                            <div class="c1DHiF text-center">-</div>
-                                          </div>
-                                          <div class="col-6">
-                                            <div class="form-group has-float-label has-required">
-                                              <input type="number" class="report_date max_sal form-control" id="max_sal" name="max_sal" placeholder="Max Salary" required="required" value="{{ $salaryMax }}" min="{{ $salaryMin}}" max="{{ $salaryMax}}" autocomplete="off" />
-                                              <label for="max_sal">Range To</label>
-                                            </div>
-                                          </div>
                                         </div>
                                     </div>
-                                    <div class="col-3">
-                                        <div class="form-group has-float-label has-required">
-                                          <input type="month" class="report_date form-control" id="report-date" name="month" placeholder=" Month-Year"required="required" value="{{ date('Y-m')}}"autocomplete="off" />
-                                          <label for="report-date">Month</label>
-                                        </div>
-                                        <div class="form-group has-float-label select-search-group">
-                                            <?php
-                                              $status = ['1'=>'Active','2'=>'Resign','3'=>'Terminate','4'=>'Suspend','5'=>'Left'];
-                                            ?>
-                                            {{ Form::select('employee_status', $status, 1, ['placeholder'=>'Select Employee Status ', 'class'=>'form-control capitalize select-search', 'id'=>'estatus']) }}
-                                            <label for="estatus">Status</label>
-                                        </div>
-                                        <div class="form-group">
-                                          <button onclick="multiple()" class="btn btn-primary nextBtn btn-lg pull-right choice_2_generate_btn" type="button" id="choice_2_generate_btn" name="choice_2_generate_btn"><i class="fa fa-save"></i> Generate</button>
-                                        </div>
-                                    </div>   
                                 </div>
-                                
+                                <br>
+                                <div class="row">
+                                    <div class="col-sm-4 col-sm-offset-4">
+                                        <div class="col-sm-8 col-sm-offset-2">
+                                            <button onclick="employeeWise()" class="btn btn-primary choice_1_generate_btn" id="choice_1_generate_btn" type="button" name="choice_1_generate_btn" style="height: 28px;
+                                            border: none;
+                                            color: white;
+                                            text-align: center;
+                                            text-decoration: none;
+                                            display: inline-block;
+                                            padding-top: 3px;
+                                            font-size: 12px;
+                                            cursor: pointer;" ><span class="glyphicon glyphicon-pencil"></span>&nbsp Generate</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-info">
+                    <div class="panel-heading salary-sheet-content">
+                        <h4 class="panel-title">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#multi-search">
+                                <i class="ace-icon fa fa-angle-down bigger-110" data-icon-hide="ace-icon fa fa-angle-down" data-icon-show="ace-icon fa fa-angle-right"></i>
+                                &nbsp;Unit Wise
+                            </a>
+                        </h4>
+                    </div>
+
+                    <div class="panel-collapse collapse in" id="multi-search">
+                        <div class="panel-body">
+                            <h3 class="header smaller lighter green">
+                                <i class="ace-icon fa fa-bullhorn"></i>
+                                All <span class="text-red" style="vertical-align: top;">&#42;</span>  required
+                            </h3>
+                            {{-- {{Form::open( ["url"=>"#", "class"=>"form-horizontal col-xs-12"] )}} --}}
+                            <div class="form-horizontal col-xs-12">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label no-padding align-left" for="unit"> Unit <span class="text-red" style="vertical-align: top;">&#42;</span> : </label>
+                                        <div class="col-sm-9">
+                                            {{ Form::select('unit', $unitList, null, ['placeholder'=>'Select Unit', 'id'=>'unit', 'style'=>'width:100%;', 'data-validation'=>'required', 'data-validation-error-msg'=>'The Unit field is required']) }}
+                                            <span class="text-red" id="error_unit_s"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label no-padding align-left" for="floor"> Floor :</label>
+                                        <div class="col-sm-9">
+                                            {{ Form::select('floor', !empty(Request::get('unit'))?$floorList:[], Request::get('floor'), ['placeholder'=>'Select Floor', 'id'=>'floor', 'style'=>'width:100%']) }}
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label no-padding align-left" for="area"> Area : </label>
+                                        <div class="col-sm-9">
+                                            {{ Form::select('area', $areaList, Request::get('area'), ['placeholder'=>'Select Area', 'id'=>'area', 'style'=> 'width:100%', 'data-validation'=>'required', 'data-validation-error-msg'=>'The Area field is required']) }}
+                                            <span class="text-red" id="error_area_s"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label no-padding align-left" for="salary_range">Range : {{-- <span style="color: red">&#42;</span> --}}</label>
+                                        <div class="col-sm-9">
+                                            <div class="col-xs-5 no-padding">
+                                                <input type="number" name="min_sal" id="min_sal" class="col-xs-12 min_sal" placeholder="Min Salary" value="{{ $salaryMin }}" min="{{ $salaryMin}}" max="{{ $salaryMax}}">
+                                            </div>
+                                            <div class="col-xs-2">
+                                               <div class="c1DHiF">-</div>
+                                            </div>
+                                            <div class="col-xs-5 no-padding">
+                                                <input type="number" name="max_sal" id="max_sal" class="col-xs-12 max_sal" placeholder="Max Salary" value="{{ $salaryMax }}" min="{{ $salaryMin}}" max="{{ $salaryMax}}">
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding align-left" for="department">Department :</label>
+                                        <div class="col-sm-8">
+                                            {{ Form::select('department', !empty(Request::get('area'))?$deptList:[], Request::get('department'), ['placeholder'=>'Select Department ', 'id'=>'department', 'style'=> 'width:100%', 'data-validation'=>'required', 'data-validation-error-msg'=>'The Department field is required']) }}
+                                            <span class="text-red" id="error_department_s"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-sm-3 no-padding control-label  align-left" for="department">Section : </label>
+                                        <div class="col-sm-8">
+                                            {{ Form::select('section', !empty(Request::get('department'))?$sectionList:[], Request::get('section'), ['placeholder'=>'Select Section ', 'id'=>'section', 'style'=> 'width:100%', 'data-validation'=>'required', 'data-validation-optional' =>'true', 'data-validation-error-msg'=>'The Department field is required']) }}
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding align-left" for="department">Sub-Section : </label>
+                                        <div class="col-sm-8">
+                                            {{ Form::select('sub_section', !empty(Request::get('section'))?$subSectionList:[], Request::get('subSection'), ['placeholder'=>'Select Sub-Section ', 'id'=>'subSection', 'style'=> 'width:100%', 'data-validation'=>'required', 'data-validation-optional' =>'true', 'data-validation-error-msg'=>'The Department field is required']) }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right align-left" for="ot_range" >Disbursed : </label>
+                                        <div class="col-sm-8">
+                                            <select id="disbursed" name="disbursed" class="col-xs-12 disbursed">
+                                                <option value=""> - Select - </option>
+                                                <option value="0">No</option>
+                                                <option value="1">Yes</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right align-left" for="month_number">Month <span class="text-red" style="vertical-align: top;">&#42;</span> :{{-- <span style="color: red">&#42;</span> --}}</label>
+                                        <div class="col-sm-9">
+                                            <select id="month_number" name="month_number" class="col-xs-12 month_number">
+                                                <option value="">Select Month</option>
+                                                <option value="01" {{sselected(date('F'),'January')}}>January</option>
+                                                <option value="02" {{sselected(date('F'),'February')}}>February</option>
+                                                <option value="03" {{sselected(date('F'),'March')}}>March</option>
+                                                <option value="04" {{sselected(date('F'),'April')}}>April</option>
+                                                <option value="05" {{sselected(date('F'),'May')}}>May</option>
+                                                <option value="06" {{sselected(date('F'),'June')}}>June</option>
+                                                <option value="07" {{sselected(date('F'),'July')}}>July</option>
+                                                <option value="08" {{sselected(date('F'),'August')}}>August</option>
+                                                <option value="09" {{sselected(date('F'),'September')}}>September</option>
+                                                <option value="10" {{sselected(date('F'),'October')}}>October</option>
+                                                <option value="11" {{sselected(date('F'),'November')}}>November</option>
+                                                <option value="12" {{sselected(date('F'),'December')}}>December</option>
+                                            </select>
+                                            <span class="text-red" id="error_month_s"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right align-left" for="year">Year <span class="text-red" style="vertical-align: top;">&#42;</span> : {{-- <span style="color: red">&#42;</span> --}}</label>
+                                        <div class="col-sm-9">
+                                            <select id="year" name="year" class="col-xs-12 year">
+                                                @foreach($getYear as $year)
+                                                <option value="{{ $year }}">{{ $year }}</option>
+                                                @endforeach
+                                            </select>
+                                            <!-- <input type="number" id="year" class="col-xs-12 yearpicker" placeholder="Enter Year" name="year" value="{{ date('Y') }}"> -->
+                                            <span class="text-red" id="error_year_s"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group sr-only">
+                                        <label class="col-sm-3 control-label no-padding-right align-left" for="disbursed_date">Disbursed Date{{-- <span style="color: red">&#42;</span> --}}</label>
+                                        <div class="col-sm-9">
+                                            <input type="date" id="disbursed_date" class="col-xs-12 disbursed_date" name="disbursed_date" placeholder="Enter Disbursed Date" >
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding-right align-left" for="employee_status_id" > Status <span class="text-red" style="vertical-align: top;">&#42;</span> : {{-- <span style="color: red">&#42;</span> --}}</label>
+                                        <div class="col-sm-9">
+                                            <select id="employee_status" name="employee_status" class="col-xs-12 employee_status">
+                                                <option value="1">Active</option>
+                                                <option value="2">Resign</option>
+                                                <option value="3">Terminate</option>
+                                                <option value="4">Suspend</option>
+                                                <option value="5">Left</option>
+                                            </select>
+                                            <span class="text-red" id="error_status_s"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label no-padding align-left" for="asOT"> OT/Non-OT :</label>
+                                        <div class="col-sm-9">
+                                            {{ Form::select('as_ot', ['1' =>'OT', '0'=>'Non-OT'], null, ['placeholder'=>'Select OT Status', 'id'=>'asOT', 'style'=>'width:100%']) }}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+                            <div class="row">
+                                <div class="col-sm-4 col-sm-offset-4">
+                                    <div class="col-sm-8 col-sm-offset-2">
+                                        <button onclick="multiple()" class="btn btn-primary choice_2_generate_btn pull-right" id="choice_2_generate_btn" name="choice_2_generate_btn"
+                                        style=" height: 28px;
+                                        margin-right: 8%;
+                                        border: none;
+                                        color: white;
+                                        text-align: center;
+                                        text-decoration: none;
+                                        display: inline-block;
+                                        padding-top: 3px;
+                                        font-size: 12px;
+                                        cursor: pointer;" ><span class="glyphicon glyphicon-pencil"></span>&nbsp
+                                        Generate</button>
+                                    </div>
+                                </div>
+                            </div>
+                            {{-- {{Form::close()}} --}}  
                         </div>
-                        
-                    </form>
-                    <!-- PAGE CONTENT ENDS -->
+                    </div>
                 </div>
-                <!-- /.col -->
             </div>
-            <div class="row">
-                <div class="col h-min-400">
-                    <input type="hidden" value="0" id="setFlug">
             
-                    <div class="progress" id="result-process-bar" style="display: none;">
-                        <div class="progress-bar progress-bar-info progress-bar-striped active" id="progress_bar_main" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">
-                          0%
-                        </div>
-                    </div>
-                    {{-- result of list --}}
-                    <div class="panel panel-success" id="salary-sheet-result" style="display: none">
-                        <div class="panel-heading" id="salary-sheet-result-inner">Salary sheet result  &nbsp;<button rel='tooltip' data-tooltip-location='left' data-tooltip='Salary sheet result print' type="button" onClick="printMe1('result-show')" class="btn btn-primary btn-xs text-right"><i class="fa fa-print"></i> Print</button></div>
-                        <div class="panel-body" id="result-show"></div>
-                    </div>
+            <input type="hidden" value="0" id="setFlug">
+            
+            <div class="progress" id="result-process-bar" style="display: none;">
+                <div class="progress-bar progress-bar-info progress-bar-striped active" id="progress_bar_main" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">
+                  0%
                 </div>
             </div>
-        </div><!-- /.page-content -->
-    </div>
-</div>
+            {{-- result of list --}}
+            <div class="panel panel-success" id="salary-sheet-result">
+                <div class="panel-heading" id="salary-sheet-result-inner" style="display: none">Salary sheet result  &nbsp;<button rel='tooltip' data-tooltip-location='left' data-tooltip='Salary sheet result print' type="button" onClick="printMe1('result-show')" class="btn btn-primary btn-xs text-right"><i class="fa fa-print"></i> Print</button></div>
+                <div class="panel-body" id="result-show"></div>
+            </div>
+
+        </div>  {{-- page-content end --}}
+    </div>  {{-- main-content-inner end --}}
+</div>  {{-- main-content end --}}
+
 @push('js')
 <script type="text/javascript">
     var loader = '<img src=\'{{ asset("assets/img/loader-box.gif")}}\' class="center-loader">';
@@ -579,4 +717,6 @@
 }
 </script>
 @endpush
+
+
 @endsection
