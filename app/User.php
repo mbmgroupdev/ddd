@@ -89,6 +89,21 @@ class User extends Authenticatable
         return (!empty($managements[0])?$managements:[]);
     }
 
+    public function module_permission($module)
+    {
+        if(auth()->user()->hasRole('Super Admin')){
+            $status = true;
+            return $status;
+        }
+        $permissions = auth()->user()->getAllPermissions();
+        $modules =  $permissions->map(function ($permissions) {
+            return $permissions->module;
+        })->toArray();
+
+        return in_array($module, $modules);
+
+    }
+
     public function canany(array $abilities, $arguments = []) {
         return collect($abilities)->reduce(function($canAccess, $ability) use ($arguments) {
           // if this user has access to any of the previously checked abilities, or the current ability, return true

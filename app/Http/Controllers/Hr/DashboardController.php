@@ -53,7 +53,7 @@ class DashboardController extends Controller
             $now = $now->subDay();
         }
         
-        return $att_data;
+        return array_reverse($att_data);
         
     }
 

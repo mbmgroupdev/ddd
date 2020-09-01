@@ -85,10 +85,12 @@ li{
     color:#000;
  }
 .content-page {
-    padding: 100px 15px 0;
+    padding: 70px 0 0;
+    position: relative;
 }
 .iq-top-navbar {
-    margin: 10px 30px;
+    margin: 10px 10px;
+    width: calc(100% - 280px);
 }
 .w-100{
   width: 100%;
@@ -635,7 +637,7 @@ div#choice_2_div {
     display: block;
 }
 .h-min-400{
-    min-height: 400px;
+    min-height: 550px !important;
 }
 table.dataTable {
   border-spacing: 1px;
@@ -662,6 +664,95 @@ a.permission-item.card-link {
     line-height: 18px;
     padding-left: 10px;
 }
+
 .no-padding{
     padding: 0 !important;
+}
+.navbar-list li > a > img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50% !important;
+}
+
+.iq-top-navbar {
+    padding: 5px;
+    min-height: 50px;
+}
+.navbar-list li>a{
+    min-height: 0;
+}
+.iq-search-bar .search-input {
+    border-radius: 15px;
+}
+.iq-search-bar {
+    padding: 0 10px;
+}
+.iq-footer{
+    margin: 0 15px 10px;
+    padding: 10px 15px;
+}
+.iq-sidebar-menu .iq-menu li a {
+    padding: 10px 15px;
+}
+.col-lg-6:nth-child(odd), .col-md-6:nth-child(odd), .col-sm-6:nth-child(odd) {
+    padding-right: 0;
+}
+.iq-card-block.iq-card-height {
+    height: calc(100% - 15px);
+}
+.iq-card{
+    margin-bottom: 15px;
+}
+text.highcharts-credits {
+    display: none;
+}
+.apexcharts-legend-series{
+    text-align: right;
+}
+.iq-sidebar-menu i{
+    color: #ffa500;
+}
+
+.iq-sidebar-menu i.la-angle-right{
+    color: #fff;
+    font-size: 13px;
+}
+.label{
+    margin: 2px;
+    padding: 2px 5px;
+    background: #099faf;
+    color: #fff;
+    display: inline-block;
+    border-radius: 5px;
+}
+.wrapper-menu i{
+    font-size: 20px;
+}
+
+.grand-total {
+    font-size: 12px;
+    color: #000;
+    height: 20px;
+    padding: 5px !important;
+    background: #dadada;
+    font-weight: bold;
+}
+.grand-total th, .grand-total td{
+    text-align: center;
+}
+main{
+    padding-bottom: 50px;
+}
+@media screen and (min-width: 768px) {
+    .iq-footer{
+        position: absolute;
+        bottom: 0;
+        width: calc(100% - 30px);
+    }
+}
+.iq-card-icon {
+    height: 35px;
+    width: 35px;
+    display: inline-block;
+    line-height: 33px;
 }
