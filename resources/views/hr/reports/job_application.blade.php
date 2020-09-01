@@ -75,7 +75,7 @@
                             <div class="col-sm-12 job_app_div">
                                 {{-- <div class="col-xs-1"></div> --}}
                                 <div class="col-xs-12 no-padding-left" id="printable" style="font-size: 9px;">
-                                    <div class="tinyMceLetter hide" name="job_application" id="job_application" style="font-size: 9px;">
+                                    <div class="tinyMceLetter" name="job_application" id="job_application" style="font-size: 9px;">
                                         <?php
                                         date_default_timezone_set('Asia/Dhaka');
                                         $en = array('0','1','2','3','4','5','6','7','8','9');

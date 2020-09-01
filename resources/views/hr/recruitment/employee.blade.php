@@ -206,36 +206,29 @@ table th {
 								</div>
 							</div>
 							<div class="col-12">
-								<div class="profile-user-info">
-								   	<div class="profile-info-row">
-										<div class="profile-info-name">Current Station</div>
-										<div class="profile-info-value">
-											<table class="table">
-												<body>
-													<tr>
-												        <td>Floor</td>
-												        <td>Line</td>
-												        <td>Start</td>
-												        <td>End</td>
-												        <td>Changed by</td>
-												    </tr>
-												    @if($station)
-													<tr>
-														<td>{{ $station->hr_floor_name }}</td>
-														<td>{{ $station->hr_line_name }}</td>
-														<td>{{ $station->start_date }}</td>
-														<td>{{ $station->end_date }}</td>
-														<td>{{ $station->as_name }}-{{ $station->updated_by }}</td>
-													</tr>
-													@else
-													<tr><td colspan="5"> No data found!</td></tr>
-													@endif
-												</body>
-											</table>
-										</div>
-									</div>
-									
-								</div>
+								<div class="profile-info-name">Current Station</div>
+								<table class="table">
+									<body>
+										<tr>
+									        <td>Floor</td>
+									        <td>Line</td>
+									        <td>Start</td>
+									        <td>End</td>
+									        <td>Changed by</td>
+									    </tr>
+									    @if($station)
+										<tr>
+											<td>{{ $station->hr_floor_name }}</td>
+											<td>{{ $station->hr_line_name }}</td>
+											<td>{{ $station->start_date }}</td>
+											<td>{{ $station->end_date }}</td>
+											<td>{{ $station->as_name }}-{{ $station->updated_by }}</td>
+										</tr>
+										@else
+										<tr><td colspan="5"> No data found!</td></tr>
+										@endif
+									</body>
+								</table>
 							</div>
 		            	</div>
 		            </div>
@@ -320,7 +313,7 @@ table th {
 										
 											<div class=" transparent">
 												<div class="">
-													<h4 class="widget-title smaller border-left-heading">
+													<h4 class="widget-title smaller border-left-heading mb-3">
 														About Me
 													</h4>
 												</div>
@@ -463,7 +456,7 @@ table th {
 										<div class="col-xs-12 col-sm-4">
 											<div class=" transparent">
 												<div class=" header-color-blue2">
-													<h4 class="widget-title smaller">
+													<h4 class="widget-title smaller border-left-heading mb-3">
 														Files
 													</h4>
 												</div>
@@ -660,7 +653,7 @@ table th {
 										<div class="col-xs-12 col-sm-3">
 											<div class=" transparent">
 												<div class=" header-color-blue2">
-													<h4 class="widget-title smaller">
+													<h4 class="widget-title smaller border-left-heading mb-3">
 														Medical Info
 													</h4>
 												</div>
@@ -787,7 +780,7 @@ table th {
 										<div class="col-xs-12 col-sm-12">
 											<div class=" transparent">
 												<div class=" header-color-blue2">
-													<h4 class="widget-title smaller">
+													<h4 class="widget-title smaller border-left-heading mb-3">
 														Education History
 													</h4>
 												</div>
@@ -855,7 +848,7 @@ table th {
 								<div id="benefit" class="tab-pane">
 								    <div class=" transparent">
 												<div class="">
-													<h4 class="widget-title smaller">
+													<h4 class="widget-title smaller border-left-heading mb-3">
 														Benefits
 													</h4>
 												</div>
@@ -923,7 +916,7 @@ table th {
                     				   <div class="col-sm-offset-2 col-sm-8">
 										<div class=" transparent">
 											<div class="">
-												<h4 class="widget-title smaller">
+												<h4 class="widget-title smaller border-left-heading mb-3">
 
 													Attendance History
 												</h4>
@@ -952,7 +945,7 @@ table th {
 							                    <div class="col-sm-6">
 													<div class=" transparent">
 												<div class="">
-													<h4 class="widget-title smaller">
+													<h4 class="widget-title smaller border-left-heading mb-3">
 														Promotion History
 													</h4>
 												</div>
@@ -995,7 +988,7 @@ table th {
 							                    <div class="col-sm-6">
 													<div class=" transparent">
 												<div class="">
-													<h4 class="widget-title smaller">
+													<h4 class="widget-title smaller border-left-heading mb-3">
 														Increment History
 													</h4>
 												</div>
@@ -1057,7 +1050,7 @@ table th {
 								<div id="loan" class="tab-pane">
 									<div class=" transparent">
 												<div class="">
-													<h4 class="widget-title smaller">
+													<h4 class="widget-title smaller border-left-heading mb-3">
 														Loan History
 													</h4>
 												</div>
@@ -1097,7 +1090,7 @@ table th {
 								<div id="leave" class="tab-pane">
 								     <div class=" transparent">
 												<div class="">
-													<h4 class="widget-title smaller">
+													<h4 class="widget-title smaller border-left-heading mb-3">
 														Leave History
 													</h4>
 												</div>
@@ -1288,7 +1281,7 @@ table th {
 								<div id="discipline" class="tab-pane">
 								      <div class=" transparent">
 												<div class="">
-													<h4 class="widget-title smaller">
+													<h4 class="widget-title smaller border-left-heading mb-3">
 														Disciplinary Record
 													</h4>
 												</div>

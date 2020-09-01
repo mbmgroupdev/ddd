@@ -1,5 +1,6 @@
-@extends('hr.index')
-@section('content')
+@extends('hr.layout')
+@section('title', 'Service Book')
+@section('main-content')
 <div class="main-content">
 	<div class="main-content-inner">
 		<div class="breadcrumbs ace-save-state" id="breadcrumbs">
@@ -9,7 +10,7 @@
 					<a href="#">Human Resource</a>
 				</li>
 				<li>
-					<a href="#">Operation</a>
+					<a href="#">Employee</a>
 				</li>
 				<li class="active"> Service Book</li>
 			</ul><!-- /.breadcrumb -->
