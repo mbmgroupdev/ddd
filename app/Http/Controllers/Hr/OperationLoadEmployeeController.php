@@ -49,7 +49,7 @@ class OperationLoadEmployeeController extends Controller
                return $query->where('emp.as_subsection_id', $input['subsection']);
             });
             
-            $getEmployee = $queryData->select('emp.as_id', 'emp.associate_id', 'emp.as_name', 'emp.as_shift_id', 'emp.as_gender', 'emp.as_pic')->get();
+            $getEmployee = $queryData->select('emp.as_id', 'emp.associate_id', 'emp.as_name', 'emp.as_oracle_code', 'emp.as_shift_id', 'emp.as_gender', 'emp.as_pic')->get();
 
             // today shift roster
             $employees = $queryData->select('emp.as_id')->pluck('emp.as_id')->toArray();
@@ -80,7 +80,7 @@ class OperationLoadEmployeeController extends Controller
         		}
                 $image = emp_profile_picture($employee);
         		$data['total'] += 1;
-                $data['result'].= "<tr class='add'><td><input type='checkbox' value='$employee->associate_id' name='assigned[$employee->as_id]'/></td><td><span class=\"lbl\"> <img src='".$image."' class='small-image' style='height:40px;width:auto'> </span></td><td><span class=\"lbl\"> $employee->associate_id</span></td><td>$employee->as_name </td><td>$shiftCode </td></tr>";
+                $data['result'].= "<tr class='add'><td><input type='checkbox' value='$employee->associate_id' name='assigned[$employee->as_id]'/></td><td><span class=\"lbl\"> <img src='".$image."' class='small-image' style='height:40px;width:auto'> </span></td><td><span class=\"lbl\"> $employee->associate_id</span></td><td>$employee->as_oracle_code </td><td>$employee->as_name </td><td>$shiftCode </td></tr>";
         	}
 
             return $data;

@@ -21,87 +21,96 @@
 		            <div class="row">
 		            	<div class="col-5">
 		            		<div class="row">
-		                		<div class="col-2 no-padding-right">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0"><font style="font-weight: bold; font-size: 12px;">Format: </font></h4>
+		                		<div class="col-2 pr-0">
+		                			<h4><font style="font-weight: bold; font-size: 12px;">Unit</font></h4>
 		                		</div>
-		                		<div class="col-10 pl-0">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0; text-transform: capitalize;">&nbsp;&nbsp;{{ isset($formatHead[1])?$formatHead[1].' Wise':'N/A' }}</h4>
+		                		<div class="col-10">
+		                			<b>: {{ $unit[$input['unit']]['hr_unit_name'] }}</b>
 		                		</div>
-		                		
-		                		<div class="col-2 no-padding-right">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0"><font style="font-weight: bold; font-size: 12px;">Unit: </font></h4>
+		                		@if($input['area'] != null)
+		                		<div class="col-2 pr-0">
+		                			<h4><font style="font-weight: bold; font-size: 12px;">Area</font></h4>
 		                		</div>
-		                		<div class="col-10 pl-0">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0">&nbsp;&nbsp;{{ $unit[$input['unit']]['hr_unit_name'] }}</h4>
+		                		<div class="col-10">
+		                			<b>: {{ $area[$input['area']]['hr_area_name'] }}</b>
 		                		</div>
-		                		
-		                		<div class="col-2 no-padding-right">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0"><font style="font-weight: bold; font-size: 12px;">Area: </font></h4>
-		                		</div>
-		                		<div class="col-10 pl-0">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0">&nbsp;&nbsp;{{ $area[$input['area']]['hr_area_name'] }}</h4>
-		                		</div>
+		                		@endif
 		                		@if($input['department'] != null)
-		                		<div class="col-2 no-padding-right">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0"><font style="font-weight: bold; font-size: 12px;">Department: </font></h4>
+		                		<div class="col-2 pr-0">
+		                			<h4><font style="font-weight: bold; font-size: 12px;">Department</font></h4>
 		                		</div>
-		                		<div class="col-10 pl-0">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0">&nbsp;&nbsp;{{ $department[$input['department']]['hr_department_name'] }}</h4>
+		                		<div class="col-10">
+		                			<b>: {{ $department[$input['department']]['hr_department_name'] }}</b>
+		                		</div>
+		                		@endif
+		                		@if($input['section'] != null)
+		                		<div class="col-2 pr-0">
+		                			<h4><font style="font-weight: bold; font-size: 12px;">Section</font></h4>
+		                		</div>
+		                		<div class="col-10">
+		                			<b>: {{ $section[$input['section']]['hr_section_name'] }}</b>
 		                		</div>
 		                		@endif
 		            		</div>
 		            	</div>
 		            	<div class="col-4 no-padding">
 		            		<div class="row">
-		                		<div class="col-4 pr-0">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0"><font style="font-weight: bold; font-size: 12px;">Total Salary: </font></h4>
+		            			@if($input['otnonot'] != null)
+		                		<div class="col-3 pr-0">
+		                			<h4 style=""><font style="font-weight: bold; font-size: 12px;">OT</font></h4>
 		                		</div>
-		                		<div class="col-8 pl-0">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0">&nbsp;&nbsp;{{ $totalSalary }}</h4>
+		                		<div class="col-9">
+		                			<b>: Yes </b>
+		                		</div>
+		                		@endif
+		                		<div class="col-3 pr-0">
+		                			<h4 style="margin:4px 5px; margin: 0; padding: 0"><font style="font-weight: bold; font-size: 12px;">Total Employee</font></h4>
+		                		</div>
+		                		<div class="col-9">
+		                			<b>: {{ count($getEmployee) }}</b>
+		                		</div>
+		                		<div class="col-3 pr-0">
+		                			<h4 style="margin:4px 5px; margin: 0; padding: 0"><font style="font-weight: bold; font-size: 12px;">Total Salary</font></h4>
+		                		</div>
+		                		<div class="col-9">
+		                			<b>: {{ $totalSalary }}</b>
 		                		</div>
 		                		
-		                		<div class="col-4 pr-0">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0"><font style="font-weight: bold; font-size: 12px;">Total Employee: </font></h4>
-		                		</div>
-		                		<div class="col-8 pl-0">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0">&nbsp;&nbsp;{{ count($getEmployee) }}</h4>
-		                		</div>
+		                		
 		                	</div>
 		            	</div>
 		            	<div class="col-3 no-padding">
 		            		<div class="row">
-		                		@if($input['section'] != null)
-		                		<div class="col-3 no-padding-right">
-		                			<h4 style="margin:4px 5px; text-align:right; margin: 0; padding: 0"><font style="font-weight: bold; font-size: 12px;">Section: </font></h4>
-		                		</div>
-		                		<div class="col-9">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0">&nbsp;&nbsp;{{ $section[$input['section']]['hr_section_name'] }}</h4>
-		                		</div>
-		                		@endif
 		                		@if($input['subSection'] != null)
-		                		<div class="col-3 no-padding-right">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0"><font style="font-weight: bold; font-size: 12px;">Sub Section: </font></h4>
+		                		<div class="col-3 pr-0">
+		                			<h4><font style="font-weight: bold; font-size: 12px;">Sub Section</font></h4>
 		                		</div>
-		                		<div class="col-9">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0">&nbsp;&nbsp;{{ $department[$input['department']]['hr_department_name'] }}</h4>
+		                		<div class="col-9 pl-0">
+		                			<b>: {{ $subSection[$input['subSection']]['hr_subsec_name'] }}</b>
 		                		</div>
 		                		@endif
 		                		@if($input['floor_id'] != null)
-		                		<div class="col-3 no-padding-right">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0"><font style="font-weight: bold; font-size: 12px;">Floor: </font></h4>
+		                		<div class="col-3 pr-0">
+		                			<h4><font style="font-weight: bold; font-size: 12px;">Floor</font></h4>
 		                		</div>
-		                		<div class="col-9">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0">&nbsp;&nbsp;{{ $floor[$input['floor_id']]['hr_floor_name'] }}</h4>
+		                		<div class="col-9 pl-0">
+		                			<b>: {{ $floor[$input['floor_id']]['hr_floor_name'] }}</b>
 		                		</div>
 		                		@endif
 		                		@if($input['line_id'] != null)
-		                		<div class="col-3 no-padding-right">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0"><font style="font-weight: bold; font-size: 12px;">Line: </font></h4>
+		                		<div class="col-3 pr-0">
+		                			<h4><font style="font-weight: bold; font-size: 12px;">Line</font></h4>
 		                		</div>
-		                		<div class="col-9">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0">&nbsp;&nbsp;{{ $line[$input['line_id']]['hr_line_name'] }}</h4>
+		                		<div class="col-9 pl-0">
+		                			<b>: {{ $line[$input['line_id']]['hr_line_name'] }}</b>
 		                		</div>
 		                		@endif
+		                		<div class="col-3 pr-0">
+		                			<h4><font style="font-weight: bold; font-size: 12px;">Format</font></h4>
+		                		</div>
+		                		<div class="col-9 pl-0">
+		                			<b class="capitalize">: {{ isset($formatHead[1])?$formatHead[1].' Wise':'N/A' }}</b>
+		                		</div>
 		                	</div>
 		            	</div>
 		            </div>
@@ -111,7 +120,9 @@
         			
         			<h2>{{ date('M Y', strtotime($input['month'])) }} Salary Summary Report </h2>
         			<h4>Unit: {{ $unit[$input['unit']]['hr_unit_name'] }}</h4>
+        			@if($input['area'] != null)
         			<h4>Area: {{ $area[$input['area']]['hr_area_name'] }}</h4>
+        			@endif
         			@if($input['department'] != null)
         			<h4>Department: {{ $department[$input['department']]['hr_department_name'] }}</h4>
         			@endif
@@ -131,7 +142,9 @@
         			@if($input['line_id'] != null)
         			<h4>Line: {{ $line[$input['line_id']]['hr_line_name'] }}</h4>
         			@endif
-
+        			@if($input['otnonot'] != null)
+        			<h4>OT: Yes</h4>
+        			@endif
         			<h4>Total Employee: <b>{{ count($getEmployee) }}</b></h4>
         			<h4>Total Salary: <b>{{ $totalSalary }}</b></h4>
 		            		
@@ -193,7 +206,7 @@
 			            	@if($head == '')
 			            	<tr>
 			            		<td>{{ ++$i }}</td>
-				            	<td><img src="{{ $employee->as_pic }}" class='small-image' onError='this.onerror=null;this.src="{{ ($employee->as_gender == 'Female'?asset('assets/images/user/1.jpg'):asset('assets/images/user/09.jpg')) }}";' style="height: 40px; width: auto;"></td>
+				            	<td><img src="{{ emp_profile_picture($employee) }}" class='small-image' style="height: 40px; width: auto;"></td>
 				            	<td>{{ $employee->associate_id }}</td>
 				            	<td>
 				            		<b>{{ $employee->as_name }}</b>
@@ -263,6 +276,7 @@
 								<th>Sl</th>
 								<th> {{ $head }} Name</th>
 								<th>Employee</th>
+								<th>Salary</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -292,6 +306,9 @@
 								<td>
 									{{ $employee->total }}
 									@php $totalEmployee += $employee->total; @endphp
+								</td>
+								<td>
+									{{ $employee->groupSalary }}
 								</td>
 							</tr>
 							@endforeach

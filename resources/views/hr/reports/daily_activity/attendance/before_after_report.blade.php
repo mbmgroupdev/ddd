@@ -34,13 +34,14 @@
 		                		<div class="col-10 pl-0">
 		                			<h4 style="margin:4px 5px; margin: 0; padding: 0">&nbsp;&nbsp;{{ $unit[$input['unit']]['hr_unit_name'] }}</h4>
 		                		</div>
-		                		
+		                		@if($input['area'] != null)
 		                		<div class="col-2 no-padding-right">
 		                			<h4 style="margin:4px 5px; margin: 0; padding: 0"><font style="font-weight: bold; font-size: 12px;">Area: </font></h4>
 		                		</div>
 		                		<div class="col-10 pl-0">
 		                			<h4 style="margin:4px 5px; margin: 0; padding: 0">&nbsp;&nbsp;{{ $area[$input['area']]['hr_area_name'] }}</h4>
 		                		</div>
+		                		@endif
 		                		@if($input['department'] != null)
 		                		<div class="col-2 no-padding-right">
 		                			<h4 style="margin:4px 5px; margin: 0; padding: 0"><font style="font-weight: bold; font-size: 12px;">Department: </font></h4>
@@ -67,7 +68,7 @@
 		                		</div>
 		                		
 		                		<div class="col-4 pr-0">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0"><font style="font-weight: bold; font-size: 12px;">Total Employee: </font></h4>
+		                			<h4 style="margin:4px 5px; margin: 0; padding: 0"><font style="font-weight: bold; font-size: 12px;">Total: </font></h4>
 		                		</div>
 		                		<div class="col-8 pl-0">
 		                			<h4 style="margin:4px 5px; margin: 0; padding: 0">&nbsp;&nbsp;{{ count($getEmployee) }}</h4>
@@ -117,7 +118,9 @@
         			
         			<h2>Before Absent After Present Summary Report </h2>
         			<h4>Unit: {{ $unit[$input['unit']]['hr_unit_name'] }}</h4>
+        			@if($input['area'] != null)
         			<h4>Area: {{ $area[$input['area']]['hr_area_name'] }}</h4>
+        			@endif
         			@if($input['department'] != null)
         			<h4>Department: {{ $department[$input['department']]['hr_department_name'] }}</h4>
         			@endif
@@ -136,6 +139,9 @@
 
         			@if($input['line_id'] != null)
         			<h4>Line: {{ $line[$input['line_id']]['hr_line_name'] }}</h4>
+        			@endif
+        			@if($input['otnonot'] != null)
+        			<h4>OT: Yes</h4>
         			@endif
 
         			<h4>Absent Date: <b>{{ $input['absent_date'] }}</b></h4>
@@ -198,7 +204,7 @@
 			            	@if($head == '')
 			            	<tr>
 			            		<td>{{ ++$i }}</td>
-				            	<td><img src="{{ $employee->as_pic }}" class='small-image' onError='this.onerror=null;this.src="{{ ($employee->as_gender == 'Female'?asset('assets/images/user/1.jpg'):asset('assets/images/user/09.jpg')) }}";' style="height: 40px; width: auto;"></td>
+				            	<td><img src="{{ emp_profile_picture($employee) }}" class='small-image' style="height: 40px; width: auto;"></td>
 				            	<td>{{ $employee->associate_id }}</td>
 				            	<td>
 				            		<b>{{ $employee->as_name }}</b>
@@ -216,7 +222,7 @@
 			            	@if($group == $employee->$format)
 			            	<tr>
 			            		<td>{{ ++$i }}</td>
-				            	<td><img src="{{ $employee->as_pic }}" class='small-image' onError='this.onerror=null;this.src="{{ ($employee->as_gender == 'Female'?asset('assets/images/user/1.jpg'):asset('assets/images/user/09.jpg')) }}";' style="height: 40px; width: auto;"></td>
+				            	<td><img src="{{ emp_profile_picture($employee) }}" class='small-image' style="height: 40px; width: auto;"></td>
 				            	<td>{{ $employee->associate_id }}</td>
 				            	<td>
 				            		<b>{{ $employee->as_name }}</b>
@@ -235,7 +241,7 @@
 			            @endforeach
 			            @else
 				            <tr>
-				            	<td colspan="9" class="text-center">No Data Found!</td>
+				            	<td colspan="9" class="text-center">No Employee Found!</td>
 				            </tr>
 			            @endif
 			            </tbody>
@@ -302,7 +308,7 @@
 							@endforeach
 							@else
 							<tr>
-				            	<td colspan="3" class="text-center">No Data Found!</td>
+				            	<td colspan="3" class="text-center">No Employee Found!</td>
 				            </tr>
 							@endif
 						</tbody>

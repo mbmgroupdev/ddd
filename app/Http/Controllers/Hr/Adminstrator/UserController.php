@@ -287,6 +287,7 @@ class UserController extends Controller
                 ->where(function($q) use($search) {
                     $q->where("associate_id", "LIKE" , "%{$search}%");
                     $q->orWhere("as_name", "LIKE" , "%{$search}%");
+                    $q->orWhere("as_oracle_code", "LIKE" , "%{$search}%");
                 })
                 ->take(10)
                 ->get();
