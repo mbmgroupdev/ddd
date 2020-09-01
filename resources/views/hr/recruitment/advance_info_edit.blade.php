@@ -26,11 +26,11 @@
                     <div class="btn-group pull-right"> 
                         <a href='{{ url("hr/recruitment/employee/show/$advance->emp_adv_info_as_id") }}' target="_blank" class="btn  btn-success" title="Profile"><i class="las la-user-tie"></i></a>
 
-                        <a  href="{{url("hr/recruitment/operation/medical_info_edit/$advance->emp_adv_info_as_id")}}" target="_blank" data-tooltip="Edit Medical Info" data-tooltip-location="left" class="btn  btn-warning" style="border-radius: 2px !important; padding: 4px;"><i class="las la-stethoscope bigger-100" ></i></a>
+                        
 
-                        <a href='{{ url("hr/recruitment/employee/edit/$advance->emp_adv_info_as_id") }}' class="btn  btn-success" title="Basic Info"><i class="las la-bold"></i></a>
                         <a href='{{ url("hr/recruitment/operation/advance_info_edit/$advance->emp_adv_info_as_id") }}' class="btn  btn-info" title="Advance Info"><i class="las la-id-card"></i></a>
                         <a href='{{ url("hr/recruitment/operation/benefits?associate_id=$advance->emp_adv_info_as_id") }}' class="btn  btn-primary" title="Benefits"><i class="las la-dollar-sign"></i></a>
+                        <a  href="{{url("hr/recruitment/operation/medical_info_edit/$advance->emp_adv_info_as_id")}}" target="_blank" data-tooltip="Edit Medical Info" data-tooltip-location="left" class="btn  btn-warning" style="border-radius: 2px !important; padding: 4px;"><i class="las la-stethoscope bigger-100" ></i></a>
                         <a href='{{ url("hr/ess/medical_incident?associate_id=$advance->emp_adv_info_as_id") }}' class="btn  btn-warning" title="Medical Incident"><i class="las la-procedures"></i></a>
                         <a href='{{ url("hr/operation/servicebook?associate_id=$advance->emp_adv_info_as_id") }}' class="btn  btn-danger" title="Service Book"><i class="las la-address-book"></i></a>
                     </div>
@@ -995,53 +995,20 @@ $(document).ready(function()
 
 
 
-    /*
-    |-------------------------------------------------- 
-    | BANGLA 
-    |-------------------------------------------------- 
-    */
-
-    $('select.associates').select2({
-        placeholder: 'Select Associate\'s ID',
-        ajax: {
-            url: '{{ url("hr/associate-search") }}',
-            type: 'get',
-            dataType: 'json',
-            delay: 250,
-            data: function (params) {
-                return { 
-                    keyword: params.term
-                }; 
-            },
-            processResults: function (data) {   
-                return {
-                    results:  $.map(data, function (item) {
-                        return {
-                            text: item.associate_name,
-                            id: item.associate_id
-                        }
-                    }) 
-                };
-            }, 
-          cache: true
-        }
-    }); 
+    
 
     // Translate english date to bangla
     var string = $("#hr_bn_doj");
-    $(window).on('load', function()
-    { 
-        string.val(convertE2B(string.val()));
-    });
+    
+    string.val(convertE2B(string.val()));
+    showInfo(associate_id);
+    educationHistory(associate_id);
+   
 
 
     // retrive all information by associate selction 
     $('body').on('change', '.associates', function(){
         showInfo($(this).val());
-    });
-    $(window).load(function(){
-        showInfo(associate_id);
-        educationHistory(associate_id);
     });
 
 

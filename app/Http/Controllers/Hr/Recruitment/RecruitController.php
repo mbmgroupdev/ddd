@@ -158,7 +158,6 @@ class RecruitController extends Controller
      */
     public function show($id)
     {
-        //
     }
 
     /**
@@ -169,7 +168,14 @@ class RecruitController extends Controller
      */
     public function edit($id)
     {
-        //
+        $data['getEmpType'] = EmpType::getActiveEmpType();
+        $data['getUnit'] = Unit::getActiveUnit();
+        $data['getArea'] = Area::getActiveArea();
+
+        $worker = WorkerRecruitment::where('worker_id',$id)->firstOrFail();
+
+
+        return view('hr.recruitment.recruit.edit', compact('data','worker'));
     }
 
     /**
