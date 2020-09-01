@@ -120,7 +120,7 @@
                   <a href="{{ url('hr/operation/shift_roaster_define') }}"><i class="las la-tasks"></i> Define Shift Roster</a>
                </li>
                <li class="@if($segment3 == 'shift_assign') active @endif">
-                  <a href="{{ url('hr/operation/shift_assign') }}"><i class="las la-tasks"></i>Shift Roster Assign</a>
+                  <a href="{{ url('hr/operation/shift_assign') }}"><i class="las la-tasks"></i>Shift Assign</a>
                </li>
                
                <li class="@if($segment3 == 'holiday-roster') active @endif">

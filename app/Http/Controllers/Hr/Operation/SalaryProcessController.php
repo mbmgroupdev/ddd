@@ -2,20 +2,22 @@
 
 namespace App\Http\Controllers\Hr\Operation;
 
+use App\Helpers\Custom;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Models\Employee;
 use App\Models\Hr\Area;
 use App\Models\Hr\Benefits;
 use App\Models\Hr\Department;
-use App\Models\Employee;
 use App\Models\Hr\Floor;
 use App\Models\Hr\HrMonthlySalary;
 use App\Models\Hr\SalaryAdjustMaster;
+use App\Models\Hr\SalaryAudit;
+use App\Models\Hr\SalaryAuditHistory;
 use App\Models\Hr\Section;
 use App\Models\Hr\Subsection;
 use App\Models\Hr\Unit;
-use App\Helpers\Custom;
 use Auth, DB;
+use Illuminate\Http\Request;
 
 class SalaryProcessController extends Controller
 {
@@ -48,6 +50,22 @@ class SalaryProcessController extends Controller
     	$input['year'] = date('Y', strtotime($input['month_year']));
     	// return $input;
     	try {
+            $salaryStatus = SalaryAudit::checkSalaryAuditStatus($input);
+            $url = 'hr/monthly-salary-audit?month='.$input['month_year'].'&unit='.$input['unit'];
+            if($salaryStatus == null){
+                return '<div class="text-center"><h2>'.$input['month_year'].' Month Salary Not Completed!</h2><a href="'.url($url).'" class="btn btn-sm btn-success"><i class="fa fa-check"> </i>Check & Confirm</a></div>';
+            }
+            if($salaryStatus->initial_audit == null || $salaryStatus->accounts_audit == null || $salaryStatus->management_audit == null){
+                if($salaryStatus->initial_audit == null){
+                    return '<div class="text-center"><h2>'.$input['month_year'].' Month Salary Audit Not Completed!</h2><a href="'.url($url).'" class="btn btn-sm btn-success"><i class="fa fa-check"> </i>Check & Confirm</a></div>';
+                }elseif($salaryStatus->accounts_audit == null){
+                    return '<div class="text-center"><h2>'.$input['month_year'].' Month Salary Accounts Audit Not Completed!</h2><a href="'.url($url).'" class="btn btn-sm btn-success"><i class="fa fa-check"> </i>Check & Confirm</a></div>';
+                }elseif($salaryStatus->management_audit == null){
+                    return '<div class="text-center"><h2>'.$input['month_year'].' Month Salary Management Audit Not Completed!</h2><a href="'.url($url).'" class="btn btn-sm btn-success"><i class="fa fa-check"> </i>Check & Confirm</a></div>';
+                }else{
+                    return 'Something Wrong!';
+                }
+            }
             $getUnit = Unit::getUnitNameBangla($input['unit']);
     		$info = [];
             if(isset($input['area'])){
@@ -139,5 +157,67 @@ class SalaryProcessController extends Controller
     		$bug = $e->getMessage();
     		return $bug;
     	}
+    }
+
+    public function salaryAuditStatus(Request $request)
+    {
+        $input = $request->all();
+
+        $data['type'] = 'error';
+        if($input['month_year'] == ''){
+            $data['message'] = 'Something Wrong, please Reload The Page';
+            return $data;
+        }
+        DB::beginTransaction();
+        try {
+            $aduit['month'] = date('m', strtotime($input['month_year'])); 
+            $aduit['year'] = date('Y', strtotime($input['month_year'])); 
+            $salaryAuditStatus = SalaryAudit::checkSalaryAuditStatus($aduit);
+            if($input['status'] == 1){
+                if($salaryAuditStatus != null){
+                    if($salaryAuditStatus->initial_audit == null){
+                        $aduit['initial_audit'] = Auth::user()->id;
+                        $aduit['initial_comment'] = $input['comment'];
+                        $aduitHistory['stage'] = 2;
+                    }elseif($salaryAuditStatus->accounts_audit == null){
+                        $aduit['accounts_audit'] = Auth::user()->id;
+                        $aduit['accounts_comment'] = $input['comment'];
+                        $aduitHistory['stage'] = 3;
+                    }elseif($salaryAuditStatus->management_audit == null){
+                        $aduit['management_audit'] = Auth::user()->id;
+                        $aduit['management_comment'] = $input['comment'];
+                        $aduitHistory['stage'] = 4;
+                    }
+                    $salaryAuditStatus->update($aduit);
+                }else{
+                    $aduit['hr_audit'] = Auth::user()->id;
+                    $aduit['hr_comment'] = $input['comment'];
+                    $aduitHistory['stage'] = 1;
+                    SalaryAudit::create($aduit);
+                }
+            }else{
+                $audit = SalaryAudit::findOrFail($salaryAuditStatus->id);
+                $audit->delete();
+            }
+            
+            // audit history
+            $aduitHistory['month'] = $aduit['month']; 
+            $aduitHistory['year'] = $aduit['year']; 
+            $aduitHistory['audit_id'] = Auth::user()->id; 
+            $aduitHistory['status'] = $input['status']; 
+            $aduitHistory['comment'] = $input['comment'];
+            SalaryAuditHistory::create($aduitHistory); 
+            
+            $data['type'] = 'success';
+            $data['message'] = 'Audit Successfully Done';
+            $data['url'] = url('hr/operation/salary-sheet');
+            DB::commit();
+            return $data;
+        } catch (\Exception $e) {
+            DB::rollback();
+            $data['message'] = $e->getMessage();
+            return $data;
+
+        }
     }
 }

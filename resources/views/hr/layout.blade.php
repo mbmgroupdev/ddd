@@ -2,7 +2,7 @@
 @include('hr.menu')
 
 @section('content')
-	<div class="container-fluid">
+	<div class="container-fluid no-padding">
 		@yield('main-content')
 	</div>
 

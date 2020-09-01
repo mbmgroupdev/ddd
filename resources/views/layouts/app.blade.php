@@ -318,7 +318,7 @@
                     @yield('content')
                 </main>
                 <!-- Footer -->
-                <footer class="bg-white iq-footer">
+                <footer class="bg-white iq-footer mr-0 ml-0 hide">
                    <div class="container-fluid">
                       <div class="row">
                          <div class="col-lg-6">

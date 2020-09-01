@@ -662,3 +662,6 @@ a.permission-item.card-link {
     line-height: 18px;
     padding-left: 10px;
 }
+.no-padding{
+    padding: 0 !important;
+}

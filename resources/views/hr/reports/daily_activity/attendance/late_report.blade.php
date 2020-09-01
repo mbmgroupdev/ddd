@@ -23,81 +23,94 @@
 		            <div class="row">
 		            	<div class="col-5">
 		            		<div class="row">
-		                		<div class="col-2 no-padding-right">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0"><font style="font-weight: bold; font-size: 12px;">Format: </font></h4>
+		                		<div class="col-2 pr-0">
+		                			<h4><font style="font-weight: bold; font-size: 12px;">Unit</font></h4>
 		                		</div>
-		                		<div class="col-10 pl-0">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0; text-transform: capitalize;">{{ isset($formatHead[1])?$formatHead[1].' Wise':'N/A' }}</h4>
+		                		<div class="col-10">
+		                			<b>: {{ $unit[$input['unit']]['hr_unit_name'] }}</b>
 		                		</div>
-		                		
-		                		<div class="col-2 no-padding-right">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0"><font style="font-weight: bold; font-size: 12px;">Unit: </font></h4>
+		                		@if($input['area'] != null)
+		                		<div class="col-2 pr-0">
+		                			<h4><font style="font-weight: bold; font-size: 12px;">Area</font></h4>
 		                		</div>
-		                		<div class="col-10 pl-0">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0">{{ $unit[$input['unit']]['hr_unit_name'] }}</h4>
+		                		<div class="col-10">
+		                			<b>: {{ $area[$input['area']]['hr_area_name'] }}</b>
 		                		</div>
-		                		
-		                		<div class="col-2 no-padding-right">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0"><font style="font-weight: bold; font-size: 12px;">Area: </font></h4>
-		                		</div>
-		                		<div class="col-10 pl-0">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0">{{ $area[$input['area']]['hr_area_name'] }}</h4>
-		                		</div>
+		                		@endif
 		                		@if($input['department'] != null)
-		                		<div class="col-2 no-padding-right">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0"><font style="font-weight: bold; font-size: 12px;">Department: </font></h4>
+		                		<div class="col-2 pr-0">
+		                			<h4><font style="font-weight: bold; font-size: 12px;">Department</font></h4>
 		                		</div>
-		                		<div class="col-10 pl-0">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0">{{ $department[$input['department']]['hr_department_name'] }}</h4>
+		                		<div class="col-10">
+		                			<b>: {{ $department[$input['department']]['hr_department_name'] }}</b>
+		                		</div>
+		                		@endif
+		                		@if($input['section'] != null)
+		                		<div class="col-2 pr-0">
+		                			<h4><font style="font-weight: bold; font-size: 12px;">Section</font></h4>
+		                		</div>
+		                		<div class="col-10">
+		                			<b>: {{ $section[$input['section']]['hr_section_name'] }}</b>
 		                		</div>
 		                		@endif
 		            		</div>
 		            	</div>
 		            	<div class="col-4 no-padding">
 		            		<div class="row">
-		                		
 		                		<div class="col-4 pr-0">
-		                			<h4 class="text-right" style="margin:4px 5px; margin: 0; padding: 0"><font style="font-weight: bold; font-size: 12px;">Total Employee: </font></h4>
+		                			<h4 style=""><font style="font-weight: bold; font-size: 12px;">Late Date</font></h4>
 		                		</div>
-		                		<div class="col-8">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0">{{ $totalEmployees }}</h4>
+		                		<div class="col-8 pl-0">
+		                			<b>: {{ $input['date']}} </b>
+		                		</div>
+		                		@if($input['otnonot'] != null)
+		                		<div class="col-4 pr-0">
+		                			<h4 style=""><font style="font-weight: bold; font-size: 12px;">OT</font></h4>
+		                		</div>
+		                		<div class="col-8 pl-0">
+		                			<b>: Yes </b>
+		                		</div>
+		                		@endif
+		                		<div class="col-4 pr-0">
+		                			<h4><font style="font-weight: bold; font-size: 12px;">Total Late Employee</font></h4>
+		                		</div>
+		                		<div class="col-8 pl-0">
+		                			<b>: {{ $totalEmployees }}</b>
 		                		</div>
 		                	</div>
 		            	</div>
 		            	<div class="col-3 no-padding">
 		            		<div class="row">
-		                		@if($input['section'] != null)
-		                		<div class="col-3 no-padding-right">
-		                			<h4 style="margin:4px 5px; text-align:right; margin: 0; padding: 0"><font style="font-weight: bold; font-size: 12px;">Section: </font></h4>
-		                		</div>
-		                		<div class="col-9">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0">{{ $section[$input['section']]['hr_section_name'] }}</h4>
-		                		</div>
-		                		@endif
 		                		@if($input['subSection'] != null)
-		                		<div class="col-3 no-padding-right">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0"><font style="font-weight: bold; font-size: 12px;">Sub Section: </font></h4>
+		                		<div class="col-3 pr-0">
+		                			<h4><font style="font-weight: bold; font-size: 12px;">Sub Section</font></h4>
 		                		</div>
-		                		<div class="col-9">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0">{{ $department[$input['department']]['hr_department_name'] }}</h4>
+		                		<div class="col-9 pl-0">
+		                			<b>: {{ $subSection[$input['subSection']]['hr_subsec_name'] }}</b>
 		                		</div>
 		                		@endif
 		                		@if($input['floor_id'] != null)
-		                		<div class="col-3 no-padding-right">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0"><font style="font-weight: bold; font-size: 12px;">Floor: </font></h4>
+		                		<div class="col-3 pr-0">
+		                			<h4><font style="font-weight: bold; font-size: 12px;">Floor</font></h4>
 		                		</div>
-		                		<div class="col-9">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0">{{ $floor[$input['floor_id']]['hr_floor_name'] }}</h4>
+		                		<div class="col-9 pl-0">
+		                			<b>: {{ $floor[$input['floor_id']]['hr_floor_name'] }}</b>
 		                		</div>
 		                		@endif
 		                		@if($input['line_id'] != null)
-		                		<div class="col-3 no-padding-right">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0"><font style="font-weight: bold; font-size: 12px;">Line: </font></h4>
+		                		<div class="col-3 pr-0">
+		                			<h4><font style="font-weight: bold; font-size: 12px;">Line</font></h4>
 		                		</div>
-		                		<div class="col-9">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0">{{ $line[$input['line_id']]['hr_line_name'] }}</h4>
+		                		<div class="col-9 pl-0">
+		                			<b>: {{ $line[$input['line_id']]['hr_line_name'] }}</b>
 		                		</div>
 		                		@endif
+		                		<div class="col-3 pr-0">
+		                			<h4><font style="font-weight: bold; font-size: 12px;">Format</font></h4>
+		                		</div>
+		                		<div class="col-9 pl-0">
+		                			<b class="capitalize">: {{ isset($formatHead[1])?$formatHead[1].' Wise':'N/A' }}</b>
+		                		</div>
 		                	</div>
 		            	</div>
 		            </div>
@@ -107,9 +120,11 @@
         			@php
         			$unitId = $input['unit'];
         			@endphp
-        			<h2>{{ $input['date']}} Late Employee Summary Report </h2>
+        			<h2>Late Employee Summary Report </h2>
         			<h4>Unit: {{ $unit[$input['unit']]['hr_unit_name'] }}</h4>
+        			@if($input['area'] != null)
         			<h4>Area: {{ $area[$input['area']]['hr_area_name'] }}</h4>
+        			@endif
         			@if($input['department'] != null)
         			<h4>Department: {{ $department[$input['department']]['hr_department_name'] }}</h4>
         			@endif
@@ -129,7 +144,10 @@
         			@if($input['line_id'] != null)
         			<h4>Line: {{ $line[$input['line_id']]['hr_line_name'] }}</h4>
         			@endif
-
+        			@if($input['otnonot'] != null)
+        			<h4>OT: Yes</h4>
+        			@endif
+        			<h4>Late Date: {{ $input['date']}}</h4>
         			<h4>Total Late Employee: <b>{{ $totalEmployees }}</b></h4>
 		            		
 		        </div>
@@ -168,7 +186,7 @@
 			                @endif
 			                <tr>
 			                    <th>Sl</th>
-			                    {{-- <th>Photo</th> --}}
+			                    <th>Photo</th>
 			                    <th>Associate ID</th>
 			                    <th>Name & Phone</th>
 			                    <th>Designation</th>
@@ -188,7 +206,7 @@
 			            	@if($head == '')
 			            	<tr>
 			            		<td>{{ ++$i }}</td>
-				            	{{-- <td><img src="{{ $employee->as_pic }}" class='small-image' onError='this.onerror=null;this.src="/assets/images/avatars/avatar2.png"' style="height: 40px; width: auto;"></td> --}}
+				            	<td><img src="{{ emp_profile_picture($employee) }}" class='small-image' style="height: 40px; width: auto;"></td>
 				            	<td>{{ $employee->associate_id }}</td>
 				            	<td>
 				            		<b>{{ $employee->as_name }}</b>
@@ -207,7 +225,7 @@
 			            	@if($group == $employee->$format)
 			            	<tr>
 			            		<td>{{ ++$i }}</td>
-				            	{{-- <td><img src="{{ $employee->as_pic }}" class='small-image' onError='this.onerror=null;this.src="/assets/images/avatars/avatar2.png"' style="height: 40px; width: auto;"></td> --}}
+				            	<td><img src="{{ emp_profile_picture($employee) }}" class='small-image' style="height: 40px; width: auto;"></td>
 				            	<td>{{ $employee->associate_id }}</td>
 				            	<td>
 				            		<b>{{ $employee->as_name }}</b>
@@ -226,13 +244,13 @@
 			            @endforeach
 			            @else
 				            <tr>
-				            	<td colspan="8" class="text-center">No Data Found!</td>
+				            	<td colspan="9" class="text-center">No Employee Found!</td>
 				            </tr>
 			            @endif
 			            </tbody>
 			            <tfoot>
 			            	<tr>
-			            		<td colspan="6"></td>
+			            		<td colspan="7"></td>
 			            		<td><b>Total Employee</b></td>
 			            		<td><b>{{ $i }}</b></td>
 			            	</tr>
@@ -293,7 +311,7 @@
 							@endforeach
 							@else
 							<tr>
-				            	<td colspan="3" class="text-center">No Data Found!</td>
+				            	<td colspan="3" class="text-center">No Employee Found!</td>
 				            </tr>
 							@endif
 						</tbody>

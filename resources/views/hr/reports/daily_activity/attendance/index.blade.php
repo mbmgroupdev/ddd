@@ -51,8 +51,8 @@
                                             </select>
                                           <label for="unit">Unit</label>
                                         </div>
-                                        <div class="form-group has-float-label has-required select-search-group">
-                                            <select name="area" class="form-control capitalize select-search" id="area" required="">
+                                        <div class="form-group has-float-label select-search-group">
+                                            <select name="area" class="form-control capitalize select-search" id="area">
                                                 <option selected="" value="">Choose...</option>
                                                 @foreach($areaList as $key => $value)
                                                 <option value="{{ $key }}">{{ $value }}</option>
@@ -113,9 +113,9 @@
                                     <div class="col-3">
                                         <div class="form-group has-float-label select-search-group">
                                             <?php
-                                                $reportType = ['absent'=>'Absent', 'before_absent_after_present'=>'Before Absent After Present','leave'=>'Leave','ot'=>'OT', 'working_hour'=>'Working Hour', 'late'=>'Late'];
+                                                $reportType = ['attendance'=>'Attendance', 'absent'=>'Absent', 'before_absent_after_present'=>'Before Absent After Present','leave'=>'Leave','ot'=>'OT', 'working_hour'=>'Working Hour', 'late'=>'Late'];
                                             ?>
-                                            {{ Form::select('report_type', $reportType, null, ['placeholder'=>'Select Report Type ', 'class'=>'form-control capitalize select-search', 'id'=>'reportType']) }}
+                                            {{ Form::select('report_type', $reportType, 'attendance', ['placeholder'=>'Select Report Type ', 'class'=>'form-control capitalize select-search', 'id'=>'reportType']) }}
                                             <label for="reportType">Report Type</label>
                                         </div>
                                         <div class="form-group has-float-label select-search-group">
@@ -183,7 +183,7 @@
           $("#result-data").html(loader);
           $("#single-employee-search").hide();
           e.preventDefault();
-          
+          var url = '';
           var unit = $('select[name="unit"]').val();
           var area = $('select[name="area"]').val();
           var date = $('input[name="date"]').val();
@@ -191,33 +191,38 @@
           var type = $('select[name="report_type"]').val();
           var form = $("#activityReport");
           var flag = 0;
-          if(unit === '' || area === '' || date === '' || type === ''){
+          if(unit === '' || date === '' || type === ''){
             flag = 1;
           }
           if(flag === 0){
             $('html, body').animate({
                 scrollTop: $("#result-data").offset().top
             }, 2000);
+            if(type == 'attendance'){
+              url = '{{ url("hr/reports/daily-present-absent-activity-report") }}';
+            }else{
+              url = '{{ url("hr/reports/daily-attendance-activity-report") }}';
+            }
 
             $.ajax({
                 type: "GET",
-                url: '{{ url("hr/reports/daily-attendance-activity-report") }}',
+                url: url,
                 data: form.serialize(), // serializes the form's elements.
                 success: function(response)
                 {
-                  // console.log(response);
-                  if(response !== 'error'){
-                    $("#result-data").html(response);
-                  }else{
-                    console.log(response);
-                    $("#result-data").html('');
-                  }
+                  console.log(response);
+                  // if(response !== 'error'){
+                  //   $("#result-data").html(response);
+                  // }else{
+                  //   console.log(response);
+                  //   $("#result-data").html('');
+                  // }
 
-                  if(format == 0 && response !== 'error'){
-                    $("#single-employee-search").show();
-                  }else{
-                     $("#single-employee-search").hide();
-                  }
+                  // if(format == 0 && response !== 'error'){
+                  //   $("#single-employee-search").show();
+                  // }else{
+                  //    $("#single-employee-search").hide();
+                  // }
                 },
                 error: function (reject) {
                   console.log(reject);
