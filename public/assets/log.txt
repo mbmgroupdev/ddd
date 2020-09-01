@@ -1,3 +1,5 @@
+2020-08-31 14:34:57 "17F005001B" hr_management- role deleted 6
+2020-08-31 14:34:51 "17F005001B" hr_admin- role deleted 5
 2020-08-30 15:59:42 "17F005001B" Permission Appointment Letter revoked from 15H025007D 
 2020-08-30 15:59:34 "17F005001B" Permission Appointment Letter assigned to 15H025007D 
 2020-08-30 15:36:14 "17F005001B" Test1 - role created:  34

@@ -1,5 +1,5 @@
 @extends('hr.layout')
-@section('title', '')
+@section('title', 'Manual Attendance')
 @section('main-content')
 @push('css')
     <style>
@@ -70,71 +70,63 @@
             </ul><!-- /.breadcrumb -->
         </div>
 
-        <div class="page-content">
-            <div class="row">
-                <div class="col-xs-12">
-                    <div class="panel panel-info">
-                      <div class="panel-body">
-                        <div class="panel panel-success">
-                            <div class="panel-heading"><h6>File Process</h6></div>
-                            <div class="panel-body" style="background: #fbfbfb;">
-                                <div class="msg" id="top-msg">
-                                    <div class="alert alert-warning ">
-                                        <span class="alert-icon"><i class="fa fa-refresh fa-spin"></i></span>
-                                        <div class="notification-info">
-                                            <h5 class=""><b id="unitName"></b> : Attendance file is being processed! Please don't close this page</h5>
+            <div class="panel panel-info">
+              <div class="panel-body">
+                <div class="panel panel-success">
+                    <div class="panel-heading"><h6>File Process</h6></div>
+                    <div class="panel-body" style="background: #fbfbfb;">
+                        <div class="msg" id="top-msg">
+                            <div class="alert alert-warning ">
+                                <span class="alert-icon"><i class="fa fa-refresh fa-spin"></i></span>
+                                <div class="notification-info">
+                                    <h5 class=""><b id="unitName"></b> : Attendance file is being processed! Please don't close this page</h5>
 
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="att_status_section" id="progressbar-box">
-                                    <div class="col-sm-1">
-                                        <img class="img-responsive" src="{{ asset('assets/img/loader-box.gif')}}" style="max-width: 64px;" alt="Synchronizing..." />
-                                    </div>
-                                    <div class="col-sm-11">
-                                        <div class="process_section" >
-                                            <div class="progress">
-                                                <div class="progress-bar progress-bar-info progress-bar-striped active" id="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">
-                                                  0%
-                                                </div>
-                                            </div>
-                                            <input type="hidden" name="unit" value="{{$unit}}">
-                                            <input type="hidden" name="array_data_count" value="{{$arrayDataCount}}">
-
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div id="accordion" class="accordion-style panel-group">
-                            <div class="panel panel-info">
-                                <div class="panel-heading file-processing-log">
-                                    <h2 class="panel-title">
-                                        <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#individual" aria-expanded="false">
-                                            <i class="bigger-110 ace-icon fa fa-angle-right" data-icon-hide="ace-icon fa fa-angle-down" data-icon-show="ace-icon fa fa-angle-right"></i>
-                                            &nbsp;Log
-                                        </a>
-                                        <a class="btn btn-info btn-xx pull-right" onClick="printMe('log-section')">
-                                            <i class="bigger-110 ace-icon fa fa-print"></i> Print
-                                        </a>
-                                    </h2>
-                                </div>
-
-                                <div class="panel-collapse collapse" id="individual" aria-expanded="false" style="height: 0px;">
-                                    <div class="panel-body">
-                                        <div id="log-section"></div>
+                        <div class="att_status_section" id="progressbar-box">
+                            <div class="col-sm-1">
+                                <img class="img-responsive" src="{{ asset('assets/img/loader-box.gif')}}" style="max-width: 64px;" alt="Synchronizing..." />
+                            </div>
+                            <div class="col-sm-11">
+                                <div class="process_section" >
+                                    <div class="progress">
+                                        <div class="progress-bar progress-bar-info progress-bar-striped active" id="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">
+                                          0%
+                                        </div>
                                     </div>
+                                    <input type="hidden" name="unit" value="{{$unit}}">
+                                    <input type="hidden" name="array_data_count" value="{{$arrayDataCount}}">
+
                                 </div>
                             </div>
                         </div>
-
-                      </div>
                     </div>
-
                 </div>
-                <!-- /.col -->
+                <div id="accordion" class="accordion-style panel-group">
+                    <div class="panel panel-info">
+                        <div class="panel-heading file-processing-log">
+                            <h2 class="panel-title">
+                                <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#individual" aria-expanded="false">
+                                    <i class="bigger-110 ace-icon fa fa-angle-right" data-icon-hide="ace-icon fa fa-angle-down" data-icon-show="ace-icon fa fa-angle-right"></i>
+                                    &nbsp;Log
+                                </a>
+                                <a class="btn btn-info btn-xx pull-right" onClick="printMe('log-section')">
+                                    <i class="bigger-110 ace-icon fa fa-print"></i> Print
+                                </a>
+                            </h2>
+                        </div>
+
+                        <div class="panel-collapse collapse" id="individual" aria-expanded="false" style="height: 0px;">
+                            <div class="panel-body">
+                                <div id="log-section"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+              </div>
             </div>
-        </div><!-- /.page-content -->
     </div>
 </div>
 

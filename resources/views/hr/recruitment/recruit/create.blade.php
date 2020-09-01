@@ -7,7 +7,7 @@
 @section('main-content')
    <div class="row">
       <div class="col-sm-12 col-lg-12">
-         <div class="panel">
+         <div class="panel h-min-400">
             <div class="panel-heading">
                   <h6>Recruitment Process
                       <a class="btn btn-primary pull-right" href="{{url('')}}">Recruit List</a>

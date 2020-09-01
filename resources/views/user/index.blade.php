@@ -1,18 +1,11 @@
 @extends('user.layout')
 @section('title', 'User Dashboard')
 @section('main-content')
-   @push('css')
-      <!-- Full calendar -->
-      <link href="{{ asset('assets/fullcalendar/core/main.css') }}" rel='stylesheet' />
-      <link href="{{ asset('assets/fullcalendar/daygrid/main.css') }}" rel='stylesheet' />
-      <link href="{{ asset('assets/fullcalendar/timegrid/main.css') }}" rel='stylesheet' />
-      <link href="{{ asset('assets/fullcalendar/list/main.css') }}" rel='stylesheet' />
-   @endpush
 
    @php $user = auth()->user(); @endphp
    <div class="row">
       <div class="col-lg-4 row m-0 p-0">
-         <div class="col-sm-12">
+         <div class="col-sm-12 mb-3">
             <div class="iq-card iq-card-block iq-card-stretch iq-card-height iq-user-profile-block" style="height: 75%;">
                <div class="iq-card-body">
                   <div class="user-details-block">
@@ -195,10 +188,7 @@
          <!--  -->
       </div>
       </div>
-      <div class="col-lg-8">
-        <div class="row">
-            
-        </div>
+      <div class="col-lg-8 pl-0">
          <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
             <div class="iq-card-body pb-0">
                <div class="row"> 
