@@ -217,7 +217,7 @@
                   <a href="{{ url('hr/operation/salary-sheet') }}"><i class="las la-file-invoice-dollar"></i>Salary Sheet</a>
                </li>
                @endif
-               @if($user->can('Payslip') || $user->hasRole('Super Admin'))
+               {{-- @if($user->can('Payslip') || $user->hasRole('Super Admin'))
                <li class="@if($segment3 == 'payslip') active @endif">
                   <a href="{{ url('hr/operation/payslip') }}"><i class="las la-address-card"></i>Payslip</a>
                </li>
@@ -226,7 +226,7 @@
                <li class="@if($segment3 == 'bonus-sheet') active @endif">
                   <a href="{{ url('hr/operation/bonus-sheet') }}"><i class="las la-file-invoice-dollar"></i>Bonus Sheet</a>
                </li>
-               @endif
+               @endif --}}
                {{-- <li class="@if($segment3 == 'earn-leave-payment') active @endif">
                   <a href="{{ url('hr/operation/earn-leave-payment') }}"><i class="las la-file-invoice-dollar"></i>Earn Leave Payment</a>
                </li> --}}

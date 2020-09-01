@@ -113,9 +113,10 @@
                                     <div class="col-3">
                                         <div class="form-group has-float-label select-search-group">
                                             <?php
-                                                $reportType = ['attendance'=>'Attendance', 'absent'=>'Absent', 'before_absent_after_present'=>'Before Absent After Present','leave'=>'Leave','ot'=>'OT', 'working_hour'=>'Working Hour', 'late'=>'Late'];
+                                                $reportType = ['absent'=>'Absent', 'before_absent_after_present'=>'Before Absent After Present','leave'=>'Leave','ot'=>'OT', 'working_hour'=>'Working Hour', 'late'=>'Late'];
+                                                //$reportType = ['attendance'=>'Attendance', 'absent'=>'Absent', 'before_absent_after_present'=>'Before Absent After Present','leave'=>'Leave','ot'=>'OT', 'working_hour'=>'Working Hour', 'late'=>'Late'];
                                             ?>
-                                            {{ Form::select('report_type', $reportType, 'attendance', ['placeholder'=>'Select Report Type ', 'class'=>'form-control capitalize select-search', 'id'=>'reportType']) }}
+                                            {{ Form::select('report_type', $reportType, null, ['placeholder'=>'Select Report Type ', 'class'=>'form-control capitalize select-search', 'id'=>'reportType']) }}
                                             <label for="reportType">Report Type</label>
                                         </div>
                                         <div class="form-group has-float-label select-search-group">
