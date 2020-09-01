@@ -73,7 +73,7 @@
                         <div class="panel p-30">
                             {{-- <div class="col-xs-2"></div> --}}
                             <div class="col-xs-12 background_div" id="printable" style="font-size: 11px;">
-                                <div class="tinyMceLetter hide" name="printArea" id="printArea">
+                                <div class="tinyMceLetter" name="printArea" id="printArea">
                                     <?php
                                     date_default_timezone_set('Asia/Dhaka');
                                     $en = array('0','1','2','3','4','5','6','7','8','9');
