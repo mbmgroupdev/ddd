@@ -392,6 +392,85 @@ class DailyActivityReportController extends Controller
             return 'error';
         }
     }
+
+    public function presentAbsentReport(Request $request)
+    {
+        $input = $request->all();
+        // dd($input);
+        // return $input;
+        try {
+            $input['area']       = isset($request['area'])?$request['area']:'';
+            $input['otnonot']    = isset($request['otnonot'])?$request['otnonot']:'';
+            $input['department'] = isset($request['department'])?$request['department']:'';
+            $input['line_id']    = isset($request['line_id'])?$request['line_id']:'';
+            $input['floor_id']   = isset($request['floor_id'])?$request['floor_id']:'';
+            $input['section']    = isset($request['section'])?$request['section']:'';
+            $input['subSection'] = isset($request['subSection'])?$request['subSection']:'';
+
+            $getEmployee = array();
+            $format = $request['report_group'];
+            $uniqueGroups = ['all'];
+            $totalValue = 0;
+
+            // employee basic sql binding
+            $employeeData = DB::table('hr_as_basic_info AS emp')
+            ->where('emp.as_status', 1);
+            if($input['report_format'] == 0 && !empty($input['employee'])){
+                $employeeData->where('emp.associate_id', 'LIKE', '%'.$input['employee'] .'%');
+            }
+            $employeeData->where('emp.as_unit_id',$request['unit'])
+            ->when(!empty($input['area']), function ($query) use($input){
+               return $query->where('emp.as_area_id',$input['area']);
+            })
+            ->when(!empty($input['department']), function ($query) use($input){
+               return $query->where('emp.as_department_id',$input['department']);
+            })
+            ->when(!empty($input['line_id']), function ($query) use($input){
+               return $query->where('emp.as_line_id', $input['line_id']);
+            })
+            ->when(!empty($input['floor_id']), function ($query) use($input){
+               return $query->where('emp.as_floor_id',$input['floor_id']);
+            })
+            ->when($request['otnonot']!=null, function ($query) use($input){
+               return $query->where('emp.as_ot',$input['otnonot']);
+            })
+            ->when(!empty($input['section']), function ($query) use($input){
+               return $query->where('emp.as_section_id', $input['section']);
+            })
+            ->when(!empty($input['subSection']), function ($query) use($input){
+               return $query->where('emp.as_subsection_id', $input['subSection']);
+            });
+            if($input['report_format'] == 1 && $input['report_group'] != null){
+                
+                $employeeData->select('emp.'.$input['report_group'], DB::raw('count(*) as total'))->groupBy('emp.'.$input['report_group']);
+                
+            }else{
+                $employeeData->select('emp.as_id', 'emp.as_gender', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_contact', 'emp.as_section_id');
+            }
+
+            $getEmployee = $employeeData->get();
+            $employeeAsIdData = $employeeData->pluck('emp.as_id')->toArray();
+            $employeeAssIdData = $employeeData->pluck('emp.associate_id')->toArray();
+
+            if($input['report_format'] == 1 && $input['report_group'] != null){
+                $totalEmployees = array_sum(array_column($getEmployee->toArray(),'total'));
+            }else{
+                $totalEmployees = count($getEmployee);
+            }
+            return $totalEmployees;
+            
+            // prsent 
+            $tableName = get_att_table($request['unit']).' AS a';
+            $presentData = DB::table($tableName)
+            ->whereDate('a.in_date', $request['date']);
+
+            
+        } catch (\Exception $e) {
+            $bug = $e->getMessage();
+            return $bug;
+            return 'error';
+        }
+    }
     public function getAbsentEmployeeFromDate($input)
     {
         // employee basic sql binding

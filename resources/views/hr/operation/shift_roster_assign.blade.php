@@ -1,5 +1,5 @@
 @extends('hr.layout')
-@section('title', 'Shift Roster Assign')
+@section('title', 'Shift Assign')
 @section('main-content')
 @push('css')
     <style>
@@ -22,7 +22,7 @@
                 <li>
                     <a href="#"> Operation </a>
                 </li>
-                <li class="active">Shift Roster Assign </li>
+                <li class="active">Shift Assign </li>
             </ul><!-- /.breadcrumb --> 
             
         </div>
@@ -41,7 +41,7 @@
                                     {{ Form::select('unit', $unitList, null, ['placeholder'=>'Select Unit','id'=>'unit_shift', 'class'=> 'form-control', 'required'=> 'required']) }} 
                                     <label  for="unit">Unit </label>
                                 </div>
-                                <div class="form-group has-required has-float-label select-search-group">
+                                <div class="form-group has-float-label select-search-group">
                                     {{ Form::select('area', $areaList, null, ['placeholder'=>'Select Area','id'=>'area_shift', 'class'=> 'form-control ', 'disabled']) }} 
                                     <label  for="area">Area </label>
                                 </div>
@@ -130,11 +130,12 @@
                                             <th class="sticky-th" ><input type="checkbox" id="checkAll"/></th>
                                             <th class="sticky-th">Image</th>
                                             <th class="sticky-th">Associate ID</th>
+                                            <th class="sticky-th">Oracle ID</th>
                                             <th class="sticky-th">Name</th>
                                             <th class="sticky-th">Current Shift</th>
                                         </tr>
                                          <tr>
-                                            <th class="sticky-th" colspan="5" id="user_filter" style="top: 40px;"></th>
+                                            <th class="sticky-th" colspan="6" id="user_filter" style="top: 40px;"></th>
                                         </tr>
                                         
                                     </thead>
@@ -275,7 +276,7 @@ $(document).ready(function(){
         }
     });
     function loadEmployeeSearchWise(){
-        userInfo.html('<th colspan="5" style=\"text-align: center; font-size: 14px; color: green;\">Searching Please Wait...</th>');
+        userInfo.html('<th colspan="6" style=\"text-align: center; font-size: 14px; color: green;\">Searching Please Wait...</th>');
         $.ajax({
             url: '{{ url("hr/operation/shift_assign_date_wise_employee") }}',
             data: {
@@ -300,7 +301,7 @@ $(document).ready(function(){
                     if(data.result == ""){
                         $('#totalEmp').text('0');
                         $('#selectEmp').text('0');
-                        userInfo.html('<th colspan="5" style=\"text-align: center; font-size: 14px; color:red;\">No Data Found</th>');
+                        userInfo.html('<th colspan="6" style=\"text-align: center; font-size: 14px; color:red;\">No Data Found</th>');
                     }
                     else{
                         userInfo.html(data.result);

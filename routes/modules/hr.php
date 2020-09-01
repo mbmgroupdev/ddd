@@ -1040,6 +1040,11 @@ Route::get('hr/setup/retirement/get_employee_details', 'Hr\Setup\RetirementPolic
 	// Daily Attendance Report
 	Route::get('hr/reports/daily-attendance-activity', 'Hr\Reports\DailyActivityReportController@attendance');
 	Route::get('hr/reports/daily-attendance-activity-report', 'Hr\Reports\DailyActivityReportController@attendanceReport');
+	Route::get('hr/reports/daily-present-absent-activity-report', 'Hr\Reports\DailyActivityReportController@presentAbsentReport');
+
+	// monthly salary audit 
+	Route::get('hr/monthly-salary-audit', 'Hr\Reports\MonthlyActivityReportController@salaryAudit');
+	Route::post('hr/operation/salary-audit', 'Hr\Operation\SalaryProcessController@salaryAuditStatus');
 
 	// monthly report
 	Route::get('hr/reports/monthly-salary', 'Hr\Reports\MonthlyActivityReportController@salary');

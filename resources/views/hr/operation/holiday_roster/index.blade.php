@@ -45,7 +45,7 @@
                                     {{ Form::select('unit', $unitList, null, ['placeholder'=>'Select Unit','id'=>'unit_shift', 'class'=> 'form-control', 'required'=> 'required']) }} 
                                     <label  for="unit">Unit </label>
                                 </div>
-                                <div class="form-group has-required has-float-label select-search-group">
+                                <div class="form-group has-float-label select-search-group">
                                     {{ Form::select('area', $areaList, null, ['placeholder'=>'Select Area','id'=>'area_shift', 'class'=> 'form-control ', 'disabled']) }} 
                                     <label  for="area">Area </label>
                                 </div>
@@ -511,7 +511,7 @@ $(document).ready(function(){
         ///unit on change section enable
     });
     unit.on("change", function(){
-        userInfo.html('<th colspan="6" style=\"text-align: center; font-size: 14px; color: green;\">Please Choose Area</th>');
+        //userInfo.html('<th colspan="6" style=\"text-align: center; font-size: 14px; color: green;\">Please Choose Area</th>');
         $( "#area_shift" ).prop( "disabled", false );
         // $( "#dates" ).prop( "disabled", false );
 
@@ -531,7 +531,7 @@ $(document).ready(function(){
     /// area on change department select
 
     $('#area_shift').on('change', function(){
-        userInfo.html('<th colspan="6" style=\"text-align: center; font-size: 14px; color: green;\">Please Choose Department</th>');
+        //userInfo.html('<th colspan="6" style=\"text-align: center; font-size: 14px; color: green;\">Please Choose Department</th>');
         $( "#department_shift" ).prop( "disabled", false );
 
         // console.log($(this).val());

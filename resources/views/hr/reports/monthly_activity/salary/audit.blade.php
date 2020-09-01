@@ -12,7 +12,7 @@
                     <a href="#">Human Resource</a>
                 </li>
                 <li>
-                    <a href="#">Reports</a>
+                    <a href="#">Audit Reports</a>
                 </li>
                 <li class="active"> Monthly Salary</li>
             </ul>
@@ -21,7 +21,7 @@
         <div class="page-content"> 
             <div class="row">
                 <div class="col-12">
-                    <form class="" role="form" id="activityReport" method="get" action="#"> 
+                    <form class="" role="form" id="activityReport" > 
                         <div class="panel">
                             <div class="panel-heading">
                                 <h6>Monthly Salary Report</h6>
@@ -33,7 +33,7 @@
                                             <select name="unit" class="form-control capitalize select-search" id="unit" required="">
                                                 <option selected="" value="">Choose...</option>
                                                 @foreach($unitList as $key => $value)
-                                                <option value="{{ $key }}">{{ $value }}</option>
+                                                <option value="{{ $key }}" @if($input['unit'] == $key) selected @endif>{{ $value }}</option>
                                                 @endforeach
                                             </select>
                                           <label for="unit">Unit</label>
@@ -106,7 +106,7 @@
                                             <label for="reportGroup">Report Group</label>
                                         </div>
                                         <div class="form-group has-float-label has-required">
-                                          <input type="month" class="report_date form-control" id="report-date" name="month" placeholder=" Month-Year"required="required" value="{{ date('Y-m')}}"autocomplete="off" />
+                                          <input type="month" class="report_date form-control" id="report-date" name="month" placeholder=" Month-Year"required="required" value="{{ $input['month']??date('Y-m')}}"autocomplete="off" readonly />
                                           <label for="report-date">Month</label>
                                         </div>
                                         <div class="form-group has-float-label select-search-group">
@@ -139,12 +139,42 @@
                                       </div>
                                     </div>
                                   </div>
-                                  <div class="offset-5 col-4">
+                                  <div class="offset-2 col-3">
+                                      <button class="btn btn-success nextBtn btn-lg text-center" type="button" data-toggle="modal" data-target="#exampleModalCenteredScrollable"><i class="fa fa-save"></i> Audit Status</button>
+                                  </div>
+                                  <div class=" col-4">
                                       <button class="btn btn-primary nextBtn btn-lg pull-right" type="submit" ><i class="fa fa-save"></i> Generate</button>
                                   </div>  
                                 </div>
                                 <div class="row">
-                                    
+                                  <div id="exampleModalCenteredScrollable" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenteredScrollableTitle" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+                                       <div class="modal-content">
+                                        <form class="form-horizontal" role="form" action="#" id="auditSalary">
+                                          <div class="modal-header">
+                                             <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Salary Audit Result</h5>
+                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                             <span aria-hidden="true">×</span>
+                                             </button>
+                                          </div>
+                                          <div class="modal-body">
+                                            <div class="custom-control custom-switch text-center mb-3">
+                                              <input name="status" type="checkbox" class="custom-control-input " id="status" value="">
+                                              <label class="custom-control-label" for="status">Confirm</label>
+                                           </div>
+                                           <div class="form-group has-float-label">
+                                              <input type="text" class="form-control" id="comments" name="comment" placeholder="Type Audit Comments" value="" autocomplete="off" />
+                                              <label for="comments">Comments</label>
+                                           </div>
+                                          </div>
+                                          <div class="modal-footer">
+                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                             <button type="button" id="auditSalary" class="btn btn-primary">Save & Submit</button>
+                                          </div>
+                                        </form>
+                                       </div>
+                                    </div>
+                                 </div> 
                                 </div>
                             </div>
                         </div>
@@ -159,7 +189,7 @@
                 <!-- /.col -->
             </div>
             <div class="row">
-                <div class="col">
+                <div class="col h-min-400">
                     <div class="result-data" id="result-data"></div>
                 </div>
             </div>
@@ -170,159 +200,205 @@
 <script src="{{ asset('assets/js/popper.min.js')}}"></script>
 <script src="{{ asset('assets/js/moment.min.js')}}"></script>
 <script type="text/javascript">
-    $(document).ready(function(){   
-        var loader = '<div class="panel"><div class="panel-body"><p style="text-align:center;margin:100px;"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>';
-        $('#activityReport').on('submit', function(e) {
-          $("#result-data").html(loader);
-          $("#single-employee-search").hide();
-          e.preventDefault();
-          
-          var unit = $('select[name="unit"]').val();
-          var area = $('select[name="area"]').val();
-          var month = $('input[name="month"]').val();
-          var stauts = $('input[name="employee_status"]').val();
-          var form = $("#activityReport");
-          var flag = 0;
-          if(unit === '' || month === '' || stauts === ''){
-            flag = 1;
-          }
-          if(flag === 0){
-            $('html, body').animate({
-                scrollTop: $("#result-data").offset().top
-            }, 2000);
-            $.ajax({
-                type: "GET",
-                url: '{{ url("hr/reports/monthly-salary-report") }}',
-                data: form.serialize(), // serializes the form's elements.
-                success: function(response)
-                {
-                  // console.log(response);
-                  if(response !== 'error'){
-                    $("#result-data").html(response);
-                  }else{
-                    console.log(response);
-                    $("#result-data").html('');
-                  }
-                },
-                error: function (reject) {
-                    console.log(reject);
+   
+  $(document).ready(function(){   
+      @if($input['month'] != null && $input['unit'] != null)
+        salaryProcess();
+      @endif 
+      var loader = '<div class="panel"><div class="panel-body"><p style="text-align:center;margin:100px;"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>';
+      $('#activityReport').on('submit', function(e) {
+        e.preventDefault();
+        salaryProcess();
+      });
+      function salaryProcess(){
+        $("#result-data").html(loader);
+        $("#single-employee-search").hide();
+        var unit = $('select[name="unit"]').val();
+        var area = $('select[name="area"]').val();
+        var month = $('input[name="month"]').val();
+        var stauts = $('input[name="employee_status"]').val();
+        var form = $("#activityReport");
+        var flag = 0;
+        if(unit === '' || month === '' || stauts === ''){
+          flag = 1;
+        }
+        if(flag === 0){
+          $('html, body').animate({
+              scrollTop: $("#result-data").offset().top
+          }, 2000);
+          $.ajax({
+              type: "GET",
+              url: '{{ url("hr/reports/monthly-salary-report") }}',
+              data: form.serialize(), // serializes the form's elements.
+              success: function(response)
+              {
+                // console.log(response);
+                if(response !== 'error'){
+                  $("#result-data").html(response);
+                }else{
+                  console.log(response);
+                  $("#result-data").html('');
                 }
-            });
-          }else{
-            console.log('required');
-            $("#result-data").html('');
-          }
-        });
-        
-        // change unit
-        $('#unit').on("change", function(){
-            $.ajax({
-                url : "{{ url('hr/attendance/floor_by_unit') }}",
-                type: 'get',
-                data: {unit : $(this).val()},
-                success: function(data)
-                {
-                    $('#floor_id').removeAttr('disabled');
-                    
-                    $("#floor_id").html(data);
-                },
-                error: function(reject)
-                {
-                   console.log(reject);
-                }
-            });
+              },
+              error: function (reject) {
+                  console.log(reject);
+              }
+          });
+        }else{
+          console.log('required');
+          $("#result-data").html('');
+        }
+      }
+      
+      // change unit
+      $('#unit').on("change", function(){
+          $.ajax({
+              url : "{{ url('hr/attendance/floor_by_unit') }}",
+              type: 'get',
+              data: {unit : $(this).val()},
+              success: function(data)
+              {
+                  $('#floor_id').removeAttr('disabled');
+                  
+                  $("#floor_id").html(data);
+              },
+              error: function(reject)
+              {
+                 console.log(reject);
+              }
+          });
 
-            //Load Line List By Unit ID
-            $.ajax({
-               url : "{{ url('hr/reports/line_by_unit') }}",
-               type: 'get',
-               data: {unit : $(this).val()},
-               success: function(data)
-               {
-                    $('#line_id').removeAttr('disabled');
-                    $("#line_id").html(data);
-               },
-               error: function(reject)
-               {
-                 console.log(reject);
-               }
-            });
-        });
-        //Load Department List By Area ID
-        $('#area').on("change", function(){
-            $.ajax({
-               url : "{{ url('hr/setup/getDepartmentListByAreaID') }}",
-               type: 'get',
-               data: {area_id : $(this).val()},
-               success: function(data)
-               {
-                    $('#department').removeAttr('disabled');
-                    
-                    $("#department").html(data);
-               },
-               error: function(reject)
-               {
-                 console.log(reject);
-               }
-            });
-        });
-
-        //Load Section List By department ID
-        $('#department').on("change", function(){
-            $.ajax({
-               url : "{{ url('hr/setup/getSectionListByDepartmentID') }}",
-               type: 'get',
-               data: {area_id: $("#area").val(), department_id: $(this).val()},
-               success: function(data)
-               {
-                    $('#section').removeAttr('disabled');
-                    
-                    $("#section").html(data);
-               },
-               error: function(reject)
-               {
-                 console.log(reject);
-               }
-            });
-        });
-        //Load Sub Section List by Section
-        $('#section').on("change", function(){
-           $.ajax({
-             url : "{{ url('hr/setup/getSubSectionListBySectionID') }}",
+          //Load Line List By Unit ID
+          $.ajax({
+             url : "{{ url('hr/reports/line_by_unit') }}",
              type: 'get',
-             data: {
-               area_id: $("#area").val(),
-               department_id: $("#department").val(),
-               section_id: $(this).val()
-             },
+             data: {unit : $(this).val()},
              success: function(data)
              {
-                $('#subSection').removeAttr('disabled');
-                
-                $("#subSection").html(data);
+                  $('#line_id').removeAttr('disabled');
+                  $("#line_id").html(data);
              },
              error: function(reject)
              {
                console.log(reject);
              }
+          });
+      });
+      //Load Department List By Area ID
+      $('#area').on("change", function(){
+          $.ajax({
+             url : "{{ url('hr/setup/getDepartmentListByAreaID') }}",
+             type: 'get',
+             data: {area_id : $(this).val()},
+             success: function(data)
+             {
+                  $('#department').removeAttr('disabled');
+                  
+                  $("#department").html(data);
+             },
+             error: function(reject)
+             {
+               console.log(reject);
+             }
+          });
+      });
+
+      //Load Section List By department ID
+      $('#department').on("change", function(){
+          $.ajax({
+             url : "{{ url('hr/setup/getSectionListByDepartmentID') }}",
+             type: 'get',
+             data: {area_id: $("#area").val(), department_id: $(this).val()},
+             success: function(data)
+             {
+                  $('#section').removeAttr('disabled');
+                  
+                  $("#section").html(data);
+             },
+             error: function(reject)
+             {
+               console.log(reject);
+             }
+          });
+      });
+      //Load Sub Section List by Section
+      $('#section').on("change", function(){
+         $.ajax({
+           url : "{{ url('hr/setup/getSubSectionListBySectionID') }}",
+           type: 'get',
+           data: {
+             area_id: $("#area").val(),
+             department_id: $("#department").val(),
+             section_id: $(this).val()
+           },
+           success: function(data)
+           {
+              $('#subSection').removeAttr('disabled');
+              
+              $("#subSection").html(data);
+           },
+           error: function(reject)
+           {
+             console.log(reject);
+           }
+         });
+      });
+
+      $('#reportFormat').on("change", function(){
+        $('input[name="employee"]').val('');
+      });
+
+      $('#auditSalary').on("click", function(){
+        var status = 0;
+          if ($("#status").is(":checked")) { 
+              status = 1;
+          }
+          var comment = $('input[name="comment"]').val();
+          var month = $('input[name="month"]').val();
+          if(status == 0 && comment == ''){
+            $.notify('If Audit Reject then Type Comment', 'error');
+          }else if(month == ''){
+            $.notify('Something Wrong, please Reload The Page', 'error');
+          }else{
+            $.ajax({
+             url : "{{ url('hr/operation/salary-audit') }}",
+             type: 'post',
+             headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+              },
+             data: {
+               status: status,
+               comment: comment,
+               month_year: month
+
+             },
+             success: function(data)
+             {
+                $.notify(data.message, data.type);
+                if(data.type === 'success'){
+                  window.location.href = data.url;
+                }
+             },
+             error: function(reject)
+             {
+               $.notify(data.message, data.type);
+             }
            });
-        });
+          }
+         
+      });
+     
+  });
 
-        $('#reportFormat').on("change", function(){
-          $('input[name="employee"]').val('');
-        });
-       
-    });
-
-    function printMe(el){ 
-        var myWindow=window.open('','','width=800,height=800');
-        myWindow.document.write('<html><head></head><body style="font-size:9px;">');
-        myWindow.document.write(document.getElementById(el).innerHTML);
-        myWindow.document.write('</body></html>');
-        myWindow.focus();
-        myWindow.print();
-        myWindow.close();
-    }
+  function printMe(el){ 
+      var myWindow=window.open('','','width=800,height=800');
+      myWindow.document.write('<html><head></head><body style="font-size:9px;">');
+      myWindow.document.write(document.getElementById(el).innerHTML);
+      myWindow.document.write('</body></html>');
+      myWindow.focus();
+      myWindow.print();
+      myWindow.close();
+  }
 </script>
 @endpush
 @endsection

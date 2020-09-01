@@ -34,13 +34,14 @@
 		                		<div class="col-sm-10 no-padding-left">
 		                			<h4 style="margin:4px 5px; margin: 0; padding: 0">&nbsp;&nbsp;{{ $unit[$input['unit']]['hr_unit_name'] }}</h4>
 		                		</div>
-		                		
+		                		@if($input['area'] != null)
 		                		<div class="col-sm-2 no-padding-right">
 		                			<h4 style="margin:4px 5px; margin: 0; padding: 0"><font style="font-weight: bold; font-size: 12px;">Area: </font></h4>
 		                		</div>
 		                		<div class="col-sm-10 no-padding-left">
 		                			<h4 style="margin:4px 5px; margin: 0; padding: 0">&nbsp;&nbsp;{{ $area[$input['area']]['hr_area_name'] }}</h4>
 		                		</div>
+		                		@endif
 		                		@if($input['department'] != null)
 		                		<div class="col-sm-2 no-padding-right">
 		                			<h4 style="margin:4px 5px; margin: 0; padding: 0"><font style="font-weight: bold; font-size: 12px;">Department: </font></h4>
@@ -118,7 +119,9 @@
         			
         			<h2>Before Absent After Present Summary Report </h2>
         			<h4>Unit: {{ $unit[$input['unit']]['hr_unit_name'] }}</h4>
+        			@if($input['area'] != null)
         			<h4>Area: {{ $area[$input['area']]['hr_area_name'] }}</h4>
+        			@endif
         			@if($input['department'] != null)
         			<h4>Department: {{ $department[$input['department']]['hr_department_name'] }}</h4>
         			@endif

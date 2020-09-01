@@ -677,7 +677,7 @@ class WorkerController extends Controller
         if (empty($request->worker_id)){
             return back()->with("error", "Unable to start the migration: Invalid user!");
         }
-            
+        
         DB::beginTransaction();
         try {
            
@@ -685,10 +685,10 @@ class WorkerController extends Controller
             ->where("worker_doctor_acceptance", "1")
             ->where("worker_is_migrated", "0");
             $location= Location::first(['hr_location_id']); //dd($location);
-
+            // return $data->first();
+            $worker = $data->first();
             if ($data->exists() && ($worker->worker_unit_id != null || $worker->worker_unit_id != ''))
             {
-                $worker = $data->first();
                 $shift_exist= DB::table('hr_shift')
                         ->where('hr_shift_unit_id', $worker->worker_unit_id)
                         ->where('hr_shift_default', 1)
@@ -706,18 +706,18 @@ class WorkerController extends Controller
 
                 if (!empty($IDGenerator['error']))
                 {
-                    return back()
-                        ->with("error", $IDGenerator['error']);
+                    toastr()->error($IDGenerator['error']);
+                    return back()->with("error", $IDGenerator['error']);
                 }
                 else if(strlen($IDGenerator['id']) != 10)
                 {
-                    return back()
-                        ->with("error", "Unable to start the migration: Alphanumeric Associate's ID required with exactly 10 characters ");
+                    toastr()->error("Unable to start the migration: Alphanumeric Associate's ID required with exactly 10 characters ");
+                    return back()->with("error", "Unable to start the migration: Alphanumeric Associate's ID required with exactly 10 characters ");
                 }
                 else if($shift_exist == null)
                 {
-                    return back()
-                        ->with("error", "Unable to start the migration: Default Shift Doesn't Exist ");
+                    toastr()->error("Unable to start the migration: Default Shift Doesn't Exist ");
+                    return back()->with("error", "Unable to start the migration: Default Shift Doesn't Exist ");
                 }
                 else
                 {
@@ -727,7 +727,6 @@ class WorkerController extends Controller
                     ->where('hr_shift_default', 1)
                     ->pluck('hr_shift_name')
                     ->first();
-
                     /*---INSERT INTO BASIC INFO TABLE---*/
                     $check = Employee::insert(array(
                         'as_emp_type_id'  => $worker->worker_emp_type_id,
@@ -781,12 +780,14 @@ class WorkerController extends Controller
 
 
                     DB::commit();
-                    $this->logFileWrite("Worker migration updated", $request->worker_id);
+                    toastr()->success('Migration successful!');
+                    $this->logFileWrite("Employee migration updated", $request->worker_id);
                     return back()->with("success", "Migration successful!");
                 }
             }
             else
             {
+                toastr()->error("Unable to start the migration: Please check the user's medical status or user already migrated!");
                 return back()->with("error", "Unable to start the migration: Please check the user's medical status or user already migrated!");
             }
             
@@ -797,9 +798,12 @@ class WorkerController extends Controller
                 $duplicate = $e->errorInfo[1];
                 if($duplicate == 1062){
                     $message = $e->errorInfo[2];
+                    toastr()->error($message);
                     return back()->with('error', $message);
                 }
             }
+            toastr()->error($bug);
+            // return $bug;
             return back()->with('error', $bug);
         }
     }
