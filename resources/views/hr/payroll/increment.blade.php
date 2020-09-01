@@ -31,7 +31,7 @@
             @can('Manage Increment')
             <div class="panel panel-success">
                 <div class="panel-heading">
-                    <h5>Increment Entry</h5>
+                    <h6>Increment Entry</h6>
                 </div>
                 <div class="panel-body">
                       <!-- Display Erro/Success Message -->
@@ -108,11 +108,11 @@
 
                             <div class="col-6">
                                 <div class="row m-0">
-                                    <div class="col-6 text-center" style="background-color: lightcoral; color: #fff;">
-                                        <p style="padding-top: 8px;">Selected Employee: <span id="selectEmp" style="font-weight: bold;"></span></p>
+                                    <div class="col-6 text-center" style="background-color:#099faf; color: #fff;">
+                                        <p style="padding-top: 5px;">Selected Employee: <span id="selectEmp" style="font-weight: bold;"></span></p>
                                     </div>
                                     <div class="col-6 text-center" style="background-color: #87B87F; color: #fff;">
-                                        <p style="padding-top: 8px;">Total Employee: <span id="totalEmp" style="font-weight: bold;"></span></p>
+                                        <p style="padding-top: 5px;">Total Employee: <span id="totalEmp" style="font-weight: bold;"></span></p>
                                     </div>
                                 </div>
                                 <div style="height: 400px; overflow: auto;">

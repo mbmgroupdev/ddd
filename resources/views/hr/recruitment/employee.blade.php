@@ -47,7 +47,7 @@ table th {
 
         <div class="row">
       		<div class="col-4">
-		        <div class="iq-card iq-card-block iq-card-stretch iq-card-height iq-user-profile-block">
+		        <div class="iq-card iq-card-block iq-card-stretch iq-card-height iq-user-profile-block" style="height: calc(100% - 80px);">
 		            <div class="iq-card-body">
 		               <div class="user-details-block">
 		                  <div class="user-profile text-center">
@@ -74,15 +74,12 @@ table th {
 							 </p>
 							 <div class="buttons">
 			                	@if(auth()->user()->canany(['Manage Employee']) || auth()->user()->hasRole('Super Admin'))
-			                    <div class="btn-group"> 
-			                        <a  href='{{url("hr/recruitment/employee/pdf/$info->associate_id")}}' target="_blank" data-tooltip="Download Employee Profile" data-tooltip-location="top" class="btn btn-sm btn-danger"  style="border-radius: 2px !important; padding: 4px; "><i class="fa fa-file-pdf-o bigger-120"></i></a> 
-			                        @if($info->as_gender == "Male")
-			                        	<a  href='{{url("hr/recruitment/employee/edit/$info->associate_id")}}' target="_blank" data-tooltip="Edit Profile" data-tooltip-location="top" class="btn btn-sm btn-info"  style="border-radius: 2px !important; padding: 4px;"><i class="fa fa-male bigger-120">&nbsp</i><i class="fa fa-edit bigger-100" style="font-size: 10px;"></i></a>
-			                        @else
-			                        	<a  href='{{url("hr/recruitment/employee/edit/$info->associate_id")}}' target="_blank" data-tooltip="Edit Profile" data-tooltip-location="top" class="btn btn-sm btn-info"  style="border-radius: 2px !important; padding: 4px;"><i class="fa fa-female bigger-120">&nbsp</i><i class="fa fa-edit bigger-100" style="font-size: 10px;"></i></a>
-			                        @endif
-			                        <a  href='{{url("hr/recruitment/operation/medical_info_edit/$info->associate_id")}}' target="_blank" data-tooltip="Edit Medical Info" data-tooltip-location="left" class="btn btn-sm btn-warning" style="border-radius: 2px !important; padding: 4px;"><i class="fa fa-user-md bigger-120">&nbsp</i><i class="fa fa-edit bigger-100" style="font-size: 10px;"></i></a>
-			                    </div>
+				                    <div class="btn-group"> 
+				                        <a  href='{{url("hr/recruitment/employee/pdf/$info->associate_id")}}' target="_blank" data-tooltip="Download Employee Profile" data-tooltip-location="top" class="btn btn-sm btn-danger"  style="border-radius: 2px !important; padding: 4px; "><i class="fa fa-file-pdf-o bigger-120"></i></a> 
+				                        <a  href='{{url("hr/recruitment/employee/edit/$info->associate_id")}}' target="_blank" data-tooltip="Edit Profile" data-tooltip-location="top" class="btn btn-sm btn-info"  style="border-radius: 2px !important; padding: 4px;"><i class="las la-user-tie bigger-120">&nbsp</i> </a> 
+				                      
+				                        <a  href='{{url("hr/recruitment/operation/medical_info_edit/$info->associate_id")}}' target="_blank" data-tooltip="Edit Medical Info" data-tooltip-location="left" class="btn btn-sm btn-warning" style="border-radius: 2px !important; padding: 4px;"><i class="fa fa-user-md bigger-120">&nbsp</i></a>
+				                    </div>
 			                    @endif
 			                </div>
 		                  </div>
@@ -323,7 +320,7 @@ table th {
 										
 											<div class=" transparent">
 												<div class="">
-													<h4 class="widget-title smaller">
+													<h4 class="widget-title smaller border-left-heading">
 														About Me
 													</h4>
 												</div>

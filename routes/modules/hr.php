@@ -22,6 +22,7 @@ Route::group(['prefix' => 'hr','namespace' => 'Hr'], function(){
 		Route::get('employee/search', 'UserController@employeeSearch');
 		Route::get('user/search', 'UserController@userSearch');
 
+		Route::get('roles', 'RolesController@index');
 		Route::get('role/create', 'RolesController@create');
 		Route::post('role/store', 'RolesController@store');
 		Route::get('role/edit/{id}', 'RolesController@edit');
@@ -1282,9 +1283,15 @@ Route::get('hr/ess/medical_incident_list', 'Hr\Ess\MedicalIncidentController@med
 Route::post('hr/ess/medical_incident_data', 'Hr\Ess\MedicalIncidentController@medicalIncidentData');
 
 //Out Side Request
-Route::get('hr/ess/out_side_request/entry', 'Hr\Ess\OutsideRequestController@showForm');
+
 Route::post('hr/ess/out_side_request/entry', 'Hr\Ess\OutsideRequestController@storeData');
 Route::get('hr/ess/out_side_request/delete/{id}', 'Hr\Ess\OutsideRequestController@deleteRequest');
+
+// ess menu
+Route::get('ess/out_side_request/entry', 'Hr\Ess\OutsideRequestController@showForm');
+Route::get('ess/leave_application', 'Hr\Ess\LeaveApplicationController@showForm');
+Route::get('ess/loan_application', 'Hr\Ess\LoanApplicationController@showForm');
+Route::get('ess/grievance/appeal', 'Hr\Ess\GrievanceAppealController@showForm');
 
 
 

@@ -17,7 +17,9 @@ class RolesController extends Controller
      */
     public function index()
     {
-        //
+        $roles = Role::orderBy('hierarchy','ASC')->get();
+
+        return view('hr.adminstrator.roles', compact('roles'));;
     }
 
     /**
