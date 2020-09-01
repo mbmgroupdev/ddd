@@ -54,7 +54,7 @@
                         <div class="form-group">
                             
                             <div id="printable">
-                                <div class="tinyMceLetter hide" id="letter" style="font-size: 12px;">
+                                <div class="tinyMceLetter" id="letter" style="font-size: 12px;">
                                     <?php
                                     date_default_timezone_set('Asia/Dhaka');
                                     $en = array('0','1','2','3','4','5','6','7','8','9');

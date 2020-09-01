@@ -32,47 +32,45 @@ class RecruitController extends Controller
     {
         DB::statement(DB::raw('set @rownum=0'));
         $data = WorkerRecruitment::with(['employee_type:emp_type_id,hr_emp_type_name', 'designation:hr_designation_id,hr_designation_name','unit:hr_unit_id,hr_unit_short_name', 'area:hr_area_id,hr_area_name'])
-        ->get();
+        ->orderBy('worker_id','DESC')->get();
         return DataTables::of($data)
         ->addIndexColumn()
         ->addColumn('hr_emp_type_name', function ($data) {
-            return $data->employee_type['hr_emp_type_name'];
+            return $data->employee_type['hr_emp_type_name']??'';
         })
         ->addColumn('hr_designation_name', function ($data) {
-            return $data->designation['hr_designation_name'];
+            return $data->designation['hr_designation_name']??'';
         })
         ->addColumn('hr_unit_short_name', function ($data) {
-            return $data->unit['hr_unit_short_name'];
+            return $data->unit['hr_unit_short_name']??'';
         })
         ->addColumn('hr_area_name', function ($data) {
-            return $data->area['hr_area_name'];
+            return $data->area['hr_area_name']??'';
         })
         ->addColumn('worker_doj', function ($data) {
             return date('Y-m-d', strtotime($data->worker_doj));
         })
         ->addColumn('medical_info', function ($data) {
             if($data->worker_doctor_acceptance == 1){
-                return '<div data-icon="S" class="icon"></div>';
+                return '<i class="las f-18 la-check-circle text-success"></i>';
             }else{
-                return '<div class="icon dripicons-cross"></div>';
+                return '<i class="las f-18 la-times-circle text-danger"></i>';
             }
         })
         ->addColumn('ie_info', function ($data) {
             if($data->worker_is_migrated == 1){
-                return '<div data-icon="S" class="icon"></div>';
+                return '<i class="las f-18 la-check-circle text-success"></i>';
             }else{
-                return '<div class="icon dripicons-cross"></div>';
+                return '<i class="las f-18 la-times-circle text-danger"></i>';
             }
         })
         ->addColumn('action', function ($data) {
-            
-            /*return "<a class=\"btn btn-sm btn-primary\" data-toggle=\"tooltip\" title=\"Edit\">
-                <i class=\"ace-icon fa fa-pencil bigger-120\"></i>
-            </a>
-            <a onclick=\"return confirm('Are you sure?');\" class=\"btn btn-sm btn-danger\" data-toggle=\"tooltip\" title=\"Delete\" style=\"padding-right: 6px;\">
-                <i class=\"ace-icon fa fa-trash bigger-120\"></i>
-            </a>";*/
-            return '<button class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="" data-original-title="Migrate To Employee"><i class="ri-heart-fill pr-0"></i></button>';
+            $buttons= '<i class="las f-18 la-check-circle text-success"></i>';
+            if($data->worker_is_migrated != 1){
+                $buttons= '<a class="btn btn-primary btn-sm" href="'.url('hr/recruitment/worker/migrate/'.$data->worker_id).'" data-toggle="tooltip" data-placement="top" title="" data-original-title="Migrate To Employee" title="Migrate to Employee"><i class="las la-heart"></i></a>';
+            }
+
+            return $buttons;
 
         })
         ->rawColumns(['DT_RowIndex', 'hr_emp_type_name', 'hr_designation_name', 'hr_unit_short_name','hr_area_name','worker_name','worker_contact','worker_doj','medical_info','ie_info','action'])

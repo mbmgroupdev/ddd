@@ -63,7 +63,7 @@
                     <div class="panel p-30">
                         <div class="form-group">
                             <div class="col-xs-12">
-                            <div class="tinyMceLetter hide" id="PrintArea">
+                            <div class="tinyMceLetter" id="PrintArea">
                                 <?php
                                 date_default_timezone_set('Asia/Dhaka');
                                 $en = array('0','1','2','3','4','5','6','7','8','9', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
