@@ -1,97 +1,54 @@
-@extends('user.layout')
-@section('title', 'User Dashboard')
+@extends('hr.layout')
+@section('title', 'Loan Application List')
 @section('main-content')
-<style type="text/css">
-    {{-- removing the links in print and adding each page header --}}
-    a[href]:after { content: none !important; }
-    thead {display: table-header-group;}
-
-    /*making place holder custom*/
-    input::-webkit-input-placeholder {
-        color: black;
-        font-weight: bold;
-        font-size: 12px;
-    }
-    input:-moz-placeholder {
-        color: black;
-        font-weight: bold;
-        font-size: 12px;
-    }
-    input:-ms-input-placeholder {
-        color: black;
-        font-weight: bold;
-        font-size: 12px;
-    }
-    th{
-        font-size: 12px;
-        font-weight: bold;
-    }
-</style>
-@endpush
 <div class="main-content">
     <div class="main-content-inner">
         <div class="breadcrumbs ace-save-state" id="breadcrumbs">
             <ul class="breadcrumb">
                 <li>
-                    <a href="#">ESS</a>
+                    <a href="#">Loan</a>
                 </li>
                 <li class="active">Loan Application List</li>
             </ul><!-- /.breadcrumb --> 
         </div>
 
-        <div class="page-content"> 
-                @include('inc/message')
-         <div class="panel panel-success">
-              <div class="panel-heading"><h6>Loan Application List</h6></div> 
-                <div class="panel-body">   
-
-            <div class="row">
-                  <!-- Display Erro/Success Message -->
-                <div class="col-xs-12">
-                    <!-- PAGE CONTENT BEGINS -->
-                    <!-- <h1 align="center">Add New Employee</h1> -->
-                    <div class="col-xs-12 worker-list">
-                    <!-- PAGE CONTENT BEGINS --> 
-                        <table id="dataTables" class="table table-striped table-bordered" style="display:table;overflow-x: auto;white-space: nowrap; width: 100%;">
-                            <thead>
-                                <tr>
-                                    <th>Sl. No</th>
-                                    <th>Associate ID</th>
-                                    <th>Name</th>
-                                    <th>Unit</th>
-                                    <th>Amount</th>
-                                    <th>Updated at</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead> 
-                            <tfoot>
-                                <tr>
-                                    <th>Sl. No</th>
-                                    <th>Associate ID</th>
-                                    <th>Name</th>
-                                    <th>Unit</th>
-                                    <th>Amount</th>
-                                    <th>Updated at</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                            </tfoot> 
-                            
-                        </table>
-                        <!-- PAGE CONTENT ENDS -->
-                    </div><!-- /.col -->
-
-                    <!-- PAGE CONTENT ENDS -->
-                </div>
-                <!-- /.col -->
+        @include('inc/message')
+        <div class="panel panel-success mb-3">
+            <div class="panel-heading"><h6>Loan Application List</h6></div> 
+            <div class="panel-body"> 
+                    <table id="dataTables" class="table table-striped table-bordered" style="display:table;overflow-x: auto;width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>Sl. No</th>
+                                <th>Associate ID</th>
+                                <th>Name</th>
+                                <th>Unit</th>
+                                <th>Amount</th>
+                                <th>Updated at</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead> 
+                        <tfoot>
+                            <tr>
+                                <th>Sl. No</th>
+                                <th>Associate ID</th>
+                                <th>Name</th>
+                                <th>Unit</th>
+                                <th>Amount</th>
+                                <th>Updated at</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </tfoot> 
+                        
+                    </table>
+                
             </div>
         </div>
-        </div>
-        </div><!-- /.page-content -->
     </div>
 </div>
-
+@push('js')
 <script type="text/javascript">
 $(document).ready(function(){ 
        ///Filter
@@ -225,4 +182,5 @@ $(document).ready(function(){
     }); 
 });
 </script>
+@endpush
 @endsection

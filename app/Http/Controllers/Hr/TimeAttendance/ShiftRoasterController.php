@@ -561,6 +561,7 @@ class ShiftRoasterController extends Controller
 
     public function datatableReturnColumn($day, $no, $data, $year, $month, $holidayCheckStatus, $holidayCheckComment, $holidayRoasterAll)
     {
+        //$data->get_shift_name();
         // $lastDay  = date($year.'-'.$month.'-t');
         $lastDay  = cal_days_in_month(CAL_GREGORIAN, $month, $year);
         $returnData = '';

@@ -35,8 +35,7 @@ Route::group(['middleware' => 'auth'], function(){
 
 	Route::get('/search-employee-result', 'SearchController@searchEmp');
 	Route::get('dashboard', 'DashboardController@index');
-	Route::get('user/change-password', 'Users_Management\UsersController@password');
-	Route::post('user/change-password', 'Users_Management\UsersController@changePassword');
+	
 	//---------USER MANAGEMENT-----------//
 
 	Route::get('users_management/users', 'Users_Management\UsersController@index')->middleware(['permission:View User']);
@@ -103,6 +102,10 @@ Route::group(['middleware' => 'auth'], function(){
 
 Route::group(['middleware' => 'auth'], function(){
 	Route::get('/', 'HomeController@index');
+
+	Route::get('user/change-password', 'Hr\Adminstrator\UserController@password');
+	Route::post('user/change-password', 'Hr\Adminstrator\UserController@changePassword');
+
 	@include 'modules/hr.php';
 });
 

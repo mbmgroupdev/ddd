@@ -84,9 +84,247 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function profile()
     {
-        //
+        $associate_id = $request->associate_id;
+        if ($associate_id)
+        {
+            $info = get_employee_by_id($associate_id);
+            // $info = Employee::where('associate_id', $associate_id)->first();
+            $per_complete = get_complete_user_info($associate_id);
+
+            if(empty($info)) abort(404, "$associate_id not found!");
+
+            $loans = DB::table("hr_loan_application")
+                ->select(
+                "*",
+                DB::raw("
+                    CASE
+                        WHEN hr_la_status = '0' THEN 'Applied'
+                        WHEN hr_la_status = '1' THEN 'Approved'
+                        WHEN hr_la_status = '2' THEN 'Declined'
+                    END AS hr_la_status
+                ")
+            )
+            ->where("hr_la_as_id", $associate_id)
+            ->get();
+
+            $month  = date('m');
+            $year   = date('Y');
+            $day    = date('d');
+            $day    = (int)$day;
+
+            $shiftRoaster = ShiftRoaster::where([
+                'shift_roaster_associate_id' => $associate_id,
+                'shift_roaster_year' => (int)$year,
+                'shift_roaster_month' => (int)$month
+            ])->first();
+
+            $roasterShift = null;
+            if($shiftRoaster) {
+                $roasterShift = 'day_'.$day;
+                $roasterShift = $shiftRoaster->$roasterShift;
+            }
+
+            //get todays status
+
+            $tableName = get_att_table($info->hr_unit_id).' AS a';
+            $daystart= date('Y-m-d')." 00:00:00";
+            $dayend= date('Y-m-d')." 23:59:59";
+            $status=[];
+            $attend = DB::table($tableName)->where('as_id',$info->as_id)
+                          ->whereBetween('in_time',[$daystart,$dayend])
+                          ->leftJoin("hr_shift AS s", "a.hr_shift_code", "=", "s.hr_shift_code")
+                          ->first();
+
+
+            if($attend != null){
+                $status=[
+                    'status'=> 1,
+                    'in_time' => $attend->in_time,
+                ];
+            }else{
+                $leave = DB::table('hr_leave')
+                        ->where('leave_ass_id', $info->associate_id)
+                        ->where('leave_from','<=', date('Y-m-d'))
+                        ->where('leave_to','>=', date('Y-m-d'))
+                        ->where('leave_status','1')
+                        ->first();
+
+                    //return $leave;
+                    if($leave !=null){
+                        $status=[
+                            'status'=> 2,
+                            'type' => $leave->leave_type
+                        ];
+                    }
+                    else{
+                        $status=[
+                            'status'=> 0
+                        ];
+                    }
+
+            }
+
+            //return $status;
+
+
+            $leaves = DB::table('hr_leave')
+                ->select(
+                    DB::raw("
+                        YEAR(leave_from) AS year,
+                        SUM(CASE WHEN leave_type = 'Casual' THEN DATEDIFF(leave_to, leave_from)+1 END) AS casual,
+                        SUM(CASE WHEN leave_type = 'Earned' THEN DATEDIFF(leave_to, leave_from)+1 END) AS earned,
+                        SUM(CASE WHEN leave_type = 'Sick' THEN DATEDIFF(leave_to, leave_from)+1 END) AS sick,
+                        SUM(CASE WHEN leave_type = 'Maternity' THEN DATEDIFF(leave_to, leave_from)+1 END) AS maternity,
+                        SUM(CASE WHEN leave_type = 'Special' THEN DATEDIFF(leave_to, leave_from)+1 END) AS special,
+                        SUM(DATEDIFF(leave_to, leave_from)+1) AS total
+                    ")
+                )
+                ->where('leave_status', '1')
+                ->where("leave_ass_id", $associate_id)
+                ->groupBy('year')
+                ->orderBy('year', 'DESC')
+                ->get();
+
+
+
+            //Earned Leave Calculation
+
+            $earnedLeaves = get_earned_leave($leaves,$info->as_id,$info->associate_id,$info->as_unit_id);
+
+            //dd($leavesForEarned);
+
+
+            //dd($earnedLeaves);
+
+            $information = DB::table("hr_as_basic_info AS b")
+            ->select(
+              "b.as_id AS id",
+              "b.associate_id AS associate",
+              "b.as_name AS name",
+              "b.as_doj AS doj",
+              "u.hr_unit_id AS unit_id",
+              "u.hr_unit_name AS unit",
+              "s.hr_section_name AS section",
+              "d.hr_designation_name AS designation"
+            )
+            ->leftJoin("hr_unit AS u", "u.hr_unit_id", "=", "b.as_unit_id")
+            ->leftJoin("hr_section AS s", "s.hr_section_id", "=", "b.as_section_id")
+            ->leftJoin("hr_designation AS d", "d.hr_designation_id", "=", "b.as_designation_id")
+            ->where("b.associate_id", "=", $associate_id)
+            ->first();
+            //earned leave
+
+
+            $records = DB::table('hr_dis_rec AS r')
+                ->select(
+                    'r.*',
+                    DB::raw("CONCAT_WS(' to ', r.dis_re_doe_from, r.dis_re_doe_to) AS date_of_execution"),
+                    'i.hr_griv_issue_name',
+                    's.hr_griv_steps_name'
+                )
+                ->leftJoin('hr_grievance_issue AS i', 'i.hr_griv_issue_id', '=', 'r.dis_re_issue_id')
+                ->leftJoin('hr_grievance_steps AS s', 's.hr_griv_steps_id', '=', 'r.dis_re_issue_id')
+                ->where('r.dis_re_offender_id', $associate_id)
+                ->get();
+
+
+            $promotions = DB::table("hr_promotion AS p")
+                ->select(
+                    "d1.hr_designation_name AS previous_designation",
+                    "d2.hr_designation_name AS current_designation",
+                    "p.eligible_date",
+                    "p.effective_date"
+                )
+                ->leftJoin("hr_designation AS d1", "d1.hr_designation_id", "=", "p.previous_designation_id")
+                ->leftJoin("hr_designation AS d2", "d2.hr_designation_id", "=", "p.current_designation_id")
+                ->where('p.associate_id', $associate_id)
+                ->orderBy('p.effective_date', "DESC")
+                ->get();
+
+            $increments = Increment::where('associate_id', $associate_id)
+                ->orderBy('effective_date', 'DESC')->get();
+
+            $educations = DB::table('hr_education AS e')
+                ->select(
+                    'l.education_level_title',
+                    'dt.education_degree_title',
+                    'e.education_level_id',
+                    'e.education_degree_id_2',
+                    'e.education_major_group_concentation',
+                    'e.education_institute_name',
+                    'r.education_result_title',
+                    'e.education_result_id',
+                    'e.education_result_marks',
+                    'e.education_result_cgpa',
+                    'e.education_result_scale',
+                    'e.education_passing_year'
+                )
+                ->leftJoin('hr_education_level AS l', 'l.id', '=', 'e.education_level_id')
+                ->leftJoin('hr_education_degree_title AS dt', 'dt.id', '=', 'e.education_degree_id_1')
+                ->leftJoin('hr_education_result AS r', 'r.id', '=', 'e.education_result_id')
+                ->where("e.education_as_id", $associate_id)
+                ->get();
+
+
+            //check current station
+            $station= DB::table('hr_station AS s')
+                        ->where('s.associate_id', $associate_id)
+                        ->whereDate('s.start_date', "<=", date('Y-m-d'))
+                        ->whereDate('s.end_date', ">=", date("Y-m-d"))
+                        ->select([
+                            "s.associate_id",
+                            "s.changed_floor",
+                            "s.changed_line",
+                            "s.start_date",
+                            "s.updated_by",
+                            "s.end_date",
+                            "f.hr_floor_name",
+                            "l.hr_line_name",
+                            "b.as_name"
+                        ])
+                        ->leftJoin('hr_floor AS f', 'f.hr_floor_id', 's.changed_floor')
+                        ->leftJoin('hr_line AS l', 'l.hr_line_id', 's.changed_line')
+                        ->leftJoin('hr_as_basic_info AS b', 'b.associate_id', 's.updated_by')
+                        ->first();
+
+            $getSalaryList      = HrMonthlySalary::where('as_id', $associate_id)
+                                ->where('year',2019)
+                                ->get();
+            $getEmployee        = Employee::getEmployeeAssociateIdWise($associate_id);
+            $title              = 'Unit : '.($getEmployee->unit != null?$getEmployee->unit['hr_unit_name_bn']:'').' - Location : '.($getEmployee->location != null?$getEmployee->location['hr_unit_name_bn']:'');
+            $pageHead['current_date']   = date('d-m-Y');
+            $pageHead['current_time']   = date('H:i');
+            $pageHead['pay_date']       = '';
+            $pageHead['unit_name']      = $getEmployee->unit['hr_unit_name_bn'];
+            $pageHead['for_date']       = 'Jan, '.date('Y').' - '.date('M, Y');
+            $pageHead['floor_name']     = ($getEmployee->floor != null?$getEmployee->floor['hr_floor_name_bn']:'');
+
+            $pageHead = (object) $pageHead;
+            return view('hr.recruitment.employee', compact(
+                'info',
+                'loans',
+                'leaves',
+                'earnedLeaves',
+                'records',
+                'promotions',
+                'increments',
+                'educations',
+                "station",
+                'getSalaryList',
+                'title',
+                'pageHead',
+                'status',
+                'per_complete',
+                'getEmployee',
+                'roasterShift'
+            ));
+        }
+        else
+        {
+            abort(404);
+        }
     }
 
     /**
@@ -244,6 +482,66 @@ class UserController extends Controller
         $permissions = $permissions->groupBy(['module','groups']);
 
         return view('hr.adminstrator.assign-permission', compact('permissions'));
+    }
+
+
+    public function password(Request $request)
+    {
+        return view('user.change-password');
+    }
+
+
+    public function changePassword(Request $request)
+    {
+        $validator = Validator::make($request->all(),[
+            'password' => 'required|string|min:6|confirmed'
+        ]);
+
+        if ($validator->fails())
+        {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+        else
+        {
+            $user = User::find(auth()->id());
+            $user->password = Hash::make($request->password);
+            $user->save();
+
+            Auth::guard()->login($user);
+
+            return redirect()->back()
+                ->with('success', 'Your password have been changed')
+                ->withInput();
+        }
+    }
+
+    public function userPassword($id, Request $request)
+    {
+        $validator = Validator::make($request->all(),[
+            'password' => 'required|string|min:6|confirmed'
+        ]);
+
+        if ($validator->fails())
+        {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+        else
+        {
+            $user = User::findOrFail($id);
+            $user->password = Hash::make($request->password);
+            $user->save();
+
+            //Auth::guard()->login($user);
+            log_file_write($user->associate_id."'s password changed by ".auth()->user()->associate_id, $user->id );
+
+            return redirect()->back()
+                ->with('success', 'users password have been changed')
+                ->withInput();
+        }
     }
 
 

@@ -2,11 +2,12 @@
     <div class="panel">
         <div class="panel-body">
             <p>Run Time:&nbsp;<?php echo date('l\&\\n\b\s\p\;F \&\\n\b\s\p\;d \&\\n\b\s\p\;Y \&\\n\b\s\p\;h:m a'); ?></p>
-            <h2 class="center">{{$unit->hr_unit_name}}</h2>
-            <h4 class="center">Attendance Summary Report: {{$date}}</h4>
+            <h2 style="text-align: center;">Attendance Summary Report</h2>
+            <h4 style="text-align: center;">Unit: {{$unit->hr_unit_name}}</h4>
+            <p style="text-align: center;">Date: {{$date}}</p>
             <br>
             <div class="row">
-                <div class="col-sm-8">
+                <div class="col-sm-8" style="width:66.67%">
                     
                     <table class="table table-bordered table-hover table-head" cellpadding="0" cellspacing="0">
                         <tr>
@@ -46,7 +47,7 @@
                         </tr>
                     </table>
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-4" style="width:33.33%">
                     <table  style="float: right;">
                         <tr>
                            <td style="text-align: right; padding: 5px;">MMR</td>
@@ -126,21 +127,29 @@
                                     $s_leave = 0;
                                     $s_total = 0; 
                                     $s_count = 1;
+
+                                    $sec = 0;
                                    
                                 @endphp
                                 @foreach($section->subsection AS $key1 => $subsec)
                                     @php 
+                                       
                                         $present = (int) ($ot['present'][$subsec->hr_subsec_id]??0);
                                         $leave = (int) ($ot['leave'][$subsec->hr_subsec_id]??0);
                                         $absent = (int) ($ot['absent'][$subsec->hr_subsec_id]??0);
 
+
                                        
                                     @endphp
                                     @if(isset($ot['total'][$subsec->hr_subsec_id]) && $ot['total'][$subsec->hr_subsec_id] > 0)
-
+                                        @php  $sec ++; @endphp
                                     <tr>
                                         <td style="text-align: center; padding: 10px;">{{$count}}</td>
-                                        <td style="text-align: center; padding: 10px;">{{$section->hr_section_name}}</td>
+                                        <td  style="text-align: center; padding: 10px; @if($sec != 1) border:none!important; @else border-bottom:none!important; @endif">
+                                            @if($sec == 1)
+                                            {{$section->hr_section_name}}
+                                            @endif
+                                        </td>
                                         <td style="text-align: center; padding: 10px;">{{$subsec->hr_subsec_name}}</td>
                                         <td width="7%" style="text-align: center; padding: 10px;">{{$ot['total'][$subsec->hr_subsec_id]??0}}</td>
                                         <td width="7%" style="text-align: center; padding: 10px;">{{$ot['present'][$subsec->hr_subsec_id]??0}}</td>
@@ -182,13 +191,13 @@
                                 @endforeach
                                 @if($s_total > 0)
 
-                                <tr class="grand-total">
+                                <tr class="grand-total" style="    background: #dadada;">
                                     <td  colspan="2" style="background: #fff;"></td>
                                     <td  style="padding:5px;"></td>
-                                    <td style=" padding: 5px;" id="grand_e"> {{$s_total}} </td>
-                                    <td style=" padding: 5px;" id="grand_p"> {{$s_present}}</td>
-                                    <td style=" padding: 5px;" id="grand_a"> {{$s_absent}}</td>
-                                    <td style=" padding: 5px;" id="grand_l"> {{$s_leave}}</td>
+                                    <td style=" text-align: center; padding: 5px;" id="grand_e"> {{$s_total}} </td>
+                                    <td style="text-align: center; padding: 5px;" id="grand_p"> {{$s_present}}</td>
+                                    <td style="text-align: center; padding: 5px;" id="grand_a"> {{$s_absent}}</td>
+                                    <td style="text-align: center; padding: 5px;" id="grand_l"> {{$s_leave}}</td>
                                     <td style=" padding: 5px;"></td>
                                     
                                 </tr>
@@ -197,11 +206,11 @@
                         @endforeach
                         <tr class="label-info grand-total">
                             <td colspan="3" style="padding:5px;">Grand Total: </td>
-                            <td style=" padding: 5px;" id="grand_e"> {{$t_total}} </td>
-                            <td style=" padding: 5px;" id="grand_p"> {{$t_present}}</td>
-                            <td style=" padding: 5px;" id="grand_a"> {{$t_absent}}</td>
-                            <td style=" padding: 5px;" id="grand_l"> {{$t_leave}}</td>
-                            <td style=" padding: 5px;"></td>
+                            <td style="text-align: center; padding: 5px;" id="grand_e"> {{$t_total}} </td>
+                            <td style="text-align: center; padding: 5px;" id="grand_p"> {{$t_present}}</td>
+                            <td style="text-align: center; padding: 5px;" id="grand_a"> {{$t_absent}}</td>
+                            <td style="text-align: center; padding: 5px;" id="grand_l"> {{$t_leave}}</td>
+                            <td style="text-align: center; padding: 5px;"></td>
                             
                         </tr>
                      
@@ -244,6 +253,7 @@
                                     $s_leave = 0;
                                     $s_total = 0; 
                                     $s_count = 1;
+                                    $sec = 0;
                                    
                                 @endphp
                                 @foreach($section->subsection AS $key1 => $subsec)
@@ -255,10 +265,14 @@
                                        
                                     @endphp
                                     @if(isset($nonot['total'][$subsec->hr_subsec_id]) && $nonot['total'][$subsec->hr_subsec_id] > 0)
-
+                                        @php  $sec ++; @endphp
                                     <tr>
                                         <td style="text-align: center; padding: 10px;">{{$count}}</td>
-                                        <td style="text-align: center; padding: 10px;">{{$section->hr_section_name}}</td>
+                                        <td style="text-align: center; padding: 10px; @if($sec != 1) border:none!important; @else border-bottom:none!important; @endif">
+                                            @if($sec == 1)
+                                            {{$section->hr_section_name}}
+                                            @endif
+                                        </td>
                                         <td style="text-align: center; padding: 10px;">{{$subsec->hr_subsec_name}}</td>
                                         <td width="7%" style="text-align: center; padding: 10px;">{{$nonot['total'][$subsec->hr_subsec_id]??0}}</td>
                                         <td width="7%" style="text-align: center; padding: 10px;">{{$nonot['present'][$subsec->hr_subsec_id]??0}}</td>
@@ -300,13 +314,13 @@
                                 @endforeach
                                 @if($s_total > 0)
 
-                                <tr class="grand-total">
+                                <tr class="grand-total" style="    background: #dadada;">
                                     <td  colspan="2" style="background: #fff;"></td>
-                                    <td  style="padding:5px;"></td>
-                                    <td style=" padding: 5px;" id="grand_e"> {{$s_total}} </td>
-                                    <td style=" padding: 5px;" id="grand_p"> {{$s_present}}</td>
-                                    <td style=" padding: 5px;" id="grand_a"> {{$s_absent}}</td>
-                                    <td style=" padding: 5px;" id="grand_l"> {{$s_leave}}</td>
+                                    <td  style="text-align: center;padding:5px;"></td>
+                                    <td style="text-align: center; padding: 5px;" id="grand_e"> {{$s_total}} </td>
+                                    <td style="text-align: center; padding: 5px;" id="grand_p"> {{$s_present}}</td>
+                                    <td style=" text-align: center;padding: 5px;" id="grand_a"> {{$s_absent}}</td>
+                                    <td style="text-align: center; padding: 5px;" id="grand_l"> {{$s_leave}}</td>
                                     <td style=" padding: 5px;"></td>
                                     
                                 </tr>
@@ -315,129 +329,16 @@
                         @endforeach
                         <tr class="label-info grand-total">
                             <td colspan="3" style="padding:5px;">Grand Total: </td>
-                            <td style=" padding: 5px;" id="grand_e"> {{$t_total}} </td>
-                            <td style=" padding: 5px;" id="grand_p"> {{$t_present}}</td>
-                            <td style=" padding: 5px;" id="grand_a"> {{$t_absent}}</td>
-                            <td style=" padding: 5px;" id="grand_l"> {{$t_leave}}</td>
+                            <td style="text-align: center; padding: 5px;" id="grand_e"> {{$t_total}} </td>
+                            <td style="text-align: center; padding: 5px;" id="grand_p"> {{$t_present}}</td>
+                            <td style="text-align: center; padding: 5px;" id="grand_a"> {{$t_absent}}</td>
+                            <td style="text-align: center; padding: 5px;" id="grand_l"> {{$t_leave}}</td>
                             <td style=" padding: 5px;"></td>
                             
                         </tr>
                      
                     </tbody>
                 </table>
-                {{-- <table class="table table-bordered table-head" cellpadding="0" cellspacing="0" border="1" width="100%">
-                    <thead>
-                        <tr class="alert-info tbl-header">
-                            <th style="text-align: center; padding: 10px;">Sl</th>
-                            <th style="text-align: center; padding: 10px;">Area</th>
-                            <th style="text-align: center; padding: 10px;">Section</th>
-                            <th style="text-align: center; padding: 10px;">Sub Section</th>
-                            <th width="7%" style="text-align: center; padding: 10px;">Employee</th>
-                            <th width="7%" style="text-align: center; padding: 10px;">Present</th>
-                            <th width="7%" style="text-align: center; padding: 10px;">Absent</th>
-                            <th width="7%" style="text-align: center; padding: 10px;">Leave</th>
-                            <th width="7%" style="text-align: center; padding: 10px;">Absent%</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @php 
-                            $t_present = 0;
-                            $t_absent = 0;
-                            $t_leave = 0;
-                            $t_total = 0; 
-                            $count = 1;
-                        @endphp
-                        @foreach($area AS $key => $ar)
-                            @foreach($ar->section AS $key1 => $section)
-                                @php
-                                    $s_present = 0;
-                                    $s_absent = 0;
-                                    $s_leave = 0;
-                                    $s_total = 0; 
-                                    $s_count = 1;
-                                   
-                                @endphp
-                                @foreach($section->subsection AS $key1 => $subsec)
-                                    @php 
-                                        $present = (int) ($nonot['present'][$subsec->hr_subsec_id]??0);
-                                        $leave = (int) ($nonot['leave'][$subsec->hr_subsec_id]??0);
-                                        $absent = (int) ($nonot['absent'][$subsec->hr_subsec_id]??0);
-
-                                       
-                                    @endphp
-                                    @if(isset($nonot['total'][$subsec->hr_subsec_id]) && $nonot['total'][$subsec->hr_subsec_id] > 0)
-
-                                    <tr>
-                                        <td style="text-align: center; padding: 10px;">{{$count}}</td>
-                                        <td style="text-align: center; padding: 10px;">{{$ar->hr_area_name}}</td>
-                                        <td style="text-align: center; padding: 10px;">{{$section->hr_section_name}}</td>
-                                        <td style="text-align: center; padding: 10px;">{{$subsec->hr_subsec_name}}</td>
-                                        <td width="7%" style="text-align: center; padding: 10px;">{{$nonot['total'][$subsec->hr_subsec_id]??0}}</td>
-                                        <td width="7%" style="text-align: center; padding: 10px;">{{$nonot['present'][$subsec->hr_subsec_id]??0}}</td>
-                                        <td width="7%" style="text-align: center; padding: 10px;">{{$nonot['absent'][$subsec->hr_subsec_id]??0}}</td>
-                                        <td width="7%" style="text-align: center; padding: 10px;">{{$nonot['leave'][$subsec->hr_subsec_id]??0}}</td>
-                                        
-                                        
-                                        @php 
-                                            $total = (int) ($nonot['total'][$subsec->hr_subsec_id]);
-                                            
-                                            $count++;
-                                            $t_total += $total;
-                                            $t_present += $present;
-                                            $t_leave += $leave;
-                                            $t_absent += $absent;
-                                            $t_present += $present;
-
-                                            
-                                            $s_total += $total;
-                                            $s_present += $present;
-                                            $s_leave += $leave;
-                                            $s_absent += $absent;
-                                            $s_present += $present;
-                                            $percent = round(((int) ($nonot['absent'][$subsec->hr_subsec_id]??0)/$total)*100);
-                                            
-                                            if($percent > 50){
-                                                $style = 'background-color:#dc3545';
-                                            }else if($percent > 0 && $percent <= 50){
-                                                $style = 'background-color:#d65c14';
-                                            }else{
-                                                $style = 'background-color:#28a745';
-                                            }
-
-                                        @endphp
-                                        <td width="7%" style="text-align: center; padding: 5px;{{$style}};color:#fff;">
-                                                <span style="font-size:14px;">{{$percent}}</span>%
-                                        </td>
-                                        
-                                    </tr>
-                                    @endif
-                                @endforeach
-                                @if($s_total > 0)
-
-                                <tr class="grand-total">
-                                    <td colspan="4" style="padding:5px;"></td>
-                                    <td style=" padding: 5px;" id="grand_e"> {{$s_total}} </td>
-                                    <td style=" padding: 5px;" id="grand_p"> {{$s_present}}</td>
-                                    <td style=" padding: 5px;" id="grand_a"> {{$s_absent}}</td>
-                                    <td style=" padding: 5px;" id="grand_l"> {{$s_leave}}</td>
-                                    <td style=" padding: 5px;"></td>
-                                    
-                                </tr>
-                                @endif
-                            @endforeach
-                        @endforeach
-                        <tr class="label-info grand-total">
-                            <td colspan="4" style="padding:5px;">Grand Total: </td>
-                            <td style=" padding: 5px;" id="grand_e"> {{$t_total}} </td>
-                            <td style=" padding: 5px;" id="grand_p"> {{$t_present}}</td>
-                            <td style=" padding: 5px;" id="grand_a"> {{$t_absent}}</td>
-                            <td style=" padding: 5px;" id="grand_l"> {{$t_leave}}</td>
-                            <td style=" padding: 5px;"></td>
-                            
-                        </tr>
-                     
-                    </tbody>
-                </table> --}}
             </div> 
         </div>
     </div>

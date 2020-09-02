@@ -20,7 +20,7 @@
             <div class="panel-heading">
                 <h6>Medical Information
                     <div class="pull-right">
-                        <a href='{{ url("hr/recruitment/employee/show/$medical->med_as_id") }}'  class="btn btn-primary" title="Profile"><i class="glyphicon glyphicon-user"></i></a>
+                        <a href='{{ url("hr/recruitment/employee/show/$medical->med_as_id") }}'  class="btn btn-primary" title="Profile"><i class="las la-user-tie"></i> View</a>
                     </div>
                 </h6>
             </div>
@@ -31,85 +31,81 @@
                     {{ Form::hidden('med_id', $medical->med_id) }}
                     <div class="row">
                         <div class="col-sm-4">
-                            <div class="form-group">
-                                <label for="med_as_id"> Associate's ID </label>
+                            <div class="form-group has-float-label has-required">
                                 <input type="text" name="med_as_id" placeholder="Associate" class="form-control" value="{{ $medical->med_as_id }}" readonly /> 
+                                <label for="med_as_id"> Associate's ID </label>
                             </div> 
-                            <div class="form-group">
-                                <label for="med_height"> Height <span style="color: red; vertical-align: text-top;">*</span></label>
+                            <div class="form-group has-required has-float-label">
                                 
-                                    <input type="text" id="med_height" name="med_height" value="{{ $medical->med_height }}" required=" required length" required-length="1-50" placeholder="Height in Inch" class="form-control"/>
-                                </div>
+                                <input type="text" id="med_height" name="med_height" value="{{ $medical->med_height }}" required=" required"  placeholder="Height in Inch" class="form-control"/>
+                                <label for="med_height"> Height </label>
                             </div>
 
-                            <div class="form-group">
-                                <label for="med_weight"> Weight <span style="color: red; vertical-align: text-top;">*</span></label>
+                            <div class="form-group has-required has-float-label">
                                 
-                                    <input type="text" id="med_weight" name="med_weight" value="{{ $medical->med_weight }}" placeholder="Weight in Kg" class="form-control" required="required length" required-length="1-50" />
-                                </div>
+                                <input type="text" id="med_weight" name="med_weight" value="{{ $medical->med_weight }}" placeholder="Weight in Kg" class="form-control" required="required length" required-length="1-50" />
+                                <label for="med_weight"> Weight </label>
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group has-float-label">
+                                
+                                <input type="text" id="med_tooth_str" name="med_tooth_str" value="{{ $medical->med_tooth_str }}" placeholder="Tooth Structure" class="form-control"  />
                                 <label for="med_tooth_str"> Tooth Structure </label>
-                                
-                                    <input type="text" id="med_tooth_str" name="med_tooth_str" value="{{ $medical->med_tooth_str }}" placeholder="Tooth Structure" class="form-control" required="length" required-length="0-124" />
-                                </div>
                             </div>
 
-                            <div class="form-group">
-                                <label for="med_blood_group"> Blood Group <span style="color: red; vertical-align: text-top;">*</span></label>
+                            <div class="form-group has-float-label select-search-group">
                                 
-                                    <select id="med_blood_group" name="med_blood_group" class="form-control" required="required">
-                                        @if(!empty($medical->med_blood_group))
-                                        <option value="{{$medical->med_blood_group}}">{{$medical->med_blood_group}}</option>
-                                        @endif
-                                        <option value="">Select Blood Group</option>
-                                        <option value="A+">A+</option>
-                                        <option value="A-">A-</option>
-                                        <option value="B+">B+</option>
-                                        <option value="B-">B-</option>
-                                        <option value="O+">O+</option>
-                                        <option value="O-">O-</option>
-                                        <option value="AB+">AB+</option>
-                                        <option value="AB-">AB-</option>
-                                    </select>
-                                </div>
+                                
+                                <select id="med_blood_group" name="med_blood_group" class="form-control" required="required">
+                                    @if(!empty($medical->med_blood_group))
+                                    <option value="{{$medical->med_blood_group}}">{{$medical->med_blood_group}}</option>
+                                    @endif
+                                    <option value="">Select Blood Group</option>
+                                    <option value="A+">A+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B+">B+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="O+">O+</option>
+                                    <option value="O-">O-</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="AB-">AB-</option>
+                                </select>
+                                <label for="med_blood_group"> Blood Group </label>
                             </div>
 
 
-                            <div class="form-group">
+                            <div class="form-group has-float-label">
+                                
+                                <textarea id="med_ident_mark" name="med_ident_mark" class="form-control" placeholder="Identification Mark" >{{ $medical->med_ident_mark }}</textarea>
+
                                 <label for="med_ident_mark"> Identification Mark </label>
-                                
-                                    <textarea id="med_ident_mark" name="med_ident_mark" class="form-control" placeholder="Identification Mark" required="length" required-length="0-256">{{ $medical->med_ident_mark }}</textarea>
-                                </div>
                             </div>
 
-                            <div class="form-group">
-                                <label for="med_others"> Other </label>
+                            <div class="form-group has-float-label">
                                 
-                                    <textarea id="med_others" name="med_others" class="form-control" placeholder="Other" required="length" required-length="0-256"> {{ $medical->med_others }}</textarea>
-                                </div>
+                                
+                                <textarea id="med_others" name="med_others" class="form-control" placeholder="Other" > {{ $medical->med_others }}</textarea>
+                                <label for="med_others"> Other </label>
                             </div>
 
                         </div>
                         <div class="col-sm-4">
-                            <div class="form-group">
-                                <label for="med_doct_comment"> Doctor's Comments <span style="color: red; vertical-align: text-top;">*</span></label>
+                            <div class="form-group has-float-label">
                                 
-                                    <textarea id="med_doct_comment" name="med_doct_comment" class="form-control" placeholder="Doctor's Comments" required="required length" required-length="1-256">{{ $medical->med_doct_comment }}</textarea>
-                                </div>
+                                
+                                <textarea id="med_doct_comment" name="med_doct_comment" class="form-control" placeholder="Doctor's Comments" required="required" required-length="1-256">{{ $medical->med_doct_comment }}</textarea>
+                                <label for="med_doct_comment"> Doctor's Comments </label>
                             </div>
 
-                            <div class="form-group">
-                                <label for="med_doct_conf_age"> Doctor's Age Confirmation <span style="color: red; vertical-align: text-top;">*</span></label>
+                            <div class="form-group has-float-label">
+                                <label for="med_doct_conf_age"> Doctor's Age Confirmation </label>
                                 
-                                    <input type="text" id="med_doct_conf_age" name="med_doct_conf_age" value="{{ $medical->med_doct_conf_age }}" placeholder="Doctor's Age Confirmation" class="form-control" required="required length" required-length="1-128"/>
-                                </div>
+                                <input type="text" id="med_doct_conf_age" name="med_doct_conf_age" value="{{ $medical->med_doct_conf_age }}" placeholder="Doctor's Age Confirmation" class="form-control" required="required" required-length="1-128"/>
                             </div> 
      
 
                             <div class="form-group">
-                                <label for="med_signature">Signature <span>(jpg|jpeg|png)</span> </label>
+                                <label for="med_signature">Signature <span>(jpg|jpeg|png)</span> </label> <br>
                                 
                                     @if(!empty($medical->med_signature))
                                     <a href="{{ url($medical->med_signature) }}" class="btn btn-xs btn-primary" target="_blank" title="View">
@@ -121,15 +117,14 @@
                                          Download
                                     </a>
                                     @else
-                                        <strong class="text-danger">No file found!</strong>
+                                        <strong class="text-danger">No file found!</strong><br>
                                     @endif
-                                    <input type="file" id="med_signature" name="med_signature" value="{{ $medical->med_signature }}" required="mime size" required-allowing="jpeg,png,jpg" required-max-size="512kb" required-error-msg-size="You can not upload images larger than 512kb" required-error-msg-mime="You can only upload jpeg, jpg or png images">
+                                    <input type="file" id="med_signature" name="med_signature" value="{{ $medical->med_signature }}" >
                                     <span id="file_upload_error" class="red" style="display: none; font-size: 13px;">Only <strong>jpeg,png,jpg </strong>type file supported(<512kb).</span>
-                                </div>
                             </div>
 
                             <div class="form-group">
-                                <label for="med_auth_signature">Authority Signature <span>(jpg|jpeg|png)</span> </label>
+                                <label for="med_auth_signature">Authority Signature <span>(jpg|jpeg|png)</span> </label><br>
                                 
                                     @if(!empty($medical->med_auth_signature))
                                     <a href="{{ url($medical->med_auth_signature) }}" class="btn btn-xs btn-primary" target="_blank" title="View">
@@ -141,15 +136,14 @@
                                          Download
                                     </a>
                                     @else
-                                        <strong class="text-danger">No file found!</strong>
+                                        <strong class="text-danger">No file found!</strong><br>
                                     @endif
-                                    <input type="file" id="med_auth_signature" name="med_auth_signature" value="{{ $medical->med_auth_signature }}" required="mime size" required-allowing="jpeg,png,jpg" required-max-size="512kb" required-error-msg-size="You can not upload images larger than 512kb" required-error-msg-mime="You can only upload jpeg, jpg or png images">
+                                    <input type="file" id="med_auth_signature" name="med_auth_signature" value="{{ $medical->med_auth_signature }}" >
                                     <span id="file_upload_error2" class="red" style="display: none; font-size: 13px;">Only <strong>jpeg,png,jpg </strong>type file supported(<512kb).</span>
-                                </div>
                             </div>
 
                             <div class="form-group">
-                                <label for="med_doct_signature">Doctor's Signature <span>(jpg|jpeg|png)</span> </label>
+                                <label for="med_doct_signature">Doctor's Signature <span>(jpg|jpeg|png)</span> </label><br>
                                 
                                     @if(!empty($medical->med_doct_signature))
                                     <a href="{{ url($medical->med_doct_signature) }}" class="btn btn-xs btn-primary" target="_blank" title="View">
@@ -161,15 +155,14 @@
                                          Download
                                     </a>
                                     @else
-                                        <strong class="text-danger">No file found!</strong>
+                                        <strong class="text-danger">No file found!</strong><br>
                                     @endif
-                                    <input type="file" id="med_doct_signature" name="med_doct_signature" value="{{ $medical->med_doct_signature }}" required="mime size" required-allowing="jpeg,png,jpg" required-max-size="512kb" required-error-msg-size="You can not upload images larger than 512kb" required-error-msg-mime="You can only upload jpeg, jpg or png images">
+                                    <input type="file" id="med_doct_signature" name="med_doct_signature" value="{{ $medical->med_doct_signature }}" >
                                     <span id="file_upload_error3" class="red" style="display: none; font-size: 13px;">Only <strong>jpeg,png,jpg </strong>type file supported(<512kb).</span>
-                                </div>
                             </div>
 
                             <div class="form-group">
-                                <button name="approve" class="btn btn-primary" type="submit">
+                                <button name="approve" class="btn btn-primary pull-right" type="submit">
                                     <i class="ace-icon fa fa-check bigger-110"></i> Update
                                 </button>
                             </div>
@@ -182,33 +175,11 @@
         </div><!-- /.page-content -->
     </div>
 </div>
+@push('js')
 <script type="text/javascript">
 $(document).ready(function()
 {   
-    $('select.associates').select2({
-        placeholder: 'Select Associate\'s ID',
-        ajax: {
-            url: '{{ url("hr/associate-search") }}',
-            dataType: 'json',
-            delay: 250,
-            data: function (params) {
-                return { 
-                    keyword: params.term
-                }; 
-            },
-            processResults: function (data) { 
-                return {
-                    results:  $.map(data, function (item) {
-                        return {
-                            text: item.associate_name,
-                            id: item.associate_id
-                        }
-                    }) 
-                };
-          },
-          cache: true
-        }
-    });
+    
 
     //file upload validation....
     $('#med_signature').on('change', function(){
@@ -244,4 +215,5 @@ $(document).ready(function()
 
 });
 </script>
+@endpush
 @endsection

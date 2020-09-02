@@ -41,7 +41,7 @@
                <li class="@if( $segment2=='leave_application') active @endif"><a href="{{ url('ess/leave_application') }}"><i class="las la-file-alt"></i>Leave Application</a></li>
                <li class="@if( $segment2=='out_side_request') active @endif"><a href="{{ url('ess/out_side_request/entry') }}"><i class="las la-file-alt"></i>Outside Request</a></li>
                <li class="@if( $segment2=='loan_application') active @endif"><a href="{{ url('ess/loan_application') }}"><i class="las la-file-alt"></i>Loan Application</a></li>
-               <li class="@if( $segment2=='grievance') active @endif"><a href="{{ url('ess/grievance/appeal')}}"><i class="las la-file-alt"></i>Greivence</a></li>
+               {{-- <li class="@if( $segment2=='grievance') active @endif"><a href="{{ url('ess/grievance/appeal')}}"><i class="las la-file-alt"></i>Greivence</a></li> --}}
             </ul>
          </li>
 

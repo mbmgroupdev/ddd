@@ -1,5 +1,5 @@
 @extends('user.layout')
-@section('title', 'User Dashboard')
+@section('title', 'Outside Request')
 @section('main-content')
 <div class="main-content">
 	<div class="main-content-inner">
@@ -11,91 +11,69 @@
 				<li class="active"> Outside Request</li>
 			</ul><!-- /.breadcrumb --> 
 		</div>
-
-		<div class="page-content"> 
-            <div class="page-header">
-				<h1>ESS<small> <i class="ace-icon fa fa-angle-double-right"></i> Outside Request</small></h1>
-            </div>
-
-            <div class="col-sm-12 no-padding-left no-padding-right">
-                <div class="col-sm-12 panel panel-success no-padding">
-                    <div class="panel-heading"><h5>Entry</h5></div>
-                        <div class="panel-body">   
-                            @include('inc/message')
-                            <div class="col-xs-offset-3 col-xs-6" style=" padding-top: 20px;">
-                                <!-- PAGE CONTENT BEGINS -->
-                                {{ Form::open(['url'=>'hr/ess/out_side_request/entry', 'class'=>'form-horizontal', 'files' => true]) }}
-             
-                                    <div class="form-group">
-                                        <label class="col-sm-4 control-label no-padding-right" for="start_date">Date <span style="color: red; vertical-align: top;">&#42;</span></label>
-                                        <div class="col-sm-7">
-                                            <div class="col-sm-6 input-icon no-padding-left">
-                                                <input type="text" name="start_date" id="start_date" class="datepicker col-xs-12 " placeholder="From" data-validation="required" data-validation-error-msg="The Start Date field is requested_locationired" />
-                                            </div> 
-
-                                            <div class="col-sm-6 input-icon input-icon-right no-padding-left">
-                                                <input type="text" placeholder="To" name="end_date" id="end_date" class=" datepicker col-xs-12"/> 
-                                            </div> 
-                                        </div>
-                                    </div>
-             
-                                    <div class="form-group">
-                                        <label class="col-sm-4 control-label no-padding-right" for="requested_location">Location <span style="color: red; vertical-align: top;">&#42;</span></label>
-                                        <div class="col-sm-7" style="padding-right: 20px;">
-                                            {{ Form::select('requested_location', $locationList, null, ['id' => 'requested_location', 'placeholder' => 'Select Location', 'class' => 'col-xs-12', 'data-validation' => 'required', 'required'=>'required']) }}
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label class="col-sm-4 control-label no-padding-right" for="requested_location">Type <span style="color: red; vertical-align: top;">&#42;</span></label>
-                                        <div class="col-sm-7" style="padding-right: 20px;">
-                                            <select id="type" name="type" class="col-xs-12" required="required">
-                                                <option value="">Select One</option>
-                                                <option value="1">Full Day</option>
-                                                <option value="2">1st Half</option>
-                                                <option value="3">2nd Half</option>
-                                            </select>
-                                        </div>
-                                    </div>
-             
-                                    <div class="form-group hide" id="place_div">
-                                        <label class="col-sm-4 control-label no-padding-right" for="requested_place">Purpose<span style="color: red; vertical-align: top;">&#42;</span></label>
-                                        <div class="col-sm-7"  style="padding-right: 20px;">
-                                            <input type="text" name="requested_place" id="requested_place" class="col-xs-12 form-control" data-validation="required"  />
-                                        </div>
-                                    </div>
-             
-                                    <div class="form-group">
-                                        <label class="col-sm-4 control-label no-padding-right" for="comment">Comment</label>
-                                        <div class="col-sm-7"  style="padding-right: 20px;">
-                                            <input type="text" name="comment" class="col-xs-12 form-control">
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="col-sm-4 control-label no-padding-right" ></label>
-                                        <div class="col-sm-7"  style="padding-right: 20px;">
-                                            <button class="btn btn-sm btn-success" type="submit">
-                                                <i class="ace-icon fa fa-check bigger-110"></i> Submit
-                                            </button>
-
-                                            &nbsp; &nbsp; &nbsp;
-                                            <button class="btn btn-sm" type="reset">
-                                                <i class="ace-icon fa fa-undo bigger-110"></i> Reset
-                                            </button>
-                                        </div>
-                                    </div>
-
-
-                                <!-- PAGE CONTENT ENDS -->
+        @include('inc/message')
+        <div class="row">
+            <div class="col-sm-3 pr-0">
+        		<div class="panel">
+                    <div class="panel-heading"><h6>Outside Request</h6></div>
+                    <div class="panel-body">   
+                        
+                        {{ Form::open(['url'=>'hr/ess/out_side_request/entry', 'class'=>'form-horizontal', 'files' => true]) }}
+     
+                            <div class="form-group has-float-label has-required">
+                                <input type="date" name="start_date" id="start_date" class="datepicker form-control " placeholder="From" required="required" />
+                                <label  for="start_date">Start Date </label>
                             </div>
-                            {{ Form::close() }}
-                        </div>
-                </div>    
+                            <div class="form-group has-float-label has-required">
+                                <input type="date" placeholder="To" name="end_date" id="end_date" class=" datepicker form-control"/> 
+                                <label  for="start_date">End Date </label>
+                                    
+                            </div>
+     
+                            <div class="form-group has-float-label has-required select-search-group">
+                                {{ Form::select('requested_location', $locationList, null, ['id' => 'requested_location', 'placeholder' => 'Select Location', 'class' => 'form-control', 'required' => 'required', 'required'=>'required']) }}
+                                <label  for="requested_location">Location </label>
+                            </div>
 
-                <div class="col-sm-12 worker-list panel panel-info no-padding">
-                    <div class="panel-heading"><h5>List</h5></div>
+                            <div class="form-group has-float-label has-required select-search-group">
+                                <select id="type" name="type" class="form-control" required="required">
+                                    <option value="">Select One</option>
+                                    <option value="1">Full Day</option>
+                                    <option value="2">1st Half</option>
+                                    <option value="3">2nd Half</option>
+                                </select>
+                                <label  for="requested_location">Type </label>
+                            </div>
+     
+                            <div class="form-group hide has-float-label has-required" id="place_div">
+                                
+                                <input type="text" name="requested_place" id="requested_place" class="form-control form-control" required="required"  />
+                                <label  for="requested_place">Purpose</label>
+                            </div>
+     
+                            <div class="form-group has-float-label has-required">
+                                
+                                <input type="text" name="comment" class="form-control form-control">
+                                <label  for="comment">Comment</label>
+                            </div>
+                            <div class="form-group">
+                                
+                                <button class="btn  btn-primary" type="submit">
+                                    <i class="ace-icon fa fa-check bigger-110"></i> Submit
+                                </button>
+
+                            </div>
+                        
+                        {{ Form::close() }}
+                    </div>
+                </div>
+                
+            </div>
+            <div class="col-sm-9">
+                <div class="panel">
+                    <div class="panel-heading"><h6>Outside List</h6></div>
                     <div class="panel-body">
-                        <table id="dataTables" class="table table-striped table-bordered"  style="display:table;overflow-x: auto;white-space: nowrap; width: 100%;">
+                        <table id="global-datatable" class="table table-striped table-bordered"  style="display:table;overflow-x: auto; width: 100%;">
                             <thead>
                                 <tr>
                                     <th>Sl</th>
@@ -135,19 +113,21 @@
                                         </td>
                                         <td>{{ $out->requested_place }}</td>
                                         <td>{{ $out->applied_on }}</td>
-                                        <td><?php if($out->status==0 ) printf("Applied");
-                                                    else if($out->status==1 ) printf("Approved");
-                                                    else printf("Rejected");
-                                                      ?></td>
-                                        <td>
-                                            <div class="btn-group">
-                                                @if($out->status == 0)
-                                                    <a href="{{ url('hr/ess/out_side_request/delete/'.$out->id) }}" type="button" class='btn btn-xs btn-danger' data-toggle="tooltip" title="Delete" onclick="return confirm('Are you sure?')"><i class="fa fa-trash bigger-120"></i></a>
-                                                @else
-                                                    <a type="button" class='btn btn-xs btn-danger' data-toggle="tooltip" title="You can not delete this!" disabled><i class="fa fa-trash bigger-120"></i></a>
-                                                @endif
-                                                    <button type="button" class="btn btn-info btn-xs modal_button " data-toggle="modal"  data-target="#myModal" data-index ="{{ $i-2 }}" title = "Details"><i class="fa fa-list bigger-120"></i></button>
-                                            </div>
+                                        <td class="text-center">
+                                            @if($out->status==0 )
+                                                ...
+                                            @elseif($out->status==1 )
+                                                <i class="las f-18 la-check-circle text-success"></i>
+                                            @else
+                                                <i class="las f-18 la-times-circle text-danger"></i>
+                                            @endif
+                                        </td>
+                                        <td class="text-center">
+                                            @if($out->status == 0)
+                                                <a href="{{ url('hr/ess/out_side_request/delete/'.$out->id) }}" type="button" class='text-danger' data-toggle="tooltip" title="Delete" onclick="return confirm('Are you sure?')"><i class="fa fa-trash bigger-120"></i></a>
+                                            @endif
+                                                <i data-toggle="modal"  data-target="#myModal" data-index ="{{ $i-2 }}" title = "Details" class="fa fa-list bigger-120 text-success"></i>
+                                        
                                         </td>
                                     </tr>
                                 @endforeach
@@ -155,64 +135,66 @@
                         </table>
                     </div>
                 </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
 
                 <!-- Modal -->
-                <div id="myModal" class="modal fade" role="dialog" style="border-radius: 5px !important;">
-                  <div class="modal-dialog">
+<div id="myModal" class="modal fade" role="dialog" style="border-radius: 5px !important;">
+  <div class="modal-dialog">
 
-                    <!-- Modal content-->
-                    <div class="modal-content">
-                      <div class="modal-header" style="background-color: lightblue;">
-                        
-                        <h4 class="modal-title">
-                            Details
-                            <button type="button" class="close btn-xs text-right" data-dismiss="modal">&times;</button>
-                        </h4>
-                      </div>
-                      <div class="modal-body">
-                        <table class="table table-striped">
-                            <tr>
-                                <th width="30%">Status</th>
-                                <td id="status_val"></td>
-                            </tr>
-                            <tr>
-                                <th width="30%">Start-End</th>
-                                <td id="strat_end_val"></td>
-                            </tr>
-                            <tr>
-                                <th width="30%">Requested Location</th>
-                                <td id="location_val"></td>
-                            </tr>
-                            <tr>
-                                <th width="30%">Type</th>
-                                <td id="type_val"></td>
-                            </tr>
-                            <tr>
-                                <th width="30%">Purpose</th>
-                                <td id="purpose_val"></td>
-                            </tr>
-                            <tr>
-                                <th width="30%">Applied on</th>
-                                <td id="applied_date_val"></td>
-                            </tr>
-                            <tr>
-                                <th width="30%">Comment</th>
-                                <td id="comment_val"></td>
-                            </tr>
-                        </table>
-                      </div>
-                      <div class="modal-footer">
-                        {{-- <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal" style="border-radius: 2px;">Close</button> --}}
-                      </div>
-                    </div>
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: lightblue;">
+        
+        <h4 class="modal-title">
+            Details
+            <button type="button" class="close btn-xs text-right" data-dismiss="modal">&times;</button>
+        </h4>
+      </div>
+      <div class="modal-body">
+        <table class="table table-striped">
+            <tr>
+                <th width="30%">Status</th>
+                <td id="status_val"></td>
+            </tr>
+            <tr>
+                <th width="30%">Start-End</th>
+                <td id="strat_end_val"></td>
+            </tr>
+            <tr>
+                <th width="30%">Requested Location</th>
+                <td id="location_val"></td>
+            </tr>
+            <tr>
+                <th width="30%">Type</th>
+                <td id="type_val"></td>
+            </tr>
+            <tr>
+                <th width="30%">Purpose</th>
+                <td id="purpose_val"></td>
+            </tr>
+            <tr>
+                <th width="30%">Applied on</th>
+                <td id="applied_date_val"></td>
+            </tr>
+            <tr>
+                <th width="30%">Comment</th>
+                <td id="comment_val"></td>
+            </tr>
+        </table>
+      </div>
+      <div class="modal-footer">
+        {{-- <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal" style="border-radius: 2px;">Close</button> --}}
+      </div>
+    </div>
 
-                  </div>
-                </div>
-            </div>
-
-		</div><!-- /.page-content -->
-	</div>
+  </div>
 </div>
+
+@push('js')
 <script type="text/javascript">
     $(document).ready(function(){
         
@@ -287,12 +269,7 @@
             }
         });
 
-        $('#dataTables').DataTable({
-            pagingType: "full_numbers" ,
-            responsive: true,
-            "sDom": '<"F"tp>'
-        }); 
-
+        
         $("#requested_location").on("change", function(){
             if($(this).val() == "Outside"){
                 $('#place_div').removeClass('hide');
@@ -304,7 +281,7 @@
 
     });
 </script>
-
+@endpush
 
 
 
