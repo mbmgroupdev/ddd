@@ -259,9 +259,9 @@
             <a href="#report" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="las la-file-invoice"></i><span>Reports</span><i class="las la-angle-right iq-arrow-right"></i></a>
             <ul id="report" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
                @if($user->can('Shift Roster') || $user->hasRole('Super Admin'))
-                     {{-- <li>
+                     <li>
                         <a href="{{ url('hr/timeattendance/shift_roaster') }}"><i class="las la-fingerprint"></i>Shift Roster Summary</a>
-                     </li> --}}
+                     </li>
                @endif
 
                @if($user->can('Attendance Summary Report') || $user->hasRole('Super Admin'))

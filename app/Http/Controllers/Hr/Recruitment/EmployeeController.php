@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Hr\Recruitment;
 use App\Helpers\Custom;
 use App\Helpers\EmployeeHelper;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\Hr\DashboardController as DashboardController;
 use App\Http\Controllers\Hr\Recruitment\CostMappingController AS CostMappingController;
 use App\Jobs\ProcessUnitWiseSalary;
 use App\Models\Hr\Area;
@@ -144,10 +143,8 @@ class EmployeeController extends Controller
 
     public function showList()
     {
-        //ACL::check(["permission" => "hr_recruitment_employer_list"]);
-        #-----------------------------------------------------------#
-
-        $reportCount = (new DashboardController)->reportCount();
+        
+        $reportCount = employee_count();
 
         $employeeTypes = EmpType::where('hr_emp_type_status', '1')->distinct()->orderBy('hr_emp_type_name', 'ASC')->pluck('hr_emp_type_name');
         $empTypes = EmpType::where('hr_emp_type_status', '1')
@@ -618,7 +615,7 @@ class EmployeeController extends Controller
 
         if (!empty($request->associate_id))
         {
-            $info = $this->getDataByID($request->associate_id);
+            $info = get_employee_by_id($request->associate_id);
             // $info = Employee::where('associate_id', $request->associate_id)->first();
             $per_complete = $this->getCompleteInfo($request->associate_id);
 
@@ -720,7 +717,7 @@ class EmployeeController extends Controller
 
             //Earned Leave Calculation
 
-            $earnedLeaves = $this->earnedLeave($leaves,$info->as_id,$info->associate_id,$info->as_unit_id);
+            $earnedLeaves = get_earned_leave($leaves,$info->as_id,$info->associate_id,$info->as_unit_id);
 
             //dd($leavesForEarned);
 
@@ -865,7 +862,7 @@ class EmployeeController extends Controller
 
         if (!empty($request->associate_id))
         {
-            $info = $this->getDataByID($request->associate_id);
+            $info = get_employee_by_id($request->associate_id);
             if(empty($info)) abort(404, "$request->associate_id not found!");
 
             $loans = DB::table("hr_loan_application")
@@ -898,7 +895,7 @@ class EmployeeController extends Controller
                 ->groupBy('year')
                 ->orderBy('year', 'DESC')
                 ->get();
-            $earnedLeaves = $this->earnedLeave($leaves,$info->as_id,$info->associate_id,$info->as_unit_id);
+            $earnedLeaves = get_earned_leave($leaves,$info->as_id,$info->associate_id,$info->as_unit_id);
 
             $information = DB::table("hr_as_basic_info AS b")
             ->select(
@@ -1036,76 +1033,12 @@ class EmployeeController extends Controller
             abort(404);
         }
     }
-    //Get earned leave
-    public function earnedLeave($leaves, $as_id, $associate_id, $unit_id)
-    {
-        $table = $this->getTableName($unit_id);
-        $leavesForEarned = collect($leaves)->sortBy('year');
-
-
-        $earnedLeaves = [];
-        if(count($leavesForEarned)>0){
-            $remainEarned = 0;
-            foreach($leavesForEarned AS $yearlyLeave){
-
-                $attendance = DB::table($table)
-                                ->where('a.as_id',$as_id)
-                                ->whereYear('a.in_time', $yearlyLeave->year)
-                                ->count();
-
-                $earnedTotal = intval($attendance/18)+$remainEarned;
-
-
-                $enjoyed = DB::table("hr_leave")
-                            ->select(
-                                DB::raw("
-                                    SUM(CASE WHEN leave_type = 'Earned' THEN DATEDIFF(leave_to, leave_from)+1 END) AS enjoyed
-                                ")
-                            )
-                            ->where("leave_ass_id", $associate_id)
-                            ->where("leave_status", "1")
-                            ->where(DB::raw("YEAR(leave_from)"), '=', $yearlyLeave->year)
-                            ->value("enjoyed");
-
-                $remainEarned = $earnedTotal-$enjoyed;
-
-                $earnedLeaves[$yearlyLeave->year]['remain'] = $remainEarned;
-                $earnedLeaves[$yearlyLeave->year]['enjoyed'] = $enjoyed;
-                $earnedLeaves[$yearlyLeave->year]['earned'] = $earnedTotal;
-
-            }
-        }else{
-            $yearAtt = DB::table($table)
-                            ->select(DB::raw('count(as_id) as att'))
-                            ->where('a.as_id',$as_id)
-                            ->groupBy(DB::raw('Year(in_time)'))
-                            ->first();
-            //dd($yearAtt);
-            $earnedTotal = 0;
-            if($yearAtt!= null){
-                foreach ($yearAtt as $key => $att) {
-                    $earnedTotal += intval($att/18);
-                }
-
-            }
-            $earnedLeaves[date('Y')]['remain'] = $earnedTotal;
-            $earnedLeaves[date('Y')]['enjoyed'] = 0;
-            $earnedLeaves[date('Y')]['earned'] = $earnedTotal;
-        }
-        return $earnedLeaves;
-
-    }
-
+   
     # Edit User by Associate ID
     public function edit(Request $request)
     {
-      $id=$request->associate_id;
+        $id=$request->associate_id;
 
-        //return dd($request->all());
-
-        //ACL::check(["permission" => "hr_recruitment_employer_list"]);
-        #-----------------------------------------------------------#
-        // check if associate id is management restricted or not
 
         $get_as_id = Employee::where('associate_id', $id)->first(['as_id']);
         $m_restriction=  auth()->user()->management_permissions(); //dd($m_restriction);
@@ -1118,7 +1051,7 @@ class EmployeeController extends Controller
 
         else{
 
-            $employee  = $this->getDataByID($request->associate_id);
+            $employee  = get_employee_by_id($id);
             // $all_employee_list  = Employee::select('as_id', 'associate_id', 'as_name')->get();
             $employeeTypes  = EmpType::where('hr_emp_type_status', '1')->pluck('hr_emp_type_name', 'emp_type_id');
             $unitList  = Unit::where('hr_unit_status', '1')
@@ -1377,7 +1310,7 @@ class EmployeeController extends Controller
         $data = [];
         if($request->has('associate_id'))
         {
-            $data = $this->getDataByID($request->associate_id);
+            $data = get_employee_by_id($associate_id);
         }
         return response()->json($data);
     }

@@ -260,7 +260,7 @@
                                            <h5 class="mb-0 text-white line-height">Hello {{ auth()->user()->name }}</h5>
                                            {{-- <span class="text-white font-size-12">Available</span> --}}
                                         </div>
-                                        <a href="profile.html" class="iq-sub-card iq-bg-primary-hover">
+                                        {{-- <a href="profile.html" class="iq-sub-card iq-bg-primary-hover">
                                            <div class="media align-items-center">
                                               <div class="rounded iq-card-icon iq-bg-primary">
                                                  <i class="ri-file-user-line"></i>
@@ -270,26 +270,16 @@
                                                  <p class="mb-0 font-size-12">View personal profile details.</p>
                                               </div>
                                            </div>
-                                        </a>
-                                        <a href="profile-edit.html" class="iq-sub-card iq-bg-primary-hover">
-                                           <div class="media align-items-center">
-                                              <div class="rounded iq-card-icon iq-bg-primary">
-                                                 <i class="ri-profile-line"></i>
-                                              </div>
-                                              <div class="media-body ml-3">
-                                                 <h6 class="mb-0 ">Edit Profile</h6>
-                                                 <p class="mb-0 font-size-12">Modify your personal details.</p>
-                                              </div>
-                                           </div>
-                                        </a>
-                                        <a href="account-setting.html" class="iq-sub-card iq-bg-primary-hover">
+                                        </a> --}}
+                                        
+                                        <a href="{{url('user/change-password')}}" class="iq-sub-card iq-bg-primary-hover">
                                            <div class="media align-items-center">
                                               <div class="rounded iq-card-icon iq-bg-primary">
                                                  <i class="ri-account-box-line"></i>
                                               </div>
                                               <div class="media-body ml-3">
                                                  <h6 class="mb-0 ">Account settings</h6>
-                                                 <p class="mb-0 font-size-12">Manage your account parameters.</p>
+                                                 <p class="mb-0 font-size-12">Manage your password.</p>
                                               </div>
                                            </div>
                                         </a>
@@ -318,7 +308,7 @@
                     @yield('content')
                 </main>
                 <!-- Footer -->
-                <footer class="bg-white iq-footer mr-0 ml-0 hide">
+                <footer class="bg-white iq-footer mr-0">
                    <div class="container-fluid">
                       <div class="row">
                          <div class="col-lg-6">

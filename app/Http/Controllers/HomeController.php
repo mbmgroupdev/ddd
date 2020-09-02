@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Hr\Leave;
 use DB;
 
 class HomeController extends Controller
@@ -25,7 +26,17 @@ class HomeController extends Controller
     public function index()
     {
         $att = $this->userAtt();
-        return view('user.index', compact('att'));
+        $associate_id = auth()->user()->associate_id;
+        $leaves = array();
+        if($associate_id){
+            $leaves= Leave::where('leave_ass_id', $associate_id)
+                        ->orderBy('id', 'DESC')
+                        ->take(5)
+                        ->get();
+
+        }
+        
+        return view('user.index', compact('att','leaves'));
     }
 
 

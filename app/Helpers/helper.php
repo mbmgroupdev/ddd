@@ -227,11 +227,205 @@ if(!function_exists('emp_profile_picture')){
     }
 }
 
+if(!function_exists('get_employee_by_id')){
+    function get_employee_by_id($associate_id = null)
+    {
+        return Employee::select(
+                'hr_as_basic_info.*',
+                'u.hr_unit_id',
+                'u.hr_unit_name',
+                'u.hr_unit_short_name',
+                'u.hr_unit_name_bn',
+                'f.hr_floor_name',
+                'f.hr_floor_name_bn',
+                'l.hr_line_name',
+                'l.hr_line_name_bn',
+                'dp.hr_department_name',
+                'dp.hr_department_name_bn',
+                'dg.hr_designation_name',
+                'dg.hr_designation_name_bn',
+                'a.*',
+                'be.*',
+                'm.*',
+                'e.hr_emp_type_name',
+                'ar.hr_area_name',
+                'se.hr_section_name',
+                'se.hr_section_name_bn',
+                'sb.hr_subsec_name',
+                'sb.hr_subsec_name_bn',
+                'bn.*',
+                # unit/floor/line/shif
+                DB::raw("
+                    CONCAT_WS('. ',
+                        CONCAT('Unit: ', u.hr_unit_short_name),
+                        CONCAT('Floor: ', f.hr_floor_name),
+                        CONCAT('Line: ', l.hr_line_name)
+                    ) AS unit_floor_line
+                "),
+                # permanent district & upazilla
+                "per_dist.dis_name AS permanent_district",
+                "per_dist.dis_name_bn AS permanent_district_bn",
+                "per_upz.upa_name AS permanent_upazilla",
+                "per_upz.upa_name_bn AS permanent_upazilla_bn",
+                # present district & upazilla
+                "pres_dist.dis_name AS present_district",
+                "pres_dist.dis_name_bn AS present_district_bn",
+                "pres_upz.upa_name AS present_upazilla",
+                "pres_upz.upa_name_bn AS present_upazilla_bn"
+            )
+            ->leftJoin('hr_area AS ar', 'ar.hr_area_id', '=', 'hr_as_basic_info.as_area_id')
+            ->leftJoin('hr_section AS se', 'se.hr_section_id', '=', 'hr_as_basic_info.as_section_id')
+            ->leftJoin('hr_subsection AS sb', 'sb.hr_subsec_id', '=', 'hr_as_basic_info.as_subsection_id')
+            ->leftJoin('hr_emp_type AS e', 'e.emp_type_id', '=', 'hr_as_basic_info.as_emp_type_id')
+            ->leftJoin('hr_unit AS u', 'u.hr_unit_id', '=', 'hr_as_basic_info.as_unit_id')
+            ->leftJoin('hr_floor AS f', 'f.hr_floor_id', '=', 'hr_as_basic_info.as_floor_id')
+            ->leftJoin('hr_line AS l', 'l.hr_line_id', '=', 'hr_as_basic_info.as_line_id')
+            ->leftJoin('hr_department AS dp', 'dp.hr_department_id', '=', 'hr_as_basic_info.as_department_id')
+            ->leftJoin('hr_designation AS dg', 'dg.hr_designation_id', '=', 'hr_as_basic_info.as_designation_id')
+            ->leftJoin("hr_as_adv_info AS a", "a.emp_adv_info_as_id", "=", "hr_as_basic_info.associate_id")
+            ->leftJoin('hr_benefits AS be',function ($leftJoin) {
+                $leftJoin->on('be.ben_as_id', '=' , 'hr_as_basic_info.associate_id') ;
+                $leftJoin->where('be.ben_status', '=', '1') ;
+            })
+            ->leftJoin('hr_med_info AS m', 'm.med_as_id', '=', 'hr_as_basic_info.associate_id')
+
+            #permanent district & upazilla
+            ->leftJoin('hr_dist AS per_dist', 'per_dist.dis_id', '=', 'a.emp_adv_info_per_dist')
+            ->leftJoin('hr_upazilla AS per_upz', 'per_upz.upa_id', '=', 'a.emp_adv_info_per_upz')
+            #present district & upazilla
+            ->leftJoin('hr_dist AS pres_dist', 'pres_dist.dis_id', '=', 'a.emp_adv_info_pres_dist')
+            ->leftJoin('hr_upazilla AS pres_upz', 'pres_upz.upa_id', '=', 'a.emp_adv_info_pres_upz')
+            ->leftJoin('hr_employee_bengali AS bn', 'bn.hr_bn_associate_id', '=', 'hr_as_basic_info.associate_id')
+            ->where("hr_as_basic_info.associate_id", $associate_id)
+            ->whereIn('hr_as_basic_info.as_unit_id', auth()->user()->unit_permissions())
+            ->first();
+    }
+}
+
+if(!function_exists('get_complete_user_info')){
+    function get_complete_user_info($associate_id = null)
+    {
+        $info= DB::table('hr_as_basic_info AS b')
+            ->select(
+                'b.*',
+                'a.*',
+                'be.*',
+                'm.*',
+                'bn.*'
+            )
+            ->leftJoin("hr_as_adv_info AS a", "a.emp_adv_info_as_id", "=", "b.associate_id")
+            ->leftJoin('hr_benefits AS be',function ($leftJoin) {
+                $leftJoin->on('be.ben_as_id', '=' , 'b.associate_id') ;
+                $leftJoin->where('be.ben_status', '=', '1') ;
+            })
+            ->leftJoin('hr_med_info AS m', 'm.med_as_id', '=', 'b.associate_id')
+            ->leftJoin('hr_employee_bengali AS bn', 'bn.hr_bn_associate_id', '=', 'b.associate_id')
+            ->where("b.associate_id", $associate_id)
+            ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
+            ->first();
+
+            $infocount=0; $totalinfo=0;
+            foreach ($info as $key =>$infovalue)
+            {
+                if($infovalue!=null){ $infocount++;}
+                $totalinfo++;
+            }
+            $per_complete=round((($infocount/$totalinfo)*100), 2);
+        return $per_complete;
+    }
+}
+
+if(!function_exists('get_earned_leave')){
+    function get_earned_leave($leaves, $as_id, $associate_id, $unit_id)
+    {
+        $table = get_att_table($unit_id).' AS a';
+        $leavesForEarned = collect($leaves)->sortBy('year');
+
+
+        $earnedLeaves = [];
+        if(count($leavesForEarned)>0){
+            $remainEarned = 0;
+            foreach($leavesForEarned AS $yearlyLeave){
+
+                $attendance = DB::table($table)
+                                ->where('a.as_id',$as_id)
+                                ->whereYear('a.in_time', $yearlyLeave->year)
+                                ->count();
+
+                $earnedTotal = intval($attendance/18)+$remainEarned;
+
+
+                $enjoyed = DB::table("hr_leave")
+                            ->select(
+                                DB::raw("
+                                    SUM(CASE WHEN leave_type = 'Earned' THEN DATEDIFF(leave_to, leave_from)+1 END) AS enjoyed
+                                ")
+                            )
+                            ->where("leave_ass_id", $associate_id)
+                            ->where("leave_status", "1")
+                            ->where(DB::raw("YEAR(leave_from)"), '=', $yearlyLeave->year)
+                            ->value("enjoyed");
+
+                $remainEarned = $earnedTotal-$enjoyed;
+
+                $earnedLeaves[$yearlyLeave->year]['remain'] = $remainEarned;
+                $earnedLeaves[$yearlyLeave->year]['enjoyed'] = $enjoyed;
+                $earnedLeaves[$yearlyLeave->year]['earned'] = $earnedTotal;
+
+            }
+        }else{
+            $yearAtt = DB::table($table)
+                        ->select(DB::raw('count(as_id) as att'))
+                        ->where('a.as_id',$as_id)
+                        ->groupBy(DB::raw('Year(in_time)'))
+                        ->first();
+            //dd($yearAtt);
+            $earnedTotal = 0;
+            if($yearAtt!= null){
+                foreach ($yearAtt as $key => $att) {
+                    $earnedTotal += intval($att/18);
+                }
+
+            }
+            $earnedLeaves[date('Y')]['remain'] = $earnedTotal;
+            $earnedLeaves[date('Y')]['enjoyed'] = 0;
+            $earnedLeaves[date('Y')]['earned'] = $earnedTotal;
+        }
+        return $earnedLeaves;
+
+    }
+}
 
 
 /*-------------------------------------
  * Cache methods
  *------------------------------------*/
+if(!function_exists('employee_count')){
+    function employee_count()
+    {
+        # Count Total, Male & Female Employee
+        $employee_count = Cache::remember('employee_count', 20000, function  () {
+
+            return  Employee::select(
+                DB::raw("
+                  COUNT(CASE WHEN as_gender = 'Male' THEN as_id END) AS males,
+                  COUNT(CASE WHEN as_gender = 'Female' THEN as_id END) AS females,
+                  COUNT(CASE WHEN as_ot = '0' THEN as_id END) AS non_ot,
+                  COUNT(CASE WHEN as_ot = '1' THEN as_id END) AS ot,
+                  COUNT(CASE WHEN as_status != '1' THEN as_id END) AS inactive,
+                  COUNT(CASE WHEN as_status = '1' THEN as_id END) AS active,
+                  COUNT(CASE WHEN as_doj = CURDATE() THEN as_id END) AS todays_join,
+                  COUNT(*) AS total
+                ")
+            )
+            //->whereIn('as_unit_id', auth()->user()->unit_permissions())
+            ->where('as_status',1) // checking status
+            ->first()->toArray();
+        });
+
+        return $employee_count;
+    }
+}
 
 if(!function_exists('cache_att_all')){
     function cache_att_all()

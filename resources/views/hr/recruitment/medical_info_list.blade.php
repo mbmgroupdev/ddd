@@ -1,26 +1,7 @@
 @extends('hr.layout')
-@section('title', '')
+@section('title', 'Medical Information List')
 @section('main-content')
-@push('css')
-<style type="text/css">
-    .dataTables_wrapper .dt-buttons {
-        text-align: center;
-        padding-left: 425px;
-    }
-    .dataTables_length{
-        float: left;
-    }
-    .dataTables_filter{
-        float: right;
-    }
-    .dataTables_processing {
-        top: 200px !important;
-        z-index: 11000 !important;
-        border: 0px !important;
-        box-shadow: none !important;
-    }
-</style>
-@endpush
+
 <div class="main-content">
     <div class="main-content-inner">
         <div class="breadcrumbs ace-save-state" id="breadcrumbs">
@@ -30,52 +11,46 @@
                     <a href="#">Human Resource</a>
                 </li>
                 <li>
-                    <a href="#">Recruitment</a>
-                </li>
-                <li>
-                    <a href="#">Operation</a>
+                    <a href="#">Employee</a>
                 </li>
                 <li class="active"> Medical Information List</li>
             </ul><!-- /.breadcrumb -->
  
         </div>
+        <!-- Display Erro/Success Message -->
+        @include('inc/message')
 
         <div class="page-content"> 
             <div class="panel panel-success">
               {{-- <div class="panel-heading"><h6>Medical Information List</h6></div>  --}}
                 <div class="panel-body">
+                         
+                    <div class=" medical_info">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <table id="dataTables" class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <!-- <th>Sl. No</th> -->
+                                    <th>Associate ID</th>
+                                    <th>Name</th>
+                                    <th>Height</th>
+                                    <th>Weight</th>
+                                    <th>Blood Group</th>
+                                    <th>Identification Mark</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                        </table>
+                        
 
-                    <div class="row">
-                         <!-- Display Erro/Success Message -->
-                            @include('inc/message')
-                        <div class="col-xs-12 medical_info">
-                            <!-- PAGE CONTENT BEGINS -->
-                            <table id="dataTables" class="table table-striped table-bordered">
-                                <thead>
-                                    <tr>
-                                        <!-- <th>Sl. No</th> -->
-                                        <th>Associate ID</th>
-                                        <th>Name</th>
-                                        <th>Height</th>
-                                        <th>Weight</th>
-                                        <th>Blood Group</th>
-                                        <th>Identification Mark</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                            </table>
-                            
-
-                            <!-- PAGE CONTENT ENDS -->
-                        </div>
-                        <!-- /.col -->
+                        <!-- PAGE CONTENT ENDS -->
                     </div>
                 </div>
             </div>
         </div><!-- /.page-content -->
     </div>
 </div>
-
+@push('js')
 <script type="text/javascript">
 $(document).ready(function(){ 
 
@@ -152,4 +127,5 @@ $(document).ready(function(){
     }); 
 });
 </script>
+@endpush
 @endsection
