@@ -14,7 +14,7 @@
     <p>১ । কারখানা/প্রতিষ্ঠানের নামঃ&nbsp;{{ (!empty($info->hr_unit_name_bn)?$info->hr_unit_name_bn:null) }}</p>
     <p>২ । কারখানা/প্রতিষ্ঠানের ঠিকানাঃ&nbsp;{{ (!empty($info->hr_unit_address_bn)?$info->hr_unit_address_bn:null) }}</p>
     <p>
-        <font style="width:250px">৩ । শ্রমিকের নাম ও ঠিকানাঃ</font>&nbsp;
+        <font style="width:250px">৩ । কর্মকর্তা/কর্মচারীর নাম ও ঠিকানাঃ</font>&nbsp;
         <font style="width:80%;border-bottom:1px dotted #999; display:inline-block">
             {{ (!empty($info->hr_bn_associate_name)?$info->hr_bn_associate_name:null) }} 
             ({{ (!empty($info->hr_bn_present_road)?"রোড নং-".$info->hr_bn_present_road:null) }},
@@ -95,7 +95,7 @@
             <tr>
                 <td width="45%" align="center">
                     মনোনীত ব্যক্তি বা ব্যক্তিদের নাম, ঠিকানা ও ছবি <br/>
-                    (নমিনীর ছবি ও স্বাক্ষর শ্রমিক কর্তৃক সত্যায়িত) <br/>
+                    (নমিনীর ছবি ও স্বাক্ষর কর্মকর্তা/কর্মচারী কর্তৃক সত্যায়িত) <br/>
                     এন আই ডি নং  
                 </td>
                 <td width="15%" align="center">সদস্যদের সহিত মনোনীত ব্যক্তিদের সম্পর্ক</td>
@@ -166,13 +166,13 @@
     <p style="margin:10px auto;text-align:justify;">প্রত্যয়ন করিতেছি যে, আমার উপস্থিতিতে জনাব/জনাবা <font style="width:160px;border-bottom:1px dotted #999; display:inline-block">{{ (!empty($info->hr_bn_associate_name)?$info->hr_bn_associate_name:null) }}&nbsp;</font> লিপিবদ্ধ বিবরণসমূহ পাঠ করিবার পর উক্ত ঘোষণা সাক্ষর করিয়াছেন। </p> 
     <p style="text-align:right;">
         <font style="width:30%;border-bottom:1px dotted #999; display:inline-block">&nbsp;</font><br/>
-        <font style="width:30%;display:inline-block;text-align:left">মনোনয়ন প্রদানকারী শ্রমিকের স্বাক্ষর, টিপসই ও তারিখ</font><br/>
+        <font style="width:30%;display:inline-block;text-align:left">মনোনয়ন প্রদানকারী কর্মকর্তা/কর্মচারীর স্বাক্ষর, টিপসই ও তারিখ</font><br/>
         <font style="width:30%;border-bottom:1px dotted #999; display:inline-block">&nbsp;</font>
     </p>
 
     <p style="text-align:left;">
         <font style="width:30%;border-top:1px dotted #999; display:inline-block;padding-top:10px">তারিখ সহ মনোনীত ব্যক্তিগণের স্বাক্ষর অথবা টিপসই <br/>
-        (শ্রমিক কর্তৃক সত্যায়িত ছবি)</font> 
+        (কর্মকর্তা/কর্মচারী কর্তৃক সত্যায়িত ছবি)</font> 
     </p> 
 
     <p style="text-align:right;">

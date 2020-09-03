@@ -76,10 +76,10 @@
                                 <br/>
 
 
-                                <p>১ । কারখানা/প্রতিষ্ঠানের নামঃ&nbsp;{{ (!empty($info->hr_unit_name_bn)?$info->hr_unit_name_bn:null) }}</p>
-                                <p><br/>২ । কারখানা/প্রতিষ্ঠানের ঠিকানাঃ&nbsp;{{ (!empty($info->hr_unit_address_bn)?$info->hr_unit_address_bn:null) }}</p>
+                                <p>১ । প্রতিষ্ঠানের নামঃ&nbsp;{{ (!empty($info->hr_unit_name_bn)?$info->hr_unit_name_bn:null) }}</p>
+                                <p><br/>২ । প্রতিষ্ঠানের ঠিকানাঃ&nbsp;{{ (!empty($info->hr_unit_address_bn)?$info->hr_unit_address_bn:null) }}</p>
                                 <p><br/>
-                                    <font style="width:250px">৩ । শ্রমিকের নাম ও ঠিকানাঃ</font>&nbsp;
+                                    <font style="width:250px">৩ । কর্মকর্তা/কর্মচারীর নাম ও ঠিকানাঃ</font>&nbsp;
                                     <font style="width:80%;border-bottom:1px dotted #999; display:inline-block">
                                         {{ (!empty($info->hr_bn_associate_name)?$info->hr_bn_associate_name:null) }} 
                                         ({{ (!empty($info->hr_bn_present_road)?"রোড নং-".$info->hr_bn_present_road:null) }},
@@ -153,14 +153,14 @@
                                     </font>
                                 </p> 
 
-                                <p style="margin:20px auto;text-align:justify;"><br><br><br>আমি এতদ্বারা ঘোষণা করিতেছি যে, আমার মৃত্যু হইলে বা আমার অবর্তমানে, আমার অনুকূলে জমা ও বিভিন্নখাতে প্রাপ্য টাকা গ্রহণের জন্য আমি নিন্মবর্ণিত ব্যক্তিকে/ব্যক্তিগণকে মনোনয়ন দান করিতেছি এবং নির্দেশ দিচ্ছি যে, উক্ত টাকা নিম্নবর্ণিত পদ্ধতিতে মনোনীত ব্যাক্তিদের মধ্যে বন্টন করিতে হইবেঃ</p>
+                                <p style="text-align:justify;"><br>আমি এতদ্বারা ঘোষণা করিতেছি যে, আমার মৃত্যু হইলে বা আমার অবর্তমানে, আমার অনুকূলে জমা ও বিভিন্নখাতে প্রাপ্য টাকা গ্রহণের জন্য আমি নিন্মবর্ণিত ব্যক্তিকে/ব্যক্তিগণকে মনোনয়ন দান করিতেছি এবং নির্দেশ দিচ্ছি যে, উক্ত টাকা নিম্নবর্ণিত পদ্ধতিতে মনোনীত ব্যাক্তিদের মধ্যে বন্টন করিতে হইবেঃ</p>
 
                                 <table style="font-size:9px" align="center" width="100%" border="1" cellspacing="0" cellpadding="4">
                                     <thead>
                                         <tr>
                                             <td width="45%" align="center">
                                                 মনোনীত ব্যক্তি বা ব্যক্তিদের নাম, ঠিকানা ও ছবি <br/>
-                                                (নমিনীর ছবি ও স্বাক্ষর শ্রমিক কর্তৃক সত্যায়িত) <br/>
+                                                (নমিনীর ছবি ও স্বাক্ষর কর্মকর্তা/কর্মচারী কর্তৃক সত্যায়িত) <br/>
                                                 এন আই ডি নং  
                                             </td>
                                             <td width="15%" align="center">সদস্যদের সহিত মনোনীত ব্যক্তিদের সম্পর্ক</td>
@@ -234,13 +234,13 @@
                                 <p style="text-align:right;">
                                     <br/>
                                     <font style="width:30%;border-bottom:1px dotted #999; display:inline-block">&nbsp;</font><br/><br/>
-                                    <font style="width:30%;display:inline-block;text-align:left">মনোনয়ন প্রদানকারী শ্রমিকের স্বাক্ষর, টিপসই ও তারিখ</font><br/>
+                                    <font style="width:30%;display:inline-block;text-align:left">মনোনয়ন প্রদানকারী কর্মকর্তা/কর্মচারীর স্বাক্ষর, টিপসই ও তারিখ</font><br/>
                                     <font style="width:30%;border-bottom:1px dotted #999; display:inline-block">&nbsp;</font>
                                 </p>
 
                                 <p style="text-align:left;">
                                     <font style="width:30%;border-top:1px dotted #999; display:inline-block;padding-top:10px">তারিখ সহ মনোনীত ব্যক্তিগণের স্বাক্ষর অথবা টিপসই <br/>
-                                    (শ্রমিক কর্তৃক সত্যায়িত ছবি)</font> 
+                                    (কর্মকর্তা/কর্মচারী কর্তৃক সত্যায়িত ছবি)</font> 
                                 </p> 
 
                                 <p style="text-align:right;">

@@ -14,7 +14,7 @@ body { font-family: 'bangla', sans-serif;}
         <h3 style="text-align:center"><u style="font-weight: bold;" >নিরাপত্তা বিষয়ক তথ্য যাচাই ফরম</u></h3>
         <h4 style="text-align:center"><u style="" >(Background Verification Form)</u></h4>
         <p style="font-size: 12px; font-weight: bold;">ক.  ব্যক্তিগত তথ্য (Personal Information):</p>
-        <p> <font style="width:14%;display:inline-block">১. কর্মীর আই.ডি</font><font style="width:12%;border-bottom:1px dotted #999; display:inline-block">:&nbsp; {{ (!empty($info->associate_id)?$info->associate_id:null) }}
+        <p> <font style="width:14%;display:inline-block">১. কর্মকর্তা/কর্মচারীর আই.ডি</font><font style="width:12%;border-bottom:1px dotted #999; display:inline-block">:&nbsp; {{ (!empty($info->associate_id)?$info->associate_id:null) }}
             </font>পদবীঃ<font style="width:25%;border-bottom:1px dotted #999; display:inline-block">&nbsp; {{ (!empty($info->hr_designation_name_bn)?$info->hr_designation_name_bn:null) }}
             </font>সেকশনঃ<font style="width:14%;border-bottom:1px dotted #999; display:inline-block">&nbsp; {{ (!empty($info->hr_section_name_bn)?$info->hr_section_name_bn:null) }}
             </font>যোগদানের তারিখঃ<font style="width:11%;border-bottom:1px dotted #999; display:inline-block">&nbsp;{{ (!empty($info->as_doj)?str_replace($en,$bn, date("d-m-Y", strtotime($info->as_doj))):null) }}
@@ -164,7 +164,7 @@ body { font-family: 'bangla', sans-serif;}
             <font style="width:40%;border-bottom:1px dotted #999; display:inline-block">&nbsp;
             </font>
         </p>
-        <p><font style="font-weight: bold;">যাচাইকারী অফিসারের মন্তব্যঃ </font>উপরোক্ত কর্মীর আবেদন পত্রে প্রদত্ত তথ্য সমূহ, রেফারেন্স হিসাবে উল্লেখিত ব্যক্তিদ্বয়ের মাধ্যমে যথাযথ ভাবে যাচাই করিয়া তথ্যের সত্যতা পাওয়া গিয়েছে/ পাওয়া যায় নাই।</p>
+        <p><font style="font-weight: bold;">যাচাইকারী অফিসারের মন্তব্যঃ </font>উপরোক্ত কর্মকর্তা/কর্মচারীর আবেদন পত্রে প্রদত্ত তথ্য সমূহ, রেফারেন্স হিসাবে উল্লেখিত ব্যক্তিদ্বয়ের মাধ্যমে যথাযথ ভাবে যাচাই করিয়া তথ্যের সত্যতা পাওয়া গিয়েছে/ পাওয়া যায় নাই।</p>
     </div>
 </div>
 
