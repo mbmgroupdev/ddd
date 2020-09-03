@@ -1,7 +1,7 @@
 <?php
 namespace App\Helpers;
 
-use App\Models\Hr\Employee;
+use App\Models\Employee;
 use App\Models\Hr\Location;
 use App\Models\Hr\SalaryAdjustMaster;
 use App\Models\Hr\Unit;

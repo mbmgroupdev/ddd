@@ -54,16 +54,16 @@ class HrMonthlySalary extends Model
 
     public function salary_add_deduct()
     {
-    	return $this->belongsTo('App\Models\Hr\Employee', 'as_id', 'associate_id');
+    	return $this->belongsTo('App\Models\Employee', 'as_id', 'associate_id');
     }
     public function activeEmployee()
     {
-    	return $this->belongsTo('App\Models\Hr\Employee', 'as_id', 'associate_id')->where('as_status', 5);
+    	return $this->belongsTo('App\Models\Employee', 'as_id', 'associate_id')->where('as_status', 5);
     }
 
     public function employee()
     {
-        return $this->belongsTo('App\Models\Hr\Employee', 'as_id', 'associate_id');
+        return $this->belongsTo('App\Models\Employee', 'as_id', 'associate_id');
     }
 
     public function employee_bengali()

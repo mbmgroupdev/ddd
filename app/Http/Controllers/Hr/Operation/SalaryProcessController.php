@@ -50,28 +50,21 @@ class SalaryProcessController extends Controller
     	$input['year'] = date('Y', strtotime($input['month_year']));
     	// return $input;
     	try {
-            // $salaryStatus = SalaryAudit::checkSalaryAuditStatus($input);
-            // $url = 'hr/monthly-salary-audit?month='.$input['month_year'].'&unit='.$input['unit'];
-            // $link = '';
-            // if(Auth::user()->can('Hr Salary Generate') || Auth::user()->can('Salary Audit') || Auth::user()->can('Accounts Salary Verify') || Auth::user()->can('Management Salary Audit')){
-            //     $link = '<a href="'.url($url).'" class="btn btn-sm btn-success"><i class="fa fa-check"> </i>Check & Confirm</a>';
-            // }
-            // if($salaryStatus == null){
-                
-            //     return '<div class="text-center"><h2>'.$input['month_year'].' Monthly Salary Not Generate!</h2>'.$link.'</div>';
+            $audit = 1;
+            $salaryStatus = SalaryAudit::checkSalaryAuditStatus($input);
+            
+            if($salaryStatus == null){
+                $audit = 0;
+            }else{
+                if($salaryStatus->initial_audit == null || $salaryStatus->accounts_audit == null || $salaryStatus->management_audit == null){
+                    $audit = 0;
+                }
+            }
+            
+            if($audit == 0){
+                return view('hr.operation.salary.aduit_status', compact('salaryStatus', 'input'));
+            }
 
-            // }
-            // if($salaryStatus->initial_audit == null || $salaryStatus->accounts_audit == null || $salaryStatus->management_audit == null){
-            //     if($salaryStatus->initial_audit == null){
-            //         return '<div class="text-center"><h2>'.$input['month_year'].' Monthly Salary Audit Department Not Completed!</h2>'.$link.'</div>';
-            //     }elseif($salaryStatus->accounts_audit == null){
-            //         return '<div class="text-center"><h2>'.$input['month_year'].' Monthly Salary Accounts Audit Not Completed!</h2>'.$link.'</div>';
-            //     }elseif($salaryStatus->management_audit == null){
-            //         return '<div class="text-center"><h2>'.$input['month_year'].' Monthly Salary Management Audit Not Completed!</h2>'.$link.'</div>';
-            //     }else{
-            //         return 'Something Wrong!';
-            //     }
-            // }
             $getUnit = Unit::getUnitNameBangla($input['unit']);
     		$info = [];
             if(isset($input['area'])){
