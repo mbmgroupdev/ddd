@@ -509,4 +509,20 @@ class DailyActivityReportController extends Controller
         $absentData = $queryData->pluck('emp.as_id')->toArray();
         return $absentData;
     }
+
+    public function attendanceAudit(Request $request)
+    {
+        $input = $request->all();
+        if($input['date'] != null && $input['unit'] != null){
+            $unitList  = Unit::where('hr_unit_status', '1')
+            ->whereIn('hr_unit_id', auth()->user()->unit_permissions())
+            ->pluck('hr_unit_name', 'hr_unit_id');
+            $areaList  = DB::table('hr_area')->where('hr_area_status', '1')->pluck('hr_area_name', 'hr_area_id');
+        
+            return view('hr/reports/daily_activity/attendance/audit', compact('unitList','areaList','input'));
+        }else{
+            toastr()->error('Something Wrong!');
+            return back();
+        }
+    }
 }

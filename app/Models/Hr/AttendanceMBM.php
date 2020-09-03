@@ -13,7 +13,7 @@ class AttendanceMBM extends Model
 
     public function employee()
     {
-    	return $this->belongsTo('App\Models\Hr\Employee', 'as_id', 'as_id');
+    	return $this->belongsTo('App\Models\Employee', 'as_id', 'as_id');
     }
 
     public function shift()
