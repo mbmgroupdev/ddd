@@ -1,20 +1,15 @@
 @extends('hr.layout')
-@section('title', 'Daily Attendance')
+@section('title', 'Daily Attendance Audit')
 @push('css')
    <link rel="stylesheet" href="{{ asset('assets/css/reports.css')}}">
 @endpush
 @section('main-content')
 @push('css')
-<style type="text/css">
-
-    @media only screen and (max-width: 771px) {
-        .background_field{width: 100% !important;}
+  <style>
+    .single-employee-search {
+      margin-top: 100px !important;
     }
-
-    @media only screen and (max-width: 771px) {
-            .background_div{width: 100% !important;}
-    }
-</style>
+  </style>
 @endpush
 <div class="main-content">
     <div class="main-content-inner">
@@ -27,7 +22,7 @@
                 <li>
                     <a href="#">Reports</a>
                 </li>
-                <li class="active"> Daily Attendance</li>
+                <li class="active"> Daily Attendance Audit</li>
             </ul>
         </div>
 
@@ -36,9 +31,7 @@
                 <div class="col-12">
                     <form class="" role="form" id="activityReport" method="get" action="#"> 
                         <div class="panel">
-                            <div class="panel-heading">
-                                <h6>Daily Attendance Report</h6>
-                            </div>
+                            
                             <div class="panel-body">
                                 <div class="row">
                                     <div class="col-3">
@@ -46,7 +39,7 @@
                                             <select name="unit" class="form-control capitalize select-search" id="unit" required="">
                                                 <option selected="" value="">Choose...</option>
                                                 @foreach($unitList as $key => $value)
-                                                <option value="{{ $key }}">{{ $value }}</option>
+                                                <option value="{{ $key }}" @if($input['unit'] == $key) selected @endif>{{ $value }}</option>
                                                 @endforeach
                                             </select>
                                           <label for="unit">Unit</label>
@@ -104,8 +97,8 @@
                                         </div>
                                         <div class="form-group has-float-label select-search-group">
                                             <select name="report_format" class="form-control capitalize select-search" id="reportformat" >
-                                                <option value="0">Details</option>
-                                                <option value="1" selected>Summary</option>
+                                                <option value="0" selected>Details</option>
+                                                <option value="1">Summary</option>
                                             </select>
                                             <label for="reportformat">Report Format</label>
                                         </div>
@@ -116,7 +109,7 @@
                                                 $reportType = ['absent'=>'Absent', 'before_absent_after_present'=>'Before Absent After Present','leave'=>'Leave','ot'=>'OT', 'working_hour'=>'Working Hour', 'late'=>'Late'];
                                                 //$reportType = ['attendance'=>'Attendance', 'absent'=>'Absent', 'before_absent_after_present'=>'Before Absent After Present','leave'=>'Leave','ot'=>'OT', 'working_hour'=>'Working Hour', 'late'=>'Late'];
                                             ?>
-                                            {{ Form::select('report_type', $reportType, null, ['placeholder'=>'Select Report Type ', 'class'=>'form-control capitalize select-search', 'id'=>'reportType']) }}
+                                            {{ Form::select('report_type', $reportType, $input['report_type']??'', ['placeholder'=>'Select Report Type ', 'class'=>'form-control capitalize select-search', 'id'=>'reportType']) }}
                                             <label for="reportType">Report Type</label>
                                         </div>
                                         <div class="form-group has-float-label select-search-group">
@@ -128,7 +121,7 @@
                                         </div>
                                         <div id="single-date">
                                           <div class="form-group has-float-label has-required">
-                                            <input type="date" class="report_date datepicker form-control" id="report-date" name="date" placeholder="Y-m-d" required="required" value="{{ date('Y-m-d') }}" autocomplete="off" />
+                                            <input type="date" class="report_date datepicker form-control" id="report-date" name="date" placeholder="Y-m-d" required="required" value="{{ $input['date']??date('Y-m-d') }}" autocomplete="off" />
                                             <label for="report-date">Date</label>
                                           </div>
                                         </div>
@@ -136,13 +129,13 @@
                                           <div class="row">
                                             <div class="col pr-0">
                                                 <div class="form-group has-float-label has-required">
-                                                    <input type="date" class="report_date datepicker form-control" id="present_date" name="present_date" placeholder="Y-m-d" required="required" value="{{ date('Y-m-d') }}" autocomplete="off" />
+                                                    <input type="date" class="report_date datepicker form-control" id="present_date" name="present_date" placeholder="Y-m-d" required="required" value="{{ $input['date']??date('Y-m-d') }}" autocomplete="off" />
                                                     <label for="present_date">Present Date</label>
                                                 </div>
                                             </div>
                                             <div class="col">
                                                 <div class="form-group has-float-label has-required">
-                                                    <input type="date" class="report_date datepicker form-control" id="absent_date" name="absent_date" placeholder="Y-m-d" required="required" value="{{ date('Y-m-d', strtotime('-1 day')) }}" autocomplete="off" />
+                                                    <input type="date" class="report_date datepicker form-control" id="absent_date" name="absent_date" placeholder="Y-m-d" required="required" value="{{ date('Y-m-d', strtotime('-1 day', strtotime($input['date'])))??date('Y-m-d', strtotime('-1 day')) }}" autocomplete="off" />
                                                     <label for="absent_date">Absent Date</label>
                                                 </div>
                                             </div>
@@ -169,7 +162,16 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <div class="result-data" id="result-data"></div>
+                  <div class="iq-card">
+                    <div class="iq-card-header d-flex justify-content-between">
+                       <div class="iq-header-title">
+                          <h4 class="card-title text-center">Report</h4>
+                       </div>
+                    </div>
+                    <div class="iq-card-body no-padding">
+                      <div class="result-data" id="result-data"></div>
+                    </div>
+                  </div>
                 </div>
             </div>
         </div><!-- /.page-content -->
@@ -178,13 +180,20 @@
 @push('js')
 <script src="{{ asset('assets/js/moment.min.js')}}"></script>
 <script type="text/javascript">
-    $(document).ready(function(){   
+    $(document).ready(function(){
+      @if($input['date'] != null && $input['unit'] != null)
+        activityProcess();
+      @endif  
         var loader = '<div class="panel"><div class="panel-body"><p style="text-align:center;margin:100px;"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>';
         $('#activityReport').on('submit', function(e) {
+          e.preventDefault();
+          activityProcess();
+        });
+
+        function activityProcess() {
           $("#result-data").html(loader);
           $("#single-employee-search").hide();
-          e.preventDefault();
-          var url = '';
+          
           var unit = $('select[name="unit"]').val();
           var area = $('select[name="area"]').val();
           var date = $('input[name="date"]').val();
@@ -234,7 +243,7 @@
             console.log('required');
             $("#result-data").html('');
           }
-        });
+        }
         // change from data action
         $('#present_date').on('change', function() {
           var before = 1 ;
@@ -347,7 +356,7 @@
           }else{
             $("#reportGroup option[value='ot_hour']").remove();
           }
-          var date = "{{ date('Y-m-d') }}";
+          var date = "{{ $input['date']??date('Y-m-d') }}";
           if(type == 'ot' || type == 'working_hour'){
             date = "{{ date('Y-m-d', strtotime('-1 day')) }}";
           }

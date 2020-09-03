@@ -3,6 +3,36 @@
 @push('css')
   
   <link rel="stylesheet" href="{{ asset('assets/css/recruitment.css')}}">
+  <style>
+    #recruit th:nth-child(2) input{
+      width: 100px !important;
+    }
+    #recruit th:nth-child(3) input{
+      width: 80px !important;
+    }
+    #recruit th:nth-child(4) input{
+      width: 65px !important;
+    }
+    #recruit th:nth-child(5) input{
+      width: 90px !important;
+    }
+    #recruit th:nth-child(6) input{
+      width:120px !important;
+    }
+    #recruit th:nth-child(7) input{
+      width: 100px !important;
+    }
+    #recruit th:nth-child(8) input{
+      width: 100px !important;
+    }
+    
+    /*table.dataTable {
+      border-spacing: 1px;
+    }
+    .badge {
+      font-size: 100%;
+    }*/
+  </style>
 @endpush
 @section('main-content')
    <div class="row">
@@ -14,7 +44,7 @@
                </div>
             </div>
             <div class="iq-card-body">
-               <table id="recruit" class="table table-hover table-borderd table-responsive">
+               <table id="recruit" class="table table-striped table-bordered table-head table-responsive w-100">
                   <thead>
                      <tr>
                         <th width="5%">Sl</th>

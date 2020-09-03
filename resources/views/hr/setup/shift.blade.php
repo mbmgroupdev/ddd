@@ -25,7 +25,8 @@
                 <div class="panel-heading">
                     <h6>
                         Shift
-                        <a class="btn btn-primary pull-right" href="#list">Shift List</a>
+                        <a class="btn btn-success ml-3 pull-right" href="{{ url('hr/operation/shift_assign') }}"><i class="fa fa-list"></i> Shift List</a>
+                        <a class="btn btn-primary pull-right" href="#list"><i class="fa fa-users"></i> Shift Assign</a>
                     </h6>
                 </div> 
                 <div class="panel-body">
