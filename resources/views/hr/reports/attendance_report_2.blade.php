@@ -140,22 +140,16 @@
     }
 
 
-    function printMe(divName) {
-        var style_sheet = '' +
-        '<style type="text/css">' +
-        'h4 {' +
-            'text-align:left; page-break-before: always; padding:0.2em; margin-bottom: 30px;'
-        '}' +
-        '</style>';
+    function printMe(el)
+    { 
         var myWindow=window.open('','','width=800,height=800');
-        myWindow.document.write(style_sheet);
-        myWindow.document.write(document.getElementById(divName).innerHTML);
-        myWindow.document.close();
+        myWindow.document.write('<html><head></head><body style="font-size:10px;">');
+        myWindow.document.write(document.getElementById(el).innerHTML);
+        myWindow.document.write('</body></html>');
         myWindow.focus();
         myWindow.print();
         myWindow.close();
     }
-
     $(document).on("click",'#report', function(){ 
         var unit = $('#unit').val(),
             date = $('#date').val(),
@@ -190,9 +184,7 @@
     });
 
 
-    function attLocation(loc){
-        window.location = loc;
-    }
+    
 
 </script>
 @endpush

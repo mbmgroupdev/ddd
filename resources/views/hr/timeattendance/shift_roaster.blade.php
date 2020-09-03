@@ -119,65 +119,63 @@
                 </div>
                 <!-- /.col -->
             </div>
-            <div class="row">
-                <div class="col">
-                  <div class="col-xs-12 worker-list d-table hide">
-                    <ul class="color-bar">
-                       <li><span class="color-label lib-roster"></span><span class="lib-label"> Change Shift</span></li>
-                       <li><span class="color-label lib-default"></span><span class="lib-label">  Default Shift</span></li>
-                       <li><span class="color-label lib-roster-holiday"></span><span class="lib-label"> Roster (Day Off)</span></li>
-                       <li><span class="color-label lib-roster-general"></span><span class="lib-label"> Roster (General)</span></li>
-                       <li><span class="color-label lib-roster-ot"></span><span class="lib-label"> Roster (OT)</span></li>
-                       <li><span class="color-label lib-holiday"></span><span class="lib-label"> Holiday/Weekend</span></li>
-                       <li><span class="color-label lib-ot"></span><span class="lib-label"> OT</span></li>
-                    </ul>
-                    <table id="dataTablesShift" class="table table-bordered table-striped" style="width: 100%; overflow-x: auto; display: block; ">
-                        <thead>
-                            <tr>
-                                <th>Id</th>
-                                <th>Name</th>
-                                <th>Associate Id</th>
-                                <th>Designation</th>
-                                <th>Line</th>
-                                <th>Floor</th>
-                                <th>Day 1</th>
-                                <th>Day 2</th>
-                                <th>Day 3</th>
-                                <th>Day 4</th>
-                                <th>Day 5</th>
-                                <th>Day 6</th>
-                                <th>Day 7</th>
-                                <th>Day 8</th>
-                                <th>Day 9</th>
-                                <th>Day 10</th>
-                                <th>Day 11</th>
-                                <th>Day 12</th>
-                                <th>Day 13</th>
-                                <th>Day 14</th>
-                                <th>Day 15</th>
-                                <th>Day 16</th>
-                                <th>Day 17</th>
-                                <th>Day 18</th>
-                                <th>Day 19</th>
-                                <th>Day 20</th>
-                                <th>Day 21</th>
-                                <th>Day 22</th>
-                                <th>Day 23</th>
-                                <th>Day 24</th>
-                                <th>Day 25</th>
-                                <th>Day 26</th>
-                                <th>Day 27</th>
-                                <th>Day 28</th>
-                                <th>Day 29</th>
-                                <th>Day 30</th>
-                                <th>Day 31</th>
-                            </tr>
-                        <thead>
-                        <tbody></tbody>
-                    </table>
-                  </div>
-                   
-                </div>
+            <div class="panel">
+               <div class="panel-body worker-list">
+                 <ul class="color-bar mb-3">
+                    <li><span class="color-label lib-roster"></span><span class="lib-label"> Change Shift</span></li>
+                    <li><span class="color-label lib-default"></span><span class="lib-label">  Default Shift</span></li>
+
+                    <li><span class="color-label lib-roster-holiday"></span><span class="lib-label"> Roster (Day Off)</span></li>
+                    <li><span class="color-label lib-roster-general"></span><span class="lib-label"> Roster (General)</span></li>
+                    <li><span class="color-label lib-roster-ot"></span><span class="lib-label"> Roster (OT)</span></li>
+                    <li><span class="color-label lib-holiday"></span><span class="lib-label"> Holiday/Weekend</span></li>
+                    <li><span class="color-label lib-ot"></span><span class="lib-label"> OT</span></li>
+                 </ul>
+                 <table id="dataTablesShift" class="table table-bordered table-striped" style="width: 100%; overflow-x: auto; display: block; ">
+                     <thead>
+                         <tr>
+                             <th>Id</th>
+                             <th>Name</th>
+                             <th>Associate Id</th>
+                             <th>Designation</th>
+                             <th>Line</th>
+                             <th>Floor</th>
+                             <th>Day 1</th>
+                             <th>Day 2</th>
+                             <th>Day 3</th>
+                             <th>Day 4</th>
+                             <th>Day 5</th>
+                             <th>Day 6</th>
+                             <th>Day 7</th>
+                             <th>Day 8</th>
+                             <th>Day 9</th>
+                             <th>Day 10</th>
+                             <th>Day 11</th>
+                             <th>Day 12</th>
+                             <th>Day 13</th>
+                             <th>Day 14</th>
+                             <th>Day 15</th>
+                             <th>Day 16</th>
+                             <th>Day 17</th>
+                             <th>Day 18</th>
+                             <th>Day 19</th>
+                             <th>Day 20</th>
+                             <th>Day 21</th>
+                             <th>Day 22</th>
+                             <th>Day 23</th>
+                             <th>Day 24</th>
+                             <th>Day 25</th>
+                             <th>Day 26</th>
+                             <th>Day 27</th>
+                             <th>Day 28</th>
+                             <th>Day 29</th>
+                             <th>Day 30</th>
+                             <th>Day 31</th>
+                         </tr>
+                     <thead>
+                     <tbody></tbody>
+                 </table>
+               </div>
             </div>
         </div><!-- /.page-content -->
     </div>
@@ -187,16 +185,13 @@
 
 <script src="{{ asset('assets/js/moment.min.js') }}"></script>
 <script src="{{ asset('plugins/DataTables/datatables.min.js') }}"></script>
-{{-- <script src="{{ asset('assets/js/dataTables.cellEdit.js') }}"></script> --}}
+<script src="{{ asset('assets/js/dataTables.cellEdit.js') }}"></script>
 <script type="text/javascript">
   function getCellId(iteration){
       return 5+iteration;
   }
 
     $(document).ready(function(){  
-        var loader = '<div class="panel"><div class="panel-body"><p style="text-align:center;margin:100px;"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>';
-        
-        // change unit
         $('#unit').on("change", function(){
             $.ajax({
                 url : "{{ url('hr/attendance/floor_by_unit') }}",
@@ -294,247 +289,246 @@
                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
             }
         });
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            }
-        });
 
-        var searchable = [];
-        var selectable = []; //use 4,5,6,7,8,9,10,11,....and * for all
-        var dropdownList = {};
-        var td = 0;
-        var datatable = $('#dataTablesShift').DataTable({
-            order: [], //reset auto order
-            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
-            processing: true,
-            responsive: false,
-            serverSide: true,
-            cache: false,
-            language: {
-              processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span> '
-            },
-            scroller: {
-              loadingIndicator: false
-            },
-            pagingType: "full_numbers",
-            ajax: {
-              url: '{!! url('hr/timeattendance/shift_roaster_datatable') !!}',
-              beforeSend: function(){
-                // Here, manually add the loading message.
-                $('#dataTablesShift > tbody').html(
-                  '<div class="row"><div class="col-sm-12 text-center"><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span></div></div>'
-                );
-              },
-              data: function (d) {
-                d.month         = $('#month').val(),
-                // d.year          = $('#year').val(),
-                d.unit          = $('#unit').val(),
-                d.otnonot       = $('#otnonot').val(),
-                d.floor_id      = $("#floor_id").val(),
-                d.line_id       = $("#line_id").val(),
-                d.area          = $("#area").val(),
-                d.department    = $("#department").val(),
-                d.section       = $("#section").val(),
-                d.subsection    = $("#subsection").val(),
-                d.emptype       = $("select[name=emp_type]").val()
-              },
-              type: "get",
-              headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-              }
-            },
 
-            dom: "<'row'<'col-sm-2'l><'col-sm-4'i><'col-sm-3 text-center'B><'col-sm-3'f>>tp",
-            buttons: [
-              {
-                extend: 'copy',
-                className: 'btn-sm btn-info text-center',
-                exportOptions: {
-                  columns: ':visible'
-                }
-              },
-              {
-                extend: 'csv',
-                className: 'btn-sm btn-success',
-                exportOptions: {
-                  columns: ':visible'
-                }
-              },
-              {
-                extend: 'excel',
-                className: 'btn-sm btn-warning',
-                exportOptions: {
-                  columns: ':visible'
-                }
-              },
-              {
-                extend: 'pdf',
-                className: 'btn-sm btn-primary',
-                exportOptions: {
-                  columns: ':visible'
-                }
-              }
-            ],
 
-            columns: [
-              { data: 'DT_RowIndex', name: 'DT_RowIndex' },
-              { data: 'name', name: 'name' },
-              { data: 'associate', name: 'associate' },
-              { data: 'designation', name: 'designation' },
-              { data: 'line', name: 'line' },
-              { data: 'floor', name: 'floor' },
-              { data: 'day_1', name: 'day_1' },
-              { data: 'day_2', name: 'day_2' },
-              { data: 'day_3', name: 'day_3' },
-              { data: 'day_4', name: 'day_4' },
-              { data: 'day_5', name: 'day_5' },
-              { data: 'day_6', name: 'day_6' },
-              { data: 'day_7', name: 'day_7' },
-              { data: 'day_8', name: 'day_8' },
-              { data: 'day_9', name: 'day_9' },
-              { data: 'day_10', name: 'day_10' },
-              { data: 'day_11', name: 'day_11' },
-              { data: 'day_12', name: 'day_12' },
-              { data: 'day_13', name: 'day_13' },
-              { data: 'day_14', name: 'day_14' },
-              { data: 'day_15', name: 'day_15' },
-              { data: 'day_16', name: 'day_16' },
-              { data: 'day_17', name: 'day_17' },
-              { data: 'day_18', name: 'day_18' },
-              { data: 'day_19', name: 'day_19' },
-              { data: 'day_20', name: 'day_20' },
-              { data: 'day_21', name: 'day_21' },
-              { data: 'day_22', name: 'day_22' },
-              { data: 'day_23', name: 'day_23' },
-              { data: 'day_24', name: 'day_24' },
-              { data: 'day_25', name: 'day_25' },
-              { data: 'day_26', name: 'day_26' },
-              { data: 'day_27', name: 'day_27' },
-              { data: 'day_28', name: 'day_28' },
-              { data: 'day_29', name: 'day_29' },
-              { data: 'day_30', name: 'day_30' },
-              { data: 'day_31', name: 'day_31' }
-            ],
-
-            rowCallback: function(row, data, index){
-                console.log(data);
-                for(var i=1; i<=31; i++){
-                    // get row cell id
-                    td = getCellId(i);
-                    if((data['day_'+i]!=null && data['day_'+i].indexOf('Weekend') != -1) || (data['day_'+i]!=null && data['day_'+i].indexOf('Holiday') != -1) ||  typeof data['hPlanner'+i] != "undefined"){
-                        if(data['hRoster'+i]) {
-                            // roster data found
-                            if(data['hRoster'+i]!=null && data['hRoster'+i].indexOf('Holiday') != -1) {
-                                $(row).find('td:eq('+td+')').css({'background-color': '#e17055', 'color': '#fff', 'font-weight': 'bold'});
-                            }
-                            if(data['hRoster'+i]!=null && data['hRoster'+i].indexOf('General') != -1) {
-                                $(row).find('td:eq('+td+')').css({'background-color': '#16a085', 'color': '#fff', 'font-weight': 'bold'});
-                            }
-                            if(data['hRoster'+i]!=null && data['hRoster'+i].indexOf('OT') != -1) {
-                                $(row).find('td:eq('+td+')').css({'background-color': '#f39c12', 'color': '#fff', 'font-weight': 'bold'});
-                            }
-                        } else {
-                            // set cell color red
-                            $(row).find('td:eq('+td+')').css({'background-color': '#dc3545', 'color': '#fff', 'font-weight': 'bold'});
-                        }
-                    } else if(data['day_'+i]!=null && data['day_'+i].indexOf('OT') != -1) {
-                        // set cell color orange
-                        $(row).find('td:eq('+td+')').css({'background-color': '#ffc107', 'color': '#fff', 'font-weight': 'bold'});
-                    } else if(data['day_'+i]) {
-                        if(data['defaultDay'+i]) {
-                            if(data['hRoster'+i]) {
-                                // roster data found
-                                if(data['hRoster'+i]!=null && data['hRoster'+i].indexOf('Holiday') != -1) {
-                                    $(row).find('td:eq('+td+')').css({'background-color': '#e17055', 'color': '#fff', 'font-weight': 'bold'});
-                                }
-                                if(data['hRoster'+i]!=null && data['hRoster'+i].indexOf('General') != -1) {
-                                    $(row).find('td:eq('+td+')').css({'background-color': '#16a085', 'color': '#fff', 'font-weight': 'bold'});
-                                }
-                                if(data['hRoster'+i]!=null && data['hRoster'+i].indexOf('OT') != -1) {
-                                    $(row).find('td:eq('+td+')').css({'background-color': '#f39c12', 'color': '#fff', 'font-weight': 'bold'});
-                                }
-                            } else {
-                                // default shift day
-                                $(row).find('td:eq('+td+')').css({'font-weight': 'bold'});
-                            }
-                        } else {
-                            if(data['hRoster'+i]) {
-                                // roster data found
-                                if(data['hRoster'+i]!=null && data['hRoster'+i].indexOf('Holiday') != -1) {
-                                    $(row).find('td:eq('+td+')').css({'background-color': '#e17055', 'color': '#fff', 'font-weight': 'bold'});
-                                }
-                                if(data['hRoster'+i]!=null && data['hRoster'+i].indexOf('General') != -1) {
-                                    $(row).find('td:eq('+td+')').css({'background-color': '#16a085', 'color': '#fff', 'font-weight': 'bold'});
-                                }
-                                if(data['hRoster'+i]!=null && data['hRoster'+i].indexOf('OT') != -1) {
-                                    $(row).find('td:eq('+td+')').css({'background-color': '#f39c12', 'color': '#fff', 'font-weight': 'bold'});
-                                }
-                            } else {
-                                // roster shift day
-                                // set cell color green
-                                $(row).find('td:eq('+td+')').css({'background-color': '#28a745', 'color': '#fff', 'font-weight': 'bold'});
-                            }
-                        }
-                    }
-                }
-            },
-
-            createdRow: function( row, data, dataIndex ) {
-                for(var i=7; i<=37; i++){
-                    $(row).children(':nth-child('+i+')').addClass('tr_eachrow');
-                }
-            },
-
-            initComplete: function () {
-              var api =  this.api();
-
-              // Apply the search
-              api.columns(searchable).every(function () {
-                var column = this;
-                var input = document.createElement("input");
-                input.setAttribute('placeholder', $(column.header()).text());
-
-                $(input).appendTo($(column.header()).empty())
-                .on('keyup', function () {
-
-                  column.search($(this).val(), false, false, true).draw();
-                });
-
-                $('input', this.column(column).header()).on('click', function(e) {
-                  e.stopPropagation();
-                });
-              });
-
-              // each column select list
-              api.columns(selectable).every( function (i, x) {
-                var column = this;
-
-                var select = $('<select><option value="">'+$(column.header()).text()+'</option></select>')
-                .appendTo($(column.header()).empty())
-                .on('change', function(e){
-                  var val = $.fn.dataTable.util.escapeRegex(
-                    $(this).val()
-                  );
-                  column.search(val ? val : '', true, false ).draw();
-                  e.stopPropagation();
-                });
-
-                // column.data().unique().sort().each( function ( d, j ) {
-                // if(d) select.append('<option value="'+d+'">'+d+'</option>' )
-                // });
-                $.each(dropdownList[i], function(j, v) {
-                  select.append('<option value="'+v+'">'+v+'</option>')
-                });
-              });
-            }
-        });
 
         $('#shiftRoasterForm').on('submit', function(e) {
             e.preventDefault();
+            $('.app-loader').show();
             if($('#unit').val()) {
                 $(".d-table").removeClass('hide');
-                datatable.draw();
+                /*datatable.draw();*/
+                
+              var searchable = [];
+              var selectable = []; 
+              var dropdownList = {};
+              var td = 0;
+              var datatable = $('#dataTablesShift').DataTable({
+                  order: [], //reset auto order
+                  lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                  processing: true,
+                  responsive: false,
+                  serverSide: true,
+                  cache: false,/*
+                  language: {
+                    processing: function(){
+                        $('.app-loader').html();
+                    },
+                  },*/
+                  scroller: {
+                    loadingIndicator: false
+                  },
+                  pagingType: "full_numbers",
+                  ajax: {
+                    url: '{!! url('hr/timeattendance/shift_roaster_datatable') !!}',
+                    beforeSend: function(){
+                        //$('.app-loader').show();
+                    },
+                    data: function (d) {
+                      d.month         = $('#month').val(),
+                      // d.year          = $('#year').val(),
+                      d.unit          = $('#unit').val(),
+                      d.otnonot       = $('#otnonot').val(),
+                      d.floor_id      = $("#floor_id").val(),
+                      d.line_id       = $("#line_id").val(),
+                      d.area          = $("#area").val(),
+                      d.department    = $("#department").val(),
+                      d.section       = $("#section").val(),
+                      d.subsection    = $("#subsection").val(),
+                      d.emptype       = $("select[name=emp_type]").val()
+                    },
+                    type: "get",
+                    headers: {
+                      'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                  },
+
+                  dom: "lBftrip",
+                  buttons: [
+                    {
+                      extend: 'copy',
+                      className: 'btn-sm btn-info text-center',
+                      exportOptions: {
+                        columns: ':visible'
+                      }
+                    },
+                    {
+                      extend: 'csv',
+                      className: 'btn-sm btn-success',
+                      exportOptions: {
+                        columns: ':visible'
+                      }
+                    },
+                    {
+                      extend: 'excel',
+                      className: 'btn-sm btn-warning',
+                      exportOptions: {
+                        columns: ':visible'
+                      }
+                    },
+                    {
+                      extend: 'pdf',
+                      className: 'btn-sm btn-primary',
+                      exportOptions: {
+                        columns: ':visible'
+                      }
+                    }
+                  ],
+
+                  columns: [
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex' },
+                    { data: 'name', name: 'name' },
+                    { data: 'associate', name: 'associate' },
+                    { data: 'designation', name: 'designation' },
+                    { data: 'line', name: 'line' },
+                    { data: 'floor', name: 'floor' },
+                    { data: 'day_1', name: 'day_1' },
+                    { data: 'day_2', name: 'day_2' },
+                    { data: 'day_3', name: 'day_3' },
+                    { data: 'day_4', name: 'day_4' },
+                    { data: 'day_5', name: 'day_5' },
+                    { data: 'day_6', name: 'day_6' },
+                    { data: 'day_7', name: 'day_7' },
+                    { data: 'day_8', name: 'day_8' },
+                    { data: 'day_9', name: 'day_9' },
+                    { data: 'day_10', name: 'day_10' },
+                    { data: 'day_11', name: 'day_11' },
+                    { data: 'day_12', name: 'day_12' },
+                    { data: 'day_13', name: 'day_13' },
+                    { data: 'day_14', name: 'day_14' },
+                    { data: 'day_15', name: 'day_15' },
+                    { data: 'day_16', name: 'day_16' },
+                    { data: 'day_17', name: 'day_17' },
+                    { data: 'day_18', name: 'day_18' },
+                    { data: 'day_19', name: 'day_19' },
+                    { data: 'day_20', name: 'day_20' },
+                    { data: 'day_21', name: 'day_21' },
+                    { data: 'day_22', name: 'day_22' },
+                    { data: 'day_23', name: 'day_23' },
+                    { data: 'day_24', name: 'day_24' },
+                    { data: 'day_25', name: 'day_25' },
+                    { data: 'day_26', name: 'day_26' },
+                    { data: 'day_27', name: 'day_27' },
+                    { data: 'day_28', name: 'day_28' },
+                    { data: 'day_29', name: 'day_29' },
+                    { data: 'day_30', name: 'day_30' },
+                    { data: 'day_31', name: 'day_31' }
+                  ],
+
+                  rowCallback: function(row, data, index){
+                      for(var i=1; i<=31; i++){
+                          // get row cell id
+                          td = getCellId(i);
+                          if((data['day_'+i]!=null && data['day_'+i].indexOf('Weekend') != -1) || (data['day_'+i]!=null && data['day_'+i].indexOf('Holiday') != -1) ||  typeof data['hPlanner'+i] != "undefined"){
+                              if(data['hRoster'+i]) {
+                                  // roster data found
+                                  if(data['hRoster'+i]!=null && data['hRoster'+i].indexOf('Holiday') != -1) {
+                                      $(row).find('td:eq('+td+')').css({'background-color': '#e17055', 'color': '#fff', 'font-weight': 'bold'});
+                                  }
+                                  if(data['hRoster'+i]!=null && data['hRoster'+i].indexOf('General') != -1) {
+                                      $(row).find('td:eq('+td+')').css({'background-color': '#16a085', 'color': '#fff', 'font-weight': 'bold'});
+                                  }
+                                  if(data['hRoster'+i]!=null && data['hRoster'+i].indexOf('OT') != -1) {
+                                      $(row).find('td:eq('+td+')').css({'background-color': '#f39c12', 'color': '#fff', 'font-weight': 'bold'});
+                                  }
+                              } else {
+                                  // set cell color red
+                                  $(row).find('td:eq('+td+')').css({'background-color': '#dc3545', 'color': '#fff', 'font-weight': 'bold'});
+                              }
+                          } else if(data['day_'+i]!=null && data['day_'+i].indexOf('OT') != -1) {
+                              // set cell color orange
+                              $(row).find('td:eq('+td+')').css({'background-color': '#ffc107', 'color': '#fff', 'font-weight': 'bold'});
+                          } else if(data['day_'+i]) {
+                              if(data['defaultDay'+i]) {
+                                  if(data['hRoster'+i]) {
+                                      // roster data found
+                                      if(data['hRoster'+i]!=null && data['hRoster'+i].indexOf('Holiday') != -1) {
+                                          $(row).find('td:eq('+td+')').css({'background-color': '#e17055', 'color': '#fff', 'font-weight': 'bold'});
+                                      }
+                                      if(data['hRoster'+i]!=null && data['hRoster'+i].indexOf('General') != -1) {
+                                          $(row).find('td:eq('+td+')').css({'background-color': '#16a085', 'color': '#fff', 'font-weight': 'bold'});
+                                      }
+                                      if(data['hRoster'+i]!=null && data['hRoster'+i].indexOf('OT') != -1) {
+                                          $(row).find('td:eq('+td+')').css({'background-color': '#f39c12', 'color': '#fff', 'font-weight': 'bold'});
+                                      }
+                                  } else {
+                                      // default shift day
+                                      $(row).find('td:eq('+td+')').css({'font-weight': 'bold'});
+                                  }
+                              } else {
+                                  if(data['hRoster'+i]) {
+                                      // roster data found
+                                      if(data['hRoster'+i]!=null && data['hRoster'+i].indexOf('Holiday') != -1) {
+                                          $(row).find('td:eq('+td+')').css({'background-color': '#e17055', 'color': '#fff', 'font-weight': 'bold'});
+                                      }
+                                      if(data['hRoster'+i]!=null && data['hRoster'+i].indexOf('General') != -1) {
+                                          $(row).find('td:eq('+td+')').css({'background-color': '#16a085', 'color': '#fff', 'font-weight': 'bold'});
+                                      }
+                                      if(data['hRoster'+i]!=null && data['hRoster'+i].indexOf('OT') != -1) {
+                                          $(row).find('td:eq('+td+')').css({'background-color': '#f39c12', 'color': '#fff', 'font-weight': 'bold'});
+                                      }
+                                  } else {
+                                      // roster shift day
+                                      // set cell color green
+                                      $(row).find('td:eq('+td+')').css({'background-color': '#28a745', 'color': '#fff', 'font-weight': 'bold'});
+                                  }
+                              }
+                          }
+                      }
+                  },
+
+                  createdRow: function( row, data, dataIndex ) {
+                      for(var i=7; i<=37; i++){
+                          $(row).children(':nth-child('+i+')').addClass('tr_eachrow');
+                      }
+                  },
+
+                  initComplete: function () {
+                    var api =  this.api();
+
+                    // Apply the search
+                    api.columns(searchable).every(function () {
+                      var column = this;
+                      var input = document.createElement("input");
+                      input.setAttribute('placeholder', $(column.header()).text());
+
+                      $(input).appendTo($(column.header()).empty())
+                      .on('keyup', function () {
+
+                        column.search($(this).val(), false, false, true).draw();
+                      });
+
+                      $('input', this.column(column).header()).on('click', function(e) {
+                        e.stopPropagation();
+                      });
+                    });
+
+                    // each column select list
+                    api.columns(selectable).every( function (i, x) {
+                      var column = this;
+
+                      var select = $('<select><option value="">'+$(column.header()).text()+'</option></select>')
+                      .appendTo($(column.header()).empty())
+                      .on('change', function(e){
+                        var val = $.fn.dataTable.util.escapeRegex(
+                          $(this).val()
+                        );
+                        column.search(val ? val : '', true, false ).draw();
+                        e.stopPropagation();
+                      });
+
+                      // column.data().unique().sort().each( function ( d, j ) {
+                      // if(d) select.append('<option value="'+d+'">'+d+'</option>' )
+                      // });
+                      $.each(dropdownList[i], function(j, v) {
+                        select.append('<option value="'+v+'">'+v+'</option>')
+                      });
+                    });
+                    $('.app-loader').hide();
+                  }
+              });
+               
             }
         });
 

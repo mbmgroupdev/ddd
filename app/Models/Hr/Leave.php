@@ -10,7 +10,7 @@ class Leave extends Model
     protected $guarded = [];
 
     protected $dates = [
-        'created_at'
+        'created_at','leave_from','leave_to'
     ];
 
     public static function getDateStatusWiseEmployeeLeaveCheck($assId, $date, $status)

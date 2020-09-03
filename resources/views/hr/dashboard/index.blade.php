@@ -3,14 +3,42 @@
 @section('main-content')
 
 @php $user = auth()->user(); @endphp
+   @include('hr.common.employee_count')
 	<div class="row">
+      
+      
+      
+      @if($user->can('Attendance Chart') || $user->hasRole('Super Admin'))
+      <div class="col-lg-6">
+        <div class="panel iq-card-block iq-card-stretch iq-card-height">
+            <div class="panel-heading d-flex justify-content-between">
+                  <h6>Attendance: {{date('F')}}</h6>
+            </div>
+            <div class="panel-body">
+               <div id="att-chart"></div>
+            </div>
+        </div>
+         <!--  -->
+      </div>  
+      @endif
+
+      @if($user->can('Daily Attendance') || $user->hasRole('Super Admin'))
+      <div class="col-md-6">
+         <div class="panel iq-card-block iq-card-stretch iq-card-height">
+            <div class="panel-heading d-flex justify-content-between">
+                  <h6>Today's Attendance</h6>
+            </div>
+            <div class="iq-card-body">
+               <div id="today-att" style="width: 100%; height: 400px;"></div>
+            </div>
+         </div>
+      </div>
+      @endif
       @if($user->can('Monthly Salary') || $user->hasRole('Super Admin'))
        <div class="col-lg-6">
-         <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
-            <div class="iq-card-header d-flex justify-content-between">
-               <div class="iq-header-title">
-                  <h4 class="card-title">Monthly Salary</h4>
-               </div>
+         <div class="panel iq-card-block iq-card-stretch iq-card-height">
+            <div class="panel-heading d-flex justify-content-between">
+                  <h6>Monthly Salary</h6>
             </div>
             <div class="iq-card-body">
                <div id="monthly-salary-chart"></div>
@@ -19,29 +47,11 @@
       </div>
       @endif
 
-      @if($user->can('Attendance Chart') || $user->hasRole('Super Admin'))
-      <div class="col-lg-6">
-        <div class="iq-card">
-            <div class="iq-card-header d-flex justify-content-between">
-               <div class="iq-header-title">
-                  <h4 class="card-title">Attendance: {{date('F')}}</h4>
-               </div>
-            </div>
-            <div class="iq-card-body">
-               <div id="att-chart"></div>
-            </div>
-        </div>
-         <!--  -->
-      </div>  
-      @endif
-
       @if($user->can('Monthly Overtime') || $user->hasRole('Super Admin'))               
       <div class="col-md-6">
-         <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
-            <div class="iq-card-header d-flex justify-content-between">
-               <div class="iq-header-title">
-                  <h4 class="card-title">Monthly Overtime</h4>
-               </div>
+         <div class="panel iq-card-block iq-card-stretch iq-card-height">
+            <div class="panel-heading d-flex justify-content-between">
+                  <h6>Monthly Overtime</h6>
             </div>
             <div class="iq-card-body">
                <div id="ot-comparison"></div>
@@ -50,20 +60,7 @@
       </div>
       @endif
 
-      @if($user->can('Daily Attendance') || $user->hasRole('Super Admin'))
-      <div class="col-md-6">
-         <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
-            <div class="iq-card-header d-flex justify-content-between">
-               <div class="iq-header-title">
-                  <h4 class="card-title">Today's Attendance</h4>
-               </div>
-            </div>
-            <div class="iq-card-body">
-               <div id="today-att" style="width: 100%; height: 400px;"></div>
-            </div>
-         </div>
-      </div>
-      @endif
+      
    </div>
    @push('js')
       <!-- Apexcharts JavaScript -->

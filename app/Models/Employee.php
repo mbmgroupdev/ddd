@@ -122,6 +122,14 @@ class Employee extends Model
         return $this->belongsTo(Shift::class, ['as_unit_id', 'as_shift_id'], ['hr_shift_unit_id', 'hr_shift_name'])->latest();
     }
 
+    public function get_shift_name()
+    {
+        $shifts = Shift::select('hr_shift_id','hr_shift_name',
+'hr_shift_unit_id')->latest()->get()->groupBy('hr_shift_name','hr_shift_unit_id')->toArray();
+
+        dd($shifts);
+    }
+
     public function salary()
     {
         return $this->belongsTo('App\Models\Hr\HrMonthlySalary', 'associate_id', 'as_id');

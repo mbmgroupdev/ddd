@@ -637,7 +637,7 @@ div#choice_2_div {
     display: block;
 }
 .h-min-400{
-    min-height: 550px !important;
+    min-height: 500px !important;
 }
 table.dataTable {
   border-spacing: 1px;
@@ -759,6 +759,80 @@ main{
 .f-18{
     font-size: 18px;
 }
+<<<<<<< HEAD
 .f-16{
     font-size: 16px;
+=======
+.icon-70 {
+    height: 70px;
+    width: 70px;
+    line-height: 70px;
+    font-size: 60px;
+    color: #099fb0;
+    padding: 5px;
+}
+.iq-card.icon-card {
+    width: 15%;
+    display: inline-block;
+    margin: 0 5px;
+}
+.iq-card.icon-card:first-child{
+    margin-left: 0;
+}
+.iq-card.icon-card:last-child{
+    margin-right: 0;
+}
+.flex{
+    display: flex;
+}
+.icon-card .iq-card-body {
+     padding: 5px; 
+}
+
+ul.color-bar {
+    list-style: none;
+    display: block;
+    height: auto;
+    padding: 10px;
+    margin: 5px auto;
+    text-align: center;
+}
+span.color-label {
+    width: 30px;
+    display: block;
+    height: 20px;
+    float: left;
+    margin: 0 5px;
+}
+span.lib-label {
+    text-align: left;
+    display: grid;
+}
+.lib-default {
+    background-color: #f8f9fa;
+}
+.lib-roster-holiday {
+    background-color: #e17055;
+}
+.lib-roster-general {
+    background-color: #16a085;
+}
+.lib-roster-ot {
+    background-color: #f39c12;
+}
+.lib-holiday {
+    background-color: #dc3545;
+}
+.lib-ot {
+    background-color: #ffc107;
+}
+.lib-roster {
+    background-color: #28a745;
+}
+.color-bar li {
+    display: inline-block;
+    vertical-align: middle;
+    width: 13.5%;
+    height: 20px;
+    font-size: 14px;
 }
