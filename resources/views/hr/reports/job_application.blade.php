@@ -196,7 +196,7 @@
                                             </tr>
                                             <tr style="width: 100%">
                                                 <td style="border: none;">
-                                                    ১ লাইন নং (Dept) :
+                                                    ১. লাইন নং (Dept) :
                                                 </td>
                                                 <td style="border: none;">
                                                     ৪. নিয়োগের তারিখ (Date of App) : {{$info->as_doj}}
@@ -226,7 +226,7 @@
                                             <tr style="width: 100%">
                                                 <td style="border: 1px solid; text-align: center;">
                                                     <br><br><br>
-                                                    উতপাদন ব্যবস্থাপক<br>
+                                                    উৎপাদন ব্যবস্থাপক<br>
                                                     Production Manager 
                                                 </td>
                                                 <td style="border: 1px solid; text-align: center;">

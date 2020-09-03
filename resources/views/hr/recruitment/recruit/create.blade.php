@@ -10,7 +10,7 @@
          <div class="panel h-min-400">
             <div class="panel-heading">
                   <h6>Recruitment Process
-                      <a class="btn btn-primary pull-right" href="{{url('')}}">Recruit List</a>
+                      <a class="btn btn-primary pull-right" href="{{ url('hr/recruitment/recruit') }}">Recruit List</a>
                   </h6>
             </div>
             <div class="panel-body">
@@ -63,7 +63,7 @@
                                            @enderror
 
                                            <div class="form-group has-float-label has-required">
-                                              <input type="text" class="form-control @error('worker_contact') is-invalid @enderror" id="contactNo" name="worker_contact" placeholder="Type Contact Number" value="{{ old('worker_contact') }}" required="required" autocomplete="off" />
+                                              <input type="text" class="form-control @error('worker_contact') is-invalid @enderror" id="contactNo" name="worker_contact" placeholder="Type Contact Number" value="{{ old('worker_contact') }}" required="required" autocomplete="off"  pattern="[0-9]{10,15}"/>
                                               <label for="contactNo">Contact No.</label>
                                            </div>
                                            @error('worker_contact')
@@ -83,7 +83,7 @@
                                            @enderror
 
                                            <div class="form-group has-float-label has-required">
-                                              <input type="date" class="form-control @error('worker_dob') is-invalid @enderror" value="{{ old('worker_dob') }}" id="dob" name="worker_dob" required="required" autocomplete="off" />
+                                              <input type="date" max="{{date('Y-m-d')}}" class="form-control @error('worker_dob') is-invalid @enderror" value="{{ old('worker_dob') }}" id="dob" name="worker_dob" required="required" autocomplete="off" />
                                               <label for="dob">Date Of Birth</label>
                                            </div>
                                            @error('worker_dob')
@@ -244,8 +244,10 @@
                                         
                                     </div>
                                  </div>
-                                 <button class="btn btn-success btn-lg text-center" type="button" id="saveSubmit"><i class="fa fa-save"></i> Save and New</button>
-                                 <button class="btn btn-primary nextBtn btn-lg pull-right" type="button" >Continue <i class="fa fa-forward"></i></button>
+                                 <div class="pull-right">
+                                   <button class="btn btn-success" type="button" id="saveSubmit"> Save Now <i class="fa fa-save"></i></button> &nbsp; &nbsp;
+                                   <button class="btn btn-primary nextBtn btn-lg pull-right" type="button" >Continue <i class="fa fa-forward"></i></button>
+                                 </div>
                               </div>
                            </div>
                         </div>
