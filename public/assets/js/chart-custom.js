@@ -408,7 +408,7 @@ if (jQuery('#chart-6').length) {
 var lastDate = 0;
 var data = [];
 var TICKINTERVAL = 86400000;
-let XAXISRANGE = 777600000;
+XAXISRANGE = 777600000;
 
 function getDayWiseTimeSeries(baseval, count, yrange) {
     var i = 0;
