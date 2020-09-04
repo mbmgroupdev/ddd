@@ -95,7 +95,7 @@
                            </div>
                         </div>
                         <div class="iq-card-body p-0">
-                           <div id="patient-chart-1"></div>
+                           <div id="patient-chart-2"></div>
                         </div>
                      </div>
                   </div>

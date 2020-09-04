@@ -22,6 +22,9 @@
         h2 {
             font-size: 1.5rem;
         }
+        #top-tab-list li a {
+            border: 1px solid;
+        }
     </style>
 @endpush
 <div class="main-content">
