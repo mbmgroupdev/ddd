@@ -221,7 +221,7 @@ $(document).ready(function()
                 loadingIndicator: false
             },
 	        pagingType: "full_numbers",
-	        dom: "<'row'<'col-sm-3'l><'col-sm-5 text-center'B><'col-sm-4'f>>tip",
+	        dom: "lBftrip",
 	        //dom: 'lBfrtip',
 	        ajax: {
 	            url: '{!! url("hr/recruitment/employee/employee_data") !!}',
@@ -258,17 +258,6 @@ $(document).ready(function()
 
 		    ],
 	        buttons: [
-	            {
-	            	extend: 'copy',
-	            	className: 'btn-sm btn-info',
-	            	title: 'Employee List',
-	            	header: false,
-	            	footer: true,
-	                exportOptions: {
-	                    // columns: ':visible'
-	                    columns: [0,2,3,4,5,6,7,8,9,10,11,12,13]
-	                }
-	            },
 	            {
 	            	extend: 'csv',
 	            	className: 'btn-sm btn-success',

@@ -1265,7 +1265,7 @@ Route::get('hr/ess/grievance/appeal', 'Hr\Ess\GrievanceAppealController@showForm
 Route::post('hr/ess/grievance/appeal', 'Hr\Ess\GrievanceAppealController@saveData');
 
 // Loan Application
-Route::get('hr/ess/loan_list', 'Hr\Ess\LoanApplicationController@loanList');
+Route::get('hr/payroll/loan_list', 'Hr\Ess\LoanApplicationController@loanList');
 Route::post('hr/ess/loan_data', 'Hr\Ess\LoanApplicationController@getData');
 Route::get('hr/ess/loan_application', 'Hr\Ess\LoanApplicationController@showForm');
 Route::post('hr/ess/loan_application', 'Hr\Ess\LoanApplicationController@saveData');

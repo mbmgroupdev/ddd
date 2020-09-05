@@ -1,32 +1,6 @@
 @extends('hr.layout')
 @section('title', 'Attendance Consecutive')
-@push('css')
-   <link rel="stylesheet" href="{{ asset('assets/css/reports.css')}}">
-   <style>
-    table.dataTable {
-      border-spacing: 1px;
-    }
-    #dataTables th:nth-child(2) input{
-      width: 100px !important;
-    }
-    #dataTables th:nth-child(4){
-      width: 120px !important;
-    }
-    
-    #dataTables th:nth-child(6) input{
-      width: 90px !important;
-    }
-    #dataTables th:nth-child(7) input{
-      width: 120px !important;
-    }
-    #dataTables th:nth-child(8) input{
-      width: 190px !important;
-    }
-    #dataTables th:nth-child(9) input{
-      width: 62px !important;
-    }
-   </style>
-@endpush
+
 @section('main-content')
 
 <div class="main-content">
@@ -341,13 +315,6 @@
 
       dom: 'lBfrtip',
       buttons: [
-        {
-          extend: 'copy',
-          className: 'btn-sm btn-info text-center',
-          exportOptions: {
-            columns: ':visible'
-          }
-        },
         {
           extend: 'csv',
           className: 'btn-sm btn-success',

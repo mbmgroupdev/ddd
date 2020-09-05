@@ -1,5 +1,5 @@
 @extends('hr.layout')
-@section('title', 'Add Role')
+@section('title', 'Disciplinary List')
 @section('main-content')
 <div class="main-content">
     <div class="main-content-inner">
@@ -69,15 +69,8 @@ $(document).ready(function(){
         serverSide: true,
         pagingType: "full_numbers",
         ajax: '{{ url("hr/notification/record/disciplinary_record_data") }}',
-        dom: "<'row'<'col-sm-2'l><'col-sm-4'i><'col-sm-3 text-center'B><'col-sm-3'f>>tp", 
+        dom: "lBftrip", 
         buttons: [  
-            {
-                extend: 'copy', 
-                className: 'btn-sm btn-info',
-                exportOptions: {
-                    columns: ':visible'
-                }
-            }, 
             {
                 extend: 'csv', 
                 className: 'btn-sm btn-success',

@@ -101,16 +101,7 @@ $(document).ready(function(){
         },
         //dom: "<'row'<'col-sm-2'l><'col-sm-4'i><'col-sm-3 text-center'B><'col-sm-3'f>>tp", 
         dom:'lBfrtip',
-        buttons: [  
-            {
-                extend: 'copy', 
-                className: 'btn-sm btn-info',
-                title: 'Advance Info Employee List',
-                exportOptions: {
-                    // columns: ':visible'
-                    columns: [0,1,2,3,4]
-                }
-            }, 
+        buttons: [   
             {
                 extend: 'csv', 
                 className: 'btn-sm btn-success',

@@ -50,42 +50,39 @@
                      'X-CSRF-TOKEN': '{{ csrf_token() }}'
                } 
            }, 
-           dom: "<'row'<'col-sm-3'l><'col-sm-5 text-center'B><'col-sm-4'f>>tip",
-           buttons: [  
-               {
-                   extend: 'copy', 
-                   className: 'btn-sm btn-info',
-                   exportOptions: {
-                       columns: ':visible'
-                   }
-               }, 
+           dom: "lBftrip",
+           buttons: [   
                {
                    extend: 'csv', 
                    className: 'btn-sm btn-success',
                    exportOptions: {
                        columns: ':visible'
-                   }
+                   },
+                   title: 'MBM ERP user List'
                }, 
                {
                    extend: 'excel', 
                    className: 'btn-sm btn-warning',
                    exportOptions: {
                        columns: ':visible'
-                   }
+                   },
+                   title: 'MBM ERP user List'
                }, 
                {
                    extend: 'pdf', 
                    className: 'btn-sm btn-primary', 
                    exportOptions: {
                        columns: ':visible'
-                   }
+                   },
+                   title: 'MBM ERP user List'
                }, 
                {
                    extend: 'print', 
                    className: 'btn-sm btn-default',
                    exportOptions: {
                        columns: ':visible'
-                   } 
+                   },
+                   title: 'MBM ERP user List' 
                } 
            ], 
            columns: [  

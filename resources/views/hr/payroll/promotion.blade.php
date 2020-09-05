@@ -21,7 +21,11 @@
             @include('inc/message')
             @can('Manage Promotion') 
             <div class="panel">
-                <div class="panel-heading"><h6>Promotion</h6></div>
+                <div class="panel-heading">
+                    <h6>Promotion
+                        {{-- <a href="" class="btn btn-primary pull-right">Promotion List</a> --}}
+                    </h6>
+                </div>
                          
                 {{ Form::open(['url'=>'hr/payroll/promotion', 'class'=>'form-horizontal p-3']) }}
                     <div class="row justify-content-center">

@@ -67,14 +67,6 @@ $(document).ready(function(){
         dom: "lBftrip", 
         buttons: [  
             {
-                extend: 'copy', 
-                className: 'btn-sm btn-info',
-                title: 'Disciplinary Record List',
-                exportOptions: {
-                    columns: [0,1,2,3,4,5,6,7]
-                }
-            }, 
-            {
                 extend: 'csv', 
                 className: 'btn-sm btn-success',
                 title: 'Disciplinary Record List',

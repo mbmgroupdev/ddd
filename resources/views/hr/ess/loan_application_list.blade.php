@@ -15,7 +15,7 @@
         @include('inc/message')
         <div class="panel panel-success mb-3">
             <div class="panel-heading"><h6>Loan Application List</h6></div> 
-            <div class="panel-body"> 
+            <div class="panel-body mb-3"> 
                     <table id="dataTables" class="table table-striped table-bordered" style="display:table;overflow-x: auto;width: 100%;">
                         <thead>
                             <tr>
@@ -75,17 +75,7 @@ $(document).ready(function(){
             } 
         },
         dom: "<'row'<'col-sm-2'l><'col-sm-3'i><'col-sm-4 text-center'B><'col-sm-3'f>>tp", 
-        buttons: [  
-            {
-                extend: 'copy', 
-                className: 'btn-sm btn-info',
-                title: 'Loan Application List',
-                header: false,
-                footer: true,
-                exportOptions: {
-                    columns: [0,1,2,3,4,5,6]
-                }
-            }, 
+        buttons: [   
             {
                 extend: 'csv', 
                 className: 'btn-sm btn-success',

@@ -164,15 +164,7 @@ $(document).ready(function(){
                   'X-CSRF-TOKEN': '{{ csrf_token() }}'
             } 
         }, 
-        buttons: [  
-            {
-                extend: 'copy', 
-                className: 'btn-sm btn-info',
-                title: 'Performance Appraisal List',
-                exportOptions: {
-                    columns: [0,1,2,3,4,5,6]
-                }
-            }, 
+        buttons: [ 
             {
                 extend: 'csv', 
                 className: 'btn-sm btn-success',

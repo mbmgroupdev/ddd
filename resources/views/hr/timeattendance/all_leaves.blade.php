@@ -124,16 +124,6 @@ $(document).ready(function(){
         }, 
         buttons: [  
             {
-                extend: 'copy', 
-                className: 'btn-sm btn-info',
-                title: 'All Leaves',
-                header: false,
-                footer: true,
-                exportOptions: {
-                    columns: ':visible'
-                }
-            }, 
-            {
                 extend: 'csv', 
                 className: 'btn-sm btn-success',
                 title: 'All Leaves',

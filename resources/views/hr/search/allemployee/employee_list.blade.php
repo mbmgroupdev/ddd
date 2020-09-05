@@ -83,16 +83,6 @@ $(document).ready(function(){
         dom: "lBfrtip", 
         buttons: [  
             {
-                extend: 'copy', 
-                className: 'btn-sm btn-info',
-                title: 'Employee Benefit List',
-                header: false,
-                footer: true,
-                exportOptions: {
-                    columns: [0,1,2,3,4,5]
-                }
-            }, 
-            {
                 extend: 'csv', 
                 className: 'btn-sm btn-success',
                 title: 'Employee Benefit List',

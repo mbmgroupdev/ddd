@@ -1,5 +1,5 @@
 @extends('hr.layout')
-@section('title', 'Add Role')
+@section('title', 'Training List')
 @section('main-content')
 <div class="main-content">
     <div class="main-content-inner">
@@ -56,6 +56,7 @@
         </div><!-- /.page-content -->
     </div>
 </div>
+@push('js')
 <script type="text/javascript">
     $(document).ready(function(){ 
         $('#dataTables').DataTable({
@@ -65,15 +66,8 @@
             serverSide: true,
             pagingType: "full_numbers",
             ajax: '{!! url("hr/notification/training/training_data") !!}',
-            dom: "<'row'<'col-sm-2'l><'col-sm-4'i><'col-sm-3 text-center'B><'col-sm-3'f>>tp", 
-            buttons: [  
-                {
-                    extend: 'copy', 
-                    className: 'btn-sm btn-info',
-                    exportOptions: {
-                        columns: ':visible'
-                    }
-                }, 
+            dom: "lBftrip", 
+            buttons: [   
                 {
                     extend: 'csv', 
                     className: 'btn-sm btn-success',
@@ -116,4 +110,5 @@
         }); 
     });
 </script>
+@endpush
 @endsection
