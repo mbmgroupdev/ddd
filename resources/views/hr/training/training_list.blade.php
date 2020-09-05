@@ -61,15 +61,7 @@ $(document).ready(function(){
         serverSide: true,
         pagingType: "full_numbers",
         dom: "lBftip", 
-        buttons: [  
-            {
-                extend: 'copy', 
-                className: 'btn-sm btn-info',
-                title: 'Training List',
-                exportOptions: {
-                    columns: ':visible'
-                }
-            }, 
+        buttons: [   
             {
                 extend: 'csv', 
                 className: 'btn-sm btn-success',

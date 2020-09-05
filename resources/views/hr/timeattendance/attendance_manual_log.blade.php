@@ -1,5 +1,5 @@
 @extends('hr.layout')
-@section('title', '')
+@section('title', 'Attendance Manual Log')
 @section('main-content')
 <div class="main-content">
     <div class="main-content-inner">

@@ -80,13 +80,6 @@ $(document).ready(function(){
         dom: 'lBfrtip',
         buttons: [
             {
-                extend: 'copy',
-                className: 'btn-sm btn-info text-center',
-                exportOptions: {
-                    columns: ':visible'
-                }
-            },
-            {
                 extend: 'csv',
                 className: 'btn-sm btn-success',
                 exportOptions: {

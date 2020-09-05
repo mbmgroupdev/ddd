@@ -1,5 +1,5 @@
 @extends('hr.layout')
-@section('title', 'Add Role')
+@section('title', 'End of Job Benefits List')
 @section('main-content')
 @push('css')
 <style type="text/css">
@@ -57,62 +57,50 @@
                 <li>
                     <a href="#">Payroll</a>
                 </li>
-                <li class="active">Benefits List</li>
+                <li class="active">End of Job Benefit List</li>
             </ul><!-- /.breadcrumb -->
  
         </div>
 
         <div class="page-content"> 
-                @include('inc/message')
+            @include('inc/message')
             <div class="panel panel-info">
-              <div class="panel-heading">
-                <h5>
-                    Benefit List
-                    <a href="{{url('hr/payroll/benefits')}}" class="btn btn-success btn-xs pull-right" style="background-color: teal !important;border-radius: 2px;border-color: teal !important;">Benefits Entry <i class="fa fa-edit bigger-120"></i></a>
-                </h5>
-              </div> 
+                <div class="panel-heading">
+                    <h6>
+                        Benefit List
+                        <a href="{{url('hr/payroll/benefits')}}" class="btn btn-primary  pull-right" >End of Job Benefit</a>
+                    </h6>
+                </div> 
                 <div class="panel-body">
 
-                    <div class="row">
-                         <!-- Display Erro/Success Message -->
-                        <div class="col-xs-12">
-                            <!-- PAGE CONTENT BEGINS -->
-
-                            <div class="col-xs-12 worker-list">
-                                <table id="dataTables" class="table table-striped table-bordered" style="display:block;overflow-x: scroll;white-space: nowrap; width: 100%;">
-                                    <thead>
-                                        <tr>
-                                            <th>Sl. No</th>
-                                            <th>Associate ID</th>
-                                            <th>Name</th>
-                                            <th>Unit</th>
-                                            <th>Description</th>
-                                            <th>Earn Amount</th>
-                                            <th>Service Benefits</th>
-                                            <th>Subsistence Allowance</th>
-                                            <th>Notice Pay</th>                                            
-                                            <th>Termination Benefits</th>                                            
-                                            <th>Natural Death Benefits</th>                                            
-                                            <th>Accidental Death Benefits</th>
-                                            <th>Total Amount</th>
-                                        </tr>
-                                    </thead>
-                                
-                                </table>
-                            </div> 
-                            
-
-                            <!-- PAGE CONTENT ENDS -->
-                        </div>
-                        <!-- /.col -->
-                    </div>
+                    <table id="dataTables" class="table table-striped table-bordered" style="display:block;overflow-x: scroll;width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>Sl. No</th>
+                                <th>Associate ID</th>
+                                <th>Name</th>
+                                <th>Unit</th>
+                                <th>Description</th>
+                                <th>Earn Amount</th>
+                                <th>Service Benefits</th>
+                                <th>Subsistence Allowance</th>
+                                <th>Notice Pay</th>                                            
+                                <th>Termination Benefits</th>                                            
+                                <th>Natural Death Benefits</th>                                            
+                                <th>Accidental Death Benefits</th>
+                                <th>Total Amount</th>
+                            </tr>
+                        </thead>
+                    
+                    </table> 
+                
                 </div>
             </div>
 
         </div><!-- /.page-content -->
     </div>
 </div>
-
+@push('js')
 <script type="text/javascript">
 $(document).ready(function(){ 
     var searchable = [1,2];
@@ -140,17 +128,7 @@ $(document).ready(function(){
             } 
         },
         dom: "lBfrtip", 
-        buttons: [  
-            {
-                extend: 'copy', 
-                className: 'btn-sm btn-info',
-                title: 'Employee Benefit List',
-                header: false,
-                footer: true,
-                exportOptions: {
-                    // columns: [0,1,2,3,4,5]
-                }
-            }, 
+        buttons: [   
             {
                 extend: 'csv', 
                 className: 'btn-sm btn-success',
@@ -254,4 +232,5 @@ $(document).ready(function(){
     }); 
 });
 </script>
+@endpush
 @endsection

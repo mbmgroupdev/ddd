@@ -1,5 +1,5 @@
 @extends('hr.layout')
-@section('title', 'Add Role')
+@section('title', 'Greivance Appeal List')
 @section('main-content')
 <div class="main-content">
     <div class="main-content-inner">
@@ -52,7 +52,7 @@
         </div><!-- /.page-content -->
     </div>
 </div>
-
+@push('js')
 <script type="text/javascript">
 $(document).ready(function(){ 
 
@@ -62,15 +62,8 @@ $(document).ready(function(){
         responsive: true,
         serverSide: true,
         pagingType: "full_numbers",
-        dom: "<'row'<'col-sm-2'l><'col-sm-3'i><'col-sm-4 text-center'B><'col-sm-3'f>>tp", 
+        dom: "lBftrip", 
         buttons: [  
-            {
-                extend: 'copy', 
-                className: 'btn-sm btn-info',
-                exportOptions: {
-                    columns: ':visible'
-                }
-            }, 
             {
                 extend: 'csv', 
                 className: 'btn-sm btn-success',
@@ -114,4 +107,5 @@ $(document).ready(function(){
     }); 
 });
 </script>
+@endpush
 @endsection

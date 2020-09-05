@@ -469,11 +469,11 @@ table th {
 														@if(!empty($info->emp_adv_info_job_app))
 														<a href="{{ url($info->emp_adv_info_job_app) }}" class="btn btn-xs btn-primary" target="_blank" title="View">
 															<i class="fa fa-eye"></i>
-															 View
+															 
 														</a>
 														<a href="{{ url($info->emp_adv_info_job_app) }}" class="btn btn-xs btn-success" target="_blank" download title="Download">
 															<i class="fa fa-eye"></i>
-															 Download
+															 
 														</a>
 														@else
 															<strong class="text-danger">No file found!</strong>
@@ -488,11 +488,11 @@ table th {
 														@if(!empty($info->emp_adv_info_cv))
 														<a href="{{ url($info->emp_adv_info_cv) }}" class="btn btn-xs btn-primary" target="_blank" title="View">
 															<i class="fa fa-eye"></i>
-															 View
+															 
 														</a>
 														<a href="{{ url($info->emp_adv_info_cv) }}" class="btn btn-xs btn-success" target="_blank" download title="Download">
 															<i class="fa fa-eye"></i>
-															 Download
+															 
 														</a>
 														@else
 															<strong class="text-danger">No file found!</strong>
@@ -524,8 +524,8 @@ table th {
 													<div class="profile-info-name"> Birth Certificate</div>
 													<div class="profile-info-value btn-group">
 														@if(!empty($info->emp_adv_info_birth_cer))
-														<a href="{{ url($info->emp_adv_info_birth_cer) }}" class="btn btn-xs btn-primary" target="_blank" title="View"><i class="fa fa-eye"></i> View</a>
-														<a href="{{ url($info->emp_adv_info_birth_cer) }}" class="btn btn-xs btn-success" target="_blank" download title="Download"><i class="fa fa-download"></i> Download</a>
+														<a href="{{ url($info->emp_adv_info_birth_cer) }}" class="btn btn-xs btn-primary" target="_blank" title="View"><i class="fa fa-eye"></i> </a>
+														<a href="{{ url($info->emp_adv_info_birth_cer) }}" class="btn btn-xs btn-success" target="_blank" download title="Download"><i class="fa fa-download"></i> </a>
 														@else
 															<strong class="text-danger">No file found!</strong>
 														@endif
@@ -538,7 +538,7 @@ table th {
 														@if(!empty($info->emp_adv_info_city_corp_cer))
 														<a href="{{ url($info->emp_adv_info_city_corp_cer) }}" class="btn btn-xs btn-primary" target="_blank" title="View">
 															<i class="fa fa-eye"></i>
-															 View
+															 
 														</a>
 														<a href="{{ url($info->emp_adv_info_city_corp_cer) }}" class="btn btn-xs btn-success" target="_blank" download title="Download">
 															<i class="fa fa-download"></i>
@@ -557,11 +557,11 @@ table th {
 														@if(!empty($info->emp_adv_info_police_veri))
 														<a href="{{ url($info->emp_adv_info_police_veri) }}" class="btn btn-xs btn-primary" target="_blank" title="View">
 															<i class="fa fa-eye"></i>
-															 View
+															 
 														</a>
 														<a href="{{ url($info->emp_adv_info_police_veri) }}" class="btn btn-xs btn-success" target="_blank" download title="Download">
 															<i class="fa fa-eye"></i>
-															 Download
+															 
 														</a>
 														@else
 															<strong class="text-danger">No file found!</strong>
@@ -586,11 +586,11 @@ table th {
 														@if(!empty($info->emp_adv_info_finger_print))
 														<a href="{{ url($info->emp_adv_info_finger_print) }}" class="btn btn-xs btn-primary" target="_blank" title="View">
 															<i class="fa fa-eye"></i>
-															 View
+															 
 														</a>
 														<a href="{{ url($info->emp_adv_info_finger_print) }}" class="btn btn-xs btn-success" target="_blank" download title="Download">
 															<i class="fa fa-eye"></i>
-															 Download
+															 
 														</a>
 														@else
 															<strong class="text-danger">No file found!</strong>
@@ -604,11 +604,11 @@ table th {
 														@if(!empty($info->emp_adv_info_signature))
 														<a href="{{ url($info->emp_adv_info_signature) }}" class="btn btn-xs btn-primary" target="_blank" title="View">
 															<i class="fa fa-eye"></i>
-															 View
+															 
 														</a>
 														<a href="{{ url($info->emp_adv_info_signature) }}" class="btn btn-xs btn-success" target="_blank" download title="Download">
 															<i class="fa fa-eye"></i>
-															 Download
+															 
 														</a>
 														@else
 															<strong class="text-danger">No file found!</strong>
@@ -622,11 +622,11 @@ table th {
 														@if(!empty($info->emp_adv_info_auth_sig))
 														<a href="{{ url($info->emp_adv_info_auth_sig) }}" class="btn btn-xs btn-primary" target="_blank" title="View">
 															<i class="fa fa-eye"></i>
-															 View
+															 
 														</a>
 														<a href="{{ url($info->emp_adv_info_auth_sig) }}" class="btn btn-xs btn-success" target="_blank" download title="Download">
 															<i class="fa fa-eye"></i>
-															 Download
+															 
 														</a>
 														@else
 															<strong class="text-danger">No file found!</strong>
@@ -723,11 +723,11 @@ table th {
 																@if(!empty($info->med_signature))
 																<a href="{{ url($info->med_signature) }}" class="btn btn-xs btn-primary" target="_blank" title="View">
 																	<i class="fa fa-eye"></i>
-																	 View
+																	 
 																</a>
 																<a href="{{ url($info->med_signature) }}" class="btn btn-xs btn-success" download target="_blank" title="Download">
 																	<i class="fa fa-eye"></i>
-																	 Download
+																	 
 																</a>
 																@else
 																	<strong class="text-danger">No file found!</strong>
@@ -741,11 +741,11 @@ table th {
 																@if(!empty($info->med_auth_signature))
 																<a href="{{ url($info->med_auth_signature) }}" class="btn btn-xs btn-primary" target="_blank" title="View">
 																	<i class="fa fa-eye"></i>
-																	 View
+																	 
 																</a>
 																<a href="{{ url($info->med_auth_signature) }}" class="btn btn-xs btn-success" target="_blank" download title="Download">
 																	<i class="fa fa-eye"></i>
-																	 Download
+																	 
 																</a>
 																@else
 																	<strong class="text-danger">No file found!</strong>
@@ -759,11 +759,11 @@ table th {
 																@if(!empty($info->med_doct_signature))
 																<a href="{{ url($info->med_doct_signature) }}" class="btn btn-xs btn-primary" target="_blank" title="View">
 																	<i class="fa fa-eye"></i>
-																	 View
+																	 
 																</a>
 																<a href="{{ url($info->med_doct_signature) }}" class="btn btn-xs btn-success" target="_blank" download title="Download">
 																	<i class="fa fa-eye"></i>
-																	 Download
+																	 
 																</a>
 																@else
 																	<strong class="text-danger">No file found!</strong>

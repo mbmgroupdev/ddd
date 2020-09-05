@@ -1,5 +1,5 @@
 @extends('hr.layout')
-@section('title', '')
+@section('title', 'Medical List')
 @section('main-content')
 @push('css')
 <style type="text/css">
@@ -125,7 +125,7 @@ $(document).ready(function(){
 	    responsive: false,
 	    serverSide: true,
         pagingType: "full_numbers",
-        dom: "<'row'<'col-sm-2'l><'col-sm-4'i><'col-sm-3 text-center'B><'col-sm-3'f>>tp", 
+        dom: "lBftrip", 
         ajax: {
             url: '{!! url("hr/recruitment/worker/medical_data") !!}',
             type: "POST",
@@ -149,17 +149,6 @@ $(document).ready(function(){
 	        {data: 'action', name: 'action', orderable: false, searchable: false}
 	    ],  
         buttons: [  
-            {
-            	extend: 'copy', 
-            	className: 'btn-sm btn-info',
-                header: false,
-                footer: true,
-                title: 'Worker Medical List',
-                exportOptions: {
-                    // columns: ':visible'
-                    columns: [0,1,2,3,4,5,6,7,8,9,10,11]
-                }
-            }, 
             {
             	extend: 'csv', 
             	className: 'btn-sm btn-success',

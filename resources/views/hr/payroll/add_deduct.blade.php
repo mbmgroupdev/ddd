@@ -1,7 +1,6 @@
 @extends('hr.layout')
 @section('title', 'Salary Adjustment')
 @section('main-content')
-@section('content')
 <div class="main-content">
     <div class="col-12">
         <div class="breadcrumbs ace-save-state" id="breadcrumbs">

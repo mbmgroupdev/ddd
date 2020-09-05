@@ -1,5 +1,5 @@
 @extends('hr.layout')
-@section('title', 'Add Role')
+@section('title', 'Leave Application List')
 @section('main-content')
 <div class="main-content">
     <div class="main-content-inner">
@@ -51,7 +51,7 @@
         </div>
     </div>
 </div>
-
+@push('js')
 <script type="text/javascript">
 $(document).ready(function(){ 
 
@@ -64,13 +64,6 @@ $(document).ready(function(){
         ajax: '{!! url("hr/notification/leave/leave_app_data") !!}',
         dom: "<'row'<'col-sm-2'l><'col-sm-4'i><'col-sm-3 text-center'B><'col-sm-3'f>>tp", 
         buttons: [  
-            {
-                extend: 'copy', 
-                className: 'btn-sm btn-info',
-                exportOptions: {
-                    columns: ':visible'
-                }
-            }, 
             {
                 extend: 'csv', 
                 className: 'btn-sm btn-success',
@@ -113,4 +106,5 @@ $(document).ready(function(){
     }); 
 });
 </script>
+@endpush
 @endsection
