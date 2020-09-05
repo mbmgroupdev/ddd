@@ -63,7 +63,7 @@ class FileTagController extends Controller
             foreach ($employees as $associate)
             {
                     $data['filetag'] .= "
-                    <div style=\"border-style: solid; width:900px; height: 32%; margin:10px;\">
+                    <div style=\"border-style: solid;width:900px;margin: 10px auto;\">
                     <p style=\"text-align:center; font-size:72px; font-weight:700; margin:0px; padding:0px;\">".strtoupper($associate->as_name)."</p>
                     <p style=\"text-align:center; font-weight:600; font-size:48px; margin:0px; padding:0px;\">".
                                 (!empty($associate->associate_id)?

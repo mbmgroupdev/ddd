@@ -52,7 +52,7 @@ if(!function_exists('sselected')){
 if(!function_exists('salary_lock_date')){
     function salary_lock_date()
     {
-        return  Cache::remember('salary_lock_date', 10000000, function () {
+        return  Cache::remember('salary_lock_date', 100000000, function () {
             return DB::table('hr_system_setting')->first()->salary_lock;
         }); 
         
@@ -603,7 +603,7 @@ if(!function_exists('unit_wise_today_att')){
 if(!function_exists('designation_by_id')){
     function designation_by_id()
     {
-       return  Cache::remember('designation', 1000000, function () {
+       return  Cache::remember('designation', 10000000, function () {
             return Designation::get()->keyBy('hr_designation_id')->toArray();
         });      
 
@@ -613,7 +613,7 @@ if(!function_exists('designation_by_id')){
 if(!function_exists('shift_by_code')){
     function shift_by_code()
     {
-       return  Cache::remember('shift_code', 1000000, function () {
+       return  Cache::remember('shift_code', 10000000, function () {
             return Shift::get()->keyBy('hr_shift_code')->toArray();
         });      
 
@@ -623,7 +623,7 @@ if(!function_exists('shift_by_code')){
 if(!function_exists('unit_by_id')){
     function unit_by_id()
     {
-       return  Cache::remember('unit', 1000000, function () {
+       return  Cache::remember('unit', 10000000, function () {
             return Unit::get()->keyBy('hr_unit_id')->toArray();
         });      
 
@@ -635,7 +635,7 @@ if(!function_exists('unit_by_id')){
 if(!function_exists('line_by_id')){
     function line_by_id()
     {
-       return  Cache::remember('line', 1000000, function () {
+       return  Cache::remember('line', 10000000, function () {
             return Line::get()->keyBy('hr_line_id')->toArray();
         });      
 
@@ -645,7 +645,7 @@ if(!function_exists('line_by_id')){
 if(!function_exists('floor_by_id')){
     function floor_by_id()
     {
-       return  Cache::remember('floor', 1000000, function () {
+       return  Cache::remember('floor', 10000000, function () {
             return Floor::get()->keyBy('hr_floor_id')->toArray();
         });      
 
@@ -655,7 +655,7 @@ if(!function_exists('floor_by_id')){
 if(!function_exists('department_by_id')){
     function department_by_id()
     {
-       return  Cache::remember('department', 1000000, function () {
+       return  Cache::remember('department', 10000000, function () {
             return Department::get()->keyBy('hr_department_id')->toArray();
         });      
 
@@ -665,7 +665,7 @@ if(!function_exists('department_by_id')){
 if(!function_exists('section_by_id')){
     function section_by_id()
     {
-       return  Cache::remember('section', 1000000, function () {
+       return  Cache::remember('section', 10000000, function () {
             return Section::get()->keyBy('hr_section_id')->toArray();
         });      
 
@@ -674,7 +674,7 @@ if(!function_exists('section_by_id')){
 if(!function_exists('subSection_by_id')){
     function subSection_by_id()
     {
-       return  Cache::remember('subSection', 1000000, function () {
+       return  Cache::remember('subSection', 10000000, function () {
             return Subsection::get()->keyBy('hr_subsec_id')->toArray();
         });      
 
@@ -684,7 +684,7 @@ if(!function_exists('subSection_by_id')){
 if(!function_exists('area_by_id')){
     function area_by_id()
     {
-       return  Cache::remember('area', 1000000, function () {
+       return  Cache::remember('area', 10000000, function () {
             return Area::get()->keyBy('hr_area_id')->toArray();
         });      
 
