@@ -150,15 +150,7 @@ class RecruitController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-    }
+    
 
     /**
      * Show the form for editing the specified resource.
@@ -187,7 +179,54 @@ class RecruitController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'worker_name'           => 'required|max:128',
+            'worker_doj'            => 'required|date',
+            'worker_emp_type_id'    => 'required',
+            'worker_designation_id' => 'required',
+            'worker_unit_id'        => 'required',
+            'worker_area_id'        => 'required',
+            'worker_department_id'  => 'required',
+            'worker_section_id'     => 'required',
+            'worker_subsection_id'  => 'required',
+            'worker_gender'         => 'required',
+            'worker_dob'            => 'required',
+            'worker_contact'        => 'required'
+        ]);
+        if($validator->fails()){
+            toastr()->error('Some field validation fails');
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $input = $request->except('_token');
+
+        $worker = WorkerRecruitment::checkRecruitmentWorker($input);
+        if($worker != null){
+            toastr()->error($input['worker_name'].' info already exists');
+            return back();
+        }
+
+        $input['worker_ot'] = isset($input['worker_ot'])?1:0;
+        $input['worker_doctor_acceptance'] = isset($input['worker_doctor_acceptance'])?1:2;
+        $input['worker_pigboard_test'] = isset($input['worker_pigboard_test'])?1:0;
+        $input['worker_finger_test'] = isset($input['worker_finger_test'])?1:0;
+        $input['worker_color_join'] = isset($input['worker_color_join'])?1:0;
+        $input['worker_color_band_join'] = isset($input['worker_color_band_join'])?1:0;
+        $input['worker_box_pleat_join'] = isset($input['worker_box_pleat_join'])?1:0;
+        $input['worker_color_top_stice'] = isset($input['worker_color_top_stice'])?1:0;
+        $input['worker_urmol_join'] = isset($input['worker_urmol_join'])?1:0;
+        $input['worker_clip_join'] = isset($input['worker_clip_join'])?1:0;
+        try {
+
+            WorkerRecruitment::where('worker_id', $request->worker_id)->update($input);
+            toastr()->success('Recruitment information updated');
+            return redirect('/hr/recruitment/recruit');
+        } catch (\Exception $e) {
+            $bug = $e->getMessage();
+            return $bug;
+            toastr()->error($bug);
+            return back();
+        }
     }
 
     /**
