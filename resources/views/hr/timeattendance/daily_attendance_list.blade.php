@@ -1,5 +1,5 @@
 @extends('hr.layout')
-@section('title', '')
+@section('title', 'Daily Attendance List')
 @section('main-content')
 <div class="main-content">
     <div class="main-content-inner">
@@ -53,7 +53,7 @@
         </div><!-- /.page-content -->
     </div>
 </div>
-
+@push('js')
 <script type="text/javascript">
 $(document).ready(function(){ 
 
@@ -64,15 +64,8 @@ $(document).ready(function(){
         serverSide: true,
         pagingType: "full_numbers",
         ajax: '{!! url("hr/timeattendance/daily_attendance_data") !!}',
-        dom: "<'row'<'col-sm-2'l><'col-sm-4'i><'col-sm-3 text-center'B><'col-sm-3'f>>tp", 
+        dom: "lBftrip", 
         buttons: [  
-            {
-                extend: 'copy', 
-                className: 'btn-sm btn-info',
-                exportOptions: {
-                    columns: ':visible'
-                }
-            }, 
             {
                 extend: 'csv', 
                 className: 'btn-sm btn-success',
@@ -115,4 +108,5 @@ $(document).ready(function(){
     }); 
 });
 </script>
+@endpush
 @endsection

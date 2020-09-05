@@ -37,13 +37,13 @@
 @section('main-content')
    <div class="row">
       <div class="col-sm-12 col-lg-12">
-         <div class="iq-card">
-            <div class="iq-card-header d-flex justify-content-between">
-               <div class="iq-header-title">
-                  <h4 class="card-title">All Recruitment List</h4>
-               </div>
+         <div class="panel">
+            <div class="panel-heading">
+                  <h6 >Recruitment List
+                    <a href="{{url('hr/recruitment/recruit/create')}}" class="btn btn-primary pull-right">Recruit</a>
+                  </h6>
             </div>
-            <div class="iq-card-body">
+            <div class="panel-body">
                <table id="recruit" class="table table-striped table-bordered table-head table-responsive w-100">
                   <thead>
                      <tr>
@@ -82,15 +82,8 @@
                      'X-CSRF-TOKEN': '{{ csrf_token() }}'
                } 
           }, 
-          dom: "<'row'<'col-sm-3'l><'col-sm-5 text-center'B><'col-sm-4'f>>tip",
+          dom: "lBftrip",
           buttons: [  
-             {
-                 extend: 'copy', 
-                 className: 'btn-sm btn-info',
-                 exportOptions: {
-                     columns: ':visible'
-                 }
-             }, 
              {
                  extend: 'csv', 
                  className: 'btn-sm btn-success',

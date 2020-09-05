@@ -122,7 +122,20 @@ class DesignationController extends Controller
     {
         $emp_type= EmpType::where('hr_emp_type_status','1')->pluck('hr_emp_type_name','emp_type_id');
         $designation= DB::table('hr_designation')->where('hr_designation_id', '=', $id)->first();
-        return view('/hr/setup/designation_update', compact('emp_type', 'designation'));
+
+        $designations= DB::table('hr_designation AS d')
+            ->select(
+                'd.hr_designation_id',
+                'd.hr_designation_name',
+                'd.hr_designation_name_bn',
+                'd.hr_designation_position',
+                'd.hr_designation_grade',
+                'emp.hr_emp_type_name'
+            )
+            ->leftJoin('hr_emp_type AS emp', 'emp.emp_type_id', '=', 'd.hr_designation_emp_type')
+            ->orderBy('d.hr_designation_position', 'DESC')
+            ->get();
+        return view('/hr/setup/designation_update', compact('emp_type', 'designation','designations'));
     }
 
     public function designationupdateStore(Request $request)

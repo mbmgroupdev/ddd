@@ -104,16 +104,6 @@ $(document).ready(function(){
         dom: "lBftip", 
         buttons: [  
             {
-                extend: 'copy', 
-                className: 'btn-sm btn-info',
-                title: 'Training Assign List',
-                header: false,
-                footer: true,
-                exportOptions: {
-                    columns: ':visible'
-                }
-            }, 
-            {
                 extend: 'csv', 
                 className: 'btn-sm btn-success',
                 title: 'Training Assign List',

@@ -1,5 +1,5 @@
 @extends('hr.layout')
-@section('title', '')
+@section('title', 'Employee List')
 @section('main-content')
 <div class="main-content">
 	<div class="main-content-inner">
@@ -178,7 +178,7 @@ $(document).ready(function()
 	            loadingIndicator: true
 	        },
 	        pagingType: "full_numbers", 
-	        dom: "<'row'<'col-sm-2'l><'col-sm-4'i><'col-sm-3 text-center'B><'col-sm-3'f>>tp", 
+	        dom: "lBftrip", 
 		    ajax:{
 		    	url:  '{!! url("hr/recruitment/employee/employee_data") !!}',
 		    	type: "get",
@@ -212,15 +212,6 @@ $(document).ready(function()
 		        {data:'education_level_title', name: 'education_level_title'}
 		    ],  
 	        buttons: [  
-	            {
-	            	extend: 'copy', 
-	            	className: 'btn-sm btn-info',
-	            	header: false,
-	            	footer: true,
-	                exportOptions: {
-	                    columns: ':visible'
-	                }
-	            }, 
 	            {
 	            	extend: 'csv', 
 	            	className: 'btn-sm btn-success',

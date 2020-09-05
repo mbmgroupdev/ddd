@@ -1,8 +1,6 @@
 @extends('hr.layout')
 @section('title', 'Benefit List')
 @section('main-content')
-
-@section('content')
 <div class="main-content">
     <div class="main-content-inner">
         <div class="col-sm-12">
@@ -84,17 +82,7 @@ $(document).ready(function(){
             } 
         },
         dom: "lBfrtip", 
-        buttons: [  
-            {
-                extend: 'copy', 
-                className: 'btn-sm btn-info',
-                title: 'Employee Benefit List',
-                header: false,
-                footer: true,
-                exportOptions: {
-                    columns: [0,1,2,3,4,5]
-                }
-            }, 
+        buttons: [   
             {
                 extend: 'csv', 
                 className: 'btn-sm btn-success',

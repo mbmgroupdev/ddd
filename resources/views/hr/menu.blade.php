@@ -123,7 +123,7 @@
             </li>
             @endif
             @if($user->can('Loan List') || $user->hasRole('Super Admin'))
-            <li><a href="{{ url('hr/ess/loan_list') }}"><i class="las la-dollar-sign"></i>Loan</a></li>
+            <li class="@if($segment3 == 'loan_list') active @endif"><a href="{{ url('hr/payroll/loan_list') }}"><i class="las la-dollar-sign"></i>Loan</a></li>
             @endif
          </ul>
       </li>

@@ -1,5 +1,5 @@
 @extends('hr.layout')
-@section('title', '')
+@section('title', 'Worker IE Skill List')
 @section('main-content')
 @push('css')
 <style type="text/css">
@@ -75,7 +75,7 @@ $(document).ready(function(){
 	    responsive: true,
 	    serverSide: true,
         pagingType: "full_numbers",
-        dom: "<'row'<'col-sm-2'l><'col-sm-4'i><'col-sm-3 text-center'B><'col-sm-3'f>>tp",  
+        dom: "lBftrip",  
         ajax: {
             url: '{!! url("hr/recruitment/worker/ie_skill_data") !!}',
             type: "POST",
@@ -99,15 +99,6 @@ $(document).ready(function(){
 	        {data: 'action', name: 'action', orderable: false, searchable: false}
 	    ],  
         buttons: [  
-            {
-            	extend: 'copy', 
-            	className: 'btn-sm btn-info',
-            	title: 'Worker IE Skill List',
-                exportOptions: {
-                    // columns: ':visible'
-                    columns: [0,1,2,3,4,5,6,7,8,9,10,11]
-                }
-            }, 
             {
             	extend: 'csv', 
             	className: 'btn-sm btn-success',

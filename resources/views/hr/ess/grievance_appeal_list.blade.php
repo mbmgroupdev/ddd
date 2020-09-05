@@ -60,7 +60,7 @@
         </div><!-- /.page-content -->
     </div>
 </div>
-
+@push('js')
 <script type="text/javascript">
 $(document).ready(function(){ 
 
@@ -70,16 +70,8 @@ $(document).ready(function(){
         responsive: true,
         serverSide: true,
         pagingType: "full_numbers",
-        dom: "<'row'<'col-sm-2'l><'col-sm-3'i><'col-sm-4 text-center'B><'col-sm-3'f>>tp", 
-        buttons: [  
-            {
-                extend: 'copy', 
-                className: 'btn-sm btn-info',
-                title: 'Greivance Appeal List',
-                exportOptions: {
-                    columns: ':visible'
-                }
-            }, 
+        dom: "lBftrip", 
+        buttons: [   
             {
                 extend: 'csv', 
                 className: 'btn-sm btn-success',
@@ -134,4 +126,5 @@ $(document).ready(function(){
     }); 
 });
 </script>
+@endpush
 @endsection
