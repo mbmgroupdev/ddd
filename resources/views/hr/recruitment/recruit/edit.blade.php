@@ -10,7 +10,7 @@
          <div class="panel h-min-400">
             <div class="panel-heading">
                   <h6>Recruitment Edit
-                      <a class="btn btn-primary pull-right" href="{{url('')}}">Recruit List</a>
+                      <a class="btn btn-primary pull-right" href="{{url('hr/recruitment/recruit')}}">Recruit List</a>
                   </h6>
             </div>
             <div class="panel-body">
@@ -24,13 +24,13 @@
                               </a>
                            </div>
                            <div id="document" class="wizard-step">
-                              <a href="#medical-info" class="btn btn-default disabled">
+                              <a href="#medical-info" class="btn btn-default ">
                               <i class="fa fa-user-md"></i><span>Medical</span>
                               </a>
                            </div>
                            
                            <div id="confirm" class="wizard-step">
-                              <a href="#ie-info" class="btn btn-default disabled">
+                              <a href="#ie-info" class="btn btn-default ">
                               <i class="fa fa-eye text-success"></i><span>IE</span>
                               </a>
                            </div>
@@ -38,8 +38,9 @@
                      </div>
                   </div>
                   <div class="col-sm-9">
-                     <form action="" method="POST" enctype="multipart/form-data" >
+                     <form action="{{url('hr/recruitment/recruit/'.$worker->worker_id.'/update')}}" method="POST" enctype="multipart/form-data" >
                         {{-- class="needs-validation form" novalidate --}}
+                        <input type="hidden" name="worker_id" value="{{$worker->worker_id}}">
                         @csrf
                         <div class="row setup-content" id="basic-info">
                            <div class="col-sm-12">
@@ -53,7 +54,7 @@
                                     <div class="row form-card-details pt-3">
                                         <div class="col-sm-4">
                                             <div class="form-group has-float-label has-required">
-                                              <input type="text" class="form-control @error('worker_name') is-invalid @enderror" id="associate-name" name="worker_name" placeholder="Type Associate Name" required="required" value="{{ $worker->worker_name??'' }}" autocomplete="off" />
+                                              <input type="text" class="form-control @error('worker_name') is-invalid @enderror" id="associate-name" name="worker_name" placeholder="Type Associate Name"  value="{{ $worker->worker_name??'' }}" autocomplete="off" />
                                               <label for="associate-name">Associate Name</label>
                                            </div>
                                            @error('worker_name')
@@ -63,7 +64,7 @@
                                            @enderror
 
                                            <div class="form-group has-float-label has-required">
-                                              <input type="text" class="form-control @error('worker_contact') is-invalid @enderror" id="contactNo" name="worker_contact" placeholder="Type Contact Number" value="{{ $worker->worker_contact??'' }}" required="required" autocomplete="off" />
+                                              <input type="text" class="form-control @error('worker_contact') is-invalid @enderror" id="contactNo" name="worker_contact" placeholder="Type Contact Number" value="{{ $worker->worker_contact??'' }}"  autocomplete="off" />
                                               <label for="contactNo">Contact No.</label>
                                            </div>
                                            @error('worker_contact')
@@ -83,7 +84,7 @@
                                            @enderror
 
                                            <div class="form-group has-float-label has-required">
-                                              <input type="date" class="form-control @error('worker_dob') is-invalid @enderror" value="{{ $worker->worker_dob??'' }}" id="dob" name="worker_dob" required="required" autocomplete="off" />
+                                              <input type="date" class="form-control @error('worker_dob') is-invalid @enderror" value="{{ $worker->worker_dob??'' }}" id="dob" name="worker_dob"  autocomplete="off" />
                                               <label for="dob">Date Of Birth</label>
                                            </div>
                                            @error('worker_dob')
@@ -99,6 +100,15 @@
                                               <label for="nid">NID/Birth Certificate</label>
                                            </div>
                                            @error('worker_nid')
+                                             <span class="invalid-feedback" role="alert">
+                                                 <strong>{{ $message }}</strong>
+                                             </span>
+                                           @enderror
+                                           <div class="custom-control custom-switch">
+                                              <input name="worker_ot" type="checkbox" class="custom-control-input @error('worker_ot') is-invalid @enderror" id="otHolder" value="{{ $worker->worker_ot??1 }}">
+                                              <label class="custom-control-label" for="otHolder">OT Holder</label>
+                                           </div>
+                                           @error('worker_ot')
                                              <span class="invalid-feedback" role="alert">
                                                  <strong>{{ $message }}</strong>
                                              </span>
@@ -200,7 +210,7 @@
                                            @enderror
 
                                            <div class="form-group has-float-label has-required">
-                                              <input type="date" class="form-control @error('worker_doj') is-invalid @enderror" value="{{ $worker->worker_doj??'' }}" id="doj" name="worker_doj" required="required" autocomplete="off" />
+                                              <input type="date" class="form-control @error('worker_doj') is-invalid @enderror" value="{{ $worker->worker_doj??'' }}" id="doj" name="worker_doj"  autocomplete="off" />
                                               <label for="doj">Date of Joining</label>
                                            </div>
                                            @error('worker_doj')
@@ -231,21 +241,16 @@
                                              </span>
                                            @enderror
 
-                                           <div class="custom-control custom-switch">
-                                              <input name="worker_ot" type="checkbox" class="custom-control-input @error('worker_ot') is-invalid @enderror" id="otHolder" value="{{ $worker->worker_ot??1 }}">
-                                              <label class="custom-control-label" for="otHolder">OT Holder</label>
-                                           </div>
-                                           @error('worker_ot')
-                                             <span class="invalid-feedback" role="alert">
-                                                 <strong>{{ $message }}</strong>
-                                             </span>
-                                           @enderror
+                                           
                                         </div>
                                         
                                     </div>
                                  </div>
-                                 <button class="btn btn-success btn-lg text-center" type="button" id="saveSubmit"><i class="fa fa-save"></i> Save and New</button>
-                                 <button class="btn btn-primary nextBtn btn-lg pull-right" type="button" >Continue <i class="fa fa-forward"></i></button>
+                                 <div class="pull-right">
+                                   <button class="btn btn-success btn-lg text-center" type="button" id="saveSubmit">Update <i class="fa fa-save"></i> </button>
+                                   <button class="btn btn-primary nextBtn btn-lg " type="button" >Continue <i class="fa fa-forward"></i></button>
+                                   
+                                 </div>
                               </div>
                            </div>
                         </div>
@@ -264,7 +269,7 @@
                                              <div class="card-body row">
                                                 <div class="col-md-6">
                                                    <div class="form-group has-float-label has-required">
-                                                      <input type="text" class="form-control @error('worker_height') is-invalid @enderror" value="{{ $worker->worker_height??'' }}" id="height" name="worker_height" placeholder="Type Employee Height (Height in inch)" required="required" autocomplete="off" />
+                                                      <input type="text" class="form-control @error('worker_height') is-invalid @enderror" value="{{ $worker->worker_height??'' }}" id="height" name="worker_height" placeholder="Type Employee Height (Height in inch)"  autocomplete="off" />
                                                       <label for="height">Height</label>
                                                    </div>
                                                    @error('worker_height')
@@ -275,7 +280,7 @@
                                                 </div>
                                                 <div class="col-md-6">
                                                    <div class="form-group has-float-label has-required">
-                                                      <input type="text" class="form-control @error('worker_weight') is-invalid @enderror" value="{{ $worker->worker_weight??'' }}" id="weight" name="worker_weight" placeholder="Type Employee Weight (Weight in kg)" required="required" autocomplete="off" />
+                                                      <input type="text" class="form-control @error('worker_weight') is-invalid @enderror" value="{{ $worker->worker_weight??'' }}" id="weight" name="worker_weight" placeholder="Type Employee Weight (Weight in kg)"  autocomplete="off" />
                                                       <label for="weight">Weight</label>
                                                    </div>
                                                    @error('worker_weight')
@@ -286,7 +291,7 @@
                                                 </div>
                                                 <div class="col-md-6">
                                                    <div class="form-group has-float-label has-required">
-                                                      <input type="text" class="form-control @error('worker_tooth_structure') is-invalid @enderror" id="toothStructure" name="worker_tooth_structure" placeholder="Type Tooth Structure" required="required" value="{{ $worker->worker_tooth_structure??'N/A' }}" autocomplete="off" />
+                                                      <input type="text" class="form-control @error('worker_tooth_structure') is-invalid @enderror" id="toothStructure" name="worker_tooth_structure" placeholder="Type Tooth Structure"  value="{{ $worker->worker_tooth_structure??'N/A' }}" autocomplete="off" />
                                                       <label for="toothStructure">Tooth Structure</label>
                                                    </div>
                                                    @error('worker_tooth_structure')
@@ -309,7 +314,7 @@
                                                 </div>
                                                 <div class="col-md-6">
                                                    <div class="form-group has-float-label has-required">
-                                                      <input type="text" class="form-control @error('worker_identification_mark') is-invalid @enderror" id="identificationMark" name="worker_identification_mark" placeholder="Type Identification Mark" value="{{ $worker->worker_identification_mark??'' }}" required="required" autocomplete="off" />
+                                                      <input type="text" class="form-control @error('worker_identification_mark') is-invalid @enderror" id="identificationMark" name="worker_identification_mark" placeholder="Type Identification Mark" value="{{ $worker->worker_identification_mark??'' }}"  autocomplete="off" />
                                                       <label for="identificationMark">Identification Mark</label>
                                                    </div>
                                                    @error('worker_identification_mark')
@@ -331,7 +336,7 @@
                                                 </div>
                                                 <div class="col-md-6">
                                                    <div class="form-group has-float-label has-required">
-                                                      <input type="text" class="form-control @error('worker_doctor_comments') is-invalid @enderror" id="doctorComments" name="worker_doctor_comments" value="{{ $worker->worker_doctor_comments??'' }}" placeholder="Type Doctor's Comments" required="required" autocomplete="off" />
+                                                      <input type="text" class="form-control @error('worker_doctor_comments') is-invalid @enderror" id="doctorComments" name="worker_doctor_comments" value="{{ $worker->worker_doctor_comments??'' }}" placeholder="Type Doctor's Comments"  autocomplete="off" />
                                                       <label for="doctorComments">Doctor's Comments</label>
                                                    </div>
                                                    @error('worker_doctor_comments')
@@ -342,7 +347,7 @@
                                                 </div>
                                                 <div class="col-md-6">
                                                    <div class="custom-control custom-switch">
-                                                      <input name="worker_doctor_acceptance" type="checkbox" class="custom-control-input @error('worker_doctor_acceptance') is-invalid @enderror" id="acceptance" value="{{ $worker->worker_doctor_acceptance??'1' }}">
+                                                      <input name="worker_doctor_acceptance" type="checkbox" class="custom-control-input @error('worker_doctor_acceptance') is-invalid @enderror" id="acceptance" value="1" {{ $worker->worker_doctor_acceptance == 1?'checked':'' }}>
                                                       <label class="custom-control-label" for="acceptance">Acceptance</label>
                                                    </div>
                                                    @error('worker_doctor_acceptance')
@@ -358,8 +363,10 @@
                                        
                                     </div>
                                  </div>
-                                 <button class="btn btn-success btn-lg text-center" type="button" id="saveMedicalSubmit"><i class="fa fa-save"></i> Save and New</button>
-                                 <button class="btn btn-primary nextBtn btn-lg pull-right" type="button" >Continue <i class="fa fa-forward"></i></button>
+                                 <div class="pull-right">
+                                   <button class="btn btn-success btn-lg text-center" type="button" id="saveMedicalSubmit"> Update <i class="fa fa-save"></i></button>
+                                   <button class="btn btn-primary nextBtn btn-lg" type="button" >Continue <i class="fa fa-forward"></i></button>
+                                 </div>
 
                               </div>
                            </div>
@@ -380,7 +387,7 @@
                                              <div class="card-body row pb-15">
                                                 <div class="col-md-6">
                                                    <div class="custom-control custom-switch">
-                                                      <input name="worker_pigboard_test" value="{{$worker->worker_pigboard_test??'1' }}" type="checkbox" class="custom-control-input @error('worker_pigboard_test') is-invalid @enderror" id="pegboard">
+                                                      <input name="worker_pigboard_test" value="1" type="checkbox" class="custom-control-input @error('worker_pigboard_test') is-invalid @enderror" id="pegboard" {{ $worker->worker_pigboard_test == 1?'checked':'' }}>
                                                       <label class="custom-control-label" for="pegboard">Pegboard Test</label>
                                                    </div>
                                                    @error('worker_pigboard_test')
@@ -391,7 +398,7 @@
                                                 </div>
                                                 <div class="col-md-6">
                                                    <div class="custom-control custom-switch">
-                                                      <input name="worker_finger_test" value="{{ $worker->worker_finger_test??'1' }}" type="checkbox" class="custom-control-input @error('worker_finger_test') is-invalid @enderror" id="finger">
+                                                      <input name="worker_finger_test" value="1" {{ $worker->worker_finger_test == 1?'checked':'' }} type="checkbox" class="custom-control-input @error('worker_finger_test') is-invalid @enderror" id="finger">
                                                       <label class="custom-control-label" for="finger">Finger Test</label>
                                                    </div>
                                                    @error('worker_finger_test')
@@ -400,14 +407,9 @@
                                                      </span>
                                                    @enderror
                                                 </div>
-                                             </div>
-                                          </div>
-                                          <div class="card mb-2">
-                                             
-                                             <div class="card-body row pb-15">
                                                 <div class="col-md-6">
                                                    <div class="custom-control custom-switch">
-                                                      <input name="worker_color_join" value="{{ $worker->worker_color_join??'1' }}" type="checkbox" class="custom-control-input @error('worker_color_join') is-invalid @enderror" id="colorJoin">
+                                                      <input name="worker_color_join" value="1" {{ $worker->worker_color_join == 1?'checked':'' }} type="checkbox" class="custom-control-input @error('worker_color_join') is-invalid @enderror" id="colorJoin">
                                                       <label class="custom-control-label" for="colorJoin">Color Join</label>
                                                    </div>
                                                    @error('worker_color_join')
@@ -418,7 +420,7 @@
                                                 </div>
                                                 <div class="col-md-6">
                                                    <div class="custom-control custom-switch">
-                                                      <input name="worker_color_band_join" value="{{ $worker->worker_color_band_join??'1' }}" type="checkbox" class="custom-control-input @error('worker_color_band_join') is-invalid @enderror" id="colorBandJoin">
+                                                      <input name="worker_color_band_join" value="1" {{ $worker->worker_color_band_join == 1?'checked':'' }} type="checkbox" class="custom-control-input @error('worker_color_band_join') is-invalid @enderror" id="colorBandJoin">
                                                       <label class="custom-control-label" for="colorBandJoin">Color Band Join</label>
                                                    </div>
                                                    @error('worker_color_band_join')
@@ -429,7 +431,7 @@
                                                 </div>
                                                 <div class="col-md-6">
                                                    <div class="custom-control custom-switch">
-                                                      <input name="worker_box_pleat_join" value="{{ $worker->worker_box_pleat_join??'1' }}" type="checkbox" class="custom-control-input @error('worker_box_pleat_join') is-invalid @enderror" id="colorPleatJoin">
+                                                      <input name="worker_box_pleat_join" value="1" {{ $worker->worker_box_pleat_join == 1?'checked':'' }} type="checkbox" class="custom-control-input @error('worker_box_pleat_join') is-invalid @enderror" id="colorPleatJoin">
                                                       <label class="custom-control-label" for="colorPleatJoin">Box Pleat Join</label>
                                                    </div>
                                                    @error('worker_box_pleat_join')
@@ -440,7 +442,7 @@
                                                 </div>
                                                 <div class="col-md-6">
                                                    <div class="custom-control custom-switch">
-                                                      <input name="worker_color_top_stice" value="{{ $worker->worker_color_top_stice??'1' }}" type="checkbox" class="custom-control-input @error('worker_color_top_stice') is-invalid @enderror" id="colorTopStice">
+                                                      <input name="worker_color_top_stice" value="1" {{ $worker->worker_color_top_stice == 1?'checked':'' }} type="checkbox" class="custom-control-input @error('worker_color_top_stice') is-invalid @enderror" id="colorTopStice">
                                                       <label class="custom-control-label" for="colorTopStice">Color Top Stice</label>
                                                    </div>
                                                    @error('worker_color_top_stice')
@@ -451,7 +453,7 @@
                                                 </div>
                                                 <div class="col-md-6">
                                                    <div class="custom-control custom-switch">
-                                                      <input name="worker_urmol_join" value="{{ $worker->worker_urmol_join??'1' }}" type="checkbox" class="custom-control-input @error('worker_urmol_join') is-invalid @enderror" id="urmolJoin">
+                                                      <input name="worker_urmol_join" value="1" {{ $worker->worker_urmol_join == 1?'checked':'' }} type="checkbox" class="custom-control-input @error('worker_urmol_join') is-invalid @enderror" id="urmolJoin">
                                                       <label class="custom-control-label" for="urmolJoin">Urmol Join</label>
                                                    </div>
                                                    @error('worker_urmol_join')
@@ -462,7 +464,7 @@
                                                 </div>
                                                 <div class="col-md-6">
                                                    <div class="custom-control custom-switch">
-                                                      <input name="worker_clip_join" value="{{ $worker->worker_clip_join??'1' }}" type="checkbox" class="custom-control-input @error('worker_clip_join') is-invalid @enderror" id="clipJoin">
+                                                      <input name="worker_clip_join" value="1" {{ $worker->worker_clip_join == 1?'checked':'' }} type="checkbox" class="custom-control-input @error('worker_clip_join') is-invalid @enderror" id="clipJoin">
                                                       <label class="custom-control-label" for="clipJoin">Clip Join</label>
                                                    </div>
                                                    @error('worker_clip_join')
@@ -477,8 +479,7 @@
                                        
                                     </div>
                                  </div>
-                                 <button class="btn btn-success btn-lg text-center" type="submit" ><i class="fa fa-save"></i> Save and Confirm</button>
-                                 {{-- <button class="btn btn-primary btn-lg pull-right" type="submit" ><i class="fa fa-right"></i> Confirm </button> --}}
+                                 <button class="btn btn-success btn-lg text-center" type="submit" ><i class="fa fa-save"></i> Update</button>
 
                               </div>
                            </div>

@@ -67,16 +67,24 @@ class EducationLevelController extends Controller
         $levelList= DB::table('hr_education_level AS l')->pluck('education_level_title', 'id');
 
         $degree=DB::table('hr_education_degree_title AS a')
+                ->select(
+                    "a.id",
+                    "b.education_level_title",
+                    "a.education_degree_title",
+                    "b.id AS lvl_id"
+                )
+                ->leftJoin("hr_education_level AS b", "b.id", "=", "a.education_level_id")->where('a.id', $id)->first();
+        $degrees=DB::table('hr_education_degree_title AS a')
                     ->select(
                         "a.id",
                         "b.education_level_title",
-                        "a.education_degree_title",
-                        "b.id AS lvl_id"
+                        "a.education_degree_title"
                     )
-                    ->leftJoin("hr_education_level AS b", "b.id", "=", "a.education_level_id")->where('a.id', $id)->first();
+                    ->leftJoin("hr_education_level AS b", "b.id", "=", "a.education_level_id")
+                    ->get();
 
 
-        return view('hr/setup/education_title_edit', compact('degree','levelList'));
+        return view('hr/setup/education_title_edit', compact('degree','levelList','degrees'));
     }
 
     public function degreeUpdate(Request $request){
