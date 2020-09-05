@@ -14,7 +14,7 @@
         .alert-icon i { width: 30px; height: 30px; display: block; text-align: center; line-height: 30px; font-size: 20px; color: #FFF;}
         .fa-info-circle:before { content: "\f05a";}
         .alert-warning .alert-icon { background-color: #f16d2f;}
-        .notification-info { margin-left: 20px;}
+        .notification-info { margin-left: 10px;}
         a{cursor: pointer;}
         .alert {padding: 8px 15px;}
         .att_rollback .panel-title {margin-top: 3px; margin-bottom: 3px;}
