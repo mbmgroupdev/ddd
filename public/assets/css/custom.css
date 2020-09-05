@@ -9,78 +9,81 @@
    outline: 0;
 }
 hr {
-        margin-top: 11px;
-        margin-bottom: 10px;
-        border-top: 1px solid #eee;
-    }
-    a .profile-info-row{
-        width: 100%;display: block;
-    }
-    a .profile-info-row:first-child, a.profile-info-name:first-child  {
-        display: table-cell;
-    }
-    p.search-title{
-        margin:10px 0;
-        color: rgba(8, 155, 171, 1);
-    }
-    .pricing-box:hover{
-        cursor: pointer;
-    }
-    #printButton{margin-top:5px; }
-    .fc-event-container a{margin-top: 10px; padding: 10px;}
-    .modal-dialog{width: 600px!important;}
-    div.dataTables_wrapper, div.dataTables_processing {
-        background-color: transparent !important;
-        z-index: 999 !important;
-        border-color: transparent !important;
-    }
-    #hr_search_input {
-        padding: 20px 15px 5px 15px;
-    }
-    .progress[data-percent]:after {
-        color: #000 !important;
-    }
-    .search_ot_shift{
-        text-align: center;
-        padding: 5px;
-        background: #f3f3f3;
-        cursor: pointer;
-    }
-    .search_ot_shift:hover{
-        color:#27960b;
-    }
-    .search-result-all{margin: 0;}
-    .search-result-div{}
-    #searchContent .panel-info{min-height: 300px;padding-bottom: 20px;}
-    
-    @media only screen and (max-width: 767px) {
-        #form_search_div{margin-top: 50px;}
-        #dateDiv{margin-top: 20px; padding-left: 0px;}
-        #yearDiv{margin-top: 20px; padding-left: 0px;}
-        #monthDiv{margin-top: 20px; padding-left: 0px;}
-        #rangeSection{margin-top: 20px;}
-        #categoryDiv{padding-left: 0px !important;padding-top: 10px; padding-bottom: 10px;}
-        #typeDiv{padding-left: 0px !important;padding-top: 10px;}
-        #rangeFromDiv{padding-left: 0px;}
-    }
-    @media print {
-        .col-sm-4:{width:300px;}
-    }
-    @media only screen and (max-width: 1280px){
-        .search-result-div{width: 33.33%;}
-    }
-    @media only screen and (max-width: 767px) {
-        .search-result-div{width: 50%;}
-    }
-    @media only screen and (max-width: 579px) {
-        .search-result-div{width: 100%;}
-    }
-    @media print {
-        #printOutputSection {display: block;}
-    }
+    margin-top: 11px;
+    margin-bottom: 10px;
+    border-top: 1px solid #eee;
+}
+a .profile-info-row{
+    width: 100%;display: block;
+}
+a .profile-info-row:first-child, a.profile-info-name:first-child  {
+    display: table-cell;
+}
+p.search-title{
+    margin:10px 0;
+    color: rgba(8, 155, 171, 1);
+}
+.pricing-box:hover{
+    cursor: pointer;
+}
+#printButton{margin-top:5px; }
+.fc-event-container a{margin-top: 10px; padding: 10px;}
+.modal-dialog{width: 600px!important;}
+div.dataTables_wrapper, div.dataTables_processing {
+    background-color: transparent !important;
+    z-index: 999 !important;
+    border-color: transparent !important;
+}
+#hr_search_input {
+    padding: 20px 15px 5px 15px;
+}
+.progress[data-percent]:after {
+    color: #000 !important;
+}
+.search_ot_shift{
+    text-align: center;
+    padding: 5px;
+    background: #f3f3f3;
+    cursor: pointer;
+}
+.search_ot_shift:hover{
+    color:#27960b;
+}
+.search-result-all{margin: 0;}
+.search-result-div{}
+#searchContent .panel-info{min-height: 300px;padding-bottom: 20px;}
+
+@media only screen and (max-width: 767px) {
+    #form_search_div{margin-top: 50px;}
+    #dateDiv{margin-top: 20px; padding-left: 0px;}
+    #yearDiv{margin-top: 20px; padding-left: 0px;}
+    #monthDiv{margin-top: 20px; padding-left: 0px;}
+    #rangeSection{margin-top: 20px;}
+    #categoryDiv{padding-left: 0px !important;padding-top: 10px; padding-bottom: 10px;}
+    #typeDiv{padding-left: 0px !important;padding-top: 10px;}
+    #rangeFromDiv{padding-left: 0px;}
+}
+@media print {
+    .col-sm-4:{width:300px;}
+}
+@media only screen and (max-width: 1280px){
+    .search-result-div{width: 33.33%;}
+}
+@media only screen and (max-width: 767px) {
+    .search-result-div{width: 50%;}
+}
+@media only screen and (max-width: 579px) {
+    .search-result-div{width: 100%;}
+}
+@media print {
+    #printOutputSection {display: block;}
+}
 /*.wrapper {
     background: linear-gradient(to right, #1469b0 0%, rgb(233 248 10) 100%);
 }*/
+.justify-center{
+    justify-content: center;
+}
 li{
     color:#000;
  }

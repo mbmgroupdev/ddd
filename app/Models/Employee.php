@@ -239,6 +239,17 @@ class Employee extends Model
         ->paginate(10);
     }
 
+    public static function getSearchGlobalKeyWise($value)
+    {
+        return DB::table('hr_as_basic_info')
+        ->select('as_name', 'associate_id')
+        ->where('associate_id', 'LIKE', '%'. $value .'%')
+        ->orWhere('as_name', 'LIKE', '%'. $value . '%')
+        ->orWhere('as_oracle_code', 'LIKE', '%'. $value . '%')
+        ->limit(10)
+        ->get();
+    }
+
     public static function getEmployeeShiftIdWise($shiftId, $unitId)
     {
         return Employee::select('as_id')

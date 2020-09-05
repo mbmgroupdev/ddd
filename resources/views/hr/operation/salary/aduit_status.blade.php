@@ -5,9 +5,7 @@
             font-size: 16px;
             top: 25px;
         }*/
-        #top-tab-list li a {
-            border: 1px solid;
-        }
+        
     </style>
 @endpush
 @php
