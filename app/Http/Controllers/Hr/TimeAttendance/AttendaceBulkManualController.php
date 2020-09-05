@@ -22,12 +22,21 @@ class AttendaceBulkManualController extends Controller
     public function bulkManual(Request $request)
     {
         try {
-            $result = $this->empAttendanceByMonth($request);
-            // dd($result);
-            $attendance = $result['attendance'];
-            $info = $result['info'];
-            $joinExist = $result['joinExist'];
-            $leftExist = $result['leftExist'];
+            $attendance = array();
+            $info = array();
+            $joinExist = array();
+            $leftExist = array();
+            if($request->month <= date('Y-m')){
+
+                $result = $this->empAttendanceByMonth($request);
+                // dd($result);
+                $attendance = $result['attendance'];
+                $info = $result['info'];
+                $joinExist = $result['joinExist'];
+                $leftExist = $result['leftExist'];
+            }else{
+                $info = 'No result found yet!';
+            }
             return view("hr/timeattendance/attendance_bulk_manual",compact('attendance','info', 'joinExist', 'leftExist'));
         } catch(\Exception $e) {
             return $e->getMessage();
@@ -475,14 +484,14 @@ class AttendaceBulkManualController extends Controller
 
     public function empAttendanceByMonth($request)
     {
-        //if (!empty(request()->associate) && !empty(request()->month) && !empty(request()->year)) {
+        
         $total_attend   = 0;
         $total_overtime = 0;
         $associate = $request->associate;
-        $tempdate= "01-".$request->month."-".$request->year;
-
-        $month = date("m", strtotime($tempdate));
-        $year  = $request->year;
+        $tempdate= "01-".$request->month;
+        $explode = explode('-',$request->month);
+        $month = $explode[1];
+        $year  = $explode[0];
         #------------------------------------------------------
         // ASSOCIATE INFORMATION
         $fetchUser = Employee::where("hr_as_basic_info.associate_id", "=", $associate);
