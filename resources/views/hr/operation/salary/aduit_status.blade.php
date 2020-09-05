@@ -17,7 +17,7 @@
     }
     $link = '';
     if(Auth::user()->can('Hr Salary Generate') || Auth::user()->can('Salary Audit') || Auth::user()->can('Accounts Salary Verify') || Auth::user()->can('Management Salary Audit')){
-        $link = '<a href="'.url($url).'" class="btn btn-md btn-outline-success"><i class="fa fa-check"> </i>Check & Confirm</a>';
+        $link = '<a href="'.url($url).'" class="btn btn-md btn-outline-success"><i class="las la-hand-point-right"></i>Check & Confirm</a>';
     }
     
 
