@@ -55,17 +55,7 @@
                                 </div>
                                 <div class="col-6">
                                     <button type="submit" class="btn btn-primary btn-sm activityReportBtn"><i class="fa fa-save"></i> Generate</button>
-                                    @if (!empty(request()->associate) && !empty($month) && !empty($year))
-                                    <div id="print_pdf" class="custom-control-inline" >
-                                         
-                                        <button type="button" onClick="printMe1('PrintArea')" class="btn btn-warning btn-sm" title="Print">
-                                            <i class="fa fa-print"></i>
-                                        </button>
-                                        <button type="button"  id="excel"  class="showprint btn btn-success btn-sm" title="Excel">
-                                            <i class="fa fa-file-excel-o" style="font-size:14px"></i>
-                                       </button>
-                                    </div>
-                                    @endif
+                                    
                                 </div>
                             </div>
                         </div>
@@ -91,7 +81,16 @@
                        <div class="iq-header-title w-100">
                           <div class="row">
                             <div class="col-3">
-                              
+                                <div class="action-section">
+                                    <h4 class="card-title capitalize inline">
+                                        <button type="button" onClick="printMe1('result-data')" class="btn view list_view no-padding" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Job Card">
+                                           <i class="fa fa-print"></i>
+                                        </button>
+                                        <button type="button" id="excel" class="btn view list_view no-padding" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download Job Card">
+                                           <i class="fa fa-file-excel-o"></i>
+                                        </button>
+                                    </h4>
+                                </div>
                             </div>
                             <div class="col-6 text-center">
                               <h4 class="card-title capitalize inline">
@@ -117,10 +116,11 @@
                             <div class="col-3">
                               @if(($lastMonth == $month && $lockDate > date('Y-m-d'))|| $month == date('m'))
                               <div class="text-right">
+                                <h4 class="card-title capitalize inline">
                                 <a href='{{url("hr/timeattendance/attendance_bulk_manual?associate=$info->associate&month=$month&year=$year")}}' class="btn view list_view no-padding" data-toggle="tooltip" data-placement="top" title="" data-original-title="Manual Edit Job Card">
                                   <i class="fa fa-edit bigger-120"></i>
                                 </a>
-                                
+                                </h4>
                               </div>
                               @endif
                             </div>
