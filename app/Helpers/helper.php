@@ -430,9 +430,9 @@ if(!function_exists('employee_count')){
 if(!function_exists('cache_att_all')){
     function cache_att_all()
     {
-        Cache::put('att_mbm', cache_att_mbm(), 10000);
-        Cache::put('att_aql', cache_att_aql(), 10000);
-        Cache::put('att_ceil', cache_att_ceil(), 10000);
+        Cache::put('att_mbm', cache_att_mbm(), 1000000);
+        Cache::put('att_aql', cache_att_aql(), 1000000);
+        Cache::put('att_ceil', cache_att_ceil(), 1000000);
     }
 }
 
@@ -444,14 +444,16 @@ if(!function_exists('cache_daily_operation')){
             $user = auth()->user();
             if($user){
                 $unit = auth()->user()->employee?auth()->user()->employee['as_unit_id']:1;
-                Cache::put('today_att', unit_wise_today_att($unit), 10000);
+                Cache::put('today_att'.$unit, unit_wise_today_att($unit), 1000000);
+            }else{
+                Cache::put('today_att1', unit_wise_today_att(1), 1000000);
             }
         }else{
-            Cache::put('today_att', unit_wise_today_att($unit), 10000);
+            Cache::put('today_att'.$unit, unit_wise_today_att($unit), 1000000);
         }
         cache_att_all();
-        Cache::put('monthly_ot', cache_monthly_ot(), 10000);
-        Cache::put('monthly_salary', cache_monthly_salary(), 10000);
+        Cache::put('monthly_ot', cache_monthly_ot(), 1000000);
+        Cache::put('monthly_salary', cache_monthly_salary(), 1000000);
     }
 }
 

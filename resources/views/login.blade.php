@@ -8,8 +8,10 @@
       <title>MBM - ERP</title>
       <!-- Favicon -->
       <link rel="shortcut icon" href="{{ asset('images/mbm.ico')}} " />
+
       <!-- Styles -->
       <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+
       <!-- Style CSS -->
       <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
       {{-- login css --}}

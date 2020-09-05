@@ -100,6 +100,10 @@ class DashboardController extends Controller
             $salary_data['category'][$thismonth] = $now->format('M');
             $now = $now->subMonth();
         }
+        
+        $salary_data['salary'] = array_reverse($salary_data['salary']);
+        $salary_data['ot'] = array_reverse($salary_data['ot']);
+        $salary_data['category'] = array_reverse($salary_data['category']);
 
         return $salary_data; 
     }
@@ -114,6 +118,7 @@ class DashboardController extends Controller
         
         
         if(isset($today_att['date']) && $today_att['date'] != date('Y-m-d')){
+            
             $today_att = Cache::put('today_att'.$unit, unit_wise_today_att($unit), 10000);
         }
 
