@@ -22,6 +22,11 @@
       border-radius: 3px;
       padding: 0px 3px;
     }
+    /*.action-btn{
+      border: 1px solid #000;
+      border-radius: 3px;
+      padding: 0px 3px;
+    }*/
   </style>
 @endpush
 <div class="main-content">
@@ -166,7 +171,13 @@
                        <div class="iq-header-title w-100">
                           <div class="row">
                             <div class="col-3">
-                              
+                              @php
+                                $month = date('Y-m', strtotime($input['date']));
+                                $unit = $input['unit'];
+                              @endphp
+                              <div class="salary-section text-left inline">
+                                <a href='{{ url("hr/monthly-salary-audit?month=$month&unit=$unit") }}' class="btn btn-primary text-white" data-toggle="tooltip" data-placement="top" title="" data-original-title="Salary Check" ><i class="las la-hand-point-right"></i> Salary Check</a>
+                              </div>
                             </div>
                             <div class="col-6 text-center">
                               <h4 class="card-title capitalize inline">
@@ -180,6 +191,7 @@
                               </h4>
                             </div>
                             <div class="col-3">
+                              
                               <div class="text-right">
                                 <a class="btn view list_view no-padding" data-toggle="tooltip" data-placement="top" title="" data-original-title="Details Report View" id="0">
                                   <i class="las la-list-ul"></i>

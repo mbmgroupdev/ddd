@@ -104,8 +104,8 @@
                                         </div>
                                         <div class="form-group has-float-label select-search-group">
                                             <select name="report_format" class="form-control capitalize select-search" id="reportformat" >
-                                                <option value="0">Details</option>
-                                                <option value="1" selected>Summary</option>
+                                                <option value="0" selected>Details</option>
+                                                <option value="1">Summary</option>
                                             </select>
                                             <label for="reportformat">Report Format</label>
                                         </div>
