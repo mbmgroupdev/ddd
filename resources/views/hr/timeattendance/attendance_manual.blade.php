@@ -73,8 +73,8 @@
                                 <span class="alert-icon"><i class="fa fa-info-circle"></i></span>
                                 <div class="notification-info">
                                     Before File Upload, define holiday and assign shift roster.  <br>
-                                    <a target="_blank" href="{{ url('/hr/timeattendance/shift_assign')}}" class="btn  btn-primary">Shift Assign</a>
-                                    <a target="_blank" href="{{ url('/hr/timeattendance/operation/yearly_holidays/create')}}" class="btn  btn-primary">Define Holiday </a>
+                                    <a target="_blank" href="{{ url('hr/operation/shift_assign')}}" class="btn  btn-primary">Shift Assign</a>
+                                    <a target="_blank" href="{{ url('hr/operation/holiday-roster')}}" class="btn  btn-primary">Define Holiday </a>
                                 </div>
                             </div>
                         </div>

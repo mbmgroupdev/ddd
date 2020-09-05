@@ -20,11 +20,6 @@
       <link rel="stylesheet" href="{{ asset('assets/css/responsive.css') }}">
    </head>
    <body>
-      <!-- loader Start -->
-      <div id="loading">
-         <div id="loading-center">
-         </div>
-      </div>
       <!-- loader END -->
         <!-- Sign in Start -->
         <section class="sign-in-page">
@@ -112,12 +107,7 @@
       <script src="{{ asset('assets/js/select2.min.js') }}"></script>
       <!-- Owl Carousel JavaScript -->
       <script src="{{ asset('assets/js/owl.carousel.min.js') }}"></script>
-      <!-- Magnific Popup JavaScript -->
-      <script src="{{ asset('assets/js/jquery.magnific-popup.min.js') }}"></script>
-      <!-- Smooth Scrollbar JavaScript -->
-      <script src="{{ asset('assets/js/smooth-scrollbar.js') }}"></script>
-      <!-- Chart Custom JavaScript -->
-      <script src="{{ asset('assets/js/chart-custom.js') }}"></script>
+     
       <!-- Custom JavaScript -->
       <script src="{{ asset('assets/js/custom.js') }}"></script>
    </body>
