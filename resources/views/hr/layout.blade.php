@@ -9,7 +9,7 @@
 
     <title>@yield('title') - MBM ERP</title>
     <!-- Favicon -->
-    <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}" />
+    <link rel="shortcut icon" href="{{ asset('images/mbm.ico')}} " />
     
 
     <!-- Styles -->

@@ -7,11 +7,9 @@
       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
       <title>MBM - ERP</title>
       <!-- Favicon -->
-      <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico')}} " />
-      <!-- Bootstrap CSS -->
-      <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
-      <!-- Typography CSS -->
-      <link rel="stylesheet" href="{{ asset('assets/css/typography.css') }}">
+      <link rel="shortcut icon" href="{{ asset('images/mbm.ico')}} " />
+      <!-- Styles -->
+      <link href="{{ asset('css/app.css') }}" rel="stylesheet">
       <!-- Style CSS -->
       <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
       {{-- login css --}}
@@ -21,6 +19,7 @@
    </head>
    <body>
       <!-- loader END -->
+      <div id="app">
         <!-- Sign in Start -->
         <section class="sign-in-page">
             <div class="container sign-in-page-bg mt-4 p-0">
@@ -29,16 +28,8 @@
                         <div class="sign-in-detail text-white">
                             <div class="owl-carousel" data-autoplay="true" data-loop="true" data-nav="false" data-dots="true" data-items="1" data-items-laptop="1" data-items-tab="1" data-items-mobile="1" data-items-mobile-sm="1" data-margin="0">
                                 <div class="item login-slider">
-                                    <img src="{{ asset('images/login/1.jpg') }}" class="img-fluid mb-4 radius-10" alt="logo">
-                                    <h4 class="mb-1 text-white">Manage Time & Attendance</h4>
-                                </div>
-                                <div class="item login-slider">
                                     <img src="{{ asset('images/login/2.jpg') }}" class="img-fluid mb-4 radius-10" alt="logo">
-                                    <h4 class="mb-1 text-white">Process Salary</h4>
-                                </div>
-                                <div class="item login-slider">
-                                    <img src="{{ asset('images/login/3.jpg') }}" class="img-fluid mb-4 radius-10" alt="logo">
-                                    <h4 class="mb-1 text-white">Manage your orders</h4>
+                                    <h4 class="mb-1 text-white">MBM Group</h4>
                                 </div>
                             </div>
                         </div>
@@ -85,31 +76,9 @@
             </div>
         </section>
         <!-- Sign in END -->
-      <!-- Optional JavaScript -->
-      <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-      <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
-      <script src="{{ asset('assets/js/popper.min.js') }}"></script>
-      <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
-      <!-- Appear JavaScript -->
-      <script src="{{ asset('assets/js/jquery.appear.js') }}"></script>
-      <!-- Countdown JavaScript -->
-      <script src="{{ asset('assets/js/countdown.min.js') }}"></script>
-      <!-- Counterup JavaScript -->
-      <script src="{{ asset('assets/js/waypoints.min.js') }}"></script>
-      <script src="{{ asset('assets/js/jquery.counterup.min.js') }}"></script>
-      <!-- Wow JavaScript -->
-      <script src="{{ asset('assets/js/wow.min.js') }}"></script>
-      <!-- Apexcharts JavaScript -->
-      <script src="{{ asset('assets/js/apexcharts.js') }}"></script>
-      <!-- Slick JavaScript -->
-      <script src="{{ asset('assets/js/slick.min.js') }}"></script>
-      <!-- Select2 JavaScript -->
-      <script src="{{ asset('assets/js/select2.min.js') }}"></script>
-      <!-- Owl Carousel JavaScript -->
-      <script src="{{ asset('assets/js/owl.carousel.min.js') }}"></script>
+      </div>
+      <script src="{{ asset('js/app.js') }}"></script>
      
-      <!-- Custom JavaScript -->
-      <script src="{{ asset('assets/js/custom.js') }}"></script>
    </body>
 
 </html>

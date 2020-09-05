@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Hr\Leave;
+use Illuminate\Support\Facades\Artisan;
 use DB;
 
 class HomeController extends Controller
@@ -81,5 +82,19 @@ class HomeController extends Controller
         ];
 
         return $chartdata;
+    }
+    public function login()
+    {
+        return view('login');
+    }
+    public function clear()
+    {
+        $exitCode = Artisan::call('config:clear');
+        $exitCode = Artisan::call('cache:clear');
+        $exitCode = Artisan::call('route:clear');
+        $exitCode = Artisan::call('config:cache');
+        $exitCode = Artisan::call('route:cache');
+        $exitCode = Artisan::call('optimize');
+        return 'DONE'; //Return anything
     }
 }

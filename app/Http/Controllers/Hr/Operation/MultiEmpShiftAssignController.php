@@ -139,7 +139,7 @@ class MultiEmpShiftAssignController extends Controller
         {
         	$image = ($employee->as_pic == null?'/assets/images/avatars/profile-pic.jpg': $employee->as_pic);
 	        $data['result'].= "<tr class='add'>
-	                    <td><input type='checkbox' value='$employee->associate_id' name='assigned[$employee->as_id]'/></td><td><span class=\"lbl\"> <img src='".$image."' class='small-image' onError='this.onerror=null;this.src=\"/assets/images/avatars/avatar2.png\"'> </span></td><td><span class=\"lbl\"> $employee->associate_id</span></td>
+	                    <td><input type='checkbox' value='$employee->associate_id' name='assigned[$employee->as_id]'/></td><td><span class=\"lbl\"> <img src='".emp_profile_picture($employee)."' class='small-image min-img-file'> </span></td><td><span class=\"lbl\"> $employee->associate_id</span></td>
 	                    <td>$employee->as_name </td><td>$employee->as_shift_id </td></tr>";
         }
 
