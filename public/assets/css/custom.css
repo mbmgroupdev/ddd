@@ -834,3 +834,11 @@ span.lib-label {
     height: 20px;
     font-size: 14px;
 }
+.min-img-file{
+    height: 40px; width:auto;
+}
+
+[aria-labelledby="id-66-title"] {
+  visibility: visible;
+  display: none;
+}

@@ -204,7 +204,7 @@
 			            	@if($head == '')
 			            	<tr>
 			            		<td>{{ ++$i }}</td>
-				            	<td><img src="{{ emp_profile_picture($employee) }}" class='small-image' style="height: 40px; width: auto;"></td>
+				            	<td><img src="{{ emp_profile_picture($employee) }}" class='small-image min-img-file'></td>
 				            	<td>{{ $employee->associate_id }}</td>
 				            	<td>
 				            		<b>{{ $employee->as_name }}</b>

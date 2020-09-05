@@ -203,7 +203,7 @@ $(document).ready(function() {
                         if(len === dataLength){
                             // console.log('complete');
                             $("#progressbar-box").hide();
-                            $("#top-msg").html('<div class="alert alert-success "><span class="alert-icon"><i class="fa fa-check"></i></span><div class="notification-info"><h5 class="">'+unitName+' Attendance file is processed.</h5><a href="'+url+'/hr/timeattendance/attendance_manual" class="btn btn-warning btn-xs"> <i class="fa fa-reply-all"></i> Back</a></div></div>');
+                            $("#top-msg").html('<div class="alert alert-success "><span class="alert-icon"><i class="fa fa-check"></i></span><div class="notification-info"><h5 class="">'+unitName+' Attendance file is processed.</h5><a href="'+url+'/hr/timeattendance/attendance-upload" class="btn btn-warning btn-xs"> <i class="fa fa-reply-all"></i> Back</a></div></div>');
                             if(unit != 1001){
                                 absentCheck(unit, fileDate);
                             }
