@@ -38,6 +38,9 @@
             color: #FFF;
         }
         .notification-info {
+            margin-left: 10px;
+        }
+        /*.notification-info {
             margin-left: 56px;
             margin-top: -40px;
             min-height: 40px;
@@ -46,7 +49,7 @@
             margin-bottom: 3px;
             padding-left: 0px;
             list-style: none outside none;
-        }
+        }*/
         .notification-sender {
             color: #414147;
         }
