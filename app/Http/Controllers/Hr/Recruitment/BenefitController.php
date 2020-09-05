@@ -1004,7 +1004,7 @@ class BenefitController extends Controller
     public function showAssociateBenefit(Request $request)
     {
         $info = DB::table("hr_as_basic_info AS b")
-            ->select("b.associate_id", "b.as_name", "b.as_name", "d.hr_designation_name", "dpt.hr_department_name", "u.hr_unit_name")
+            ->select("b.associate_id", "b.as_name", "b.as_pic","b.as_gender", "d.hr_designation_name", "dpt.hr_department_name", "u.hr_unit_name")
             ->where('b.associate_id', $request->associate_id)
             ->leftJoin("hr_designation AS d", "d.hr_designation_id", "b.as_designation_id")
             ->leftJoin("hr_department AS dpt", "dpt.hr_department_id", "b.as_department_id")

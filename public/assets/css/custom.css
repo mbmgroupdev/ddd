@@ -359,11 +359,6 @@ table.table-head th {
 .iq-card.iq-user-profile-block {
     height: 79%;
 }
-#associateList{
-    display: block;
-    max-height: 400px;
-    overflow-y: scroll;
-}
 .pt-35{
     padding-top: 35px;
 }
@@ -762,7 +757,6 @@ main{
 .f-18{
     font-size: 18px;
 }
-
 .f-16{
     font-size: 16px;
 }

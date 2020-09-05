@@ -1,120 +1,62 @@
 @extends('hr.layout')
-@section('title', 'Add Role')
+@section('title', 'Benefit List')
 @section('main-content')
-@push('css')
-<style type="text/css">
-    {{-- removing the links in print and adding each page header --}}
-    a[href]:after { content: none !important; }
-    thead {display: table-header-group;}
 
-    /*making place holder custom*/
-    input::-webkit-input-placeholder {
-        color: black;
-        font-weight: bold;
-        font-size: 12px;
-    }
-    input:-moz-placeholder {
-        color: black;
-        font-weight: bold;
-        font-size: 12px;
-    }
-    input:-ms-input-placeholder {
-        color: black;
-        font-weight: bold;
-        font-size: 12px;
-    }
-    th{
-        font-size: 12px;
-        font-weight: bold;
-    }
-    .dataTables_wrapper .dt-buttons {
-        text-align: center;
-        padding-left: 450px;
-    }
-    .dataTables_length{
-        float: left;
-    }
-    .dataTables_filter{
-        float: right;
-    }
-    .dataTables_processing {
-        top: 200px !important;
-        z-index: 11000 !important;
-        border: 0px !important;
-        box-shadow: none !important;
-        background: transparent !important;
-    }
-</style>
-@endpush
 @section('content')
 <div class="main-content">
     <div class="main-content-inner">
-        <div class="breadcrumbs ace-save-state" id="breadcrumbs">
-            <ul class="breadcrumb">
-                <li>
-                    <i class="ace-icon fa fa-home home-icon"></i>
-                    <a href="#">Human Resource</a>
-                </li>
-                <li>
-                    <a href="#">Payroll</a>
-                </li>
-                <li class="active">Benefit List</li>
-            </ul><!-- /.breadcrumb -->
- 
-        </div>
-
-        <div class="page-content"> 
-                @include('inc/message')
-            <div class="panel panel-success">
-              {{-- <div class="panel-heading"><h6>Benefit List</h6></div>  --}}
-                <div class="panel-body">
-
-                    <div class="row">
-                         <!-- Display Erro/Success Message -->
-                        <div class="col-xs-12">
-                            <!-- PAGE CONTENT BEGINS -->
-
-                            <div class="col-xs-12 worker-list">
-                                <table id="dataTables" class="table table-striped table-bordered" style="display:table;overflow-x: auto;white-space: nowrap; width: 100%;">
-                                    <thead>
-                                        <tr>
-                                            <!-- <th>Sl. No</th> -->
-                                            <th>Associate ID</th>
-                                            <th>Name</th>
-                                            <th>Unit</th>
-                                            <th>Joining Salary</th>
-                                            <th>Current Salary</th>
-                                            <th>Basic Salary</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tfoot>
-                                        <tr>
-                                            <!-- <th>Sl. No</th> -->
-                                            <th>Associate ID</th>
-                                            <th>Name</th>
-                                            <th>Unit</th>
-                                            <th>Joining Salary</th>
-                                            <th>Current Salary</th>
-                                            <th>Basic Salary</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div> 
-                            
-
-                            <!-- PAGE CONTENT ENDS -->
-                        </div>
-                        <!-- /.col -->
-                    </div>
-                </div>
+        <div class="col-sm-12">
+            <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+                <ul class="breadcrumb">
+                    <li>
+                        <i class="ace-icon fa fa-home home-icon"></i>
+                        <a href="#">Human Resource</a>
+                    </li>
+                    <li>
+                        <a href="#">Employee</a>
+                    </li>
+                    <li class="active">Benefit List</li>
+                </ul><!-- /.breadcrumb -->
+     
             </div>
 
-        </div><!-- /.page-content -->
+            @include('inc/message')
+            <div class="panel panel-success">
+                <div class="panel-body">
+                    <div class="worker-list">
+                        <table id="dataTables" class="table table-striped table-bordered" style="display:table;overflow-x: auto;width: 100%;">
+                            <thead>
+                                <tr>
+                                    <!-- <th>Sl. No</th> -->
+                                    <th>Associate ID</th>
+                                    <th>Name</th>
+                                    <th>Unit</th>
+                                    <th>Joining Salary</th>
+                                    <th>Current Salary</th>
+                                    <th>Basic Salary</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <!-- <th>Sl. No</th> -->
+                                    <th>Associate ID</th>
+                                    <th>Name</th>
+                                    <th>Unit</th>
+                                    <th>Joining Salary</th>
+                                    <th>Current Salary</th>
+                                    <th>Basic Salary</th>
+                                    <th>Action</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div> 
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-
+@push('js')
 <script type="text/javascript">
 $(document).ready(function(){ 
     var searchable = [0,1];
@@ -249,4 +191,5 @@ $(document).ready(function(){
     }); 
 });
 </script>
+@endpush
 @endsection

@@ -25,87 +25,94 @@
 
 
 		<div class="panel p-3 pb-0"> 
-            {{ Form::open(['url'=>'', 'class'=>'row', 'id'=>'IdCard']) }}
-			<div class="col-6">
-				<div class="row">
-					<div class="col-6 file_tag_field">
-						<div class="form-group has-float-label select-search-group">
-							
-	                        {{ Form::select('emp_type', $employeeTypes, null, ['placeholder'=>'Select Employee Type', 'class'=> 'form-control filter']) }}  
-	                        <label>Employee Type</label>
+			<div class="panel-heading">
+				<h6>Employee File Tag</h6>
+			</div>
+			<div class="panel-body">
+				
+	            {{ Form::open(['url'=>'', 'class'=>'row', 'id'=>'IdCard']) }}
+				<div class="col-6">
+					<div class="row">
+						<div class="col-6 file_tag_field">
+							<div class="form-group has-float-label select-search-group">
+								
+		                        {{ Form::select('emp_type', $employeeTypes, null, ['placeholder'=>'Select Employee Type', 'class'=> 'form-control filter']) }}  
+		                        <label>Employee Type</label>
+							</div>
+						</div>
+						<div class="col-6">
+							<div class="form-group has-float-label select-search-group">
+	                        	{{ Form::select('unit', $unitList, null, ['placeholder'=>'Select Unit', 'class'=> 'form-control filter']) }} 
+	                        	<label>Unit</label>
+							</div> 
 						</div>
 					</div>
-					<div class="col-6">
-						<div class="form-group has-float-label select-search-group">
-                        	{{ Form::select('unit', $unitList, null, ['placeholder'=>'Select Unit', 'class'=> 'form-control filter']) }} 
-                        	<label>Unit</label>
-						</div> 
-					</div>
-				</div>
 
-				<div class="row">
-					<div class="col-6 file_tag_field">
-						<div class="form-group has-float-label select-search-group">
-							{{ Form::select('floor', [], null, ['placeholder'=>'Select Floor', 'class'=>'form-control filter']) }}
-							<label>Floor</label>
-						</div>   
-					</div>
-					<div class="col-6">
-						<div class="form-group has-float-label select-search-group">
-							{{ Form::select('line', [], null, ['placeholder'=>'Select Line', 'class'=>'form-control filter']) }} 
-							<label>Line</label>
-						</div>   
-					</div>  
-				</div>
-
-				<div class="row">
-					<div class="col-6 file_tag_field">
-						<div class="form-group has-float-label">
-							<input type="date"  name="doj_from" id="doj_from" class=" form-control" placeholder="Date of Join From" >
-							<label>From</label>
+					<div class="row">
+						<div class="col-6 file_tag_field">
+							<div class="form-group has-float-label select-search-group">
+								{{ Form::select('floor', [], null, ['placeholder'=>'Select Floor', 'class'=>'form-control filter']) }}
+								<label>Floor</label>
+							</div>   
+						</div>
+						<div class="col-6">
+							<div class="form-group has-float-label select-search-group">
+								{{ Form::select('line', [], null, ['placeholder'=>'Select Line', 'class'=>'form-control filter']) }} 
+								<label>Line</label>
+							</div>   
 						</div>  
 					</div>
-					<div class="col-6 file_tag_field">
-						<div class="form-group has-float-label">
-							<input type="date" name="doj_to" id="doj_to" class="datepicker form-control filter" placeholder="Date of Join To" >
-							<label>To</label>
-						</div> 
-					</div>  
-				</div>
 
-				<div class="row" id="search_btn" style="margin:10px 0px; display: none;">
-					<div class="col-6 col-offset-6 ">
-                        <div class="btn-group pull-right">
-                            <button type="submit" class="btn btn-info btn ck" type="button">
-                                <i class="ace-icon fa fa-search"></i> Search
-                            </button> 
-							<div id="printBtn" style="display:inline-block;"></div>
-                        </div>
+					<div class="row">
+						<div class="col-6 file_tag_field">
+							<div class="form-group has-float-label">
+								<input type="date"  name="doj_from" id="doj_from" class=" form-control" placeholder="Date of Join From" >
+								<label>From</label>
+							</div>  
+						</div>
+						<div class="col-6 file_tag_field">
+							<div class="form-group has-float-label">
+								<input type="date" name="doj_to" id="doj_to" class="datepicker form-control filter" placeholder="Date of Join To" >
+								<label>To</label>
+							</div> 
+						</div>  
+					</div>
+
+					<div class="row" id="search_btn" style="margin:10px 0px; display: none;">
+                        <button type="submit" class="btn btn-primary btn ck" type="button">
+                            <i class="ace-icon fa fa-search"></i> Search
+                        </button>  &nbsp;&nbsp;
+						<div id="printBtn" style="display:inline-block;"></div>
 					</div>
 				</div>
+
+
+				<div class="col-6" style="margin-top: -16px;padding-left: 20px;padding-right: 15px;border-top: 1px solid rgb(206 235 238);">
+					<div class="row" style="height: 300px; overflow: auto;">
+	                    <table id="AssociateTable" class="table header-fixed1 table-compact table-bordered col-sm-12">
+	                        <thead>
+	                           
+	                            <tr>
+		                            <th class="sticky-th"><input type="checkbox" id="checkAll"/></th>
+		                            <th class="sticky-th">Associate ID</th>
+		                            <th class="sticky-th">Name</th>
+	                            </tr>
+	                             <tr>
+	                                <th class="sticky-th" colspan="5" id="user_filter" style="top: 40px;"></th>
+	                            </tr>
+	                            
+	                        </thead>
+	                        <tbody id="associateList">
+	                        </tbody>
+	                    </table>
+	                </div> 
+				</div>
+				{{ Form::close() }}
 			</div>
+		</div>
 
-
-			<div class="col-6" style="padding-top: 10px; padding-left: 20px; padding-right: 20px;"> 
-                <table id="AssociateTable" class="table header-fixed table-compact table-bordered">
-                    <thead>
-                        <tr>
-                            <th><input type="checkbox" id="checkAll"/></th>
-                            <th>Associate ID</th>
-                            <th>Name</th>
-                        </tr>
-                        <tr>
-                            <th colspan="3" id="user_filter"></th>
-                        </tr>
-                    </thead>
-                    <tbody id="associateList">
-						
-                    </tbody>
-                </table>
-			</div>
-			{{ Form::close() }}
-
-			<div class="col-xs-10 col-offset-1" id="idCardPrint" style="overflow-y: scroll; height:1200px; border: 1px solid whitesmoke; " hidden></div> 
+		<div class="panel">
+			<div id="idCardPrint" style="overflow-y: scroll; height:1200px; border: 1px solid whitesmoke; " hidden></div> 
 		</div>
 	</div>
 </div>   
@@ -295,7 +302,6 @@ function printContent(el)
 	mywindow.print();
 	mywindow.close();  
 }
- 
 </script>
 @endpush
 @endsection
