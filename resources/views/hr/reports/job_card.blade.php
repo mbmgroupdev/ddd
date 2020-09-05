@@ -48,7 +48,7 @@
                                 </div>
                                 <div class="col-6">
                                     <button type="submit" class="btn btn-primary btn-sm activityReportBtn"><i class="fa fa-save"></i> Generate</button>
-                                    @if (!empty(request()->associate) && !empty(request()->month) && !empty(request()->year))
+                                    @if (!empty(request()->associate) && !empty($month) && !empty($year))
                                     <div id="print_pdf" class="custom-control-inline" >
                                          
                                         <button type="button" onClick="printMe1('PrintArea')" class="btn btn-warning btn-sm" title="Print">
@@ -75,30 +75,30 @@
                         <div class="result-data" id="result-data">
                             @if(isset($info))
                                 @php
-                                    $year  = request()->year;
-                                    $monthName = request()->month;
+                                    $year  = date('Y', strtotime(request()->month_year));
+                                    $month = date('m', strtotime(request()->month_year));
                                 @endphp
 
                                 <div id="html-2-pdfwrapper" class="col-sm-12" style="margin:20px auto;border:1px solid #ccc">
                                     <div class="page-header" id="brand-head" style="border-bottom:2px double #666; text-align: center;">
                                         @php
                                         $lastMonth = date('m',strtotime("-1 month"));
-                                        $thisMonth = date('m', strtotime(request()->month));
+                                        $thisMonth = date('m');
                                         $number = salary_lock_date();
                                         $lockDate = Date('Y-m')."-".sprintf('%02d', $number);
                                         @endphp
 
-                                        @if(($lastMonth == $thisMonth && $lockDate> date('Y-m-d'))|| $thisMonth == date('m'))
-                                        @hasanyrole("super user|user type 2|advance user 2|power user 2|power user 3")
+                                        @if(($lastMonth == $month && $lockDate > date('Y-m-d'))|| $thisMonth == date('m'))
+                                        
                                             <div class="btn-group pull-right">
-                                                <a  href={{url("hr/timeattendance/attendance_bulk_manual?associate=$info->associate&&month=$monthName&year=$year")}} target="_blank" data-tooltip="Edit Attendance Manual" data-tooltip-location="top" class="btn btn-sm btn-info"  style="border-radius: 2px !important; padding: 4px; "><i class="fa fa-edit bigger-120"></i></a>
+                                                <a  href='{{url("hr/timeattendance/attendance_bulk_manual?associate=$info->associate&month=$month&year=$year")}}' target="_blank" data-tooltip="Edit Attendance Manual" data-tooltip-location="top" class="btn btn-sm btn-info"  style="border-radius: 2px !important; padding: 4px; "><i class="fa fa-edit bigger-120"></i></a>
                                             </div>
-                                        @endhasanyrole
+                                        
                                         @endif
                                         <h3 style="margin:4px 10px">{{ $info->unit }}</h3>
                                         <h5 style="margin:4px 10px">Job Card Report</h5>
 
-                                        <h5 style="margin:4px 10px">For the month of {{ request()->month }} - {{ request()->year }}</h5>
+                                        <h5 style="margin:4px 10px">For the month of {{ $month }} - {{ $year }}</h5>
                                     </div>
                                     <table class="table" style="width:100%;border:1px solid #ccc;margin-bottom:0;font-size:14px;text-align:left"  cellpadding="5">
                                         <tr>

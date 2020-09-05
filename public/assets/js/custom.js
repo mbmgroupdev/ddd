@@ -140,7 +140,7 @@ Index Of Script
         /*---------------------------------------------------------------------
         Magnific Popup
         -----------------------------------------------------------------------*/
-        jQuery('.popup-gallery').magnificPopup({
+        /*jQuery('.popup-gallery').magnificPopup({
             delegate: 'a.popup-img',
             type: 'image',
             tLoading: 'Loading image #%curr%...',
@@ -164,7 +164,7 @@ Index Of Script
             removalDelay: 160,
             preloader: false,
             fixedContentPos: false
-        });
+        });*/
 
 
         /*---------------------------------------------------------------------
