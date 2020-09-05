@@ -7,7 +7,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
       <title>MBM - ERP</title>
       <!-- Favicon -->
-      <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico')}} " />
+      <link rel="shortcut icon" href="{{ asset('images/mbm.ico')}} " />
       <!-- Bootstrap CSS -->
       <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
       <!-- Typography CSS -->

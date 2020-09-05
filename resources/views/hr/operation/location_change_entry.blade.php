@@ -1,8 +1,6 @@
 @extends('hr.layout')
 @section('title', 'Outside Entry')
 @section('main-content')
-
-@section('content')
 <div class="main-content">
     <div class="main-content-inner col-sm-12">
         <div class="breadcrumbs ace-save-state" id="breadcrumbs">
