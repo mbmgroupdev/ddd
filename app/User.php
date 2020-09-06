@@ -57,7 +57,7 @@ class User extends Authenticatable
 
     public function logins()
     {
-        return $this->hasMany(UserActivity::class, 'associate_id', 'associate_id')->orderBy('id','DESC');
+        return $this->hasMany(UserActivity::class, 'user_id', 'user_id')->orderBy('id','DESC');
     }
 
     public function logs()
@@ -68,7 +68,7 @@ class User extends Authenticatable
 
     public function lastlogin()
     {
-        return UserActivity::where('associate_id',$this->id)->orderBy('id','DESC')->first();
+        return UserActivity::where('user_id',$this->id)->orderBy('id','DESC')->first();
     }
 
     public function unit_permissions()
