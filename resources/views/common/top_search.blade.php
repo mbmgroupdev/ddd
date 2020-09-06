@@ -15,27 +15,43 @@
        <input type="text" name="search" placeholder="Search Employee..." class="text search-input typeahead seach-employee" placeholder="Type here to search..." value="{{ $value }}" id="nav-search-input1" autocomplete="off" required data-type="employee">
        <a class="search-link" href="#"><i class="las la-user-circle"></i></a>
     </form>
+    <div id="search-suggestion" style="position: relative">
+    	
+    </div>
  </div>
 @push('js')
 	
 	<script>
 
-		$('.seach-employee').keypress(function (e) {
-			var search = $('.seach-employee').val();
-			if (e.which == 13) {
-				if(search !== '' && search !== null){
-					$('form#form-seach').submit();
-			    	return false; 
+		$(document).on('keyup', '.seach-employee', function (e) {
+			var keyword = $('.seach-employee').val();
+			if(keyword !== '' && keyword !== null){
+				if (e.which == 13) {
+						$('form#form-seach').submit();
+				    	return false; 
 				}else{
-					return false;
-				}    
+					$.ajax({
+			            url: '{{ url("search/suggestion") }}',
+			            data: {
+			                keyword: keyword,
+			                _token : "{{ csrf_token() }}",
+			            },
+			            type: 'post',
+			            success: function(result)
+			            {  
+			                $('#search-suggestion').html(result);
+			            },
+			            error:function(xhr)
+			            {
+			            	$('#search-suggestion').html('');
+			            }
+			        });
+				}
+			}else{
+				$('#search-suggestion').html('');
 			}
 			
 		  
 		});
-
-		// $(document).jQuery(document).ready(function($) {
-		// 	$('input').attr('autocomplete', 'off');
-		// });
 	</script>
 @endpush

@@ -23,6 +23,11 @@ class RecruitController extends Controller
     {
         return view('hr.recruitment.recruit.list');
     }
+
+    public function bulk()
+    {
+        return view('hr.recruitment.recruit.bulk');
+    }
     /**
      * Display a listing of the resource.
      *

@@ -6,12 +6,12 @@
 @endpush
 @section('main-content')
    <div class="row">
-      <div class="col-sm-12 col-lg-12">
+      <div class="col-sm-12 col-lg-12"> 
          <div class="panel h-min-400">
             <div class="panel-heading">
                   <h6>Recruitment Process
                       <div class="pull-right">
-                        <a class="btn btn-primary" href="{{ url('hr/recruitment/recruit/bulk') }}">Recruit Bulk</a>
+                        <a class="btn btn-primary" href="{{ url('hr/recruitment/recruit-bulk-upload') }}">Recruit Bulk</a>
                         <a class="btn btn-primary" href="{{ url('hr/recruitment/recruit') }}">Recruit List</a>
                         
                     </div>

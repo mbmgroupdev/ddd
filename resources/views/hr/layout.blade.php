@@ -94,13 +94,13 @@
                             <li>
                                <a href="#" class="search-toggle iq-waves-effect d-flex align-items-center">
                                   @if(auth()->user()->employee)
-                                  <img src='{{ auth()->user()->employee != null?asset(auth()->user()->employee['as_pic'] ):(auth()->user()->employee['as_gender'] == 'Female'?asset('assets/images/user/1.jpg'):asset('assets/images/user/09.jpg')) }}' class="img-fluid rounded mr-3" alt="{{ auth()->user()->name }}" onError='this.onerror=null;this.src="{{ (auth()->user()->employee['as_gender'] == 'Female'?asset('assets/images/user/1.jpg'):asset('assets/images/user/09.jpg')) }}";'>
+                                  <img src='{{ emp_profile_picture(auth()->user()->employee)}}' class="img-fluid rounded mr-3" alt="{{ auth()->user()->name }}" >
                                   @else
                                     <img class="img-fluid rounded mr-3" src="{{ asset('assets/images/user/09.jpg') }} ">
                                   @endif
                                   <div class="caption">
                                      <h6 class="mb-0 line-height">{{ auth()->user()->name }}</h6>
-                                     {{-- <span class="font-size-12">Available</span> --}}
+                                     <span class="font-size-12">Available</span>
                                   </div>
                                </a>
                                <div class="iq-sub-dropdown iq-user-dropdown">
@@ -108,14 +108,24 @@
                                      <div class="iq-card-body p-0 ">
                                         <div class="bg-primary p-3">
                                            <h5 class="mb-0 text-white line-height">Hello {{ auth()->user()->name }}</h5>
-                                           {{-- <span class="text-white font-size-12">Available</span> --}}
+                                           <span class="text-white font-size-12">Available</span>
                                         </div>
-                                        
+                                        <a href="{{url('profile')}}" class="iq-sub-card iq-bg-primary-hover">
+                                           <div class="media align-items-center">
+                                              <div class="rounded iq-card-icon iq-bg-primary">
+                                                 <i class="f-18 las la-user-tie"></i>
+                                              </div>
+                                              <div class="media-body ml-3">
+                                                 <h6 class="mb-0 ">My Profile</h6>
+                                                 <p class="mb-0 font-size-12">View personal profile details.</p>
+                                              </div>
+                                           </div>
+                                        </a>
                                         
                                         <a href="{{url('user/change-password')}}" class="iq-sub-card iq-bg-primary-hover">
                                            <div class="media align-items-center">
                                               <div class="rounded iq-card-icon iq-bg-primary">
-                                                 <i class="ri-account-box-line"></i>
+                                                 <i class="f-18 las la-key"></i>
                                               </div>
                                               <div class="media-body ml-3">
                                                  <h6 class="mb-0 ">Account settings</h6>
