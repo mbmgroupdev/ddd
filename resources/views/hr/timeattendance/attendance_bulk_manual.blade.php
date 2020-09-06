@@ -84,7 +84,7 @@
                         @endphp
                         <div id="html-2-pdfwrapper" class="col-sm-12" style="margin:20px auto;border:1px solid #ccc;">
                             <div class="page-header" style="border-bottom:2px double #666">
-                                <h2 style="margin:4px 10px">{{ $info->unit['hr_unit_name'] }}</h2>
+                                <h2 style="margin:4px 10px">{{ $info->unit }}</h2>
                                 <h5 style="margin:4px 10px">For the month of {{ request()->month }} </h5>
                             </div>
                             <form class="form-horizontal" role="form" method="post" action="{{ url('hr/timeattendance/attendance_bulk_store')  }}" enctype="multipart/form-data">
@@ -97,8 +97,8 @@
                                            <p style="margin:0;padding:4px 10px"><strong>DOJ </strong>: {{ date("d-m-Y", strtotime($info->as_doj)) }}</p>
                                         </th>
                                         <th>
-                                           <p style="margin:0;padding:4px 10px"><strong>Section </strong>: {{ $info->section['hr_section_name'] }} </p>
-                                           <p style="margin:0;padding:4px 10px"><strong>Designation </strong>: {{ $info->designation['hr_designation_name']}} </p>
+                                           <p style="margin:0;padding:4px 10px"><strong>Section </strong>: {{ $info->section }} </p>
+                                           <p style="margin:0;padding:4px 10px"><strong>Designation </strong>: {{ $info->designation }} </p>
                                         </th>
                                     </tr> 
                                 </table>
@@ -171,12 +171,14 @@
                                                     }
                                                 @endphp
                                                 @if($data['late_status']==1 || ($data['in_time'] == null && $data['out_time'] != null))
-                                                    <span style="height: 17px;float:right;" class="label label-warning pull-right">Late</span>
+                                                    <span style="height: auto;float:right;" class="label label-warning pull-right">Late</span>
                                                 @endif
                                                 @if($data['remarks']== 'HD')
-                                                    <span style="height: 17px;float:right;" class="label label-danger pull-right">Half Day @if($data['late_status']==1) , @endif</span>
+                                                    <span style="height: auto;float:right;" class="label label-danger pull-right">Half Day @if($data['late_status']==1) , @endif</span>
                                                 @endif
-                                                <span style="height: 17px;float:right;cursor:pointer;" class="label label-success pull-right" data-tooltip="{{$data['outside_msg']}}" data-tooltip-location="top">{{$data['outside']}}</span>
+                                                @if($data['outside'] != null)
+                                                <span style="height: auto;float:right;cursor:pointer;" class="label label-success pull-right" data-tooltip="{{$data['outside_msg']}}" data-tooltip-location="top">{{$data['outside']}}</span>
+                                                @endif
                                             </td>
                                             <td>{{ $data['floor'] }}</td>
                                             <td>{{ $data['line'] }}</td>
