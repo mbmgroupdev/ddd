@@ -37,12 +37,23 @@ Route::group(['prefix' => 'hr','namespace' => 'Hr'], function(){
 		Route::post('unit','UnitController@store');
 	});
 
+	Route::group(['prefix' => 'recruitment','namespace' => 'Recruitment'], function(){
+		Route::resource('recruit', 'RecruitController');
+		Route::post('recruit/{id}/update', 'RecruitController@update');
+
+		Route::get('recruit-bulk-upload', 'RecruitController@bulk');
+		Route::get('recruit-data-list', 'RecruitController@list');
+		Route::post('first-step-recruitment', 'RecruitController@basicRecruitStore');
+		Route::post('second-step-recruitment', 'RecruitController@medicalRecruitStore');
+	});
+
+	// common routes
+	Route::get('employee-type-wise-designation/{id}', 'Common\EmployeeAttributeController@getDesignation');
+	Route::get('area-wise-department/{id}', 'Common\EmployeeAttributeController@getDepartment');
+	Route::get('department-wise-section/{id}', 'Common\EmployeeAttributeController@getSection');
+	Route::get('section-wise-subsection/{id}', 'Common\EmployeeAttributeController@getSubSection');
 
 
-
-	// other hr routes
-	
-	@include 'xinnah.php';
 });
 
 
@@ -52,6 +63,8 @@ Route::get('menu-change', 'DashboardController@menu');
 Route::get('hr/buyermode/generate_buyer_mode', 'Hr\BuyerMode\BmodeGenerateController@generateBuyerMode');
 Route::post('hr/buyermode/generate_buyer_mode_data', 'Hr\BuyerMode\BmodeGenerateController@generateBuyerModeData');
 Route::get('hr/buyermode/get_employees', 'Hr\BuyerMode\BmodeGenerateController@getEmployees');
+
+	
 
 // employee show
 Route::get('hr/recruitment/employee/show/{associate_id?}', 'Hr\Recruitment\EmployeeController@show');
