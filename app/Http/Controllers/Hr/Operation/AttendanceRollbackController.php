@@ -17,14 +17,14 @@ class AttendanceRollbackController extends Controller
     {
         $input = $request->all();
         $tableName = get_att_table($input['unit']);
+        // return $tableName;
         try {
             $getAtt = DB::table($tableName)
-            ->select('in_time')
-            ->orderBy('in_time', 'desc')
-            ->pluck('in_time')
+            ->select('in_date')
+            ->orderBy('in_date', 'desc')
             ->first();
             if($getAtt != null){
-                $data = date('Y-m-d', strtotime($getAtt));
+                $data = date('Y-m-d', strtotime($getAtt->in_date));
                 return response()->json(['type'=>'success','value'=> $data]);
             }else{
                 return response()->json(['type'=>'error','message'=>"No Date Found!"]);

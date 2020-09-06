@@ -148,7 +148,7 @@ class AttendaceDaywiseManualController extends Controller
               $colName= "a.id as attid";
           }
           else{
-              $tableName="hr_attendance AS a";
+              $tableName="hr_attendance_mbm AS a";
               $colName= "a.att_id as attid";
           }
       #-----------------------------------------------------
@@ -610,7 +610,7 @@ class AttendaceDaywiseManualController extends Controller
         $colName= "id";
       }
       else{
-        $tableName="hr_attendance";
+        $tableName="hr_attendance_mbm";
         $colName= "att_id";
       }
 

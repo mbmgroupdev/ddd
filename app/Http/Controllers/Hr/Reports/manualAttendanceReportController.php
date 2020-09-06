@@ -60,10 +60,7 @@ class manualAttendanceReportController extends Controller
 	                $tableName="hr_attendance_cew";
 	                $colName= "id";
 	            }
-	            else{
-	                $tableName="hr_attendance";
-	                $colName= "att_id";
-	            } 
+	             
 
 	        // Query for counting manual attendance    
 	            $manualAttCount= DB::table($tableName. ' AS a')

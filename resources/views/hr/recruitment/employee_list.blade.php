@@ -141,7 +141,7 @@
 					<table id="dataTables" class="table table-striped table-bordered" style="display: block;overflow-x: auto;white-space: nowrap; width: 100%;">
 						<thead>
 							<tr>
-								<th>ID</th>
+								<th>Sl.</th>
 								<th>Action</th>
 								<th>Associate ID</th>
 								<th>Name</th>
@@ -236,7 +236,7 @@ $(document).ready(function()
 	            }
 	        },
 		    columns: [
-		        {data:'serial_no', name: 'serial_no'},
+		        {data:'DT_RowIndex', name: 'DT_RowIndex'},
 		        {data:'action', name: 'action', orderable: false, searchable: false},
 		        {data:'associate_id', name: 'associate_id'},
 		        {data:'as_name',  name: 'as_name'},

@@ -200,7 +200,6 @@
 
     // rollback process
     $(document).on('change',"#rollback-unit", function(e){
-        console.log('hi');
         var unit =  $(this).val();
         if(!(unit)){
             $("#rollback-date-content").hide();

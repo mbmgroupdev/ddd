@@ -97,7 +97,7 @@ class unitAttendanceController extends Controller
 
             $onroll=$onroll+1;
 
-            $tableName="hr_attendance";
+            $tableName="hr_attendance_mbm";
             $unit= $request->unit_id;
 
             if($unit == 2) $tableName="hr_attendance_ceil";

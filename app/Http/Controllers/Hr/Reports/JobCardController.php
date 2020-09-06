@@ -23,6 +23,7 @@ class JobCardController extends Controller
       return $pdf->download('Job_Card_Report_'.date('d_F_Y').'.pdf');
     } elseif($request->all() != null){
       $result = $this->empAttendanceByMonth($request);
+      // return $result;
       $attendance = $result['attendance'];
       $info = $result['info'];
       $joinExist = $result['joinExist'];
@@ -51,31 +52,19 @@ class JobCardController extends Controller
     #------------------------------------------------------
     // ASSOCIATE INFORMATION
     $fetchUser = DB::table("hr_as_basic_info AS b")
-                  ->select(
-                    "b.associate_id AS associate",
-                    "b.as_name AS name",
-                    "b.as_doj AS doj",
-                    "b.as_ot",
-                    "b.as_status_date",
-                    "b.as_status",
-                    "u.hr_unit_id AS unit_id",
-                    "u.hr_unit_name AS unit",
-                    "s.hr_section_name AS section",
-                    "d.hr_designation_name AS designation",
-                    "b.as_floor_id",
-                    "b.as_line_id",
-                    "hr_floor.hr_floor_name",
-                    "hr_line.hr_line_name"
-                  )
-                  ->leftJoin("hr_unit AS u", "u.hr_unit_id", "=", "b.as_unit_id")
-                  ->leftJoin("hr_section AS s", "s.hr_section_id", "=", "b.as_section_id")
-                  ->leftJoin("hr_designation AS d", "d.hr_designation_id", "=", "b.as_designation_id")
-                  ->leftJoin('hr_floor','b.as_floor_id','hr_floor.hr_floor_id')
-                  ->leftJoin('hr_line','b.as_line_id','hr_line.hr_line_id')
-                  ->where("b.associate_id", "=", $associate);
+                  ->where("b.associate_id", $associate);
     //check user exists
     if($fetchUser->exists()) {
       $info = $fetchUser->first();
+      $getUnit = unit_by_id();
+      $getLine = line_by_id();
+      $getFloor = floor_by_id();
+      $getDesignation = designation_by_id();
+      $getSection = section_by_id();
+      $subSection = subSection_by_id();
+      $info->unit = $getUnit[$info->as_unit_id]['hr_unit_name'];
+      $info->section = $getSection[$info->as_section_id]['hr_section_name']??'';
+      $info->designation = $getDesignation[$info->as_designation_id]['hr_designation_name']??'';
       $date       = ($year."-".$month."-"."01");
       $startDay   = date('Y-m-d', strtotime($date));
       $endDay     = date('Y-m-t', strtotime($date));
@@ -84,8 +73,8 @@ class JobCardController extends Controller
       if($endDay>$toDay) {
         $endDay= $toDay;
       }
-      $tableName= get_att_table($info->unit_id).' AS a';
-      $associate= $info->associate;
+      $tableName= get_att_table($info->as_unit_id).' AS a';
+      $associate= $info->associate_id;
 
       $totalDays  = (date('d', strtotime($endDay))-date('d', strtotime($startDay)));
       $total_attends  = 0; $absent = 0; $x=1; $total_ot = 0;
@@ -93,8 +82,8 @@ class JobCardController extends Controller
       // join exist this month
       $iEx = 0;
       $joinExist = false;
-      if($info->doj != null) {
-        list($yearE,$monthE,$dateE) = explode('-',$info->doj);
+      if($info->as_doj != null) {
+        list($yearE,$monthE,$dateE) = explode('-',$info->as_doj);
         if($year == $yearE && $month == $monthE) {
           $iEx = $dateE-1;
           $joinExist = true;
@@ -104,7 +93,7 @@ class JobCardController extends Controller
       // left,terminate,resign, suspend, delete exist
       $leftExist = false;
       if($info->as_status_date != null) {
-        if(in_array($info->as_status,[0,2,3,4,5])!==false) {
+        if(in_array($info->as_status,[0,2,3,4,5])!=false) {
           list($yearL,$monthL,$dateL) = explode('-',$info->as_status_date);
           if($year == $yearL && $month == $monthL) {
             if($joinExist == false) {
@@ -117,7 +106,30 @@ class JobCardController extends Controller
           }
         }
       }
-      // dd($totalDays);
+
+      $floor = $getFloor[$info->as_floor_id]['hr_floor_name']??'';
+      $line = $getLine[$info->as_line_id]['hr_line_name']??'';
+      // holiday roster
+      $getHolidayRoster = HolidayRoaster::
+      where('as_id',$associate)
+      ->where('date', 'LIKE', $request->month_year.'%')
+      ->get()
+      ->keyBy('date')->toArray();
+
+      // get attendance
+      $getAttendance = DB::table($tableName)
+                    ->where('a.as_id', $info->as_id)
+                    ->where('a.in_date', 'LIKE', $request->month_year.'%')
+                    ->get()
+                    ->keyBy('in_date')->toArray();
+      // yearly holiday roster planner
+      $getHoliday = DB::table("hr_yearly_holiday_planner")
+                  ->where('hr_yhp_status', 1)
+                  ->where('hr_yhp_unit', $info->as_unit_id)
+                  ->get()
+                  ->keyBy('hr_yhp_dates_of_holidays')->toArray();
+      
+      // dd($getAttendance);
       for($i=$iEx; $i<=$totalDays; $i++) {
         $date       = ($year."-".$month."-".$x++);
         $thisDay   = date('Y-m-d', strtotime($date));
@@ -130,8 +142,7 @@ class JobCardController extends Controller
                          ->leftJoin('hr_floor','hr_station.changed_floor','hr_floor.hr_floor_id')
                          ->leftJoin('hr_line','hr_station.changed_line','hr_line.hr_line_id')
                          ->first();
-        $floor = !empty($info->hr_floor_name)?$info->hr_floor_name:null;
-        $line = !empty($info->hr_line_name)?$info->hr_line_name:null;
+        
 
 
         //Default Values
@@ -160,31 +171,19 @@ class JobCardController extends Controller
           $attendance[$i]['present_status']=$leaveCheck->leave_type." Leave";
         } else {
           // check attendance
-          $attendCheck = DB::table($tableName)
-                          ->select(
-                              "a.*",
-                              "b.as_ot"
-                          )
-                          ->join("hr_as_basic_info AS b", function($join) {
-                              $join->on("b.as_id", "=", "a.as_id");
-                          })
-                          ->where('b.associate_id', $associate)
-                          ->whereDate('a.in_time', '=', $thisDay)
-                          //->orWhereDate('a.out_time', '=', $thisDay)
-                          ->first();
+          
+            $attendCheck = $getAttendance[$thisDay]??'';
 
             // check holiday
-            $holidayRoaster = HolidayRoaster::where(['date'=>$thisDay,'as_id'=>$associate])->first();
-            if(!$holidayRoaster){
-              $holidayEmployee = Employee::where('associate_id',$associate)->first();
+            $holidayRoaster = $getHolidayRoster[$thisDay]??'';
+
+            if($holidayRoaster == ''){
+              // $holidayEmployee = Employee::where('associate_id',$associate)->first();
               // if shift assign then check yearly hoiliday
-              if((int)$holidayEmployee->shift_roaster_status == 0) {
-                $holidayCheck = DB::table("hr_yearly_holiday_planner")
-                            ->where('hr_yhp_dates_of_holidays', $thisDay)
-                            ->where('hr_yhp_status', 1)
-                            ->where('hr_yhp_unit', $info->unit_id)
-                            ->first();
-                if($holidayCheck){
+              if((int)$info->shift_roaster_status == 0) {
+                
+                $holidayCheck = $getHoliday[$thisDay]??'';
+                if($holidayCheck != ''){
                   if($holidayCheck->hr_yhp_open_status == 1) {
                     $attendance[$i]['present_status'] = "Weekend(General)";
                   }
@@ -198,19 +197,19 @@ class JobCardController extends Controller
                 }
               }
             } else {
-              if($holidayRoaster->remarks == 'Holiday') {
+              if($holidayRoaster['remarks'] == 'Holiday') {
                 $attendance[$i]['present_status'] = "Day Off";
-                if($holidayRoaster->comment != null) {
-                  $attendance[$i]['present_status'] .= ' - '.$holidayRoaster->comment;
+                if($holidayRoaster['comment'] != null) {
+                  $attendance[$i]['present_status'] .= ' - '.$holidayRoaster['comment'];
                 }
               }
-              if($holidayRoaster->remarks == 'OT') {
+              if($holidayRoaster['remarks'] == 'OT') {
                 $attendance[$i]['present_status'] = "OT";
-                $attendance[$i]['attPlusOT'] = 'OT - '.$holidayRoaster->comment;
+                $attendance[$i]['attPlusOT'] = 'OT - '.$holidayRoaster['comment'];
               }
             }
 
-            if($attendCheck){
+            if($attendCheck != ''){
               $intime = (!empty($attendCheck->in_time))?date("H:i", strtotime($attendCheck->in_time)):null;
               $outtime = (!empty($attendCheck->out_time))?date("H:i", strtotime($attendCheck->out_time)):null;
               if($attendCheck->remarks == 'DSI'){
