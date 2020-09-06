@@ -842,3 +842,16 @@ span.lib-label {
   visibility: visible;
   display: none;
 }
+
+.iq-card-body.em-card-body {
+    position: absolute;
+    width: 100%;
+    background: #ceebee;
+    top: 5px;
+    border-radius: 15px;
+}
+.emp-lists li{
+    background: #fff;
+    border-radius: 5px;
+    list-style-type: none;
+}

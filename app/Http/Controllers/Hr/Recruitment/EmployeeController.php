@@ -549,7 +549,7 @@ class EmployeeController extends Controller
 
     protected function getCompleteInfo($associate_id = null)
     {
-        $info= DB::table('hr_as_basic_info AS b')
+        $info = DB::table('hr_as_basic_info AS b')
             ->select(
                 'b.*',
                 'a.*',
