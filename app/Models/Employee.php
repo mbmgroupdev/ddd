@@ -13,7 +13,7 @@ class Employee extends Model
 	use Compoships;
 
     //public $with = ['employee_bengali','designation', 'unit', 'floor', 'department'];
-	public $with = ['designation'];
+	//public $with = ['designation'];
     protected $table = "hr_as_basic_info";
     protected $guarded = [];
 

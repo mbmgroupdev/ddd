@@ -25,7 +25,7 @@ class User extends Authenticatable
         'name', 'associate_id', 'email', 'password','unit_id', 'unit_permissions', 'buyer_permissions','buyer_template_permission','management_restriction'
     ];
 
-    protected $with = ['employee','logs'];
+    protected $with = ['employee'];
 
     /**
      * The attributes that should be hidden for arrays.
