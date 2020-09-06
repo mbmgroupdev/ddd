@@ -10,7 +10,11 @@
          <div class="panel h-min-400">
             <div class="panel-heading">
                   <h6>Recruitment Process
-                      <a class="btn btn-primary pull-right" href="{{ url('hr/recruitment/recruit') }}">Recruit List</a>
+                      <div class="pull-right">
+                        <a class="btn btn-primary" href="{{ url('hr/recruitment/recruit/bulk') }}">Recruit Bulk</a>
+                        <a class="btn btn-primary" href="{{ url('hr/recruitment/recruit') }}">Recruit List</a>
+                        
+                    </div>
                   </h6>
             </div>
             <div class="panel-body">

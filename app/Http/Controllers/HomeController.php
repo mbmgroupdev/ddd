@@ -26,6 +26,7 @@ class HomeController extends Controller
      */
     public function index()
     {
+        //auth()->user()->logs();
         $att = $this->userAtt();
         $associate_id = auth()->user()->associate_id;
         $leaves = array();
