@@ -13,9 +13,7 @@
       <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
       <!-- Style CSS -->
-      <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
-      {{-- login css --}}
-      <link rel="stylesheet" href="{{ asset('assets/css/login.css') }}">
+      <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">  
       <!-- Responsive CSS -->
       <link rel="stylesheet" href="{{ asset('assets/css/responsive.css') }}">
 </head>

@@ -129,7 +129,7 @@ class LeaveLogController extends Controller
 				->distinct("date")
 				->where("as_id", $id)
 				->where(DB::raw("YEAR(in_time)"), $i)
-				->groupBy("att_id")
+				->groupBy("id")
 				->get();
 			//make total earned
 			$total_earned += number_format((sizeof($attend[$i])>0?(sizeof($attend[$i])/18):0), 2); 

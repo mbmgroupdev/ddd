@@ -29,7 +29,6 @@ class AttendaceBulkManualController extends Controller
             if($request->month <= date('Y-m')){
 
                 $result = $this->empAttendanceByMonth($request);
-                // dd($result);
                 $attendance = $result['attendance'];
                 $info = $result['info'];
                 $joinExist = $result['joinExist'];
@@ -494,10 +493,20 @@ class AttendaceBulkManualController extends Controller
         $year  = $explode[0];
         #------------------------------------------------------
         // ASSOCIATE INFORMATION
-        $fetchUser = Employee::where("hr_as_basic_info.associate_id", "=", $associate);
+        $fetchUser = Employee::where("associate_id", $associate);
         //check user exists
         if($fetchUser->exists()) {
           $info = $fetchUser->first();
+          $getUnit = unit_by_id();
+          $getLine = line_by_id();
+          $getFloor = floor_by_id();
+          $getDesignation = designation_by_id();
+          $getSection = section_by_id();
+          $subSection = subSection_by_id();
+          $info->unit = $getUnit[$info->as_unit_id]['hr_unit_name'];
+          $info->section = $getSection[$info->as_section_id]['hr_section_name']??'';
+          $info->designation = $getDesignation[$info->as_designation_id]['hr_designation_name']??'';
+
           $date       = ($year."-".$month."-"."01");
           $startDay   = date('Y-m-d', strtotime($date));
           $endDay     = date('Y-m-t', strtotime($date));
@@ -506,7 +515,7 @@ class AttendaceBulkManualController extends Controller
           if($endDay>$toDay) {
             $endDay= $toDay;
           }
-          $tableName= $this->getTableNameUnit($info->as_unit_id);
+          $tableName= get_att_table($info->as_unit_id).' AS a';
           $associate= $info->associate_id;
 
           $totalDays  = (date('d', strtotime($endDay))-date('d', strtotime($startDay)));
@@ -539,6 +548,29 @@ class AttendaceBulkManualController extends Controller
               }
             }
           }
+
+          $floor = $getFloor[$info->as_floor_id]['hr_floor_name']??'';
+          $line = $getLine[$info->as_line_id]['hr_line_name']??'';
+          // holiday roster
+          $getHolidayRoster = DB::table('holiday_roaster')
+          ->where('as_id',$associate)
+          ->where('date', 'LIKE', $request->month_year.'%')
+          ->get()
+          ->keyBy('date')->toArray();
+
+          // get attendance
+          $getAttendance = DB::table($tableName)
+                        ->where('a.as_id', $info->as_id)
+                        ->where('a.in_date', 'LIKE', $request->month_year.'%')
+                        ->get()
+                        ->keyBy('in_date')->toArray();
+          // yearly holiday roster planner
+          $getHoliday = DB::table("hr_yearly_holiday_planner")
+                      ->where('hr_yhp_status', 1)
+                      ->where('hr_yhp_unit', $info->as_unit_id)
+                      ->get()
+                      ->keyBy('hr_yhp_dates_of_holidays')->toArray();
+
           for($i=$iEx; $i<=$totalDays; $i++) {
             $date       = ($year."-".$month."-".$x);
             $thisDay   = date('Y-m-d', strtotime($date));
@@ -577,8 +609,6 @@ class AttendaceBulkManualController extends Controller
                              ->leftJoin('hr_floor','hr_station.changed_floor','hr_floor.hr_floor_id')
                              ->leftJoin('hr_line','hr_station.changed_line','hr_line.hr_line_id')
                              ->first();
-            $floor = !empty($info->floor['hr_floor_name'])?$info->floor['hr_floor_name']:null;
-            $line  = !empty($info->line['hr_line_name'])?$info->line['hr_line_name']:null;
 
             //Default Values
             $attendance[$i]['in_time']      = null;
@@ -606,30 +636,17 @@ class AttendaceBulkManualController extends Controller
               $attendance[$i]['present_status']=$leaveCheck->leave_type." Leave";
             } else {
                 // check attendance
-                $attendCheck = DB::table($tableName)
-                              ->select(
-                                  "a.*",
-                                  "b.as_ot"
-                              )
-                              ->join("hr_as_basic_info AS b", function($join) {
-                                  $join->on("b.as_id", "=", "a.as_id");
-                              })
-                              ->where('b.associate_id', $associate)
-                              ->whereDate('a.in_time', '=', $thisDay)
-                              //->orWhereDate('a.out_time', '=', $thisDay)
-                              ->first();
+          
+                $attendCheck = $getAttendance[$thisDay]??'';
 
                 // check holiday
-                $holidayRoaster = HolidayRoaster::where(['date'=>$thisDay,'as_id'=>$associate])->first();
-                if(!$holidayRoaster){
+                $holidayRoaster = $getHolidayRoster[$thisDay]??'';
+
+                if($holidayRoaster == ''){
                   // if shift assign then check yearly hoiliday
                   if((int)$info->shift_roaster_status == 0) {
-                    $holidayCheck = DB::table("hr_yearly_holiday_planner")
-                                ->where('hr_yhp_dates_of_holidays', $thisDay)
-                                ->where('hr_yhp_status', 1)
-                                ->where('hr_yhp_unit', $info->as_unit_id)
-                                ->first();
-                    if($holidayCheck){
+                    $holidayCheck = $getHoliday[$thisDay]??'';
+                    if($holidayCheck != ''){
                       if($holidayCheck->hr_yhp_open_status == 1) {
                         $attendance[$i]['present_status'] = "Weekend(General)";
                       }
@@ -655,7 +672,7 @@ class AttendaceBulkManualController extends Controller
                   }
                 }
 
-                if($attendCheck){
+                if($attendCheck != ''){
                   $attendance[$i]['att_id'] = $attendCheck->id;
                   $intime = (!empty($attendCheck->in_time))?date("H:i:s", strtotime($attendCheck->in_time)):null;
                   $outtime = (!empty($attendCheck->out_time))?date("H:i:s", strtotime($attendCheck->out_time)):null;

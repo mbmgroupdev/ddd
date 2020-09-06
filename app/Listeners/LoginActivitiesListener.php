@@ -28,7 +28,7 @@ class LoginActivitiesListener
     public function handle(Login $event)
     {
         LoginActivities::insert([
-            'associate_id'  =>  $event->user->associate_id,
+            'user_id'       =>  $event->user->id,
             'user_agent'    =>  \Illuminate\Support\Facades\Request::header('User-Agent'),
             'browser'       =>  $this->getBrowser()->browser." (".$this->getBrowser()->version.")",
             'platform'      =>  $this->getBrowser()->platform,
