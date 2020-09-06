@@ -117,7 +117,7 @@
                               @if(($lastMonth == $month && $lockDate > date('Y-m-d'))|| $month == date('m'))
                               <div class="text-right">
                                 <h4 class="card-title capitalize inline">
-                                <a href='{{url("hr/timeattendance/attendance_bulk_manual?associate=$info->associate&month=$month&year=$year")}}' class="btn view list_view no-padding" data-toggle="tooltip" data-placement="top" title="" data-original-title="Manual Edit Job Card">
+                                <a href='{{url("hr/timeattendance/attendance_bulk_manual?associate=$info->associate_id&month=$month&year=$year")}}' class="btn view list_view no-padding" data-toggle="tooltip" data-placement="top" title="" data-original-title="Manual Edit Job Card">
                                   <i class="fa fa-edit bigger-120"></i>
                                 </a>
                                 </h4>
@@ -140,9 +140,9 @@
                                 <table class="table" style="width:100%;border:1px solid #ccc;margin-bottom:0;font-size:14px;text-align:left"  cellpadding="5">
                                     <tr>
                                         <th style="width:35%">
-                                           <p style="margin:0;padding:4px 10px"><strong>ID </strong> # {{ $info->associate }}</p>
-                                           <p style="margin:0;padding:4px 10px"><strong>Name </strong>: {{ $info->name }}</p>
-                                           <p style="margin:0;padding:4px 10px"><strong>DOJ </strong>: {{ date("d-m-Y", strtotime($info->doj)) }}</p>
+                                           <p style="margin:0;padding:4px 10px"><strong>ID </strong> # {{ $info->associate_id }}</p>
+                                           <p style="margin:0;padding:4px 10px"><strong>Name </strong>: {{ $info->as_name }}</p>
+                                           <p style="margin:0;padding:4px 10px"><strong>DOJ </strong>: {{ date("d-m-Y", strtotime($info->as_doj)) }}</p>
                                         </th>
                                         <th>
                                            <p style="margin:0;padding:4px 10px"><strong>Section </strong>: {{ $info->section }} </p>

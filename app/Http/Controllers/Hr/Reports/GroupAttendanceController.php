@@ -77,7 +77,7 @@ class GroupAttendanceController extends Controller
                     $tableName= "hr_attendance_cew AS a";
                 }
                 else{
-                    $tableName= "hr_attendance AS a";
+                    $tableName= "hr_attendance_mbm AS a";
                 } 
 
                 // Query for attendance in time

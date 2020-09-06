@@ -254,7 +254,7 @@ class SalarySheetCustomController extends Controller
         } else if($unit ==8){
             $tableName="hr_attendance_cew";
         } else{
-            $tableName="hr_attendance";
+            $tableName="hr_attendance_mbm";
         }
         // get holiday ot
         $hr_basic = Employee::where('associate_id',$getSalary->as_id)->first();

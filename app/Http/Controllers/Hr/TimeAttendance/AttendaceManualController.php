@@ -88,7 +88,7 @@ class AttendaceManualController extends Controller
                 $tableName="hr_attendance_cew AS a";
            }
            else{
-                $tableName="hr_attendance AS a";
+                $tableName="hr_attendance_mbm AS a";
            }
             // checking existing punch
             $ispunched = DB::table($tableName)
@@ -193,7 +193,7 @@ class AttendaceManualController extends Controller
             $tableName="hr_attendance_cew AS a";
         }
         else{
-            $tableName="hr_attendance AS a";
+            $tableName="hr_attendance_mbm AS a";
         }
         $data = array();
         // if any punch of today exists then show it
@@ -283,7 +283,7 @@ public function manualAttLogData(){
     DB::statement(DB::raw("SET @s:=0"));
     $data= DB::select("
         SELECT @s:=@s+1 AS serial_no, a.*,  b.as_name, b.associate_id
-        FROM hr_attendance AS a
+        FROM hr_attendance_mbm AS a
         LEFT JOIN hr_as_basic_info AS b ON b.as_id = a.as_id
         WHERE a.remarks != '' OR a.remarks != NULL
     ");

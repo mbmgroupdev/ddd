@@ -122,7 +122,7 @@ class LeaveLogController extends Controller
 		{
 			# -----------------------------------
 			// total due earned due 
-			$attend[$i] = DB::table("hr_attendance")
+			$attend[$i] = DB::table("hr_attendance_mbm")
 				->select(DB::raw("
 					DATE(in_time) AS date 
 				"))

@@ -206,11 +206,13 @@
         salaryProcess();
       @endif 
       var loader = '<div class="panel"><div class="panel-body"><p style="text-align:center;margin:100px;"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>';
+
       $('#activityReport').on('submit', function(e) {
         e.preventDefault();
         salaryProcess();
       });
       function salaryProcess(){
+        console.log(loader)
         $("#result-data").html(loader);
         $("#single-employee-search").hide();
         var unit = $('select[name="unit"]').val();

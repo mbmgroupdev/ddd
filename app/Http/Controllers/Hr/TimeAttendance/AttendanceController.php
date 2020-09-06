@@ -34,7 +34,7 @@ class AttendanceController extends Controller
         #-----------------------------------------------------------#
 
         DB::statement(DB::raw('set @serial_no=0'));
-        $data = DB::table("hr_attendance AS a")
+        $data = DB::table("hr_attendance_mbm AS a")
             ->select(
                 DB::raw('@serial_no := @serial_no + 1 AS serial_no'),
                 "b.associate_id",
@@ -1348,7 +1348,7 @@ class AttendanceController extends Controller
         $report_to    = $request->report_to;
         $unit         = $request->unit;
 
-        $data = DB::table("hr_attendance AS a")
+        $data = DB::table("hr_attendance_mbm AS a")
             ->select(
                 "b.associate_id",
                 "a.in_time",
