@@ -405,7 +405,7 @@ class BenefitController extends Controller
         $employeeTypes  = EmpType::where('hr_emp_type_status', '1')->pluck('hr_emp_type_name', 'emp_type_id');
         $typeList= IncrementType::pluck('increment_type', 'id');
 
-        $incrementList= DB::table('hr_increment AS inc')
+        /*$incrementList= DB::table('hr_increment AS inc')
                             ->where('status', 0)
                             ->select([
                                 'inc.id',
@@ -421,15 +421,15 @@ class BenefitController extends Controller
                             ->leftJoin('hr_as_basic_info AS b', 'b.associate_id', 'inc.associate_id')
                             ->leftJoin('hr_increment_type AS c', 'c.id', 'inc.increment_type' )
                             ->orderBy('inc.id','desc')
-                            ->get();
+                            ->get();*/
 
         //Arear Salary List----
-        $associate_ids = DB::table('hr_salary_adjust_master as b')
+        /*$associate_ids = DB::table('hr_salary_adjust_master as b')
                                 ->groupBy('b.associate_id')
                                 ->pluck('b.associate_id')
-                                ->toArray();
+                                ->toArray();*/
         // dd($associate_ids);
-        foreach ($associate_ids as $key => $ass) {
+        /*foreach ($associate_ids as $key => $ass) {
             $data = DB::table('hr_salary_adjust_master as b')->where('b.associate_id', $ass)
                     ->select([
                         'b.month',
@@ -449,12 +449,12 @@ class BenefitController extends Controller
                     ->where('c.type', 3)
                     ->get();
             $arrear_data[$key] = $data;
-        }
+        }*/
 
 
         // dd($arrear_data);
 
-        return view('hr/payroll/increment', compact('unitList','employeeTypes', 'typeList', 'incrementList', 'arrear_data'));
+        return view('hr/payroll/increment', compact('unitList','employeeTypes', 'typeList'));
     }
 
     public function storeIncrement(Request $request)

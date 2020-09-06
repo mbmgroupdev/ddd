@@ -83,10 +83,13 @@ class HomeController extends Controller
 
         return $chartdata;
     }
+    
     public function login()
     {
         return view('login');
     }
+
+
     public function clear()
     {
         $exitCode = Artisan::call('config:clear');

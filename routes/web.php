@@ -19,21 +19,22 @@ use Illuminate\Support\Facades\Route;
 Route::group(['middleware' => 'guest'], function(){
 	Route::get('/', 'HomeController@login');
 });
-Route::get('/clear-cache', 'HomeController@clear');
 
 Auth::routes();
 
 
 
-// need to modify this routes
-Route::get('hr/payroll/promotion-jobs', 'Hr\Recruitment\BenefitController@promotionJobs');
-Route::get('hr/payroll/increment-jobs', 'Hr\Recruitment\BenefitController@incrementJobs');
-Route::get('hr/timeattendance/shift-jobs', 'Hr\TimeAttendance\ShiftRoasterController@shiftJobs');
-Route::get('hr/leave/leave_status_jobs', 'Hr\TimeAttendance\LeaveWorkerController@maternityLeaveCheck');
-Route::get('hr/leave/leave_status_update_jobs', 'Hr\TimeAttendance\LeaveWorkerController@LeaveStatusCheckAndUpdate');
-
 Route::group(['middleware' => 'auth'], function(){
 
+	Route::get('/clear-cache', 'HomeController@clear');
+	Route::get('/mmr-report', 'Hr\ReportController@mmr');
+
+	// need to modify this routes
+	Route::get('hr/payroll/promotion-jobs', 'Hr\Recruitment\BenefitController@promotionJobs');
+	Route::get('hr/payroll/increment-jobs', 'Hr\Recruitment\BenefitController@incrementJobs');
+	Route::get('hr/timeattendance/shift-jobs', 'Hr\TimeAttendance\ShiftRoasterController@shiftJobs');
+	Route::get('hr/leave/leave_status_jobs', 'Hr\TimeAttendance\LeaveWorkerController@maternityLeaveCheck');
+	Route::get('hr/leave/leave_status_update_jobs', 'Hr\TimeAttendance\LeaveWorkerController@LeaveStatusCheckAndUpdate');
 	Route::get('/search-employee-result', 'SearchController@searchEmp');
 	Route::get('dashboard', 'DashboardController@index');
 	
