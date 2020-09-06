@@ -10,8 +10,10 @@ class NomineeController extends Controller
 {    
 	public function showForm(Request $request)
     {
-
-    	$info = DB::table('hr_as_basic_info AS b')
+        dd(cache('spatie.permission.cache'));
+        $info = array();
+        if($request->has('associate_id')){
+    	   $info = DB::table('hr_as_basic_info AS b')
             ->where("b.associate_id", $request->associate)
             ->select(
                 'u.hr_unit_name_bn',
@@ -43,7 +45,7 @@ class NomineeController extends Controller
             ->leftJoin('hr_employee_bengali AS bn', 'bn.hr_bn_associate_id', '=', 'b.associate_id')  
             ->first(); 
 
-
+        }
         if ($request->get('pdf') == true) { 
             $pdf = PDF::loadView('hr/reports/nominee_pdf', []);
             return $pdf->download('Nominee_Report_'.date('d_F_Y').'.pdf');

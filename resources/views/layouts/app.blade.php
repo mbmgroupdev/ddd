@@ -9,7 +9,7 @@
 
     <title>@yield('title') - MBM ERP</title>
     <!-- Favicon -->
-    <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}" />
+    <link rel="shortcut icon" href="{{ asset('images/mbm.ico')}} " />
     
 
     <!-- Styles -->
@@ -29,10 +29,10 @@
 </head>
 <body>
     <!-- loader Start -->
-    {{-- <div id="loading">
+    <div id="loading">
         <div id="loading-center">
         </div>
-    </div> --}}
+    </div>
     <!-- loader END -->
     <div id="app">
         <!-- Wrapper Start -->

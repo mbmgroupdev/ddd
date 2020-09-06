@@ -1,5 +1,6 @@
-@extends('hr.index')
-@section('content')
+@extends('hr.layout')
+@section('title', 'Loan Application Status')
+@section('main-content')
 <div class="main-content">
     <div class="main-content-inner">
         <div class="breadcrumbs ace-save-state" id="breadcrumbs">

@@ -37,7 +37,7 @@
                       <!-- Display Erro/Success Message -->
                     @include('inc/message')
                     
-                    <form class="form-horizontal p-3" role="form" method="post" action="{{ url('hr/payroll/increment')  }}" enctype="multipart/form-data">
+                    <form class="form-horizontal" role="form" method="post" action="{{ url('hr/payroll/increment')  }}" enctype="multipart/form-data">
                         {{ csrf_field() }} 
                         <div class="row">
                             <div class="col-6">
@@ -119,12 +119,12 @@
                                     <table id="AssociateTable" class="table header-fixed1 table-compact table-bordered" >
                                         <thead>
                                             <tr>
-                                                <th style='position: sticky; top: -1px; text-align: center;'><input type="checkbox" id="checkAll" style="height:10px !important;" /></th>
-                                                <th style='position: sticky; top: -1px;'>Associate ID</th>
-                                                <th style='position: sticky; top: -1px;'>Associate Name</th>
+                                                <th class="sticky-th"><input type="checkbox" id="checkAll" class="sticky-th" /></th>
+                                                <th class="sticky-th">Associate ID</th>
+                                                <th class="sticky-th">Associate Name</th>
                                             </tr>
                                             <tr>
-                                                <th colspan="3" id="user_filter" style='position: sticky; top: -1px;' ></th>
+                                                <th class="sticky-th" colspan="3" id="user_filter" style='top: 40px;' ></th>
                                             </tr>
                                         </thead> 
                                         <tbody id="user_info">
