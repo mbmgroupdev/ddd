@@ -1310,7 +1310,7 @@ class EmployeeController extends Controller
         $data = [];
         if($request->has('associate_id'))
         {
-            $data = get_employee_by_id($associate_id);
+            $data = get_employee_by_id($request->associate_id);
         }
         return response()->json($data);
     }

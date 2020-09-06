@@ -227,10 +227,11 @@ if(!function_exists('emp_profile_picture')){
     }
 }
 
-if(!function_exists('get_employee_by_id')){
+if(!function_exists('get_employee_by_id'))
+{
     function get_employee_by_id($associate_id = null)
     {
-        return Employee::select(
+        $emp = Employee::select(
                 'hr_as_basic_info.*',
                 'u.hr_unit_id',
                 'u.hr_unit_name',
@@ -299,6 +300,9 @@ if(!function_exists('get_employee_by_id')){
             ->where("hr_as_basic_info.associate_id", $associate_id)
             ->whereIn('hr_as_basic_info.as_unit_id', auth()->user()->unit_permissions())
             ->first();
+        $emp->as_pic = emp_profile_picture($emp);
+
+        return$emp;
     }
 }
 

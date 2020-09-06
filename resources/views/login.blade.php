@@ -18,7 +18,7 @@
       <link rel="stylesheet" href="{{ asset('assets/css/login.css') }}">
       <!-- Responsive CSS -->
       <link rel="stylesheet" href="{{ asset('assets/css/responsive.css') }}">
-   </head>
+</head>
    <body>
       <!-- loader END -->
       <div id="app">
