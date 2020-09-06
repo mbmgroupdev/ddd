@@ -68,7 +68,7 @@ class ProcessLeftEmployeeSalary implements ShouldQueue
                     $tableName= "hr_attendance_cew";
                 }
                 else{
-                    $tableName= "hr_attendance";
+                    $tableName= "hr_attendance_mbm";
                 }
 
                 //  get benefit employee associate id wise

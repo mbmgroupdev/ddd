@@ -330,7 +330,7 @@ class AttendanceReportController extends Controller
     public function presentData($data = array())
     {
     	$data = (object)$data;
-		return DB::table("hr_attendance AS a")
+		return DB::table("hr_attendance_mbm AS a")
 			->join("hr_as_basic_info AS b", function($query) use($data) {
 				$query->where("b.as_status", 1);
 				$query->where("b.as_ot", 1);
@@ -424,7 +424,7 @@ class AttendanceReportController extends Controller
 		    ->where('as_status', 1)
 		    ->count();
 
-		$present = DB::table('hr_attendance AS att')
+		$present = DB::table('hr_attendance_mbm AS att')
 			->whereDate('att.in_time', date("Y-m-d",strtotime($report_date)))
 			->join('hr_as_basic_info AS b', function($join) use($unit, $ot_status) {
 				$join->on('att.as_id', '=', 'b.as_id');
@@ -677,7 +677,7 @@ class AttendanceReportController extends Controller
 
         		}
         		else{
-        		    $present= DB::table('hr_attendance AS a')
+        		    $present= DB::table('hr_attendance_mbm AS a')
                     				->join("hr_as_basic_info AS b", "b.as_id", "=", "a.as_id")
                     				->where("b.as_unit_id", $unit)
                     				->where("b.as_section_id", $section->as_section_id)

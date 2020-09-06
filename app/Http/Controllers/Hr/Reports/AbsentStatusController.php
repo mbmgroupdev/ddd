@@ -44,7 +44,7 @@ class AbsentStatusController extends Controller
  			}
             
             
-            $tableName= "hr_attendance";
+            $tableName= "hr_attendance_mbm";
             
             if($unit_id == 1 || $unit_id == 4 || $unit_id == 5 || $unit_id == 9){
                 $tableName= "hr_attendance_mbm";

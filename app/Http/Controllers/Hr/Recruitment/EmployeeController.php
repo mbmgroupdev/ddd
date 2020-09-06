@@ -282,6 +282,7 @@ class EmployeeController extends Controller
 
         
         return Datatables::of($data)
+            ->addIndexColumn()
             ->editColumn('as_ot', function($user){
                 if($user->as_ot==1){
                     $ot_id2="OT";
@@ -325,7 +326,7 @@ class EmployeeController extends Controller
                 return $return;
             })
             ->rawColumns([
-                'serial_no',
+                
                 'as_status',
                 'action',
                 'as_ot'

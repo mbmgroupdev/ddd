@@ -218,7 +218,7 @@ if(!function_exists('emp_profile_picture')){
     {
         $default = ($employee->as_gender == 'Female'?'/assets/images/user/1.jpg':'/assets/images/user/09.jpg');
 
-        if($employee->as_pic != null && file_exists($employee->as_pic)){
+        if($employee->as_pic != null && file_exists(public_path($employee->as_pic))){
             $image = $employee->as_pic;
         }else{
             $image = $default;

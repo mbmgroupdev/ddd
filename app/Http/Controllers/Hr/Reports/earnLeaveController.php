@@ -370,7 +370,7 @@ class earnLeaveController extends Controller
       {
         # -----------------------------------
         // total due earned due
-        $attend[$i] = DB::table("hr_attendance")
+        $attend[$i] = DB::table("hr_attendance_mbm")
           ->where("as_id", $id)
           ->whereYear('in_time', '=', $i)
           ->count(); /// total present return
@@ -438,7 +438,7 @@ class earnLeaveController extends Controller
 
       # -----------------------------------
       // total due earned due
-      $attend = DB::table("hr_attendance")
+      $attend = DB::table("hr_attendance_mbm")
         ->where("as_id", $id)
         ->whereYear('in_time', '=', $end_year)
         ->count(); /// total present return

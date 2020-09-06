@@ -40,7 +40,7 @@
                             <div class="form-group has-float-label has-required ">
                                 <input type="hidden" name="previous_designation_id">
                                 <input type="text" name="previous_designation" id="previous_designation" placeholder="No Previous Designation Found"  readonly  class="form-control" />
-                                <label  for="previous_designation"> Previous Designation </label>
+                                <label for="previous_designation"> Previous Designation </label>
                             </div>
 
                             <div class="form-group has-float-label has-required select-search-group">

@@ -798,20 +798,8 @@ class BenefitController extends Controller
         // ACL::check(["permission" => "hr_payroll_benefit_list"]);
         #-----------------------------------------------------------#
         $designationList = Designation::where('hr_designation_status', 1)->pluck("hr_designation_name", "hr_designation_id");
-        $promotionList= DB::table('hr_promotion AS p')
-                            ->select(
-                                'p.id',
-                                'p.associate_id',
-                                'b.as_name',
-                                'pd.hr_designation_name AS previous_desg',
-                                'cd.hr_designation_name AS current_desg'
-                            )
-                            ->where('p.status', 0)
-                            ->leftJoin('hr_as_basic_info AS b', 'p.associate_id', 'b.associate_id')
-                            ->leftJoin('hr_designation AS pd', 'p.previous_designation_id', 'pd.hr_designation_id')
-                            ->leftJoin('hr_designation AS cd', 'p.current_designation_id', 'cd.hr_designation_id')
-                            ->get();
-        return view('hr/payroll/promotion', compact('designationList', 'promotionList'));
+        
+        return view('hr/payroll/promotion', compact('designationList'));
     }
 
     public function storePromotion(Request $request)

@@ -53,7 +53,7 @@ class DailyOTReportController extends Controller
     		$report_date= date('d-M-Y', strtotime($request->report_date));
     		//get attendance list of Report Date
     		
-    		$tableName= "hr_attendance";
+    		$tableName= "hr_attendance_mbm";
     		if($request->unit_id == 1 || $request->unit_id == 4 || $request->unit_id ==5 || $request->unit_id ==9){
     		    $tableName= "hr_attendance_mbm";
     		}
