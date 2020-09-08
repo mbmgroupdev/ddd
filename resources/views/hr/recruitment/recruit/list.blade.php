@@ -69,7 +69,9 @@
    <script type="text/javascript">
    $(document).ready(function(){ 
       var searchable = [1,2,3,4,5,6,7];
-       $('#recruit').DataTable({
+      var exportColName = ['SL','Employee Type','Designation','Unit', 'Area', 'Name','Contact','DOJ'];
+      var exportCol = [0,1,2,3,4,5,6,7];
+      var dt = $('#recruit').DataTable({
           order: [], //reset auto order
           processing: true,
           responsive: true,
@@ -83,36 +85,76 @@
                } 
           }, 
           dom: "lBftrip",
-          buttons: [  
-             {
-                 extend: 'csv', 
-                 className: 'btn-sm btn-success',
-                 exportOptions: {
-                     columns: ':visible'
-                 }
-             }, 
-             {
-                 extend: 'excel', 
-                 className: 'btn-sm btn-warning',
-                 exportOptions: {
-                     columns: ':visible'
-                 }
-             }, 
-             {
-                 extend: 'pdf', 
-                 className: 'btn-sm btn-primary', 
-                 exportOptions: {
-                     columns: ':visible'
-                 }
-             }, 
-             {
-                 extend: 'print', 
-                 className: 'btn-sm btn-default',
-                 exportOptions: {
-                     columns: ':visible'
-                 } 
-             } 
-          ], 
+          buttons: [   
+              {
+                  extend: 'csv', 
+                  className: 'btn btn-sm btn-success',
+                  title: 'Employee recruitment list',
+                  header: true,
+                  footer: false,
+                  exportOptions: {
+                      columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
+                  },
+                  "action": allExport,
+                  messageTop: ''
+              }, 
+              {
+                  extend: 'excel', 
+                  className: 'btn btn-sm btn-warning',
+                  title: 'Employee recruitment list',
+                  header: true,
+                  footer: false,
+                  exportOptions: {
+                      columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
+                  },
+                  "action": allExport,
+                  messageTop: ''
+              }, 
+              {
+                  extend: 'pdf', 
+                  className: 'btn btn-sm btn-primary', 
+                  title: 'Employee recruitment list',
+                  header: true,
+                  footer: false,
+                  exportOptions: {
+                      columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
+                  },
+                  "action": allExport,
+                  messageTop: ''
+              }, 
+              {
+                  extend: 'print', 
+                  className: 'btn btn-sm btn-default',
+                  title: '',
+                  header: true,
+                  footer: false,
+                  exportOptions: {
+                      columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
+                  },
+                  "action": allExport,
+                  messageTop: customReportHeader('Employee recruitment list', { })
+              } 
+          ],
           columns: [  
                {data: 'DT_RowIndex', name: 'DT_RowIndex'}, 
                {data: 'hr_emp_type_name', name: 'hr_emp_type_name'}, 

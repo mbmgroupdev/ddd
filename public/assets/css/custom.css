@@ -26,6 +26,9 @@ p.search-title{
 .pricing-box:hover{
     cursor: pointer;
 }
+.f-60{
+    font-size: 60px;
+}
 #printButton{margin-top:5px; }
 .fc-event-container a{margin-top: 10px; padding: 10px;}
 .modal-dialog{width: 600px!important;}

@@ -39,18 +39,21 @@ Index Of Script
 Index Of Script
 ----------------------------------------------*/
 
+
 (function(jQuery) {
 
 
     "use strict";
+    
+   
 
     jQuery(document).ready(function() {
 
         /*---------------------------------------------------------------------
         Page Loader
         -----------------------------------------------------------------------*/
-        jQuery("#load").fadeOut();
-        jQuery("#loading").fadeOut("");
+        /*jQuery("#load").fadeOut();
+        jQuery("#loading").fadeOut("");*/
 
 
 

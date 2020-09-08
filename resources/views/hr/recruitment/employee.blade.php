@@ -36,10 +36,7 @@ table th {
 	border-radius: 2px;
 }
 </style>
-<link href="{{ asset('assets/fullcalendar/core/main.css')}}" rel='stylesheet' />
-<link href="{{ asset('assets/fullcalendar/daygrid/main.css')}}" rel='stylesheet' />
-<link href="{{ asset('assets/fullcalendar/timegrid/main.css')}}" rel='stylesheet' />
-<link href="{{ asset('assets/fullcalendar/list/main.css')}}" rel='stylesheet' />
+<link rel="stylesheet" href="{{ asset('assets/css/fullcalendar.min.css') }}">
 @endpush
 
 <div  class="main-content">
@@ -1384,11 +1381,8 @@ table th {
 	</div>
 </div>
 @push('js')
-<script src="{{ asset('assets/js/moment.min.js') }}"></script>  
-<script src="{{ asset('assets/fullcalendar/core/main.js') }}"></script>
-<script src="{{ asset('assets/fullcalendar/daygrid/main.js') }}"></script>
-<script src="{{ asset('assets/fullcalendar/timegrid/main.js') }}"></script>
-<script src="{{ asset('assets/fullcalendar/list/main.js') }}"></script> 
+<script src="{{ asset('assets/js/moment.min.js') }}"></script>
+<script src="{{ asset('assets/js/fullcalendar.min.js') }}"></script>
 <script type="text/javascript">
 var _token = $('input[name="_token"]').val();
 function errorMsgRepeter(id, check, text){

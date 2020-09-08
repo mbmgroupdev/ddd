@@ -26,6 +26,27 @@
     <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
     <!-- Responsive CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/responsive.css') }}">
+    <script src="{{ asset('js/app.js') }}"></script>
+    <script>
+        var count = 0;
+        var refreshIntervalId =setInterval(function(){ 
+            count++;
+            jQuery(document).ready(function() {
+                clearInterval(refreshIntervalId);
+                jQuery("#load").fadeOut();
+                jQuery("#loading").fadeOut("");
+                
+            });
+            if( count == 5){
+                clearInterval(refreshIntervalId);
+                jQuery("#load").fadeOut();
+                jQuery("#loading").fadeOut("");
+            }
+        }, 300);
+
+
+        
+    </script>
 </head>
 <body>
     <!-- loader Start -->
@@ -155,7 +176,7 @@
                 </div>
                 {{-- main content --}}
                 <main class="">
-                  <div class="container-fluid">
+                  <div id="main-body" class="container-fluid">
                     @yield('main-content')
                   </div>
                 </main>
@@ -185,7 +206,7 @@
         </div>
     </div>
     <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}"></script>
+    
     <!-- Smooth Scrollbar JavaScript -->
     <script src="{{ asset('assets/js/smooth-scrollbar.js') }}"></script>
 
