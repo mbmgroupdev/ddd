@@ -101,7 +101,7 @@
         <li>
             <a href="#"> Operations </a>
         </li>
-        <li class="active"> Holiday Roster </li>
+        <li class="active"> Holiday Roster List</li>
       </ul><!-- /.breadcrumb -->
     </div>
     <div class="page-content">
@@ -184,7 +184,6 @@
                             $month = date('m');
                             $year = date('Y');
                           @endphp
-                          <!-- <input name="report_from" id="report_from" placeholder="m" autocomplete="off" class="col-xs-12 date-picker form-control" data-validation="required" data-validation-format="mm" style="height: 30px; font-size: 12px;" /> -->
                           {{ Form::select('month', ['01' => 'January', '02' => 'February', '03' => 'March', '04' => 'April', '05' => 'May', '06' => 'June', '07' => 'July', '08' => 'August', '09' => 'September', '10' => 'October', '11' => 'November', '12' => 'December'], $month, ['placeholder'=>'Select Month', 'id'=>'month', 'required','class'=> 'form-control', 'data-validation'=>'required', 'data-validation-error-msg'=>'The Month field is required', 'required']) }}
                         </div>
                       </div>
@@ -258,7 +257,7 @@
     <div class="col-sm-12">
       <!-- PAGE CONTENT BEGINS -->
       <br>
-      <div class="table d-table hide table-responsive" >
+      <div class="d-table hide" >
         <table id="dataTables" class="table table-striped table-bordered" style="display: auto; overflow-x: auto;white-space: nowrap; width: 100% !important;">
           <thead>
             <tr>

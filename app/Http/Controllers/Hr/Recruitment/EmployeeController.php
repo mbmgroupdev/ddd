@@ -228,17 +228,6 @@ class EmployeeController extends Controller
     public function getData(Request $request)
     {
         
-        $cantacces = [];
-        $userIdNotAccessible = DB::table('roles')
-                  ->whereIn('name',$cantacces)
-                  ->leftJoin('model_has_roles','roles.id','model_has_roles.role_id')
-                  ->pluck('model_has_roles.model_id');
-
-        $asIds = DB::table('users')
-                     ->whereIn('id',$userIdNotAccessible)
-                     ->pluck('associate_id');
-        
-
         $data = DB::table('hr_as_basic_info AS b')
             ->select([
                 DB::raw('b.as_id AS serial_no'),
@@ -263,8 +252,7 @@ class EmployeeController extends Controller
             ->leftJoin('hr_line AS l', 'l.hr_line_id', '=', 'b.as_line_id')
             ->leftJoin('hr_department AS dp', 'dp.hr_department_id', '=', 'b.as_department_id')
             ->leftJoin('hr_designation AS dg', 'dg.hr_designation_id', '=', 'b.as_designation_id')
-            //->where('b.as_unit_id', $request->unit)
-            ->whereNotIn('b.associate_id',$asIds)
+            ->whereIn('b.as_status',[1,6])
             ->where(function ($query) use ($request) {
                 if($request->otnonot != null){
                     $query->where('b.as_ot', '=', $request->otnonot);
@@ -291,28 +279,6 @@ class EmployeeController extends Controller
                     $ot_id2="Non OT";
                 }
                 return ($ot_id2);
-            })
-            ->editColumn('as_status', function($user){
-                if ($user->as_status == 1)
-                {
-                    return "Active";
-                }
-                elseif ($user->as_status == 2)
-                {
-                    return "Resign";
-                }
-                elseif ($user->as_status == 3)
-                {
-                    return "Terminate";
-                }
-                elseif ($user->as_status == 4)
-                {
-                    return "Suspend";
-                }
-                 elseif ($user->as_status == 5)
-                {
-                    return "Left";
-                }
             })
             ->editColumn('action', function ($user) {
 

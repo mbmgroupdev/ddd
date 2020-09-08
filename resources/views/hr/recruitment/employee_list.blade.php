@@ -1,7 +1,14 @@
 @extends('hr.layout')
 @section('title', 'Employee List')
 @section('main-content')
-
+@push('css')
+<style type="text/css">
+	tr td:nth-child(2){
+	    display: inline-block;
+	    width: 80px;
+	}
+</style>
+@endpush
 <div class="main-content">
 	<div class="main-content-inner">
 		<div class="breadcrumbs ace-save-state" id="breadcrumbs">
@@ -215,7 +222,7 @@ $(document).ready(function()
 		    serverSide: true,
 	        processing: true,
             language: {
-              processing: '<i class="fa fa-spinner fa-spin orange bigger-500" style="font-size:60px;margin-top:50px;z-index:100;"></i>'
+              processing: '<i class="fa fa-spinner fa-spin f-60" style="font-size:60px;margin-top:50px;z-index:100;"></i>'
             },
             scroller: {
                 loadingIndicator: false

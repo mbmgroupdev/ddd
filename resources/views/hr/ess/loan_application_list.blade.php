@@ -29,18 +29,6 @@
                                 <th>Action</th>
                             </tr>
                         </thead> 
-                        <tfoot>
-                            <tr>
-                                <th>Sl. No</th>
-                                <th>Associate ID</th>
-                                <th>Name</th>
-                                <th>Unit</th>
-                                <th>Amount</th>
-                                <th>Updated at</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </tfoot> 
                         
                     </table>
                 
@@ -61,9 +49,15 @@ $(document).ready(function(){
       
     };
 
-    $('#dataTables').DataTable({
+    var exportColName = ['Sl.','','Associate ID','Name','Unit','Amount','', 'Status'];
+    var exportCol = [0,1,2,3,4,,6];
+
+    var dt = $('#dataTables').DataTable({
         order: [], //reset auto order
         processing: true,
+        language: {
+          processing: '<i class="fa fa-spinner fa-spin f-60" style="font-size:60px;margin-top:50px;z-index:100;"></i>'
+        },
         responsive: true,
         serverSide: true,
         pagingType: "full_numbers",
@@ -74,50 +68,83 @@ $(document).ready(function(){
                   'X-CSRF-TOKEN': '{{ csrf_token() }}'
             } 
         },
-        dom: "<'row'<'col-sm-2'l><'col-sm-3'i><'col-sm-4 text-center'B><'col-sm-3'f>>tp", 
+        dom: "lBftrip", 
         buttons: [   
-            {
-                extend: 'csv', 
-                className: 'btn-sm btn-success',
-                title: 'Loan Application List',
-                header: false,
-                footer: true,
-                exportOptions: {
-                    columns: [0,1,2,3,4,5,6]
-                }
-            }, 
-            {
-                extend: 'excel', 
-                className: 'btn-sm btn-warning',
-                title: 'Loan Application List',
-                header: false,
-                footer: true,
-                exportOptions: {
-                    columns: [0,1,2,3,4,5,6]
-                }
-            }, 
-            {
-                extend: 'pdf', 
-                className: 'btn-sm btn-primary', 
-                title: 'Loan Application List',
-                header: false,
-                footer: true,
-                exportOptions: {
-                    columns: [0,1,2,3,4,5,6]
-                }
-            }, 
-            {
-                extend: 'print', 
-                className: 'btn-sm btn-default',
-                title: 'Loan Application List',
-                header: true,
-                footer: false,
-                exportOptions: {
-                    columns: [0,1,2,3,4,5,6],
-                    stripHtml: false
-                } 
-            } 
-        ], 
+              {
+                  extend: 'csv', 
+                  className: 'btn btn-sm btn-success',
+                  title: 'Loan Application List',
+                  header: true,
+                  footer: false,
+                  exportOptions: {
+                      columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
+                  },
+                  "action": allExport,
+                  messageTop: ''
+              }, 
+              {
+                  extend: 'excel', 
+                  className: 'btn btn-sm btn-warning',
+                  title: 'Loan Application List',
+                  header: true,
+                  footer: false,
+                  exportOptions: {
+                      columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
+                  },
+                  "action": allExport,
+                  messageTop: ''
+              }, 
+              {
+                  extend: 'pdf', 
+                  className: 'btn btn-sm btn-primary', 
+                  title: 'Loan Application List',
+                  header: true,
+                  footer: false,
+                  exportOptions: {
+                      columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
+                  },
+                  "action": allExport,
+                  messageTop: ''
+              }, 
+              {
+                  extend: 'print', 
+                  className: 'btn btn-sm btn-default',
+                  title: '',
+                  header: true,
+                  footer: false,
+                  exportOptions: {
+                      columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
+                  },
+                  "action": allExport,
+                  messageTop: function () {
+                      var unit = '';
+                      if($('#unit').val() != null){
+                         unit = $('#unit').select2('data')[0].text; 
+                      }
+                      return customReportHeader('Loan Application List', {});
+                    }
+              } 
+          ],
         columns: [ 
             { data: 'serial_no', name: 'serial_no' }, 
             { data: 'hr_la_as_id', name: 'hr_la_as_id' }, 

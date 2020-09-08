@@ -1,51 +1,7 @@
 @extends('hr.layout')
 @section('title', 'End of Job Benefits List')
 @section('main-content')
-@push('css')
-<style type="text/css">
-    {{-- removing the links in print and adding each page header --}}
-    a[href]:after { content: none !important; }
-    thead {display: table-header-group;}
 
-    /*making place holder custom*/
-    input::-webkit-input-placeholder {
-        color: black;
-        font-weight: bold;
-        font-size: 12px;
-    }
-    input:-moz-placeholder {
-        color: black;
-        font-weight: bold;
-        font-size: 12px;
-    }
-    input:-ms-input-placeholder {
-        color: black;
-        font-weight: bold;
-        font-size: 12px;
-    }
-    th{
-        font-size: 12px;
-        font-weight: bold;
-    }
-    .dataTables_wrapper .dt-buttons {
-        text-align: center;
-        padding-left: 450px;
-    }
-    .dataTables_length{
-        float: left;
-    }
-    .dataTables_filter{
-        float: right;
-    }
-    .dataTables_processing {
-        top: 200px !important;
-        z-index: 11000 !important;
-        border: 0px !important;
-        box-shadow: none !important;
-        background: transparent !important;
-    }
-</style>
-@endpush
 <div class="main-content">
     <div class="main-content-inner">
         <div class="breadcrumbs ace-save-state" id="breadcrumbs">
@@ -104,20 +60,22 @@
 <script type="text/javascript">
 $(document).ready(function(){ 
     var searchable = [1,2];
-    var selectable = [3]; //use 4,5,6,7,8,9,10,11,....and * for all
-    // dropdownList = {column_number: {'key':value}}; 
+    var selectable = [3]; 
     var dropdownList = {
          '3' :[@foreach($unitList as $e) <?php echo "'$e'," ?> @endforeach]
     };
 
-    $('#dataTables').DataTable({
+    var exportColName = ['Sl.','Associate ID','Name','Unit','','Earn Amount','Service Benefits', 'Subsistence Allowance', 'Notice Pay','Termination Benefits','Natural Death Benefits','Accidental Death Benefits','Total Amount'];
+    var exportCol = [0,1,2,3,5,6,7,8,9,10,11,12];
+
+    var dt = $('#dataTables').DataTable({
         order: [], //reset auto order
         processing: true,
         // responsive: true,
         serverSide: true,
         pagingType: "full_numbers",
         language: {
-            processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span> '
+            processing: '<i class="fa fa-spinner fa-spin f-60 fa-fw"></i><span class="sr-only">Loading...</span> '
 
         },
         ajax: {
@@ -129,48 +87,102 @@ $(document).ready(function(){
         },
         dom: "lBfrtip", 
         buttons: [   
-            {
-                extend: 'csv', 
-                className: 'btn-sm btn-success',
-                title: 'Employee Benefit List',
-                header: false,
-                footer: true,
-                exportOptions: {
-                    // columns: [0,1,2,3,4,5]
-                }
-            }, 
-            {
-                extend: 'excel', 
-                className: 'btn-sm btn-warning',
-                title: 'Employee Benefit List',
-                header: false,
-                footer: true,
-                exportOptions: {
-                    // columns: [0,1,2,3,4,5]
-                }
-            }, 
-            {
-                extend: 'pdf', 
-                className: 'btn-sm btn-primary', 
-                title: 'Employee Benefit List',
-                header: false,
-                footer: true,
-                exportOptions: {
-                    // columns: [0,1,2,3,4,5]
-                }
-            }, 
-            {
-                extend: 'print', 
-                className: 'btn-sm btn-default',
-                title: 'Employee Benefit List',
-                header: true,
-                footer: false,
-                exportOptions: {
-                    // columns: [],
-                    stripHtml: false
-                } 
-            } 
-        ], 
+              {
+                  extend: 'csv', 
+                  className: 'btn btn-sm btn-success',
+                  title: 'End of job benefit list',
+                  header: true,
+                  footer: false,
+                  exportOptions: {
+                      columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
+                  },
+                  "action": allExport,
+                  messageTop: ''
+              }, 
+              {
+                  extend: 'excel', 
+                  className: 'btn btn-sm btn-warning',
+                  title: 'End of job benefit list',
+                  header: true,
+                  footer: false,
+                  exportOptions: {
+                      columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
+                  },
+                  "action": allExport,
+                  messageTop: ''
+              }, 
+              {
+                  extend: 'pdf', 
+                  className: 'btn btn-sm btn-primary', 
+                  title: 'End of job benefit list',
+                  header: true,
+                  footer: false,
+                  exportOptions: {
+                      columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
+                  },
+                  "action": allExport,
+                  messageTop: ''
+              }, 
+              {
+                  extend: 'print', 
+                  className: 'btn btn-sm btn-default',
+                  title: '',
+                  header: true,
+                  footer: false,
+                  exportOptions: {
+                      columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
+                  },
+                  "action": allExport,
+                  messageTop: function () {
+                      return customReportHeader('End of job benefit list', {});
+                  },
+                  customize: function(win)
+                    {
+         
+                        var last = null;
+                        var current = null;
+                        var bod = [];
+         
+                        var css = '@page { size: landscape; }',
+                            head = win.document.head || win.document.getElementsByTagName('head')[0],
+                            style = win.document.createElement('style');
+         
+                        style.type = 'text/css';
+                        style.media = 'print';
+         
+                        if (style.styleSheet)
+                        {
+                          style.styleSheet.cssText = css;
+                        }
+                        else
+                        {
+                          style.appendChild(win.document.createTextNode(css));
+                        }
+         
+                        head.appendChild(style);
+                 }
+              } 
+          ],
         columns: [ 
 
             { data: 'DT_RowIndex', name: 'DT_RowIndex' }, 

@@ -57,49 +57,92 @@
 @push('js')
 <script type="text/javascript">
 $(document).ready(function(){  
+    var exportColName = ['SL.','Offender ID','Greiver ID','Reason','Action', 'Requested Remedy', 'Discussed Date','Date of Execution'];
+    var exportCol = [0,1,2,3,4,5,6,7];
 
-    $('#dataTables').DataTable({
+    var dt = $('#dataTables').DataTable({
         order: [], //reset auto order
         processing: true, 
         responsive: true,
         serverSide: true,
         pagingType: "full_numbers",
         dom: "lBftrip", 
-        buttons: [  
-            {
-                extend: 'csv', 
-                className: 'btn-sm btn-success',
-                title: 'Disciplinary Record List',
-                exportOptions: {
-                    columns: [0,1,2,3,4,5,6,7]
-                }
-            }, 
-            {
-                extend: 'excel', 
-                className: 'btn-sm btn-warning',
-                title: 'Disciplinary Record List',
-                exportOptions: {
-                    columns: [0,1,2,3,4,5,6,7]
-                }
-            }, 
-            {
-                extend: 'pdf', 
-                className: 'btn-sm btn-primary', 
-                title: 'Disciplinary Record List',
-                exportOptions: {
-                    columns: [0,1,2,3,4,5,6,7]
-                }
-            }, 
-            {
-                extend: 'print', 
-                className: 'btn-sm btn-default',
-                title: 'Disciplinary Record List',
-                exportOptions: {
-                    columns: [0,1,2,3,4,5,6,7],
-                    stripHtml: false
-                } 
-            } 
-        ], 
+        buttons: [   
+              {
+                  extend: 'csv', 
+                  className: 'btn btn-sm btn-success',
+                  title: 'Disciplinary Record List',
+                  header: true,
+                  footer: false,
+                  exportOptions: {
+                      columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
+                  },
+                  "action": allExport,
+                  messageTop: ''
+              }, 
+              {
+                  extend: 'excel', 
+                  className: 'btn btn-sm btn-warning',
+                  title: 'Disciplinary Record List',
+                  header: true,
+                  footer: false,
+                  exportOptions: {
+                      columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
+                  },
+                  "action": allExport,
+                  messageTop: ''
+              }, 
+              {
+                  extend: 'pdf', 
+                  className: 'btn btn-sm btn-primary', 
+                  title: 'Disciplinary Record List',
+                  header: true,
+                  footer: false,
+                  exportOptions: {
+                      columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
+                  },
+                  "action": allExport,
+                  messageTop: ''
+              }, 
+              {
+                  extend: 'print', 
+                  className: 'btn btn-sm btn-default',
+                  title: '',
+                  header: true,
+                  footer: false,
+                  exportOptions: {
+                      columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
+                  },
+                  "action": allExport,
+                  messageTop: function () {
+                      var unit = '';
+                      if($('#unit').val() != null){
+                         unit = $('#unit').select2('data')[0].text; 
+                      }
+                      return customReportHeader('Disciplinary Record List', { });
+                    }
+              } 
+          ],
         ajax: '{!! url("hr/performance/operation/disciplinary_data") !!}',
         columns: [  
             { data: 'serial_no', name: 'serial_no' }, 
