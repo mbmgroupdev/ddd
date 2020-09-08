@@ -52,6 +52,7 @@ class SalaryProcessController extends Controller
     	// return $input;
     	try {
             $audit = 1;
+            $input['unit_id'] = $input['unit'];
             $salaryStatus = SalaryAudit::checkSalaryAuditStatus($input);
             
             if($salaryStatus == null){
@@ -63,7 +64,7 @@ class SalaryProcessController extends Controller
             }
             
             if($audit == 0){
-                return view('hr.operation.salary.aduit_status', compact('salaryStatus', 'input'));
+                return view('hr.operation.salary.salary_status', compact('salaryStatus', 'input'));
             }
 
             $getUnit = Unit::getUnitNameBangla($input['unit']);
@@ -168,6 +169,7 @@ class SalaryProcessController extends Controller
 
             if($request->unit != null && $request->month_year != null){
                 $input = $request->all();
+                $input['unit_id'] = $input['unit'];
                 $input['month'] = date('m', strtotime($input['month_year']));
                 $input['year'] = date('Y', strtotime($input['month_year']));
                 $salaryStatus = SalaryAudit::checkSalaryAuditStatus($input);
@@ -185,7 +187,6 @@ class SalaryProcessController extends Controller
     public function salaryAuditStatus(Request $request)
     {
         $input = $request->all();
-
         $data['type'] = 'error';
         if($input['month_year'] == ''){
             $data['message'] = 'Something Wrong, please Reload The Page';
@@ -195,6 +196,7 @@ class SalaryProcessController extends Controller
         try {
             $aduit['month'] = date('m', strtotime($input['month_year'])); 
             $aduit['year'] = date('Y', strtotime($input['month_year'])); 
+            $aduit['unit_id'] = $input['unit']; 
             $salaryAuditStatus = SalaryAudit::checkSalaryAuditStatus($aduit);
             if($input['status'] == 1){
                 if($salaryAuditStatus != null){
@@ -233,7 +235,9 @@ class SalaryProcessController extends Controller
             
             $data['type'] = 'success';
             $data['message'] = 'Audit Successfully Done';
-            $data['url'] = url('hr/operation/salary-sheet');
+            $unit = $input['unit'];
+            $month = $input['month_year'];
+            $data['url'] = url('hr/operation/salary-generate?month='.$month.'&unit='.$unit);
             DB::commit();
             return $data;
         } catch (\Exception $e) {

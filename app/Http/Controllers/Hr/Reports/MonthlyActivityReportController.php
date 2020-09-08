@@ -25,7 +25,7 @@ class MonthlyActivityReportController extends Controller
     public function salaryReport(Request $request)
     {
         $input = $request->all();
-        // return $input;
+        // dd($input);
         try {
             $yearMonth = explode('-', $input['month']);
             $month = $yearMonth[1];
@@ -47,10 +47,12 @@ class MonthlyActivityReportController extends Controller
 
             $queryData = DB::table('hr_monthly_salary AS s')
             ->where('emp.as_unit_id',$input['unit'])
-            ->where('emp.as_status',$input['employee_status'])
             ->where('s.year', $year)
             ->where('s.month', $month)
             ->whereBetween('s.gross', [$input['min_sal'], $input['max_sal']])
+            ->when(!empty($input['employee_status']), function ($query) use($input){
+               return $query->where('emp.as_status',$input['employee_status']);
+            })
             ->when(!empty($input['area']), function ($query) use($input){
                return $query->where('emp.as_area_id',$input['area']);
             })
@@ -79,7 +81,7 @@ class MonthlyActivityReportController extends Controller
                 $queryData->select('emp.'.$input['report_group'], DB::raw('count(*) as total'), DB::raw('sum(total_payable) as groupSalary'))->groupBy('emp.'.$input['report_group']);
 
             }else{
-                $queryData->select('emp.as_id','emp.as_gender', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_section_id', 's.total_payable');
+                $queryData->select('emp.as_id','emp.as_gender', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_section_id', 's.present', 's.absent', 's.total_payable');
                 $totalSalary = round($queryData->sum("s.total_payable"));
             }
             $getEmployee = $queryData->get();
@@ -98,6 +100,7 @@ class MonthlyActivityReportController extends Controller
                     $format = '';
                 }
             }
+
             return view('hr.reports.monthly_activity.salary.report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalSalary', 'totalEmployees'));
         } catch (\Exception $e) {
             return $e->getMessage();

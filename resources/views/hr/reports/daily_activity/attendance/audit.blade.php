@@ -180,9 +180,10 @@
                               @php
                                 $month = date('Y-m', strtotime($input['date']));
                                 $unit = $input['unit'];
+                                $audit = $input['audit']??'';
                               @endphp
                               <div class="salary-section text-left inline">
-                                <a href='{{ url("hr/monthly-salary-audit?month=$month&unit=$unit") }}' class="btn btn-outline-success" data-toggle="tooltip" data-placement="top" title="" data-original-title="Salary Check" ><i class="las la-hand-point-right"></i> Check Salary</a>
+                                <a href='{{ url("hr/monthly-salary-audit?month=$month&unit=$unit&audit=$audit") }}' class="btn btn-outline-success" data-toggle="tooltip" data-placement="top" title="" data-original-title="Salary Check" ><i class="las la-hand-point-right"></i> Check Salary</a>
                               </div>
                             </div>
                             <div class="col-6 text-center">

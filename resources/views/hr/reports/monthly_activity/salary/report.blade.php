@@ -11,25 +11,26 @@
 				$subSection = subSection_by_id();
 				$area = area_by_id();
 				$formatHead = explode('_',$format);
+
 			@endphp
 			
 			<div class="top_summery_section">
 				@if($input['report_format'] == 0 || ($input['report_format'] == 1 && $format != null))
 				<div class="page-header">
-		            <h2 style="margin:4px 10px; font-weight: bold; text-align: center;">{{ date('M Y', strtotime($input['month'])) }} Salary Report </h2>
-		            <h4 style="margin:4px 10px; font-weight: bold; text-align: center;">@if($input['report_format'] == 0) Details @else Summary @endif Report</h4>
+		            <h2 style="margin:4px 10px; font-weight: bold; text-align: center;">Salary @if($input['report_format'] == 0) Details @else Summary @endif Report </h2>
+		            
 		            <div class="row">
 		            	<div class="col-5">
 		            		<div class="row">
 		                		<div class="col-2 pr-0">
-		                			<h4><font style="font-weight: bold; font-size: 12px;">Unit</font></h4>
+		                			<h5>Unit</h5>
 		                		</div>
 		                		<div class="col-10">
 		                			<b>: {{ $unit[$input['unit']]['hr_unit_name'] }}</b>
 		                		</div>
 		                		@if($input['area'] != null)
 		                		<div class="col-2 pr-0">
-		                			<h4><font style="font-weight: bold; font-size: 12px;">Area</font></h4>
+		                			<h5>Area</h5>
 		                		</div>
 		                		<div class="col-10">
 		                			<b>: {{ $area[$input['area']]['hr_area_name'] }}</b>
@@ -37,7 +38,7 @@
 		                		@endif
 		                		@if($input['department'] != null)
 		                		<div class="col-2 pr-0">
-		                			<h4><font style="font-weight: bold; font-size: 12px;">Department</font></h4>
+		                			<h5>Department</h5>
 		                		</div>
 		                		<div class="col-10">
 		                			<b>: {{ $department[$input['department']]['hr_department_name'] }}</b>
@@ -45,7 +46,7 @@
 		                		@endif
 		                		@if($input['section'] != null)
 		                		<div class="col-2 pr-0">
-		                			<h4><font style="font-weight: bold; font-size: 12px;">Section</font></h4>
+		                			<h5>Section</h5>
 		                		</div>
 		                		<div class="col-10">
 		                			<b>: {{ $section[$input['section']]['hr_section_name'] }}</b>
@@ -55,25 +56,31 @@
 		            	</div>
 		            	<div class="col-4 no-padding">
 		            		<div class="row">
-		            			@if($input['otnonot'] != null)
-		                		<div class="col-3 pr-0">
-		                			<h4 style=""><font style="font-weight: bold; font-size: 12px;">OT</font></h4>
+		            			<div class="col-4 p-0">
+		                			<h5>Month</h4>
 		                		</div>
-		                		<div class="col-9">
+		                		<div class="col-8 pl-0">
+		                			<b>: {{ date('M Y', strtotime($input['month'])) }} </b>
+		                		</div>
+		            			@if($input['otnonot'] != null)
+		                		<div class="col-4 p-0">
+		                			<h5>OT</h5>
+		                		</div>
+		                		<div class="col-8 pl-0">
 		                			<b>: Yes </b>
 		                		</div>
 		                		@endif
-		                		<div class="col-3 pr-0">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0"><font style="font-weight: bold; font-size: 12px;">Total Employee</font></h4>
+		                		<div class="col-4 p-0">
+		                			<h5>Total Employee</h5>
 		                		</div>
-		                		<div class="col-9">
-		                			<b>: {{ count($getEmployee) }}</b>
+		                		<div class="col-8 pl-0">
+		                			<b>: {{ $totalEmployees }}</b>
 		                		</div>
-		                		<div class="col-3 pr-0">
-		                			<h4 style="margin:4px 5px; margin: 0; padding: 0"><font style="font-weight: bold; font-size: 12px;">Total Salary</font></h4>
+		                		<div class="col-4 p-0">
+		                			<h5>Total Salary</h5>
 		                		</div>
-		                		<div class="col-9">
-		                			<b>: {{ $totalSalary }}</b>
+		                		<div class="col-8 pl-0">
+		                			<b>: {{ number_format($totalSalary, 2, '.', ',') }} (BDT)</b>
 		                		</div>
 		                		
 		                		
@@ -83,7 +90,7 @@
 		            		<div class="row">
 		                		@if($input['subSection'] != null)
 		                		<div class="col-3 pr-0">
-		                			<h4><font style="font-weight: bold; font-size: 12px;">Sub Section</font></h4>
+		                			<h5>Sub Section</h5>
 		                		</div>
 		                		<div class="col-9 pl-0">
 		                			<b>: {{ $subSection[$input['subSection']]['hr_subsec_name'] }}</b>
@@ -91,7 +98,7 @@
 		                		@endif
 		                		@if($input['floor_id'] != null)
 		                		<div class="col-3 pr-0">
-		                			<h4><font style="font-weight: bold; font-size: 12px;">Floor</font></h4>
+		                			<h5>Floor</h5>
 		                		</div>
 		                		<div class="col-9 pl-0">
 		                			<b>: {{ $floor[$input['floor_id']]['hr_floor_name'] }}</b>
@@ -99,17 +106,17 @@
 		                		@endif
 		                		@if($input['line_id'] != null)
 		                		<div class="col-3 pr-0">
-		                			<h4><font style="font-weight: bold; font-size: 12px;">Line</font></h4>
+		                			<h5>Line</h5>
 		                		</div>
 		                		<div class="col-9 pl-0">
 		                			<b>: {{ $line[$input['line_id']]['hr_line_name'] }}</b>
 		                		</div>
 		                		@endif
 		                		<div class="col-3 pr-0">
-		                			<h4><font style="font-weight: bold; font-size: 12px;">Format</font></h4>
+		                			<h5>Format</h5>
 		                		</div>
 		                		<div class="col-9 pl-0">
-		                			<b class="capitalize">: {{ isset($formatHead[1])?$formatHead[1].' Wise':'N/A' }}</b>
+		                			<b class="capitalize">: {{ isset($formatHead[1])?$formatHead[1]:'N/A' }}</b>
 		                		</div>
 		                	</div>
 		            	</div>
@@ -145,7 +152,7 @@
         			@if($input['otnonot'] != null)
         			<h4>OT: Yes</h4>
         			@endif
-        			<h4>Total Employee: <b>{{ count($getEmployee) }}</b></h4>
+        			<h4>Total Employee: <b>{{ $totalEmployees }}</b></h4>
         			<h4>Total Salary: <b>{{ $totalSalary }}</b></h4>
 		            		
 		        </div>
@@ -163,23 +170,23 @@
 			                	@php
 									if($format == 'as_line_id'){
 										$head = 'Line';
-										$body = $line[$group]['hr_line_name'];
+										$body = $line[$group]['hr_line_name']??'';
 									}elseif($format == 'as_floor_id'){
 										$head = 'Floor';
-										$body = $floor[$group]['hr_floor_name'];
+										$body = $floor[$group]['hr_floor_name']??'';
 									}elseif($format == 'as_department_id'){
 										$head = 'Department';
-										$body = $department[$group]['hr_department_name'];
+										$body = $department[$group]['hr_department_name']??'';
 									}elseif($format == 'as_designation_id'){
 										$head = 'Designation';
-										$body = $designation[$group]['hr_designation_name'];
+										$body = $designation[$group]['hr_designation_name']??'';
 									}else{
 										$head = '';
 									}
 								@endphp
 			                	@if($head != '')
 			                    <th colspan="2">{{ $head }}</th>
-			                    <th colspan="8">{{ $body }}</th>
+			                    <th colspan="10">{{ $body }}</th>
 			                    @endif
 			                </tr>
 			                @endif
@@ -187,17 +194,19 @@
 			                    <th>Sl</th>
 			                    <th>Photo</th>
 			                    <th>Associate ID</th>
-			                    <th>Name & Phone</th>
+			                    <th>Name</th>
 			                    <th>Designation</th>
 			                    <th>Department</th>
 			                    <th>Floor</th>
 			                    <th>Line</th>
+			                    <th>Present</th>
+			                    <th>Absent</th>
 			                    <th>Total</th>
 			                    <th>Action</th>
 			                </tr>
 			            </thead>
 			            <tbody>
-			            @php $i = 0; @endphp
+			            @php $i = 0; $month = $input['month']; @endphp
 			            @if(count($getEmployee) > 0)
 			            @foreach($getEmployee as $employee)
 			            	@php
@@ -206,16 +215,18 @@
 			            	@if($head == '')
 			            	<tr>
 			            		<td>{{ ++$i }}</td>
-				            	<td><img src="{{ emp_profile_picture($employee) }}" class='small-image' style="height: 40px; width: auto;"></td>
-				            	<td>{{ $employee->associate_id }}</td>
+				            	<td><img src="{{ emp_profile_picture($employee) }}" class='small-image min-img-file'></td>
+				            	<td><a href='{{ url("hr/operation/job_card?associate=$employee->associate_id&month_year=$month") }}' target="_blank">{{ $employee->associate_id }}</a></td>
 				            	<td>
 				            		<b>{{ $employee->as_name }}</b>
 				            	</td>
-				            	<td>{{ $designation[$employee->as_designation_id]['hr_designation_name']??'' }}</td>
+				            	<td>{{ $designationName }}</td>
 				            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
 				            	<td>{{ $floor[$employee->as_floor_id]['hr_floor_name']??'' }}</td>
 				            	<td>{{ $line[$employee->as_line_id]['hr_line_name']??'' }}</td>
-				            	<td>{{ $employee->total_payable }}</td>
+				            	<td>{{ $employee->present }}</td>
+				            	<td>{{ $employee->absent }}</td>
+				            	<td>{{ number_format($employee->total_payable, 2, '.', ',') }}</td>
 				            	<td>
 				            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Yearly Activity Report' ><i class="fa fa-eye"></i></button>
 				            	</td>
@@ -224,8 +235,8 @@
 			            	@if($group == $employee->$format)
 			            	<tr>
 			            		<td>{{ ++$i }}</td>
-				            	<td><img src="{{ $employee->as_pic }}" class='small-image' onError='this.onerror=null;this.src="{{ ($employee->as_gender == 'Female'?asset('assets/images/user/1.jpg'):asset('assets/images/user/09.jpg')) }}";' style="height: 40px; width: auto;"></td>
-				            	<td>{{ $employee->associate_id }}</td>
+				            	<td><img src="{{ emp_profile_picture($employee) }}" class='small-image min-img-file'></td>
+				            	<td><a href='{{ url("hr/operation/job_card?associate=$employee->associate_id&month_year=$month") }}' target="_blank">{{ $employee->associate_id }}</a></td>
 				            	<td>
 				            		<b>{{ $employee->as_name }}</b>
 				            	</td>
@@ -233,7 +244,9 @@
 				            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
 				            	<td>{{ $floor[$employee->as_floor_id]['hr_floor_name']??'' }}</td>
 				            	<td>{{ $line[$employee->as_line_id]['hr_line_name']??'' }}</td>
-				            	<td>{{ $employee->total_payable }}</td>
+				            	<td>{{ $employee->present }}</td>
+				            	<td>{{ $employee->absent }}</td>
+				            	<td>{{ number_format($employee->total_payable, 2, '.', ',') }}</td>
 				            	<td>
 				            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Yearly Activity Report' ><i class="fa fa-eye"></i></button>
 				            	</td>
@@ -243,13 +256,13 @@
 			            @endforeach
 			            @else
 				            <tr>
-				            	<td colspan="10" class="text-center">No Data Found!</td>
+				            	<td colspan="12" class="text-center">No Data Found!</td>
 				            </tr>
 			            @endif
 			            </tbody>
 			            <tfoot>
 			            	<tr>
-			            		<td colspan="7"></td>
+			            		<td colspan="9"></td>
 			            		<td><b>Total Employee</b></td>
 			            		<td colspan="2"><b>{{ $i }}</b></td>
 			            	</tr>
@@ -275,7 +288,7 @@
 							<tr>
 								<th>Sl</th>
 								<th> {{ $head }} Name</th>
-								<th>Employee</th>
+								<th>No. Of Employee</th>
 								<th>Salary</th>
 							</tr>
 						</thead>
@@ -289,26 +302,28 @@
 								<td>
 									@php
 										$group = $employee->$format;
-										if($format == 'as_line_id'){
-											$body = $line[$group]['hr_line_name'];
+										if($format == 'as_unit_id'){
+											$body = $unit[$group]['hr_unit_name']??'';
+										}elseif($format == 'as_line_id'){
+											$body = $line[$group]['hr_line_name']??'';
 										}elseif($format == 'as_floor_id'){
-											$body = $floor[$group]['hr_floor_name'];
+											$body = $floor[$group]['hr_floor_name']??'';
 										}elseif($format == 'as_department_id'){
-											$body = $department[$group]['hr_department_name'];
+											$body = $department[$group]['hr_department_name']??'';
 										}elseif($format == 'as_designation_id'){
-											$body = $designation[$group]['hr_designation_name'];
+											$body = $designation[$group]['hr_designation_name']??'';
 										}else{
-											$body = '';
+											$body = 'N/A';
 										}
 									@endphp
-									{{ $body }}
+									{{ ($body == null)?'N/A':$body }}
 								</td>
 								<td>
 									{{ $employee->total }}
 									@php $totalEmployee += $employee->total; @endphp
 								</td>
 								<td>
-									{{ $employee->groupSalary }}
+									{{ number_format($employee->groupSalary, 2, '.', ',') }} (BDT)
 								</td>
 							</tr>
 							@endforeach
