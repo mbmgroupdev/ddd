@@ -26,6 +26,9 @@ p.search-title{
 .pricing-box:hover{
     cursor: pointer;
 }
+.f-60{
+    font-size: 60px;
+}
 #printButton{margin-top:5px; }
 .fc-event-container a{margin-top: 10px; padding: 10px;}
 .modal-dialog{width: 600px!important;}
@@ -841,4 +844,17 @@ span.lib-label {
 [aria-labelledby="id-66-title"] {
   visibility: visible;
   display: none;
+}
+
+.iq-card-body.em-card-body {
+    position: absolute;
+    width: 100%;
+    background: #ceebee;
+    top: 5px;
+    border-radius: 15px;
+}
+.emp-lists li{
+    background: #fff;
+    border-radius: 5px;
+    list-style-type: none;
 }

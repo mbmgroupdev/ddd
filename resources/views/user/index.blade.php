@@ -33,10 +33,6 @@
                            <h6 class="text-primary">Last Logged In </h6>
                            <span>{{$last_login->login_at->diffForHumans() }}</span>
                         </li>
-                        <li class="text-center">
-                           <h6 class="text-primary">IP Address</h6>
-                           <span>{{$last_login->ip_address}}</span>
-                        </li>
                      </ul>
                      @endif
                   </div>
@@ -196,13 +192,4 @@
          </div>
       </div>
    </div>
-   @push('js')
-      <script src="{{ asset('assets/js/apexcharts.js') }}"></script>
-      <script src="{{ asset('assets/js/core.js') }}"></script>
-      
-      <script src="{{ asset('assets/js/animated.js') }}"></script>
-      
-      <!-- Chart Custom JavaScript -->
-      <script src="{{ asset('assets/js/chart-custom.js') }}"></script>
-   @endpush  
 @endsection

@@ -58,20 +58,24 @@
 <script type="text/javascript">
 $(document).ready(function(){ 
     var searchable = [0,1];
-    var selectable = [2]; //use 4,5,6,7,8,9,10,11,....and * for all
-    // dropdownList = {column_number: {'key':value}}; 
+    var selectable = [2]; 
+
     var dropdownList = {
         '2' :[@foreach($unitList as $e) <?php echo "'$e'," ?> @endforeach]
     };
 
-    $('#dataTables').DataTable({
+    var exportColName = ['Associate ID','Name','Unit','Joining Salary', 'Current Salary', 'Basic Salary'];
+    var exportCol = [0,1,2,3,4,5];
+    
+    var dt = $('#dataTables').DataTable({
         order: [], //reset auto order
         processing: true,
         responsive: true,
         serverSide: true,
+        lengthMenu: [[10,25, 100, -1], [10,25, 100, "All"]],
         pagingType: "full_numbers",
         language: {
-            processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span> '
+            processing: '<i class="fa fa-spinner fa-spin f-60"></i><span class="sr-only">Loading...</span> '
 
         },
         ajax: {
@@ -85,44 +89,71 @@ $(document).ready(function(){
         buttons: [   
             {
                 extend: 'csv', 
-                className: 'btn-sm btn-success',
-                title: 'Employee Benefit List',
-                header: false,
-                footer: true,
-                exportOptions: {
-                    columns: [0,1,2,3,4,5]
-                }
-            }, 
-            {
-                extend: 'excel', 
-                className: 'btn-sm btn-warning',
-                title: 'Employee Benefit List',
-                header: false,
-                footer: true,
-                exportOptions: {
-                    columns: [0,1,2,3,4,5]
-                }
-            }, 
-            {
-                extend: 'pdf', 
-                className: 'btn-sm btn-primary', 
-                title: 'Employee Benefit List',
-                header: false,
-                footer: true,
-                exportOptions: {
-                    columns: [0,1,2,3,4,5]
-                }
-            }, 
-            {
-                extend: 'print', 
-                className: 'btn-sm btn-default',
-                title: 'Employee Benefit List',
+                className: 'btn btn-sm btn-success',
+                title: 'Employee benefit report',
                 header: true,
                 footer: false,
                 exportOptions: {
-                    columns: [0,1,2,3,4,5],
-                    stripHtml: false
-                } 
+                    columns: exportCol,
+                    format: {
+                        header: function ( data, columnIdx ) {
+                            return exportColName[columnIdx];
+                        }
+                    }
+                },
+                "action": allExport,
+                messageTop: ''
+            }, 
+            {
+                extend: 'excel', 
+                className: 'btn btn-sm btn-warning',
+                title: 'Employee benefit report',
+                header: true,
+                footer: false,
+                exportOptions: {
+                    columns: exportCol,
+                    format: {
+                        header: function ( data, columnIdx ) {
+                            return exportColName[columnIdx];
+                        }
+                    }
+                },
+                "action": allExport,
+                messageTop: '',
+            }, 
+            {
+                extend: 'pdf', 
+                className: 'btn btn-sm btn-primary', 
+                title: 'Employee benefit report',
+                header: true,
+                footer: false,
+                exportOptions: {
+                    columns: exportCol,
+                    format: {
+                        header: function ( data, columnIdx ) {
+                            return exportColName[columnIdx];
+                        }
+                    }
+                },
+                "action": allExport,
+                messageTop: ''
+            }, 
+            {
+                extend: 'print', 
+                className: 'btn btn-sm btn-default',
+                title: '',
+                header: true,
+                footer: false,
+                exportOptions: {
+                    columns: exportCol,
+                    format: {
+                        header: function ( data, columnIdx ) {
+                            return exportColName[columnIdx];
+                        }
+                    }
+                },
+                "action": allExport,
+                messageTop: customReportHeader('Employee benefit report', { "unit": "MBM Garments Ltd." })
             } 
         ], 
         columns: [ 
@@ -137,7 +168,6 @@ $(document).ready(function(){
         initComplete: function () {   
             var api =  this.api();
 
-            // Apply the search 
             api.columns(searchable).every(function () {
                 var column = this; 
                 var input = document.createElement("input"); 
@@ -168,15 +198,13 @@ $(document).ready(function(){
                         e.stopPropagation();
                     });
 
-                // column.data().unique().sort().each( function ( d, j ) {
-                // if(d) select.append('<option value="'+d+'">'+d+'</option>' )
-                // });
                 $.each(dropdownList[i], function(j, v) {
                     select.append('<option value="'+v+'">'+v+'</option>')
                 }); 
             });
         }   
     }); 
+
 });
 </script>
 @endpush

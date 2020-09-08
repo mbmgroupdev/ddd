@@ -48,11 +48,7 @@ table th {
 		            <div class="iq-card-body">
 		               <div class="user-details-block">
 		                  <div class="user-profile text-center">
-		                     @if($info->employee)
-		                     <img src='{{ $info->employee['as_pic'] != null?asset($info->employee['as_pic'] ):($info->employee['as_gender'] == 'Female'?asset('assets/images/user/1.jpg'):asset('assets/images/user/09.jpg')) }}' class="avatar-130 img-fluid" alt="{{ $info->name }}" onError='this.onerror=null;this.src="{{ ($info->employee['as_gender'] == 'Female'?asset('assets/images/user/1.jpg'):asset('assets/images/user/09.jpg')) }}";'>
-		                     @else
-		                        <img class="avatar-130 img-fluid" src="{{ asset('assets/images/user/09.jpg') }} ">
-		                      @endif
+		                     <img src='{{ emp_profile_picture($info)}}' class="avatar-130 img-fluid" alt="{{ $info->name }}">
 		                  </div>
 		                  <div class="text-center mt-3">
 		                     <h2><strong>{{ $info->as_name }}</strong></h2>
@@ -69,16 +65,7 @@ table th {
 								    <span class="label label-danger "> Absent </span>
 								 @endif
 							 </p>
-							 <div class="buttons">
-			                	@if(auth()->user()->canany(['Manage Employee']) || auth()->user()->hasRole('Super Admin'))
-				                    <div class="btn-group"> 
-				                        <a  href='{{url("hr/recruitment/employee/pdf/$info->associate_id")}}' target="_blank" data-tooltip="Download Employee Profile" data-tooltip-location="top" class="btn btn-sm btn-danger"  style="border-radius: 2px !important; padding: 4px; "><i class="fa fa-file-pdf-o bigger-120"></i></a> 
-				                        <a  href='{{url("hr/recruitment/employee/edit/$info->associate_id")}}' target="_blank" data-tooltip="Edit Profile" data-tooltip-location="top" class="btn btn-sm btn-info"  style="border-radius: 2px !important; padding: 4px;"><i class="las la-user-tie bigger-120">&nbsp</i> </a> 
-				                      
-				                        <a  href='{{url("hr/recruitment/operation/medical_info_edit/$info->associate_id")}}' target="_blank" data-tooltip="Edit Medical Info" data-tooltip-location="left" class="btn btn-sm btn-warning" style="border-radius: 2px !important; padding: 4px;"><i class="fa fa-user-md bigger-120">&nbsp</i></a>
-				                    </div>
-			                    @endif
-			                </div>
+
 		                  </div>
 		               </div>
 		            </div>
@@ -90,7 +77,7 @@ table th {
 		            	<div class="row">
 		            		<div class="col-12">
 		            			<div class="progress pos-rel" data-percent="{{$per_complete}}%">
-									<div class="progress-bar" style="width:{{$per_complete}}%;">This profile is {{$per_complete}}% complete.</div>
+									<div class="progress-bar" style="width:{{$per_complete}}%;">Your profile is {{$per_complete}}% complete.</div>
 								</div>
 		            		</div>
 		            		<div class="col-6">
@@ -111,14 +98,12 @@ table th {
 											</span>
 										</div>
 									</div>
-									@if(auth()->user()->canany(['Advance Info List','Manage Employee']) || auth()->user()->hasRole('Super Admin'))
 									<div class="profile-info-row">
 										<div class="profile-info-name"> Contact  </div>
 										<div class="profile-info-value">
 											<span> {{ $info->as_contact }} </span>
 										</div>
 									</div>
-									@endif
 									<div class="profile-info-row">
 										<div class="profile-info-name"> OT Status </div>
 										<div class="profile-info-value">
@@ -242,14 +227,12 @@ table th {
 									Advance Info
 								</a>
 							</li>
-							@if(auth()->user()->canany(['Salary Sheet','Salary Report','Assign Benefit']) || auth()->user()->hasRole('Super Admin'))
 							<li class="nav-item">
 								<a data-toggle="tab" class="nav-link" role="tab" aria-controls="home" aria-selected="true" href="#benefit">
 									<i class="orange ace-icon fa fa-gift bigger-120"></i>
 									Benefits
 								</a>
 							</li>
-							@endif
 
 							<li class="nav-item">
 								<a data-toggle="tab" class="nav-link" role="tab" aria-controls="home" aria-selected="true" href="#employment">
@@ -257,14 +240,12 @@ table th {
 									Employment History
 								</a>
 							</li>
-							@if(auth()->user()->canany(['Salary Sheet','Salary Report']) || auth()->user()->hasRole('Super Admin'))
 							<li class="nav-item">
 								<a data-toggle="tab" class="nav-link" role="tab" aria-controls="home" aria-selected="true" href="#salary">
 									<i class="pink ace-icon fa fa-money bigger-120"></i>
 									Salary Record
 								</a>
 							</li>
-							@endif
 
 							<li class="nav-item">
 								<a data-toggle="tab" class="nav-link" role="tab" aria-controls="home" aria-selected="true" href="#loan">
@@ -278,14 +259,12 @@ table th {
 									Leave History
 								</a>
 							</li>
-							@if(auth()->user()->canany(['Query Attendance','Attendance Report','Manual Attendance Report']) || auth()->user()->hasRole('Super Admin'))
 							<li class="nav-item">
 								<a data-toggle="tab" class="nav-link" role="tab" aria-controls="home" aria-selected="true" id="attload" href="#attendance">
 									<i class="orange ace-icon fa fa-list bigger-120"></i>
 									Attendance History
 								</a>
 							</li>
-							@endif
 
 							<li class="nav-item">
 								<a data-toggle="tab" class="nav-link" role="tab" aria-controls="home" aria-selected="true" href="#discipline">
@@ -301,10 +280,7 @@ table th {
 							
 							<div class="tab-content no-border" >
 								<div id="info" class="tab-pane in active">
-									<!-- /.row -->
-
 									
-									@if(auth()->user()->canany(['Advance Info List','Manage Employee']) || auth()->user()->hasRole('Super Admin'))
 									<div class="row">
 										<div class="col-xs-12 col-sm-5">
 										
@@ -837,11 +813,9 @@ table th {
 										
 										
 									</div>
-									@else
-										You are not permitted to see!
-									@endif
+									
 								</div><!-- /#home -->
-								@if(auth()->user()->canany(['Salary Sheet','Salary Report','Assign Benefit']) || auth()->user()->hasRole('Super Admin'))
+								
 								<div id="benefit" class="tab-pane">
 								    <div class=" transparent">
 												<div class="">
@@ -905,9 +879,7 @@ table th {
 									</div>
 									</div>
 									
-								</div><!-- /#feed -->
-								@endif
-								@if(auth()->user()->canany(['Query Attendance','Attendance Report','Manual Attendance Report']) || auth()->user()->hasRole('Super Admin'))
+								</div>
 								<div id="attendance" class="tab-pane">
                     				<div class="row"> 
                     				   <div class="col-sm-offset-2 col-sm-8">
@@ -935,7 +907,6 @@ table th {
 					                  </div>
 					                </div>
 					            </div>
-					            @endif
 
 								<div id="employment" class="tab-pane">
                     						<div class="row"> 
@@ -1318,7 +1289,6 @@ table th {
 										
 									  </div>
 								</div>
-								@if(auth()->user()->canany(['Salary Sheet','Salary Report']) || auth()->user()->hasRole('Super Admin'))
 								<div id="salary" class="tab-pane">
 								    <div class=" transparent">
 										
@@ -1370,7 +1340,6 @@ table th {
 										
 									</div>
 								</div>
-								@endif
 							</div>
 						</div>
   					</div>
@@ -1382,7 +1351,7 @@ table th {
 </div>
 @push('js')
 <script src="{{ asset('assets/js/moment.min.js') }}"></script>
-<script src="{{ asset('assets/js/fullcalendar.min.js') }}"></script>
+<script src="{{ asset('assets/js/fullcalendar.min.js') }}"></script> 
 <script type="text/javascript">
 var _token = $('input[name="_token"]').val();
 function errorMsgRepeter(id, check, text){

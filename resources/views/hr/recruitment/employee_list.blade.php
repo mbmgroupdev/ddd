@@ -138,7 +138,7 @@
 				
 				
 				<div class="col-12 worker-list pb-3 pt-3">
-					<table id="dataTables" class="table table-striped table-bordered" style="display: block;overflow-x: auto;white-space: nowrap; width: 100%;">
+					<table id="dataTables" class="table table-striped table-bordered" style="display: block;overflow-x: auto;width: 100%;" border="1">
 						<thead>
 							<tr>
 								<th>Sl.</th>
@@ -146,7 +146,6 @@
 								<th>Associate ID</th>
 								<th>Name</th>
 								<th>Designation</th>
-								<th>Status</th>
 								<th>Oracle ID</th>
 								<th>RFID</th>
 								<th>Employee Type</th>
@@ -170,17 +169,16 @@
 $(document).ready(function()
 {
 	
-		var searchable = [3,4,5,6];
-		var selectable = [2,7,8,9,10,12,13]; 
+		var searchable = [2,3,4,5,6];
+		var selectable = [7,8,9,10,11,12]; 
 
 		var dropdownList = {
-			'2':['Active', 'Resign', 'Terminate', 'Suspend','Left'],
 			'7' :[@foreach($employeeTypes as $emp) <?php echo "'$emp'," ?> @endforeach],
 			'8' :[@foreach($floorList as $floor) <?php echo "'$floor'," ?> @endforeach],
 			'9' :[@foreach($lineList as $e) <?php echo "'$e'," ?> @endforeach],
 			'10' :[@foreach($departmentList as $e) <?php echo "'$e'," ?> @endforeach],
-			'12':['Female','Male'],
-			'13':['OT','Non OT']
+			'11':['Female','Male'],
+			'12':['OT','Non OT']
 		};
 
 		$("#unit").change(function(){
@@ -205,8 +203,10 @@ $(document).ready(function()
 		
 
 		
+		var exportColName = ['Sl.','','Associate ID','Name','Designation','Oracle ID','RFID', 'Employee Type', 'Floor','Line','Department','Gender','OT Status'];
+      	var exportCol = [0,2,3,4,5,6,7,8,9,10,11,12];
 
-	    var dTable = $('#dataTables').DataTable({
+	    var dt = $('#dataTables').DataTable({
 
 	    	order: [],
 	    	lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
@@ -241,7 +241,6 @@ $(document).ready(function()
 		        {data:'associate_id', name: 'associate_id'},
 		        {data:'as_name',  name: 'as_name'},
 		        {data:'hr_designation_name', name: 'hr_designation_name', orderable: false},
-		        {data:'as_status', name: 'as_status'},
 		        {data:'as_oracle_code', name: 'as_oracle_code'},
 		        {data:'as_rfid_code', name: 'as_rfid_code'},
 		        {data:'hr_emp_type_name', name: 'hr_emp_type_name', orderable: false},
@@ -257,57 +256,82 @@ $(document).ready(function()
 
 
 		    ],
-	        buttons: [
-	            {
-	            	extend: 'csv',
-	            	className: 'btn-sm btn-success',
-	            	title: 'Employee List',
-	            	header: false,
-	            	footer: true,
-	                exportOptions: {
-	                    // columns: ':visible'
-	                    columns: [0,2,3,4,5,6,7,8,9,10,11,12,13]
-	                }
-	            },
-	            {
-	            	extend: 'excel',
-	            	className: 'btn-sm btn-warning',
-	            	title: 'Employee List',
-	            	header: false,
-	            	footer: true,
-	                exportOptions: {
-	                    // columns: ':visible',
-	                    columns: [0,2,3,4,5,6,7,8,9,10,11,12,13]
-	                }
-	            },
-	            {
-	            	extend: 'pdf',
-	            	className: 'btn-sm btn-primary',
-	            	title: 'Employee List',
-	            	pageSize: 'A2',
-	            	header: false,
-	            	footer: true,
-	                exportOptions: {
-	                    // columns: ':visible'
-	                    columns: [0,2,3,4,5,6,7,8,9,10,11,12,13]
-	                }
-	            },
-	            {
-	            	extend: 'print',
-	            	className: 'btn-sm btn-default',
-	            	title: 'Employee List',
-	            	// orientation:'landscape',
-	            	pageSize: 'A2',
-	            	header: true,
-	            	footer: false,
-	            	orientation: 'landscape',
-	                exportOptions: {
-	                    // columns: ':visible',
-	                    columns: [0,2,3,4,5,6,7,8,9,10,11,12,13],
-	                    stripHtml: false
-	                }
-	            }
-	        ],
+	        buttons: [   
+              {
+                  extend: 'csv', 
+                  className: 'btn btn-sm btn-success',
+                  title: 'Employee list',
+                  header: true,
+                  footer: false,
+                  exportOptions: {
+                      columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
+                  },
+                  "action": allExport,
+                  messageTop: ''
+              }, 
+              {
+                  extend: 'excel', 
+                  className: 'btn btn-sm btn-warning',
+                  title: 'Employee list',
+                  header: true,
+                  footer: false,
+                  exportOptions: {
+                      columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
+                  },
+                  "action": allExport,
+                  messageTop: ''
+              }, 
+              {
+                  extend: 'pdf', 
+                  className: 'btn btn-sm btn-primary', 
+                  title: 'Employee list',
+                  header: true,
+                  footer: false,
+                  exportOptions: {
+                      columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
+                  },
+                  "action": allExport,
+                  messageTop: ''
+              }, 
+              {
+                  extend: 'print', 
+                  className: 'btn btn-sm btn-default',
+                  title: '',
+                  header: true,
+                  footer: false,
+                  exportOptions: {
+                      columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
+                  },
+                  "action": allExport,
+                  messageTop: function () {
+                  	  var unit = '';
+                  	  if($('#unit').val() != null){
+                  	  	 unit = $('#unit').select2('data')[0].text; 
+                  	  }
+	                  return customReportHeader('Employee list', { 'unit':unit, 'emp_type' : $('#emp_type').val(), ot: $('#otnonot').val() });
+                    }
+              } 
+          ],
 	        initComplete: function () {
 	        	var api =  this.api();
 
@@ -362,7 +386,7 @@ $(document).ready(function()
 
 	$(document).on("click",'#empFilter', function(e){
 		e.preventDefault();
-		dTable.draw();
+		dt.draw();
 	});
 });
 </script>

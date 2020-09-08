@@ -28,6 +28,7 @@ Route::group(['middleware' => 'auth'], function(){
 
 	Route::get('/clear-cache', 'HomeController@clear');
 	Route::get('/mmr-report', 'Hr\ReportController@mmr');
+	Route::get('/profile', 'Hr\ProfileController@showProfile');
 
 	// need to modify this routes
 	Route::get('hr/payroll/promotion-jobs', 'Hr\Recruitment\BenefitController@promotionJobs');
@@ -93,6 +94,7 @@ Route::group(['middleware' => 'auth'], function(){
 	Route::get('/user-search', 'UserDashboardController@userSearch');
 	// employee search
 	Route::get('/search', 'SearchController@search');
+	Route::post('/search/suggestion', 'SearchController@suggestion');
 
 });
 

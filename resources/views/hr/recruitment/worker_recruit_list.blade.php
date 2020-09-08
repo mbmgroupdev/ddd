@@ -1,43 +1,8 @@
 @extends('hr.layout')
 @section('title', 'Recruit List')
 @section('main-content')
-@push('css')
-<style type="text/css">
-    .dataTables_wrapper{
-        text-align: center;
-        
-    }
-    
-</style>
-@endpush
-@push('css')
-<style type="text/css">
-    {{-- removing the links in print and adding each page header --}}
-    a[href]:after { content: none !important; }
-    thead {display: table-header-group;}
 
-    /*making place holder custom*/
-    input::-webkit-input-placeholder {
-        color: black;
-        font-weight: bold;
-        font-size: 12px;
-    }
-    input:-moz-placeholder {
-        color: black;
-        font-weight: bold;
-        font-size: 12px;
-    }
-    input:-ms-input-placeholder {
-        color: black;
-        font-weight: bold;
-        font-size: 12px;
-    }
-    th{
-        font-size: 12px;
-        font-weight: bold;
-    }
-</style>
-@endpush
+
 <div class="main-content">
 	<div class="main-content-inner">
 		<div class="breadcrumbs ace-save-state" id="breadcrumbs">
@@ -48,9 +13,6 @@
 				</li> 
 				<li>
 					<a href="#">Recruitment</a>
-				</li>
-				<li>
-					<a href="#">Worker</a>
 				</li>
 				<li class="active">Recruit List</li>
 			</ul><!-- /.breadcrumb --> 

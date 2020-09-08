@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Employee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use DB;
 
 class SearchController extends Controller
 {
@@ -30,6 +31,21 @@ class SearchController extends Controller
         $input['search'] = $inputExp[0];
         $getEmployee = Employee::getSearchKeyWise($input['search']);
         return view('common.search_result', compact('getEmployee'));
+    }
+
+    public function suggestion(Request $request)
+    {
+        $keyword = $request->keyword;
+
+        $employees = DB::table('hr_as_basic_info')
+        ->select('as_name', 'associate_id', 'as_pic', 'as_gender')
+        ->where('associate_id', 'LIKE', '%'. $keyword .'%')
+        ->orWhere('as_name', 'LIKE', '%'. $keyword . '%')
+        ->orWhere('as_oracle_code', 'LIKE', '%'. $keyword . '%')
+        ->limit(5)
+        ->get();
+
+        return view('common.search_suggestion', compact('employees','keyword'))->render();
     }
     
     
