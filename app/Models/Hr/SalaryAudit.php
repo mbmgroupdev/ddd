@@ -16,6 +16,6 @@ class SalaryAudit extends Model
 
     public static function checkSalaryAuditStatus($data)
     {
-    	return SalaryAudit::where('month', $data['month'])->where('year', $data['year'])->first();
+    	return SalaryAudit::where('unit_id', $data['unit'])->where('month', $data['month'])->where('year', $data['year'])->first();
     }
 }
