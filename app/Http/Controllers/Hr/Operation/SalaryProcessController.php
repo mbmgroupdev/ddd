@@ -18,6 +18,7 @@ use App\Models\Hr\Subsection;
 use App\Models\Hr\Unit;
 use Auth, DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class SalaryProcessController extends Controller
 {
@@ -156,6 +157,29 @@ class SalaryProcessController extends Controller
     		$bug = $e->getMessage();
     		return $bug;
     	}
+    }
+
+    public function generate(Request $request)
+    {
+        try {
+            $units = Cache::rememberForever('units', function() {
+                return DB::table('hr_unit')->orderBy('hr_unit_name', 'desc')->get();
+            });
+
+            if($request->unit != null && $request->month_year != null){
+                $input = $request->all();
+                $input['month'] = date('m', strtotime($input['month_year']));
+                $input['year'] = date('Y', strtotime($input['month_year']));
+                $salaryStatus = SalaryAudit::checkSalaryAuditStatus($input);
+                return view('hr.operation.salary.aduit_status', compact('salaryStatus', 'input'));
+            }
+
+            return view('hr.operation.salary.generate', compact('units'));
+
+        } catch (\Exception $e) {
+            return $e->getMessage();
+            return 'error';
+        }
     }
 
     public function salaryAuditStatus(Request $request)

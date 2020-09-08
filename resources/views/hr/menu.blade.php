@@ -213,8 +213,11 @@
             </li>
             @endif
             @if($user->can('Salary Sheet') || $user->hasRole('Super Admin'))
+            <li class="@if($segment3 == 'salary-generate') active @endif">
+               <a href="{{ url('hr/operation/salary-generate') }}"><i class="las la-file-invoice-dollar"></i>Salary Generate</a>
+            </li>
             <li class="@if($segment3 == 'salary-sheet') active @endif">
-               <a href="{{ url('hr/operation/salary-sheet') }}"><i class="las la-file-invoice-dollar"></i>Salary Sheet</a>
+               <a href="{{ url('hr/operation/salary-sheet') }}"><i class="las la-file-invoice-dollar"></i>Salary Disbursed</a>
             </li>
             @endif
             {{-- @if($user->can('Payslip') || $user->hasRole('Super Admin'))

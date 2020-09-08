@@ -493,7 +493,7 @@ class AttendaceBulkManualController extends Controller
         $year  = $explode[0];
         #------------------------------------------------------
         // ASSOCIATE INFORMATION
-        $fetchUser = Employee::where("associate_id", $associate);
+        $fetchUser = Employee::with('shift')->where("associate_id", $associate);
         //check user exists
         if($fetchUser->exists()) {
           $info = $fetchUser->first();
