@@ -7,7 +7,7 @@
 @push('css')
   <style>
     .single-employee-search {
-      margin-top: 100px !important;
+      margin-top: 82px !important;
     }
     .view:hover, .view:hover{
       color: #ccc !important;
@@ -22,11 +22,16 @@
       border-radius: 3px;
       padding: 0px 3px;
     }
-    /*.action-btn{
-      border: 1px solid #000;
-      border-radius: 3px;
-      padding: 0px 3px;
-    }*/
+    .view.active i{
+      background: linear-gradient(to right,#0db5c8 0,#089bab 100%);
+      color: #fff;
+      border-color: #089bab;
+    }
+    .iq-card .iq-card-header {
+      margin-bottom: 10px;
+      padding: 15px 15px;
+      padding-bottom: 8px;
+    }
   </style>
 @endpush
 <div class="main-content">
@@ -122,19 +127,20 @@
 
                                         </div> --}}
                                         <input type="hidden" id="reportformat" name="report_format" value="0">
-                                        <div class="form-group has-float-label select-search-group">
+                                        <input type="hidden" id="reportGroup" name="report_group" value="as_line_id">
+                                        {{-- <div class="form-group has-float-label select-search-group">
                                             <?php
                                                 $type = ['as_line_id'=>'Line','as_floor_id'=>'Floor','as_department_id'=>'Department','as_designation_id'=>'Designation'];
                                             ?>
                                             {{ Form::select('report_group', $type, null, ['placeholder'=>'Select Report Group ', 'class'=>'form-control capitalize select-search', 'id'=>'reportGroup']) }}
                                             <label for="reportGroup">Report Group</label>
-                                        </div>
+                                        </div> --}}
                                     </div>
                                     <div class="col-3">
                                         <div class="form-group has-float-label select-search-group">
                                             <?php
                                                 $reportType = ['absent'=>'Absent','leave'=>'Leave','ot'=>'OT', 'working_hour'=>'Working Hour', 'late'=>'Late'];
-                                                //$reportType = ['attendance'=>'Attendance', 'absent'=>'Absent', 'before_absent_after_present'=>'Before Absent After Present','leave'=>'Leave','ot'=>'OT', 'working_hour'=>'Working Hour', 'late'=>'Late'];
+                                                
                                             ?>
                                             {{ Form::select('report_type', $reportType, $input['report_type']??'', ['placeholder'=>'Select Report Type ', 'class'=>'form-control capitalize select-search', 'id'=>'reportType']) }}
                                             <label for="reportType">Report Type</label>
@@ -147,7 +153,7 @@
                                           </div>
                                         </div>
                                         <div class="form-group">
-                                          <button class="btn btn-primary nextBtn btn-lg pull-right" type="submit" ><i class="fa fa-search"></i> Search</button>
+                                          <button class="btn btn-primary nextBtn btn-lg pull-right" id="form-submit" type="submit" ><i class="fa fa-search"></i> Search</button>
                                         </div>
                                     </div>   
                                 </div>
@@ -156,7 +162,7 @@
                         </div>
                         <div class="single-employee-search" id="single-employee-search" style="display: none;">
                           <div class="form-group">
-                            <input type="text" name="employee" class="form-control" placeholder="Search Employee Associate ID..." id="searchEmployee">
+                            <input type="text" name="employee" class="form-control" placeholder="Search Employee Associate ID..." id="searchEmployee" autocomplete="off">
                           </div>
                         </div>
                     </form>
@@ -176,7 +182,7 @@
                                 $unit = $input['unit'];
                               @endphp
                               <div class="salary-section text-left inline">
-                                <a href='{{ url("hr/monthly-salary-audit?month=$month&unit=$unit") }}' class="btn btn-primary text-white" data-toggle="tooltip" data-placement="top" title="" data-original-title="Salary Check" ><i class="las la-hand-point-right"></i> Salary Check</a>
+                                <a href='{{ url("hr/monthly-salary-audit?month=$month&unit=$unit") }}' class="btn btn-outline-success" data-toggle="tooltip" data-placement="top" title="" data-original-title="Salary Check" ><i class="las la-hand-point-right"></i> Check Salary</a>
                               </div>
                             </div>
                             <div class="col-6 text-center">
@@ -191,21 +197,40 @@
                               </h4>
                             </div>
                             <div class="col-3">
-                              
-                              <div class="text-right">
-                                <a class="btn view list_view no-padding" data-toggle="tooltip" data-placement="top" title="" data-original-title="Details Report View" id="0">
-                                  <i class="las la-list-ul"></i>
-                                </a>
-                                <a class="btn view grid_view no-padding" data-toggle="tooltip" data-placement="top" title="" data-original-title="Summary Report View" id="1">
-                                  <i class="las la-th-large"></i>
-                                </a>
+                              <div class="row">
+                                <div class="col-7 pr-0">
+                                  <div class="format">
+                                    <div class="form-group has-float-label select-search-group mb-0">
+                                        <?php
+                                            $type = ['as_unit_id'=>'N/A','as_line_id'=>'Line','as_floor_id'=>'Floor','as_department_id'=>'Department','as_designation_id'=>'Designation'];
+                                        ?>
+                                        {{ Form::select('report_group_select', $type, 'as_line_id', ['class'=>'form-control capitalize', 'id'=>'reportGroupHead']) }}
+                                        <label for="reportGroupHead">Report Format</label>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="col-5 pl-0">
+                                  <div class="text-right">
+                                    <a class="btn view grid_view no-padding" data-toggle="tooltip" data-placement="top" title="" data-original-title="Summary Report View" id="1">
+                                      <i class="las la-th-large"></i>
+                                    </a>
+                                    <a class="btn view list_view no-padding" data-toggle="tooltip" data-placement="top" title="" data-original-title="Details Report View" id="0">
+                                      <i class="las la-list-ul"></i>
+                                    </a>
+                                    
+                                  </div>
+                                </div>
                               </div>
+                              
+                              
                             </div>
                           </div>
                        </div>
                     </div>
                     <div class="iq-card-body no-padding">
-                      <div class="result-data" id="result-data"></div>
+                      <div class="result-data" id="result-data">
+                        <div class="panel"><div class="panel-body"><p style="text-align:center;margin:100px;"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>
+                      </div>
                     </div>
                  </div>
                   
@@ -218,9 +243,9 @@
 <script src="{{ asset('assets/js/moment.min.js')}}"></script>
 <script type="text/javascript">
     $(document).ready(function(){
-      @if($input['date'] != null && $input['unit'] != null)
-        activityProcess();
-      @endif  
+        @if($input['date'] != null && $input['unit'] != null)
+          activityProcess();
+        @endif  
         var loader = '<div class="panel"><div class="panel-body"><p style="text-align:center;margin:100px;"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>';
         $('#activityReport').on('submit', function(e) {
           e.preventDefault();
@@ -245,7 +270,7 @@
           $("#result-head").html(head);
           activityProcess();
         });
-        $(".view").click(function() {
+        $(".grid_view, .list_view").click(function() {
           var value = $(this).attr('id');
           console.log(value);
           $("#reportformat").val(value);
@@ -253,6 +278,11 @@
           activityProcess();
         });
           
+        $("#reportGroupHead").on("change", function(){
+          var group = $(this).val();
+          $("#reportGroup").val(group);
+          activityProcess();
+        });
 
         function activityProcess() {
           $("#result-data").html(loader);
@@ -294,14 +324,18 @@
                   if(response !== 'error'){
                     $("#result-data").html(response);
                   }else{
-                    console.log(response);
+                    // console.log(response);
                     $("#result-data").html('');
                   }
 
                   if(format == 0 && response !== 'error'){
                     $("#single-employee-search").show();
+                    $('.list_view').addClass('active').attr('disabled', true);
+                    $('.grid_view').removeClass('active').attr('disabled', false);
                   }else{
-                     $("#single-employee-search").hide();
+                    $("#single-employee-search").hide();
+                    $('.grid_view').addClass('active').attr('disabled', true);
+                    $('.list_view').removeClass('active').attr('disabled', false);
                   }
                 },
                 error: function (reject) {
@@ -422,9 +456,9 @@
           var type = $(this).val();
           $('input[name="employee"]').val('');
           if(type == 'ot'){
-            $('#reportGroup').append('<option value="ot_hour">OT Hour</option>');
+            $('#reportGroupHead').append('<option value="ot_hour">OT Hour</option>');
           }else{
-            $("#reportGroup option[value='ot_hour']").remove();
+            $("#reportGroupHead option[value='ot_hour']").remove();
           }
           var date = "{{ $input['date']??date('Y-m-d') }}";
           if(type == 'ot' || type == 'working_hour'){
@@ -440,21 +474,14 @@
           }
         });
 
+        
+
         /*$('#reportFormat').on("change", function(){
           $('input[name="employee"]').val('');
         });*/
        
     });
 
-    function printMe(el){ 
-        var myWindow=window.open('','','width=800,height=800');
-        myWindow.document.write('<html><head></head><body style="font-size:9px;">');
-        myWindow.document.write(document.getElementById(el).innerHTML);
-        myWindow.document.write('</body></html>');
-        myWindow.focus();
-        myWindow.print();
-        myWindow.close();
-    }
 </script>
 @endpush
 @endsection

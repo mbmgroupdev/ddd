@@ -1,23 +1,15 @@
-@push('css')
-    <style>
-        /*.tab-link-inline span{
-            position: absolute;
-            font-size: 16px;
-            top: 25px;
-        }*/
-        
-    </style>
-@endpush
 @php
     if($salaryStatus == null){
         $date = date('Y-m-01', strtotime($input['month_year']));
         $url = 'hr/daily-activity-audit?date='.$date.'&unit='.$input['unit'].'&report_type=absent';
+        $button = 'Check Attendance';
     }else{
         $url = 'hr/monthly-salary-audit?month='.$input['month_year'].'&unit='.$input['unit'];
+        $button = 'Check Salary';
     }
     $link = '';
     if(Auth::user()->can('Hr Salary Generate') || Auth::user()->can('Salary Audit') || Auth::user()->can('Accounts Salary Verify') || Auth::user()->can('Management Salary Audit')){
-        $link = '<a href="'.url($url).'" class="btn btn-md btn-outline-success"><i class="las la-hand-point-right"></i>Check & Confirm</a>';
+        $link = '<a href="'.url($url).'" class="btn btn-md btn-outline-success"><i class="las la-hand-point-right"></i> '.$button.'</a>';
     }
     
 
@@ -26,22 +18,22 @@
 <div class="iq-card-body">
    <ul id="top-tab-list" class="p-0">
      <li class="{{ $salaryStatus == null?'':'active' }}" id="account">
-        <a href="javascript:void();" class="tab-link-inline">
+        <a class="tab-link-inline">
         <i class="las la-user-shield"></i><span class="f-16">HR</span>
         </a>
      </li>
      <li id="audit" class="{{ (isset($salaryStatus) && $salaryStatus->initial_audit != null)?'active':'' }}">
-        <a href="javascript:void();" class="tab-link-inline">
+        <a class="tab-link-inline">
         <i class="las la-user-shield"></i><span class="f-16">Audit</span>
         </a>
      </li>
      <li id="accounts" class="{{ (isset($salaryStatus) && $salaryStatus->accounts_audit != null)?'active':'' }}">
-        <a href="javascript:void();" class="tab-link-inline">
+        <a class="tab-link-inline">
         <i class="las la-user-shield"></i><span class="f-16">Accounts</span>
         </a>
      </li>
      <li id="management" class="{{ (isset($salaryStatus) && $salaryStatus->management_audit != null)?'active':'' }}">
-        <a href="javascript:void();" class="tab-link-inline">
+        <a class="tab-link-inline">
         <i class="las la-user-shield"></i><span class="f-16">Management</span>
         </a>
      </li>

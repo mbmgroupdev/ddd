@@ -222,6 +222,7 @@ class DailyActivityReportController extends Controller
             $input['subSection'] = isset($request['subSection'])?$request['subSection']:'';
 
             $getEmployee = array();
+            $data = array();
             $format = $request['report_group'];
             $uniqueGroups = ['all'];
             $totalValue = 0;
@@ -282,6 +283,7 @@ class DailyActivityReportController extends Controller
             ->when(!empty($input['subSection']), function ($query) use($input){
                return $query->where('emp.as_subsection_id', $input['subSection']);
             });
+
             if($input['report_type'] == 'ot' || $input['report_type'] == 'working_hour' || $input['report_type'] == 'late' || $input['report_type'] == 'before_absent_after_present'){
                 $attData->leftjoin(DB::raw('(' . $employeeData_sql. ') AS emp'), function($join) use ($employeeData) {
                     $join->on('a.as_id', '=', 'emp.as_id')->addBinding($employeeData->getBindings());
@@ -295,6 +297,9 @@ class DailyActivityReportController extends Controller
                     $join->on('a.leave_ass_id', '=', 'emp.associate_id')->addBinding($employeeData->getBindings());
                 });
             }
+
+            // $countEmployee = $attData->select('emp.as_id', DB::raw('count(*) as countEmp'))->pluck('countEmp')->first();
+
             if($input['report_type'] == 'ot'){
                 
                 $attData->where('a.ot_hour', '>', 0);
@@ -352,6 +357,7 @@ class DailyActivityReportController extends Controller
             }
                 
             $getEmployee = $attData->get();
+            // dd($getEmployee);
             if($input['report_format'] == 1 && $input['report_group'] != null){
                 $totalEmployees = array_sum(array_column($getEmployee->toArray(),'total'));
             }else{

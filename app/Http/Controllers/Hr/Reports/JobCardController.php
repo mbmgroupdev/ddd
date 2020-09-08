@@ -21,7 +21,7 @@ class JobCardController extends Controller
 
       $pdf = PDF::loadView('hr/reports/job_card_pdf', $result);
       return $pdf->download('Job_Card_Report_'.date('d_F_Y').'.pdf');
-    } elseif($request->all() != null){
+    } elseif($request->associate != null && $request->month_year != null){
       $result = $this->empAttendanceByMonth($request);
       // return $result;
       $attendance = $result['attendance'];
