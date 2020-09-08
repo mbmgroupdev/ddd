@@ -14,6 +14,9 @@
     @media only screen and (max-width: 771px) {
             .background_div{width: 100% !important;}
     }
+    .single-employee-search {
+        margin-top: 2% !important;
+    }
 </style>
 @endpush
 <div class="main-content">

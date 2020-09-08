@@ -19,7 +19,7 @@
         h3 {
             font-size: 1rem;
         }
-        h2 {
+        h2, h2 b {
             font-size: 1.5rem;
         }
         #top-tab-list li a {
@@ -131,8 +131,8 @@
                                     </div>
                                     <div class="col-3">
                                         <div class="form-group has-float-label has-required">
-                                          <input type="month" class="report_date form-control" id="report-date" name="month_year" placeholder=" Month-Year"required="required" value="{{ date('Y-m')}}"autocomplete="off" />
-                                          <label for="report-date">Month</label>
+                                          <input type="month" class="report_date form-control" id="month" name="month_year" placeholder=" Month-Year"required="required" value="{{ date('Y-m', strtotime('-1 month')) }}"autocomplete="off" />
+                                          <label for="month">Month</label>
                                         </div>
                                         <div class="form-group has-float-label select-search-group">
                                             <?php
@@ -157,23 +157,17 @@
             </div>
             <div class="row">
                 <div class="col h-min-400">
-                    <input type="hidden" value="0" id="setFlug">
                     <div id="result-process-bar" style="display: none;">
                         <div class="iq-card">
                             <div class="iq-card-body">
-                                <div class="" id="progress-bar">
+                                <div class="" id="result-show">
                                     <div class="panel"><div class="panel-body"><p style="text-align:center;margin:100px;"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>
-                                    {{-- <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div> --}}
+                                    
                                 </div>
                             </div>
                         </div>
                     </div>
                     
-                    {{-- result of list --}}
-                    <div class="panel panel-success" id="salary-sheet-result" style="display: none">
-                        <div class="panel-heading" id="salary-sheet-result-inner">Salary sheet result  &nbsp;<button rel='tooltip' data-tooltip-location='left' data-tooltip='Salary sheet result print' type="button" onClick="printMe1('result-show')" class="btn btn-primary btn-xs text-right"><i class="fa fa-print"></i> Print</button></div>
-                        <div class="panel-body" id="result-show"></div>
-                    </div>
                 </div>
             </div>
         </div><!-- /.page-content -->
@@ -354,27 +348,37 @@
 
     //multiple salary sheet
     function multiple() {
-        $("#result-process-bar").show();
         var form = $("#unitWiseSalary");
-        $.ajax({
-            type: "get",
-            url: '{{ url("hr/operation/unit-wise-salary-sheet")}}',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            },
-            data: form.serialize(), // serializes the form's elements.
-            success: function(response)
-            {
-                $("#result-process-bar").hide();
-                if(response !== 'error'){
-                    $("#salary-sheet-result").show();
-                    $("#result-show").html(response);
+        var unit = $("#unit").val();
+        var month = $("#month").val();
+        if(unit !== '' && month !== ''){
+            $("#result-process-bar").show();
+            $.ajax({
+                type: "get",
+                url: '{{ url("hr/operation/unit-wise-salary-sheet")}}',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                },
+                data: form.serialize(), // serializes the form's elements.
+                success: function(response)
+                {
+                    if(response !== 'error'){
+                        $("#result-show").html(response);
+                    }
+                },
+                error: function (reject) {
+                    console.log(reject);
                 }
-            },
-            error: function (reject) {
-                console.log(reject);
+            });
+        }else{
+            $("#result-process-bar").hide();
+            if(unit !== null){
+                $.notify("Please Select Unit", 'error');
             }
-        });
+            if(month !== null){
+                $.notify("Please Select Month", 'error');
+            }
+        }
     }
 
     var incValue = 1;
