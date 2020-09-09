@@ -282,10 +282,10 @@ class EmployeeController extends Controller
             })
             ->editColumn('action', function ($user) {
 
-                $return = "<a href=".url('hr/recruitment/employee/show/'.$user->associate_id)." class=\"btn btn-xs btn-success\" data-toggle=\"tooltip\" title=\"View\">
+                $return = "<a href=".url('hr/recruitment/employee/show/'.$user->associate_id)." class=\"btn btn-sm btn-success\" data-toggle='tooltip' data-placement='top' title='' data-original-title='View Employee Profile'>
                         <i class=\"ace-icon fa fa-eye bigger-120\"></i>
                     </a>
-                    <a href=".url('hr/recruitment/employee/edit/'.$user->associate_id)." class=\"btn btn-xs btn-primary\" data-toggle=\"tooltip\" title=\"Edit\" style=\"margin-top:1px;\">
+                    <a href=".url('hr/recruitment/employee/edit/'.$user->associate_id)." class=\"btn btn-sm btn-primary\" data-toggle=\"tooltip\" title=\"Edit\" style=\"margin-top:1px;\">
                         <i class=\"ace-icon fa fa-pencil bigger-120\"></i>
                     </a>";
                 $return .= "</div>";
