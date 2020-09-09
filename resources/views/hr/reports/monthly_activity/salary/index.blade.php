@@ -2,7 +2,36 @@
 @section('title', 'Monthly Salary')
 
 @section('main-content')
+@push('css')
+  <style>
+    .single-employee-search {
+      margin-top: 82px !important;
+    }
+    .view:hover, .view:hover{
+      color: #ccc !important;
+      
+    }
+    .grid_view{
 
+    }
+    .view i{
+      font-size: 25px;
+      border: 1px solid #000;
+      border-radius: 3px;
+      padding: 0px 3px;
+    }
+    .view.active i{
+      background: linear-gradient(to right,#0db5c8 0,#089bab 100%);
+      color: #fff;
+      border-color: #089bab;
+    }
+    .iq-card .iq-card-header {
+      margin-bottom: 10px;
+      padding: 15px 15px;
+      padding-bottom: 8px;
+    }
+  </style>
+@endpush
 <div class="main-content">
     <div class="main-content-inner">
         <div class="breadcrumbs ace-save-state" id="breadcrumbs">
@@ -89,24 +118,43 @@
                                             </select>
                                             <label for="otnonot">OT/Non-OT</label>
                                         </div>
-                                        <div class="form-group has-float-label select-search-group">
+                                        {{-- <div class="form-group has-float-label select-search-group">
                                             <select name="report_format" class="form-control capitalize select-search" id="reportformat" >
                                                 <option value="0" selected>Details</option>
                                                 <option value="1" >Summary</option>
                                             </select>
                                             <label for="reportformat">Report Format</label>
+                                        </div> --}}
+                                        <input type="hidden" id="reportformat" name="report_format" value="0">
+                                        <input type="hidden" id="reportGroup" name="report_group" value="as_line_id">
+                                        <div class="row">
+                                          <div class="col-5 pr-0">
+                                            <div class="form-group has-float-label has-required">
+                                              <input type="number" class="report_date min_sal form-control" id="min_sal" name="min_sal" placeholder="Min Salary" required="required" value="{{ $salaryMin }}" min="{{ $salaryMin}}" max="{{ $salaryMax}}" autocomplete="off" />
+                                              <label for="min_sal">Range From</label>
+                                            </div>
+                                          </div>
+                                          <div class="col-1 p-0">
+                                            <div class="c1DHiF text-center">-</div>
+                                          </div>
+                                          <div class="col-6">
+                                            <div class="form-group has-float-label has-required">
+                                              <input type="number" class="report_date max_sal form-control" id="max_sal" name="max_sal" placeholder="Max Salary" required="required" value="{{ $salaryMax }}" min="{{ $salaryMin}}" max="{{ $salaryMax}}" autocomplete="off" />
+                                              <label for="max_sal">Range To</label>
+                                            </div>
+                                          </div>
                                         </div>
                                     </div>
                                     <div class="col-3">
-                                        <div class="form-group has-float-label select-search-group">
+                                        {{-- <div class="form-group has-float-label select-search-group">
                                             <?php
                                                 $type = ['as_line_id'=>'Line','as_floor_id'=>'Floor','as_department_id'=>'Department','as_designation_id'=>'Designation'];
                                             ?>
                                             {{ Form::select('report_group', $type, null, ['placeholder'=>'Select Report Group ', 'class'=>'form-control capitalize select-search', 'id'=>'reportGroup']) }}
                                             <label for="reportGroup">Report Group</label>
-                                        </div>
+                                        </div> --}}
                                         <div class="form-group has-float-label has-required">
-                                          <input type="month" class="report_date form-control" id="report-date" name="month" placeholder=" Month-Year"required="required" value="{{ date('Y-m')}}"autocomplete="off" />
+                                          <input type="month" class="report_date form-control" id="report-date" name="month" placeholder=" Month-Year"required="required" value="{{ date('Y-m', strtotime('-1 month')) }}"autocomplete="off" />
                                           <label for="report-date">Month</label>
                                         </div>
                                         <div class="form-group has-float-label select-search-group">
@@ -116,41 +164,18 @@
                                             {{ Form::select('employee_status', $status, 1, ['placeholder'=>'Select Employee Status ', 'class'=>'form-control capitalize select-search', 'id'=>'estatus']) }}
                                             <label for="estatus">Status</label>
                                         </div>
+                                        <div class="form-group">
+                                          <button class="btn btn-primary nextBtn btn-lg pull-right" type="submit" ><i class="fa fa-filter"></i> Filter</button>
+                                        </div>
                                         
                                     </div>   
                                 </div>
-                                <div class="row">
-                                  <div class="col-3">
-                                    <div class="row">
-                                      <div class="col-5 pr-0">
-                                        <div class="form-group has-float-label has-required">
-                                          <input type="number" class="report_date min_sal form-control" id="min_sal" name="min_sal" placeholder="Min Salary" required="required" value="{{ $salaryMin }}" min="{{ $salaryMin}}" max="{{ $salaryMax}}" autocomplete="off" />
-                                          <label for="min_sal">Range From</label>
-                                        </div>
-                                      </div>
-                                      <div class="col-1 p-0">
-                                        <div class="c1DHiF text-center">-</div>
-                                      </div>
-                                      <div class="col-6">
-                                        <div class="form-group has-float-label has-required">
-                                          <input type="number" class="report_date max_sal form-control" id="max_sal" name="max_sal" placeholder="Max Salary" required="required" value="{{ $salaryMax }}" min="{{ $salaryMin}}" max="{{ $salaryMax}}" autocomplete="off" />
-                                          <label for="max_sal">Range To</label>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div class="offset-5 col-4">
-                                      <button class="btn btn-primary nextBtn btn-lg pull-right" type="submit" ><i class="fa fa-save"></i> Generate</button>
-                                  </div>  
-                                </div>
-                                <div class="row">
-                                    
-                                </div>
+                                
                             </div>
                         </div>
                         <div class="single-employee-search" id="single-employee-search" style="display: none;">
                           <div class="form-group">
-                            <input type="text" name="employee" class="form-control" placeholder="Search Employee Associate ID..." id="searchEmployee">
+                            <input type="text" name="employee" class="form-control" placeholder="Search Employee Associate ID..." id="searchEmployee" autocomplete="off">
                           </div>
                         </div>
                     </form>
@@ -160,27 +185,93 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <div class="result-data" id="result-data"></div>
+                  <div class="iq-card" id="result-section" style="display: none">
+                    <div class="iq-card-header d-flex mb-0">
+                       <div class="iq-header-title w-100">
+                          <div class="row">
+                            <div class="col-3">
+                              
+                            </div>
+                            <div class="col-6 text-center">
+                              <h4 class="card-title capitalize inline">
+                                
+                              </h4>
+                            </div>
+                            <div class="col-3">
+                              <div class="row">
+                                <div class="col-7 pr-0">
+                                  <div class="format">
+                                    <div class="form-group has-float-label select-search-group mb-0">
+                                        <?php
+                                            $type = ['as_unit_id'=>'N/A','as_line_id'=>'Line','as_floor_id'=>'Floor','as_department_id'=>'Department','as_designation_id'=>'Designation'];
+                                        ?>
+                                        {{ Form::select('report_group_select', $type, 'as_line_id', ['class'=>'form-control capitalize', 'id'=>'reportGroupHead']) }}
+                                        <label for="reportGroupHead">Report Format</label>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="col-5 pl-0">
+                                  <div class="text-right">
+                                    <a class="btn view grid_view no-padding" data-toggle="tooltip" data-placement="top" title="" data-original-title="Summary Report View" id="1">
+                                      <i class="las la-th-large"></i>
+                                    </a>
+                                    <a class="btn view list_view no-padding" data-toggle="tooltip" data-placement="top" title="" data-original-title="Details Report View" id="0">
+                                      <i class="las la-list-ul"></i>
+                                    </a>
+                                    
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              
+                            </div>
+                          </div>
+                       </div>
+                    </div>
+                    <div class="iq-card-body no-padding">
+                      <div class="result-data" id="result-data">
+                        
+                      </div>
+                    </div>
+                 </div>
+                  
                 </div>
             </div>
         </div><!-- /.page-content -->
     </div>
 </div>
 @push('js')
-<script src="{{ asset('assets/js/popper.min.js')}}"></script>
 <script src="{{ asset('assets/js/moment.min.js')}}"></script>
 <script type="text/javascript">
     $(document).ready(function(){   
         var loader = '<div class="panel"><div class="panel-body"><p style="text-align:center;margin:100px;"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>';
         $('#activityReport').on('submit', function(e) {
+          e.preventDefault();
+          salaryProcess();
+        });
+        $(".grid_view, .list_view").click(function() {
+          var value = $(this).attr('id');
+          // console.log(value);
+          $("#reportformat").val(value);
+          $('input[name="employee"]').val('');
+          salaryProcess();
+        });
+          
+        $("#reportGroupHead").on("change", function(){
+          var group = $(this).val();
+          $("#reportGroup").val(group);
+          salaryProcess();
+        });
+        function salaryProcess(){
+          // console.log(loader)
+          $("#result-section").show();
           $("#result-data").html(loader);
           $("#single-employee-search").hide();
-          e.preventDefault();
-          
           var unit = $('select[name="unit"]').val();
           var area = $('select[name="area"]').val();
           var month = $('input[name="month"]').val();
           var stauts = $('input[name="employee_status"]').val();
+          var format = $('input[name="report_format"]').val();
           var form = $("#activityReport");
           var flag = 0;
           if(unit === '' || month === '' || stauts === ''){
@@ -200,8 +291,17 @@
                   if(response !== 'error'){
                     $("#result-data").html(response);
                   }else{
-                    console.log(response);
+                    // console.log(response);
                     $("#result-data").html('');
+                  }
+                  if(format == 0 && response !== 'error'){
+                    $("#single-employee-search").show();
+                    $('.list_view').addClass('active').attr('disabled', true);
+                    $('.grid_view').removeClass('active').attr('disabled', false);
+                  }else{
+                    $("#single-employee-search").hide();
+                    $('.grid_view').addClass('active').attr('disabled', true);
+                    $('.list_view').removeClass('active').attr('disabled', false);
                   }
                 },
                 error: function (reject) {
@@ -212,7 +312,7 @@
             console.log('required');
             $("#result-data").html('');
           }
-        });
+        }
         
         // change unit
         $('#unit').on("change", function(){
@@ -314,15 +414,6 @@
        
     });
 
-    function printMe(el){ 
-        var myWindow=window.open('','','width=800,height=800');
-        myWindow.document.write('<html><head></head><body style="font-size:9px;">');
-        myWindow.document.write(document.getElementById(el).innerHTML);
-        myWindow.document.write('</body></html>');
-        myWindow.focus();
-        myWindow.print();
-        myWindow.close();
-    }
 </script>
 @endpush
 @endsection

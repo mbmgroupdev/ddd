@@ -130,6 +130,23 @@
                                         @endphp
                                         <input type="hidden" id="reportformat" name="report_format" value="{{ $reFor }}">
                                         <input type="hidden" id="reportGroup" name="report_group" value="{{ $reGro }}">
+                                        <div class="row">
+                                          <div class="col-5 pr-0">
+                                            <div class="form-group has-float-label has-required">
+                                              <input type="number" class="report_date min_sal form-control" id="min_sal" name="min_sal" placeholder="Min Salary" required="required" value="{{ $salaryMin }}" min="{{ $salaryMin}}" max="{{ $salaryMax}}" autocomplete="off" />
+                                              <label for="min_sal">Range From</label>
+                                            </div>
+                                          </div>
+                                          <div class="col-1 p-0">
+                                            <div class="c1DHiF text-center">-</div>
+                                          </div>
+                                          <div class="col-6">
+                                            <div class="form-group has-float-label has-required">
+                                              <input type="number" class="report_date max_sal form-control" id="max_sal" name="max_sal" placeholder="Max Salary" required="required" value="{{ $salaryMax }}" min="{{ $salaryMin}}" max="{{ $salaryMax}}" autocomplete="off" />
+                                              <label for="max_sal">Range To</label>
+                                            </div>
+                                          </div>
+                                        </div>
                                     </div>
                                     <div class="col-3">
                                         
@@ -144,36 +161,12 @@
                                             {{ Form::select('employee_status', $status, null, ['placeholder'=>'Select Employee Status ', 'class'=>'form-control capitalize select-search', 'id'=>'estatus']) }}
                                             <label for="estatus">Status</label>
                                         </div>
-                                        
+                                        <div class="form-group">
+                                          <button class="btn btn-primary nextBtn btn-lg pull-right" type="submit" ><i class="fa fa-filter"></i> Filter</button>
+                                        </div>
                                     </div>   
                                 </div>
-                                <div class="row">
-                                  <div class="col-3">
-                                    <div class="row">
-                                      <div class="col-5 pr-0">
-                                        <div class="form-group has-float-label has-required">
-                                          <input type="number" class="report_date min_sal form-control" id="min_sal" name="min_sal" placeholder="Min Salary" required="required" value="{{ $salaryMin }}" min="{{ $salaryMin}}" max="{{ $salaryMax}}" autocomplete="off" />
-                                          <label for="min_sal">Range From</label>
-                                        </div>
-                                      </div>
-                                      <div class="col-1 p-0">
-                                        <div class="c1DHiF text-center">-</div>
-                                      </div>
-                                      <div class="col-6">
-                                        <div class="form-group has-float-label has-required">
-                                          <input type="number" class="report_date max_sal form-control" id="max_sal" name="max_sal" placeholder="Max Salary" required="required" value="{{ $salaryMax }}" min="{{ $salaryMin}}" max="{{ $salaryMax}}" autocomplete="off" />
-                                          <label for="max_sal">Range To</label>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div class="offset-2 col-3">
-                                      
-                                  </div>
-                                  <div class=" col-4">
-                                      <button class="btn btn-primary nextBtn btn-lg pull-right" type="submit" ><i class="fa fa-save"></i> Generate</button>
-                                  </div>  
-                                </div>
+                                
                                 <div class="row">
                                   <div id="exampleModalCenteredScrollable" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenteredScrollableTitle" aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">

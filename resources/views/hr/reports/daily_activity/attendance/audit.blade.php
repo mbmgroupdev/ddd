@@ -1,8 +1,6 @@
 @extends('hr.layout')
 @section('title', 'Daily Attendance Audit')
-@push('css')
-   <link rel="stylesheet" href="{{ asset('assets/css/reports.css')}}">
-@endpush
+
 @section('main-content')
 @push('css')
   <style>

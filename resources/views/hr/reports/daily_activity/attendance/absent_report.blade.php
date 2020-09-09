@@ -195,7 +195,9 @@
 			                </tr>
 			            </thead>
 			            <tbody>
-			            @php $i = 0; @endphp
+			            @php
+			             $i = 0; $month = date('Y-m',strtotime($input['date'])); 
+			            @endphp
 			            @if(count($getEmployee) > 0)
 			            @foreach($getEmployee as $employee)
 			            	@php
@@ -205,7 +207,7 @@
 			            	<tr>
 			            		<td>{{ ++$i }}</td>
 				            	<td><img src="{{ emp_profile_picture($employee) }}" class='small-image min-img-file'></td>
-				            	<td>{{ $employee->associate_id }}</td>
+				            	<td><a href='{{ url("hr/operation/job_card?associate=$employee->associate_id&month_year=$month") }}' target="_blank">{{ $employee->associate_id }}</a></td>
 				            	<td>
 				            		<b>{{ $employee->as_name }}</b>
 				            		<p>{{ $employee->as_contact }}</p>
@@ -223,7 +225,7 @@
 			            	<tr>
 			            		<td>{{ ++$i }}</td>
 				            	<td><img src="{{ emp_profile_picture($employee) }}" class='small-image' style="height: 40px; width: auto;"></td>
-				            	<td>{{ $employee->associate_id }}</td>
+				            	<td><a href='{{ url("hr/operation/job_card?associate=$employee->associate_id&month_year=$month") }}' target="_blank">{{ $employee->associate_id }}</a></td>
 				            	<td>
 				            		<b>{{ $employee->as_name }}</b>
 				            		<p>{{ $employee->as_contact }}</p>
