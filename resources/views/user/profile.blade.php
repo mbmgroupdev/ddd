@@ -63,6 +63,9 @@ table th {
 								    <span class="label label-danger "> Absent </span>
 								 @endif
 							 </p>
+							 <div>
+							 	<a  href='{{url("hr/user/pdf")}}' target="_blank" data-tooltip="Download Your Profile" data-tooltip-location="top" class="btn btn-sm btn-danger"  style="border-radius: 2px !important; padding: 4px; "><i class="fa fa-file-pdf-o bigger-120"></i></a>
+							 </div>
 
 		                  </div>
 		               </div>
@@ -280,7 +283,7 @@ table th {
 								<div id="info" class="tab-pane in active">
 									
 									<div class="row">
-										<div class="col-xs-12 col-sm-5">
+										<div class="col-sm-12 col-sm-5">
 										
 											<div class=" transparent">
 												<div class="">
@@ -424,7 +427,7 @@ table th {
 											</div>
 										</div>
 
-										<div class="col-xs-12 col-sm-4">
+										<div class="col-sm-12 col-sm-4">
 											<div class=" transparent">
 												<div class=" header-color-blue2">
 													<h4 class="widget-title smaller border-left-heading mb-3">
@@ -621,7 +624,7 @@ table th {
 												</div>
 											</div>
 										</div>
-										<div class="col-xs-12 col-sm-3">
+										<div class="col-sm-12 col-sm-3">
 											<div class=" transparent">
 												<div class=" header-color-blue2">
 													<h4 class="widget-title smaller border-left-heading mb-3">
@@ -748,7 +751,7 @@ table th {
 										</div>
 									</div>
 									<div class="row">
-										<div class="col-xs-12 col-sm-12">
+										<div class="col-sm-12 col-sm-12">
 											<div class=" transparent">
 												<div class=" header-color-blue2">
 													<h4 class="widget-title smaller border-left-heading mb-3">
@@ -1060,11 +1063,11 @@ table th {
 								            @if(!empty($leaves) && count($leaves) >0) 
 												@foreach($leaves as $leave)
 												<div class="row">
-													<div class="col-xs-2">
+													<div class="col-sm-2">
 														<strong>{{ $leave->year }}</strong>
 													</div>
 
-													<div class="col-xs-10">
+													<div class="col-sm-10">
 														<table class="table" style="border:1px solid #6EAED1">
 															<thead>
 															<tr>
@@ -1430,18 +1433,6 @@ function errorMsgRepeter(id, check, text){
 			});
 	    });
     $(document).ready(function(){
-    	$('#demo').fullCalendar({
-				events: [
-				    {
-				      title: 'My Event',
-				      start: '2020-09-01',
-				      end: '2020-09-02',
-				      description: 'This is a cool event'
-				    }
-				    // more events here
-				  ],
-				  
-			});
     	//Dates entry alerts....
             $('#form-date').on('dp.change',function(){
                 $('#to-date').val($('#form-date').val());    

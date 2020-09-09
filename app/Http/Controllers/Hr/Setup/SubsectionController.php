@@ -110,6 +110,19 @@ class SubsectionController extends Controller
         return redirect('/hr/setup/subsection')->with('success', "Successfuly deleted Sub-Section");
     }
     public function subsectionUpdate($id){
+        $subSections= DB::table('hr_subsection AS ss')
+                        ->Select(
+                            'ss.hr_subsec_id',
+                            'ss.hr_subsec_name',
+                            'ss.hr_subsec_name_bn',
+                            'a.hr_area_name',
+                            'd.hr_department_name',
+                            's.hr_section_name'
+                        )
+                        ->leftJoin('hr_area AS a', 'a.hr_area_id', '=', 'ss.hr_subsec_area_id')
+                        ->leftJoin('hr_department AS d', 'd.hr_department_id', '=', 'ss.hr_subsec_department_id')
+                        ->leftJoin('hr_section AS s', 's.hr_section_id', '=', 'ss.hr_subsec_section_id')
+                        ->get();
 
         $subSection= DB::table('hr_subsection')->where('hr_subsec_id', $id)->first();
 
@@ -120,7 +133,7 @@ class SubsectionController extends Controller
 
         // dd($departmentList);
 
-        return view('/hr/setup/subsection_update', compact('areaList', 'subSection', 'departmentList', 'sectionList'));
+        return view('/hr/setup/subsection_update', compact('areaList', 'subSection', 'departmentList', 'sectionList','subSections'));
     }
     public function subsectionUpdateStore(Request $request){
         // dd($request->all());

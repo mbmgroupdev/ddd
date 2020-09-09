@@ -1009,7 +1009,7 @@ table th {
                         <p style="margin:0;padding:0">
 
                           Consumer  =
-                           <font style="color:hotpink">{{ ($list->add_deduct == null) ? '0.00' : isset($list->add_deduct['cg_product'])?$list->add_deduct['cg_product']:'' }}</font>
+                           <font style="color:hotpink">{{ ($list->add_deduct == null) ? '0.00' : (isset($list->add_deduct['cg_product'])?$list->add_deduct['cg_product']:'') }}</font>
                            
                         </p>
                         <p style="margin:0;padding:0">

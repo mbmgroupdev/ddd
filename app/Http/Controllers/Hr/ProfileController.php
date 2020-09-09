@@ -438,8 +438,9 @@ class ProfileController extends Controller
 
 
 
-        $getSalaryList      = HrMonthlySalary::where('as_id', $info->as_id)
+        $getSalaryList      = HrMonthlySalary::where('as_id', $associate_id)
                             ->get();
+                            
         //$getEmployee        = Employee::getEmployeeAssociateIdWise($info->associate_id);
         $title              = 'Unit : '.$info->hr_unit_name_bn.' - Location : '.$info->hr_unit_name_bn;
         $pageHead['current_date']   = date('d-m-Y');

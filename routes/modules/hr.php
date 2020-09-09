@@ -28,6 +28,7 @@ Route::group(['prefix' => 'hr','namespace' => 'Hr'], function(){
 		Route::get('role/edit/{id}', 'RolesController@edit');
 		Route::post('role/edit/{id}', 'RolesController@update'); 
 		Route::get('role/delete/{id}', 'RolesController@destroy');
+		Route::get('role/sync-permission', 'RolesController@syncPermission');
 	});
 
 	// settings ------------------------------------------------------------

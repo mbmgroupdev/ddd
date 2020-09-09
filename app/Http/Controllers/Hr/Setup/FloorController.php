@@ -94,7 +94,18 @@ class FloorController extends Controller
     public function floorUpdate(Request $request){
         $unitList  = Unit::where('hr_unit_status', '1')->pluck('hr_unit_name', 'hr_unit_id');
         $floor= DB::table('hr_floor AS f')->where('f.hr_floor_id','=', $request->hr_floor_id)->first();
-        return view('hr/setup/floor_update', compact('floor','unitList'));
+
+        $floors= DB::table('hr_floor as f')
+                    ->Select(
+                        'f.hr_floor_id',
+                        'f.hr_floor_name',
+                        'f.hr_floor_name_bn',
+                        'u.hr_unit_name'
+                    )
+                    ->leftJoin('hr_unit AS u', 'u.hr_unit_id', '=', 'f.hr_floor_unit_id')
+                    ->whereIn('f.hr_floor_unit_id', auth()->user()->unit_permissions())
+                    ->get();
+        return view('hr/setup/floor_update', compact('floor','unitList','floors'));
     }
 
 

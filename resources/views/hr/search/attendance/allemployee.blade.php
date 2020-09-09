@@ -94,6 +94,10 @@
         var selectable = []; //use 4,5,6,7,8,9,10,11,....and * for all
         var dropdownList = {};
 
+        var exportColName = ['Sl.','Associate ID','Name','Designation','Shift','Floor','Attendance Status'];
+        var exportCol = [0,1,2,3,5,6];
+
+
         var dt =  $('#dataTables').DataTable({
            order: [], //reset auto order
             lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
