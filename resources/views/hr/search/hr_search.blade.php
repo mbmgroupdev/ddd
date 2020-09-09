@@ -126,11 +126,11 @@
                         
                         
                     </div>
-                    <div class="progress" id="result-process-bar" style="display: none;">
+                  {{--   <div class="progress" id="result-process-bar" style="display: none;">
                         <div class="progress-bar progress-bar-info progress-bar-striped active" id="progress_bar_main" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">
                           0%
                         </div>
-                    </div>
+                    </div> --}}
 
                     <input type="hidden" value="0" id="setFlug" />
                     <div id="searchContent"></div>
@@ -163,7 +163,7 @@
         });
         // page loader function
         function preLoader(html='searchContent'){
-            //return $('#'+html).html('<center><i class="ace-icon fa fa-spinner fa-spin orange bigger-500" style="font-size:80px;margin-top:100px;"></i></center>');
+            $('.app-loader').show();
         }
         // get page type
         function getPageType(queryStrings){
@@ -384,7 +384,7 @@
         $('#form_search').on('click', function() {
             $("#result-process-bar").css('display', 'block');
             $('#setFlug').val(0);
-            processbar(0);
+            preLoader();
             $('#searchContent').hide();
             categorySelect = $('#categorySelect').val();
             typeSelect  = $('#typeSelect').val();
@@ -411,8 +411,9 @@
                     $('#searchContent').html(res.page);
                     window.history.pushState('','',res.url);
                     $('#setFlug').val(1);
-                    processbar('success');
+                    //processbar('success');
                     $('#searchContent').show();
+                    $('.app-loader').hide();
                     // console.log(res);
                 },
                 error: function(){
@@ -718,7 +719,7 @@
         function attAjaxCall(url,data,resultDiv='searchContent') {
             $("#result-process-bar").css('display', 'block');
             $('#setFlug').val(0);
-            processbar(0);
+            preLoader(0);
             $('#searchContent').hide();
             $.ajax({
                 url: url,
@@ -729,7 +730,7 @@
                     window.history.pushState('','',res.url);
                     // console.log(res);
                     $('#setFlug').val(1);
-                    processbar('success');
+                    $('.app-loader').hide();
                     $('#searchContent').show();
                 },
                 error: function(jqXHR, textStatus, errorThrown){
@@ -737,7 +738,7 @@
                     console.log('Error message: ' + errorThrown);
                     console.log('error occored on ajax call');
                     $('#setFlug').val(2);
-                    processbar('error');
+                    $('.app-loader').hide();
                 }
             });
         }

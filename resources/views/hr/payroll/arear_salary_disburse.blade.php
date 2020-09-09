@@ -1,5 +1,5 @@
 @extends('hr.layout')
-@section('title', 'Add Role')
+@section('title', 'Arear Salary Disburse')
 @section('main-content')
 <div class="main-content">
 	<div class="main-content-inner">

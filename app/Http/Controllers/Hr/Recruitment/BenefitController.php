@@ -396,6 +396,43 @@ class BenefitController extends Controller
         return response()->json($result);
     }
 
+    public function incrementList()
+    {
+        return view('hr/payroll/increment_list');
+    }
+
+    public function incrementListData()
+    {
+        $data= DB::table('hr_increment AS inc')
+                    ->where('status', 0)
+                    ->select([
+                        'inc.id',
+                        'inc.associate_id',
+                        'b.as_name',
+                        'inc.increment_type',
+                        'inc.increment_amount',
+                        'inc.amount_type',
+                        'inc.eligible_date',
+                        'inc.effective_date',
+                        'c.increment_type AS inc_type_name',
+                    ])
+                    ->leftJoin('hr_as_basic_info AS b', 'b.associate_id', 'inc.associate_id')
+                    ->leftJoin('hr_increment_type AS c', 'c.id', 'inc.increment_type' )
+                    ->orderBy('inc.id','desc')
+                    ->get();
+
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->addColumn('action', function ($data) {
+                return "<div class=\"btn-group\">
+                    <a type=\"button\" href=".url('hr/payroll/increment_edit/'.$data->id)." class=\"btn btn-xs btn-primary\"><i class=\"fa fa-pencil\"></i></a>
+                </div>";
+            })
+            ->rawColumns(['action'])
+            ->make(true);  
+                             
+    }
+
     public function showIncrementForm()
     {
         // ACL::check(["permission" => "hr_payroll_benefit_list"]);

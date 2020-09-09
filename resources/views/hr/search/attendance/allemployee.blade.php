@@ -138,7 +138,12 @@
                     className: 'btn-sm btn-success',
                     "action": allExport,
                     exportOptions: {
-                        columns: ':visible'
+                        columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
                     }
                 },
                 {
@@ -146,7 +151,12 @@
                     className: 'btn-sm btn-warning',
                     "action": allExport,
                     exportOptions: {
-                        columns: ':visible'
+                        columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
                     }
                 },
                 {
@@ -154,7 +164,12 @@
                     className: 'btn-sm btn-primary',
                     "action": allExport,
                     exportOptions: {
-                        columns: ':visible'
+                        columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
                     }
                 },
                 {
@@ -163,7 +178,12 @@
                     autoWidth: true,
                     className: 'btn-sm btn-default print',
                     exportOptions: {
-                        columns: ':visible',
+                        columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      },
                         stripHtml: false
                     },
                     "action": allExport,
