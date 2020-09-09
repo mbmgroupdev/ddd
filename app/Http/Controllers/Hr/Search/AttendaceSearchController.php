@@ -443,7 +443,7 @@ class AttendaceSearchController extends Controller
         }
         /*$attData->where('a.in_time','>=', $rangeFrom." 00:00:00");
         $attData->where('a.in_time','<=', $rangeTo." 23:59:59");*/
-        $attData->whereRaw('DATE(a.in_date) = ?', [$rangeFrom]);
+        $attData->where('a.in_date',$rangeFrom);
         /*$attData->whereRaw('DATE(a.in_date) <= ?', [$rangeTo]);*/
         $attData->join(DB::raw('(' . $hr_basic_sql. ') AS b'), function($join) use ($hr_basic_list){
             $join->on('a.as_id', '=', 'b.as_id')->addBinding($hr_basic_list->getBindings()); ;

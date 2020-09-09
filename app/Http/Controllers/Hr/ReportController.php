@@ -12,7 +12,7 @@ use App\Models\Hr\Station;
 use Carbon\Carbon;
 use Collective\Html\HtmlFacade;
 use Illuminate\Http\Request;
-use Validator, Auth, DB, DataTables, stdClass;
+use Validator, Auth, DB, DataTables, stdClass, Cache;
 
 class ReportController extends Controller
 {
@@ -30,6 +30,7 @@ class ReportController extends Controller
 
     public function mmr(Request $request)
     {
+        
     	
     	$date = $request->date??date('Y-m-d');
     	$unit  = Unit::where(['hr_unit_status' => 1])->get()->keyBy('hr_unit_status');
@@ -61,7 +62,7 @@ class ReportController extends Controller
 					->groupBy('b.as_unit_id')
 					->pluck('count', 'b.as_unit_id');
 
-		dd($present);
+		//dd($present);
 
     	return view('hr.daily_mmr_report', compact('report'));
     }
