@@ -258,38 +258,38 @@
 
 
       @if(auth()->user()->canany(['Shift Roster','Monthly Increment','Attendance Summary Report','Fixed Salary Sheet','Manual Attendance Report','Outside List','Attendance Consecutive Report','Event History','Group Attendance','Leave Log']) || $user->hasRole('Super Admin'))
-      <li>
+      <li class="@if($segment2 == 'reports') active @endif">
          <a href="#report" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="las la-file-invoice"></i><span>Reports</span><i class="las la-angle-right iq-arrow-right"></i></a>
          <ul id="report" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
             @if($user->can('Shift Roster') || $user->hasRole('Super Admin'))
-                  <li>
+                  <li class="@if($segment3 == 'shift_roaster') active @endif">
                      <a href="{{ url('hr/timeattendance/shift_roaster') }}"><i class="las la-fingerprint"></i>Shift Roster Summary</a>
                   </li>
             @endif
 
             @if($user->can('Attendance Summary Report') || $user->hasRole('Super Admin'))
-                  <li><a href="{{ url('hr/reports/attendance_summary_report') }}"><i class="las la-fingerprint"></i>Attendance Summary</a></li>
+                  <li class="@if($segment3 == 'attendance_summary_report') active @endif"><a href="{{ url('hr/reports/attendance_summary_report') }}"><i class="las la-fingerprint"></i>Attendance Summary</a></li>
             @endif
             
-            <li><a href="{{ url('hr/reports/daily-attendance-activity') }}"><i class="las la-fingerprint"></i>Daily Attendance</a></li>
+            <li class="@if($segment3 == 'daily-attendance-activity') active @endif"><a href="{{ url('hr/reports/daily-attendance-activity') }}"><i class="las la-fingerprint"></i>Daily Attendance</a></li>
             @if($user->can('Attendance Consecutive Report') || $user->hasRole('Super Admin'))
-            <li><a href="{{ url('hr/operation/absent_present_list') }}"><i class="las la-fingerprint"></i>Attendance Consecutive</a></li>
+            <li class="@if($segment3 == 'absent_present_list') active @endif"><a href="{{ url('hr/operation/absent_present_list') }}"><i class="las la-fingerprint"></i>Attendance Consecutive</a></li>
             @endif
             {{-- <li><a href="{{ url('hr/reports/group_attendance') }}"><i class="las la-fingerprint"></i>Group Attendance</a></li> --}}
             @if($user->can('Monthly Increment') || $user->hasRole('Super Admin'))
-            <li><a href="{{ url('hr/reports/monthly-salary') }}"><i class="las la-fingerprint"></i>Monthly Salary</a></li>
+            <li class="@if($segment3 == 'monthly-salary') active @endif"><a href="{{ url('hr/reports/monthly-salary') }}"><i class="las la-fingerprint"></i>Monthly Salary</a></li>
             @endif
-            <li><a href="{{ url('hr/reports/employee-yearly-activity') }}"><i class="las la-fingerprint"></i>Employee Yearly Activity</a></li>
+            <li class="@if($segment3 == 'employee-yearly-activity') active @endif"><a href="{{ url('hr/reports/employee-yearly-activity') }}"><i class="las la-fingerprint"></i>Employee Yearly Activity</a></li>
             {{-- <li><a href="{{ url('hr/reports/monthy_increment') }}"><i class="las la-chart-area"></i>Increment Report</a></li> --}}
             @if($user->can('Increment Report') || $user->hasRole('Super Admin'))
             {{-- <li><a href="{{ url('') }}"><i class="las la-chart-area"></i>Promotion Report</a></li> --}}
             @endif
             
             @if($user->can('Yearly Leave Log') || $user->hasRole('Super Admin'))
-            <li><a href="{{ url('hr/reports/leave_log') }}"><i class="las la-calendar-alt"></i>Yearly Leave Log</a></li>
+            <li class="@if($segment3 == 'leave_log') active @endif"><a href="{{ url('hr/reports/leave_log') }}"><i class="las la-calendar-alt"></i>Yearly Leave Log</a></li>
             @endif
             @if($user->can('Event History') || $user->hasRole('Super Admin'))
-            <li><a href="{{ url('hr/reports/event_history') }}"><i class="las la-calendar-alt"></i>Event History</a></li>
+            <li class="@if($segment3 == 'event_history') active @endif"><a href="{{ url('hr/reports/event_history') }}"><i class="las la-calendar-alt"></i>Event History</a></li>
             @endif
          </ul>
       </li>

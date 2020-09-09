@@ -168,7 +168,6 @@
                              <thead>
                                 <tr>
                                    <th>Sl.</th>
-                                   {{-- <th>Job Card</th> --}}
                                    <th>Associate ID</th>
                                    <th>Oracle ID</th>
                                    <th>Name</th>
@@ -416,7 +415,10 @@
         var selectable = []; //use 4,5,6,7,8,9,10,11,....and * for all
         var dropdownList = {};
 
-        var dTable =  $('#dataTables').DataTable({
+        var exportColName = ['Sl.','Associate ID','Oracle ID','Name','Designation','Shift', 'Date', 'In Time','Out Time','OT','Status'];
+        var exportCol = [0,1,2,3,4,5,6,7,8,9];
+
+        var dt =  $('#dataTables').DataTable({
 
          order: [], //reset auto order
          lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
@@ -425,7 +427,7 @@
          serverSide: true,
          cache: false,
          language: {
-           processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span> '
+           processing: '<i class="fa fa-spinner fa-spin f-60"></i><span class="sr-only">Loading...</span> '
          },
          scroller: {
            loadingIndicator: false
@@ -457,83 +459,134 @@
          },
 
          dom: 'lBfrtip',
-         buttons: [
-           {
-             extend: 'csv',
-             className: 'btn-sm btn-success',
-             exportOptions: {
-               columns: ':visible'
-             }
-           },
-           {
-             extend: 'excel',
-             className: 'btn-sm btn-warning',
-             exportOptions: {
-               columns: ':visible'
-             }
-           },
-           {
-             extend: 'pdf',
-             className: 'btn-sm btn-primary',
-             exportOptions: {
-               columns: ':visible'
-             }
-           },
-           {
-
-
-             extend: 'print',
-             className: 'btn-sm btn-default print',
-             title: '<h2 class="text-center">'+ $("#type").val() +'</h2><br>',
-             orientation: 'landscape',
-             pageSize: 'LEGAL',
-             alignment: "center",
-             // header:true,
-             messageTop: function () {
-             //printCounter++;
-                 return '<style>'+
-                   'input::-webkit-input-placeholder {'+
-                   'color: black;'+
-                   'font-weight: bold;'+
-                   'font-size: 12px;'+
-                   '}'+
-                   'input:-moz-placeholder {'+
-                   'color: black;'+
-                   'font-weight: bold;'+
-                   'font-size: 12px;'+
-                   '}'+
-                   'input:-ms-input-placeholder {'+
-                   'color: black;'+
-                   'font-weight: bold;'+
-                   'font-size: 12px;'+
-                   '}'+
-                   'th{'+
-                   'font-size: 12px !important;'+
-                   'color: black !important;'+
-                   'font-weight: bold !important;'+
-                   '}</style>'+
-                   '<h2 class="text-center">'+'Unit: '+$("#unit option:selected").text()+'</h2>'+
-                   '<h4 class="text-center">'+'Report Type: '+$("#type option:selected").text()+'</h2>'+
-                   '<h4 class="text-center">'+'Report Date: '+$("#report_from").val()+' '+'To'+' '+$("#report_to").val()+'</h4>'+
-                   '<h4 class="text-center">'+'Total: '+dTable.data().length+'</h4>'+
-                   '<h4 class="text-center">'+'Printed At: '+new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate()+'</h4><br>'
-                   ;
-
-             // if ( printCounter === 1 ) {
-             //     return $("#type").val();
-             // }
-             // else {
-             //     return 'You have printed this document '+printCounter+' times';
-             // }
-         },
-         messageBottom: null,
-             exportOptions: {
-               columns: [0,1,2,5,6,7,8,9],
-               stripHtml: false
-             },
-
-           }
-         ],
+         buttons: [   
+              {
+                  extend: 'csv', 
+                  className: 'btn btn-sm btn-success',
+                  title: function () {
+                      var type = 'Attendance Report -';
+                      if($('#type').val() != null){
+                         type += $('#type').select2('data')[0].text; 
+                      }
+                      return type;
+                  },
+                  header: true,
+                  footer: false,
+                  exportOptions: {
+                      columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
+                  },
+                  "action": allExport,
+                  messageTop: ''
+              }, 
+              {
+                  extend: 'excel', 
+                  className: 'btn btn-sm btn-warning',
+                  title: function () {
+                      var type = 'Attendance Report - ';
+                      if($('#type').val() != null){
+                         type += $('#type').select2('data')[0].text; 
+                      }
+                      return type;
+                  },
+                  header: true,
+                  footer: false,
+                  exportOptions: {
+                      columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
+                  },
+                  "action": allExport,
+                  messageTop: ''
+              }, 
+              {
+                  extend: 'pdf', 
+                  className: 'btn btn-sm btn-primary', 
+                  title: function () {
+                      var type = 'Attendance Report - ';
+                      if($('#type').val() != null){
+                         type += $('#type').select2('data')[0].text; 
+                      }
+                      return type;
+                  },
+                  header: true,
+                  footer: false,
+                  exportOptions: {
+                      columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
+                  },
+                  "action": allExport,
+                  messageTop: ''
+              }, 
+              {
+                  extend: 'print', 
+                  className: 'btn btn-sm btn-default',
+                  title: '',
+                  header: true,
+                  footer: false,
+                  exportOptions: {
+                      columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
+                  },
+                  "action": allExport,
+                  messageTop: function () {
+                      var data = {
+                       unit : '',
+                       report_from : $('#report_from').val(),
+                       report_to   : $('#report_to').val(),
+                       otnonot        : '',
+                       floor_id : '',
+                       line_id : '',
+                       area : '',
+                       department : '',
+                       section : '',
+                       subSection : '',
+                       type : '',
+                       ot_hour : $("#ot_hour").val()
+                      }
+                      if($('#unit').val() != null){
+                         data.unit = $('#unit').select2('data')[0].text; 
+                      }
+                      if($('#floor_id').val() != null){
+                         data.floor_id = $('#floor_id').select2('data')[0].text; 
+                      }
+                      if($('#line_id').val() != null){
+                         data.line_id = $('#line_id').select2('data')[0].text; 
+                      }
+                      if($('#area').val() != null){
+                         data.area = $('#area').select2('data')[0].text; 
+                      }
+                      if($('#department').val() != null){
+                         data.department = $('#department').select2('data')[0].text; 
+                      }
+                      if($('#section').val() != null){
+                         data.section = $('#section').select2('data')[0].text; 
+                      }
+                      if($('#subSection').val() != null){
+                         data.subSection = $('#subSection').select2('data')[0].text; 
+                      }
+                      if($('#type').val() != null){
+                         data.type = 'Attendance Report - '+$('#type').select2('data')[0].text; 
+                      }
+                      return operationReportHeader(data.type, data);
+                    }
+              } 
+          ],
 
          columns: [
            { data: 'DT_RowIndex', name: 'DT_RowIndex' },
@@ -604,7 +657,7 @@
 
        });
 
-       dTable.MakeCellsEditable({
+       dt.MakeCellsEditable({
          "onUpdate": myCallbackFunction,
          "inputCss":'my-input-class',
          "columns": [7,8],
@@ -653,7 +706,7 @@
          }
          else{
            $(".d-table").removeClass('hide');
-           dTable.draw();
+           dt.draw();
          }
        });
     });

@@ -5,15 +5,15 @@
 <style type="text/css">
     /*.form-group{margin-bottom: 10px;}*/
     @media only screen and (max-width: 768px) {
-    .form-group{margin-bottom: 0px;}
-}
+        .form-group{margin-bottom: 0px;}
+    }
 
-        .station-card-content .panel-title {margin-top: 3px; margin-bottom: 3px;}
-        .station-card-content .panel-title a{font-size: 15px; display: block;}
-        .select2{width: 100% !important;}
-        .panel-group { margin-bottom: 5px;}
-        h3.smaller {font-size: 13px;}
-        .header {margin-top: 0;}
+    .station-card-content .panel-title {margin-top: 3px; margin-bottom: 3px;}
+    .station-card-content .panel-title a{font-size: 15px; display: block;}
+    .select2{width: 100% !important;}
+    .panel-group { margin-bottom: 5px;}
+    h3.smaller {font-size: 13px;}
+    .header {margin-top: 0;}
 </style>
 @endpush
 <div class="main-content">
@@ -184,7 +184,6 @@
                             </div>
 
                         {{ Form::close() }}
-                      </div>
                     </div>
                 </div>
             </div>

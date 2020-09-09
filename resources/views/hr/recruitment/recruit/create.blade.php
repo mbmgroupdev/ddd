@@ -1,7 +1,6 @@
 @extends('hr.layout')
 @section('title', 'Recruitment Process')
 @push('css')
-   {{-- <link rel="stylesheet" href="{{ asset('assets/css/select2.min.css')}}"> --}}
    <link rel="stylesheet" href="{{ asset('assets/css/recruitment.css')}}">
 @endpush
 @section('main-content')

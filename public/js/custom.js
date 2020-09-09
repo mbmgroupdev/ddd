@@ -184,7 +184,6 @@ function allExport(e, dt, button, config)
 
 function customReportHeader(title, parameter)
 {
-    console.log(parameter);
     var header = '<p></p>'+
                  '<h3 style="text-align:center;">'+title+'</h3>';
     if(parameter.unit){
@@ -196,3 +195,99 @@ function customReportHeader(title, parameter)
            
 }
 
+function operationReportHeader(title, parameter)
+{
+    var header = '<h3 style="text-align:center;">'+title+'</h3>';
+    if(parameter.report == 'holiday_roster'){
+
+        header += '<h4 style="text-align:center;">Month: <b>'+parameter.month;
+    }else{
+        header += '<h4 style="text-align:center;">Date: <b>'+parameter.report_from;
+        
+        if(parameter.report_from != parameter.report_to){     
+            header += '- '+parameter.report_to;
+        }
+    }
+    header += '</b></h4>';
+
+    /*common parameters*/
+    if(parameter.unit){
+        header += '<h5 style="text-align:center;">Unit: '+parameter.unit+'</h5>';
+    }
+
+    header += '<table style="width:100%";><tr><td>'; 
+    if(parameter.area){
+        header += 'Area: '+parameter.area;
+    }
+    header += '</td><td style="text-align:center;">';
+    if(parameter.department){
+        header += 'Department: '+parameter.department;
+    }
+    header += '</td><td style="text-align:right;">';
+    if(parameter.floor_id){
+        header += 'Floor: '+parameter.floor_id;
+    }
+    header += '</td></tr><tr><td>';
+    if(parameter.section){
+        header += 'Section: '+parameter.section;
+    }
+    header += '</td><td style="text-align:center;">';
+    if(parameter.subSection){
+        header += 'Sub-section: '+parameter.subSection;
+    }
+    header += '</td><td style="text-align:right;">';
+    if(parameter.line_id){
+        header += 'Line: '+parameter.line_id;
+    }
+    header += '</td></tr></table>'; 
+
+    return header;
+}
+
+function rosterReportHeader(title, parameter)
+{
+    var header = '<h3 style="text-align:center;">'+title+'</h3>';
+    if(parameter.month){
+        header += '<h4 style="text-align:center;">Month: <b>'+parameter.month+'</b>';
+    }
+    if(parameter.date){
+        header += ' Date: <b>'+parameter.date+'</b>';
+    }
+    if(parameter.day){
+        header += ' Day: <b>'+parameter.day+'</b>';
+    }
+    header += '</h4>';
+
+    /*common parameters*/
+    if(parameter.unit){
+        header += '<h5 style="text-align:center;">Unit: '+parameter.unit+'</h5>';
+    }
+
+    header += '<table style="width:100%";><tr><td>'; 
+    if(parameter.area){
+        header += 'Area: '+parameter.area;
+    }
+    header += '</td><td style="text-align:center;">';
+    if(parameter.department){
+        header += 'Department: '+parameter.department;
+    }
+    header += '</td><td style="text-align:right;">';
+    if(parameter.floor_id){
+        header += 'Floor: '+parameter.floor_id;
+    }
+    header += '</td></tr><tr><td>';
+    if(parameter.section){
+        header += 'Section: '+parameter.section;
+    }
+    header += '</td><td style="text-align:center;">';
+    if(parameter.subSection){
+        header += 'Sub-section: '+parameter.subSection;
+    }
+    header += '</td><td style="text-align:right;">';
+    if(parameter.line_id){
+        header += 'Line: '+parameter.line_id;
+    }
+    header += '</td></tr></table>'; 
+
+    return header;
+}

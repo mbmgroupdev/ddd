@@ -63,13 +63,13 @@
                 </div>
             </div>
             <div class="panel panel-info">
-                <div class="panel-heading"><h6>Apprisal List<a href="{{ url('hr/performance/appraisal')}}" class="pull-right btn btn-xx btn-info">Apprisal</a></h6></div> 
+                <div class="panel-heading"><h6>Apprisal List<a href="{{ url('hr/performance/appraisal')}}" class="pull-right btn btn-primary">Apprisal</a></h6></div> 
                 <div class="panel-body worker-list">
                     <!-- PAGE CONTENT BEGINS -->
 
                     <!-- </br> -->
                     <!-- Display Erro/Success Message -->
-                    <table id="dataTables" class="table table-striped table-bordered" style="display:table;overflow-x: auto;white-space: nowrap; width: 100%;">
+                    <table id="dataTables" class="table table-striped table-bordered" style="display:table;overflow-x: auto; width: 100%;">
                         <thead>
                             <tr>
                                 <th>Associate ID</th>
@@ -112,29 +112,6 @@ $(document).ready(function(){
             }
         }
     });
-    $('select.associates').select2({
-        ajax: {
-            url: '{{ url("hr/associate-search") }}',
-            dataType: 'json',
-            delay: 250,
-            data: function (params) {
-                return { 
-                    keyword: params.term
-                }; 
-            },
-            processResults: function (data) { 
-                return {
-                    results:  $.map(data, function (item) {
-                        return {
-                            text: item.associate_name,
-                            id: item.associate_id
-                        }
-                    }) 
-                };
-          },
-          cache: true
-        }
-    });
 
 
     $.ajaxSetup({
@@ -143,10 +120,16 @@ $(document).ready(function(){
         }
     });
 
+    var exportColName = ['Associate ID','Name','Department','Appraisal Duration','Primary Assesment', 'Appraisal Status', 'Rating'];
+    var exportCol = [0,1,2,3,4,5,6];
 
-    var oTable = $('#dataTables').DataTable({
+
+    var dt = $('#dataTables').DataTable({
         order: [], //reset auto order
         processing: true,
+            language: {
+              processing: '<i class="fa fa-spinner fa-spin f-60" style="font-size:60px;margin-top:50px;z-index:100;"></i>'
+            },
         responsive: true,
         serverSide: true,
         pagingType: "full_numbers",
@@ -164,41 +147,82 @@ $(document).ready(function(){
                   'X-CSRF-TOKEN': '{{ csrf_token() }}'
             } 
         }, 
-        buttons: [ 
-            {
-                extend: 'csv', 
-                className: 'btn-sm btn-success',
-                title: 'Performance Appraisal List',
-                exportOptions: {
-                    columns: [0,1,2,3,4,5,6]
-                }
-            }, 
-            {
-                extend: 'excel', 
-                className: 'btn-sm btn-warning',
-                title: 'Performance Appraisal List',
-                exportOptions: {
-                    columns: [0,1,2,3,4,5,6]
-                }
-            }, 
-            {
-                extend: 'pdf', 
-                className: 'btn-sm btn-primary', 
-                title: 'Performance Appraisal List',
-                exportOptions: {
-                    columns: [0,1,2,3,4,5,6]
-                }
-            }, 
-            {
-                extend: 'print', 
-                className: 'btn-sm btn-default',
-                title: 'Performance Appraisal List',
-                exportOptions: {
-                    columns: [0,1,2,3,4,5,6],
-                    stripHtml: false
-                } 
-            } 
-        ], 
+        buttons: [   
+              {
+                  extend: 'csv', 
+                  className: 'btn btn-sm btn-success',
+                  title: 'Performance Appraisal List',
+                  header: true,
+                  footer: false,
+                  exportOptions: {
+                      columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
+                  },
+                  "action": allExport,
+                  messageTop: ''
+              }, 
+              {
+                  extend: 'excel', 
+                  className: 'btn btn-sm btn-warning',
+                  title: 'Performance Appraisal List',
+                  header: true,
+                  footer: false,
+                  exportOptions: {
+                      columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
+                  },
+                  "action": allExport,
+                  messageTop: ''
+              }, 
+              {
+                  extend: 'pdf', 
+                  className: 'btn btn-sm btn-primary', 
+                  title: 'Performance Appraisal List',
+                  header: true,
+                  footer: false,
+                  exportOptions: {
+                      columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
+                  },
+                  "action": allExport,
+                  messageTop: ''
+              }, 
+              {
+                  extend: 'print', 
+                  className: 'btn btn-sm btn-default',
+                  title: '',
+                  header: true,
+                  footer: false,
+                  exportOptions: {
+                      columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
+                  },
+                  "action": allExport,
+                  messageTop: function () {
+                      var unit = '';
+                      if($('#unit').val() != null){
+                         unit = $('#unit').select2('data')[0].text; 
+                      }
+                      return customReportHeader('Performance Appraisal List', { });
+                    }
+              } 
+          ],
         columns: [ 
             { data: 'hr_pa_as_id', name: 'hr_pa_as_id' }, 
             { data: 'as_name',  name: 'as_name' }, 
@@ -224,7 +248,7 @@ $(document).ready(function(){
     }
     else
     {
-        oTable.draw();
+        dt.draw();
         e.preventDefault();
     }
     // if(isNaN(start) && isNaN(end) && isNaN($('#hr_pa_as_id').val())){

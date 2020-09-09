@@ -82,7 +82,7 @@
 <script type="text/javascript"> 
 $(document).ready(function(){ 
 
-    $('#dataTables').DataTable({
+    var dt = $('#dataTables').DataTable({
         order: [], //reset auto order
         processing: true,
         responsive: true,
@@ -106,6 +106,7 @@ $(document).ready(function(){
                 extend: 'csv', 
                 className: 'btn-sm btn-success',
                 title: 'Advance Info Employee List',
+                "action": allExport,
                 exportOptions: {
                     // columns: ':visible'
                     columns: [0,1,2,3,4]
@@ -115,6 +116,7 @@ $(document).ready(function(){
                 extend: 'excel', 
                 className: 'btn-sm btn-warning',
                 title: 'Advance Info Employee List',
+                "action": allExport,
                 exportOptions: {
                     // columns: ':visible'
                     columns: [0,1,2,3,4]
@@ -124,6 +126,7 @@ $(document).ready(function(){
                 extend: 'pdf', 
                 className: 'btn-sm btn-primary', 
                 title: 'Advance Info Employee List',
+                "action": allExport,
                 exportOptions: {
                     // columns: ':visible'
                     columns: [0,1,2,3,4]
@@ -133,6 +136,7 @@ $(document).ready(function(){
                 extend: 'print', 
                 className: 'btn-sm btn-default',
                 title: 'Advance Info Employee List',
+                "action": allExport,
                 exportOptions: {
                     columns: [0,1,2,3,4]
                 } 

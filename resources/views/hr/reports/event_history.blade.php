@@ -124,7 +124,7 @@ $(document).ready(function()
         '2' :['In-time/Out-time Modify','Absent to Present','Present to Absent','Made Halfday'],
     }; 
 
-    $('#dataTables').DataTable({
+    var dt = $('#dataTables').DataTable({
         order: [], //reset auto order
         processing: true,
         responsive: false,

@@ -108,7 +108,7 @@ $(document).ready(function(){
         var dropdownList = {
         };
 
-        var dTable =  $('#dataTables').DataTable({
+        var dt =  $('#dataTables').DataTable({
            order: [], //reset auto order
             lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
             processing: true,
@@ -141,6 +141,7 @@ $(document).ready(function(){
                 {
                     extend: 'csv',
                     className: 'btn-sm btn-success',
+                    "action": allExport,
                     exportOptions: {
                         columns: ':visible'
                     }
@@ -148,6 +149,7 @@ $(document).ready(function(){
                 {
                     extend: 'excel',
                     className: 'btn-sm btn-warning',
+                    "action": allExport,
                     exportOptions: {
                         columns: ':visible'
                     }
@@ -155,6 +157,7 @@ $(document).ready(function(){
                 {
                     extend: 'pdf',
                     className: 'btn-sm btn-primary',
+                    "action": allExport,
                     exportOptions: {
                         columns: ':visible'
                     }
@@ -165,6 +168,7 @@ $(document).ready(function(){
                     autoWidth: true,
                     className: 'btn-sm btn-default print',
                     title: '',
+                    "action": allExport,
                     exportOptions: {
                         columns: ':visible',
                         stripHtml: false
@@ -237,12 +241,12 @@ $(document).ready(function(){
         });
         var status = '{{ Request::get('salstatus') }}';
         if(status=== 'ot'){
-            dTable.column(7).visible(false);
-            dTable.column(8).visible(false);       
+            dt.column(7).visible(false);
+            dt.column(8).visible(false);       
         }
         if(status=== 'salary'){
-            dTable.column(6).visible(false);
-            dTable.column(8).visible(false);       
+            dt.column(6).visible(false);
+            dt.column(8).visible(false);       
         }
         console.log('fbgyh');
     });

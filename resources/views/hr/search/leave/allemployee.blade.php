@@ -100,7 +100,7 @@
         var selectable = []; //use 4,5,6,7,8,9,10,11,....and * for all
         var dropdownList = {};
 
-        var dTable =  $('#dataTables').DataTable({
+        var dt =  $('#dataTables').DataTable({
            order: [], //reset auto order
             lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
             processing: true,
@@ -139,6 +139,7 @@
                 {
                     extend: 'csv',
                     className: 'btn-sm btn-success',
+                    "action": allExport,
                     exportOptions: {
                         columns: ':visible'
                     }
@@ -146,6 +147,7 @@
                 {
                     extend: 'excel',
                     className: 'btn-sm btn-warning',
+                    "action": allExport,
                     exportOptions: {
                         columns: ':visible'
                     }
@@ -153,6 +155,7 @@
                 {
                     extend: 'pdf',
                     className: 'btn-sm btn-primary',
+                    "action": allExport,
                     exportOptions: {
                         columns: ':visible'
                     }
@@ -161,6 +164,7 @@
 
                     extend: 'print',
                     autoWidth: true,
+                    "action": allExport,
                     className: 'btn-sm btn-default print',
                     exportOptions: {
                         columns: ':visible',

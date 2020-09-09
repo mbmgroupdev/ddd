@@ -276,10 +276,10 @@
 $(document).ready(function(){
     var totalempcount = 0;
     var totalemp = 0;
-    $('#dataTables').DataTable({
+     $('#dataTables').DataTable({
             pagingType: "full_numbers" ,
     }); 
-    $('#dataTables2').DataTable({
+    var dt = $('#dataTables2').DataTable({
             pagingType: "full_numbers",
             dom: "<'row'<'col-2'l><'col-4'i><'col-3 text-center'B><'col-3'f>>tp",
             buttons: [
@@ -293,6 +293,7 @@ $(document).ready(function(){
                         columns: ['0','1','2','3','4','5','6'],
                         stripHtml: false
                     }
+                    "action": allExport,
                 }
             ]
     }); 

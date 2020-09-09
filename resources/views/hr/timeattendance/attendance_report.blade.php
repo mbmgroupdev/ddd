@@ -426,7 +426,7 @@
    var selectable = []; //use 4,5,6,7,8,9,10,11,....and * for all
    var dropdownList = {};
 
-   var dTable =  $('#dataTables').DataTable({
+   var dt =  $('#dataTables').DataTable({
 
      order: [], //reset auto order
      lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
@@ -471,6 +471,7 @@
        {
          extend: 'csv',
          className: 'btn-sm btn-success',
+         "action": allExport,
          exportOptions: {
            columns: ':visible'
          }
@@ -478,6 +479,7 @@
        {
          extend: 'excel',
          className: 'btn-sm btn-warning',
+         "action": allExport,
          exportOptions: {
            columns: ':visible'
          }
@@ -485,6 +487,7 @@
        {
          extend: 'pdf',
          className: 'btn-sm btn-primary',
+         "action": allExport,
          exportOptions: {
            columns: ':visible'
          }
@@ -498,6 +501,7 @@
          orientation: 'landscape',
          pageSize: 'LEGAL',
          alignment: "center",
+         "action": allExport,
          // header:true,
          messageTop: function () {
          //printCounter++;
@@ -525,7 +529,7 @@
                '<h2 class="text-center">'+'Unit: '+$("#unit option:selected").text()+'</h2>'+
                '<h4 class="text-center">'+'Report Type: '+$("#type option:selected").text()+'</h2>'+
                '<h4 class="text-center">'+'Report Date: '+$("#report_from").val()+' '+'To'+' '+$("#report_to").val()+'</h4>'+
-               '<h4 class="text-center">'+'Total: '+dTable.data().length+'</h4>'+
+               '<h4 class="text-center">'+'Total: '+dt.data().length+'</h4>'+
                '<h4 class="text-center">'+'Printed At: '+new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate()+'</h4><br>'
                ;
 
@@ -613,7 +617,7 @@
 
    });
 
-   dTable.MakeCellsEditable({
+   dt.MakeCellsEditable({
      "onUpdate": myCallbackFunction,
      "inputCss":'my-input-class',
      "columns": [8,9],
@@ -663,7 +667,7 @@
      }
      else{
        $(".d-table").removeClass('hide');
-       dTable.draw();
+       dt.draw();
      }
    });
 

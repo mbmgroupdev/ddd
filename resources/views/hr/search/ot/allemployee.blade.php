@@ -113,7 +113,7 @@ $(document).ready(function(){
         var dropdownList = {
         };
 
-        var dTable =  $('#dataTables').DataTable({
+        var dt =  $('#dataTables').DataTable({
            order: [], //reset auto order
             lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
             processing: true,
@@ -148,6 +148,7 @@ $(document).ready(function(){
                 {
                     extend: 'csv',
                     className: 'btn-sm btn-success',
+                    "action": allExport,
                     exportOptions: {
                         columns: ':visible'
                     }
@@ -155,12 +156,14 @@ $(document).ready(function(){
                 {
                     extend: 'excel',
                     className: 'btn-sm btn-warning',
+                    "action": allExport,
                     exportOptions: {
                         columns: ':visible'
                     }
                 },
                 {
                     extend: 'pdf',
+                    "action": allExport,
                     className: 'btn-sm btn-primary',
                     exportOptions: {
                         columns: ':visible'
@@ -170,6 +173,7 @@ $(document).ready(function(){
 
                     extend: 'print',
                     autoWidth: true,
+                    "action": allExport,
                     className: 'btn-sm btn-default print',
                     title: '',
                     exportOptions: {
