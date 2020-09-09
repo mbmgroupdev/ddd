@@ -388,7 +388,7 @@ $(document).ready(function(){
   // var selectable = []; //use 4,5,6,7,8,9,10,11,....and * for all
   var dropdownList = {};
   var printCounter = 0;
-  var dTable =  $('#dataTables').DataTable({
+  var dt =  $('#dataTables').DataTable({
 
     order: [], //reset auto order
     lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
@@ -434,6 +434,7 @@ $(document).ready(function(){
       {
         extend: 'csv',
         className: 'btn-sm btn-success',
+        "action": allExport,
         exportOptions: {
           columns: ':visible'
         }
@@ -441,6 +442,7 @@ $(document).ready(function(){
       {
         extend: 'excel',
         className: 'btn-sm btn-warning',
+        "action": allExport,
         exportOptions: {
           columns: ':visible'
         }
@@ -448,6 +450,7 @@ $(document).ready(function(){
       {
         extend: 'pdf',
         className: 'btn-sm btn-primary',
+        "action": allExport,
         exportOptions: {
           columns: ':visible'
         }
@@ -457,6 +460,7 @@ $(document).ready(function(){
         extend: 'print',
         className: 'btn-sm btn-default print',
         title: '',
+        "action": allExport,
         orientation: 'portrait',
         pageSize: 'LEGAL',
         alignment: "center",
@@ -487,7 +491,7 @@ $(document).ready(function(){
           '<h2 class="text-center">Consecutive ' +$("#type option:selected").text()+' Report</h2>'+
           '<h3 class="text-center">'+'Unit: '+$("#unit option:selected").text()+'</h3>'+
           '<h5 class="text-center">(From '+$("#report_from").val()+' '+'To'+' '+$("#report_to").val()+') </h5>'+
-          '<h5 class="text-center">'+'Total: '+dTable.data().length+'</h5>'+
+          '<h5 class="text-center">'+'Total: '+dt.data().length+'</h5>'+
           '<h6 style = "margin-left:80%;">'+'Printed on: '+new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate()+'</h6><br>'
           ;
 
@@ -592,7 +596,7 @@ $(document).ready(function(){
           //$("#floor_id").html(data);
           toastr.success(' ','Attendance Update Successfully.');
           $('#calendarModal').modal('hide');
-          dTable.draw();
+          dt.draw();
         },
         error: function()
         {
@@ -774,7 +778,7 @@ setTimeout(function(){
     }
     else{
       $(".d-table").removeClass('hide');
-      dTable.draw();
+      dt.draw();
     }
   });
 

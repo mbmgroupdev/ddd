@@ -84,7 +84,7 @@
                                     </div>
                                 </div>
                                 <div class="col-6">
-                                    <button type="submit" class="btn btn-primary btn-sm" id="report"><i class="fa fa-save"></i> Generate</button>
+                                    <button type="button" class="btn btn-primary btn-sm" id="report"><i class="fa fa-save"></i> Generate</button>
                                     <div class="buttons hide inline" style="display: initial;">
     
                                     <button type="button" onClick="printMe('PrintArea')" class="btn btn-warning btn-sm" title="Print">
@@ -150,7 +150,8 @@
         myWindow.print();
         myWindow.close();
     }
-    $(document).on("click",'#report', function(){ 
+
+    $('#report').on("click", function(){ 
         var unit = $('#unit').val(),
             date = $('#date').val(),
             btn = $(this);
@@ -172,12 +173,12 @@
                 },
                 error: function()
                 {
-                    alert('failed...');
+                    $.notify('failed...', 'error');
                     btn.attr("disabled",false);
                 }
             });
         }else{
-            alert('Please select unit & date!');
+            $.notify('Please select unit & date!', 'error');
             $("#generate-report").html('');
 
         }

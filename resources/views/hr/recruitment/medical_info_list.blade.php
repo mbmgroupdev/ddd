@@ -54,7 +54,7 @@
 <script type="text/javascript">
 $(document).ready(function(){ 
 
-    $('#dataTables').DataTable({
+    var dt = $('#dataTables').DataTable({
         order: [], //reset auto order
         processing: true,
         responsive: true,
@@ -78,6 +78,7 @@ $(document).ready(function(){
                 extend: 'csv', 
                 className: 'btn-sm btn-success',
                 title: 'Employee Medical Information List',
+                "action": allExport,
                 exportOptions: {
                     columns: ':visible'
                 }
@@ -86,6 +87,7 @@ $(document).ready(function(){
                 extend: 'excel', 
                 className: 'btn-sm btn-warning',
                 title: 'Employee Medical Information List',
+                "action": allExport,
                 exportOptions: {
                     columns: ':visible'
                 }
@@ -94,6 +96,7 @@ $(document).ready(function(){
                 extend: 'pdf', 
                 className: 'btn-sm btn-primary', 
                 title: 'Employee Medical Information List',
+                "action": allExport,
                 exportOptions: {
                     columns: ':visible'
                 }
@@ -102,6 +105,7 @@ $(document).ready(function(){
                 extend: 'print', 
                 className: 'btn-sm btn-default',
                 title: 'Employee Medical Information List',
+                "action": allExport,
                 exportOptions: {
                     columns: ':visible'
                 } 

@@ -6,10 +6,56 @@
             <h4 style="text-align: center;">Unit: {{$unit->hr_unit_name}}</h4>
             <p style="text-align: center;">Date: {{$date}}</p>
             <br>
-            <div class="row">
-                <div class="col-sm-8" style="width:66.67%">
-                    
-                    <table class="table table-bordered table-hover table-head" cellpadding="0" cellspacing="0">
+            <div style="display:flex;width: 100%;">
+                <div style="width:33%;display: inline-block;float:left;">
+                    {{-- <table > --}}
+                        {{-- <tr>
+                           <td style="text-align: right; padding: 5px;">MMR</td>
+                           <td>&nbsp;&nbsp;=&nbsp;&nbsp;</td>
+                           <td>
+                               <p style="border-bottom: 1px solid; padding-bottom: 0px; margin-bottom: 0px; text-align: center;">P. NON OT + P. OT Holder</p>
+                               <p style="margin-top: 0px; padding-top: 0px; text-align: center;"> Sewing Opr + Fin Opr</p>
+                           </td>
+                        </tr>
+                        <tr>
+                           <td></td>
+                           <td>&nbsp;&nbsp;=&nbsp;&nbsp;</td>
+                            <td>
+                                <p style="border-bottom: 1px solid; padding-bottom: 0px; margin-bottom: 0px; text-align: center;">
+                                    <span id="p_ot_n">{{array_sum($nonot['present'])}}</span> + <font id="p_ot">{{array_sum($ot['present'])}}</font>
+
+                                  <!--   <input type="text" id="p_ot_n2" name=""> -->
+                                </p>
+                               <p style="margin-top: 0px; padding-top: 0px; text-align: center;">
+                                   <font id="sw_opr">{{((int) ($ot['total'][138]??0)+(int) ($nonot['total'][138]??0))}}</font> + <font id="fin_opr">{{((int) ($ot['total'][84]??0)+(int) ($nonot['total'][84]??0))}}</font>
+                            </p>
+                            </td>
+                        </tr> --}}
+                        @php
+                            $tsw = (int) ((int) ($nonot['total'][138]??0)+(int) ($ot['total'][138]??0)+(int) ($nonot['total'][48]??0)+(int) ($ot['total'][48]??0));
+
+                            if($tsw > 0){
+
+                            }else{
+                                $tsw = 1;
+                            }
+                            $mmr = round((array_sum($nonot['present'])+array_sum($ot['present']))/$tsw,2);
+                        @endphp
+                        {{-- <tr>
+                           <td></td>
+                           <td>&nbsp;&nbsp;=&nbsp;&nbsp;</td>
+                            <td>
+                                <font id="mmr_result">{{$mmr??0}}</font>
+                            </td>
+                        </tr>
+                    </table> --}}
+                    <h3 class="mb-1 " style="margin: 20px 0;font-size: 14px;font-weight: bold;border-left: 3px solid #099dae;line-height: 18px;padding-left: 10px;">MMR</h3>
+                    <div style="padding: 20px 13px;font-size: 40px;font-weight: bold;line-height: 40px;color: #099faf;">{{$mmr}}</div>
+                </div>
+                <div style="width:67%; display: inline-block;float:right;">
+                
+
+                    <table class="table table-bordered table-hover table-head" cellpadding="0" cellspacing="0" border='1'>
                         <tr>
                             <th width="25%" style="text-align: left; padding: 5px;"> Summary : </th>
                             <td width="15%" style="border: 1px; text-align: center; padding: 5px;">Employee</td>
@@ -47,52 +93,12 @@
                         </tr>
                     </table>
                 </div>
-                <div class="col-sm-4" style="width:33.33%">
-                    <table  style="float: right;">
-                        <tr>
-                           <td style="text-align: right; padding: 5px;">MMR</td>
-                           <td>&nbsp;&nbsp;=&nbsp;&nbsp;</td>
-                           <td>
-                               <p style="border-bottom: 1px solid; padding-bottom: 0px; margin-bottom: 0px; text-align: center;">P. NON OT + P. OT Holder</p>
-                               <p style="margin-top: 0px; padding-top: 0px; text-align: center;"> Sewing Opr + Fin Opr</p>
-                           </td>
-                        </tr>
-                        <tr>
-                           <td></td>
-                           <td>&nbsp;&nbsp;=&nbsp;&nbsp;</td>
-                            <td>
-                                <p style="border-bottom: 1px solid; padding-bottom: 0px; margin-bottom: 0px; text-align: center;">
-                                    <span id="p_ot_n">{{array_sum($nonot['present'])}}</span> + <font id="p_ot">{{array_sum($ot['present'])}}</font>
-
-                                  <!--   <input type="text" id="p_ot_n2" name=""> -->
-                                </p>
-                               <p style="margin-top: 0px; padding-top: 0px; text-align: center;">
-                                   <font id="sw_opr">{{((int) ($ot['total'][138]??0)+(int) ($nonot['total'][138]??0))}}</font> + <font id="fin_opr">{{((int) ($ot['total'][84]??0)+(int) ($nonot['total'][84]??0))}}</font>
-                            </p>
-                            </td>
-                        </tr>
-                        @php
-                            $tsw = (int) ((int) ($nonot['total'][138]??0)+(int) ($ot['total'][138]??0)+(int) ($nonot['total'][48]??0)+(int) ($ot['total'][48]??0));
-
-                            if($tsw > 0){
-
-                            }else{
-                                $tsw = 1;
-                            }
-                            $mmr = round((array_sum($nonot['present'])+array_sum($ot['present']))/$tsw,2);
-                        @endphp
-                        <tr>
-                           <td></td>
-                           <td>&nbsp;&nbsp;=&nbsp;&nbsp;</td>
-                            <td>
-                                <font id="mmr_result">{{$mmr??0}}</font>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
             </div>
-            <div style="margin: 10px;"></div>
-            <h3 style="margin-top: 20px; margin-bottom: 20px;">OT Holder List:</h3>
+            <br>
+            <div style="margin: 10px 0;">
+                <h3 style="margin: 10px 0;font-size: 14px;
+    font-weight: bold;border-left: 3px solid #099dae;line-height: 18px;padding-left: 10px;">OT Holder List:</h3>
+            </div>
             <div class=" non_ot_holder_list">
                 <table class="table table-bordered table-head" cellpadding="0" cellspacing="0" border="1" width="100%">
                     <thead>
@@ -174,15 +180,15 @@
                                             $percent = round(((int) ($ot['absent'][$subsec->hr_subsec_id]??0)/$total)*100);
                                             
                                             if($percent > 50){
-                                                $style = 'background-color:#dc3545';
+                                                $style = 'color:#dc3545';
                                             }else if($percent > 0 && $percent <= 50){
-                                                $style = 'background-color:#d65c14';
+                                                $style = 'color:#c0a32c';
                                             }else{
-                                                $style = 'background-color:#28a745';
+                                                $style = 'color:#28a745';
                                             }
 
                                         @endphp
-                                        <td width="7%" style="text-align: center; padding: 5px;{{$style}};color:#fff;">
+                                        <td width="7%" class="text-att" style="text-align:center;{{$style}};">
                                                 <span style="font-size:14px;">{{$percent}}</span>%
                                         </td>
                                         
@@ -218,7 +224,7 @@
                 </table>
             </div>
             <div style="margin: 10px;"></div>
-            <h3 style="margin-top: 20px; margin-bottom: 20px;">Non-OT Holder List:</h3>
+            <h3 style="margin: 10px 0;font-size: 14px;font-weight: bold;border-left: 3px solid #099dae;line-height: 18px;padding-left: 10px;">Non-OT Holder List:</h3>
             <div class="non_ot_holder_list" >
                 <table class="table table-bordered table-head" cellpadding="0" cellspacing="0" border="1" width="100%">
                     <thead>
@@ -297,15 +303,15 @@
                                             $percent = round(((int) ($nonot['absent'][$subsec->hr_subsec_id]??0)/$total)*100);
                                             
                                             if($percent > 50){
-                                                $style = 'background-color:#dc3545';
+                                                $style = 'color:#dc3545';
                                             }else if($percent > 0 && $percent <= 50){
-                                                $style = 'background-color:#d65c14';
+                                                $style = 'color:#c0a32c';
                                             }else{
-                                                $style = 'background-color:#28a745';
+                                                $style = 'color:#28a745';
                                             }
 
                                         @endphp
-                                        <td width="7%" style="text-align: center; padding: 5px;{{$style}};color:#fff;">
+                                        <td width="7%" class="text-att" style="text-align:center;{{$style}};">
                                                 <span style="font-size:14px;">{{$percent}}</span>%
                                         </td>
                                         

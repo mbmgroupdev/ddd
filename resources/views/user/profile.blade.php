@@ -26,8 +26,6 @@ table th {
   background-color: #ffebbb;
   color: #393939;
 }
-
-.fc-prev-button, .fc-next-button, .fc-today-button{display: none;}
 .progress[data-percent]:after {
     display: none;
 }
@@ -893,9 +891,6 @@ table th {
 
 					                        <div class="">
 					                            <div id="attcal" class="widget-main no-padding">
-					                            <br>
-					                            <br>
-					                            
 					                            
 
 
@@ -1343,7 +1338,7 @@ table th {
 							</div>
 						</div>
   					</div>
-
+  					<div id="demo"></div>
   				</div>
   			</div>
       	</div>
@@ -1367,12 +1362,8 @@ function errorMsgRepeter(id, check, text){
         return flug1;
     }
 
-    $('#attload').on('click', function(){
-	    $('#attcal').html('<center><i class="ace-icon fa fa-spinner fa-spin orange bigger-500" style="font-size:80px;margin-top:100px;"></i></center>');
-		setTimeout(function(){ 
-			$('#attcal').load('{{URL::to("hr/user/attendance_calendar/$info->associate_id")}}'); 
-		}, 1000);
-    });
+
+    
 
 	function individual() {
         var as_id       = $('input[name="as_id"]').val();
@@ -1422,35 +1413,35 @@ function errorMsgRepeter(id, check, text){
     }
 
 
-    function myPrintf() {
-    	//$('#print-div').load('print');
-        /*var myPrintContent = document.getElementById('print-div');
-        var windowUrl = 'about:blank';
-        var uniqueName = new Date();
-        var windowName = 'Print' + uniqueName.getTime();
-        var myPrintWindow = window.open(windowUrl, windowName, 'width=800,height=800');
-        myPrintWindow.document.write(myPrintContent.innerHTML);
-        myPrintWindow.document.getElementById('print-div').style.display='block';
-        myPrintWindow.document.close();
-        myPrintWindow.focus();
-        myPrintWindow.print();
-        myPrintWindow.close();    
-        return false;*/
-
-
-        /*$.ajax({
-            type:"POST",
-            cache:false,
-            url:"print",
-	        success: function(response) {
-	        	alert(response);
-	  
-	        }
-        });*/
-    }
 
     //date-validation
+		$(document).on('click','#attload', function(){
+			$('#attcal').fullCalendar({
+				events: [
+				    {
+				      title: 'My Event',
+				      start: '2020-09-01',
+				      end: '2020-09-02',
+				      description: 'This is a cool event'
+				    }
+				    // more events here
+				  ],
+
+			});
+	    });
     $(document).ready(function(){
+    	$('#demo').fullCalendar({
+				events: [
+				    {
+				      title: 'My Event',
+				      start: '2020-09-01',
+				      end: '2020-09-02',
+				      description: 'This is a cool event'
+				    }
+				    // more events here
+				  ],
+				  
+			});
     	//Dates entry alerts....
             $('#form-date').on('dp.change',function(){
                 $('#to-date').val($('#form-date').val());    

@@ -101,7 +101,7 @@ $(document).ready(function()
     var selectable = []; //use 4,5,6,7,8,9,10,11,....and * for all
  
 
-    $('#dataTables').DataTable({
+    var dt = $('#dataTables').DataTable({
         order: [], //reset auto order
         processing: true,
         responsive: true,
@@ -122,6 +122,7 @@ $(document).ready(function()
                 title: 'Overtime List',
                 header: false,
                 footer: true,
+                "action": allExport,
                 exportOptions: {
                     columns: ':visible'
                 }
@@ -132,6 +133,7 @@ $(document).ready(function()
                 title: 'Overtime List',
                 header: false,
                 footer: true,
+                "action": allExport,
                 exportOptions: {
                     columns: ':visible'
                 }
@@ -142,6 +144,7 @@ $(document).ready(function()
                 title: 'Overtime List',
                 header: false,
                 footer: true,
+                "action": allExport,
                 exportOptions: {
                     columns: ':visible'
                 }
@@ -152,6 +155,7 @@ $(document).ready(function()
                 title: 'Overtime List',
                 header: true,
                 footer: false,
+                "action": allExport,
                 exportOptions: {
                     columns: ':visible',
                     stripHtml: false

@@ -26,6 +26,9 @@ p.search-title{
 .pricing-box:hover{
     cursor: pointer;
 }
+.text-att{
+    text-align: center; padding: 5px;color:#fff;
+}
 .f-60{
     font-size: 60px;
 }

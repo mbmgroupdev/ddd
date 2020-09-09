@@ -94,7 +94,7 @@
         var selectable = []; //use 4,5,6,7,8,9,10,11,....and * for all
         var dropdownList = {};
 
-        var dTable =  $('#dataTables').DataTable({
+        var dt =  $('#dataTables').DataTable({
            order: [], //reset auto order
             lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
             processing: true,
@@ -132,6 +132,7 @@
                 {
                     extend: 'csv',
                     className: 'btn-sm btn-success',
+                    "action": allExport,
                     exportOptions: {
                         columns: ':visible'
                     }
@@ -139,6 +140,7 @@
                 {
                     extend: 'excel',
                     className: 'btn-sm btn-warning',
+                    "action": allExport,
                     exportOptions: {
                         columns: ':visible'
                     }
@@ -146,6 +148,7 @@
                 {
                     extend: 'pdf',
                     className: 'btn-sm btn-primary',
+                    "action": allExport,
                     exportOptions: {
                         columns: ':visible'
                     }
@@ -159,6 +162,7 @@
                         columns: ':visible',
                         stripHtml: false
                     },
+                    "action": allExport,
                     title: '',
                     messageTop: function () {
                         return  '<h3 class="text-center">MBM Garments Ltd.</h3>'+
@@ -225,7 +229,7 @@
             }
         });
         // if(attstatus) {
-        //     dTable.columns(4).search(attstatus).draw();
+        //     dt.columns(4).search(attstatus).draw();
         // }
     });
 </script>

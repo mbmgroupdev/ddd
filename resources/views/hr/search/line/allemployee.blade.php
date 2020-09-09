@@ -95,7 +95,7 @@ $(document).ready(function(){
         var dropdownList = {
         };
 
-        var dTable =  $('#dataTables').DataTable({
+        var dt =  $('#dataTables').DataTable({
            order: [], //reset auto order
             lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
             processing: true,
@@ -125,6 +125,7 @@ $(document).ready(function(){
                 {
                     extend: 'csv',
                     className: 'btn-sm btn-success',
+                    "action": allExport,
                     exportOptions: {
                         columns: ':visible'
                     }
@@ -132,6 +133,7 @@ $(document).ready(function(){
                 {
                     extend: 'excel',
                     className: 'btn-sm btn-warning',
+                    "action": allExport,
                     exportOptions: {
                         columns: ':visible'
                     }
@@ -139,6 +141,7 @@ $(document).ready(function(){
                 {
                     extend: 'pdf',
                     className: 'btn-sm btn-primary',
+                    "action": allExport,
                     exportOptions: {
                         columns: ':visible'
                     }
@@ -153,6 +156,7 @@ $(document).ready(function(){
                         columns: ':visible',
                         stripHtml: false
                     },
+                    "action": allExport,
                     title: '',
                     messageTop: function () {
                         return  '<h3 class="text-center">MBM Garments Ltd.</h3>'+
@@ -221,12 +225,12 @@ $(document).ready(function(){
         });
         var type = '{{ Request::get('type') }}';
         if(type=== 'date'){
-            dTable.column(6).visible(false);      
+            dt.column(6).visible(false);      
         }else{
-            dTable.column(7).visible(false);
-            dTable.column(8).visible(false);
-            dTable.column(9).visible(false);
-            dTable.column(10).visible(false);
+            dt.column(7).visible(false);
+            dt.column(8).visible(false);
+            dt.column(9).visible(false);
+            dt.column(10).visible(false);
         }
         console.log('fbgyh');
     });

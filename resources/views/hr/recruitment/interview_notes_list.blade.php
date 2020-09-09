@@ -86,7 +86,7 @@
 $(document).ready(function(){ 
     var searchable = [1,2,3,4,5];
 
-    $('#dataTables').DataTable({
+    var dt = $('#dataTables').DataTable({
         order: [], //reset auto order
         processing: true,
         responsive: true,
@@ -107,6 +107,7 @@ $(document).ready(function(){
                 title: 'Interview Notes List',
                 header: false,
                 footer: true,
+                "action": allExport,
                 exportOptions: {
                     columns: [0,1,2,3,4,5]
                 }
@@ -117,6 +118,7 @@ $(document).ready(function(){
                 title: 'Interview Notes List',
                 header: false,
                 footer: true,
+                "action": allExport,
                 exportOptions: {
                     columns: [0,1,2,3,4,5]
                 }
@@ -126,7 +128,8 @@ $(document).ready(function(){
                 className: 'btn-sm btn-primary',
                 title: 'Interview Notes List',
                 header: false,
-                footer: true, 
+                footer: true,
+                "action": allExport, 
                 exportOptions: {
                     columns: [0,1,2,3,4,5]
                 }
@@ -137,6 +140,7 @@ $(document).ready(function(){
                 title: 'Interview Notes List',
                 header: true,
                 footer: false,
+                "action": allExport,
                 exportOptions: {
                     columns: [0,1,2,3,4,5],
                     stripHtml: false

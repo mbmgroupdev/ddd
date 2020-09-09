@@ -119,7 +119,7 @@ $(document).ready(function(){
         '9' :['Yes', 'No']
     };
 
-    $('#dataTables').DataTable({
+    var dt = $('#dataTables').DataTable({
     	order: [], //reset auto order
 	    processing: true,
 	    responsive: false,
@@ -155,6 +155,7 @@ $(document).ready(function(){
                 header: false,
                 footer: true,
                 title: 'Worker Medical List',
+                "action": allExport,
                 exportOptions: {
                     // columns: ':visible'
                     columns: [0,1,2,3,4,5,6,7,8,9,10,11]
@@ -166,6 +167,7 @@ $(document).ready(function(){
                 header: false,
                 footer: true,
                 title: 'Worker Medical List',
+                "action": allExport,
                 exportOptions: {
                     // columns: ':visible'
                     columns: [0,1,2,3,4,5,6,7,8,9,10,11]
@@ -179,6 +181,7 @@ $(document).ready(function(){
                 // orientation: 'landscape',
                 pageSize: 'A3',
                 title: 'Worker Medical List', 
+                "action": allExport,
                 exportOptions: {
                     // columns: ':visible'
                     columns: [0,1,2,3,4,5,6,7,8,9,10,11]
@@ -191,6 +194,7 @@ $(document).ready(function(){
                 footer: false,
                 // orientation: 'landscape',
                 title: 'Worker Medical List',
+                "action": allExport,
                 pageSize: 'A3',
                 exportOptions: {
                     // columns: ':visible'
