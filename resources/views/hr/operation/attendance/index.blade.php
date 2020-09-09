@@ -69,8 +69,8 @@
                                             </select>
                                           <label for="unit">Unit</label>
                                         </div>
-                                        <div class="form-group has-float-label has-required select-search-group">
-                                            <select name="area" class="form-control capitalize select-search" id="area" required="">
+                                        <div class="form-group has-float-label select-search-group">
+                                            <select name="area" class="form-control capitalize select-search" id="area">
                                                 <option selected="" value="">Choose...</option>
                                                 @foreach($areaList as $key => $value)
                                                 <option value="{{ $key }}">{{ $value }}</option>
