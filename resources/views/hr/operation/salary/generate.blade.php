@@ -8,6 +8,9 @@
             padding: 5px 15px;
             cursor: default;
         }
+        div.text-center b{
+            font-size: 22px;
+        }
     </style>
 @endpush
 <div class="main-content">
@@ -38,7 +41,7 @@
                                             <select name="unit" class="form-control capitalize select-search" id="unit" required="">
                                                 <option selected="" value="">Choose...</option>
                                                 @foreach($units as $key => $unit)
-                                                <option value="{{ $unit->hr_unit_id }}">{{ $unit->hr_unit_name }}</option>
+                                                <option value="{{ $unit->hr_unit_id }}" @if(isset(request()->unit) && request()->unit == $unit->hr_unit_id) selected @endif>{{ $unit->hr_unit_name }}</option>
                                                 @endforeach
                                             </select>
                                           <label for="unit">Unit</label>
@@ -46,7 +49,7 @@
                                     </div>
                                     <div class="col-3">
                                         <div class="form-group has-float-label has-required">
-                                          <input type="month" class="report_date form-control" id="month" name="month_year" placeholder=" Month-Year"required="required" value="{{ date('Y-m', strtotime('-1 month')) }}"autocomplete="off" />
+                                          <input type="month" class="report_date form-control" id="month" name="month_year" placeholder=" Month-Year"required="required" value="{{ (request()->month?request()->month:date('Y-m', strtotime('-1 month'))) }}"autocomplete="off" />
                                           <label for="month">Month</label>
                                         </div>
                                     </div> 
@@ -86,7 +89,9 @@
 @push('js')
 
 <script>
-
+    @if(request()->month != null && request()->unit != null)
+        generate();
+    @endif 
     // generate salary sheet
     function generate() {
         
@@ -104,7 +109,7 @@
                 data: form.serialize(), // serializes the form's elements.
                 success: function(response)
                 {
-                    
+                    // console.log(response)
                     if(response !== 'error'){
                         $("#result-data").html(response);
                     }
