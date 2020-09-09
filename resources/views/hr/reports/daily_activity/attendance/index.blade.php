@@ -1,21 +1,34 @@
 @extends('hr.layout')
 @section('title', 'Daily Attendance')
-@push('css')
-   <link rel="stylesheet" href="{{ asset('assets/css/reports.css')}}">
-@endpush
+
 @section('main-content')
 @push('css')
 <style type="text/css">
-
-    @media only screen and (max-width: 771px) {
-        .background_field{width: 100% !important;}
-    }
-
-    @media only screen and (max-width: 771px) {
-            .background_div{width: 100% !important;}
-    }
     .single-employee-search {
-        margin-top: 2% !important;
+      margin-top: 82px !important;
+    }
+    .view:hover, .view:hover{
+      color: #ccc !important;
+      
+    }
+    .grid_view{
+
+    }
+    .view i{
+      font-size: 25px;
+      border: 1px solid #000;
+      border-radius: 3px;
+      padding: 0px 3px;
+    }
+    .view.active i{
+      background: linear-gradient(to right,#0db5c8 0,#089bab 100%);
+      color: #fff;
+      border-color: #089bab;
+    }
+    .iq-card .iq-card-header {
+      margin-bottom: 10px;
+      padding: 15px 15px;
+      padding-bottom: 8px;
     }
 </style>
 @endpush
@@ -105,30 +118,19 @@
                                             </select>
                                             <label for="otnonot">OT/Non-OT</label>
                                         </div>
-                                        <div class="form-group has-float-label select-search-group">
-                                            <select name="report_format" class="form-control capitalize select-search" id="reportformat" >
-                                                <option value="0" selected>Details</option>
-                                                <option value="1">Summary</option>
-                                            </select>
-                                            <label for="reportformat">Report Format</label>
-                                        </div>
+                                        <input type="hidden" id="reportformat" name="report_format" value="0">
+                                        <input type="hidden" id="reportGroup" name="report_group" value="as_line_id">
                                     </div>
                                     <div class="col-3">
                                         <div class="form-group has-float-label select-search-group">
                                             <?php
-                                                $reportType = ['absent'=>'Absent', 'before_absent_after_present'=>'Before Absent After Present','leave'=>'Leave','ot'=>'OT', 'working_hour'=>'Working Hour', 'late'=>'Late'];
+                                                $reportType = ['absent'=>'Absent', 'before_absent_after_present'=>'Present After Being Absent','leave'=>'Leave','ot'=>'OT', 'working_hour'=>'Working Hour', 'late'=>'Late'];
                                                 //$reportType = ['attendance'=>'Attendance', 'absent'=>'Absent', 'before_absent_after_present'=>'Before Absent After Present','leave'=>'Leave','ot'=>'OT', 'working_hour'=>'Working Hour', 'late'=>'Late'];
                                             ?>
                                             {{ Form::select('report_type', $reportType, null, ['placeholder'=>'Select Report Type ', 'class'=>'form-control capitalize select-search', 'id'=>'reportType']) }}
                                             <label for="reportType">Report Type</label>
                                         </div>
-                                        <div class="form-group has-float-label select-search-group">
-                                            <?php
-                                                $type = ['as_line_id'=>'Line','as_floor_id'=>'Floor','as_department_id'=>'Department','as_designation_id'=>'Designation'];
-                                            ?>
-                                            {{ Form::select('report_group', $type, null, ['placeholder'=>'Select Report Group ', 'class'=>'form-control capitalize select-search', 'id'=>'reportGroup']) }}
-                                            <label for="reportGroup">Report Group</label>
-                                        </div>
+                                        
                                         <div id="single-date">
                                           <div class="form-group has-float-label has-required">
                                             <input type="date" class="report_date datepicker form-control" id="report-date" name="date" placeholder="Y-m-d" required="required" value="{{ date('Y-m-d') }}" autocomplete="off" />
@@ -155,14 +157,14 @@
                                 </div>
                                 <div class="row">
                                     <div class="offset-8 col-4">
-                                        <button class="btn btn-primary nextBtn btn-lg pull-right" type="submit" ><i class="fa fa-save"></i> Generate</button>
+                                        <button class="btn btn-primary nextBtn btn-lg pull-right" type="submit" ><i class="las la-filter"></i> Filter</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="single-employee-search" id="single-employee-search" style="display: none;">
                           <div class="form-group">
-                            <input type="text" name="employee" class="form-control" placeholder="Search Employee Associate ID..." id="searchEmployee">
+                            <input type="text" name="employee" class="form-control" placeholder="Search Employee Associate ID..." id="searchEmployee" autocomplete="off">
                           </div>
                         </div>
                     </form>
@@ -172,7 +174,64 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <div class="result-data" id="result-data"></div>
+                  <div class="iq-card" id="result-section" style="display: none">
+                    <div class="iq-card-header d-flex mb-0">
+                       <div class="iq-header-title w-100">
+                          <div class="row">
+                            <div class="col-3">
+                              
+                            </div>
+                            <div class="col-6 text-center">
+                              <div id="head-arrow">
+                                <h4 class="card-title capitalize inline">
+                                  <a class="btn view prev_btn" data-toggle="tooltip" data-placement="top" title="" data-original-title="Previous Date Report" >
+                                    <i class="las la-chevron-left"></i>
+                                  </a>
+                                  <b class="f-16" id="result-head"> </b>
+                                  <a class="btn view next_btn" data-toggle="tooltip" data-placement="top" title="" data-original-title="Next Date Report" >
+                                    <i class="las la-chevron-right"></i>
+                                  </a>
+                                </h4>
+                              </div>
+                            </div>
+                            <div class="col-3">
+                              <div class="row">
+                                <div class="col-7 pr-0">
+                                  <div class="format">
+                                    <div class="form-group has-float-label select-search-group mb-0">
+                                        <?php
+                                            $type = ['as_unit_id'=>'N/A','as_line_id'=>'Line','as_floor_id'=>'Floor','as_department_id'=>'Department','as_designation_id'=>'Designation'];
+                                        ?>
+                                        {{ Form::select('report_group_select', $type, 'as_line_id', ['class'=>'form-control capitalize', 'id'=>'reportGroupHead']) }}
+                                        <label for="reportGroupHead">Report Format</label>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="col-5 pl-0">
+                                  <div class="text-right">
+                                    <a class="btn view grid_view no-padding" data-toggle="tooltip" data-placement="top" title="" data-original-title="Summary Report View" id="1">
+                                      <i class="las la-th-large"></i>
+                                    </a>
+                                    <a class="btn view list_view no-padding" data-toggle="tooltip" data-placement="top" title="" data-original-title="Details Report View" id="0">
+                                      <i class="las la-list-ul"></i>
+                                    </a>
+                                    
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              
+                            </div>
+                          </div>
+                       </div>
+                    </div>
+                    <div class="iq-card-body no-padding">
+                      <div class="result-data" id="result-data">
+                        
+                      </div>
+                    </div>
+                 </div>
+                  
                 </div>
             </div>
         </div><!-- /.page-content -->
@@ -184,21 +243,65 @@
     $(document).ready(function(){   
         var loader = '<div class="panel"><div class="panel-body"><p style="text-align:center;margin:100px;"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>';
         $('#activityReport').on('submit', function(e) {
+          e.preventDefault();
+          activityProcess();
+        });
+        $(".next_btn").click(function(event) {
+          var date = $('input[name="date"]').val();
+          var type = $('select[name="report_type"]').val();
+          var dateAfter = moment(date).add(1 , 'day').format("YYYY-MM-DD");
+          $('input[name="date"]').val(dateAfter);
+          var head = type+' - '+dateAfter;
+          $("#result-head").html(head);
+          activityProcess();
+        });
+
+        $(".prev_btn").click(function(event) {
+          var date = $('input[name="date"]').val();
+          var type = $('select[name="report_type"]').val();
+          var dateBefore = moment(date).subtract(1 , 'day').format("YYYY-MM-DD");
+          $('input[name="date"]').val(dateBefore);
+          var head = type+' - '+dateBefore;
+          $("#result-head").html(head);
+          activityProcess();
+        });
+        $(".grid_view, .list_view").click(function() {
+          var value = $(this).attr('id');
+          // console.log(value);
+          $("#reportformat").val(value);
+          $('input[name="employee"]').val('');
+          activityProcess();
+        });
+          
+        $("#reportGroupHead").on("change", function(){
+          var group = $(this).val();
+          $("#reportGroup").val(group);
+          activityProcess();
+        });
+
+        function activityProcess() {
+          $("#result-section").show();
           $("#result-data").html(loader);
           $("#single-employee-search").hide();
-          e.preventDefault();
-          var url = '';
+          
           var unit = $('select[name="unit"]').val();
           var area = $('select[name="area"]').val();
           var date = $('input[name="date"]').val();
-          var format = $('select[name="report_format"]').val();
+          var format = $('input[name="report_format"]').val();
           var type = $('select[name="report_type"]').val();
+          if(type === 'before_absent_after_present'){
+            $("#head-arrow").hide();
+          }else{
+            $("#head-arrow").show();
+          }
           var form = $("#activityReport");
           var flag = 0;
           if(unit === '' || date === '' || type === ''){
             flag = 1;
           }
           if(flag === 0){
+            $(".next_btn").attr('disabled', true);
+            $(".prev_btn").attr('disabled', true);
             $('html, body').animate({
                 scrollTop: $("#result-data").offset().top
             }, 2000);
@@ -207,25 +310,33 @@
             }else{
               url = '{{ url("hr/reports/daily-attendance-activity-report") }}';
             }
-
+            var head = type+' - '+date;
+            $("#result-head").html(head);
+            
             $.ajax({
                 type: "GET",
                 url: url,
                 data: form.serialize(), // serializes the form's elements.
                 success: function(response)
                 {
+                  $(".next_btn").attr('disabled', false);
+                  $(".prev_btn").attr('disabled', false);
                   // console.log(response);
                   if(response !== 'error'){
                     $("#result-data").html(response);
                   }else{
-                    console.log(response);
+                    // console.log(response);
                     $("#result-data").html('');
                   }
 
                   if(format == 0 && response !== 'error'){
                     $("#single-employee-search").show();
+                    $('.list_view').addClass('active').attr('disabled', true);
+                    $('.grid_view').removeClass('active').attr('disabled', false);
                   }else{
-                     $("#single-employee-search").hide();
+                    $("#single-employee-search").hide();
+                    $('.grid_view').addClass('active').attr('disabled', true);
+                    $('.list_view').removeClass('active').attr('disabled', false);
                   }
                 },
                 error: function (reject) {
@@ -237,7 +348,7 @@
             console.log('required');
             $("#result-data").html('');
           }
-        });
+        }
         // change from data action
         $('#present_date').on('change', function() {
           var before = 1 ;
@@ -370,15 +481,7 @@
        
     });
 
-    function printMe(el){ 
-        var myWindow=window.open('','','width=800,height=800');
-        myWindow.document.write('<html><head></head><body style="font-size:9px;">');
-        myWindow.document.write(document.getElementById(el).innerHTML);
-        myWindow.document.write('</body></html>');
-        myWindow.focus();
-        myWindow.print();
-        myWindow.close();
-    }
+    
 </script>
 @endpush
 @endsection
