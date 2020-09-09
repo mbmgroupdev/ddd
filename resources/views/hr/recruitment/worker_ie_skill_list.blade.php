@@ -69,7 +69,7 @@
 <script type="text/javascript">
 $(document).ready(function(){ 
 
-    $('#dataTables').DataTable({
+    var dt = $('#dataTables').DataTable({
     	order: [], //reset auto order
 	    processing: true,
 	    responsive: true,
@@ -103,6 +103,7 @@ $(document).ready(function(){
             	extend: 'csv', 
             	className: 'btn-sm btn-success',
             	title: 'Worker IE Skill List',
+            	"action": allExport,
                 exportOptions: {
                     // columns: ':visible'
                     columns: [0,1,2,3,4,5,6,7,8,9,10,11]
@@ -112,6 +113,7 @@ $(document).ready(function(){
             	extend: 'excel', 
             	className: 'btn-sm btn-warning',
             	title: 'Worker IE Skill List',
+            	"action": allExport,
                 exportOptions: {
                     // columns: ':visible'
                     columns: [0,1,2,3,4,5,6,7,8,9,10,11]
@@ -122,6 +124,7 @@ $(document).ready(function(){
             	className: 'btn-sm btn-primary',
             	title: 'Worker IE Skill List',
                 pageSize: 'A3', 
+                "action": allExport,
                 exportOptions: {
                     // columns: ':visible'
                     columns: [0,1,2,3,4,5,6,7,8,9,10,11]
@@ -131,6 +134,7 @@ $(document).ready(function(){
             	extend: 'print', 
             	className: 'btn-sm btn-default',
             	title: 'Worker IE Skill List',
+            	"action": allExport,
                 exportOptions: {
                     // columns: ':visible'
                     columns: [0,1,2,3,4,5,6,7,8,9,10,11]

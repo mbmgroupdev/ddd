@@ -104,7 +104,7 @@ $(document).ready(function(){
         '5':['Applied','Approved','Declined'] 
     };
 
-    $('#dataTables').DataTable({
+    var dt = $('#dataTables').DataTable({
         order: [],  
         processing: true,
         responsive: false,
@@ -129,6 +129,7 @@ $(document).ready(function(){
                 title: 'All Leaves',
                 header: false,
                 footer: true,
+                "action": allExport,
                 exportOptions: {
                     columns: ':visible'
                 }
@@ -139,6 +140,7 @@ $(document).ready(function(){
                 title: 'All Leaves',
                 header: false,
                 footer: true,
+                "action": allExport,
                 exportOptions: {
                     columns: ':visible'
                 }
@@ -149,6 +151,7 @@ $(document).ready(function(){
                 title: 'All Leaves',
                 header: false,
                 footer: true,
+                "action": allExport,
                 exportOptions: {
                     columns: ':visible'
                 }
@@ -159,6 +162,7 @@ $(document).ready(function(){
                 title: 'All Leaves',
                 header: true,
                 footer: false,
+                "action": allExport,
                 exportOptions: {
                     columns: ':visible',
                     stripHtml: false

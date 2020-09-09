@@ -84,7 +84,7 @@
 @push('js')
 <script type="text/javascript">
     $(document).ready(function(){
-        $("#unit_change_table").DataTable({
+        var dt = $("#unit_change_table").DataTable({
             paging: true,
 
             dom: "lBftrip",
@@ -92,33 +92,46 @@
             {
                 extend: 'csv', 
                 className: 'btn-sm btn-success',
+                title:'',
                 exportOptions: {
                     columns: ':visible'
-                }
+                },
+                "action": allExport,
+                messageTop:'Location Change List'            
             }, 
             {
                 extend: 'excel', 
                 className: 'btn-sm btn-warning',
+                title:'',
                 exportOptions: {
                     columns: ':visible'
-                }
+                },
+                "action": allExport,
+                messageTop:'Location Change List'            
             }, 
             {
                 extend: 'pdf', 
                 className: 'btn-sm btn-primary', 
+                title:'',
                 exportOptions: {
                     columns: ':visible'
-                }
+                },
+                "action": allExport,
+                messageTop:'Location Change List'            
             }, 
             {
                 extend: 'print', 
                 className: 'btn-sm btn-default',
+                title:'',
                 exportOptions: {
                     columns: ':visible'
-                } 
+                },
+                "action": allExport,
+                messageTop:'<h3 style="text-align:center;">Location Change List</h3>' 
+
             } 
         ],
-    });
+        });
     });
 
 </script>

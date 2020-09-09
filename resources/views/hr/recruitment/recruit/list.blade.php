@@ -37,10 +37,21 @@
 @section('main-content')
    <div class="row">
       <div class="col-sm-12 col-lg-12">
+        <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+            <ul class="breadcrumb">
+                <li>
+                   <a href="/"><i class="ace-icon fa fa-home home-icon"></i>Human Resource</a> 
+                </li>
+                <li>
+                    <a href="#">Recruitment</a>
+                </li>
+                <li class="active">Recruit List</li>
+            </ul><!-- /.breadcrumb --> 
+        </div>
          <div class="panel">
             <div class="panel-heading">
                   <h6 >Recruitment List
-                    <a href="{{url('hr/recruitment/recruit/create')}}" class="btn btn-primary pull-right">Recruit</a>
+                    <a href="{{url('hr/recruitment/recruit/create')}}" class="btn btn-primary pull-right">New Recruit</a>
                   </h6>
             </div>
             <div class="panel-body">
@@ -74,6 +85,9 @@
       var dt = $('#recruit').DataTable({
           order: [], //reset auto order
           processing: true,
+          language: {
+              processing: '<i class="fa fa-spinner fa-spin orange bigger-500" style="font-size:60px;margin-top:50px;z-index:100;"></i>'
+          },
           responsive: true,
           serverSide: true,
           pagingType: "full_numbers", 

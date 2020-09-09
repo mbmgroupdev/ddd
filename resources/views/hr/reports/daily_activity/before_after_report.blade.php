@@ -16,7 +16,7 @@
 			<div class="top_summery_section">
 				@if($input['report_format'] == 0 || ($input['report_format'] == 1 && $format != null))
 				<div class="page-header" style="text-align:left;border-bottom:2px double #666">
-		            <h2 style="margin:4px 10px; font-weight: bold; text-align: center;">Before Absent After Present </h2>
+		            <h2 style="margin:4px 10px; font-weight: bold; text-align: center;">Present After Being Absent </h2>
 		            <h4 style="margin:4px 10px; font-weight: bold; text-align: center;">@if($input['report_format'] == 0) Details @else Summary @endif Report</h4>
 		            <div class="row">
 		            	<div class="col-sm-5">

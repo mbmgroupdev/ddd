@@ -101,7 +101,7 @@
         <li>
             <a href="#"> Operations </a>
         </li>
-        <li class="active"> Holiday Roster </li>
+        <li class="active"> Holiday Roster List</li>
       </ul><!-- /.breadcrumb -->
     </div>
     <div class="page-content">
@@ -184,7 +184,6 @@
                             $month = date('m');
                             $year = date('Y');
                           @endphp
-                          <!-- <input name="report_from" id="report_from" placeholder="m" autocomplete="off" class="col-xs-12 date-picker form-control" data-validation="required" data-validation-format="mm" style="height: 30px; font-size: 12px;" /> -->
                           {{ Form::select('month', ['01' => 'January', '02' => 'February', '03' => 'March', '04' => 'April', '05' => 'May', '06' => 'June', '07' => 'July', '08' => 'August', '09' => 'September', '10' => 'October', '11' => 'November', '12' => 'December'], $month, ['placeholder'=>'Select Month', 'id'=>'month', 'required','class'=> 'form-control', 'data-validation'=>'required', 'data-validation-error-msg'=>'The Month field is required', 'required']) }}
                         </div>
                       </div>
@@ -258,7 +257,7 @@
     <div class="col-sm-12">
       <!-- PAGE CONTENT BEGINS -->
       <br>
-      <div class="table d-table hide table-responsive" >
+      <div class="d-table hide" >
         <table id="dataTables" class="table table-striped table-bordered" style="display: auto; overflow-x: auto;white-space: nowrap; width: 100% !important;">
           <thead>
             <tr>
@@ -389,7 +388,7 @@ $(document).ready(function(){
   // var selectable = []; //use 4,5,6,7,8,9,10,11,....and * for all
   var dropdownList = {};
   var printCounter = 0;
-  var dTable =  $('#dataTables').DataTable({
+  var dt =  $('#dataTables').DataTable({
 
     order: [], //reset auto order
     lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
@@ -435,6 +434,7 @@ $(document).ready(function(){
       {
         extend: 'csv',
         className: 'btn-sm btn-success',
+        "action": allExport,
         exportOptions: {
           columns: ':visible'
         }
@@ -442,6 +442,7 @@ $(document).ready(function(){
       {
         extend: 'excel',
         className: 'btn-sm btn-warning',
+        "action": allExport,
         exportOptions: {
           columns: ':visible'
         }
@@ -449,6 +450,7 @@ $(document).ready(function(){
       {
         extend: 'pdf',
         className: 'btn-sm btn-primary',
+        "action": allExport,
         exportOptions: {
           columns: ':visible'
         }
@@ -458,6 +460,7 @@ $(document).ready(function(){
         extend: 'print',
         className: 'btn-sm btn-default print',
         title: '',
+        "action": allExport,
         orientation: 'portrait',
         pageSize: 'LEGAL',
         alignment: "center",
@@ -488,7 +491,7 @@ $(document).ready(function(){
           '<h2 class="text-center">Consecutive ' +$("#type option:selected").text()+' Report</h2>'+
           '<h3 class="text-center">'+'Unit: '+$("#unit option:selected").text()+'</h3>'+
           '<h5 class="text-center">(From '+$("#report_from").val()+' '+'To'+' '+$("#report_to").val()+') </h5>'+
-          '<h5 class="text-center">'+'Total: '+dTable.data().length+'</h5>'+
+          '<h5 class="text-center">'+'Total: '+dt.data().length+'</h5>'+
           '<h6 style = "margin-left:80%;">'+'Printed on: '+new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate()+'</h6><br>'
           ;
 
@@ -593,7 +596,7 @@ $(document).ready(function(){
           //$("#floor_id").html(data);
           toastr.success(' ','Attendance Update Successfully.');
           $('#calendarModal').modal('hide');
-          dTable.draw();
+          dt.draw();
         },
         error: function()
         {
@@ -775,7 +778,7 @@ setTimeout(function(){
     }
     else{
       $(".d-table").removeClass('hide');
-      dTable.draw();
+      dt.draw();
     }
   });
 

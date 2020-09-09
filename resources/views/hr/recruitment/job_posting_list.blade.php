@@ -101,7 +101,7 @@ $(document).ready(function(){
     //     '3' :['Full Time', 'Part Time', 'Contractual']
     // };
 
-    $('#dataTables').DataTable({
+    var dt = $('#dataTables').DataTable({
         order: [], //reset auto order
         processing: true,
         responsive: true,
@@ -122,6 +122,7 @@ $(document).ready(function(){
                 title: 'Job Posting List',
                 header: false,
                 footer: true,
+                "action": allExport,
                 exportOptions: {
                     columns: ':visible'
                 }
@@ -132,6 +133,7 @@ $(document).ready(function(){
                 title: 'Job Posting List',
                 header: false,
                 footer: true,
+                "action": allExport,
                 exportOptions: {
                     columns: ':visible'
                 }
@@ -142,6 +144,7 @@ $(document).ready(function(){
                 title: 'Job Posting List',
                 header: false,
                 footer: true,
+                "action": allExport,
                 exportOptions: {
                     columns: ':visible'
                 }
@@ -152,6 +155,7 @@ $(document).ready(function(){
                 title: 'Job Posting List',
                 header: true,
                 footer: false,
+                "action": allExport,
                 exportOptions: {
                     columns: ':visible',
                     stripHtml: false

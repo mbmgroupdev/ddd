@@ -24,7 +24,7 @@
                 <li>
                     <a href="#">Reports</a>
                 </li>
-                <li class="active"> Before Absent After Present</li>
+                <li class="active"> Present After Being Absent</li>
             </ul>
         </div>
 
@@ -34,7 +34,7 @@
                     <form class="" role="form" id="activityReport" method="get" action="#"> 
                         <div class="panel">
                             <div class="panel-heading">
-                                <h6>Before Absent After Present Report</h6>
+                                <h6>Present After Being Absent Report</h6>
                             </div>
                             <div class="panel-body">
                                 <div class="row">

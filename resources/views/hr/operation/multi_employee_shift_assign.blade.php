@@ -153,7 +153,7 @@ $(document).ready(function(){
 
     var totalempcount = 0;
     var totalemp = 0;
- $('#dataTables2').DataTable({
+ var dt = $('#dataTables2').DataTable({
         pagingType: "full_numbers" ,
         // searching: false,
         // "lengthChange": false,

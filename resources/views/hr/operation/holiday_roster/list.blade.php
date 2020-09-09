@@ -37,7 +37,7 @@
                     <form class="" role="form" id="holidayRosterReport" method="get" action="#">
                         <div class="panel">
                           <div class="panel-heading">
-                            <h6>Holiday Roster <a href="{{ url('/hr/operation/holiday-roster')}}" class="btn btn-success btn-sm pull-right"> <i class="fa fa-plus"></i> Holiday Roster assign</a></h6>
+                            <h6>Holiday Roster List <a href="{{ url('/hr/operation/holiday-roster')}}" class="btn btn-success btn-sm pull-right"> <i class="fa fa-plus"></i> Holiday Roster Assign</a></h6>
                           </div>
                           <div class="panel-body">
                               <div class="row">
@@ -129,105 +129,101 @@
                 </div>
                 <!-- /.col -->
             </div>
-            <div class="row">
-                <div class="col h-min-400">
-                    <div class="table d-table hide">
-                      <div class="iq-card">
-                        <div class="iq-card-body">
-                          <table id="dataTables" class="table table-striped table-bordered table-head table-responsive w-100" style="">
-                             <thead>
-                                <tr>
-                                  <th>Sl. No</th>
-                                  <th>Picture</th>
-                                  <th>Oracle ID</th>
-                                  <th>Associate ID</th>
-                                  {{-- <th>Unit</th> --}}
-                                  <th>Name</th>
-                                  <th>Contact</th>
-                                  <th>Section</th>
-                                  <th>Designation</th>
-                                  <th>Dates</th>
-                                  <th>Total</th>
-                                  <th>Actions</th>
-                                </tr>
-                             </thead>
-                          </table>
-                       </div>
-                     </div>
-                   </div>
-                   <div class="modal fade" id="calendarModal" tabindex="-1" role="dialog" aria-labelledby="calendarModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h5 class="modal-title" id="calendarModalLabel">Dates</h5>
+              <div class="table-area hide h-min-400">
+                <div class="iq-card">
+                  <div class="iq-card-body">
+                    <table id="dataTables" class="table table-striped table-bordered" style="display: block;overflow-x: auto;width: 100%!important;">
+                       <thead>
+                          <tr>
+                            <th>Sl. No</th>
+                            <th>Picture</th>
+                            <th>Oracle ID</th>
+                            <th>Associate ID</th>
+                            {{-- <th>Unit</th> --}}
+                            <th>Name</th>
+                            <th>Contact</th>
+                            <th>Section</th>
+                            <th>Designation</th>
+                            <th>Dates</th>
+                            <th>Total</th>
+                            <th>Actions</th>
+                          </tr>
+                       </thead>
+                    </table>
+                 </div>
+               </div>
+             </div>
+             <div class="modal fade" id="calendarModal" tabindex="-1" role="dialog" aria-labelledby="calendarModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="calendarModalLabel">Dates</h5>
 
-                        </div>
-                        <div class="modal-body">
-                          <div class="row" >
+                  </div>
+                  <div class="modal-body">
+                    <div class="row" >
 
-                            <div class="row" style="padding: 10px 20px">
-                              <div class="col-md-12">
-                                <div class="col-sm-6 " >
-                                  <label class="col-sm-5 control-label no-padding-right" for="typem"> Report Type* </label>
-                                  <div class="col-sm-7 no-padding-right" >
-                                    <?php
-                                      $types=['Holiday'=>'Holiday','General'=>'General','OT'=>'OT']
-                                    ?>
-                                      {{ Form::select('typem', $types, null, ['placeholder'=>'Select Type','id'=>'typem', 'class'=> 'form-control']) }}
-                                  </div>
-
-                                </div>
-                                <div class="col-sm-6 " >
-                                  <label class="col-sm-4 control-label no-padding-right" for="comment"> Comment </label>
-                                  <div class="col-sm-7 no-padding-right" >
-                                    <input type="text" name="comment" id="comment" class="form-control" value="" placeholder="Comment">
-                                  </div>
-
-                                </div>
-                              </div>
-
-                          </div>
-
-
-
-                            <div class="col-md-12">
-                              <div class="widget-box widget-color-blue3">
-                                  <div class="widget-header">
-                                      <h4 class="widget-title smaller">
-                                        Calendar
-                                      </h4>
-                                      {{-- <div class="widget-toolbar">
-                                          <a href="#" data-action="collapse">
-                                              <i class="ace-icon fa fa-chevron-down"></i>
-                                          </a>
-                                      </div> --}}
-                                  </div>
-
-
-                                  <div class="widget-body">
-                                      <div class="widget-main padding-16">
-                                          <div id="event-calendar">
-
-                                          </div>
-
-                                      </div>
-                                  </div>
-                              </div>
-                              <input type="hidden" name="as_id" id="as_id" value="">
-                              <input type="hidden" name="previousDates" id="previousDates" value="">
-                              <input type="hidden" name="previousDatesChanged" id="previousDatesChanged" value="">
+                      <div class="row" style="padding: 10px 20px">
+                        <div class="col-md-12">
+                          <div class="col-sm-6 " >
+                            <label class="col-sm-5 control-label no-padding-right" for="typem"> Report Type* </label>
+                            <div class="col-sm-7 no-padding-right" >
+                              <?php
+                                $types=['Holiday'=>'Holiday','General'=>'General','OT'=>'OT']
+                              ?>
+                                {{ Form::select('typem', $types, null, ['placeholder'=>'Select Type','id'=>'typem', 'class'=> 'form-control']) }}
                             </div>
 
-                      </div>
+                          </div>
+                          <div class="col-sm-6 " >
+                            <label class="col-sm-4 control-label no-padding-right" for="comment"> Comment </label>
+                            <div class="col-sm-7 no-padding-right" >
+                              <input type="text" name="comment" id="comment" class="form-control" value="" placeholder="Comment">
+                            </div>
+
+                          </div>
                         </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                          <button type="button" id="saveDates" class="btn btn-primary">Save changes</button>
-                        </div>
-                      </div>
+
                     </div>
+
+
+
+                      <div class="col-md-12">
+                        <div class="widget-box widget-color-blue3">
+                            <div class="widget-header">
+                                <h4 class="widget-title smaller">
+                                  Calendar
+                                </h4>
+                                {{-- <div class="widget-toolbar">
+                                    <a href="#" data-action="collapse">
+                                        <i class="ace-icon fa fa-chevron-down"></i>
+                                    </a>
+                                </div> --}}
+                            </div>
+
+
+                            <div class="widget-body">
+                                <div class="widget-main padding-16">
+                                    <div id="event-calendar">
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="as_id" id="as_id" value="">
+                        <input type="hidden" name="previousDates" id="previousDates" value="">
+                        <input type="hidden" name="previousDatesChanged" id="previousDatesChanged" value="">
+                      </div>
+
+                </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" id="saveDates" class="btn btn-primary">Save changes</button>
                   </div>
                 </div>
+              </div>
             </div>
         </div><!-- /.page-content -->
     </div>
@@ -267,7 +263,10 @@ $(document).ready(function(){
   // var selectable = []; //use 4,5,6,7,8,9,10,11,....and * for all
   var dropdownList = {};
   var printCounter = 0;
-  var dTable =  $('#dataTables').DataTable({
+  var exportColName = ['Sl.','Picture','Oracle ID','Associate ID','Name','Contact', 'Section', 'Designation','Days','Total'];
+  var exportCol = [0,2,3,4,5,6,7,8,9];
+
+  var dt =  $('#dataTables').DataTable({
 
     order: [], //reset auto order
     lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
@@ -276,7 +275,7 @@ $(document).ready(function(){
     serverSide: true,
     cache: false,
     language: {
-      processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span> '
+      processing: '<i class="fa fa-spinner fa-spin f-60"></i><span class="sr-only">Loading...</span> '
     },
     scroller: {
       loadingIndicator: false
@@ -306,74 +305,136 @@ $(document).ready(function(){
     },
 
     dom: 'lBfrtip',
-    buttons: [
+    buttons: [   
       {
-        extend: 'csv',
-        className: 'btn-sm btn-success',
-        exportOptions: {
-          columns: ':visible'
-        }
-      },
+          extend: 'csv', 
+          className: 'btn btn-sm btn-success',
+          title: function () {
+              var type = 'Holiday Roster -';
+              if($('#type').val() != ''){
+                 type += $('#type').select2('data')[0].text; 
+              }
+              return type;
+          },
+          header: true,
+          footer: false,
+          exportOptions: {
+              columns: exportCol,
+              format: {
+                  header: function ( data, columnIdx ) {
+                      return exportColName[columnIdx];
+                  }
+              }
+          },
+          "action": allExport,
+          messageTop: ''
+      }, 
       {
-        extend: 'excel',
-        className: 'btn-sm btn-warning',
-        exportOptions: {
-          columns: ':visible'
-        }
-      },
+          extend: 'excel', 
+          className: 'btn btn-sm btn-warning',
+          title: function () {
+              var type = 'Holiday Roster - ';
+              if($('#type').val() != ''){
+                 type += $('#type').select2('data')[0].text; 
+              }
+              return type;
+          },
+          header: true,
+          footer: false,
+          exportOptions: {
+              columns: exportCol,
+              format: {
+                  header: function ( data, columnIdx ) {
+                      return exportColName[columnIdx];
+                  }
+              }
+          },
+          "action": allExport,
+          messageTop: ''
+      }, 
       {
-        extend: 'pdf',
-        className: 'btn-sm btn-primary',
-        exportOptions: {
-          columns: ':visible'
-        }
-      },
+          extend: 'pdf', 
+          className: 'btn btn-sm btn-primary', 
+          title: function () {
+              var type = 'Holiday Roster - ';
+              if($('#type').val() != null){
+                 type += $('#type').select2('data')[0].text; 
+              }
+              return type;
+          },
+          header: true,
+          footer: false,
+          exportOptions: {
+              columns: exportCol,
+              format: {
+                  header: function ( data, columnIdx ) {
+                      return exportColName[columnIdx];
+                  }
+              }
+          },
+          "action": allExport,
+          messageTop: ''
+      }, 
       {
-
-        extend: 'print',
-        className: 'btn-sm btn-default print',
-        title: '',
-        orientation: 'portrait',
-        pageSize: 'LEGAL',
-        alignment: "center",
-        // header:true,
-        messageTop: function () {
-          //printCounter++;
-          return '<style>'+
-          'input::-webkit-input-placeholder {'+
-          'color: black;'+
-          'font-weight: bold;'+
-          'font-size: 12px;'+
-          '}'+
-          'input:-moz-placeholder {'+
-          'color: black;'+
-          'font-weight: bold;'+
-          'font-size: 12px;'+
-          '}'+
-          'input:-ms-input-placeholder {'+
-          'color: black;'+
-          'font-weight: bold;'+
-          'font-size: 12px;'+
-          '}'+
-          'th{'+
-          'font-size: 12px !important;'+
-          'color: black !important;'+
-          'font-weight: bold !important;'+
-          '}</style>'+
-          '<h2 class="text-center">Consecutive ' +$("#type option:selected").text()+' Report</h2>'+
-          '<h3 class="text-center">'+'Unit: '+$("#unit option:selected").text()+'</h3>'+
-          '<h5 class="text-center">'+'Total: '+dTable.data().length+'</h5>'+
-          '<h6 style = "margin-left:80%;">'+'Printed on: '+new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate()+'</h6><br>'
-          ;
-
-        },
-        messageBottom: null,
-        exportOptions: {
-          columns: [0,1,3,4,5,6,7,8,9],
-          stripHtml: false
-        },
-      }
-    ],
+          extend: 'print', 
+          className: 'btn btn-sm btn-default',
+          title: '',
+          header: true,
+          footer: false,
+          exportOptions: {
+              columns: exportCol,
+              format: {
+                  header: function ( data, columnIdx ) {
+                      return exportColName[columnIdx];
+                  }
+              }
+          },
+          "action": allExport,
+          messageTop: function () {
+              var data = {
+               unit : '',
+               month : $('#month').val(),
+               date  : $('#report_to').val(),
+               day    : '',
+               floor_id : '',
+               line_id : '',
+               area : '',
+               department : '',
+               section : '',
+               subSection : '',
+               type : '',
+              }
+              if($('#unit').val() != ''){
+                 data.unit = $('#unit').select2('data')[0].text; 
+              }
+              if($('#floor_id').val() != ''){
+                 data.floor_id = $('#floor_id').select2('data')[0].text; 
+              }
+              if($('#line_id').val() != ''){
+                 data.line_id = $('#line_id').select2('data')[0].text; 
+              }
+              if($('#area').val() != ''){
+                 data.area = $('#area').select2('data')[0].text; 
+              }
+              if($('#department').val() != ''){
+                 data.department = $('#department').select2('data')[0].text; 
+              }
+              if($('#section').val() != ''){
+                 data.section = $('#section').select2('data')[0].text; 
+              }
+              if($('#subSection').val() != ''){
+                 data.subSection = $('#subSection').select2('data')[0].text; 
+              }
+              if($('#day').val() != ''){
+                 data.day = $('#day').select2('data')[0].text; 
+              }
+              if($('#type').val() != ''){
+                 data.type = 'Holiday Roster - '+$('#type').select2('data')[0].text; 
+              }
+              return rosterReportHeader(data.type, data);
+            }
+      } 
+  ],
 
     columns: [
       { data: 'DT_RowIndex', name: 'DT_RowIndex' },
@@ -468,7 +529,7 @@ $(document).ready(function(){
           //$("#floor_id").html(data);
           toastr.success(' ','Attendance Update Successfully.');
           $('#calendarModal').modal('hide');
-          dTable.draw();
+          dt.draw();
         },
         error: function()
         {
@@ -646,8 +707,8 @@ setTimeout(function(){
 
     }
     else{
-      $(".d-table").removeClass('hide');
-      dTable.draw();
+      $(".table-area").removeClass('hide');
+      dt.draw();
     }
   });
 
