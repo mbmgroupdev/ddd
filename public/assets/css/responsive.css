@@ -243,3 +243,11 @@ NOTE: This file contains the styling for responsive Template.
 	.iq-top-navbar .iq-sub-dropdown{width: 240px;}
 }
 @media(max-width:359px) { }
+
+@media only screen and (max-width: 771px) {
+	.background_field{width: 100% !important;}
+}
+
+@media only screen and (max-width: 771px) {
+	.background_div{width: 100% !important;}
+}
