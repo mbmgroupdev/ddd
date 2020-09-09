@@ -1384,8 +1384,8 @@ table th {
 <script src="{{ asset('assets/js/moment.min.js') }}"></script>
 <script src="{{ asset('assets/js/fullcalendar.min.js') }}"></script>
 <script type="text/javascript">
-var _token = $('input[name="_token"]').val();
-function errorMsgRepeter(id, check, text){
+	var _token = $('input[name="_token"]').val();
+	function errorMsgRepeter(id, check, text){
 
         var flug1 = false;
         if(check == ''){
@@ -1401,7 +1401,7 @@ function errorMsgRepeter(id, check, text){
     $('#attload').on('click', function(){
 	    $('#attcal').html('<center><i class="ace-icon fa fa-spinner fa-spin orange bigger-500" style="font-size:80px;margin-top:100px;"></i></center>');
 		setTimeout(function(){ 
-			$('#attcal').load('{{URL::to("hr/user/attendance_calendar/$info->associate_id")}}'); 
+			$('#attcal').load('{{URL::to("hr/user/attendance_calendar/$info->associate_id")}}');
 		}, 1000);
     });
 
