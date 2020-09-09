@@ -130,59 +130,41 @@
                         <div class="modal-body" id="attachment-body-content">
                             <div class="row" style="padding: 4px;">
                             {{Form::open(['url'=>'hr/setup/bonus_type_update', 'class'=>'form-horizontal']) }}
-                                    <div class="col-sm-offset-2 col-sm-8">
-                                        <div class="form-group">
-                                            <label for="edit_bonus_type_name">Bonus Type Name 
-                                            </label>
-                                            <div class="col-sm-9">
-                                                <input type="text" name="edit_bonus_type_name" id="edit_bonus_type_name" class="col-xs-12" required="required"  placeholder="Enter Bonus Type Name">
-                                            </div>
-                                        </div>
-                                         <div class="form-group">
-                                            <label class="col-sm-3 no-padding-right control-label">Month: </label>
-                                            <div class="col-sm-3">
-                                                <input type="text" name="edit_month" id="edit_month" class="form-control" placeholder="Month" required="required">
-                                            </div>
-                                            <label class="col-sm-2 no-padding-right control-label">Year:</label>
-                                            <div class="col-sm-4">
-                                                <input type="text" name="edit_year" id="edit_year" class="col-xs-12 yearpicker" placeholder="Year" required="required">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label >Amount 
-                                            </label>
-                                            <div class="col-sm-9">
-                                                <div class="col-sm-5 no-padding-left">
-                                                    <input type="number" name="edit_bonus_amount" id="edit_bonus_amount"  placeholder="Enter"  class="col-xs-12 in_h" >
-                                                </div>
-
-                                                <div class="col-sm-7 no-padding-right">
-
-                                                     <label class="col-xs-2 control-label no-padding-left no-padding-top">OR,</label>
-                                                    <input type="number" name="edit_bonus_percent" id="edit_bonus_percent" class="col-xs-6 in_h" placeholder="Enter">
-                                                     <label class="col-xs-4 control-label no-padding no-margin"> &nbsp % of Basic</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
+                                <input type="hidden" name="edit_id" id="edit_id">
+                                <div class="col-sm-12">
+                
+                                    <div class="form-group has-required has-float-label">
+                                        </label>
+                                        <input type="text" name="edit_bonus_type_name" id="edit_bonus_type_name"  class="form-control" required="required" placeholder="Enter Bonus for">
+                                        <label for="bonus_type_name">Bonus for 
                                     </div>
-                                    {{-- view the entry --}}
-                                    <div class="col-sm-12">
-                                        
-                                        <div class="clearfix form-actions">
-                                            <div class="col-md-offset-4 col-md-4 text-center"> 
-                                                <input type="hidden" name="edit_id" id="edit_id" >
-                                                <button class="btn btn-success btn-sm" type="submit">
-                                                    <i class="ace-icon fa fa-check bigger-110"></i> Update
-                                                </button>
-
-                                                &nbsp; &nbsp; &nbsp;
-                                                <button class="btn btn-sm" type="reset">
-                                                    <i class="ace-icon fa fa-undo bigger-110"></i> Reset
-                                                </button>
+                                    <div class="form-group has-required has-float-label">
+                                        <input type="month" name="month" id="month" class="form-control" placeholder="Month" required="required" name="edit_month" id="edit_month" value="{{date('Y-m')}}">
+                                        <label>Month </label>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            
+                                            <div class="form-group  has-float-label">
+                                                <input type="text" name="bonus_amount" name="edit_bonus_amount" id="edit_bonus_amount"    placeholder="Enter"  class="form-control in_h" >
+                                                <label >Amount </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            
+                                            <div class="form-group  has-float-label">
+                                                <input type="text" name="edit_bonus_percent" id="edit_bonus_percent"  placeholder="% of Basic"  class="form-control in_h" >
+                                                <label >OR, % of Basic </label>
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="form-group">
+                                        <button class="btn btn-primary" type="submit">
+                                            <i class=" fa fa-check"></i> Update
+                                        </button>
+                                            
+                                    </div>
+                                </div>
                             {{Form::close()}}
                             </div>
                         </div>
@@ -225,10 +207,9 @@
                     dataType: 'json',
                     data: {bt_id: bt_id},
                     success: function(data){
-                          console.log(data);
                           $("#edit_id").val(data.id);
                           $("#edit_bonus_type_name").val(data.bonus_type_name);
-                          $("#edit_month").val(months[data.month-1]); 
+                          $("#edit_month").val(data.month); 
                           $("#edit_year").val(data.year); 
                           $("#edit_bonus_amount").val(data.amount); 
                           $("#edit_bonus_percent").val(data.percent_of_basic); 

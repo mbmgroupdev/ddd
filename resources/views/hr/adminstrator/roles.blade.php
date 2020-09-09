@@ -36,8 +36,8 @@
                                                 <span class="label label-info label-many">{{ $permission }}</span>
                                             @endforeach
                                         </td>
-                                        <td>
-                                            <a href="{{ url('hr/adminstrator/role/edit/'.$role->id) }}" class="btn btn-xs btn-info"><i class="fa fa-pencil"></i></a>
+                                        <td style="width:80px;"> 
+                                            <a href="{{ url('hr/adminstrator/role/edit/'.$role->id) }}" class="btn btn-xs btn-primary"><i class="fa fa-pencil"></i></a>
                                             <a href="{{ url('hr/adminstrator/role/delete',[$role->id]) }}" class="btn btn-xs btn-danger" onclick="return confirm('Are you sure?')"><i class="fa fa-trash"></i></a> 
                                         </td>
                                     </tr>

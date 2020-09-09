@@ -1,107 +1,181 @@
 @extends('hr.layout')
-@section('title', '')
+@section('title', 'Sub-Section Edit')
 @section('main-content')
-<div class="main-content">
-    <div class="main-content-inner">
-        <div class="breadcrumbs ace-save-state" id="breadcrumbs">
-            <ul class="breadcrumb">
-                <li>
-                    <i class="ace-icon fa fa-home home-icon"></i>
-                    <a href="#"> Human Resource </a>
-                </li> 
-                <li>
-                    <a href="#"> Setup </a>
-                </li>
-                <li class="active"> Sub-Section Update</li>
-            </ul><!-- /.breadcrumb -->
-        </div>
-
-        <div class="page-content"> 
-            <div class="page-header">
-                <h1>Setup <small><i class="ace-icon fa fa-angle-double-right"></i> Sub-Section Update</small></h1>
-            </div>
-
-            <div class="row">
-                  <!-- Display Erro/Success Message -->
-                @include('inc/message')
+    @push('css')
+    @endpush
+    <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+        <ul class="breadcrumb">
+            <li>
+                <i class="ace-icon fa fa-home home-icon"></i>
+                <a href="#"> Human Resource </a>
+            </li> 
+            <li>
+                <a href="#"> Library </a>
+            </li>
+            <li class="active"> Sub-Section Edit</li>
+        </ul>
+    </div>
+    <div class="row">
+       <div class="col-lg-2 pr-0">
+           <!-- include library menu here  -->
+           @include('hr.settings.library_menu')
+       </div>
+       <div class="col-lg-10 mail-box-detail">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h6>
+                        Sub-Section
+                        <a class="btn btn-primary pull-right" href="#list">Sub-Section List</a>
+                    </h6>
+                </div> 
+                <div class="panel-body">
+                    
                     <form class="form-horizontal" role="form" method="post" action="{{ url('hr/setup/subsection_update')  }}" enctype="multipart/form-data">
-                    {{ csrf_field() }}
-                <div class="col-sm-6 col-sm-offset-3">
-                    <!-- PAGE CONTENT BEGINS -->
-
+                        {{ csrf_field() }} 
                         <input type="hidden" name="hr_subsec_id" value="{{ $subSection->hr_subsec_id }}"> 
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group has-required has-float-label select-search-group">
+                                    
+                                    {{ Form::select('hr_subsec_area_id', $areaList, $subSection->hr_subsec_area_id, ['placeholder' => 'Select Area Name', 'class' => 'form-control', 'id'=>'hr_subsec_area_id', 'required'=>'required']) }}
+                                    <label for="hr_subsec_area_id" > Area Name  </label>
+                                    
+                                </div>
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label no-padding-right" for="hr_subsec_area_id" > Area Name <span style="color: red; vertical-align: top;">&#42;</span> </label>
-                            <div class="col-sm-8">
-                                {{ Form::select('hr_subsec_area_id', $areaList, $subSection->hr_subsec_area_id, ['placeholder' => 'Select Area Name', 'class' => 'col-xs-12', 'id'=>'hr_subsec_area_id', 'data-validation'=>'required']) }}
-                            </div>
-                        </div>
+                                <div class="form-group has-required has-float-label select-search-group">
+                                    
+                                    {{ Form::select('hr_subsec_department_id', $departmentList, $subSection->hr_subsec_department_id, ['placeholder' => 'Select Department Name', 'class' => 'form-control', 'id'=>'hr_subsec_department_id', 'data-validation'=>'required']) }}
+                                    <label for="hr_subsec_department_id" >Department Name  </label>
+                                    
+                                </div>
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label no-padding-right" for="hr_subsec_department_id" >Department Name <span style="color: red; vertical-align: top;">&#42;</span> </label>
-                            <div class="col-sm-8">
-                                {{ Form::select('hr_subsec_department_id', $departmentList, $subSection->hr_subsec_department_id, ['placeholder' => 'Select Department Name', 'class' => 'col-xs-12', 'id'=>'hr_subsec_department_id', 'data-validation'=>'required']) }}
-                                <!-- <select name="hr_subsec_department_id" id="hr_subsec_department_id" class="col-xs-12" data-validation="required">
-                                    <option value="">Select Department Name </option> 
-                                </select> -->
+                                
                             </div>
-                        </div>
+                            <div class="col-sm-4">
+                                <div class="form-group has-required has-float-label select-search-group">
+                                    
+                                    {{ Form::select('hr_subsec_section_id', $sectionList, $subSection->hr_subsec_section_id, ['placeholder' => 'Select Section Name', 'class' => 'form-control', 'id'=>'hr_subsec_section_id', 'data-validation'=>'required']) }}
+                                    <label for="hr_subsec_section_id" >Section Name  </label>
+                                </div>
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label no-padding-right" for="hr_subsec_section_id" >Section Name <span style="color: red; vertical-align: top;">&#42;</span> </label>
-                            <div class="col-sm-8">
-                                {{ Form::select('hr_subsec_section_id', $sectionList, $subSection->hr_subsec_section_id, ['placeholder' => 'Select Section Name', 'class' => 'col-xs-12', 'id'=>'hr_subsec_section_id', 'data-validation'=>'required']) }}
-                                <!-- <select name="hr_subsec_section_id" id="hr_subsec_section_id" class="col-xs-12" data-validation="required">
-                                    <option value="">Select Section Name </option> 
-                                </select> -->
+                                <div class="form-group has-required has-float-label">
+                                    
+                                    <input type="text" name="hr_subsec_name" id="hr_subsec_name" placeholder="Sub Section Name" class="form-control" required="required" value="{{ $subSection->hr_subsec_name }}"/>
+                                    <label for="hr_subsec_name" > Sub Section Name  </label>
+                                    
+                                </div>
+                                
+                                
                             </div>
-                        </div>
+                            <div class="col-sm-4"> 
+                                <div class="form-group  has-float-label">
+                                    
+                                    <input type="text" name="hr_subsec_name_bn" id="hr_subsec_name_bn" placeholder="সাব সেকশনের নাম" class="form-control" value="{{ $subSection->hr_subsec_name_bn }}">
+                                    <label for="hr_subsec_name_bn" > সাব সেকশন (বাংলা) </label>
+                                    
+                                </div>
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label no-padding-right" for="hr_subsec_name" > Sub Section Name <span style="color: red; vertical-align: top;">&#42;</span> </label>
-                            <div class="col-sm-8">
-                                <input type="text" name="hr_subsec_name" id="hr_subsec_name" placeholder="Sub Section Name" class="col-xs-12" value="{{ $subSection->hr_subsec_name }}" data-validation="required length custom" data-validation-length="1-128"/>
+                                <div class="form-group has-float-label">
+                                    
+                                    <input type="text" id="hr_subsec_code" name="hr_subsec_code" placeholder="Sub Section Code" class="form-control" value="{{ $subSection->hr_subsec_code }}">
+                                    <label for="hr_subsec_code"> Sub Section Code </label>
+                                    
+                                </div>
+                                <div class="form-group"> 
+                                    <button class="btn pull-right btn-primary" type="submit">Update</button>
+                                </div>
+                                
                             </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label no-padding-right" for="hr_subsec_name_bn" > সাব সেকশন (বাংলা) </label>
-                            <div class="col-sm-8">
-                                <input type="text" name="hr_subsec_name_bn" id="hr_subsec_name_bn" placeholder="সাব সেকশনের নাম" class="col-xs-12" value="{{ $subSection->hr_subsec_name_bn }}" data-validation="length" data-validation-length="0-255"/>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label no-padding-right" for="hr_subsec_code"> Sub Section Code </label>
-                            <div class="col-sm-8">
-                                <input type="text" id="hr_subsec_code" name="hr_subsec_code" placeholder="Sub Section Code" class="col-xs-12" value="{{ $subSection->hr_subsec_code }}" data-validation="length" data-validation-length="0-10" data-validation-current-error="The input value must be between 0-10 characters">
-                            </div>
-                        </div>
-                    <!-- PAGE CONTENT ENDS -->
+                        </div>    
+                            
+                    </form> 
                 </div>
-                <!-- /.col -->
-                <div class="col-sm-12 col-xs-12">
-                    <div class="clearfix form-actions">
-                        <div class="col-md-offset-4 col-md-4 text-center" style="padding-left: 30px;"> 
-                            <button class="btn btn-sm btn-success" type="submit">
-                                <i class="ace-icon fa fa-check bigger-110"></i> Submit
-                            </button>
-
-                            &nbsp; &nbsp; &nbsp;
-                            <button class="btn btn-sm" type="reset">
-                                <i class="ace-icon fa fa-undo bigger-110"></i> Reset
-                            </button>
+            </div>
+            <div id="list" class="panel panel-info">
+                <div class="panel-body">
+                    <ul class="nav nav-tabs" id="myTab-1" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="active-tab" data-toggle="tab" href="#active" role="tab" aria-controls="active" aria-selected="false">Active</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="trash-tab" data-toggle="tab" href="#trash" role="tab" aria-controls="trash" aria-selected="false">Trash</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane fade active show" id="active" role="tabpanel" aria-labelledby="active-tab">
+                         
+                            <div class="table-responsive">
+                                <table id="global-datatable" class="table table-striped table-bordered" style="display: block;width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 10%;">Area Name</th>
+                                            <th style="width: 20%;">Department Name</th>
+                                            <th style="width: 20%;">Section Name</th>
+                                            <th style="width: 20%;">Sub Section Name</th>
+                                            <th style="width: 20%;">সাব সেকশন (বাংলা)</th>
+                                            <th style="width: 10%;">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($subSections as $subSection)
+                                        <tr>
+                                            <td>{{ $subSection->hr_area_name }}</td>
+                                            <td>{{ $subSection->hr_department_name }}</td>
+                                            <td>{{ $subSection->hr_section_name }}</td>
+                                            <td>{{ $subSection->hr_subsec_name }}</td>
+                                            <td>{{ $subSection->hr_subsec_name_bn }}</td>
+                                            <td>
+                                            <div class="btn-group">
+                                                <a type="button" href="{{ url('hr/setup/subsection_update/'.$subSection->hr_subsec_id) }}" class='btn btn-xs btn-primary' data-toggle="tooltip" title="Edit"> <i class="ace-icon fa fa-pencil bigger-120"></i></a>
+                                                <a href="{{ url('hr/setup/subsection/'.$subSection->hr_subsec_id) }}" type="button" class='btn btn-xs btn-danger' data-toggle="tooltip" title="Delete" onclick="return confirm('Are you sure?')"><i class="ace-icon fa fa-trash bigger-120"></i></a>
+                                            </div>
+                                        </td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="trash" role="tabpanel" aria-labelledby="trash-tab">
+                            <div class="table-responsive">
+                                <table id="global-trash" class="table table-striped table-bordered" style="display: block;width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 10%;">Area Name</th>
+                                            <th style="width: 20%;">Department Name</th>
+                                            <th style="width: 20%;">Section Name</th>
+                                            <th style="width: 20%;">Sub Section Name</th>
+                                            <th style="width: 20%;">সাব সেকশন (বাংলা)</th>
+                                            <th style="width: 10%;">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($subSections as $subSection)
+                                        <tr>
+                                            <td>{{ $subSection->hr_area_name }}</td>
+                                            <td>{{ $subSection->hr_department_name }}</td>
+                                            <td>{{ $subSection->hr_section_name }}</td>
+                                            <td>{{ $subSection->hr_subsec_name }}</td>
+                                            <td>{{ $subSection->hr_subsec_name_bn }}</td>
+                                            <td>
+                                            <div class="btn-group">
+                                                <a type="button" href="{{ url('hr/setup/subsection_update/'.$subSection->hr_subsec_id) }}" class='btn btn-xs btn-primary' data-toggle="tooltip" title="Edit"> <i class="ace-icon fa fa-pencil bigger-120"></i></a>
+                                                <a href="{{ url('hr/setup/subsection/'.$subSection->hr_subsec_id) }}" type="button" class='btn btn-xs btn-danger' data-toggle="tooltip" title="Delete" onclick="return confirm('Are you sure?')"><i class="ace-icon fa fa-trash bigger-120"></i></a>
+                                            </div>
+                                        </td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
-                    </form>                    
             </div>
-        </div><!-- /.page-content -->
+
+       </div>
     </div>
-</div>
-
-
+@push('js')
 <script type="text/javascript">
 $(document).ready(function(){
     //Load Department List
@@ -147,4 +221,5 @@ $(document).ready(function(){
     });
 });
 </script>
+@endpush
 @endsection

@@ -77,8 +77,27 @@ class RolesController extends Controller
         $permissions = $permissions->groupBy(['module','groups']);
 
 
-        return view('hr.adminstrator.edit_role', compact('role','permissions'));
+        return view('hr.adminstrator.edit-roles', compact('role','permissions'));
 
+
+    }
+
+    public function syncPermission(Request $request)
+    {
+        $role = Role::find($request->id);
+
+        if($request->type == 'revoke'){
+            $role->revokePermissionTo($request->permission);
+            log_file_write("Permission ".$request->permission." revoked from ".$request->id, '');
+
+            return '"'.$request->permission.'" revoked from';
+
+        }else if($request->type == 'assign'){
+            $role->givePermissionTo($request->permission); 
+            log_file_write("Permission ".$request->permission." assigned to ".$request->id, '');
+
+            return '"'.$request->permission.'" assigned to';            
+        }
 
     }
 

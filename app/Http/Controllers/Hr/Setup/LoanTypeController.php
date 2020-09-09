@@ -14,8 +14,6 @@ class LoanTypeController extends Controller
         $loantype=DB::table('hr_loan_type')
                   ->select('hr_loan_type_name','id')
                   ->get();
-        //dd($loantype);
-        #-----------------------------------------------------------#
     	return view('hr/setup/loan_type', compact('loantype'));
     }
     public function storeloanType(Request $request){
@@ -54,10 +52,13 @@ class LoanTypeController extends Controller
 
     public function loanTypeEdit($id){
 
-        $loantype= DB::table('hr_loan_type')->where('id', $id)->first();
+        $loantypeLibrary =DB::table('hr_loan_type')
+                  ->get();
+
+        $loantype = DB::table('hr_loan_type')->where('id', $id)->first();
 
 
-        return view('/hr/setup/loan_type_edit', compact('loantype'));
+        return view('/hr/setup/loan_type_edit', compact('loantype','loantypeLibrary'));
     }
 
     public function updateLoanType(Request $request){

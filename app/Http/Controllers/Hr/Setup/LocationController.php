@@ -86,9 +86,10 @@ class LocationController extends Controller
 
     }
     public function locationUpdate($id){
+        $locations= Location::all();
         $location= DB::table('hr_location')->where('hr_location_id','=',$id)->first(); //dd($location);
         $unitList= Unit::pluck('hr_unit_name', 'hr_unit_id');
-        return view('/hr/setup/location_update',compact('location','unitList'));
+        return view('/hr/setup/location_update',compact('location','unitList','locations'));
     }
     public function locationUpdateStore(Request $request){
         // dd($request->all());

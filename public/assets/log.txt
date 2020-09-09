@@ -1,3 +1,8 @@
+2020-09-09 10:46:11 "17F005001B" Permission Job Card assigned to 34 
+2020-09-09 10:43:25 "17F005001B" Permission Basic Setup assigned to 34 
+2020-09-09 10:35:00 "17F005001B" Permission Education Setup assigned to 34 
+2020-09-09 10:12:58 "17F005001B" hr_executive_payroll- role deleted 13
+2020-09-09 10:12:51 "17F005001B" hr_supervisor- role deleted 7
 2020-09-08 16:06:40 "17F005001B" Location Changed for 12 13
 2020-09-06 13:49:22 "17F005001B" User Created 41
 2020-09-02 15:21:05 "17F005001B" Medical information Updated 22981
