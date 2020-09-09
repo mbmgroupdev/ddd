@@ -30,6 +30,7 @@
       padding: 15px 15px;
       padding-bottom: 8px;
     }
+
 </style>
 @endpush
 <div class="main-content">
@@ -179,7 +180,10 @@
                        <div class="iq-header-title w-100">
                           <div class="row">
                             <div class="col-3">
-                              
+                              <h4 class="card-title capitalize inline">
+                                  <button class="btn btn-sm btn-primary hidden-print" onclick="printDiv('result-data')" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report"><i class="las la-print"></i> </button>
+                                  
+                                </h4>
                             </div>
                             <div class="col-6 text-center">
                               <div id="head-arrow">
@@ -481,7 +485,23 @@
        
     });
 
-    
+    function printDiv(divName)
+    {   
+        
+
+        var mywindow=window.open('','','width=800,height=800');
+        
+        mywindow.document.write('<html><head><title>Print Contents</title>');
+        mywindow.document.write('<style>@page {size: landscape; color: color;} </style>');
+        mywindow.document.write('</head><body>');
+        mywindow.document.write(document.getElementById(divName).innerHTML);
+        mywindow.document.write('</body></html>');
+
+        mywindow.document.close();  
+        mywindow.focus();           
+        mywindow.print();
+        mywindow.close();
+    }
 </script>
 @endpush
 @endsection
