@@ -27,6 +27,17 @@ class FloorController extends Controller
                     ->leftJoin('hr_unit AS u', 'u.hr_unit_id', '=', 'f.hr_floor_unit_id')
                     ->whereIn('f.hr_floor_unit_id', auth()->user()->unit_permissions())
                     ->get();
+       /* $trashed= DB::table('hr_floor as f')
+                    ->Select(
+                        'f.hr_floor_id',
+                        'f.hr_floor_name',
+                        'f.hr_floor_name_bn',
+                        'u.hr_unit_name'
+                    )
+                    ->leftJoin('hr_unit AS u', 'u.hr_unit_id', '=', 'f.hr_floor_unit_id')
+                    ->whereIn('f.hr_floor_unit_id', auth()->user()->unit_permissions())
+                    ->whereNotNull('deleted_at')
+                    ->onlyTrashed();*/
     	return view('hr/setup/floor', compact('unitList', 'floors'));
     }
 

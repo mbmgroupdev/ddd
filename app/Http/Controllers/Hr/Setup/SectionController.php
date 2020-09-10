@@ -19,8 +19,8 @@ class SectionController extends Controller
         //ACL::check(["permission" => "hr_setup"]);
         #-----------------------------------------------------------#
     	$areaList = Area::where('hr_area_status', 1)->pluck('hr_area_name','hr_area_id');
-        $sections= DB::table('hr_section AS s')
 
+        $sections= DB::table('hr_section AS s')
                         ->Select(
                             's.hr_section_id',
                             's.hr_section_name',
@@ -31,9 +31,9 @@ class SectionController extends Controller
                         ->leftJoin('hr_area AS a', 'a.hr_area_id', '=', 's.hr_section_area_id')
                         ->leftJoin('hr_department AS d', 'd.hr_department_id', '=', 's.hr_section_department_id')
                         ->get();
+        $trashed = [];
 
-
-    	return view('hr.setup.section', compact('areaList', 'sections'));
+    	return view('hr.setup.section', compact('areaList', 'sections', 'trashed'));
     }
 
     public function sectionStore(Request $request)
@@ -108,7 +108,19 @@ class SectionController extends Controller
 
         $departmentList= Department::where('hr_department_area_id', $section->hr_section_area_id)->pluck('hr_department_name', 'hr_department_id');
 
-        return view('/hr/setup/section_update', compact('areaList','section','departmentList'));
+        $sections= DB::table('hr_section AS s')
+                        ->Select(
+                            's.hr_section_id',
+                            's.hr_section_name',
+                            's.hr_section_name_bn',
+                            'a.hr_area_name',
+                            'd.hr_department_name'
+                        )
+                        ->leftJoin('hr_area AS a', 'a.hr_area_id', '=', 's.hr_section_area_id')
+                        ->leftJoin('hr_department AS d', 'd.hr_department_id', '=', 's.hr_section_department_id')
+                        ->get();
+        $trashed = [];
+        return view('/hr/setup/section_update', compact('areaList','section','departmentList','sections', 'trashed'));
     }
     public function sectionUpdateStore(Request $request){
         // dd($request->all());

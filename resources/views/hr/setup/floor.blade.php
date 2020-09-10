@@ -121,8 +121,8 @@
                                             <th style="width: 20%;">Action</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        @foreach($floors as $floor)
+                                    {{-- <tbody>
+                                        @foreach($trashed as $floor)
                                         <tr>
                                             <td>{{ $floor->hr_unit_name }}</td>
                                             <td>{{ $floor->hr_floor_name }}</td>
@@ -135,7 +135,7 @@
                                             </td>
                                         </tr>
                                         @endforeach
-                                    </tbody>
+                                    </tbody> --}}
                                 </table>
                             </div>
                         </div>

@@ -1,8 +1,6 @@
 @extends('hr.layout')
 @section('title', 'Shift')
 @section('main-content')
-    @push('css')
-    @endpush
     <div class="breadcrumbs ace-save-state" id="breadcrumbs">
         <ul class="breadcrumb">
             <li>
@@ -175,7 +173,7 @@
                                     </thead>
                                     <tbody>
                                         @php $i=0; @endphp
-                                        @foreach($shifts as $shift)
+                                        @foreach($trashed as $shift)
                                         <?php 
                                             $code= $shift->hr_shift_code;
                                             $letters = preg_replace('/[^a-zA-Z]/', '', $code);

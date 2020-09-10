@@ -33,8 +33,7 @@ class ReportController extends Controller
         
     	
     	$date = $request->date??date('Y-m-d');
-    	$unit  = Unit::where(['hr_unit_status' => 1])->get()->keyBy('hr_unit_status');
-
+    	$units  = unit_by_id();
     	$operator = DB::table('hr_as_basic_info')
     				->select(DB::raw('COUNT(*) as emp'), 'as_unit_id')
     				->where('as_status', 1)
@@ -45,26 +44,41 @@ class ReportController extends Controller
 
     	$present = array();
 
-    	$employeeData = DB::table('hr_as_basic_info');
-        $employeeData_sql = $employeeData->toSql();
-
     	$present = DB::table('hr_attendance_mbm AS a')
-					->whereDate('a.in_time', $date)
+					->where('a.in_date', $date)
 					->select(
 						DB::raw('count(*) AS count'),
 						'b.as_unit_id'
 					)
-					/*$queryData->leftjoin(DB::raw('(' . $employeeData_sql. ') AS b'), function($join) use ($employeeData) {
-		                $join->on('emp.associate_id','hr_absent.associate_id')->addBinding($employeeData->getBindings());
-		            });*/
 					->leftJoin('hr_as_basic_info AS b', 'a.as_id', 'b.as_id')
 					->where('b.as_status',1) 
 					->groupBy('b.as_unit_id')
 					->pluck('count', 'b.as_unit_id');
 
-		//dd($present);
+        $present[2] = DB::table('hr_attendance_ceil')
+                        ->where('in_date', $date)
+                        ->count();
+        $present[3] = DB::table('hr_attendance_aql')
+                        ->where('in_date', $date)
+                        ->count();
 
-    	return view('hr.daily_mmr_report', compact('report'));
+        $present[8] = DB::table('hr_attendance_cew')
+                        ->where('in_date', $date)
+                        ->count();
+        
+
+        foreach ($operator as $key => $op) {
+            $op = $op == 0?1:$op; 
+            $p  = $present[$key]??0;
+            $mmr = round(($p/$op),2); 
+            $chart_data[] = array(
+                'Unit' => $units[$key]['hr_unit_short_name'],
+                'MMR'  => $mmr
+            );
+            $mmr_data[$key] = $mmr;
+        }
+
+    	return view('common.daily_mmr_report', compact('chart_data','units','present','operator','mmr_data'));
     }
 
 
@@ -93,7 +107,7 @@ class ReportController extends Controller
 
 
     	$data['present'] = DB::table($tablename)
-    				->whereDate('a.in_time', $date)
+    				->where('a.in_date', $date)
     				->select([
     					DB::raw('count(*) AS count'),
     					'b.as_subsection_id'

@@ -143,7 +143,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach($departments as $department)
+                                        @foreach($trashed as $department)
                                         <tr>
                                             <td>{{ $department->hr_department_name }}</td>
                                             <td>{{ $department->hr_department_name_bn }}</td>

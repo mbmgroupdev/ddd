@@ -38,6 +38,38 @@ Index Of Script
 ------------------------------------------------
 Index Of Script
 ----------------------------------------------*/
+(function(jQuery) {
+    "use strict";
+    jQuery(document).ready(function() {
+        var rightSideBarMini = false;
+        checkRightSideBar(rightSideBarMini);
+        jQuery(document).on('click', '.right-sidebar-toggle', function() {
+            if (rightSideBarMini) {
+                rightSideBarMini = false;
+            } else {
+                rightSideBarMini = true;
+            }
+            checkRightSideBar(rightSideBarMini);
+        })
+    });
+
+    function checkRightSideBar(rightSideBarMini) {
+        if (rightSideBarMini) {
+            rightSideBarShow();
+        } else {
+            rightSideBarHide()
+        }
+    }
+
+    function rightSideBarShow() {
+        jQuery('.right-sidebar-mini').addClass('right-sidebar')
+    }
+
+    function rightSideBarHide() {
+        jQuery('.right-sidebar-mini').removeClass('right-sidebar')
+    }
+
+})(jQuery);
 
 
 (function(jQuery) {

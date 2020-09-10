@@ -66,7 +66,7 @@
         <div id="load"></div>
         <div class="row">
             <div class="col">
-                <form role="form"  id="searchform" method="get" action="{{ url('hr/reports/attendance_report_2') }}">
+                <form role="form"  id="searchform" method="get" action="#">
                     <div class="panel">
                         
                         <div class="panel-body">
@@ -116,14 +116,55 @@
     const loader = '<div class="panel"><div class="panel-body"><p style="text-align:center;margin:100px;"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>';
 
     $(document).ready(function(){
-
+        loaddata($('#report'));
         $('#excel').click(function(){
             var url='data:application/vnd.ms-excel,' + encodeURIComponent($('#html-2-pdfwrapper').html())
                     location.href=url
                 return false
-            })
+            });
 
-    })
+        
+
+        $(document).on("click","#report", function(){ 
+            var btn = $(this);
+            loaddata(btn);
+        });
+
+
+    });
+
+    function loaddata(btn)
+        {
+            var unit = $('#unit').val(),
+                date = $('#date').val()
+            if(unit && date){
+                $('.buttons').addClass('hide');
+                btn.attr("disabled",true);
+                $("#generate-report").html(loader);
+                $.ajax({
+                    url : "{{ url('hr/reports/get_att_summary') }}",
+                    type: 'get',
+                    data: {unit : unit, date : date},
+                    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                    success: function(data)
+                    {
+                        $("#generate-report").html(data);
+                        btn.attr("disabled",false);
+                        $('.buttons').removeClass('hide');
+                    },
+                    error: function()
+                    {
+                        $.notify('failed...', 'error');
+                        btn.attr("disabled",false);
+                    }
+                });
+            }else{
+                $.notify('Please select unit & date!', 'error');
+                $("#generate-report").html('');
+
+            }
+        }
+
     //  Loader
     document.onreadystatechange = function () {
         var state = document.readyState
@@ -151,39 +192,7 @@
         myWindow.close();
     }
 
-    $('#report').on("click", function(){ 
-        var unit = $('#unit').val(),
-            date = $('#date').val(),
-            btn = $(this);
-
-        if(unit && date){
-            $('.buttons').addClass('hide');
-            btn.attr("disabled",true);
-            $("#generate-report").html(loader);
-            $.ajax({
-                url : "{{ url('hr/reports/get_att_summary') }}",
-                type: 'get',
-                data: {unit : unit, date : date},
-                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                success: function(data)
-                {
-                    $("#generate-report").html(data);
-                    btn.attr("disabled",false);
-                    $('.buttons').removeClass('hide');
-                },
-                error: function()
-                {
-                    $.notify('failed...', 'error');
-                    btn.attr("disabled",false);
-                }
-            });
-        }else{
-            $.notify('Please select unit & date!', 'error');
-            $("#generate-report").html('');
-
-        }
-    });
-
+    
 
     
 

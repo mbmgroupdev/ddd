@@ -63,8 +63,6 @@
       
    </div>
    @push('js')
-      <!-- Apexcharts JavaScript -->
-      <script src="{{ asset('assets/js/jquery.appear.js')}}"></script>
       <script src="{{ asset('assets/js/apexcharts.js') }}"></script>
       <script src="{{ asset('assets/js/lottie.js') }}"></script>
       <!-- am core JavaScript -->
@@ -73,9 +71,6 @@
       <script src="{{ asset('assets/js/charts.js') }}"></script>
       
       <script src="{{ asset('assets/js/animated.js') }}"></script>
-      <!-- am kelly JavaScript -->
-      <script src="{{ asset('assets/js/kelly.js') }}"></script>
-
       <script src="{{ asset('assets/js/highcharts.js')}}"></script>
       <!-- Chart Custom JavaScript -->
       
@@ -86,10 +81,10 @@
         jQuery("#monthly-salary-chart").length && am4core.ready(function() {
             var options = {
                   series: [{
-                  name: 'Salary',
+                  name: 'Salary (Lakh)',
                   data: @php echo json_encode(array_values($salary_chart['salary'])); @endphp
                 }, {
-                  name: 'OT Payment',
+                  name: 'OT Payment (Lakh)',
                   data: @php echo json_encode(array_values($salary_chart['ot'])); @endphp
                 }],
                 colors: ['#089bab','#FC9F5B'],

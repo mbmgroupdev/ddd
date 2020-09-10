@@ -475,8 +475,8 @@ class AttendanceReportController extends Controller
     {
     	$unit  = Unit::where('hr_unit_id',$request->unit)->first();
     	$date = $request->date;
-    	$ot = $this->otEmpAttendance(1,$date,1);
-    	$nonot = $this->otEmpAttendance(1,$date,0);
+    	$ot = $this->otEmpAttendance($request->unit,$date,1);
+    	$nonot = $this->otEmpAttendance($request->unit,$date,0);
     	$area = Area::with('section','section.subsection')
     			->whereHas('section', function($q){
 				    $q->where('hr_section_status', 1);
@@ -518,7 +518,7 @@ class AttendanceReportController extends Controller
 
 
     	$data['present'] = DB::table($tablename)
-    				->whereDate('a.in_time', $date)
+    				->where('a.in_date', $date)
     				->select([
     					DB::raw('count(*) AS count'),
     					'b.as_subsection_id'
