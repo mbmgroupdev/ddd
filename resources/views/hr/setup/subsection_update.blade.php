@@ -150,7 +150,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach($subSections as $subSection)
+                                        @foreach($trashed as $subSection)
                                         <tr>
                                             <td>{{ $subSection->hr_area_name }}</td>
                                             <td>{{ $subSection->hr_department_name }}</td>

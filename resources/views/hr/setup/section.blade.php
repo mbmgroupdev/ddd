@@ -1,8 +1,6 @@
 @extends('hr.layout')
 @section('title', 'Section')
 @section('main-content')
-    @push('css')
-    @endpush
     <div class="breadcrumbs ace-save-state" id="breadcrumbs">
         <ul class="breadcrumb">
             <li>
@@ -134,7 +132,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach($sections as $section)
+                                        @foreach($trashed as $section)
                                         <tr>
                                             <td>{{ $section->hr_area_name }}</td>
                                             <td>{{ $section->hr_department_name }}</td>

@@ -134,7 +134,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach($lines as $line)
+                                        @foreach($trashed as $line)
                                         <tr>
                                             <td>{{ $line->hr_unit_name }}</td>
                                             <td>{{ $line->hr_floor_name }}</td>

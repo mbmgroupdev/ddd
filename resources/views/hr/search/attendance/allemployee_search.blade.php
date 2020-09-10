@@ -52,7 +52,10 @@ $(document).ready(function(){
     var selectable = []; //use 4,5,6,7,8,9,10,11,....and * for all
     var dropdownList = {};
 
-    var dTable =  $('#dataTables').DataTable({
+    var exportColName = ['Sl.','Associate ID','Name','Designation','Shift','Floor','Attendance Status'];
+        var exportCol = [0,1,2,3,5,6];
+
+    var dt =  $('#dataTables').DataTable({
        order: [], //reset auto order
         lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
         processing: true,
@@ -81,23 +84,41 @@ $(document).ready(function(){
         buttons: [
             {
                 extend: 'csv',
+                "action" : allExport,
                 className: 'btn-sm btn-success',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }  
                 }
             },
             {
                 extend: 'excel',
+                "action" : allExport,
                 className: 'btn-sm btn-warning',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }  
                 }
             },
             {
                 extend: 'pdf',
+                "action" : allExport,
                 className: 'btn-sm btn-primary',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }  
                 }
             },
             {
@@ -105,8 +126,14 @@ $(document).ready(function(){
                 extend: 'print',
                 autoWidth: true,
                 className: 'btn-sm btn-default print',
+                "action" : allExport,
                 exportOptions: {
-                    columns: ':visible',
+                    columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      },
                     stripHtml: true
                 },
                 title: '',
@@ -175,7 +202,7 @@ $(document).ready(function(){
         }
     });
     // if(salstatus=='ot') {
-    //     dTable.columns(4).visible(false);
+    //     dt.columns(4).visible(false);
     // }
 });
 </script>

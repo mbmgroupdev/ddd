@@ -1,3 +1,5 @@
+2020-09-10 12:58:01 "17F005001B" Permission Education Setup revoked from 32 
+2020-09-10 11:35:33 "17F005001B" Permission Education Setup assigned to 32 
 2020-09-09 10:46:11 "17F005001B" Permission Job Card assigned to 34 
 2020-09-09 10:43:25 "17F005001B" Permission Basic Setup assigned to 34 
 2020-09-09 10:35:00 "17F005001B" Permission Education Setup assigned to 34 

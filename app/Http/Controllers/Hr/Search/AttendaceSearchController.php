@@ -441,9 +441,7 @@ class AttendaceSearchController extends Controller
             $single_emp = Employee::where('associate_id',$associate_id)->first();
             $attData->where('a.as_id', $single_emp->as_id);
         }
-        /*$attData->where('a.in_time','>=', $rangeFrom." 00:00:00");
-        $attData->where('a.in_time','<=', $rangeTo." 23:59:59");*/
-        $attData->whereRaw('DATE(a.in_date) = ?', [$rangeFrom]);
+        $attData->where('a.in_date',$rangeFrom);
         /*$attData->whereRaw('DATE(a.in_date) <= ?', [$rangeTo]);*/
         $attData->join(DB::raw('(' . $hr_basic_sql. ') AS b'), function($join) use ($hr_basic_list){
             $join->on('a.as_id', '=', 'b.as_id')->addBinding($hr_basic_list->getBindings()); ;
@@ -554,23 +552,17 @@ class AttendaceSearchController extends Controller
             $single_emp = Employee::where('associate_id',$associate_id)->first();
             $attData->where('a.as_id', $single_emp->as_id);
         }
-        $attData->where('a.in_time','>=', $rangeFrom." 00:00:00");
-        $attData->where('a.in_time','<=', $rangeTo." 23:59:59");
+        $attData->where('a.in_date', $rangeFrom);
         $attData->join(DB::raw('(' . $hr_basic_sql. ') AS b'), function($join) use ($hr_basic_list){
             $join->on('a.as_id', '=', 'b.as_id')->addBinding($hr_basic_list->getBindings()); ;
         });
         $attData->leftJoin('hr_designation AS dsg', 'dsg.hr_designation_id', 'b.as_designation_id');
         $attData->leftJoin("hr_unit AS u", "u.hr_unit_id", "=", "b.as_unit_id");
         $attData->leftJoin("hr_shift AS s", "a.hr_shift_code", "=", "s.hr_shift_code");
-        // $attData->leftJoin('hr_shift AS s', function($q) use ($unit) {
-        //     $q->on('s.hr_shift_code','a.hr_shift_code')
-        //       ->where('s.hr_shift_unit_id',$unit);
-        //     //   ->on('s.hr_shift_unit_id', 'b.as_unit_id');
-        //       //->on('s.hr_shift_code', DB::raw("(select s.hr_shift_code from s WHERE s.hr_shift_code = a.hr_shift_code AND s.hr_shift_unit_id = b.as_unit_id )"));
-        // });
+        
+
         $attData->leftJoin("hr_floor AS f", 'f.hr_floor_id', '=', 'b.as_floor_id');
-        // $attData->leftJoin("hr_section AS sec", 'sec.hr_section_id', '=', 'b.as_section_id');
-        // $attData->leftJoin("hr_line AS li", 'li.hr_line_id', '=', 'b.as_line_id');
+       
         $attData->groupBy('a.as_id');
 
         // return dd($attData->get());

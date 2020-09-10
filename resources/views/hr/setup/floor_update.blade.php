@@ -72,75 +72,36 @@
             </div>
             <div id="list" class="panel panel-info">
                 <div class="panel-body">
-                    <ul class="nav nav-tabs" id="myTab-1" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" id="active-tab" data-toggle="tab" href="#active" role="tab" aria-controls="active" aria-selected="false">Active</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="trash-tab" data-toggle="tab" href="#trash" role="tab" aria-controls="trash" aria-selected="false">Trash</a>
-                        </li>
-                    </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane fade active show" id="active" role="tabpanel" aria-labelledby="active-tab">
+                   
                          
-                            <div class="table-responsive">
-                                <table id="global-datatable" class="table table-striped table-bordered" style="display: block;width: 100%;">
-                                    <thead>
-                                        <tr>
-                                            <th style="width: 30%;">Unit Name</th>
-                                            <th style="width: 20%;">Floor Name</th>
-                                            <th style="width: 20%;">ফ্লোর (বাংলা)</th>
-                                            <th style="width: 10%;">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($floors as $floor)
-                                        <tr>
-                                            <td>{{ $floor->hr_unit_name }}</td>
-                                            <td>{{ $floor->hr_floor_name }}</td>
-                                            <td>{{ $floor->hr_floor_name_bn }}</td>
-                                            <td>
-                                                <div class="btn-group">
-                                                    <a type="button" href="{{ url('hr/setup/floor_update/'.$floor->hr_floor_id) }}" class='btn btn-xs btn-primary' data-toggle="tooltip" title="Edit"> <i class="ace-icon fa fa-pencil bigger-120"></i></a>
-                                                    <a href="{{ url('hr/setup/floor/'.$floor->hr_floor_id) }}" type="button" class='btn btn-xs btn-danger' data-toggle="tooltip" title="Delete" onclick="return confirm('Are you sure?')"><i class="ace-icon fa fa-trash bigger-120"></i></a>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" id="trash" role="tabpanel" aria-labelledby="trash-tab">
-                            <div class="table-responsive">
-                                <table id="global-trash" class="table table-striped table-bordered" style="display: block;width: 100%;">
-                                    <thead>
-                                        <tr>
-                                            <th style="width: 20%;">Unit Name</th>
-                                            <th style="width: 20%;">Floor Name</th>
-                                            <th style="width: 20%;">ফ্লোর (বাংলা)</th>
-                                            <th style="width: 20%;">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($floors as $floor)
-                                        <tr>
-                                            <td>{{ $floor->hr_unit_name }}</td>
-                                            <td>{{ $floor->hr_floor_name }}</td>
-                                            <td>{{ $floor->hr_floor_name_bn }}</td>
-                                            <td>
-                                                <div class="btn-group">
-                                                    <a type="button" href="{{ url('hr/setup/floor_update/'.$floor->hr_floor_id) }}" class='btn btn-xs btn-primary' data-toggle="tooltip" title="Edit"> <i class="ace-icon fa fa-pencil bigger-120"></i></a>
-                                                    <a href="{{ url('hr/setup/floor/'.$floor->hr_floor_id) }}" type="button" class='btn btn-xs btn-danger' data-toggle="tooltip" title="Delete" onclick="return confirm('Are you sure?')"><i class="ace-icon fa fa-trash bigger-120"></i></a>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                    <div class="table-responsive">
+                        <table id="global-datatable" class="table table-striped table-bordered" style="display: block;width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th style="width: 30%;">Unit Name</th>
+                                    <th style="width: 20%;">Floor Name</th>
+                                    <th style="width: 20%;">ফ্লোর (বাংলা)</th>
+                                    <th style="width: 10%;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($floors as $floor)
+                                <tr>
+                                    <td>{{ $floor->hr_unit_name }}</td>
+                                    <td>{{ $floor->hr_floor_name }}</td>
+                                    <td>{{ $floor->hr_floor_name_bn }}</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a type="button" href="{{ url('hr/setup/floor_update/'.$floor->hr_floor_id) }}" class='btn btn-xs btn-primary' data-toggle="tooltip" title="Edit"> <i class="ace-icon fa fa-pencil bigger-120"></i></a>
+                                            <a href="{{ url('hr/setup/floor/'.$floor->hr_floor_id) }}" type="button" class='btn btn-xs btn-danger' data-toggle="tooltip" title="Delete" onclick="return confirm('Are you sure?')"><i class="ace-icon fa fa-trash bigger-120"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
+                        
                 </div>
             </div>
 

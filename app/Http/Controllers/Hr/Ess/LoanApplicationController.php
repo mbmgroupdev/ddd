@@ -14,12 +14,19 @@ class LoanApplicationController extends Controller
 	# show loan list
 	public function loanList()
 	{
-        //ACL::check(["permission" => "hr_payroll_loan_list"]);
-        #-----------------------------------------------------------#
         $unit = Unit::whereIn('hr_unit_id', auth()->user()->unit_permissions())
             ->pluck('hr_unit_name','hr_unit_id');
 
     	return view('hr/ess/loan_application_list',compact('unit'));
+    }
+
+    public function loan()
+    {
+        $types= DB::table('hr_loan_type AS l')
+                    ->select('l.*')
+                    ->get();
+
+        return view('hr/payroll/loan_application',compact('types'));
     }
 
     # get LoadData
@@ -251,12 +258,15 @@ class LoanApplicationController extends Controller
 	                'b.as_name',
 	                'b.as_doj',
 	                'dp.hr_department_name',
-	                'dg.hr_designation_name'
+	                'dg.hr_designation_name',
+                    'b.as_pic',
+                    'b.as_gender'
 	            )
 	            ->leftJoin('hr_department AS dp', 'dp.hr_department_id', '=', 'b.as_department_id')
 	            ->leftJoin('hr_designation AS dg', 'dg.hr_designation_id', '=', 'b.as_designation_id')
 	            ->where("b.associate_id", $request->associate_id)
 	            ->first();
+            $data['associate']->as_pic = emp_profile_picture($data['associate']); 
 
 	        $data['loan'] = DB::table('hr_loan_application')
 	        	->select(

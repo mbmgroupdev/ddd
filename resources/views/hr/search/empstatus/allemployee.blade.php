@@ -1,25 +1,3 @@
-<style>
-    .dataTables_wrapper .dataTables_processing {
-        position: absolute;
-        top: 30%;
-        left: 50%;
-        width: 30%;
-        height: 80px;
-        margin-left: -20%;
-        margin-top: -25px;
-        padding-top: 20px;
-        text-align: center;
-        font-size: 1.7em;
-        background-color:White;
-    }
-    .dataTables_wrapper .dt-buttons {
-        float:right;
-        text-align:center;
-    }
-    .dataTables_length{
-        float:left;
-    }
-</style>
 <div class="panel panel-info col-sm-12">
     <br>
     <div class="breadcrumbs ace-save-state" id="breadcrumbs">
@@ -73,7 +51,8 @@
         var searchable = [];
         var selectable = []; //use 4,5,6,7,8,9,10,11,....and * for all
         var dropdownList = {};
-
+        var exportColName = ['Sl.','Associate ID','Name','Date of Join'];
+        var exportCol = [0,1,2,3];
         var dt =  $('#dataTables').DataTable({
            order: [], //reset auto order
             lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
@@ -105,7 +84,12 @@
                   className: 'btn-sm btn-success',
                   "action": allExport,
                   exportOptions: {
-                    columns: ':visible'
+                    columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
                   }
               },
               {
@@ -113,7 +97,12 @@
                   className: 'btn-sm btn-warning',
                   "action": allExport,
                   exportOptions: {
-                    columns: ':visible'
+                    columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
                   }
               },
               {
@@ -121,7 +110,12 @@
                   className: 'btn-sm btn-primary',
                   "action": allExport,
                   exportOptions: {
-                    columns: ':visible'
+                    columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
                   }
               },
               {
@@ -163,7 +157,12 @@
               },
               messageBottom: null,
                   exportOptions: {
-                    columns: ':visible',
+                    columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      },
                     stripHtml: false
                   },
                 }

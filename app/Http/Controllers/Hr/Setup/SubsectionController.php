@@ -34,7 +34,8 @@ class SubsectionController extends Controller
                         ->leftJoin('hr_department AS d', 'd.hr_department_id', '=', 'ss.hr_subsec_department_id')
                         ->leftJoin('hr_section AS s', 's.hr_section_id', '=', 'ss.hr_subsec_section_id')
                         ->get();
-    	return view('hr.setup.subsection', compact('areaList', 'subSections'));
+        $trashed = [];
+    	return view('hr.setup.subsection', compact('areaList', 'subSections', 'trashed'));
     }
 
     public function subsectionStore(Request $request)
@@ -131,9 +132,9 @@ class SubsectionController extends Controller
         $departmentList = Department::where('hr_department_area_id', $subSection->hr_subsec_area_id)->pluck('hr_department_name','hr_department_id');
         $sectionList= Section::where('hr_section_id', $subSection->hr_subsec_section_id)->pluck('hr_section_name','hr_section_id');
 
-        // dd($departmentList);
+        $trashed = [];
 
-        return view('/hr/setup/subsection_update', compact('areaList', 'subSection', 'departmentList', 'sectionList','subSections'));
+        return view('/hr/setup/subsection_update', compact('areaList', 'subSection', 'departmentList', 'sectionList','subSections','trashed'));
     }
     public function subsectionUpdateStore(Request $request){
         // dd($request->all());

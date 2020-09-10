@@ -514,13 +514,11 @@
 
         $('#associate').on('change', function(){
             var emp_id = $(this).val();
+
             $('#voucher').attr('hidden', 'hidden');
             clearReadonlyFields();
-             // var yr_of_service = $('#year_of_service').val();
-                //ajax call to check the existance of emp_type and service year.
-                // console.log(emp_type_id,yr_of_service );
-            
             if(emp_id != ""){
+                $('.app-loader').show();
                 var url = '{{url('')}}';
                 // console.log(url);
                 $.ajax({
@@ -628,10 +626,12 @@
                                 scrollTop: $("#voucher").offset().top},
                                 'slow');
                         } 
+                        $('.app-loader').hide();
                     },
                     error: function(data)
                     {
-                        alert('failed...');
+                        $.notify('failed...','error');
+                        $('.app-loader').hide();
                     }
                 });
             }
@@ -652,6 +652,7 @@
                 $('#total_earn_leave').text('0');
                 $('#enjoyed_earn_leave').text('0');
                 $('#remained_earn_leave').text('0');
+                $('.app-loader').hide();
             }
 
         });

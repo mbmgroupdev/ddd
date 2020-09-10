@@ -1,35 +1,7 @@
 @extends('hr.layout')
 @section('title', 'Cost Mapping List')
 @section('main-content')
-@push('css')
-<style type="text/css">
-    {{-- removing the links in print and adding each page header --}}
-    a[href]:after { content: none !important; }
-    thead {display: table-header-group;}
 
-    /*making place holder custom*/
-    input::-webkit-input-placeholder {
-        color: black;
-        font-weight: bold;
-        font-size: 12px;
-    }
-    input:-moz-placeholder {
-        color: black;
-        font-weight: bold;
-        font-size: 12px;
-    }
-    input:-ms-input-placeholder {
-        color: black;
-        font-weight: bold;
-        font-size: 12px;
-    }
-    th{
-        font-size: 12px;
-        font-weight: bold;
-    }
-</style>
-@endpush
-@section('content')
 <div class="main-content">
     <div class="main-content-inner">
         <div class="breadcrumbs ace-save-state" id="breadcrumbs">
@@ -39,54 +11,48 @@
                     <a href="#">Human Resource</a>
                 </li>
                 <li>
-                    <a href="#">Recruitment</a>
-                </li>
-                <li>
-                    <a href="#">Operation</a>
+                    <a href="#">Employee</a>
                 </li>
                 <li class="active"> Cost Distribution(Mapping) List</li>
             </ul><!-- /.breadcrumb -->
         </div>
+        @include('inc/message')
+        <div class="panel panel-success">
+          <div class="panel-heading">
+            <h6>Cost Distribution (Mapping) List <a href="{{ url('hr/operation/cost-mapping')}}" class="pull-right btn btn-xx btn-info">Cost Distribution</a></h6></div> 
+            <div class="panel-body">
 
-        <div class="page-content"> 
-            <div class="panel panel-success">
-              <div class="panel-heading"><h6>Cost Distribution (Mapping) List <a href="{{ url('hr/operation/cost-mapping')}}" class="pull-right btn btn-xx btn-info">Cost Distribution (Mapping)</a></h6></div> 
-                <div class="panel-body">
-
-                    <div class="row">
-                         <!-- Display Erro/Success Message -->
-                            @include('inc/message')
-                        <div class="col-xs-12 worker-list">
-                            <!-- PAGE CONTENT BEGINS -->
-                            <table id="dataTables" class="table table-striped table-bordered" style="display: block;overflow-x: auto;white-space: nowrap; width: 100%;">
-                                <thead>
-                                    <tr>
-                                        <th width="20%">Sl</th>
-                                        <th width="20%">Associate ID</th>
-                                        <th width="20%">Associate Name</th>
-                                        <th width="20%">Units</th>
-                                        <th width="20%">Areas</th>
-                                        <th width="20%">Action</th>
-                                    </tr>
-                                </thead>
-                                <tfoot>
-                                    <tr>
-                                        <th>Sl</th>
-                                        <th>Associate ID</th>
-                                        <th>Associate Name</th>
-                                        <th>Units</th>
-                                        <th>Areas</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                            <!-- PAGE CONTENT ENDS -->
-                        </div>
-                        <!-- /.col -->
+                <div class="row">
+                    <div class="col-sm-12 worker-list">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <table id="dataTables" class="table table-striped table-bordered" style="display: block;overflow-x: auto;white-space: nowrap; width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th width="20%">Sl</th>
+                                    <th width="20%">Associate ID</th>
+                                    <th width="20%">Associate Name</th>
+                                    <th width="20%">Units</th>
+                                    <th width="20%">Areas</th>
+                                    <th width="20%">Action</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <th>Sl</th>
+                                    <th>Associate ID</th>
+                                    <th>Associate Name</th>
+                                    <th>Units</th>
+                                    <th>Areas</th>
+                                    <th>Action</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <!-- PAGE CONTENT ENDS -->
                     </div>
+                    <!-- /.col -->
                 </div>
             </div>
-        </div><!-- /.page-content -->
+        </div>
     </div>
 </div>
 @push('js')
@@ -100,11 +66,20 @@ $(document).ready(function(){
         '4' :[@foreach($areaList as $e) <?php echo "'$e'," ?> @endforeach],
     };
 
-    $('#dataTables').DataTable({
+    var exportColName = ['Sl.','Associate ID','Name','Unit','Area'];
+        var exportCol = [0,1,2,3,4];
+
+    var dt = $('#dataTables').DataTable({
         order: [], //reset auto order
         processing: true,
         responsive: true,
         serverSide: true,
+        language: {
+              processing: '<i class="ace-icon fa fa-spinner fa-spin orange bigger-500" style="font-size:60px;margin-top:50px;"></i>'
+                },
+            scroller: {
+                loadingIndicator: false
+            },
         pagingType: "full_numbers", 
         ajax: {
             url: '{!! url("hr/operation/cost_mapping_data") !!}',
@@ -121,10 +96,15 @@ $(document).ready(function(){
                 title: 'Cost Distribution(Mapping) List',
                 header: false,
                 footer: true,
+                "action" : allExport,
                 exportOptions: {
                     // columns: ':visible'
-                    columns: [0,1,2,3,4]
-                }
+                    columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }                }
             }, 
             {
                 extend: 'excel', 
@@ -132,10 +112,15 @@ $(document).ready(function(){
                 title: 'Cost Distribution(Mapping) List',
                 header: false,
                 footer: true,
+                "action" : allExport,
                 exportOptions: {
                     // columns: ':visible'
-                    columns: [0,1,2,3,4]
-                }
+                    columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }                }
             }, 
             {
                 extend: 'pdf', 
@@ -145,8 +130,12 @@ $(document).ready(function(){
                 footer: true,
                 exportOptions: {
                     // columns: ':visible'
-                    columns: [0,1,2,3,4]
-                }
+                    columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }                }
             }, 
             {
                 extend: 'print', 
@@ -154,9 +143,15 @@ $(document).ready(function(){
                 title: 'Cost Distribution(Mapping) List',
                 header: true,
                 footer: false,
+                "action" : allExport,
                 exportOptions: {
                     // columns: ':visible'
-                    columns: [0,1,2,3,4],
+                    columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      },
                     stripHtml: false
                 } 
             } 

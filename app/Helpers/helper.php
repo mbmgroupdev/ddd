@@ -548,7 +548,7 @@ if(!function_exists('unit_wise_today_att')){
                                 DB::raw("DISTINCT(a.as_id)"),
                                 "a.hr_shift_code"
                               )
-                        ->whereDate('a.in_time', $today)
+                        ->where('a.in_date', $today)
                         ->leftJoin('hr_as_basic_info AS b', 'b.as_id', 'a.as_id')
                         ->where('b.as_unit_id', $unit)
                         ->get()
@@ -556,7 +556,7 @@ if(!function_exists('unit_wise_today_att')){
 
         $late  = DB::table($table.' AS a')
                         ->select('late_status')
-                        ->whereDate('a.in_time', $today)
+                        ->where('a.in_date', $today)
                         ->where('a.late_status', 1)
                         ->leftJoin('hr_as_basic_info AS b', 'b.as_id', 'a.as_id')
                         ->where('b.as_unit_id', $unit)
@@ -583,7 +583,7 @@ if(!function_exists('unit_wise_today_att')){
         $employee = Employee::where("as_status", 1)->where('as_unit_id', $unit)->count();
 
         $absent = DB::table('hr_absent')
-                   ->whereDate('date',$today)
+                   ->where('date',$today)
                    ->where('hr_unit', $unit)
                    ->get()
                    ->count();
@@ -630,7 +630,7 @@ if(!function_exists('unit_by_id')){
     function unit_by_id()
     {
        return  Cache::remember('unit', 10000000, function () {
-            return Unit::get()->keyBy('hr_unit_id')->toArray();
+            return Unit::orderBy('hr_unit_name','DESC')->get()->keyBy('hr_unit_id')->toArray();
         });      
 
     }
