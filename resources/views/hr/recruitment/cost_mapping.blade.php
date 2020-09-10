@@ -1,5 +1,5 @@
 @extends('hr.layout')
-@section('title', '')
+@section('title', 'Cost Mapping')
 @section('main-content')
 @push('css')
 <style type="text/css">
@@ -20,182 +20,159 @@
                    <a href="/"><i class="ace-icon fa fa-home home-icon"></i>Human Resource</a> 
                 </li>
                 <li>
-                    <a href="#">Recruitment</a>
-                </li>
-                <li>
-                    <a href="#">Operation</a>
+                    <a href="#">Employee</a>
                 </li>
                 <li class="active">Cost Mapping</li>
-            </ul><!-- /.breadcrumb --> 
+            </ul>
         </div>
-        <div class="page-content"> 
-            <div class="page-header">
-                <h1>Operation<small> <i class="ace-icon fa fa-angle-double-right"></i> Cost Mapping</small></h1>
+         @include('inc/message')
+        <div class="panel"> 
+            <div class="panel-heading">
+                <ul class="nav nav-pills" id="pills-tab" role="tablist">
+                  <li class="nav-item">
+                     <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#unit_mapping_tab" role="tab" aria-controls="unit_mapping_tab" aria-selected="true">Unit Mapping</a>
+                  </li>
+                  <li class="nav-item">
+                     <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#area_mapping_tab" role="tab" aria-controls="area_mapping_tab" aria-selected="false">Area Mapping</a>
+                  </li>
+               </ul>
             </div>
-            <div class="row">
-                <div class="tabbable">
-                    <ul class="nav nav-tabs">
-                        <li class="active">
-                            <a data-toggle="tab" href="#unit_mapping_tab" aria-expanded="true">Unit Mapping</a>
-                        </li>
-                        <li class="">
-                            <a data-toggle="tab" href="#area_mapping_tab">Area Mapping</a>
-                        </li>
-                    </ul>
-                    <div class="tab-content">
-                        <div id="unit_mapping_tab" class="tab-pane fade in active">
-                            <!-- Display Erro/Success Message -->
-                            @include('inc/message')
-                            {{ Form::open(['url'=>'hr/operation/unit_map', 'method'=>"post", 'class'=>'form-horizontal']) }}
-                                 
-                                <div class="col-sm-5 col-sm-offset-1">
-                                    <div class="form-group">
-                                        <label class="col-sm-4 control-label no-padding-right" for="associate_id"> Associate's ID<span style="color: red">&#42;</span> </label>
-                                        <div class="col-sm-8">
-                                            {{ Form::select('associate_id', [], null, ['placeholder'=>'Select Associate\'s ID', 'style'=> "width:100%", 'id'=>'associate_id', 'class'=> 'associates no-select col-xs-12', 'data-validation'=>'required', 'data-validation-error-msg' => 'The Associate\'s ID field is required']) }}  
-                                        </div>
+            <div class="panel-body">
+                
+               <div class="tab-content mb-5" id="pills-tabContent-2">
+                    <div class="tab-pane fade active show" id="unit_mapping_tab" role="tabpanel" aria-labelledby="pills-home-tab">
+                        {{ Form::open(['url'=>'hr/operation/unit_map', 'method'=>"post", 'class'=>'form-horizontal']) }}
+                            <div class="row justify-content-center">
+                                <div class="col-sm-3">
+                                    <div class="form-group has-required has-float-label select-search-group">
+                                        {{ Form::select('associate_id', [], null, ['placeholder'=>'Select Associate\'s ID', 'id'=>'associate_id', 'class'=> 'associates form-control', 'required'=>'required']) }}
+                                        <label  for="associate_id"> Associate's ID</label>
                                     </div> 
                                 </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label class="col-sm-3 control-label no-padding-right text-right" for="gross_salary"> Gross Salary</label>
-                                        <div class="col-sm-9">
-                                            <input type="text" name="gross_salary" id="gross_salary" placeholder="Associate's Gross Salary" class="col-xs-6" readonly/>
-                                        </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group has-float-label">
+                                        <input type="text" name="gross_salary" id="gross_salary" placeholder="Associate's Gross Salary" class="form-control" readonly/>
+                                        <label  for="gross_salary"> Gross Salary</label>
                                     </div>
                                 </div>
+                            </div>     
+                                
 
-                                <div style="margin-top: 25px; margin-left: 10%; width: 80%">
-                                    <table class="table table-bordered table-hover">
-                                        <thead>
+                            <div class="mt-3 mb-3">
+                                <table class="table table-bordered ">
+                                    <thead>
+                                        <tr>
+                                            <th colspan="3" style="text-align: center;">Unit Cost Distribution(Mapping)</th>
+                                        </tr>
+                                        <tr>
+                                            <th width="33%">Unit</th>
+                                            <th width="33%">Floor</th>
+                                            <th width="33%">Line</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                       
+                                        @foreach($unitList AS $unit)
                                             <tr>
-                                                <th colspan="3" style="text-align: center;">Unit Cost Distribution(Mapping)</th>
-                                            </tr>
-                                            <tr>
-                                                <th width="33%">Unit</th>
-                                                <th width="33%">Floor</th>
-                                                <th width="33%">Line</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                           
-                                            @foreach($unitList AS $unit)
-                                                <tr>
-                                                    <td style="margin: 0px; padding: 0px; border-color: #ddd;">
-                                                        <div class="checkbox" style="margin: 0px; padding: 2px;">
-                                                            <label class="col-xs-8">
-                                                                <input name="selected_unit[]" type="checkbox" value="{{ $unit->hr_unit_id }}" class="ace unitCheck" style="margin: 0px; padding: 0px;"/>
-                                                                <span class="lbl" style="margin: 0px; padding: 0px;"> {{ $unit->hr_unit_name }}</span>
-                                                            </label>
-                                                            <div class="input-group input-group-sm col-xs-3">
-                                                                <input type="text" name="unit_percent[<?php echo $unit->hr_unit_id; ?>]" readonly class="form-control unit_percent" placeholder="Unit Amount" placeholder="Amount" data-validation="required" value="0" aria-describedby="sizing-addon3">
-                                                                <span class="input-group-addon" id="sizing-addon3">%</span>
-                                                            </div>
-
+                                                <td style="margin: 0px; padding: 0px; border-color: #ddd;">
+                                                    <div class="checkbox" style="margin: 0px; padding: 2px;">
+                                                        <label class="col-xs-8">
+                                                            <input name="selected_unit[]" type="checkbox" value="{{ $unit->hr_unit_id }}" class="ace unitCheck" style="margin: 0px; padding: 0px;"/>
+                                                            <span class="lbl" style="margin: 0px; padding: 0px;"> {{ $unit->hr_unit_name }}</span>
+                                                        </label>
+                                                        <div class="input-group input-group-sm col-xs-3">
+                                                            <input type="text" name="unit_percent[<?php echo $unit->hr_unit_id; ?>]" readonly class="form-control unit_percent" placeholder="Unit Amount" placeholder="Amount" data-validation="required" value="0" aria-describedby="sizing-addon3">
+                                                            <span class="input-group-addon" id="sizing-addon3">%</span>
                                                         </div>
-                                                    </td>
-                                                    <td  style="margin: 0px; padding: 0px; border-color: #ddd;" colspan="2">
-                                                        <table class="table table-bordered table-hover"  style="margin: 0px; padding: 0px;">
-                                                            <tbody>
-                                                                
-                                                                @foreach($floorList AS $floor)
-                                                                @if($unit->hr_unit_id== $floor->hr_floor_unit_id)
-                                                                <tr>
-                                                                    <td style="margin: 0px; padding: 0px; border-color: #ddd;" width="50%">
-                                                                        <div class="checkbox" style="margin: 0px; padding: 2px;">
-                                                                            <label class="col-xs-6">
-                                                                                <input name="selected_floor[]" type="checkbox" value="{{ $floor->hr_floor_id }}" class="ace floorCheck" style="margin: 0px; padding: 0px;"/>
-                                                                                <span class="lbl" style="margin: 0px; padding: 0px;"> {{ $floor->hr_floor_name }}</span>
-                                                                            </label>
-                                                                            <div class="input-group input-group-sm col-xs-3">
-                                                                                <input type="text" name="floor_percent[<?php echo $unit->hr_unit_id; ?>][<?php echo $floor->hr_floor_id; ?>]" readonly class="form-control floor_percent" placeholder="Floor" value="0" data-validation="required" aria-describedby="sizing-addon3">
-                                                                                <span class="input-group-addon" id="sizing-addon3">%</span>
-                                                                            </div>
-                                                                        </div>
-                                                                    </td>
-                                                                    <td  style="margin: 0px; padding: 0px; border-color: #ddd;" width="50%">
-                                                                        <table class="table table-bordered table-hover"  style="margin: 0px; padding: 0px;">
-                                                                            <tbody>
-                                                                            
-                                                                            @foreach($lineList AS $line)
-                                                                            @if($line->hr_line_floor_id== $floor->hr_floor_id)
-                                                                                <tr>
-                                                                                    <td style="margin: 0px; padding: 0px; border: 0px">
-                                                                                        <div class="checkbox" style="margin: 0px; padding: 2px;">
-                                                                                            <label class="col-xs-6">
-                                                                                                <input name="selected_line[]" type="checkbox" value="{{ $line->hr_line_id }}" class="ace lineCheck" style="margin: 0px; padding: 0px;"/>
-                                                                                                <span class="lbl" style="margin: 0px; padding: 0px;"> {{ $line->hr_line_name }}</span>
-                                                                                            </label>
-                                                                                            <div class="input-group input-group-sm col-xs-3">
-                                                                                                <input type="text" name="line_percent[<?php echo $unit->hr_unit_id ?>][<?php echo $floor->hr_floor_id ?>][<?php echo $line->hr_line_id ?>]" readonly class="form-control line_percent" placeholder="Line" data-validation="required" value="0" aria-describedby="sizing-addon3">
-                                                                                                <span class="input-group-addon" id="sizing-addon3">%</span>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </td>
-                                                                                </tr>
-                                                                                
-                                                                            @endif
-                                                                            @endforeach
-                                                                            </tbody>
-                                                                        </table>
-                                                                    </td>
-                                                                </tr>
-                                                               
-                                                                @endif
-                                                                @endforeach
-                                                            </tbody>
-                                                        </table>
-                                                    </td>
-                                                </tr>
 
-                                                
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="space-4"></div>
-                                <div class="space-4"></div>
-                                <div class="space-4"></div>
-                                <div class="space-4"></div>
-                                <div class="space-4"></div>
-                                <div class="clearfix form-actions">
-                                    <div class="col-sm-offset-4 col-md-4 text-center">
-                                        <button class="btn btn-sm btn-success" type="submit" id="submitUnitButton">
-                                            <i class="ace-icon fa fa-check bigger-110"></i> Submit
-                                        </button>
-                                        &nbsp; &nbsp; &nbsp;
-                                        <button class="btn btn-sm" type="reset">
-                                            <i class="ace-icon fa fa-undo bigger-110"></i> Reset
-                                        </button>
-                                    </div>
-                                </div>
-                            {{ Form::close() }}
-                        </div>
-                        <!-- Area Mapping -->
-                        <div id="area_mapping_tab" class="tab-pane fade">
-                            <!-- Display Erro/Success Message -->
-                            @include('inc/message')
-                            {{ Form::open(['url'=>'hr/operation/area_map', 'method'=>'post', 'class'=>'form-horizontal']) }}
-                                 
-                                <div class="col-sm-5 col-sm-offset-1">
-                                    <div class="form-group">
-                                        <label class="col-sm-4 control-label no-padding-right" for="associate_id_area"> Associate's ID<span style="color: red">&#42;</span> </label>
-                                        <div class="col-sm-8">
-                                            {{ Form::select('associate_id_area', [], null, ['placeholder'=>'Select Associate\'s ID', 'style'=> "width:100%", 'id'=>'associate_id_area', 'class'=> 'associates no-select col-xs-12', 'data-validation'=>'required', 'data-validation-error-msg' => 'The Associate\'s ID field is required']) }}  
-                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td  style="margin: 0px; padding: 0px; border-color: #ddd;" colspan="2">
+                                                    <table class="table table-bordered "  style="margin: 0px; padding: 0px;">
+                                                        <tbody>
+                                                            
+                                                            @foreach($floorList AS $floor)
+                                                            @if($unit->hr_unit_id== $floor->hr_floor_unit_id)
+                                                            <tr>
+                                                                <td style="margin: 0px; padding: 0px; border-color: #ddd;" width="50%">
+                                                                    <div class="checkbox" style="margin: 0px; padding: 2px;">
+                                                                        <label class="col-xs-6">
+                                                                            <input name="selected_floor[]" type="checkbox" value="{{ $floor->hr_floor_id }}" class="ace floorCheck" style="margin: 0px; padding: 0px;"/>
+                                                                            <span class="lbl" style="margin: 0px; padding: 0px;"> {{ $floor->hr_floor_name }}</span>
+                                                                        </label>
+                                                                        <div class="input-group input-group-sm col-xs-3">
+                                                                            <input type="text" name="floor_percent[<?php echo $unit->hr_unit_id; ?>][<?php echo $floor->hr_floor_id; ?>]" readonly class="form-control floor_percent" placeholder="Floor" value="0" data-validation="required" aria-describedby="sizing-addon3">
+                                                                            <span class="input-group-addon" id="sizing-addon3">%</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <td  style="margin: 0px; padding: 0px; border-color: #ddd;" width="50%">
+                                                                    <table class="table table-bordered "  style="margin: 0px; padding: 0px;">
+                                                                        <tbody>
+                                                                        
+                                                                        @foreach($lineList AS $line)
+                                                                        @if($line->hr_line_floor_id== $floor->hr_floor_id)
+                                                                            <tr>
+                                                                                <td style="margin: 0px; padding: 0px; border: 0px">
+                                                                                    <div class="checkbox" style="margin: 0px; padding: 2px;">
+                                                                                        <label class="col-xs-6">
+                                                                                            <input name="selected_line[]" type="checkbox" value="{{ $line->hr_line_id }}" class="ace lineCheck" style="margin: 0px; padding: 0px;"/>
+                                                                                            <span class="lbl" style="margin: 0px; padding: 0px;"> {{ $line->hr_line_name }}</span>
+                                                                                        </label>
+                                                                                        <div class="input-group input-group-sm col-xs-3">
+                                                                                            <input type="text" name="line_percent[<?php echo $unit->hr_unit_id ?>][<?php echo $floor->hr_floor_id ?>][<?php echo $line->hr_line_id ?>]" readonly class="form-control line_percent" placeholder="Line" data-validation="required" value="0" aria-describedby="sizing-addon3">
+                                                                                            <span class="input-group-addon" id="sizing-addon3">%</span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </td>
+                                                                            </tr>
+                                                                            
+                                                                        @endif
+                                                                        @endforeach
+                                                                        </tbody>
+                                                                    </table>
+                                                                </td>
+                                                            </tr>
+                                                           
+                                                            @endif
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                            </tr>
+
+                                            
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn pull-right btn-primary" type="submit" id="submitUnitButton">
+                                    <i class=" fa fa-check "></i> Submit
+                                </button>
+                            </div>
+                        {{ Form::close() }}
+                    </div>
+                    <div class="tab-pane fade" id="area_mapping_tab" role="tabpanel" aria-labelledby="pills-profile-tab">
+                        {{ Form::open(['url'=>'hr/operation/area_map', 'method'=>'post', 'class'=>'form-horizontal']) }}
+                            <div class="row justify-content-center">
+                                <div class="col-sm-3">
+                                    <div class="form-group has-required has-float-label select-search-group">
+                                        {{ Form::select('associate_id_area', [], null, ['placeholder'=>'Select Associate\'s ID', 'id'=>'associate_id_area', 'class'=> 'associates form-control', 'required'=>'required']) }}
+                                        <label  for="associate_id_area"> Associate's ID</label>
                                     </div> 
                                 </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label class="col-sm-3 control-label no-padding-right text-right" for="gross_salary_area"> Gross Salary</label>
-                                        <div class="col-sm-9">
-                                            <input type="text" name="gross_salary_area" id="gross_salary_area" placeholder="Associate's Gross Salary" class="col-xs-6" readonly/>
-                                        </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group has-float-label">
+                                        <input type="text" name="gross_salary_area" id="gross_salary_area" placeholder="Associate's Gross Salary" class="form-control" readonly/>
+                                        <label  for="gross_salary_area"> Gross Salary</label>
                                     </div>
                                 </div>
+                            </div> 
+                                 
 
-                                <div style="margin-top: 25px;">
-                                    <table class="table table-bordered table-hover">
+                                <div class="mt-3 mb-3">
+                                    <table class="table table-bordered ">
                                         <thead>
                                             <tr>
                                                 <th colspan="4" style="text-align: center;">Area Cost Distribution(Mapping)</th>
@@ -225,7 +202,7 @@
                                                         </div>
                                                     </td>
                                                     <td style="margin: 0px; padding: 0px; border-color: #ddd;" colspan="3">
-                                                        <table class="table table-bordered table-hover"  style="margin: 0px; padding: 0px;">
+                                                        <table class="table table-bordered "  style="margin: 0px; padding: 0px;">
                                                             <tbody>
                                                                 
                                                                 @foreach($deptList AS $dept)
@@ -244,7 +221,7 @@
                                                                         </div>
                                                                     </td>
                                                                     <td  style="margin: 0px; padding: 0px; border-color: #ddd;" colspan="2">
-                                                                        <table class="table table-bordered table-hover"  style="margin: 0px; padding: 0px;">
+                                                                        <table class="table table-bordered "  style="margin: 0px; padding: 0px;">
                                                                             <tbody>
                                                                             @foreach($sectionList AS $section)
                                                                             @if($section->hr_section_department_id== $dept->hr_department_id)
@@ -262,7 +239,7 @@
                                                                                         </div>
                                                                                     </td>
                                                                                     <td  style="margin: 0px; padding: 0px; border: 0px;" width="50%">
-                                                                                        <table class="table table-bordered table-hover"  style="margin: 0px; padding: 0px;">
+                                                                                        <table class="table table-bordered "  style="margin: 0px; padding: 0px;">
                                                                                             <tbody>
                                                                                             @foreach($subSecList AS $subSec)
                                                                                             @if($subSec->hr_subsec_section_id== $section->hr_section_id)
@@ -302,58 +279,23 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                <div class="space-4"></div>
-                                <div class="space-4"></div>
-                                <div class="space-4"></div>
-                                <div class="space-4"></div>
-                                <div class="space-4"></div>
-                                <div class="clearfix form-actions">
-                                    <div class="col-sm-offset-4 col-sm-4 text-center">
-                                        <button class="btn btn-sm btn-success" type="submit" id="submitAreaButton">
-                                            <i class="ace-icon fa fa-check bigger-110"></i> Submit
-                                        </button>
-
-                                        &nbsp; &nbsp; &nbsp;
-                                        <button class="btn btn-sm" type="reset">
-                                            <i class="ace-icon fa fa-undo bigger-110"></i> Reset
-                                        </button>
-                                    </div>
+                                <div class="form-group">
+                                    <button class="btn pull-right btn-primary" type="submit" id="submitAreaButton">
+                                        <i class=" fa fa-check "></i> Submit
+                                    </button>
                                 </div>
                             {{ Form::close() }}
-                        </div>
                     </div>
                 </div>
             </div>
         </div><!-- /.page-content -->
     </div>
 </div>
+@push('js')
 <script type="text/javascript">
 $(document).ready(function()
 {  
-    $('select.associates').select2({
-        placeholder: 'Select Associate\'s ID',
-        ajax: {
-            url: '{{ url("hr/associate-search") }}',
-            dataType: 'json',
-            delay: 250,
-            data: function (params) {
-                return { 
-                    keyword: params.term
-                }; 
-            },
-            processResults: function (data) { 
-                return {
-                    results:  $.map(data, function (item) {
-                        return {
-                            text: item.associate_name,
-                            id: item.associate_id
-                        }
-                    }) 
-                };
-          },
-          cache: true
-        }
-    });
+    
     $("#associate_id").on("change", function(){
         $.ajax({
             url: '{{ url("hr/operation/gross_salary") }}',
@@ -587,4 +529,5 @@ $(document).ready(function()
     });
 }); 
 </script> 
+@endpush
 @endsection

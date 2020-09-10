@@ -52,6 +52,7 @@ div.dataTables_wrapper, div.dataTables_processing {
     background: #f3f3f3;
     cursor: pointer;
 }
+.active .iq-arrow-right{color: rgba(8, 155, 171, 1);}
 .search_ot_shift:hover{
     color:#27960b;
 }
@@ -281,13 +282,16 @@ table th input{
 }
 .panel-heading{
     padding: 10px 15px;
-    border-bottom: 1px solid transparent;
+    border-bottom: 1px solid rgb(195 225 228);
     border-top-right-radius: 3px;
     border-top-left-radius: 3px;
     position:relative; 
     
 }
-.panel-heading::before {
+.panel-heading h6 .pull-right {
+    margin-top: -4px;
+}
+/*.panel-heading::before {
     content: '';
     display: block;
     position: absolute;
@@ -295,7 +299,7 @@ table th input{
     left: 0;
     border-bottom: 1px solid rgb(195 225 228);
     top: 100%;
-}
+}*/
 .panel-heading h6{
     color: rgba(8, 155, 171, 1);
     font-size: 16px;

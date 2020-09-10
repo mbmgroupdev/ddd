@@ -71,6 +71,11 @@
                <a href="{{ url('hr/employee/benefits') }}"><i class="las la-gifts"></i> Benefits</a>
             </li>
             @endif
+            @if($user->canany(['Cost Distribution']) || $user->hasRole('Super Admin'))
+            <li class="@if($segment3 == 'cost-mapping') active @endif">
+               <a href="{{ url('hr/employee/cost-mapping') }}"><i class="las la-gifts"></i> Cost Distribution</a>
+            </li>
+            @endif
             @if($user->can('Print File Tag') || $user->hasRole('Super Admin'))
             <li class="@if($segment2 == 'employee' && $segment3=='file_tag') active @endif">
                <a href="{{ url('hr/employee/file_tag') }}"><i class="las la-folder-plus"></i>Print File Tag</a>
@@ -123,7 +128,7 @@
             </li>
             @endif
             @if($user->can('Loan List') || $user->hasRole('Super Admin'))
-            <li class="@if($segment3 == 'loan_list') active @endif"><a href="{{ url('hr/payroll/loan_list') }}"><i class="las la-dollar-sign"></i>Loan</a></li>
+            <li class="@if($segment3 == 'loan') active @endif"><a href="{{ url('hr/payroll/loan') }}"><i class="las la-dollar-sign"></i>Loan</a></li>
             @endif
          </ul>
       </li>

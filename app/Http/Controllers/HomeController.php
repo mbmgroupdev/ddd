@@ -26,7 +26,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        //auth()->user()->logs();
+        
         $att = $this->userAtt();
         $associate_id = auth()->user()->associate_id;
         $leaves = array();
@@ -52,13 +52,13 @@ class HomeController extends Controller
 
 
             $present  = DB::table($table)
-                        ->whereMonth('in_time', date('m'))
+                        ->whereMonth('in_date', date('m'))
                         ->whereYear('in_date',date('Y'))
                         ->where('as_id', $as_id)
                         ->count();
 
             $late  = DB::table($table)
-                        ->whereMonth('in_time', date('m'))
+                        ->whereMonth('in_date', date('m'))
                         ->whereYear('in_date',date('Y'))
                         ->where('as_id', $as_id)
                         ->where('late_status', 1)

@@ -16,8 +16,6 @@ class ShiftController extends Controller
 	#show form
     public function shift()
     {
-        //ACL::check(["permission" => "hr_setup"]);
-        #-------------------------------------------------#
 
         $unitList  = Unit::where('hr_unit_status', '1')->whereIn('hr_unit_id', auth()->user()->unit_permissions())->pluck('hr_unit_name', 'hr_unit_id');
 
@@ -36,14 +34,14 @@ class ShiftController extends Controller
             ON u.hr_unit_id = s1.hr_shift_unit_id
             WHERE s2.hr_shift_id IS NULL AND s1.hr_shift_unit_id IN ($unitids)
             ORDER BY s1.hr_shift_id DESC");
+        $trashed = [];
 
-    	return view('hr/setup/shift', compact('unitList', 'shifts'));
+    	return view('hr/setup/shift', compact('unitList', 'shifts','trashed'));
     }
 
     public function shiftStore(Request $request)
     {
-        //ACL::check(["permission" => "hr_setup"]);
-        #-----------------------------------------------#
+        
 
     	$validator= Validator::make($request->all(),[
     		'hr_shift_unit_id'    => 'required|max:11',
@@ -184,8 +182,23 @@ class ShiftController extends Controller
           ->leftJoin('hr_unit AS u', 'u.hr_unit_id', '=', 's.hr_shift_unit_id')
           ->where('hr_shift_id',$id)
           ->first();
-
-        return view('/hr/setup/shift_update', compact('shift'));
+        $unitids = implode(",", auth()->user()->unit_permissions());
+        $shifts = DB::select("SELECT
+            s1.hr_shift_id,
+            s1.hr_shift_name,
+            s1.hr_shift_code,
+            s1.hr_shift_start_time,
+            s1.hr_shift_end_time,
+            s1.hr_shift_break_time,u.hr_unit_name
+            FROM hr_shift s1
+            LEFT JOIN hr_shift s2
+            ON (s1.hr_shift_unit_id = s2.hr_shift_unit_id AND s1.hr_shift_name = s2.hr_shift_name AND s1.hr_shift_id < s2.hr_shift_id)
+            LEFT JOIN hr_unit AS u
+            ON u.hr_unit_id = s1.hr_shift_unit_id
+            WHERE s2.hr_shift_id IS NULL AND s1.hr_shift_unit_id IN ($unitids)
+            ORDER BY s1.hr_shift_id DESC");
+        $trashed = [];
+        return view('/hr/setup/shift_update', compact('shift','shifts','trashed'));
     }
 
     public function shiftUpdateStore(Request $request)
@@ -205,7 +218,6 @@ class ShiftController extends Controller
         }
         $input = $request->all();
         $getShift = Shift::getShiftIdWise($input['hr_shift_id']);
-        // $oldShiftCode = $getShift->hr_shift_code;
         $shift = Shift::checkExistsTimeWiseShift($input);
         DB::beginTransaction();
         try {

@@ -16,7 +16,13 @@
          <li>
             <a href="{{ url('/hr') }}" class="iq-waves-effect"><i class="las la-users"></i><span>HR</span></a>
          </li> 
-         @endif                    
+         @endif  
+
+         @if(auth()->user()->hasRole('Super Admin'))
+         <li class="@if($segment1 == 'mmr-report') active @endif">
+            <a href="{{ url('/mmr-report') }}" class="iq-waves-effect"><i class="las la-file"></i><span>MMR Report</span></a>
+         </li> 
+         @endif                   
          {{-- <li>
             <a href="#" class="iq-waves-effect"><i class="las la-user-secret"></i><span>Merchandising </span></a>
          </li>

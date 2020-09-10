@@ -456,6 +456,8 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 
 	//Increment
 	Route::get('hr/payroll/increment', 'Hr\Recruitment\BenefitController@showIncrementForm');
+	Route::get('hr/payroll/increment-list', 'Hr\Recruitment\BenefitController@incrementList');
+	Route::get('hr/payroll/increment-list-data', 'Hr\Recruitment\BenefitController@incrementListData');
 	Route::get('hr/payroll/get_associate', 'Hr\Recruitment\BenefitController@getAssociates')->middleware(['permission:Manage Increment']);
 	Route::post('hr/payroll/increment', 'Hr\Recruitment\BenefitController@storeIncrement')->middleware(['permission:Manage Increment']);
 	Route::get('hr/payroll/increment_edit/{id}', 'Hr\Recruitment\BenefitController@editIncrement')->middleware(['permission:Manage Increment']);
@@ -1192,8 +1194,9 @@ Route::post('hr/setup/buyer_template_update', 'Hr\Setup\BuyerModeSetupController
 	Route::get('hr/operation/servicebookpage', 'Hr\ServiceBook\ServiceBookController@servicebookPage');
 
 	//Cost Mapping
-	Route::get('hr/operation/cost-mapping', 'Hr\Recruitment\CostMappingController@showForm')->middleware(['permission:Cost Distribution']);
+	Route::get('hr/employee/cost-mapping', 'Hr\Recruitment\CostMappingController@showForm')->middleware(['permission:Cost Distribution']);
 	Route::get('hr/operation/gross_salary', 'Hr\Recruitment\CostMappingController@getAssGross')->middleware(['permission:Cost Distribution']);
+
 	Route::post('hr/operation/unit_map', 'Hr\Recruitment\CostMappingController@unitMapStore')->middleware(['permission:Cost Distribution']);
 	Route::post('hr/operation/area_map', 'Hr\Recruitment\CostMappingController@areaMapStore')->middleware(['permission:Cost Distribution']);
 	Route::get('hr/operation/cost_mapping/{id}', 'Hr\Recruitment\CostMappingController@viewMap')->middleware(['permission:Cost Distribution']);
@@ -1286,6 +1289,7 @@ Route::post('hr/ess/grievance/appeal', 'Hr\Ess\GrievanceAppealController@saveDat
 
 // Loan Application
 Route::get('hr/payroll/loan_list', 'Hr\Ess\LoanApplicationController@loanList');
+Route::get('hr/payroll/loan', 'Hr\Ess\LoanApplicationController@loan');
 Route::post('hr/ess/loan_data', 'Hr\Ess\LoanApplicationController@getData');
 Route::get('hr/ess/loan_application', 'Hr\Ess\LoanApplicationController@showForm');
 Route::post('hr/ess/loan_application', 'Hr\Ess\LoanApplicationController@saveData');

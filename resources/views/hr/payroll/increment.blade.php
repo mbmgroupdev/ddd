@@ -31,7 +31,9 @@
             @can('Manage Increment')
             <div class="panel panel-success">
                 <div class="panel-heading">
-                    <h6>Increment Entry</h6>
+                    <h6>Increment Entry
+                        <a href="{{url('hr/payroll/increment-list')}}" class="btn btn-primary pull-right">Increment List</a>
+                    </h6>
                 </div>
                 <div class="panel-body">
                       <!-- Display Erro/Success Message -->
@@ -292,7 +294,7 @@ $(document).ready(function(){
                     exportOptions: {
                         columns: ['0','1','2','3','4','5','6'],
                         stripHtml: false
-                    }
+                    },
                     "action": allExport,
                 }
             ]

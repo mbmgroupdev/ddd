@@ -205,23 +205,17 @@
 
         </div>
     </div>
-    <!-- Scripts -->
-    
-    <!-- Smooth Scrollbar JavaScript -->
     <script src="{{ asset('assets/js/smooth-scrollbar.js') }}"></script>
 
-    {{-- notify --}}
+
     <script src="{{asset('assets/js/notify/notify.js')}}"></script>
     <script src="{{asset('assets/js/select2.min.js')}}"></script>
     <script src="{{asset('assets/js/toastr.min.js')}}"></script>
     <script src="{{ asset('plugins/DataTables/datatables.min.js') }}"></script>
     <!-- Custom JavaScript -->
     @stack('js')
-    @toastr_render
-    <script src="{{ asset('assets/js/chart-custom.js') }}"></script>
     <script src="{{ asset('assets/js/custom.js') }}"></script>
     <script src="{{ asset('js/custom.js') }}"></script>
-    {{-- <script src="{{ asset('assets/js/animated.js') }}"></script> --}}
     
 </body>
 </html>

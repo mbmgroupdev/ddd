@@ -87,86 +87,41 @@
             </div>
             <div id="list" class="panel panel-info">
                 <div class="panel-body">
-                    <ul class="nav nav-tabs" id="myTab-1" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" id="active-tab" data-toggle="tab" href="#active" role="tab" aria-controls="active" aria-selected="false">Active</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="trash-tab" data-toggle="tab" href="#trash" role="tab" aria-controls="trash" aria-selected="false">Trash</a>
-                        </li>
-                    </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane fade active show" id="active" role="tabpanel" aria-labelledby="active-tab">
                          
-                            <div class="table-responsive">
-                                <table id="global-datatable" class="table table-striped table-bordered" style="display: block;overflow-x: auto;width: 100%;">
-                                <thead>
-                                    <tr>
-                                        
-                                        <th width="30%">Location Name</th>
-                                        <th width="30%">Short Name</th>
-                                        <th width="30%">লোকেশন (বাংলা)</th>
-                                        <th width="30%">Location Code</th>
-                                        <th width="30%">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($locations as $loc)
-                                    <tr>
-                                        
-                                        <td>{{ $loc->hr_location_name }}</td>
-                                        <td>{{ $loc->hr_location_short_name }}</td>
-                                        <td>{{ $loc->hr_location_name_bn }}</td>
-                                        <td>{{ $loc->hr_location_code }}</td>
-                                        <td>
-                                            <div class="btn-group">
-                                                <a type="button" href="{{ url('hr/setup/location_update/'.$loc->hr_location_id) }}" class='btn btn-xs btn-primary' data-toggle="tooltip" title="Edit"> <i class="ace-icon fa fa-pencil bigger-120"></i></a>
-                                                <a href="{{ url('hr/setup/location/'.$loc->hr_location_id) }}" type="button" class='btn btn-xs btn-danger' data-toggle="tooltip" title="Delete" onclick="return confirm('Are you sure?')"><i class="ace-icon fa fa-trash bigger-120"></i></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" id="trash" role="tabpanel" aria-labelledby="trash-tab">
-                            <div class="table-responsive">
-                                <table id="global-trash" class="table table-striped table-bordered" style="display: block;overflow-x: auto;width: 100%;">
-                                <thead>
-                                    <tr>
-                                        
-                                        <th width="30%">Location Name</th>
-                                        <th width="30%">Short Name</th>
-                                        <th width="30%">লোকেশন (বাংলা)</th>
-                                        <th width="30%">Location Code</th>
-                                        <th width="30%">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($locations as $loc)
-                                    <tr>
-                                        
-                                        <td>{{ $loc->hr_location_name }}</td>
-                                        <td>{{ $loc->hr_location_short_name }}</td>
-                                        <td>{{ $loc->hr_location_name_bn }}</td>
-                                        <td>{{ $loc->hr_location_code }}</td>
-                                        <td>
-                                            <div class="btn-group">
-                                                <a type="button" href="{{ url('hr/setup/location_update/'.$loc->hr_location_id) }}" class='btn btn-xs btn-primary' data-toggle="tooltip" title="Edit"> <i class="ace-icon fa fa-pencil bigger-120"></i></a>
-                                                <a href="{{ url('hr/setup/location/'.$loc->hr_location_id) }}" type="button" class='btn btn-xs btn-danger' data-toggle="tooltip" title="Delete" onclick="return confirm('Are you sure?')"><i class="ace-icon fa fa-trash bigger-120"></i></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                            </div>
-                        </div>
+                    <div class="table-responsive">
+                        <table id="global-datatable" class="table table-striped table-bordered" style="display: block;overflow-x: auto;width: 100%;">
+                        <thead>
+                            <tr>
+                                
+                                <th width="30%">Location Name</th>
+                                <th width="30%">Short Name</th>
+                                <th width="30%">লোকেশন (বাংলা)</th>
+                                <th width="30%">Location Code</th>
+                                <th width="30%">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($locations as $loc)
+                            <tr>
+                                
+                                <td>{{ $loc->hr_location_name }}</td>
+                                <td>{{ $loc->hr_location_short_name }}</td>
+                                <td>{{ $loc->hr_location_name_bn }}</td>
+                                <td>{{ $loc->hr_location_code }}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a type="button" href="{{ url('hr/setup/location_update/'.$loc->hr_location_id) }}" class='btn btn-xs btn-primary' data-toggle="tooltip" title="Edit"> <i class="ace-icon fa fa-pencil bigger-120"></i></a>
+                                        <a href="{{ url('hr/setup/location/'.$loc->hr_location_id) }}" type="button" class='btn btn-xs btn-danger' data-toggle="tooltip" title="Delete" onclick="return confirm('Are you sure?')"><i class="ace-icon fa fa-trash bigger-120"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                     </div>
+                        
                 </div>
             </div>
-
        </div>
     </div>
 @endsection

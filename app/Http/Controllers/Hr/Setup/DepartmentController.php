@@ -19,7 +19,8 @@ class DepartmentController extends Controller
 
         $areaList = Area::where('hr_area_status', 1)->pluck('hr_area_name','hr_area_id');
         $departments= Department::all();
-    	return view('hr.setup.department', compact('areaList', 'departments'));
+        $trashed= Department::onlyTrashed();
+    	return view('hr.setup.department', compact('areaList', 'departments','trashed'));
     }
 
     public function departmentStore(Request $request)
@@ -84,15 +85,23 @@ class DepartmentController extends Controller
         }
         return $list;
     }
-    public function departmentDelete($id){
-        DB::table('hr_department')->where('hr_department_id', $id)->delete();
+    
+    public function departmentDelete($id)
+    {
+        DB::table('hr_department')
+        ->where('hr_department_id', $id)
+        ->delete();
+
         return redirect('/hr/setup/department')->with('success', "Successfuly deleted Department");
     }
-    public function departmentUpdate($id){
+    public function departmentUpdate($id)
+    {
         // dd($id);
         $areaList = Area::where('hr_area_status', 1)->pluck('hr_area_name','hr_area_id');
         $department= DB::table('hr_department')->where('hr_department_id', $id)->first();
-        return view('/hr/setup/department_update', compact('areaList', 'department'));
+        $departments= Department::all();
+        $trashed= Department::onlyTrashed();
+        return view('/hr/setup/department_update', compact('areaList', 'department','departments','trashed'));
     }
 
     public function departmentUpdateStore(Request $request)

@@ -31,8 +31,9 @@ class LineController extends Controller
                     ->leftJoin('hr_floor AS f', 'f.hr_floor_id', '=', 'l.hr_line_floor_id')
                     ->whereIn('hr_line_unit_id', auth()->user()->unit_permissions())
                     ->get();
+        $trashed = [];
 
-    	return view('hr/setup/line', compact('unitList', 'lines'));
+    	return view('hr/setup/line', compact('unitList', 'lines', 'trashed'));
     }
 
     public function lineStore(Request $request)
@@ -105,10 +106,24 @@ class LineController extends Controller
     public function lineUpdate($id){
         $unitList  = Unit::where('hr_unit_status', '1')->pluck('hr_unit_name', 'hr_unit_id');
         $line= DB::table('hr_line')->where('hr_line_id', '=', $id)->first();
-        // $unitList= Unit::where('hr_unit_id', $line->hr_line_unit_id)->pluck('hr_line_name', 'hr_line_id');
+        
         $floorList= Floor::where('hr_floor_unit_id', $line->hr_line_unit_id)->pluck('hr_floor_name', 'hr_floor_id');
+
+        $lines= DB::table('hr_line AS l')
+                    ->Select(
+                        'l.hr_line_id',
+                        'l.hr_line_name',
+                        'l.hr_line_name_bn',
+                        'u.hr_unit_name',
+                        'f.hr_floor_name'
+                    )
+                    ->leftJoin('hr_unit AS u', 'u.hr_unit_id', '=', 'l.hr_line_unit_id')
+                    ->leftJoin('hr_floor AS f', 'f.hr_floor_id', '=', 'l.hr_line_floor_id')
+                    ->whereIn('hr_line_unit_id', auth()->user()->unit_permissions())
+                    ->get();
         // dd($floorList);
-        return view('/hr/setup/line_update',compact('line', 'unitList', 'floorList'));
+        $trashed = [];           
+        return view('/hr/setup/line_update',compact('line', 'unitList', 'floorList','lines', 'trashed'));
     }
 
     public function lineUpdateStore(Request $request){

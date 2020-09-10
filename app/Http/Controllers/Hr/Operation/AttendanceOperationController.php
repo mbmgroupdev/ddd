@@ -223,7 +223,7 @@ class AttendanceOperationController extends Controller
     		$tableName = get_att_table($request['unit']);
             $attData = DB::table($tableName)
             ->select('hr_attendance_mbm.*', 'b.as_ot', 'b.as_oracle_code', 'b.as_id', 'b.associate_id', 'b.as_name', 'b.as_designation_id')
-        	->whereBetween('in_time', [date('Y-m-d',strtotime($request['report_from']))." "."00:00:00", date('Y-m-d',strtotime($request['report_to']))." "."23:59:59"]);
+            ->whereBetween('in_date', [$request['report_from'], $request['report_to']]);
         	if($request['type'] == 'All'){
         		$attData->addSelect(DB::raw("'all' as reportType"));
         	}elseif($request['type'] == 'Present'){
