@@ -5,7 +5,7 @@
 
 jQuery.fn.dataTable.Api.register('MakeCellsEditable()', function (settings) {
     var table = this.table();
-    var lock = parseInt($("#lock_data").val());
+    var lock = parseInt($("#lock_status").val());
     jQuery.fn.extend({
         // UPDATE
         updateEditableCell: function (callingElement) {
@@ -102,6 +102,8 @@ jQuery.fn.dataTable.Api.register('MakeCellsEditable()', function (settings) {
               //  console.log(new Date(row.data().att_date));
                 var attdate = new Date(row.data().att_date);
                 var currentdate = new Date();
+                var currentMonth = (new Date).getMonth() + 1;
+                var attMonth = (new Date(row.data().att_date)).getMonth() + 1;
                 // Object.keys(oldValue).length === 0
                  //console.log((currentdate.getDate() <= 5 || attdate.getMonth() == currentdate.getMonth()) && (attdate.getMonth() == currentdate.getMonth()-1 || attdate.getMonth() == currentdate.getMonth()));
                 var userCheck = $("#super-id").val();
@@ -111,8 +113,7 @@ jQuery.fn.dataTable.Api.register('MakeCellsEditable()', function (settings) {
 
         if((types != 'Leave') && (types != 'Holiday')){
             if(Object.keys(oldValue).length === 0 || userCheck === '1' ){
-                //
-                if((currentdate.getDate() <= lock || attdate.getMonth() == currentdate.getMonth() ) && (attdate.getMonth() == (currentdate.getMonth() == 0 ? 11 :currentdate.getMonth()-1) || attdate.getMonth() == currentdate.getMonth())){
+                if(lock == 0  && attMonth == (currentMonth == 0 ? 11 :currentMonth-1) || attMonth == currentMonth){
                     $('.my-cancel-class').click();
                     // Show input
                     if (!$(cell).find('input').length && !$(cell).find('select').length && !$(cell).find('textarea').length) {
@@ -131,12 +132,12 @@ jQuery.fn.dataTable.Api.register('MakeCellsEditable()', function (settings) {
                   // }
                 }
                 else{
-                  swal("Sorry!", "You can only change previous month's data on or before "+lock+" day of current month!","info")
+                  $.notify("Attendance Modification Time Over","error")
                 }
               }
             }else{
 
-            swal("Sorry!", "You can not change "+types+" data","info")
+            $.notify("You can not change "+types+" data","error")
 
             }
 

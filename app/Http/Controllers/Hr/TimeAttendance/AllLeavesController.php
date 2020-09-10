@@ -217,11 +217,17 @@ class AllLeavesController extends Controller
                               $getAbsent->delete();
                           }
                       }
-                      $lockDate = Custom::getLockDate();
+
                       // check previous month leave
                       if($leaveMonth == $lastMonth){
-                          if($day < $lockDate){
-                              $getEmployee = Employee::getEmployeeAssociateIdWise($request->leave_ass_id);
+                          $getEmployee = Employee::getEmployeeAssociateIdWise($request->leave_ass_id);
+                          // check activity lock/unlock
+                          $yearMonth = date('Y-m', strtotime('-1 month'));
+                          $lock['month'] = date('m', strtotime($yearMonth));
+                          $lock['year'] = date('Y', strtotime($yearMonth));
+                          $lock['unit_id'] = $getEmployee->as_unit_id;
+                          $lockActivity = monthly_activity_close($lock);
+                          if($lockActivity == 0){
                               if($getEmployee != null){
                                   $tableName = Custom::unitWiseAttendanceTableName($getEmployee->as_unit_id);
                                   $yearLeave = Carbon::parse($request->leave_from)->format('Y');
@@ -500,11 +506,17 @@ class AllLeavesController extends Controller
                     $getAbsent->delete();
                   }
                 }
-                $lockDate = Custom::getLockDate();
+                
                 // check previous month leave
                 if($leaveMonth == $lastMonth){
-                    if($day < $lockDate){
-                      $getEmployee = Employee::getEmployeeAssociateIdWise($getLeave->leave_ass_id);
+                  $getEmployee = Employee::getEmployeeAssociateIdWise($getLeave->leave_ass_id);
+                    // check activity lock/unlock
+                    $yearMonth = date('Y-m', strtotime('-1 month'));
+                    $lock['month'] = date('m', strtotime($yearMonth));
+                    $lock['year'] = date('Y', strtotime($yearMonth));
+                    $lock['unit_id'] = $getEmployee->as_unit_id;
+                    $lockActivity = monthly_activity_close($lock);
+                    if($lockActivity == 0){
                       if($getEmployee != null){
                           $tableName = Custom::unitWiseAttendanceTableName($getEmployee->as_unit_id);
                           $yearLeave = Carbon::parse($getLeave->leave_from)->format('Y');

@@ -261,12 +261,6 @@
       <li class="@if($segment2 == 'reports') active @endif">
          <a href="#report" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="las la-file-invoice"></i><span>Reports</span><i class="las la-angle-right iq-arrow-right"></i></a>
          <ul id="report" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
-            @if($user->can('Shift Roster') || $user->hasRole('Super Admin'))
-                  <li class="@if($segment3 == 'shift_roaster') active @endif">
-                     <a href="{{ url('hr/timeattendance/shift_roaster') }}"><i class="las la-fingerprint"></i>Shift Roster Summary</a>
-                  </li>
-            @endif
-
             @if($user->can('Attendance Summary Report') || $user->hasRole('Super Admin'))
                   <li class="@if($segment3 == 'attendance_summary_report') active @endif"><a href="{{ url('hr/reports/attendance_summary_report') }}"><i class="las la-fingerprint"></i>Attendance Summary</a></li>
             @endif
@@ -279,6 +273,16 @@
             @if($user->can('Monthly Increment') || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'monthly-salary') active @endif"><a href="{{ url('hr/reports/monthly-salary') }}"><i class="las la-fingerprint"></i>Monthly Salary</a></li>
             @endif
+             @if($user->can('Shift Roster') || $user->hasRole('Super Admin'))
+               <li class="@if($segment3 == 'shift_roaster') active @endif">
+                  <a href="{{ url('hr/timeattendance/shift_roaster') }}"><i class="las la-fingerprint"></i>Shift Roster Summary</a>
+               </li>
+               <li class="@if($segment3 == 'roaster_view') active @endif">
+                  <a href="{{ url('hr/shift_roaster/roaster_view') }}"><i class="las la-fingerprint"></i>Holiday Roster</a>
+               </li>
+            @endif
+
+            <li class="@if($segment3 == 'unit-wise-shift') active @endif"><a href="{{ url('hr/reports/unit-wise-shift') }}"><i class="las la-fingerprint"></i>Unit Wise Shift</a></li>
             <li class="@if($segment3 == 'employee-yearly-activity') active @endif"><a href="{{ url('hr/reports/employee-yearly-activity') }}"><i class="las la-fingerprint"></i>Employee Yearly Activity</a></li>
             {{-- <li><a href="{{ url('hr/reports/monthy_increment') }}"><i class="las la-chart-area"></i>Increment Report</a></li> --}}
             @if($user->can('Increment Report') || $user->hasRole('Super Admin'))

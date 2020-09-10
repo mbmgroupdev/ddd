@@ -159,8 +159,7 @@
             </div>
             <div class="row">
                 <div class="col">
-                  @php $lock = salary_lock_date();@endphp
-                   <input type="hidden" value="{{ $lock }}" id="lock_data">
+                   <input type="hidden" value="1" id="lock_status">
                     <div class="table d-table hide">
                       <div class="iq-card">
                         <div class="iq-card-body">
@@ -700,14 +699,30 @@
          //   var condition = $("#condition").val();
          // },100);
 
-         if(to == "" || from == "" || unit == "")
-         {
-           console.log("Please Select Following Field");
-         }
-         else{
-           $(".d-table").removeClass('hide');
-           dt.draw();
-         }
+          if(to == "" || from == "" || unit == "")
+          {
+            console.log("Please Select Following Field");
+          }
+          else{
+            // check activity lock
+            $.ajax({
+              type: "get",
+              url: '{{ url("hr/operation/unit-wise-activity-lock")}}',
+              data: {
+                unit: unit
+              },
+              success: function(response)
+              {
+                // console.log(response);
+                $("#lock_status").val(response);
+              },
+              error: function (reject) {
+                console.log(reject);
+              }
+            });
+            $(".d-table").removeClass('hide');
+            dt.draw();
+          }
        });
     });
   function stripHtml(html){

@@ -101,10 +101,15 @@ class NotifLeaveController extends Controller
                                 ->whereDate('in_time','<=', $getLeave->leave_to)
                                 ->delete();
                                 
-                    $lockDate = Custom::getLockDate();
                     // check previous month leave
                     if($leaveMonth == $lastMonth){
-                        if($day < $lockDate){
+                        // check activity lock/unlock
+                        $yearMonth = date('Y-m', strtotime('-1 month'));
+                        $lock['month'] = date('m', strtotime($yearMonth));
+                        $lock['year'] = date('Y', strtotime($yearMonth));
+                        $lock['unit_id'] = $getEmployee->as_unit_id;
+                        $lockActivity = monthly_activity_close($lock);
+                        if($lockActivity == 0){
                             if($getEmployee != null){
                                 $yearLeave = Carbon::parse($getLeave->leave_from)->format('Y');
                                 $monthLeave = Carbon::parse($getLeave->leave_from)->format('m');

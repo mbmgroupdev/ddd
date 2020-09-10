@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Hr\Reports;
 use App\Http\Controllers\Controller;
 use App\Models\Hr\Benefits;
 use App\Models\Hr\HrMonthlySalary;
+use App\Models\Hr\SalaryAudit;
 use App\Models\Hr\Unit;
 use DB;
 use Illuminate\Http\Request;
@@ -30,6 +31,25 @@ class MonthlyActivityReportController extends Controller
             $yearMonth = explode('-', $input['month']);
             $month = $yearMonth[1];
             $year = $yearMonth[0];
+
+            $auditFlag = 1;
+            $audit['unit_id'] = $input['unit'];
+            $audit['year'] = $year;
+            $audit['month'] = $month;
+            $salaryStatus = SalaryAudit::checkSalaryAuditStatus($audit);
+            
+            if($salaryStatus == null){
+                $auditFlag = 0;
+            }else{
+                if($salaryStatus->initial_audit == null || $salaryStatus->accounts_audit == null || $salaryStatus->management_audit == null){
+                    $auditFlag = 0;
+                }
+            }
+            
+            if($auditFlag == 0){
+                return '<div class="iq-card-body"><h2 class="text-red text-center">Monthly Salary Of '.date('M Y', strtotime($input['month'])).' Not Generate Yet!</h2></div>';
+            }
+
             $input['area']       = isset($request['area'])?$request['area']:'';
             $input['otnonot']    = isset($request['otnonot'])?$request['otnonot']:'';
             $input['department'] = isset($request['department'])?$request['department']:'';

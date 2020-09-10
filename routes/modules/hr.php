@@ -303,6 +303,8 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 	Route::get('hr/timeattendance/manual_att_log_data', 'Hr\TimeAttendance\AttendaceManualController@manualAttLogData');
 	Route::get('hr/timeattendance/calculate_ot', 'Hr\TimeAttendance\AttendaceManualController@calculateOt');
 
+	// activity lock/unlock check
+	Route::get('hr/operation/unit-wise-activity-lock', 'Hr\Operation\AttendanceOperationController@activityLock');
 	//Attendance Report
 	Route::get('hr/operation/attendance-operation', 'Hr\TimeAttendance\AttendanceController@attendanceReport')->middleware(['permission:Attendance Operation']);
 	// Route::get('hr/timeattendance/attendance_report_data', 'Hr\TimeAttendance\AttendanceController@attendanceReportData')->middleware(['permission:Attendance Operation']);
@@ -1092,6 +1094,9 @@ Route::get('hr/setup/retirement/get_employee_details', 'Hr\Setup\RetirementPolic
 
 	Route::get('hr/reports/absent_status', 'Hr\Reports\AbsentStatusController@showForm');
 
+	// unit wise shift report
+	Route::get('hr/reports/unit-wise-shift', 'Hr\Reports\UnitReportsController@shiftIndex');
+	Route::get('hr/reports/unit-wise-shift-report', 'Hr\Reports\UnitReportsController@shiftReport');
 //Buyer Mode
 Route::get('hr/setup/buyermode','Hr\Setup\BuyerModeSetupController@buyerMode');
 Route::post('hr/setup/buyermode','Hr\Setup\BuyerModeSetupController@buyerModeStore');
