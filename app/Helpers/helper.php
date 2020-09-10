@@ -6,6 +6,7 @@ use App\Models\Hr\Designation;
 use App\Models\Hr\Floor;
 use App\Models\Hr\HrMonthlySalary;
 use App\Models\Hr\Line;
+use App\Models\Hr\SalaryAudit;
 use App\Models\Hr\Section;
 use App\Models\Hr\Shift;
 use App\Models\Hr\Subsection;
@@ -56,6 +57,22 @@ if(!function_exists('salary_lock_date')){
             return DB::table('hr_system_setting')->first()->salary_lock;
         }); 
         
+    }
+}
+
+if(!function_exists('monthly_activity_close')){
+    function monthly_activity_close($data){
+        $flag = 1; // lock
+        $salaryStatus = SalaryAudit::checkSalaryAuditStatus($data);
+        if($salaryStatus == null){
+            $flag = 0; // unlock
+        }else{
+            if($salaryStatus->initial_audit == null){
+                $flag = 0; // unlock
+            }
+        }
+        
+        return $flag;
     }
 }
 
@@ -631,6 +648,19 @@ if(!function_exists('unit_by_id')){
     {
        return  Cache::remember('unit', 10000000, function () {
             return Unit::orderBy('hr_unit_name','DESC')->get()->keyBy('hr_unit_id')->toArray();
+        });      
+
+    }
+}
+
+if(!function_exists('unit_list')){
+    function unit_list()
+    {
+       return  Cache::remember('unit', 10000000, function () {
+            return Unit::where('hr_unit_status', '1')
+            ->whereIn('hr_unit_id', auth()->user()->unit_permissions())
+            ->orderBy('hr_unit_name', 'desc')
+            ->pluck('hr_unit_name', 'hr_unit_id');
         });      
 
     }

@@ -362,6 +362,9 @@ table.table-head th {
 .text-black{
     color: black !important;
 }
+.text-red{
+    color: red !important;
+}
 .progress{
     height: 2rem;
     border-radius: 15px;

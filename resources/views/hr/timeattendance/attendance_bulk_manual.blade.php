@@ -74,10 +74,15 @@
                         @php 
                             $lastMonth = date('m',strtotime("-1 month"));
                             $thisMonth = date('m', strtotime(request()->month));
-                            $number = Custom::getLockDate();
-                            $lockDate = Date('Y-m')."-".sprintf('%02d', $number);
+                            
                             $disabled = 'disabled="disabled"';
-                            if(($lastMonth == $thisMonth && $lockDate> date('Y-m-d'))|| $thisMonth == date('m')){
+                            // check activity lock/unlock
+                            $yearMonth = date('Y-m', strtotime('-1 month'));
+                            $lock['month'] = date('m', strtotime($yearMonth));
+                            $lock['year'] = date('Y', strtotime($yearMonth));
+                            $lock['unit_id'] = $info->as_unit_id;
+                            $lockActivity = monthly_activity_close($lock);
+                            if(($lastMonth == $thisMonth && $lockActivity == 0)|| $thisMonth == date('m')){
                                 $disabled = '';
                             }
 

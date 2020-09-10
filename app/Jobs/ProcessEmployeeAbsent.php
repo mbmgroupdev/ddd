@@ -64,7 +64,7 @@ class ProcessEmployeeAbsent implements ShouldQueue
             $month = Carbon::parse($date)->format('m');
             $getData = DB::table($this->tableName)
             ->select('as_id')
-            ->whereDate('in_time', $date)
+            ->where('in_date', $date)
             ->pluck('as_id')
             ->toArray(); 
             $arrayDiff = array_diff($getEmp, $getData);

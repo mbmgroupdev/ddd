@@ -126,6 +126,7 @@ class AttendanceController extends Controller
             DB::table('event_history')
             ->insert([
                 'user_id' => $previous['associate_id'],
+                'event_date' => date('Y-m-d'),
                 'type' => 3,
                 'previous_event' =>  json_encode($previous),
                 'modified_event' => json_encode($current),
@@ -165,6 +166,7 @@ class AttendanceController extends Controller
             DB::table('event_history')
                 ->insert([
                     'user_id' => $previous['associate_id'],
+                    'event_date' => date('Y-m-d'),
                     'type' => 4,
                     'previous_event' =>  json_encode($previous),
                     'modified_event' => json_encode($current),
@@ -1111,6 +1113,7 @@ class AttendanceController extends Controller
                     DB::table('event_history')
                       ->insert([
                         'user_id' => $current['associate_id'],
+                        'event_date' => date('Y-m-d'),
                         'type' => 3,
                         'previous_event' =>  json_encode($attd),
                         'modified_event' => json_encode($current),
@@ -1137,6 +1140,7 @@ class AttendanceController extends Controller
                 DB::table('event_history')
                 ->insert([
                     'user_id' => $current['associate_id'],
+                    'event_date' => date('Y-m-d'),
                     'type' => 1,
                     'previous_event' =>  json_encode($attd),
                     'modified_event' => json_encode($current),
@@ -1173,6 +1177,7 @@ class AttendanceController extends Controller
                     DB::table('event_history')
                     ->insert([
                         'user_id' => $request->associate_id,
+                        'event_date' => date('Y-m-d'),
                         'type' => 3,
                         'previous_event' =>  json_encode($attd),
                         'modified_event' => json_encode($current),
@@ -1200,6 +1205,7 @@ class AttendanceController extends Controller
                 DB::table('event_history')
                 ->insert([
                     'user_id' => $current['associate_id'],
+                    'event_date' => date('Y-m-d'),
                     'type' => 1,
                     'previous_event' =>  json_encode($attd),
                     'modified_event' => json_encode($current),
@@ -1284,6 +1290,7 @@ class AttendanceController extends Controller
             DB::table('event_history')
             ->insert([
                 'user_id' => $current['associate_id'],
+                'event_date' => date('Y-m-d'),
                 'type' => 2,
                 'previous_event' =>  json_encode($previous),
                 'modified_event' => json_encode($current),
@@ -1311,6 +1318,7 @@ class AttendanceController extends Controller
             DB::table('event_history')
             ->insert([
                 'user_id' => $current['associate_id'],
+                'event_date' => date('Y-m-d'),
                 'type' => 2,
                 'previous_event' =>  json_encode($previous),
                 'modified_event' => json_encode($current),

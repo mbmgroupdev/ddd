@@ -378,6 +378,21 @@ class AttendanceOperationController extends Controller
 
     }
 
-
+    public function activityLock(Request $request)
+    {
+        $data = 1;
+        $input = $request->all();
+        try {
+            $yearMonth = date('Y-m', strtotime('-1 month'));
+            $lock['month'] = date('m', strtotime($yearMonth));
+            $lock['year'] = date('Y', strtotime($yearMonth));
+            $lock['unit_id'] = $input['unit'];
+            $data = monthly_activity_close($lock);
+            return $data;
+        } catch (\Exception $e) {
+            $bug = $e->getMessage();
+            return $data;
+        }
+    }
 
 }

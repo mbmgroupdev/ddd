@@ -472,6 +472,7 @@ class AttendaceBulkManualController extends Controller
     {
         $eventHistory = [
             'user_id' => $user_asso,
+            'event_date' => date('Y-m-d'),
             'type' => $type,
             'previous_event' => json_encode($previous_event),
             'modified_event' => json_encode($modified_event),

@@ -78,8 +78,13 @@
                             $month = date('m', strtotime(request()->month_year));
                             $lastMonth = date('m',strtotime("-1 month"));
                             $thisMonth = date('m');
-                            $number = salary_lock_date();
-                            $lockDate = Date('Y-m')."-".sprintf('%02d', $number);
+                            
+                            // check activity lock/unlock
+                            $yearMonth = date('Y-m', strtotime('-1 month'));
+                            $lock['month'] = date('m', strtotime($yearMonth));
+                            $lock['year'] = date('Y', strtotime($yearMonth));
+                            $lock['unit_id'] = $info->as_unit_id;
+                            $lockActivity = monthly_activity_close($lock);
                         @endphp
                         <div class="iq-card">
                             <div class="iq-card-header d-flex mb-0">
@@ -122,7 +127,7 @@
                                         $yearMonth = request()->month_year; 
                                     @endphp
                                     <div class="col-3">
-                                      @if(($lastMonth == $month && $lockDate > date('Y-m-d'))|| $month == date('m'))
+                                      @if(($lastMonth == $month && $lockActivity == 0)|| $month == date('m'))
                                       <div class="text-right">
                                         <h4 class="card-title capitalize inline">
                                         <a href='{{url("hr/timeattendance/attendance_bulk_manual?associate=$info->associate_id&month=$yearMonth")}}' class="btn view list_view no-padding" data-toggle="tooltip" data-placement="top" title="" data-original-title="Manual Edit Job Card">
