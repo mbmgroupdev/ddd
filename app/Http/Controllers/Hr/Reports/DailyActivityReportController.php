@@ -42,7 +42,7 @@ class DailyActivityReportController extends Controller
 
             $queryData = Absent::select('emp.as_id')
             ->where('hr_unit',$request['unit'])
-            ->whereDate('date', $request['absent_date'])
+            ->where('date', $request['absent_date'])
             ->when(!empty($areaid), function ($query) use($areaid){
                return $query->where('emp.as_area_id',$areaid);
             })
@@ -76,7 +76,7 @@ class DailyActivityReportController extends Controller
                 $tableName = get_att_table($request['unit']).' AS a';
                 $attData = DB::table($tableName)
                     ->where('emp.as_unit_id',$request['unit'])
-                    ->whereDate('a.in_date', $request['present_date'])
+                    ->where('a.in_date', $request['present_date'])
                     ->whereIn('a.as_id', $absentData)
                     ->when(!empty($areaid), function ($query) use($areaid){
                        return $query->where('emp.as_area_id',$areaid);
@@ -240,13 +240,13 @@ class DailyActivityReportController extends Controller
             if($input['report_type'] == 'ot' || $input['report_type'] == 'working_hour' || $input['report_type'] == 'late'){
                 $tableName = get_att_table($request['unit']).' AS a';
                 $attData = DB::table($tableName)
-                ->whereDate('a.in_date', $request['date']);
+                ->where('a.in_date', $request['date']);
                 if($input['report_type'] == 'late'){
                     $attData->where('a.late_status', 1);
                 }
             }elseif($input['report_type'] == 'absent'){
                 $attData = DB::table('hr_absent AS a')
-                ->whereDate('a.date', $request['date']);
+                ->where('a.date', $request['date']);
             }elseif($input['report_type'] == 'leave'){
                 $attData = DB::table('hr_leave AS a')
                 ->whereRaw('? between leave_from and leave_to', [$request['date']])
@@ -255,7 +255,7 @@ class DailyActivityReportController extends Controller
                 $absentData = $this->getAbsentEmployeeFromDate($input);
                 $tableName = get_att_table($request['unit']).' AS a';
                 $attData = DB::table($tableName)
-                ->whereDate('a.in_date', $request['present_date'])
+                ->where('a.in_date', $request['present_date'])
                 ->whereIn('a.as_id', $absentData);
             }
             // employee check
@@ -469,7 +469,7 @@ class DailyActivityReportController extends Controller
             // prsent 
             $tableName = get_att_table($request['unit']).' AS a';
             $presentData = DB::table($tableName)
-            ->whereDate('a.in_date', $request['date']);
+            ->where('a.in_date', $request['date']);
 
             
         } catch (\Exception $e) {
@@ -486,7 +486,7 @@ class DailyActivityReportController extends Controller
 
         $queryData = Absent::select('emp.as_id')
         ->where('hr_unit',$input['unit'])
-        ->whereDate('date', $input['absent_date'])
+        ->where('date', $input['absent_date'])
 
         ->when(!empty($input['area']), function ($query) use($input){
            return $query->where('emp.as_area_id',$input['area']);

@@ -30,6 +30,9 @@
       padding: 15px 15px;
       padding-bottom: 8px;
     }
+    .modal-h3{
+      line-height: 15px !important;
+    }
   </style>
 @endpush
 <div class="main-content">
@@ -118,13 +121,7 @@
                                             </select>
                                             <label for="otnonot">OT/Non-OT</label>
                                         </div>
-                                        {{-- <div class="form-group has-float-label select-search-group">
-                                            <select name="report_format" class="form-control capitalize select-search" id="reportformat" >
-                                                <option value="0" selected>Details</option>
-                                                <option value="1" >Summary</option>
-                                            </select>
-                                            <label for="reportformat">Report Format</label>
-                                        </div> --}}
+                                        
                                         <input type="hidden" id="reportformat" name="report_format" value="0">
                                         <input type="hidden" id="reportGroup" name="report_group" value="as_line_id">
                                         <div class="row">
@@ -146,13 +143,7 @@
                                         </div>
                                     </div>
                                     <div class="col-3">
-                                        {{-- <div class="form-group has-float-label select-search-group">
-                                            <?php
-                                                $type = ['as_line_id'=>'Line','as_floor_id'=>'Floor','as_department_id'=>'Department','as_designation_id'=>'Designation'];
-                                            ?>
-                                            {{ Form::select('report_group', $type, null, ['placeholder'=>'Select Report Group ', 'class'=>'form-control capitalize select-search', 'id'=>'reportGroup']) }}
-                                            <label for="reportGroup">Report Group</label>
-                                        </div> --}}
+                                        
                                         <div class="form-group has-float-label has-required">
                                           <input type="month" class="report_date form-control" id="report-date" name="month" placeholder=" Month-Year"required="required" value="{{ date('Y-m', strtotime('-1 month')) }}"autocomplete="off" />
                                           <label for="report-date">Month</label>
