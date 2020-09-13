@@ -1,113 +1,102 @@
 @extends('hr.layout')
-@section('title', 'Add Role')
+@section('title', 'Promotion Edit')
 @section('main-content')
 <div class="main-content">
-	<div class="main-content-inner">
-		<div class="breadcrumbs ace-save-state" id="breadcrumbs">
-			<ul class="breadcrumb">
-				<li>
-					<i class="ace-icon fa fa-home home-icon"></i>
-					<a href="#">Human Resource</a>
-				</li> 
-				<li>
-					<a href="#">Payroll</a>
-				</li>
-				<li class="active"> Promotion Edit</li>
-			</ul><!-- /.breadcrumb --> 
-		</div>
+    <div class="main-content-inner">
+        <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+            <ul class="breadcrumb">
+                <li>
+                    <i class="ace-icon fa fa-home home-icon"></i>
+                    <a href="#">Human Resource</a>
+                </li> 
+                <li>
+                    <a href="#">Payroll</a>
+                </li>
+                <li class="active"> Promotion Edit</li>
+            </ul><!-- /.breadcrumb --> 
+        </div>
 
-		<div class="page-content"> 
-            <div class="page-header">
-				<h1>Payroll<small> <i class="ace-icon fa fa-angle-double-right"></i> Promotion Edit</small></h1>
-            </div>
-
-            <div class="row">
-                    {{ Form::open(['url'=>'hr/payroll/promotion_update', 'class'=>'form-horizontal']) }}
-                    @include('inc/message')
-                <div class="col-xs-offset-3 col-xs-6">
-                    <!-- PAGE CONTENT BEGINS -->
-                    <!-- <h1 align="center">Add New Employee</h1> -->
-                    </br>
-                    <!-- Display Erro/Success Message -->
-                    <div class="output alert hide"></div> 
-
-                        <input type="hidden" name="promotion_id" value="{{ $promotion->id }}">
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label no-padding-right" for="associate_id"> Associate's ID <span style="color: red; vertical-align: top;">&#42;</span> </label>
-                            <div class="col-sm-9">
-                                <input type="text" name="associate_id" id="associate_id" value="{{ $promotion->associate_id }}" class="col-xs-12" readonly> 
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label no-padding-right" for="previous_designation"> Previous Designation </label>
-                            <div class="col-sm-9">
-                                <input type="hidden" name="previous_designation_id" value="{{ $promotion->previous_designation_id }}">
-                                <input type="text" name="previous_designation" id="previous_designation" value="{{ $promotion->prev_desg }}" class="col-xs-12" data-validation="required" readonly />
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label no-padding-right" for="current_designation_id"> Promoted Designation </label>
-                            <div class="col-sm-9"> 
-                                {{ Form::select('current_designation_id', $designationList, $promotion->current_designation_id, ['placeholder'=>'Select Promoted Designation', 'id'=>'current_designation_id', 'class'=> 'col-xs-12',  'data-validation'=>'required']) }}  
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label no-padding-right" for="eligible_date"> Eligible Date </label>
-                            <div class="col-sm-9">
-
-                                <input type="text" name="eligible_date" id="eligible_date" class="datepicker col-xs-12" value="{{ $promotion->eligible_date }}" data-validation="required" readonly />
-
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label no-padding-right" for="effective_date"> Effective Date </label>
-                            <div class="col-sm-9">
-                                <input type="text" name="effective_date" id="effective_date" class="datepicker col-xs-12 filter" value="{{ $promotion->effective_date }}" />
-
-                            </div>
-                        </div>
+        <div class="page-content"> 
+            
+            @include('inc/message')
+            @can('Manage Promotion') 
+            <div class="panel">
+                <div class="panel-heading">
+                    <h6>Promotion Edit
+                        <a href="{{url('hr/payroll/promotion-list')}}" class="btn btn-primary pull-right">Promotion List</a>
+                    </h6>
                 </div>
-                <div class="col-xs-12">
+                         
+                {{ Form::open(['url'=>'hr/payroll/promotion_update', 'class'=>'form-horizontal p-3 m-3']) }}
+                    <div class="row justify-content-center">
                         
-                        <div class="clearfix form-actions">
-                            <div class="col-md-offset-4 col-md-4 text-center"> 
-                                <button class="btn btn-sm btn-success" type="submit">
-                                    <i class="ace-icon fa fa-check bigger-110"></i> Submit
-                                </button>
+                        <div class="col-4">
+                            <input type="hidden" name="promotion_id" value="{{ $promotion->id }}">
+                            <div class="form-group has-float-label has-required ">
+                                <input type="text" name="associate_id" id="associate_id" value="{{ $promotion->associate_id }}" class="form-control" readonly>
+                                <label  for="associate_id"> Associate's ID </label>
+                            </div>
 
-                                &nbsp; &nbsp; &nbsp;
-                                <button class="btn btn-sm" type="reset">
-                                    <i class="ace-icon fa fa-undo bigger-110"></i> Reset
+                            <div class="form-group has-float-label has-required ">
+                                <input type="hidden" name="previous_designation_id" value="{{ $promotion->previous_designation_id }}">
+                                <input type="text" name="previous_designation" id="previous_designation" placeholder="No Previous Designation Found"  readonly  class="form-control" value="{{ $promotion->prev_desg }}"/>
+                                <label for="previous_designation"> Previous Designation </label>
+                            </div>
+
+                            <div class="form-group has-float-label has-required select-search-group">
+                                {{ Form::select('current_designation_id', $designationList, $promotion->current_designation_id , ['placeholder'=>'Select Promoted Designation', 'id'=>'current_designation_id']) }}  
+                                <label for="current_designation_id"> Promoted Designation </label>
+                            </div>
+
+                            <div class="form-group has-float-label  has-required">
+                                <input type="date" name="eligible_date" palceholder="Y-m-d" id="eligible_date" class="form-control " value="{{ $promotion->eligible_date }}"  readonly />
+                                <label  for="eligible_date"> Eligible Date </label>
+                            </div>
+
+                            <div class="form-group has-float-label has-required">
+                                <input type="date" name="effective_date" id="effective_date" class=" form-control filter" value="{{ $promotion->effective_date }}"/>
+                                <label  for="effective_date"> Effective Date </label>
+                            </div>
+                            
+     
+                        </div>
+                        <div class="col-4 benefit-employee">
+                            <div class="user-details-block">
+                                  <div class="user-profile text-center">
+                                        <img id="avatar" class="avatar-130 img-fluid" src="{{ emp_profile_picture($promotion)  }}">
+                                  </div>
+                                  <div class="text-center mt-3">
+                                     <h4><b id="user-name">{{$promotion->as_name}}</b></h4>
+                                     
+                                  </div>
+                               </div>
+                            <div class="form-group text-center mt-3">
+                                <button class="btn btn-primary " type="submit">
+                                    <i class="fa fa-check"></i> Save
                                 </button>
                             </div>
                         </div>
-
-                        <!-- /.row --> 
-                        <hr /> 
-                    <!-- PAGE CONTENT ENDS -->
-                </div>
-                    {{ Form::close() }}
-                <!-- /.col -->
+                        
+                    </div>
+                          
+                {{ Form::close() }}
             </div>
-		</div><!-- /.page-content -->
-	</div>
+            @endcan      
+          
+          
+        </div><!-- /.page-content -->
+    </div>
 </div> 
+@push('js')
 <script type="text/javascript">
 $(document).ready(function()
-{   
+{  
     $('#eligible_date').on('dp.change',function(){
-        var eligible_date = '{{ $promotion->eligible_date }}';
-        if(!eligible_date) {
-            $('#effective_date').val('');    
-        }
+        $('#effective_date').val($('#eligible_date').val());    
     });
     $('#effective_date').on('dp.change',function(){
-        var end     = $(this).val();
-        var start   = $('#eligible_date').val();
+        var end     = new Date($(this).val());
+        var start   = new Date($('#eligible_date').val());
         if(start == '' || start == null){
             alert("Please enter Start-Date first");
             $('#effective_date').val('');
@@ -119,34 +108,13 @@ $(document).ready(function()
             }
         }
     });
-    // Associate Search
-    $('select.associates').select2({
-        placeholder: 'Select Associate\'s ID',
-        ajax: {
-            url: '{{ url("hr/payroll/promotion-associate-search") }}',
-            dataType: 'json',
-            delay: 250,
-            data: function (params) {
-                return { 
-                    keyword: params.term
-                }; 
-            },
-            processResults: function (data) { 
-                return {
-                    results:  $.map(data, function (item) {
-                        return {
-                            text: item.associate_name,
-                            id: item.associate_id
-                        }
-                    }) 
-                };
-          },
-          cache: true
-        }
-    }); 
+    $('#dataTables').DataTable({
+            pagingType: "full_numbers" ,
+    });
+    
 
     //Associate Information 
-    $("body").on('change', ".associates", function(){
+    $("body").on('change', ".img-associates", function(){
         $.ajax({
             url: '{{ url("hr/payroll/promotion-associate-info") }}',
             type: 'get',
@@ -154,8 +122,13 @@ $(document).ready(function()
             data: {associate_id: $(this).val()},
             success: function(data)
             { 
+                console.log(data);
                 if (data.status)
                 { 
+                    $('#avatar').attr('src',data.as_pic);
+                    $('#user-name').text(data.as_name);
+                    $('#designation').text(data.previous_designation);
+
                     $("select[name=current_designation_id").html("").append(data.designation);
                     $('select[name=current_designation_id').trigger('change'); 
 
@@ -181,4 +154,5 @@ $(document).ready(function()
 
 });
 </script>
+@endpush
 @endsection

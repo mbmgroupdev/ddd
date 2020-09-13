@@ -28,7 +28,7 @@
          @include('inc/message')
         <div class="panel"> 
             <div class="panel-heading">
-                <ul class="nav nav-pills" id="pills-tab" role="tablist">
+                <ul class="nav nav-pills" id="pills-tab" role="tablist" style="    display: inline-flex;">
                   <li class="nav-item">
                      <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#unit_mapping_tab" role="tab" aria-controls="unit_mapping_tab" aria-selected="true">Unit Mapping</a>
                   </li>
@@ -36,6 +36,7 @@
                      <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#area_mapping_tab" role="tab" aria-controls="area_mapping_tab" aria-selected="false">Area Mapping</a>
                   </li>
                </ul>
+               <a href="{{url('hr/employee/cost_mapping_list')}}" class="btn btn-primary pull pull-right"><i class="las la-list"></i></a>
             </div>
             <div class="panel-body">
                 
