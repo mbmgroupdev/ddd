@@ -478,7 +478,7 @@ class UserController extends Controller
 
     public function permissionAssign(Request $request)
     {
-        $permissions = Permission::orderBy('name','ASC')->get();
+        $permissions = Permission::orderBy('groups','ASC')->get();
         $permissions = $permissions->groupBy(['module','groups']);
 
         return view('hr.adminstrator.assign-permission', compact('permissions'));
@@ -550,7 +550,7 @@ class UserController extends Controller
         $user = User::where('associate_id', $request->id)->first();
         //$test = $user->hasPermissionTo('Add User');
         //dd($test);
-        $permissions = Permission::orderBy('name','ASC')->get();
+        $permissions = Permission::orderBy('groups','ASC')->get();
         $permissions = $permissions->groupBy(['module','groups']);
 
         return view('hr.adminstrator.get-permission', compact('user','permissions'))->render();

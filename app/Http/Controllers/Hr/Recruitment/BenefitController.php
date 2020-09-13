@@ -433,6 +433,42 @@ class BenefitController extends Controller
                              
     }
 
+
+    public function promotionList()
+    {
+        return view('hr/payroll/promotion_list');
+    }
+
+    public function promotionListData()
+    {
+        $designation = designation_by_id();
+        $data = DB::table('hr_promotion AS inc')
+                    ->select([
+                        'inc.*',
+                        'b.as_name',
+                    ])
+                    ->leftJoin('hr_as_basic_info AS b', 'b.associate_id', 'inc.associate_id')
+                    ->orderBy('inc.id','desc')
+                    ->get();
+
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->editColumn('previous_designation_id', function ($data) use ($designation) {
+                return $designation[$data->previous_designation_id]['hr_designation_name']??'';
+            })
+            ->editColumn('current_designation_id', function ($data) use ($designation) {
+                return $designation[$data->current_designation_id]['hr_designation_name']??'';
+            })
+            ->addColumn('action', function ($data) {
+                return "<div class=\"btn-group\">
+                    <a type=\"button\" href=".url('hr/payroll/promotion_edit/'.$data->id)." class=\"btn btn-xs btn-primary\"><i class=\"fa fa-pencil\"></i></a>
+                </div>";
+            })
+            ->rawColumns(['action'])
+            ->make(true);  
+                             
+    }
+
     public function showIncrementForm()
     {
         // ACL::check(["permission" => "hr_payroll_benefit_list"]);
@@ -885,10 +921,14 @@ class BenefitController extends Controller
         $promotion= DB::table('hr_promotion AS p')
                         ->select(
                             'p.*',
-                            'd.hr_designation_name AS prev_desg'
+                            'd.hr_designation_name AS prev_desg',
+                            'b.as_name',
+                            'b.as_gender',
+                            'b.as_pic'
                         )
-                        ->where('id', $id)
+                        ->where('p.id', $id)
                         ->leftJoin('hr_designation AS d', 'p.previous_designation_id', 'd.hr_designation_id')
+                        ->leftJoin('hr_as_basic_info as b','p.associate_id', 'b.associate_id')
                         ->first();
         return view('hr/payroll/promotion_edit', compact('promotion', 'designationList'));
     }

@@ -29,7 +29,7 @@ class RolesController extends Controller
      */
     public function create()
     {
-        $permissions = Permission::orderBy('name','ASC')->get();
+        $permissions = Permission::orderBy('groups','ASC')->get();
         $permissions = $permissions->groupBy(['module','groups']);
         return view('hr.adminstrator.add-roles', compact('permissions'));
     }
