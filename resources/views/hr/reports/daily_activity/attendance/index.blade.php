@@ -461,9 +461,9 @@
           var type = $(this).val();
           $('input[name="employee"]').val('');
           if(type == 'ot'){
-            $('#reportGroup').append('<option value="ot_hour">OT Hour</option>');
+            $('#reportGroupHead').append('<option value="ot_hour">OT Hour</option>');
           }else{
-            $("#reportGroup option[value='ot_hour']").remove();
+            $("#reportGroupHead option[value='ot_hour']").remove();
           }
           var date = "{{ date('Y-m-d') }}";
           if(type == 'ot' || type == 'working_hour'){

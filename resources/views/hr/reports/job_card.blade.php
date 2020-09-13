@@ -152,7 +152,7 @@
                                         </div>
                                         <table class="table" style="width:100%;border:1px solid #ccc;margin-bottom:0;font-size:14px;text-align:left"  cellpadding="5">
                                             <tr>
-                                                <th style="width:35%">
+                                                <th style="width:32%">
                                                    <p style="margin:0;padding:4px 10px"><strong>ID </strong> # {{ $info->associate_id }}</p>
                                                    <p style="margin:0;padding:4px 10px"><strong>Name </strong>: {{ $info->as_name }}</p>
                                                    <p style="margin:0;padding:4px 10px"><strong>DOJ </strong>: {{ date("d-m-Y", strtotime($info->as_doj)) }}</p>
@@ -164,7 +164,7 @@
                                                 <th>
                                                    <p style="margin:0;padding:4px 10px"><strong>Total Present </strong>: <b >{{ $info->present }}</b> </p>
                                                    <p style="margin:0;padding:4px 10px"><strong>Total Absent </strong>: <b >{{ $info->absent }}</b></p>
-                                                   <p style="margin:0;padding:4px 10px"><strong>Total Ot </strong>: <b>{{number_to_time_format($info->ot_hour)}}</b> </p>
+                                                   <p style="margin:0;padding:4px 10px"><strong>Total OT </strong>: <b>{{number_to_time_format($info->ot_hour)}}</b> </p>
                                                 </th>
                                             </tr>
                                         </table>

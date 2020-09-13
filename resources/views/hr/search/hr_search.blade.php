@@ -140,6 +140,7 @@
     </div>
 </div>
 @push('js')
+    <script src="{{ asset('assets/js/moment.min.js')}}"></script>
     <script src="{{ asset('assets/js/chartjs.min.js') }}"></script>
     <script src="{{ asset('assets/js/fullcalendar.min.js') }}"></script>
     <script src="{{ asset('assets/js/bootbox.js') }}"></script>

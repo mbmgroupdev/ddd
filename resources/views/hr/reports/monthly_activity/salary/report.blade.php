@@ -67,7 +67,7 @@
 		                			<h5>OT</h5>
 		                		</div>
 		                		<div class="col-8 pl-0">
-		                			<b>: Yes </b>
+		                			<b>: @if($input['otnonot'] == 0) No @else Yes @endif </b>
 		                		</div>
 		                		@endif
 		                		<div class="col-4 p-0">
@@ -150,7 +150,7 @@
         			<h4>Line: {{ $line[$input['line_id']]['hr_line_name'] }}</h4>
         			@endif
         			@if($input['otnonot'] != null)
-        			<h4>OT: Yes</h4>
+        			<h4>OT: @if($input['otnonot'] == 0) No @else Yes @endif </h4>
         			@endif
         			<h4>Total Employee: <b>{{ $totalEmployees }}</b></h4>
         			<h4>Total Salary: <b>{{ $totalSalary }}</b></h4>
@@ -186,7 +186,7 @@
 								@endphp
 			                	@if($head != '')
 			                    <th colspan="2">{{ $head }}</th>
-			                    <th colspan="10">{{ $body }}</th>
+			                    <th colspan="11">{{ $body }}</th>
 			                    @endif
 			                </tr>
 			                @endif
@@ -201,6 +201,7 @@
 			                    <th>Line</th>
 			                    <th>Present</th>
 			                    <th>Absent</th>
+			                    <th>OT Hour</th>
 			                    <th>Total</th>
 			                    <th>Action</th>
 			                </tr>
@@ -211,6 +212,15 @@
 			            @foreach($getEmployee as $employee)
 			            	@php
 			            		$designationName = $designation[$employee->as_designation_id]['hr_designation_name']??'';
+			            		$otHourEx = explode('.', $employee->ot_hour);
+		                        $minute = '00';
+		                        if(isset($otHourEx[1])){
+		                            $minute = $otHourEx[1];
+		                            if($minute == 5){
+		                                $minute = 30;
+		                            }
+		                        }
+		                        $otHour = $otHourEx[0].'.'.$minute;
 			            	@endphp
 			            	@if($head == '')
 			            	<tr>
@@ -226,6 +236,7 @@
 				            	<td>{{ $line[$employee->as_line_id]['hr_line_name']??'' }}</td>
 				            	<td>{{ $employee->present }}</td>
 				            	<td>{{ $employee->absent }}</td>
+				            	<td><b>{{ $otHour }}</b></td>
 				            	<td>{{ number_format($employee->total_payable, 2, '.', ',') }}</td>
 				            	<td>
 				            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Yearly Activity Report' ><i class="fa fa-eye"></i></button>
@@ -246,9 +257,10 @@
 				            	<td>{{ $line[$employee->as_line_id]['hr_line_name']??'' }}</td>
 				            	<td>{{ $employee->present }}</td>
 				            	<td>{{ $employee->absent }}</td>
+				            	<td><b>{{ $otHour }}</b></td>
 				            	<td>{{ number_format($employee->total_payable, 2, '.', ',') }}</td>
 				            	<td>
-				            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Yearly Activity Report' ><i class="fa fa-eye"></i></button>
+				            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-yearmonth="{{ $input['month'] }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Yearly Activity Report' ><i class="fa fa-eye"></i></button>
 				            	</td>
 			            	</tr>
 			            	@endif
@@ -256,14 +268,14 @@
 			            @endforeach
 			            @else
 				            <tr>
-				            	<td colspan="12" class="text-center">No Data Found!</td>
+				            	<td colspan="13" class="text-center">No Data Found!</td>
 				            </tr>
 			            @endif
 			            </tbody>
 			            <tfoot>
 			            	<tr>
-			            		<td colspan="9"></td>
-			            		<td><b>Total Employee</b></td>
+			            		<td colspan="11" class="text-right"><b>Total Employee</b></td>
+			            		
 			            		<td colspan="2"><b>{{ $i }}</b></td>
 			            	</tr>
 			            </tfoot>
@@ -355,31 +367,16 @@
 
 		          <div class="inner_body" id="modal-details-content" style="display: none">
 		            <div class="inner_body_content">
-		               <div class="body_top_section">
+		               	<div class="body_top_section">
 		               		<h3 class="text-center modal-h3"><strong>Name :</strong> <b id="eName"></b></h3>
 		               		<h3 class="text-center modal-h3"><strong>Id :</strong> <b id="eId"></b></h3>
 		               		<h3 class="text-center modal-h3"><strong>Designation :</strong> <b id="eDesgination"></b></h3>
-		               </div>
-		               <div class="body_content_section">
-		               	<div class="body_section" id="">
-		               		<table class="table table-bordered">
-		               			<thead>
-		               				<tr>
-		               					<th>Month</th>
-		               					<th>Salary</th>
-		               				</tr>
-		               			</thead>
-		               			<tbody id="body_result_section">
-		               				<tr>
-		               					<td colspan="5">
-		               						<img src='{{ asset("assets/img/loader-box.gif")}}' class="center-loader">
-		               					</td>
-		               				</tr>
-		               			</tbody>
-		               		</table>
-		               		
 		               	</div>
-		               </div>
+		               	<div class="body_content_section">
+			               	<div class="body_section" id="employee-salary">
+			               		
+			               	</div>
+		               	</div>
 		            </div>
 		            <div class="inner_buttons">
 		              <a class="cancel_modal_button cancel_details" role="button"> Close </a>
@@ -394,7 +391,7 @@
 
 
 <script type="text/javascript">
-    var loaderModal = '<td class="text-center" colspan="6"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:50px;"></i></td>';
+    var loaderModal = '<div class="panel"><div class="panel-body"><p style="text-align:center;margin:10px;"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>';
     $(".overlay-modal, .item_details_dialog").css("opacity", 0);
     /*Remove inline styles*/
     $(".overlay-modal, .item_details_dialog").removeAttr("style");
@@ -402,12 +399,12 @@
     detailsheight = $(".item_details_dialog").css("min-height", "115px");
     var months    = ['','January','February','March','April','May','June','July','August','September','October','November','December'];
     $(document).on('click','.yearly-activity',function(){
-    	$("#body_result_section").html(loaderModal);
+    	$("#employee-salary").html(loaderModal);
         let id = $(this).data('id');
         let associateId = $(this).data('eaid');
         let name = $(this).data('ename');
         let designation = $(this).data('edesign');
-        
+        let yearMonth = $(this).data('yearmonth');
         $("#eName").html(name);
         $("#eId").html(associateId);
         $("#eDesgination").html(designation);
@@ -416,15 +413,17 @@
         $(".inner_body").show();
         // ajax call
         $.ajax({
-            url: '/hr/reports/employee-yearly-salary-modal',
+            url: '/hr/reports/employee-salary-modal',
             type: "GET",
             data: {
-                as_id: associateId
+                as_id: associateId,
+                year_month: yearMonth
             },
             success: function(response){
-                if(response.type === 'success'){
+            	// console.log(response);
+                if(response !== 'error'){
                 	setTimeout(function(){
-                		$("#body_result_section").html(response.value);
+                		$("#employee-salary").html(response);
                 	}, 1000);
                 }else{
                 	console.log(response);
@@ -435,7 +434,7 @@
         $(".show_item_details_modal").css("width", "225").animate({
           "opacity" : 1,
           height : detailsheight,
-          width : "50%"
+          width : "70%"
         }, 600, function() {
           /*When animation is done show inside content*/
           $(".fade-box").show();

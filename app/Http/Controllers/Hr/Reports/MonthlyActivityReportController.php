@@ -32,23 +32,23 @@ class MonthlyActivityReportController extends Controller
             $month = $yearMonth[1];
             $year = $yearMonth[0];
 
-            $auditFlag = 1;
-            $audit['unit_id'] = $input['unit'];
-            $audit['year'] = $year;
-            $audit['month'] = $month;
-            $salaryStatus = SalaryAudit::checkSalaryAuditStatus($audit);
+            // $auditFlag = 1;
+            // $audit['unit_id'] = $input['unit'];
+            // $audit['year'] = $year;
+            // $audit['month'] = $month;
+            // $salaryStatus = SalaryAudit::checkSalaryAuditStatus($audit);
             
-            if($salaryStatus == null){
-                $auditFlag = 0;
-            }else{
-                if($salaryStatus->initial_audit == null || $salaryStatus->accounts_audit == null || $salaryStatus->management_audit == null){
-                    $auditFlag = 0;
-                }
-            }
+            // if($salaryStatus == null){
+            //     $auditFlag = 0;
+            // }else{
+            //     if($salaryStatus->initial_audit == null || $salaryStatus->accounts_audit == null || $salaryStatus->management_audit == null){
+            //         $auditFlag = 0;
+            //     }
+            // }
             
-            if($auditFlag == 0){
-                return '<div class="iq-card-body"><h2 class="text-red text-center">Monthly Salary Of '.date('M Y', strtotime($input['month'])).' Not Generate Yet!</h2></div>';
-            }
+            // if($auditFlag == 0){
+            //     return '<div class="iq-card-body"><h2 class="text-red text-center">Monthly Salary Of '.date('M Y', strtotime($input['month'])).' Not Generate Yet!</h2></div>';
+            // }
 
             $input['area']       = isset($request['area'])?$request['area']:'';
             $input['otnonot']    = isset($request['otnonot'])?$request['otnonot']:'';
@@ -101,7 +101,7 @@ class MonthlyActivityReportController extends Controller
                 $queryData->select('emp.'.$input['report_group'], DB::raw('count(*) as total'), DB::raw('sum(total_payable) as groupSalary'))->groupBy('emp.'.$input['report_group']);
 
             }else{
-                $queryData->select('emp.as_id','emp.as_gender', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_section_id', 's.present', 's.absent', 's.total_payable');
+                $queryData->select('emp.as_id','emp.as_gender', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_section_id', 's.present', 's.absent', 's.ot_hour', 's.total_payable');
                 $totalSalary = round($queryData->sum("s.total_payable"));
             }
             $getEmployee = $queryData->get();
@@ -166,6 +166,22 @@ class MonthlyActivityReportController extends Controller
         }
     }
 
+    public function empSalaryModal(Request $request)
+    {
+        $input = $request->all();
+        try {
+            $data['as_id'] = $input['as_id'];
+            $data['month'] = date('m', strtotime($input['year_month']));
+            $data['year'] = date('Y', strtotime($input['year_month']));
+            $salary = HrMonthlySalary::getEmployeeSalaryWithMonthWise($data);
+
+            return view('hr.reports.monthly_activity.salary.employee-single-salary', compact('salary'));
+        } catch (\Exception $e) {
+            $bug = $e->getMessage();
+            // return $bug;
+            return 'error';
+        }
+    }
     public function salaryAudit(Request $request)
     {
         $input = $request->all();

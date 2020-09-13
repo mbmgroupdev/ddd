@@ -30,6 +30,10 @@
       padding: 15px 15px;
       padding-bottom: 8px;
     }
+    .modal-h3{
+      line-height: 15px !important;
+    }
+    
   </style>
 @endpush
 <div class="main-content">
@@ -202,9 +206,9 @@
                             </div>
                         </div>
                         <div class="single-employee-search" id="single-employee-search" style="display: none;">
-                          {{-- <div class="form-group">
+                          <div class="form-group">
                             <input type="text" name="employee" class="form-control" placeholder="Search Employee Associate ID..." id="searchEmployee">
-                          </div> --}}
+                          </div>
                         </div>
                     </form>
                     <!-- PAGE CONTENT ENDS -->

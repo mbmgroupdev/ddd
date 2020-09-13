@@ -317,9 +317,11 @@ if(!function_exists('get_employee_by_id'))
             ->where("hr_as_basic_info.associate_id", $associate_id)
             ->whereIn('hr_as_basic_info.as_unit_id', auth()->user()->unit_permissions())
             ->first();
-        $emp->as_pic = emp_profile_picture($emp);
+        if($emp != null){
+            $emp->as_pic = emp_profile_picture($emp);
+        }
 
-        return$emp;
+        return $emp;
     }
 }
 
@@ -646,7 +648,7 @@ if(!function_exists('shift_by_code')){
 if(!function_exists('unit_by_id')){
     function unit_by_id()
     {
-       return  Cache::remember('unit', 10000000, function () {
+       return  Cache::remember('unit', Carbon::now()->addHour(12), function () {
             return Unit::orderBy('hr_unit_name','DESC')->get()->keyBy('hr_unit_id')->toArray();
         });      
 
@@ -656,8 +658,8 @@ if(!function_exists('unit_by_id')){
 if(!function_exists('unit_list')){
     function unit_list()
     {
-       return  Cache::remember('unit', 10000000, function () {
-            return Unit::where('hr_unit_status', '1')
+       return  Cache::remember('unit_list', Carbon::now()->addHour(12), function () {
+            return Unit::select('hr_unit_name', 'hr_unit_id')->where('hr_unit_status', '1')
             ->whereIn('hr_unit_id', auth()->user()->unit_permissions())
             ->orderBy('hr_unit_name', 'desc')
             ->pluck('hr_unit_name', 'hr_unit_id');

@@ -15,12 +15,13 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
-    <link rel="stylesheet" href="{{ asset('assets/css/typography.css') }}">
-    <!-- Style CSS -->
+    {{-- <link rel="stylesheet" href="{{ asset('assets/css/typography.css') }}">
+    
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-float-label.min.css')}}"/>
     <link rel="stylesheet" href="{{ asset('assets/css/toastr.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('plugins/DataTables/datatables.css')}}">
+    <link rel="stylesheet" href="{{ asset('plugins/DataTables/datatables.css')}}"> --}}
+    <link rel="stylesheet" href="{{ asset('assets/css/all.css') }}">
     @stack('css')
     {{-- Custom CSS --}}
     <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
@@ -205,13 +206,12 @@
 
         </div>
     </div>
-    <script src="{{ asset('assets/js/smooth-scrollbar.js') }}"></script>
-
-
+    {{-- <script src="{{ asset('assets/js/smooth-scrollbar.js') }}"></script>
     <script src="{{asset('assets/js/notify/notify.js')}}"></script>
     <script src="{{asset('assets/js/select2.min.js')}}"></script>
     <script src="{{asset('assets/js/toastr.min.js')}}"></script>
-    <script src="{{ asset('plugins/DataTables/datatables.min.js') }}"></script>
+    <script src="{{ asset('plugins/DataTables/datatables.min.js') }}"></script> --}}
+    <script src="{{asset('assets/js/all.js')}}"></script>
     <!-- Custom JavaScript -->
     @stack('js')
     <script src="{{ asset('assets/js/custom.js') }}"></script>

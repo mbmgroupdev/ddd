@@ -20,7 +20,7 @@ class UnitReportsController extends Controller
     	
     	$unitShift = [];
     	$input = $request->all();
-    	// return $input;
+    	// dd($input);
     	try {
             
 	        $year  = date('Y', strtotime($input['date']));
@@ -36,12 +36,9 @@ class UnitReportsController extends Controller
             	$unitList = unit_list();
             }else{
             	$unit = unit_by_id();
-            	$unitList[$input['unit']] = $unit[$input['unit']];
+            	$unitList[$input['unit']] = $unit[$input['unit']]['hr_unit_name'];
             }
 
-            // foreach ($unitList as $unitId => $unit) {
-            // 	$unitShift[$unitId] = $unit;
-            // }
             foreach ($unitList as $unitId => $unit) {
             	$list = "";
             	$queryData = ShiftRoaster::select('hr_shift_roaster.'.$column, DB::raw('count(*) as total'));
@@ -101,7 +98,7 @@ class UnitReportsController extends Controller
 	                      ";
 	            $unitShift[$unit] = $list;
             }
-        	//dd($unitShift);
+        	// dd($unitShift);
             return view('hr.reports.unit-shift.report', compact('unitShift'));
     	} catch (\Exception $e) {
     		$bug = $e->getMessage();

@@ -3,7 +3,6 @@
 @push('css')
   
   <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-datetimepicker.min.css') }}" />
-  <link rel="stylesheet" href="{{ asset('plugins/DataTables/datatables.css')}}">
   <link rel="stylesheet" href="{{ asset('assets/css/editor.dataTables.min.css') }}" />
   <style>
     #dataTables th:nth-child(2) input{
@@ -194,7 +193,6 @@
 
 <script src="{{ asset('assets/js/moment.min.js') }}"></script>
 <script src="{{ asset('assets/js/bootstrap-datetimepicker.min.js') }}"></script>
-<script src="{{ asset('plugins/DataTables/datatables.min.js') }}"></script>
 <script src="{{ asset('assets/js/dataTables.cellEdit.js') }}"></script>
 <script type="text/javascript">
     $(document).ready(function(){  

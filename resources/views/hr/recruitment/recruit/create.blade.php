@@ -496,8 +496,7 @@
       </div>
    </div>
    @push('js')
-     <!-- Select2 JavaScript -->
-      <script src="{{ asset('assets/js/select2.min.js') }}"></script>
+
       <script>
          $(".select-search").select2({});
 

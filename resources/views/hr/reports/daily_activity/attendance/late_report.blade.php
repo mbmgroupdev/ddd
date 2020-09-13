@@ -68,7 +68,7 @@
 		                			<h5>OT</h5>
 		                		</div>
 		                		<div class="col-8 pl-0">
-		                			<b>: Yes </b>
+		                			<b>: @if($input['otnonot'] == 0) No @else Yes @endif </b>
 		                		</div>
 		                		@endif
 		                		<div class="col-4 pr-0">
