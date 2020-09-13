@@ -66,7 +66,7 @@
 		                			<h5>OT</h5>
 		                		</div>
 		                		<div class="col-9 pl-0">
-		                			<b>: Yes </b>
+		                			<b>: @if($input['otnonot'] == 0) No @else Yes @endif </b>
 		                		</div>
 		                		@endif
 		                		<div class="col-3 pr-0">
@@ -141,7 +141,7 @@
         			<h4>Line: {{ $line[$input['line_id']]['hr_line_name'] }}</h4>
         			@endif
         			@if($input['otnonot'] != null)
-        			<h4>OT: Yes</h4>
+        			<h4>OT: @if($input['otnonot'] == 0) No @else Yes @endif </h4>
         			@endif
         			<h4>Leave Date: {{ $input['date']}}</h4>
         			<h4>Total Leave : <b>{{ $totalEmployees }}</b></h4>

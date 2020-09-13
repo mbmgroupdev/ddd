@@ -142,7 +142,7 @@
         			<h4>Line: {{ $line[$input['line_id']]['hr_line_name'] }}</h4>
         			@endif
         			@if($input['otnonot'] != null)
-        			<h4>OT: Yes</h4>
+        			<h4>OT: @if($input['otnonot'] == 0) No @else Yes @endif </h4>
         			@endif
 
         			<h4>Absent Date: <b>{{ $input['absent_date'] }}</b></h4>

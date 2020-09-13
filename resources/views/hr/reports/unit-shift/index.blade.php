@@ -106,7 +106,7 @@
                     date:date
                 },
                 success: function(response){
-                    console.log(response);
+                    // console.log(response);
                     $("#result-data").html(response);
                 }
             });

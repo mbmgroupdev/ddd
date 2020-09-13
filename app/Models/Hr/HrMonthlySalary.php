@@ -95,6 +95,15 @@ class HrMonthlySalary extends Model
         ->first();
     }
 
+    public static function getEmployeeSalaryWithMonthWise($data)
+    {
+        return HrMonthlySalary::with(['employee_bengali', 'employee', 'salary_add_deduct'])
+        ->where('as_id', $data['as_id'])
+        ->where('year', $data['year'])
+        ->where('month', $data['month'])
+        ->first();
+    }
+
     public static function getYearlyActivityMonthWise($asId, $year)
     {
         return DB::table('hr_monthly_salary')

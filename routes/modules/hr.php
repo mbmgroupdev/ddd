@@ -1072,6 +1072,7 @@ Route::get('hr/setup/retirement/get_employee_details', 'Hr\Setup\RetirementPolic
 	Route::get('hr/reports/monthly-salary', 'Hr\Reports\MonthlyActivityReportController@salary');
 	Route::get('hr/reports/monthly-salary-report', 'Hr\Reports\MonthlyActivityReportController@salaryReport');
 	Route::get('hr/reports/employee-yearly-salary-modal', 'Hr\Reports\MonthlyActivityReportController@salaryReportModal');
+	Route::get('hr/reports/employee-salary-modal', 'Hr\Reports\MonthlyActivityReportController@empSalaryModal');
 
 
 	#------------- Search associate with paramenters(unit, floor, line)---------#

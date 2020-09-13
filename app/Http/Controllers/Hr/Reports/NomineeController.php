@@ -10,7 +10,7 @@ class NomineeController extends Controller
 {    
 	public function showForm(Request $request)
     {
-        dd(cache('spatie.permission.cache'));
+        
         $info = array();
         if($request->has('associate_id')){
     	   $info = DB::table('hr_as_basic_info AS b')

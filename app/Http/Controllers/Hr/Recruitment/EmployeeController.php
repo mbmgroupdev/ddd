@@ -583,10 +583,14 @@ class EmployeeController extends Controller
         if (!empty($request->associate_id))
         {
             $info = get_employee_by_id($request->associate_id);
+
+            if(empty($info)){
+                toastr()->error($request->associate_id.' Not Found!');
+                return back();
+            }
             // $info = Employee::where('associate_id', $request->associate_id)->first();
             $per_complete = $this->getCompleteInfo($request->associate_id);
 
-            if(empty($info)) abort(404, "$request->associate_id not found!");
 
             $loans = DB::table("hr_loan_application")
                 ->select(

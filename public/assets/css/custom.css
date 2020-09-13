@@ -32,6 +32,12 @@ p.search-title{
 .f-60{
     font-size: 60px;
 }
+.f-9{
+    font-size: 9px;
+}
+p.f-9 span, p.f-9 span font{
+    font-size: 9px;
+}
 #printButton{margin-top:5px; }
 .fc-event-container a{margin-top: 10px; padding: 10px;}
 .modal-dialog{width: 600px!important;}
