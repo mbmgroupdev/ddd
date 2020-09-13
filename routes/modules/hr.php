@@ -318,7 +318,7 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 
 	//shift roaster
 	Route::get('hr/timeattendance/shift_roaster', 'Hr\TimeAttendance\ShiftRoasterController@getRoaster');
-	Route::get('hr/timeattendance/shift_roaster_datatable', 'Hr\TimeAttendance\ShiftRoasterController@getRoasterDatatableData');
+	Route::post('hr/timeattendance/shift_roaster_datatable', 'Hr\TimeAttendance\ShiftRoasterController@getRoasterDatatableData');
 	Route::post('hr/timeattendance/shift_roaster_data', 'Hr\TimeAttendance\ShiftRoasterController@getRoasterData');
 	Route::get('hr/timeattendance/get_floor_by_unit', 'Hr\TimeAttendance\ShiftRoasterController@getFloorByUnit');
 

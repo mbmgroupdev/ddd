@@ -123,9 +123,9 @@
                                             <label for="otnonot">OT/Non-OT</label>
                                         </div>
                                         @php
-                                          if(isset(request()->audit) && (request()->audit == 'Accounts' || request()->audit == 'Management')){
+                                          if(isset(request()->audit) && (request()->audit == 'Audit' || request()->audit == 'Accounts' || request()->audit == 'Management')){
                                             $reFor = 1;
-                                            $reGro = 'as_department_id';
+                                            $reGro = 'as_unit_id';
                                           }else{
                                             $reFor = 0;
                                             $reGro = 'as_line_id';

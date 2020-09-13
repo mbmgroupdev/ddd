@@ -24,7 +24,7 @@
      </li>
   </ul>
 
-  @php $msg = ''; @endphp
+  @php $msg = ''; $link = ''; @endphp
   <form class="form">
     @if($salaryStatus == null)
       @php 
@@ -33,37 +33,49 @@
         $date = date('Y-m-01', strtotime($input['month_year']));
         $url = 'hr/daily-activity-audit?date='.$date.'&unit='.$input['unit'].'&report_type=absent';
         $department = 'HR';
+        if(Auth::user()->can('Salary Generate - HR')){
+          $link = '<a href="'.url($url.'&audit='.$department).'" class="btn btn-md btn-outline-success"><i class="las la-hand-point-right"></i> '.$button.'</a>';
+        }
       @endphp
     @else
-      @if($salaryStatus->initial_audit == null || $salaryStatus->accounts_audit == null || $salaryStatus->management_audit == null)
-          @if($salaryStatus->initial_audit == null)
-            @php
-             $msg = 'Monthly Salary Of <b>'.date('M Y', strtotime($input['month_year'])).'</b> Handover On Audit Department';
-             $department = 'Audit'; 
-            @endphp
-          @elseif($salaryStatus->accounts_audit == null)
-            @php
-             $msg = 'Monthly Salary Of <b>'.date('M Y', strtotime($input['month_year'])).'</b> Handover On Accounts Department'; 
-             $department = 'Accounts'; 
-            @endphp
-          @elseif($salaryStatus->management_audit == null)
-            @php
-             $msg = 'Monthly Salary Of <b>'.date('M Y', strtotime($input['month_year'])).'</b> Handover On Management Department'; 
-             $department = 'Management'; 
-            @endphp
-          @endif
-      @endif
       @php 
         $button = 'Check Salary';
         $url = 'hr/monthly-salary-audit?month='.$input['month_year'].'&unit='.$input['unit'];
       @endphp
+      @if($salaryStatus->initial_audit == null || $salaryStatus->accounts_audit == null || $salaryStatus->management_audit == null)
+          @if($salaryStatus->initial_audit == null)
+            @php
+              $msg = 'Monthly Salary Of <b>'.date('M Y', strtotime($input['month_year'])).'</b> Handover On Audit Department';
+              $department = 'Audit'; 
+              if(Auth::user()->can('Salary Audit - Audit')){
+                $link = '<a href="'.url($url.'&audit='.$department).'" class="btn btn-md btn-outline-success"><i class="las la-hand-point-right"></i> '.$button.'</a>';
+              }
+            @endphp
+          @elseif($salaryStatus->accounts_audit == null)
+            @php
+              $msg = 'Monthly Salary Of <b>'.date('M Y', strtotime($input['month_year'])).'</b> Handover On Accounts Department'; 
+              $department = 'Accounts';
+              if(Auth::user()->can('Salary Verify - Accounts')){
+                $link = '<a href="'.url($url.'&audit='.$department).'" class="btn btn-md btn-outline-success"><i class="las la-hand-point-right"></i> '.$button.'</a>';
+              } 
+            @endphp
+          @elseif($salaryStatus->management_audit == null)
+            @php
+              $msg = 'Monthly Salary Of <b>'.date('M Y', strtotime($input['month_year'])).'</b> Handover On Management Department'; 
+              $department = 'Management'; 
+              if(Auth::user()->can('Salary Confirmation - Management')){
+                $link = '<a href="'.url($url.'&audit='.$department).'" class="btn btn-md btn-outline-success"><i class="las la-hand-point-right"></i> '.$button.'</a>';
+              }
+            @endphp
+          @endif
+      @else
+        @php
+          $msg = 'Monthly Salary Of <b>'.date('M Y', strtotime($input['month_year'])).'</b> Process Completed';
+           
+        @endphp
+      @endif
+      
     @endif
-    @php
-      $link = '';
-      if(Auth::user()->can('Hr Salary Generate') || Auth::user()->can('Salary Audit') || Auth::user()->can('Accounts Salary Verify') || Auth::user()->can('Management Salary Audit')){
-          $link = '<a href="'.url($url.'&audit='.$department).'" class="btn btn-md btn-outline-success"><i class="las la-hand-point-right"></i> '.$button.'</a>';
-      }
-    @endphp
 
     <div class="text-center">
         <h3>{!! $msg !!}</h3>
