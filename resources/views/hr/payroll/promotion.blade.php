@@ -23,7 +23,7 @@
             <div class="panel">
                 <div class="panel-heading">
                     <h6>Promotion
-                        {{-- <a href="" class="btn btn-primary pull-right">Promotion List</a> --}}
+                        <a href="{{url('hr/payroll/promotion-list')}}" class="btn btn-primary pull-right">Promotion List</a>
                     </h6>
                 </div>
                          
@@ -57,11 +57,7 @@
                                 <input type="date" name="effective_date" id="effective_date" class=" form-control filter" value="" />
                                 <label  for="effective_date"> Effective Date </label>
                             </div>
-                            <div class="form-group">
-                                <button class="btn btn-primary" type="submit">
-                                    <i class="fa fa-check"></i> Save
-                                </button>
-                            </div>
+                            
      
                         </div>
                         <div class="col-4 benefit-employee">
@@ -75,44 +71,18 @@
                                         Employee designation</p>
                                      
                                   </div>
+                                  <div class="form-group text-center mt-2">
+                                <button class="btn btn-primary " type="submit">
+                                    <i class="fa fa-check"></i> Save
+                                </button>
+                            </div>
                                </div>
                         </div>
                     </div>
                           
                 {{ Form::close() }}
             </div>
-            @endcan        
-            <!-- /.col -->
-            {{-- <div class="responsive-hundred">
-               <div class="widget-box widget-color-blue">
-                <table id="dataTables" class="table table-striped table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Associate ID</th>
-                                <th>Name</th>
-                                <th>Prev. Desg.</th>
-                                <th>Curr. Desg</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($promotionList AS $promotion)
-                            <tr>
-                                <td>{{ $promotion->associate_id }}</td>
-                                <td>{{ $promotion->as_name }}</td>
-                                <td>{{ $promotion->previous_desg }}</td>
-                                <td>{{ $promotion->current_desg }}</td>
-                                <td>
-                                <div class="btn-group">
-                                    <a type="button" href="{{ url('hr/payroll/promotion_edit/'.$promotion->id) }}" class='btn btn-xs btn-primary'><i class="fa fa-pencil"></i></a>
-                                </div>
-                            </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div> --}}
+            @endcan      
           
           
 		</div><!-- /.page-content -->

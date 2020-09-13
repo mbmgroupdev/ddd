@@ -317,8 +317,10 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 	Route::get('hr/timeattendance/make_halfday', 'Hr\TimeAttendance\AttendanceController@makeHalfday');
 
 	//shift roaster
-	Route::get('hr/timeattendance/shift_roaster', 'Hr\TimeAttendance\ShiftRoasterController@getRoaster');
+
+	Route::get('hr/reports/shift_roaster', 'Hr\TimeAttendance\ShiftRoasterController@getRoaster');
 	Route::post('hr/timeattendance/shift_roaster_datatable', 'Hr\TimeAttendance\ShiftRoasterController@getRoasterDatatableData');
+
 	Route::post('hr/timeattendance/shift_roaster_data', 'Hr\TimeAttendance\ShiftRoasterController@getRoasterData');
 	Route::get('hr/timeattendance/get_floor_by_unit', 'Hr\TimeAttendance\ShiftRoasterController@getFloorByUnit');
 
@@ -378,7 +380,7 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 
 	// shift Roaster
 	Route::get('hr/operation/holiday-roster', 'Hr\ShiftRoaster\ShiftRoasterController@index')->middleware(['permission:Holiday Roster']);
-	Route::get('hr/shift_roaster/roaster_view', 'Hr\ShiftRoaster\ShiftRoasterController@viewRoaster')->middleware(['permission:Holiday Roster']);
+	Route::get('hr/reports/holiday-roster', 'Hr\ShiftRoaster\ShiftRoasterController@viewRoaster')->middleware(['permission:Holiday Roster']);
 	Route::post('hr/shift_roaster/save_roaster', 'Hr\ShiftRoaster\ShiftRoasterController@saveRoaster')->middleware(['permission:Holiday Roster']);
 	Route::get('hr/shift_roaster/roaster_view_data', 'Hr\ShiftRoaster\ShiftRoasterController@getRoasterData');
 	Route::get('hr/shift_roaster/roaster_save_changes', 'Hr\ShiftRoaster\ShiftRoasterController@roasterSaveChanges');
@@ -475,6 +477,9 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 	Route::get('hr/payroll/promotion-associate-search', 'Hr\Recruitment\BenefitController@searchPromotedAssociate')->middleware(['permission:Manage Promotion']);
 	Route::get('hr/payroll/promotion-associate-info', 'Hr\Recruitment\BenefitController@promotedAssociateInfo')->middleware(['permission:Manage Promotion']);
 	Route::get('hr/payroll/benefit/{associate_id}', 'Hr\Recruitment\BenefitController@showAssociateBenefit');
+
+	Route::get('hr/payroll/promotion-list', 'Hr\Recruitment\BenefitController@promotionList');
+	Route::get('hr/payroll/promotion-list-data', 'Hr\Recruitment\BenefitController@promotionListData');
 
 
 //Salary
@@ -1206,7 +1211,7 @@ Route::post('hr/setup/buyer_template_update', 'Hr\Setup\BuyerModeSetupController
 	Route::post('hr/operation/unit_map_update', 'Hr\Recruitment\CostMappingController@unitMapUpdate')->middleware(['permission:Cost Distribution']);
 	Route::post('hr/operation/area_map_update', 'Hr\Recruitment\CostMappingController@areaMapUpdate')->middleware(['permission:Cost Distribution']);
 
-	Route::get('hr/operation/cost_mapping_list', 'Hr\Recruitment\CostMappingController@mapList')->middleware(['permission:Cost Distribution List']);
+	Route::get('hr/employee/cost_mapping_list', 'Hr\Recruitment\CostMappingController@mapList')->middleware(['permission:Cost Distribution List']);
 	Route::post('hr/operation/cost_mapping_data', 'Hr\Recruitment\CostMappingController@mapData')->middleware(['permission:Cost Distribution List']);
 
 	//Frequent Manual Attendance report
@@ -1341,7 +1346,7 @@ Route::get('hr/db_file/use_data/{file_name}', 'Hr\DatabaseBackupController@loadD
 
 
 ///-----Absent or Present List operation..............
-Route::get('hr/operation/absent_present_list', 'Hr\Operation\AbsentPresentListController@absentPresentIndex')->middleware(['permission:Attendance Consecutive Report']);
+Route::get('hr/reports/attendance-consecutive', 'Hr\Operation\AbsentPresentListController@absentPresentIndex')->middleware(['permission:Attendance Consecutive Report']);
 Route::get('hr/operation/attendance_report_data', 'Hr\Operation\AbsentPresentListController@attendanceReportData');
 ///-----Absent or Present List operation end..............
 

@@ -95,6 +95,9 @@ $(document).ready(function(){
         var dropdownList = {
         };
 
+        var exportColName = ['Sl.','Associate ID','Name','Unit','Floor','Line','Total Change', 'Changed Line', 'Changed Floor', 'Start Date', 'End Date'];
+        var exportCol = [0,1,2,3,4,5,6,7,8,9];
+
         var dt =  $('#dataTables').DataTable({
            order: [], //reset auto order
             lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
@@ -127,7 +130,12 @@ $(document).ready(function(){
                     className: 'btn-sm btn-success',
                     "action": allExport,
                     exportOptions: {
-                        columns: ':visible'
+                        columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
                     }
                 },
                 {
@@ -135,7 +143,12 @@ $(document).ready(function(){
                     className: 'btn-sm btn-warning',
                     "action": allExport,
                     exportOptions: {
-                        columns: ':visible'
+                        columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
                     }
                 },
                 {
@@ -143,7 +156,12 @@ $(document).ready(function(){
                     className: 'btn-sm btn-primary',
                     "action": allExport,
                     exportOptions: {
-                        columns: ':visible'
+                        columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
                     }
                 },
                 {
@@ -153,7 +171,12 @@ $(document).ready(function(){
                     className: 'btn-sm btn-default print',
                     title: '',
                     exportOptions: {
-                        columns: ':visible',
+                        columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      },
                         stripHtml: false
                     },
                     "action": allExport,

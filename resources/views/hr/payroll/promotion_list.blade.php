@@ -1,83 +1,73 @@
+@extends('hr.layout')
+@section('title', 'Increment')
+@section('main-content')
+@push('css')
+    <style type="text/css">
+        {{-- removing the links in print and adding each page header --}}
+        a[href]:after { content: none !important; }
+        thead {display: table-header-group;}
 
+        /*.form-group {overflow: hidden;}*/
+        table.header-fixed1 tbody {max-height: 240px;  overflow-y: scroll;}
 
-<div class="panel panel-info col-sm-12 col-xs-12">
-    <div class="breadcrumbs ace-save-state" id="breadcrumbs">
-        <ul class="breadcrumb">
-            <li>
-                <i class="ace-icon fa fa-angle-double-right"></i>
-                <a href="#" class="search_all" data-category="{{ $request1['category'] }}" data-type="{{ $request1['type'] }}"> MBM Group </a>
-            </li>
-            
-            @if(isset($request1['unit']))
-                <li>
-                    <a href="#" class="search_unit"> All Unit </a>
-                </li>
-                <li>
-                    <a href="#" class="search_floor" data-unit="{{ $request1['unit'] }}">
-                        {{ $data['unit']->hr_unit_name }}
-                    </a>
-                </li>
-            @endif
-            @if(isset($request1['floor']))
-                <li>
-                    <a href="#" class="search_line" data-floor="{{ $request1['floor'] }}">
-                        {{ $data['floor']->hr_floor_name }}
-                    </a>
-                </li>
-            @endif
-            @if(isset($request1['line']))
-                <li>
-                    <a href="#" class="line_change" data-line="{{ $request1['line'] }}">
-                        {{ $data['line']->hr_line_name }}
-                    </a>
-                </li>
-            @endif
-            <li class="active"> Line Change List</li>
-        </ul><!-- /.breadcrumb -->
+    </style>
+@endpush
+<div class="main-content">
+	<div class="main-content-inner">
+		<div class="breadcrumbs ace-save-state" id="breadcrumbs">
+			<ul class="breadcrumb">
+				<li>
+					<i class="ace-icon fa fa-home home-icon"></i>
+					<a href="#"> Human Resource </a>
+				</li> 
+				<li>
+					<a href="#"> Payroll </a>
+				</li>
+				<li class="active"> Promotion </li>
+			</ul><!-- /.breadcrumb --> 
+		</div>
 
-    </div>
-    <hr>
-    <p class="search-title">Search results of  {{ $showTitle }}</p>
-    <div class="panel-body">
-        <!-- <h4 class="center">MBM Group</h4> -->
-        
-        <div class="row choice_2_div" id="choice_2_div" name="choice_2_div">
-                <div class="col-sm-12">
-                    <table id="dataTables" class="table table-striped table-bordered">
+		<div class="page-content"> 
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <h6>Promotion List
+                        <a href="{{url('hr/payroll/promotion')}}" class="btn btn-primary pull-right">Promotion</a>
+                    </h6>
+                </div>
+                <div class="panel-body">
+                    
+                    <table id="dataTables" class="table table-striped table-bordered" style="width: 100% !important;">
                         <thead>
                             <tr>
-                                <th>Sl</th>
+                                <th>Sl.</th>
                                 <th>Associate ID</th>
                                 <th>Name</th>
-                                <th>Unit</th>
-                                <th>Floor</th>
-                                <th>Line</th>
-                                <th>Changed Floor</th>
-                                <th>Changed Line</th>
-                                <th>Start Date</th>
-                                <th>End Date</th>
+                                <th>Prev. Designation</th>
+                                <th>Curr. Designation</th>
+                                <th>Effective Date</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
+                        <tbody>
+                        </tbody>
                     </table>
                 </div>
-
-        </div>
-    </div>
+            </div>
+		</div><!-- /.page-content -->
+	</div>
 </div>
-
-
-<script type="text/javascript">
+@push('js')
+<script type="text/javascript"> 
 $(document).ready(function(){
-    
-        var searchable = [1,2,3,4];
-        var selectable = []; //use 4,5,6,7,8,9,10,11,....and * for all
-        var dropdownList = {
-        };
+    var totalempcount = 0;
+    var totalemp = 0;
+    var searchable = [1,2];
+    var selectable = []; //use 4,5,6,7,8,9,10,11,....and * for all
+    var dropdownList = {};
+    var exportColName = ['Sl.','Associate ID','Name','Prev. Designation','Curr. Designation','Effective Date'];
+        var exportCol = [0,1,2,3,4,5];
 
-        var exportColName = ['Sl.','Associate ID','Name','Unit','Floor','Line','Total Change', 'Changed Line', 'Changed Floor', 'Start Date', 'End Date'];
-        var exportCol = [0,1,2,3,4,5,6,7,8,9];
-
-        var dt =  $('#dataTables').DataTable({
+    var dt =  $('#dataTables').DataTable({
            order: [], //reset auto order
             lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
             processing: true,
@@ -91,12 +81,7 @@ $(document).ready(function(){
             },
             pagingType: "full_numbers",
             ajax: {
-                url: '{!! url("hr/search/hr_line_search_change_list") !!}',
-                data: {
-                    unit: '{{ isset($request1['unit'])?$request1['unit']:'' }}',
-                    floor: '{{ isset($request1['floor'])?$request1['floor']:'' }}',
-                    line: '{{ isset($request1['line'])?$request1['line']:'' }}'
-                },
+                url: '{!! url("hr/payroll/promotion-list-data") !!}',
                 type: "get",
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
@@ -132,8 +117,8 @@ $(document).ready(function(){
                 },
                 {
                     extend: 'pdf',
-                    className: 'btn-sm btn-primary',
                     "action": allExport,
+                    className: 'btn-sm btn-primary',
                     exportOptions: {
                         columns: exportCol,
                       format: {
@@ -147,27 +132,22 @@ $(document).ready(function(){
 
                     extend: 'print',
                     autoWidth: true,
-                    className: 'btn-sm btn-default print',
                     "action": allExport,
+                    className: 'btn-sm btn-default print',
                     title: '',
                     exportOptions: {
                         columns: exportCol,
-                      format: {
-                          header: function ( data, columnIdx ) {
-                              return exportColName[columnIdx];
-                          }
-                      },
+                        format: {
+                            header: function ( data, columnIdx ) {
+                                return exportColName[columnIdx];
+                            }
+                        },
                         stripHtml: false
                     },
                     title: '',
                     messageTop: function () {
-                        return  '<h3 class="text-center">MBM Garments Ltd.</h3>'+
-                                '<h4 class="text-center">Line Change Report</h4>'+
-                                '@if(isset($request1["unit"]))<h6 class="text-center">Unit: {{ $data["unit"]->hr_unit_name }} </h6>@endif'+
-                                '@if(isset($request1["floor"]))<h6 class="text-center">Floor: {{$data["floor"]->hr_floor_name}}'+
-                                    '@if(isset($request1["line"]))| Line: {{$data["line"]->hr_line_name}} @endif'+
-                                '</h6>@endif'+
-                                '<h5 class="text-center">{{$showTitle}}</h5>';
+                        return  '<h3 class="text-center">Increment List</h3>';
+                               
                     }
 
                 }
@@ -177,13 +157,10 @@ $(document).ready(function(){
                 { data: 'DT_RowIndex', name: 'DT_RowIndex' },
                 { data: 'associate_id',  name: 'associate_id' },
                 { data: 'as_name', name: 'as_name'},
-                { data: 'hr_unit_name',  name: 'hr_unit_name' },
-                { data: 'as_floor_id',  name: 'as_floor_id' },
-                { data: 'as_line_id',  name: 'as_line_id' },
-                { data: 'changed_floor',  name: 'changed_floor' },
-                { data: 'changed_line',  name: 'changed_line' },
-                { data: 'start_date',  name: 'start_date' },
-                { data: 'end_date',  name: 'end_date' }
+                { data: 'previous_designation_id', name: 'previous_designation_id'},
+                { data: 'current_designation_id',  name: 'current_designation_id' },
+                { data: 'effective_date',  name: 'effective_date' },
+                { data: 'action',  name: 'action' }
             ],
             initComplete: function () {
                 var api =  this.api();
@@ -223,9 +200,12 @@ $(document).ready(function(){
                     });
                 });
             }
-        });
-    });
-
-
+        }); 
     
+   
+   
+   
+});
 </script>
+@endpush
+@endsection

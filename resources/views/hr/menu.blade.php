@@ -176,7 +176,7 @@
       @endif
 
 
-      @if(auth()->user()->canany(['Define Shift Roster','Job Card','Attendance Operation','Employee Shift Assign','Shift Assign','Holiday Roster','Yearly Holiday','Payslip','ID Card','Salary Sheet','Bonus Sheet','Retirement','Earn Leave Payment','Maternity Payment','Station Card']) || $user->hasRole('Super Admin'))
+      @if(auth()->user()->canany(['Define Shift Roster','Job Card','Attendance Operation','Employee Shift Assign','Shift Assign','Holiday Roster','Yearly Holiday','Payslip','ID Card','Salary Sheet','Bonus Sheet','Retirement','Earn Leave Payment','Maternity Payment','Station Card','Salary Generate - HR','Salary Audit - Audit','Salary Verify - Accounts','Salary Confirmation - Management']) || $user->hasRole('Super Admin'))
       <li class="@if($segment2 == 'operation') active @endif">
          <a href="#operation" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="las la-tools"></i><span>Operation</span><i class="las la-angle-right iq-arrow-right"></i></a>
          <ul id="operation" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
@@ -217,10 +217,12 @@
                <a href="{{ url('hr/operation/job_card') }}"><i class="las la-id-card"></i>Job Card</a>
             </li>
             @endif
-            @if($user->can('Salary Sheet') || $user->hasRole('Super Admin'))
+            @if($user->canany(['Salary Generate - HR','Salary Audit - Audit','Salary Verify - Accounts','Salary Confirmation - Management']) || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'salary-generate') active @endif">
-               <a href="{{ url('hr/operation/salary-generate') }}"><i class="las la-file-invoice-dollar"></i>Salary Generate</a>
+               <a href="{{ url('hr/operation/salary-generate') }}"><i class="las la-file-invoice-dollar"></i>Salary Process</a>
             </li>
+            @endif
+            @if($user->canany(['Salary Generate - HR','Salary Audit - Audit','Salary Verify - Accounts','Salary Confirmation - Management','Salary Sheet']) || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'salary-sheet') active @endif">
                <a href="{{ url('hr/operation/salary-sheet') }}"><i class="las la-file-invoice-dollar"></i>Salary Disbursed</a>
             </li>
@@ -272,7 +274,7 @@
             
             <li class="@if($segment3 == 'daily-attendance-activity') active @endif"><a href="{{ url('hr/reports/daily-attendance-activity') }}"><i class="las la-fingerprint"></i>Daily Attendance</a></li>
             @if($user->can('Attendance Consecutive Report') || $user->hasRole('Super Admin'))
-            <li class="@if($segment3 == 'absent_present_list') active @endif"><a href="{{ url('hr/operation/absent_present_list') }}"><i class="las la-fingerprint"></i>Attendance Consecutive</a></li>
+            <li class="@if($segment3 == 'absent_present_list') active @endif"><a href="{{ url('hr/reports/attendance-consecutive') }}"><i class="las la-fingerprint"></i>Attendance Consecutive</a></li>
             @endif
             {{-- <li><a href="{{ url('hr/reports/group_attendance') }}"><i class="las la-fingerprint"></i>Group Attendance</a></li> --}}
             @if($user->can('Monthly Increment') || $user->hasRole('Super Admin'))
@@ -280,10 +282,10 @@
             @endif
              @if($user->can('Shift Roster') || $user->hasRole('Super Admin'))
                <li class="@if($segment3 == 'shift_roaster') active @endif">
-                  <a href="{{ url('hr/timeattendance/shift_roaster') }}"><i class="las la-fingerprint"></i>Shift Roster Summary</a>
+                  <a href="{{ url('hr/reports/shift_roaster') }}"><i class="las la-fingerprint"></i>Shift Roster Summary</a>
                </li>
                <li class="@if($segment3 == 'roaster_view') active @endif">
-                  <a href="{{ url('hr/shift_roaster/roaster_view') }}"><i class="las la-fingerprint"></i>Holiday Roster</a>
+                  <a href="{{ url('hr/reports/holiday-roster') }}"><i class="las la-fingerprint"></i>Holiday Roster</a>
                </li>
             @endif
 
