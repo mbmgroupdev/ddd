@@ -22,33 +22,33 @@
 		            	<div class="col-5">
 		            		<div class="row">
 		                		
-		                		<div class="col-2 pr-0">
+		                		<div class="col-3 pr-0">
 		                			<h5>Unit</h5>
 		                		</div>
-		                		<div class="col-10">
+		                		<div class="col-9">
 		                			<b>: {{ $unit[$input['unit']]['hr_unit_name'] }}</b>
 		                		</div>
 		                		@if($input['area'] != null)
-		                		<div class="col-2 pr-0">
+		                		<div class="col-3 pr-0">
 		                			<h5>Area</h5>
 		                		</div>
-		                		<div class="col-10">
+		                		<div class="col-9">
 		                			<b>: {{ $area[$input['area']]['hr_area_name'] }}</b>
 		                		</div>
 		                		@endif
 		                		@if($input['department'] != null)
-		                		<div class="col-2 pr-0">
+		                		<div class="col-3 pr-0">
 		                			<h5>Department</h5>
 		                		</div>
-		                		<div class="col-10">
+		                		<div class="col-9">
 		                			<b>: {{ $department[$input['department']]['hr_department_name'] }}</b>
 		                		</div>
 		                		@endif
 		                		@if($input['section'] != null)
-		                		<div class="col-2 pr-0">
+		                		<div class="col-3 pr-0">
 		                			<h5>Section</h5>
 		                		</div>
-		                		<div class="col-10">
+		                		<div class="col-9">
 		                			<b>: {{ $section[$input['section']]['hr_section_name'] }}</b>
 		                		</div>
 		                		@endif

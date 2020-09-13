@@ -24,7 +24,7 @@ class DailyActivityReportController extends Controller
     public function beforeAfterReport(Request $request)
     {
         $input = $request->all();
-        // dd($input);
+       
         try {
             $areaid       = isset($request['area'])?$request['area']:'';
             $otnonot      = isset($request['otnonot'])?$request['otnonot']:'';
