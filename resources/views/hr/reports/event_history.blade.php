@@ -1,8 +1,5 @@
 @extends('hr.layout')
 @section('title', 'Event History')
-@push('css')
-  <link rel="stylesheet" href="{{ asset('plugins/DataTables/datatables.css')}}">
-@endpush
 @section('main-content')
 <div class="main-content">
     <div class="main-content-inner">
@@ -114,7 +111,6 @@
 </div>
    
 @push('js')
-<script src="{{ asset('plugins/DataTables/datatables.min.js') }}"></script>
 <script type="text/javascript">
 $(document).ready(function()
 {
@@ -124,11 +120,20 @@ $(document).ready(function()
         '2' :['In-time/Out-time Modify','Absent to Present','Present to Absent','Made Halfday'],
     }; 
 
+    var exportColName = ['Sl.','Associate ID','Type','Changed At','Changed By','Modified Data'];
+    var exportCol = [0,1,2,3,4,5];
+
     var dt = $('#dataTables').DataTable({
         order: [], //reset auto order
         processing: true,
         responsive: false,
         serverSide: true,
+        language: {
+            processing: '<i class="ace-icon fa fa-spinner fa-spin orange bigger-500" style="font-size:60px;margin-top:50px;"></i>'
+            },
+            scroller: {
+               loadingIndicator: false
+         },
         pagingType: "full_numbers",
         ajax: {
             url: '{!! url("hr/reports/event_history_data") !!}',
@@ -142,76 +147,66 @@ $(document).ready(function()
            {
              extend: 'csv',
              className: 'btn-sm btn-success',
+             "action": allExport,
              exportOptions: {
-               columns: ':visible'
+               columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
              }
            },
            {
              extend: 'excel',
              className: 'btn-sm btn-warning',
+             "action": allExport,
              exportOptions: {
-               columns: ':visible'
+               columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
              }
            },
            {
              extend: 'pdf',
              className: 'btn-sm btn-primary',
+             "action": allExport,
              exportOptions: {
-               columns: ':visible'
+               columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
              }
            },
            {
-
-
              extend: 'print',
              className: 'btn-sm btn-default print',
-             title: '<h2 class="text-center">'+ $("#type").val() +'</h2><br>',
-             orientation: 'landscape',
+             title: '',
+             /*orientation: 'landscape',
              pageSize: 'LEGAL',
-             alignment: "center",
-             // header:true,
+             alignment: "center",*/
+             "action": allExport,
+             exportOptions: {
+                  columns: exportCol,
+                  format: {
+                      header: function ( data, columnIdx ) {
+                          return exportColName[columnIdx];
+                      }
+                  }/*,
+                  stripHtml: false*/
+              },
+
              messageTop: function () {
              //printCounter++;
-                 return '<style>'+
-                   'input::-webkit-input-placeholder {'+
-                   'color: black;'+
-                   'font-weight: bold;'+
-                   'font-size: 12px;'+
-                   '}'+
-                   'input:-moz-placeholder {'+
-                   'color: black;'+
-                   'font-weight: bold;'+
-                   'font-size: 12px;'+
-                   '}'+
-                   'input:-ms-input-placeholder {'+
-                   'color: black;'+
-                   'font-weight: bold;'+
-                   'font-size: 12px;'+
-                   '}'+
-                   'th{'+
-                   'font-size: 12px !important;'+
-                   'color: black !important;'+
-                   'font-weight: bold !important;'+
-                   '}</style>'+
-                   '<h2 class="text-center">'+'Unit: '+$("#unit option:selected").text()+'</h2>'+
-                   '<h4 class="text-center">'+'Report Type: '+$("#type option:selected").text()+'</h2>'+
-                   '<h4 class="text-center">'+'Report Date: '+$("#report_from").val()+' '+'To'+' '+$("#report_to").val()+'</h4>'+
-                   '<h4 class="text-center">'+'Total: '+dTable.data().length+'</h4>'+
+                 return '<h2 class="text-center">Event History</h2>'+
                    '<h4 class="text-center">'+'Printed At: '+new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate()+'</h4><br>'
                    ;
-
-             // if ( printCounter === 1 ) {
-             //     return $("#type").val();
-             // }
-             // else {
-             //     return 'You have printed this document '+printCounter+' times';
-             // }
-         },
-         messageBottom: null,
-             exportOptions: {
-               columns: [0,1,2,5,6,7,8,9],
-               stripHtml: false
-             },
+            }
 
            }
          ],
