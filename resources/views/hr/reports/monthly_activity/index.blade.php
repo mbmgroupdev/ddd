@@ -59,6 +59,25 @@
                             <div class="panel-body">
                                 <div class="row">
                                     <div class="col-3">
+                                        <div class="form-group has-required has-float-label select-search-group">
+                                            <?php
+                                                $reportType = ['maternity'=>'Maternity Leave'];
+                                            ?>
+                                            {{ Form::select('report_type', $reportType, null, ['placeholder'=>'Select Report Type ', 'class'=>'form-control capitalize select-search', 'id'=>'reportType']) }}
+                                            <label for="reportType">Report Type</label>
+                                        </div>
+                                        
+                                          <div class="form-group has-float-label has-required">
+                                            <input type="month" class="report_date datepicker form-control" id="report-date-from" name="date" placeholder="Y-m" required="required" value="{{ date('Y-m') }}" autocomplete="off" />
+                                            <label for="report-date">Month From</label>
+                                          </div>
+
+                                          <div class="form-group has-float-label has-required">
+                                            <input type="month" class="report_date datepicker form-control" id="report-date-to" name="date" placeholder="Y-m" required="required" value="{{ date('Y-m') }}" autocomplete="off" />
+                                            <label for="report-date">Month To</label>
+                                          </div>
+                                    </div>   
+                                    <div class="col-3">
                                         <div class="form-group has-float-label has-required select-search-group">
                                             <select name="unit" class="form-control capitalize select-search" id="unit" required="">
                                                 <option selected="" value="">Choose...</option>
@@ -97,12 +116,7 @@
                                             </select>
                                             <label for="section">Section</label>
                                         </div>
-                                        <div class="form-group has-float-label select-search-group">
-                                            <select name="subSection" class="form-control capitalize select-search" id="subSection" disabled>
-                                                <option selected="" value="">Choose...</option> 
-                                            </select>
-                                            <label for="subSection">Sub Section</label>
-                                        </div>
+                                        
                                     </div> 
                                     <div class="col-3">
                                         <div class="form-group has-float-label select-search-group">
@@ -112,48 +126,16 @@
                                             <label for="line_id">Line</label>
                                         </div>
                                         <div class="form-group has-float-label select-search-group">
-                                            <select name="otnonot" class="form-control capitalize select-search" id="otnonot" >
-                                                <option selected="" value="">Choose...</option>
-                                                <option value="0">Non-OT</option>
-                                                <option value="1">OT</option>
+                                            <select name="subSection" class="form-control capitalize select-search" id="subSection" disabled>
+                                                <option selected="" value="">Choose...</option> 
                                             </select>
-                                            <label for="otnonot">OT/Non-OT</label>
+                                            <label for="subSection">Sub Section</label>
                                         </div>
+                                        
                                         <input type="hidden" id="reportformat" name="report_format" value="0">
                                         <input type="hidden" id="reportGroup" name="report_group" value="as_line_id">
                                     </div>
-                                    <div class="col-3">
-                                        <div class="form-group has-float-label select-search-group">
-                                            <?php
-                                                $reportType = ['maternity'=>'Maternity Leave'];
-                                            ?>
-                                            {{ Form::select('report_type', $reportType, null, ['placeholder'=>'Select Report Type ', 'class'=>'form-control capitalize select-search', 'id'=>'reportType']) }}
-                                            <label for="reportType">Report Type</label>
-                                        </div>
-                                        
-                                        <div id="single-date">
-                                          <div class="form-group has-float-label has-required">
-                                            <input type="month" class="report_date datepicker form-control" id="report-date" name="date" placeholder="Y-m-d" required="required" value="{{ date('Y-m') }}" autocomplete="off" />
-                                            <label for="report-date">Month</label>
-                                          </div>
-                                        </div>
-                                        <div id="double-date" style="display: none">
-                                          <div class="row">
-                                            <div class="col pr-0">
-                                                <div class="form-group has-float-label has-required">
-                                                    <input type="month" class="report_date datepicker form-control" id="present_date" name="present_date" placeholder="Y-m-d" required="required" value="{{ date('Y-m') }}" autocomplete="off" />
-                                                    <label for="present_date">Month From</label>
-                                                </div>
-                                            </div>
-                                            <div class="col">
-                                                <div class="form-group has-float-label has-required">
-                                                    <input type="month" class="report_date datepicker form-control" id="absent_date" name="absent_date" placeholder="Y-m-d" required="required" value="{{ date('Y-m', strtotime('-1 day')) }}" autocomplete="off" />
-                                                    <label for="absent_date">Absent Date</label>
-                                                </div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                    </div>   
+                                    
                                 </div>
                                 <div class="row">
                                     <div class="offset-8 col-4">
