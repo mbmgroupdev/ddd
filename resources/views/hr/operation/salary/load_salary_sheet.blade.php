@@ -31,24 +31,26 @@
         @endif
     </h5>
 @endif
-
-<h3 style="margin:4px 10px;text-align:center;">
-    বেতন/মজুরি এবং অতিরিক্ত সময়ের মজুরী<br/>
-    তারিখঃ {{ Custom::engToBnConvert($pageHead->for_date) }}
-</h3>
 @php
     $loc_count = 0;
     $total_emp = 0;
     $total_sal = 0;
+    $locations = location_by_id();
 @endphp
+@if($pageHead->unit_name != '')
+    <h3 style="margin:4px 10px;text-align:center;">
+        বেতন/মজুরি এবং অতিরিক্ত সময়ের মজুরী<br/>
+        তারিখঃ {{ Custom::engToBnConvert($pageHead->for_date) }}
+    </h3>
+    
 
-<h6 style="margin:4px 10px;text-align:center;font-weight:600;font-size:13px;">
-    সর্বমোট টাকার পরিমানঃ
-    <span style="color:hotpink;font-size:15px;" id="total-salary"></span><br/>
-    মোট কর্মী/কর্মচারীঃ
-    <span style="color:hotpink;font-size:15px;" id="emp-count"></span>
-</h6>
-
+    <h6 style="margin:4px 10px;text-align:center;font-weight:600;font-size:13px;">
+        সর্বমোট টাকার পরিমানঃ
+        <span style="color:hotpink;font-size:15px;" id="total-salary"></span><br/>
+        মোট কর্মী/কর্মচারীঃ
+        <span style="color:hotpink;font-size:15px;" id="emp-count"></span>
+    </h6>
+@endif
 @if(count($getSalaryList) == 0)
     <b><h5 class="text-center"> No data found !</h5></b>
 @endif
@@ -64,7 +66,7 @@
                 $asLocationList = array_column($lists,'as_location');
                 $loc_emp = 0;
                 $loc_sal = 0;
-                $getLocation = Custom::locationNameBangla($location);
+                $getLocation = $locations[$location]['hr_location_name']??'';
                 $loc_count++;
                 $totalSalary_s = 0;
                 $emp = 0;
@@ -74,7 +76,7 @@
 
                         // $salaryAdd_s = (($tSalary->salary_add_deduct_id == null) ? '0.00' : $tSalary->salary_add_deduct_id);
                         $ot_s = round((float)($tSalary->ot_rate) * $tSalary->ot_hour);
-                        $leaveAdjust_s = Custom::salaryLeaveAdjustAsIdMonthYearWise($tSalary->as_id, $tSalary->month, $tSalary->year);
+                        //$leaveAdjust_s = Custom::salaryLeaveAdjustAsIdMonthYearWise($tSalary->as_id, $tSalary->month, $tSalary->year);
                         $totalSalary_s += ($tSalary->total_payable);
                         $emp++;
                         $ot_payable += round((float)($tSalary->ot_rate) * $tSalary->ot_hour); 
@@ -427,7 +429,7 @@
                <input type="hidden" name="associateId" value="" id="modal-associateId">
                <input type="hidden" name="month" value="" id="modal-month">
                <input type="hidden" name="year" value="" id="modal-year">
-               <h1 class="text-center" ><strong class="f22" id="disbursed_name"></strong></h1>
+               <h3 class="text-center" ><strong class="f22" id="disbursed_name"></strong></h3>
                <h4 class="text-center" id="disbursed_post"></h4>
                <h4 class="text-center" id="disbursed_id"></h4>
                <h4 class="text-center" id="disbursed_body"></h4>

@@ -418,6 +418,7 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 	Route::get('hr/timeattendance/operation/yearly_holidays/modal_save', 'Hr\TimeAttendance\YearlyHolidayController@modalSave');
 	Route::get('hr/timeattendance/operation/yearly_holidays/modal_delete', 'Hr\TimeAttendance\YearlyHolidayController@modalDelete');
 	// operation/ salary process
+	Route::get('hr/operation/employee-wise-salary-sheet', 'Hr\Operation\SalaryProcessController@employeeWise');
 	Route::get('hr/operation/unit-wise-salary-sheet', 'Hr\Operation\SalaryProcessController@unitWise');
 	Route::get('hr/operation/salary-generate', 'Hr\Operation\SalaryProcessController@generate');
 

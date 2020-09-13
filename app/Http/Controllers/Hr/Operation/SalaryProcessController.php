@@ -140,6 +140,7 @@ class SalaryProcessController extends Controller
             // return $designation;
 
             $locationDataSet = $getSalaryList->toArray();
+            // dd($getSalaryList);
             // return $locationDataSet;
             $locationList = array_column($locationDataSet, 'as_location');
             $uniqueLocation = array_unique($locationList);
@@ -158,6 +159,85 @@ class SalaryProcessController extends Controller
     		$bug = $e->getMessage();
     		return $bug;
     	}
+    }
+
+    public function employeeWise(Request $request)
+    {
+        $input = $request->all();
+        $input['month'] = date('m', strtotime($input['emp_month_year']));
+        $input['year'] = date('Y', strtotime($input['emp_month_year']));
+        try {
+
+            // $audit = 1;
+            // $input['unit_id'] = $input['unit'];
+            // $salaryStatus = SalaryAudit::checkSalaryAuditStatus($input);
+            
+            // if($salaryStatus == null){
+            //     $audit = 0;
+            // }else{
+            //     if($salaryStatus->initial_audit == null || $salaryStatus->accounts_audit == null || $salaryStatus->management_audit == null){
+            //         $audit = 0;
+            //     }
+            // }
+            
+            // if($audit == 0){
+            //     return view('hr.operation.salary.salary_status', compact('salaryStatus', 'input'));
+            // }
+
+            // $getUnit = Unit::getUnitNameBangla($input['unit']);
+            $info = [];
+            
+            // employee info
+            $employeeData = DB::table('hr_as_basic_info');
+            $employeeDataSql = $employeeData->toSql();
+            // employee bangla info
+            $employeeBanData = DB::table('hr_employee_bengali');
+            $employeeBanDataSql = $employeeBanData->toSql();
+
+            $queryData = DB::table('hr_monthly_salary as s')
+            ->where('s.year', $input['year'])
+            ->where('s.month', $input['month'])
+            ->whereIn('s.as_id', $input['as_id']);
+            $queryData->leftjoin(DB::raw('(' . $employeeDataSql. ') AS emp'), function($join) use ($employeeData) {
+                $join->on('emp.associate_id','s.as_id')->addBinding($employeeData->getBindings());
+            });
+
+            $queryData->leftjoin(DB::raw('(' . $employeeBanDataSql. ') AS bemp'), function($join) use ($employeeBanData) {
+                $join->on('bemp.hr_bn_associate_id','emp.associate_id')->addBinding($employeeBanData->getBindings());
+            });
+                
+            $getSalaryList = $queryData->select('s.*', 'emp.as_doj', 'emp.as_ot', 'emp.as_designation_id', 'emp.as_location', 'bemp.hr_bn_associate_name')->get();
+
+            $employeeAssociates = $queryData->select('emp.associate_id')->pluck('emp.associate_id')->toArray();
+            // salary adjust
+            $salaryAddDeduct = DB::table('hr_salary_add_deduct')
+                ->where('year', $input['year'])
+                ->where('month', date('n', strtotime($input['month'])))
+                ->whereIn('associate_id', $employeeAssociates)
+                ->get()->keyBy('associate_id')->toArray();
+            // employee designation
+            $designation = designation_by_id();
+            // return $designation;
+
+            $locationDataSet = $getSalaryList->toArray();
+            // return $locationDataSet;
+            $locationList = array_column($locationDataSet, 'as_location');
+            $uniqueLocation = array_unique($locationList);
+            $locationDataSet = array_chunk($locationDataSet, 5, true);
+            // $title = $getUnit->hr_unit_name_bn;
+            $pageHead['current_date']   = date('Y-m-d');
+            $pageHead['current_time']   = date('H:i');
+            $pageHead['unit_name']      = '';
+            $pageHead['for_date']       = Custom::engToBnConvert($input['month'].' - '.$input['year']);
+            $pageHead['floor_name']     = '';
+            $pageHead['month']     = $input['month'];
+            $pageHead['year']     = $input['year'];
+            $pageHead = (object)$pageHead;
+            return view('hr.operation.salary.load_salary_sheet', compact('uniqueLocation', 'getSalaryList', 'pageHead','locationDataSet', 'info', 'salaryAddDeduct', 'designation'));
+        } catch (\Exception $e) {
+            $bug = $e->getMessage();
+            return $bug;
+        }
     }
 
     public function generate(Request $request)
