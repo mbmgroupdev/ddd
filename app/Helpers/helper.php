@@ -10,6 +10,7 @@ use App\Models\Hr\SalaryAudit;
 use App\Models\Hr\Section;
 use App\Models\Hr\Shift;
 use App\Models\Hr\Subsection;
+use App\Models\Hr\Location;
 use App\Models\Hr\Unit;
 use App\Models\UserLog;
 use App\User;
@@ -625,6 +626,16 @@ if(!function_exists('unit_wise_today_att')){
     }
 
 }
+if(!function_exists('location_by_id')){
+    function location_by_id()
+    {
+       return  Cache::remember('location', Carbon::now()->addHour(23), function () {
+            return Location::get()->keyBy('hr_location_id')->toArray();
+        });      
+
+    }
+}
+
 if(!function_exists('designation_by_id')){
     function designation_by_id()
     {
