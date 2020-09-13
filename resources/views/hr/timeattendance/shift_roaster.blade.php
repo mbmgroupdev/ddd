@@ -1,8 +1,6 @@
 @extends('hr.layout')
 @section('title', 'Shift Roster Summary')
 @push('css')
-  <link rel="stylesheet" href="{{ asset('plugins/DataTables/datatables.css')}}">
-  {{-- <link rel="stylesheet" href="{{ asset('assets/css/editor.dataTables.min.css') }}" /> --}}
   
 @endpush
 @section('main-content')
@@ -103,10 +101,15 @@
                                             <label for="month">Month</label>
                                         </div>
                                         
-                                        <br>
-                                        <br>
+                                        <div class="form-group has-float-label select-search-group">
+                                            <select name="report_type" class="form-control capitalize select-search" id="reportType" >
+                                                <option value="0" selected>All</option>
+                                                <option value="1">Change</option>
+                                            </select>
+                                            <label for="reportType">Type</label>
+                                        </div>
                                         <div class="form-group">
-                                          <button class="btn btn-primary nextBtn btn-lg pull-right" id="shiftRoasterBtn" type="submit" ><i class="fa fa-save"></i> Generate</button>
+                                          <button class="btn btn-primary nextBtn btn-lg pull-right" id="shiftRoasterBtn" type="button" ><i class="fa fa-save"></i> Generate</button>
                                         </div>
                                     </div>   
                                 </div>
@@ -120,7 +123,7 @@
                 <!-- /.col -->
             </div>
             <div class="panel">
-               <div class="panel-body worker-list">
+               <div class="panel-body worker-list result-table hide">
                  <ul class="color-bar mb-3">
                     <li><span class="color-label lib-roster"></span><span class="lib-label"> Change Shift</span></li>
                     <li><span class="color-label lib-default"></span><span class="lib-label">  Default Shift</span></li>
@@ -184,8 +187,7 @@
 <!-- Datepicker Css -->
 
 <script src="{{ asset('assets/js/moment.min.js') }}"></script>
-<script src="{{ asset('plugins/DataTables/datatables.min.js') }}"></script>
-<script src="{{ asset('assets/js/dataTables.cellEdit.js') }}"></script>
+
 <script type="text/javascript">
   function getCellId(iteration){
       return 5+iteration;
@@ -293,11 +295,11 @@
 
 
 
-        $('#shiftRoasterForm').on('submit', function(e) {
+        $('#shiftRoasterBtn').on('click', function(e) {
             e.preventDefault();
             $('.app-loader').show();
             if($('#unit').val()) {
-                $(".d-table").removeClass('hide');
+                $(".result-table").removeClass('hide');
                 /*datatable.draw();*/
                 
               var searchable = [];
@@ -319,6 +321,7 @@
                   scroller: {
                     loadingIndicator: false
                   },
+                  "bDestroy": true,
                   pagingType: "full_numbers",
                   ajax: {
                     url: '{!! url('hr/timeattendance/shift_roaster_datatable') !!}',
@@ -337,8 +340,9 @@
                       d.section       = $("#section").val(),
                       d.subsection    = $("#subsection").val(),
                       d.emptype       = $("select[name=emp_type]").val()
+                      d.reporttype       = $("select[name=report_type]").val()
                     },
-                    type: "get",
+                    type: "post",
                     headers: {
                       'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     }

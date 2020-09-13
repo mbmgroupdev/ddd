@@ -66,8 +66,11 @@ class MonthlyActivityReportController extends Controller
             $uniqueGroups = ['all'];
 
             $queryData = DB::table('hr_monthly_salary AS s')
-            ->where('emp.as_unit_id',$input['unit'])
-            ->where('s.year', $year)
+            ->where('emp.as_unit_id',$input['unit']);
+            if($input['report_format'] == 0 && !empty($input['employee'])){
+                $queryData->where('emp.associate_id', 'LIKE', '%'.$input['employee'] .'%');
+            }
+            $queryData->where('s.year', $year)
             ->where('s.month', $month)
             ->whereBetween('s.gross', [$input['min_sal'], $input['max_sal']])
             ->when(!empty($input['employee_status']), function ($query) use($input){

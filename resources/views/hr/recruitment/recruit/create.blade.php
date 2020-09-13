@@ -496,7 +496,9 @@
       </div>
    </div>
    @push('js')
-
+    
+    <!-- Chart Custom JavaScript -->
+    <script src="{{ asset('assets/js/chart-custom.js') }}"></script>
       <script>
          $(".select-search").select2({});
 
