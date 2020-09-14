@@ -16,7 +16,7 @@
 			<div class="top_summery_section">
 				@if($input['report_format'] == 0 || ($input['report_format'] == 1 && $format != null))
 				<div class="page-header">
-		            <h2 style="margin:4px 10px; font-weight: bold; text-align: center;">Present After Being Absent @if($input['report_format'] == 0) Details @else Summary @endif Report</h2>
+		            <h2 style="margin:4px 10px; font-weight: bold; text-align: center;">Maternity Leave @if($input['report_format'] == 0) Details @else Summary @endif Report</h2>
 		            
 		            <div class="row">
 		            	<div class="col-5">
@@ -57,20 +57,20 @@
 		            	<div class="col-4 no-padding">
 		            		<div class="row">
 		                		<div class="col-4 pr-0">
-		                			<h5>Absent Date</h5>
+		                			<h5>Duration</h5>
 		                		</div>
 		                		<div class="col-8 pl-0">
-		                			<b>: {{ $input['absent_date'] }}</b>
+		                			<b>: {{$input['duration']}} </b>
 		                		</div>
 		                		<div class="col-4 pr-0">
-		                			<h5>Present Date</h5>
+		                			<h5>Total Pay</h5>
 		                		</div>
 		                		<div class="col-8 pl-0">
-		                			<b>: {{ $input['present_date'] }}</b>
+		                			<b>: {{$totalPay}}</b>
 		                		</div>
 		                		
 		                		<div class="col-4 pr-0">
-		                			<h5>Total</h5>
+		                			<h5>Total Employee</h5>
 		                		</div>
 		                		<div class="col-8 pl-0">
 		                			<b>: {{ $totalEmployees }}</b>
@@ -80,7 +80,7 @@
 		            	<div class="col-3 pr-0">
 		            		<div class="row">
 		                		
-		                		@if($input['subSection'] != null)
+		                		@if(isset($input['subSection']) && $input['subSection'] != null)
 		                		<div class="col-3 pr-0">
 		                			<h5>Sub Section</h5>
 		                		</div>
@@ -117,7 +117,7 @@
 		        @else
 		        <div class="page-header-summery">
         			
-        			<h2>Before Absent After Present Summary Report </h2>
+        			<h2>Maternity Leave Summary Report </h2>
         			<h4>Unit: {{ $unit[$input['unit']]['hr_unit_name'] }}</h4>
         			@if($input['area'] != null)
         			<h4>Area: {{ $area[$input['area']]['hr_area_name'] }}</h4>
@@ -145,8 +145,8 @@
         			<h4>OT: @if($input['otnonot'] == 0) No @else Yes @endif </h4>
         			@endif
 
-        			<h4>Absent Date: <b>{{ $input['absent_date'] }}</b></h4>
-        			<h4>Present Date: <b>{{ $input['present_date'] }}</b></h4>
+        			<h4>Duration: <b>{{$input['duration']}}</b></h4>
+        			<h4>Total Pay: <b>{{$totalPay}}</b></h4>
         			<h4>Total Employee: <b>{{ count($getEmployee) }}</b></h4>
 		            		
 		        </div>
@@ -154,6 +154,7 @@
 			</div>
 			<div class="content_list_section">
 				@if($input['report_format'] == 0)
+
 					@foreach($uniqueGroups as $group)
 					
 					<table class="table table-bordered table-hover table-head">
@@ -179,7 +180,7 @@
 								@endphp
 			                	@if($head != '')
 			                    <th colspan="2">{{ $head }}</th>
-			                    <th colspan="7">{{ $body }}</th>
+			                    <th colspan="8">{{ $body }}</th>
 			                    @endif
 			                </tr>
 			                @endif
@@ -192,19 +193,22 @@
 			                    <th>Department</th>
 			                    <th>Floor</th>
 			                    <th>Line</th>
+			                    <th>Pay</th>
 			                    <th>Action</th>
 			                </tr>
 			            </thead>
 			            <tbody>
 			            @php
-			             $i = 0; $month = date('Y-m',strtotime($input['date'])); 
+			             $i = 0; $month = $input['from_date']; $sum = 0; // date('Y-m',strtotime($input['form-date'])); 
 			            @endphp
 			            @if(count($getEmployee) > 0)
 			            @foreach($getEmployee as $employee)
 			            	@php
+			            		
 			            		$designationName = $designation[$employee->as_designation_id]['hr_designation_name']??'';
 			            	@endphp
 			            	@if($head == '')
+			            		@php $sum += ($employee->maternity_pay??0); @endphp
 			            	<tr>
 			            		<td>{{ ++$i }}</td>
 				            	<td><img src="{{ emp_profile_picture($employee) }}" class='small-image' style="height: 40px; width: auto;"></td>
@@ -217,12 +221,14 @@
 				            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
 				            	<td>{{ $floor[$employee->as_floor_id]['hr_floor_name']??'' }}</td>
 				            	<td>{{ $line[$employee->as_line_id]['hr_line_name']??'' }}</td>
+				            	<td style="text-align:right;">{{ $employee->maternity_pay??0 }}</td>
 				            	<td>
-				            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Yearly Activity Report' ><i class="fa fa-eye"></i></button>
+				            		
 				            	</td>
 			            	</tr>
 			            	@else
 			            	@if($group == $employee->$format)
+			            	@php $sum += ($employee->maternity_pay??0); @endphp
 			            	<tr>
 			            		<td>{{ ++$i }}</td>
 				            	<td><img src="{{ emp_profile_picture($employee) }}" class='small-image' style="height: 40px; width: auto;"></td>
@@ -235,8 +241,9 @@
 				            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
 				            	<td>{{ $floor[$employee->as_floor_id]['hr_floor_name']??'' }}</td>
 				            	<td>{{ $line[$employee->as_line_id]['hr_line_name']??'' }}</td>
+				            	<td style="text-align:right;">{{ $employee->maternity_pay??0 }}</td>
 				            	<td>
-				            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Yearly Activity Report' ><i class="fa fa-eye"></i></button>
+				            		
 				            	</td>
 			            	</tr>
 			            	@endif
@@ -244,15 +251,18 @@
 			            @endforeach
 			            @else
 				            <tr>
-				            	<td colspan="9" class="text-center">No Employee Found!</td>
+				            	<td colspan="10" class="text-center">No Employee Found!</td>
 				            </tr>
 			            @endif
 			            </tbody>
 			            <tfoot>
 			            	<tr>
-			            		<td colspan="7"></td>
+			            		<td colspan="5"></td>
 			            		<td><b>Total Employee</b></td>
 			            		<td><b>{{ $i }}</b></td>
+			            		<td><b>Total Pay</b></td>
+			            		<td style="text-align: right;"><b>{{ $sum }}</b></td>
+			            		<td></td>
 			            	</tr>
 			            </tfoot>
 					</table>
@@ -279,6 +289,7 @@
 								<th>Sl</th>
 								<th> {{ $head }} Name</th>
 								<th>Employee</th>
+								<th style="text-align: center;">Pay</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -307,15 +318,16 @@
 									@endphp
 									{{ ($body == null)?'N/A':$body }}
 								</td>
-								<td>
+								<td style="text-align: center;">
 									{{ $employee->total }}
 									@php $totalEmployee += $employee->total; @endphp
 								</td>
+								<td style="text-align: right;">{{ $employee->maternity_pay }}</td>
 							</tr>
 							@endforeach
 							@else
 							<tr>
-				            	<td colspan="3" class="text-center">No Employee Found!</td>
+				            	<td colspan="4" class="text-center">No Employee Found!</td>
 				            </tr>
 							@endif
 						</tbody>
@@ -325,7 +337,5 @@
 			</div>
 		</div>
 
-		{{-- modal --}}
-		@include('hr.reports.daily_activity.attendance.employee_activity_modal')
 	</div>
 </div>

@@ -68,34 +68,34 @@ class MaternityPaymentCOntroller extends Controller
 	public function getMaternityEmployeeDetails(Request $request){
 
 		$emp_details = DB::table('hr_leave as b')->select([
-									'b.*',
-									'c.as_name',
-									'd.hr_unit_name_bn',
-									'd.hr_unit_short_name',
-									'd.hr_unit_address_bn',
-									'e.hr_bn_associate_name',
-									'f.hr_department_name',
-									'f.hr_department_name_bn',
-									'g.hr_section_name',
-									'g.hr_section_name_bn',
-									'h.hr_subsec_name',
-									'h.hr_subsec_name_bn',
-									'k.hr_designation_name_bn',
-									'j.status as maternity_salary_given_status'
+							'b.*',
+							'c.as_name',
+							'd.hr_unit_name_bn',
+							'd.hr_unit_short_name',
+							'd.hr_unit_address_bn',
+							'e.hr_bn_associate_name',
+							'f.hr_department_name',
+							'f.hr_department_name_bn',
+							'g.hr_section_name',
+							'g.hr_section_name_bn',
+							'h.hr_subsec_name',
+							'h.hr_subsec_name_bn',
+							'k.hr_designation_name_bn',
+							'j.status as maternity_salary_given_status'
+						])
+						->leftJoin('hr_as_basic_info as c', 'c.associate_id', 'b.leave_ass_id')
+						->leftJoin('hr_unit as d', 'd.hr_unit_id', 'c.as_unit_id')
+						->leftJoin('hr_employee_bengali as e', 'e.hr_bn_associate_id', 'b.leave_ass_id')
+						->leftJoin('hr_department as f', 'f.hr_department_id', 'c.as_department_id')
+						->leftJoin('hr_section as g', 'g.hr_section_id', 'c.as_section_id')
+						->leftJoin('hr_subsection as h', 'h.hr_subsec_id', 'c.as_subsection_id')
+						->leftJoin('hr_salary_adjust_master as i', 'i.associate_id', 'b.leave_ass_id')
+						->leftJoin('hr_salary_adjust_details as j', 'j.salary_adjust_master_id', 'i.id')
+						->leftJoin('hr_designation as k', 'k.hr_designation_id', 'c.as_designation_id')
+						->where([
+									'c.as_id'=>$request->emp_id
 								])
-								->leftJoin('hr_as_basic_info as c', 'c.associate_id', 'b.leave_ass_id')
-								->leftJoin('hr_unit as d', 'd.hr_unit_id', 'c.as_unit_id')
-								->leftJoin('hr_employee_bengali as e', 'e.hr_bn_associate_id', 'b.leave_ass_id')
-								->leftJoin('hr_department as f', 'f.hr_department_id', 'c.as_department_id')
-								->leftJoin('hr_section as g', 'g.hr_section_id', 'c.as_section_id')
-								->leftJoin('hr_subsection as h', 'h.hr_subsec_id', 'c.as_subsection_id')
-								->leftJoin('hr_salary_adjust_master as i', 'i.associate_id', 'b.leave_ass_id')
-								->leftJoin('hr_salary_adjust_details as j', 'j.salary_adjust_master_id', 'i.id')
-								->leftJoin('hr_designation as k', 'k.hr_designation_id', 'c.as_designation_id')
-								->where([
-											'c.as_id'=>$request->emp_id
-										])
-								->first();
+						->first();
 
 		// dd($emp_details);exit;
 

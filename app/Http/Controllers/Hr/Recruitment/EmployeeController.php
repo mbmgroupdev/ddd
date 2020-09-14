@@ -239,6 +239,7 @@ class EmployeeController extends Controller
                 'l.hr_line_name',
                 'dp.hr_department_name',
                 'dg.hr_designation_name',
+                'dg.hr_designation_position',
                 'b.as_gender',
                 'b.as_ot',
                 'b.as_status',
@@ -265,7 +266,7 @@ class EmployeeController extends Controller
                 }
             })
             ->whereNotIn('as_id', auth()->user()->management_permissions())
-            ->orderBy('b.as_id','desc')
+            ->orderBy('dg.hr_designation_position','ASC')
             ->get();
 
         
