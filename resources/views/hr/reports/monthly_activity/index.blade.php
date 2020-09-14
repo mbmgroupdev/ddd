@@ -68,12 +68,12 @@
                                         </div>
                                         
                                           <div class="form-group has-float-label has-required">
-                                            <input type="month" class="report_date datepicker form-control" id="report-date-from" name="date" placeholder="Y-m" required="required" value="{{ date('Y-m') }}" autocomplete="off" />
+                                            <input type="month" class="report_date datepicker form-control" id="report-date-from" name="from_date" placeholder="Y-m" required="required" value="{{ date('Y-m') }}" autocomplete="off" />
                                             <label for="report-date">Month From</label>
                                           </div>
 
                                           <div class="form-group has-float-label has-required">
-                                            <input type="month" class="report_date datepicker form-control" id="report-date-to" name="date" placeholder="Y-m" required="required" value="{{ date('Y-m') }}" autocomplete="off" />
+                                            <input type="month" class="report_date datepicker form-control" id="report-date-to" name="to_date" placeholder="Y-m" required="required" value="{{ date('Y-m') }}" autocomplete="off" />
                                             <label for="report-date">Month To</label>
                                           </div>
                                     </div>   
@@ -271,7 +271,8 @@
           
           var unit = $('select[name="unit"]').val();
           var area = $('select[name="area"]').val();
-          var date = $('input[name="date"]').val();
+          var from_date = $('input[name="from_date"]').val();
+          var to_date = $('input[name="to_date"]').val();
           var format = $('input[name="report_format"]').val();
           var type = $('select[name="report_type"]').val();
           if(type === 'maternity'){
@@ -281,7 +282,7 @@
           }
           var form = $("#activityReport");
           var flag = 0;
-          if(unit === '' || date === '' || type === ''){
+          if(unit === '' || from_date === '' || type === ''){
             flag = 1;
           }
           if(flag === 0){
@@ -295,7 +296,7 @@
             }else{
               url = '{{ url("hr/reports/daily-attendance-activity-report") }}';
             }
-            var head = type+' - '+date;
+            var head = type+' - '+from_date;
             $("#result-head").html(head);
             
             $.ajax({

@@ -283,7 +283,7 @@ table th {
 								<div id="info" class="tab-pane in active">
 									
 									<div class="row">
-										<div class="col-sm-12 col-sm-5">
+										<div class=" col-sm-5">
 										
 											<div class=" transparent">
 												<div class="">
@@ -427,7 +427,7 @@ table th {
 											</div>
 										</div>
 
-										<div class="col-sm-12 col-sm-4">
+										<div class=" col-sm-4">
 											<div class=" transparent">
 												<div class=" header-color-blue2">
 													<h4 class="widget-title smaller border-left-heading mb-3">
@@ -624,7 +624,7 @@ table th {
 												</div>
 											</div>
 										</div>
-										<div class="col-sm-12 col-sm-3">
+										<div class=" col-sm-3">
 											<div class=" transparent">
 												<div class=" header-color-blue2">
 													<h4 class="widget-title smaller border-left-heading mb-3">
