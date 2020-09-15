@@ -35,6 +35,19 @@ table th {
 .btn {
 	border-radius: 2px;
 }
+.user-details-block .user-profile {
+    margin-top: -85px;
+    width: 130px;
+    height: auto;
+    margin: 0 auto;
+}
+.avatar-130 {
+    height: 100%;
+    width: 100%;
+}
+.avatar-130 {
+    border-radius: 6% !important;
+}
 </style>
 <link rel="stylesheet" href="{{ asset('assets/css/fullcalendar.min.css') }}">
 @endpush
@@ -48,7 +61,8 @@ table th {
 		            <div class="iq-card-body">
 		               <div class="user-details-block">
 		                  <div class="user-profile text-center">
-		                     <img class="avatar-130 img-fluid" src="{{ emp_profile_picture($info) }} ">
+		                        <img class="avatar-130 img-fluid" src="{{ emp_profile_picture($info) }} ">
+		                     
 		                  </div>
 		                  <div class="text-center mt-3">
 		                     <h2><strong>{{ $info->as_name }}</strong></h2>
@@ -65,13 +79,13 @@ table th {
 								    <span class="label label-danger "> Absent </span>
 								 @endif
 							 </p>
-							 <div class="buttons">
+							 <div class="buttons mt-3">
 			                	@if(auth()->user()->canany(['Manage Employee']) || auth()->user()->hasRole('Super Admin'))
 				                    <div class="btn-group"> 
-				                        <a  href='{{url("hr/recruitment/employee/pdf/$info->associate_id")}}' target="_blank" data-tooltip="Download Employee Profile" data-tooltip-location="top" class="btn btn-sm btn-danger"  style="border-radius: 2px !important; padding: 4px; "><i class="fa fa-file-pdf-o bigger-120"></i></a> 
-				                        <a  href='{{url("hr/recruitment/employee/edit/$info->associate_id")}}' target="_blank" data-tooltip="Edit Profile" data-tooltip-location="top" class="btn btn-sm btn-info"  style="border-radius: 2px !important; padding: 4px;"><i class="las la-user-tie bigger-120">&nbsp</i> </a> 
+				                        <a  href='{{url("hr/recruitment/employee/pdf/$info->associate_id")}}' target="_blank" data-toggle="tooltip" data-placement="top" title="" data-original-title='Download Employee Profile' class="btn btn-sm btn-danger"  style="border-radius: 2px !important; padding: 4px; "><i class="fa fa-file-pdf-o bigger-120"></i></a> 
+				                        <a  href='{{url("hr/recruitment/employee/edit/$info->associate_id")}}' target="_blank" data-toggle="tooltip" data-placement="top" title="" data-original-title='Edit Profile' class="btn btn-sm btn-info"  style="border-radius: 2px !important; padding: 4px;"><i class="las la-user-tie bigger-120">&nbsp</i> </a> 
 				                      
-				                        <a  href='{{url("hr/recruitment/operation/medical_info_edit/$info->associate_id")}}' target="_blank" data-tooltip="Edit Medical Info" data-tooltip-location="left" class="btn btn-sm btn-warning" style="border-radius: 2px !important; padding: 4px;"><i class="fa fa-user-md bigger-120">&nbsp</i></a>
+				                        <a  href='{{url("hr/recruitment/operation/medical_info_edit/$info->associate_id")}}' target="_blank" data-toggle="tooltip" data-placement="top" title="" data-original-title='Edit Medical Info' class="btn btn-sm btn-warning" style="border-radius: 2px !important; padding: 4px;"><i class="fa fa-user-md bigger-120">&nbsp</i></a>
 				                    </div>
 			                    @endif
 			                </div>
