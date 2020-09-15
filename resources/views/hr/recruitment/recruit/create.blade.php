@@ -86,7 +86,7 @@
                                            @enderror
 
                                            <div class="form-group has-float-label has-required">
-                                              <input type="date" max="{{date('Y-m-d')}}" class="form-control @error('worker_dob') is-invalid @enderror" value="{{ old('worker_dob') }}" id="dob" name="worker_dob" required="required" autocomplete="off" />
+                                              <input type="date" max="{{date('Y-m-d')}}" class="age-validate form-control @error('worker_dob') is-invalid @enderror" value="{{ old('worker_dob') }}" id="dob" name="worker_dob" required="required" autocomplete="off" />
                                               <label for="dob">Date Of Birth</label>
                                            </div>
                                            @error('worker_dob')
@@ -501,6 +501,18 @@
     <script src="{{ asset('assets/js/chart-custom.js') }}"></script>
       <script>
          $(".select-search").select2({});
+
+         $(document).on('change', '.age-validate', function(){
+            var birthDate = new Date($(this).val());
+            var difdt = new Date(new Date() - birthDate);
+            var age = difdt.toISOString().slice(0, 4) - 1970;
+            if (age >= 18) {
+                return true;
+            }else{
+                $.notify('Age is under 18! Please select a valid date', 'error');
+                $(this).val('');
+            }
+        });
 
          function employeeTypeWiseDesignation(id) {
             if(id !== null || id !== ''){

@@ -12,6 +12,8 @@ use App\Models\Hr\Shift;
 use App\Models\Hr\Subsection;
 use App\Models\Hr\Location;
 use App\Models\Hr\Unit;
+use App\Models\Hr\EarnedLeave;
+use App\Models\Hr\Leave;
 use App\Models\UserLog;
 use App\User;
 use Carbon\Carbon;
@@ -184,6 +186,145 @@ if(!function_exists('log_file_write')){
             $user_log->log_table = '';
             $user_log->log_row_no = $event_id;
             $user_log->save();
+    }
+}
+
+if(!function_exists('emp_remain_leave_check')){
+    function emp_remain_leave_check($request)
+    {        
+        $statement = [];
+        $statement['stat'] = "false";
+        $associate_id = $request->associate_id;
+        if(auth()->user()->associate_id == $associate_id){
+            $hello = 'You have';
+        }else{
+            $hello = 'This employee has';
+        }
+        if($request->leave_type== "Earned"){
+
+            $earned = DB::table('hr_earned_leave')
+                        ->select(DB::raw('sum(earned - enjoyed) as l'))
+                        ->where('associate_id', $associate_id)
+                        ->groupBy('associate_id')->first()->l??0;
+            //dd($earned, $request->sel_days);
+            $avail = (int) ($earned/2);
+            if($avail >= $request->sel_days){
+                $statement['stat'] = "true";
+            }else{
+                $statement['stat'] = "false";
+                if($earned >0){
+                    $statement['msg'] = $hello.' only '.$earned.' day(s) of Earned Leave and you can take only '.$avail. ' day(s)' ;
+                }else{
+                    $statement['msg'] = $hello.' no earned leave';
+                }
+            }
+        }
+                //dd($statement);
+        // Casual Leave Restriction
+        if($request->leave_type== "Casual"){
+            $leaves = DB::table("hr_leave") 
+                ->select(
+                    DB::raw("
+                        SUM(CASE WHEN leave_type = 'Casual' THEN DATEDIFF(leave_to, leave_from)+1 END) AS casual
+                    ")
+                )
+                ->where("leave_ass_id", $info->associate_id) 
+                ->where("leave_status", "1") 
+                ->where(function ($q){
+                    $q->where(DB::raw("YEAR(leave_from)"), '=', date("Y"));
+                }) 
+                ->first();
+
+            $casual = 10-$leaves->casual;
+            if($request->sel_days < $casual){
+                $statement['stat'] = "true";
+            }else{
+                $statement['msg'] = $hello.' '.$casual.' day(s) of Casual Leave';
+            }
+        }
+        // Sick Leave Restriction
+        if($request->leave_type== "Sick"){
+            $leaves = DB::table("hr_leave") 
+                ->select(
+                    DB::raw("
+                        SUM(CASE WHEN leave_type = 'Sick' THEN DATEDIFF(leave_to, leave_from)+1 END) AS sick
+                    ")
+                )
+                ->where("leave_ass_id", $info->associate_id) 
+                ->where("leave_status", "1") 
+                ->where(function ($q){
+                    $q->where(DB::raw("YEAR(leave_from)"), '=', date("Y"));
+                }) 
+                ->first();
+
+            $sick = 14-$leaves->sick;
+            if($request->sel_days < $sick){
+                $statement['stat'] = "true";
+            }else{
+                $statement['msg'] = $hello.' '.$sick.' day(s) of Sick(14) Leave';
+            }
+        }
+        // Maternity Leave Restriction
+        if($request->leave_type== "Maternity"){
+            $leaves = DB::table("hr_leave") 
+                ->select(
+                    DB::raw("
+                        SUM(CASE WHEN leave_type = 'Maternity' THEN DATEDIFF(leave_to, leave_from)+1 END) AS maternity
+                    ")
+                )
+                ->where("leave_ass_id", $request->associate_id) 
+                ->where("leave_status", 1) 
+                ->where(function ($q){
+                    $q->where(DB::raw("YEAR(leave_from)"), '=', date("Y"));
+                }) 
+                ->first();
+            $remain = 112-($leaves->maternity??0);
+            //dd($request->sel_days);
+            if($leaves == null || ($leaves != null && $request->sel_days< $remain) ) {
+                $statement['stat'] = "true";
+            }else if (($leaves != null && $request->sel_days > $remain)){
+                $statement['msg'] = $hello.' only '.$remain.' day(s) remain';   
+            }else{
+                $statement['msg'] = $hello.' already taken Maternity Leave';   
+            }
+        }
+        if($request->leave_type == "Special"){
+            $statement['stat'] = "true";
+        }
+
+        if($statement['stat'] == 'true'){
+            $from_date = new \DateTime($request->from_date);
+            $to_date = new \DateTime($request->to_date);
+            $to_date->modify("+1 day");
+            $interval = DateInterval::createFromDateString('1 day');
+            $period = new DatePeriod($from_date, $interval, $to_date);
+            //dd($period );
+            $statement['msg'] = $hello.' already taken/applied for leave at <br>';
+            foreach ($period as $dt) {
+                $leave = Leave::where('leave_from','<=', $dt->format("Y-m-d"))
+                            ->where('leave_to','>=', $dt->format("Y-m-d"))
+                            ->where('leave_ass_id', $request->associate_id)
+                            ->when($request, function($query) use ($request) {
+                                if(isset($request->leave_id)){
+                                    $query->where('id', '!=', $request->leave_id);
+                                }
+                            })
+                            ->first();
+                if($leave){
+                    if($leave->leave_status == 1){
+                        $status = '<span style="color:#00b300;">Approved</span>';
+                    }else if($leave->leave_status == 0){
+                        $status = 'Applied';
+                    }else{
+                        $status = '';
+                    }
+                    $statement['stat'] = "false";
+                    $statement['msg'] .= $dt->format("Y-m-d").' <span style="color:#000;">--- '.$leave->leave_type.'---</span> '.$status.'<br>';
+                }
+            }
+        }
+
+        return $statement;
     }
 }
 
