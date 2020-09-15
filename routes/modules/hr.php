@@ -1067,6 +1067,10 @@ Route::get('hr/setup/retirement/get_employee_details', 'Hr\Setup\RetirementPolic
 	Route::get('hr/reports/daily-attendance-activity-report', 'Hr\Reports\DailyActivityReportController@attendanceReport');
 	Route::get('hr/reports/daily-present-absent-activity-report', 'Hr\Reports\DailyActivityReportController@presentAbsentReport');
 
+	// monthly report
+	Route::get('hr/reports/monthly-reports', 'Hr\Reports\MonthlyReportController@index');
+	Route::get('hr/reports/monthly-maternity-report', 'Hr\Reports\MonthlyReportController@maternity');
+
 	// daily activity audit 
 	Route::get('hr/daily-activity-audit', 'Hr\Reports\DailyActivityReportController@attendanceAudit');
 

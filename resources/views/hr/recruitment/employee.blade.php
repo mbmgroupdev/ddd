@@ -48,11 +48,7 @@ table th {
 		            <div class="iq-card-body">
 		               <div class="user-details-block">
 		                  <div class="user-profile text-center">
-		                     @if($info->employee)
-		                     <img src='{{ $info->employee['as_pic'] != null?asset($info->employee['as_pic'] ):($info->employee['as_gender'] == 'Female'?asset('assets/images/user/1.jpg'):asset('assets/images/user/09.jpg')) }}' class="avatar-130 img-fluid" alt="{{ $info->name }}" onError='this.onerror=null;this.src="{{ ($info->employee['as_gender'] == 'Female'?asset('assets/images/user/1.jpg'):asset('assets/images/user/09.jpg')) }}";'>
-		                     @else
-		                        <img class="avatar-130 img-fluid" src="{{ asset('assets/images/user/09.jpg') }} ">
-		                      @endif
+		                     <img class="avatar-130 img-fluid" src="{{ emp_profile_picture($info) }} ">
 		                  </div>
 		                  <div class="text-center mt-3">
 		                     <h2><strong>{{ $info->as_name }}</strong></h2>

@@ -26,79 +26,6 @@
 
         @include('inc/message')
 		<div class="page-content">
-            {{-- <div class="panel">
-		    	<div class="panel-body">
-		    		
-			    	<div class="row justify-content-center">
-	                   <div class="col-md-3">
-	                      <div class="training-block d-flex align-items-center">
-	                         <div class="rounded-circle iq-card-icon iq-bg-primary">
-	                            <i class="fa fa-user"></i>
-	                         </div>
-	                         <div class="ml-3">
-	                            <h5 class="">Total Employee</h5>
-	                            <p class="mb-0">{{ ($reportCount->employee->total?$reportCount->employee->total:0) }}</p>
-	                         </div>
-	                      </div>
-	                   </div>
-	                   <div class="col-md-3">
-	                      <div class="training-block d-flex align-items-center">
-	                         <div class="rounded-circle iq-card-icon iq-bg-primary">
-	                            <i class="fa fa-user"></i>
-	                         </div>
-	                         <div class="ml-3">
-	                            <h5 class="">Today's Join</h5>
-	                            <p class="mb-0">{{ ($reportCount->employee->todays_join?$reportCount->employee->todays_join:0) }}</p>
-	                         </div>
-	                      </div>
-	                   </div>
-	                   <div class="col-md-3">
-	                      <div class="training-block d-flex align-items-center">
-	                         <div class="rounded-circle iq-card-icon iq-bg-primary">
-	                            <i class="fa fa-user"></i>
-	                         </div>
-	                         <div class="ml-3">
-	                            <h5 class="">Males</h5>
-	                            <p class="mb-0">{{ ($reportCount->employee->males?$reportCount->employee->males:0) }}</p>
-	                         </div>
-	                      </div>
-	                   </div>
-	                   <div class="col-md-3">
-	                      <div class="training-block d-flex align-items-center">
-	                         <div class="rounded-circle iq-card-icon iq-bg-primary">
-	                            <i class="fa fa-user"></i>
-	                         </div>
-	                         <div class="ml-3">
-	                            <h5 class="">Females</h5>
-	                            <p class="mb-0">{{ ($reportCount->employee->females?$reportCount->employee->females:0) }}</p>
-	                         </div>
-	                      </div>
-	                   </div>
-	                   <div class="col-md-3">
-	                      <div class="training-block d-flex align-items-center">
-	                         <div class="rounded-circle iq-card-icon iq-bg-primary">
-	                            <i class="fa fa-user"></i>
-	                         </div>
-	                         <div class="ml-3">
-	                            <h5 class="">OT</h5>
-	                            <p class="mb-0">{{ ($reportCount->employee->ot?$reportCount->employee->ot:0) }}</p>
-	                         </div>
-	                      </div>
-	                   </div>
-	                   <div class="col-md-3">
-	                      <div class="training-block d-flex align-items-center">
-	                         <div class="rounded-circle iq-card-icon iq-bg-primary">
-	                            <i class="fa fa-user"></i>
-	                         </div>
-	                         <div class="ml-3">
-	                            <h5 class="">Non OT</h5>
-	                            <p class="mb-0">{{ ($reportCount->employee->non_ot?$reportCount->employee->non_ot:0) }}</p>
-	                         </div>
-	                      </div>
-	                   </div>
-	                </div>
-		    	</div>
-		    </div> --}}
  			<div class="panel ">
                 
                 <div class="panel-body pb-0">
@@ -149,7 +76,9 @@
 						<thead>
 							<tr>
 								<th>Sl.</th>
+								@can('Manage Employee')
 								<th>Action</th>
+								@endcan
 								<th>Associate ID</th>
 								<th>Name</th>
 								<th>Designation</th>
@@ -244,7 +173,9 @@ $(document).ready(function()
 	        },
 		    columns: [
 		        {data:'DT_RowIndex', name: 'DT_RowIndex'},
+		        @can('Manage Employee')
 		        {data:'action', name: 'action', orderable: false, searchable: false},
+		        @endcan
 		        {data:'associate_id', name: 'associate_id'},
 		        {data:'as_name',  name: 'as_name'},
 		        {data:'hr_designation_name', name: 'hr_designation_name', orderable: false},
