@@ -55,15 +55,15 @@
             <div class="panel-heading">
                 <h6>Basic: {{$employee->associate_id}}
                     <div class="btn-group pull-right"> 
-                        <a href='{{ url("hr/recruitment/employee/show/$employee->associate_id") }}' target="_blank" class="btn  btn-success" title="Profile"><i class="las la-user-tie"></i></a>
+                        <a href='{{ url("hr/recruitment/employee/show/$employee->associate_id") }}' target="_blank" class="btn  btn-success" data-toggle="tooltip" data-placement="top" title="" data-original-title='View Profile'><i class="las la-user-tie"></i></a>
 
-                        <a  href="{{url("hr/recruitment/operation/medical_info_edit/$employee->associate_id")}}" target="_blank" data-tooltip="Edit Medical Info" data-tooltip-location="left" class="btn  btn-warning" style="border-radius: 2px !important; padding: 4px;"><i class="las la-stethoscope bigger-100" ></i></a>
+                        <a  href="{{url("hr/recruitment/operation/medical_info_edit/$employee->associate_id")}}" target="_blank" data-toggle="tooltip" data-placement="top" title="" data-original-title='Edit Medical Info' class="btn  btn-warning" style="border-radius: 2px !important; padding: 4px;"><i class="las la-stethoscope bigger-100" ></i></a>
 
-                        <a href='{{ url("hr/recruitment/employee/edit/$employee->associate_id") }}' class="btn  btn-success" title="Basic Info"><i class="las la-bold"></i></a>
-                        <a href='{{ url("hr/recruitment/operation/advance_info_edit/$employee->associate_id") }}' class="btn  btn-info" title="Advance Info"><i class="las la-id-card"></i></a>
-                        <a href='{{ url("hr/recruitment/operation/benefits?associate_id=$employee->associate_id") }}' class="btn  btn-primary" title="Benefits"><i class="las la-dollar-sign"></i></a>
-                        <a href='{{ url("hr/ess/medical_incident?associate_id=$employee->associate_id") }}' class="btn  btn-warning" title="Medical Incident"><i class="las la-procedures"></i></a>
-                        <a href='{{ url("hr/operation/servicebook?associate_id=$employee->associate_id") }}' class="btn  btn-danger" title="Service Book"><i class="las la-address-book"></i></a>
+                        <a href='{{ url("hr/recruitment/employee/edit/$employee->associate_id") }}' class="btn  btn-success" data-toggle="tooltip" data-placement="top" title="" data-original-title='Edit Employee Info'><i class="las la-bold"></i></a>
+                        <a href='{{ url("hr/recruitment/operation/advance_info_edit/$employee->associate_id") }}' class="btn btn-info" data-toggle="tooltip" data-placement="top" title="" data-original-title='Edit Advance Info'><i class="las la-id-card"></i></a>
+                        <a href='{{ url("hr/recruitment/operation/benefits?associate_id=$employee->associate_id") }}' class="btn  btn-primary" data-toggle="tooltip" data-placement="top" title="" data-original-title='Edit Benefits Info'><i class="las la-dollar-sign"></i></a>
+                        <a href='{{ url("hr/ess/medical_incident?associate_id=$employee->associate_id") }}' class="btn  btn-warning" data-toggle="tooltip" data-placement="top" title="" data-original-title='Medical Incident'><i class="las la-procedures"></i></a>
+                        <a href='{{ url("hr/operation/servicebook?associate_id=$employee->associate_id") }}' class="btn  btn-danger" data-toggle="tooltip" data-placement="top" title="" data-original-title='Service Book'><i class="las la-address-book"></i></a>
                     </div>
                 </h6>
             </div>
