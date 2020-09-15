@@ -61,9 +61,9 @@
 
                         <a href='{{ url("hr/recruitment/employee/edit/$employee->associate_id") }}' class="btn  btn-success" title="Basic Info"><i class="las la-bold"></i></a>
                         <a href='{{ url("hr/recruitment/operation/advance_info_edit/$employee->associate_id") }}' class="btn  btn-info" title="Advance Info"><i class="las la-id-card"></i></a>
-                        <a href='{{ url("hr/recruitment/operation/benefits?associate_id=$employee->associate_id") }}' class="btn  btn-primary" title="Benefits"><i class="las la-dollar-sign"></i></a>
-                        <a href='{{ url("hr/ess/medical_incident?associate_id=$employee->associate_id") }}' class="btn  btn-warning" title="Medical Incident"><i class="las la-procedures"></i></a>
-                        <a href='{{ url("hr/operation/servicebook?associate_id=$employee->associate_id") }}' class="btn  btn-danger" title="Service Book"><i class="las la-address-book"></i></a>
+                        <a href='{{ url("hr/employee/benefits?associate_id=$employee->associate_id") }}' class="btn  btn-primary" title="Benefits"><i class="las la-dollar-sign"></i></a>
+                        {{-- <a href='{{ url("hr/ess/medical_incident?associate_id=$employee->associate_id") }}' class="btn  btn-warning" title="Medical Incident"><i class="las la-procedures"></i></a> --}}
+                        {{-- <a href='{{ url("hr/operation/servicebook?associate_id=$employee->associate_id") }}' class="btn  btn-danger" title="Service Book"><i class="las la-address-book"></i></a> --}}
                     </div>
                 </h6>
             </div>
@@ -102,7 +102,7 @@
                                 <label  for="as_emp_type_id"> Employee Type </label>
                             </div> 
 
-                            @if(auth()->user()->can(''))
+                            @if(auth()->user()->can('Manage Employee'))
                             <div class="form-group has-required has-float-label select-search-group">
                                 <select name="as_designation_id" id="as_designation_id" style="width:100%" required="required">
                                     @foreach($designationList AS $desg)
@@ -149,7 +149,7 @@
                             @endif
                             <div class="form-group has-required has-float-label">
 
-                                <input name="as_dob" type="date" id="date" placeholder="Date of Birth" class="datepicker form-control" required="required" value="{{ $employee->as_dob }}" />
+                                <input name="as_dob" type="date" id="date" placeholder="Date of Birth" class="age-validate form-control" required="required" max="{{date('Y-m-d')}}" value="{{ $employee->as_dob }}" />
                                 <label  for="as_dob"> Date of Birth </label>
                             </div>
                             <div class="form-group">
@@ -173,8 +173,8 @@
                             </div>
                             <div class="form-group has-required has-float-label">
 
-                                <input type="date" name="as_doj" id="as_doj" placeholder="Date of Joining" class="form-control" required="required"  value="{{ $employee->as_doj }}" />
-                                <label  for="as_doj"> Date of Joining </label>
+                                <input type="date" name="as_doj" id="as_doj" placeholder="Date of Joining" class="form-control" required="required"  value="{{ $employee->as_doj->format('Y-m-d') }}" />
+                                <label  for="as_doj"> Date of Joining</label>
                             </div>
 
 
@@ -462,38 +462,6 @@ $(document).ready(function()
     });
 
 
-
-    $('.dropZone').ace_file_input({  
-        style: 'well',
-        btn_choose: 'Drop files here or click to choose',
-        btn_change: null,
-        no_icon: 'ace-icon fa fa-cloud-upload',
-        droppable: true,
-        thumbnail: 'fit'//large | fit
-        //,icon_remove:null //set null, to hide remove/reset button
-        ,before_change:function(files, dropped) {  
-            var fileType = ["image/png", "image/jpg", "image/jpeg"]; 
-
-            if ((files[0].size <= 524288) && (jQuery.inArray(files[0].type, fileType) != '-1'))
-            { 
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        } 
-    }).on('change', function(){
-        // console.log($(this).data('ace_input_files'));
-        //console.log($(this).data('ace_input_method'));
-    });
-
-  
-    /*
-    |-------------------------------------------------- 
-    | BANGLA 
-    |-------------------------------------------------- 
-    */
     $('select.associates').select2({
         placeholder: 'Select Associate\'s ID',
         ajax: {
@@ -579,6 +547,18 @@ $(document).ready(function()
             }
             
         }
+
+        $(document).on('change', '.age-validate', function(){
+            var birthDate = new Date($(this).val());
+            var difdt = new Date(new Date() - birthDate);
+            var age = difdt.toISOString().slice(0, 4) - 1970;
+            if (age >= 18) {
+                return true;
+            }else{
+                $.notify('Age is under 18! Please select a valid date', 'error');
+                $(this).val('');
+            }
+        });
     </script>
 @endpush
 @endsection

@@ -12,16 +12,12 @@ class LeaveApplicationController extends Controller
 {
 	public function showForm()
     {
-        // ACL::check(["permissio" => "hr_ess_leave_application"]);
-        #-----------------------------------------------------------#
 
 		return view('hr/ess/leave_application');
 	}
 
 	public function saveData(Request $request)
     {
-        // ACL::check(["permission" => "hr_ess_leave_application"]);
-        #-----------------------------------------------------------#
 		$validator= Validator::make($request->all(),[
     		'leave_type'              => 'required',
     		'leave_from'              => 'required|date',
@@ -46,7 +42,7 @@ class LeaveApplicationController extends Controller
             $check->to_date = $request->leave_to;
             $check->sel_days = (int)date_diff(date_create($request->leave_from),date_create($request->leave_to))->format("%a");
 
-            $avail = $this->thisleaveLeangthCheck($check);
+            $avail = emp_remain_leave_check($request);
 
             if($avail->stat != 'false'){
 
@@ -154,7 +150,6 @@ class LeaveApplicationController extends Controller
                     ->where('associate_id', $request->associate_id)
                     ->orWhere('as_oracle_code', $request->associate_id)
                     ->first();
-        $table = get_att_table($info->as_unit_id).' AS a';
 
         $leaves = DB::table('hr_leave')
                 ->select(
@@ -173,37 +168,16 @@ class LeaveApplicationController extends Controller
                 ->where("leave_ass_id", $request->associate_id)
                 ->first();
 
-        $earnleaves = DB::table("hr_leave") 
-                    ->select(
-                        DB::raw("
-                            SUM(CASE WHEN leave_type = 'Earned' THEN DATEDIFF(leave_to, leave_from)+1 END) AS earned
-                        ")
-                    )
-                    ->where("leave_ass_id", $info->associate_id) 
-                    ->where("leave_status", "1") 
-                    ->first();
-
-        $yearAtt = DB::table($table)
-                    ->select(DB::raw('count(as_id) as att'))
-                    ->where('a.as_id',$info->as_id)
-                    ->groupBy(DB::raw('Year(in_time)'))
-                    ->get();
-
-
-        $earnedTotal = 0;
-        if($yearAtt!= null){
-            foreach ($yearAtt as $key => $Att) {
-                $earnedTotal += intval($Att->att/18);    
-            }
-            
+        $earned = DB::table('hr_earned_leave')
+                    ->where('associate_id', $request->associate_id)
+                    ->get()->keyBy('leave_year');
+        $remain = 0;
+        foreach ($earned as $key => $lv) {
+            $remain += ($lv->earned - $lv->enjoyed);
         }
-
-        $remainTotal = $earnedTotal-$earnleaves->earned+$leaves->earned;
-        $due = $remainTotal-$leaves->earned;
-
-        $earnedLeaves[date('Y')]['remain'] = $due;
-        $earnedLeaves[date('Y')]['enjoyed'] = $leaves->earned??0;
-        $earnedLeaves[date('Y')]['earned'] = $remainTotal;
+        $earnedLeaves[date('Y')]['remain'] = $remain+$leaves->earned;
+        $earnedLeaves[date('Y')]['enjoyed'] = $leaves->earned;
+        $earnedLeaves[date('Y')]['earned'] = $remain;
 
         return view('hr.timeattendance.associates_leave',compact('earnedLeaves','leaves','info'))->render();
     }
@@ -219,44 +193,25 @@ class LeaveApplicationController extends Controller
                     )
                     ->where('associate_id', $request->associate_id)
                     ->first();
-        $table = get_att_table($info->as_unit_id).' AS a';
+
         $statement = [];
         $statement['stat'] = "false";
         // Earned Leave Restriction
         if($request->leave_type== "Earned"){
-            $leaves = DB::table("hr_leave") 
-                        ->select(
-                            DB::raw("
-                                SUM(CASE WHEN leave_type = 'Earned' THEN DATEDIFF(leave_to, leave_from)+1 END) AS earned
-                            ")
-                        )
-                        ->where("leave_ass_id", $info->associate_id) 
-                        ->where("leave_status", "1") 
-                        ->first();
+            
+            $earned = DB::table('hr_earned_leave')
+                        ->select(DB::raw('sum(earned - enjoyed) as l'))
+                        ->where('associate_id', $associate_id)
+                        ->groupBy('associate_id')->first()->l??0 ;
 
-            $yearAtt = DB::table($table)
-                        ->select(DB::raw('count(as_id) as att'))
-                        ->where('a.as_id',$info->as_id)
-                        ->groupBy(DB::raw('Year(in_time)'))
-                        ->first();
-            //dd($yearAtt);
-            $earnedTotal = 0;
-            if($yearAtt!= null){
-                foreach ($yearAtt as $key => $att) {
-                    $earnedTotal += intval($att/18);    
-                }         
-            }
-            if($leaves->earned < $earnedTotal){
+            $avail = (int) ($earned/2);
+            if($avail >= 1){
                 $statement['stat'] = "true";
-                $statement['msg'] = $earnedTotal;
             }else{
-                if($earnedTotal >0){
-                    $statement['msg'] = 'This employee has already taken '.$earnedTotal.'day(s) of Earned('.$earnedTotal.') Leave';
-                }else{
-                    $statement['msg'] = 'This employee have 0 Earned Leave';
-                }
+                $statement['stat'] = "false";
+                $statement['msg'] = 'This employee has  '.$earned.' day(s) of Earned Leave and can take only '.$avail. ' day(s)' ;
             }
-        }
+        } 
         // Casual Leave Restriction
         if($request->leave_type== "Casual"){
             $leaves = DB::table("hr_leave") 
@@ -265,7 +220,7 @@ class LeaveApplicationController extends Controller
                         SUM(CASE WHEN leave_type = 'Casual' THEN DATEDIFF(leave_to, leave_from)+1 END) AS casual
                     ")
                 )
-                ->where("leave_ass_id", $info->associate_id) 
+                ->where("leave_ass_id", $request->associate_id) 
                 ->where("leave_status", "1") 
                 ->where(function ($q){
                     $q->where(DB::raw("YEAR(leave_from)"), '=', date("Y"));
@@ -286,7 +241,7 @@ class LeaveApplicationController extends Controller
                         SUM(CASE WHEN leave_type = 'Sick' THEN DATEDIFF(leave_to, leave_from)+1 END) AS sick
                     ")
                 )
-                ->where("leave_ass_id", $info->associate_id) 
+                ->where("leave_ass_id", $request->associate_id) 
                 ->where("leave_status", "1") 
                 ->where(function ($q){
                     $q->where(DB::raw("YEAR(leave_from)"), '=', date("Y"));
@@ -301,26 +256,27 @@ class LeaveApplicationController extends Controller
         }
         // Maternity Leave Restriction
         if($request->leave_type== "Maternity"){
-            $leaves = DB::table("hr_leave") 
-                ->select(
-                    DB::raw("
-                        SUM(CASE WHEN leave_type = 'Maternity' THEN DATEDIFF(leave_to, leave_from)+1 END) AS maternity
-                    ")
-                )
-                ->where("leave_ass_id", $info->associate_id) 
-                ->where("leave_status", "1") 
-                ->where(function ($q){
-                    $q->where(DB::raw("YEAR(leave_from)"), '=', date("Y"));
-                }) 
-                ->first();
-            //dd($leaves);
-            if($leaves->maternity < 112 && $info->as_gender== "Female"){
-                $statement['stat'] = "true";
-                $statement['msg'] = $leaves->maternity;
-            }else if($info->as_gender != "Female"){
-                $statement['msg'] = 'Male Employees are not eligible for Maternity leave';   
+            if($info->as_gender == "Female"){
+                $leaves = DB::table("hr_leave") 
+                    ->select(
+                        DB::raw("
+                            SUM(CASE WHEN leave_type = 'Maternity' THEN DATEDIFF(leave_to, leave_from)+1 END) AS maternity
+                        ")
+                    )
+                    ->where("leave_ass_id", $request->associate_id) 
+                    ->where("leave_status", "1") 
+                    ->where(function ($q){
+                        $q->where(DB::raw("YEAR(leave_from)"), '=', date("Y"));
+                    }) 
+                    ->first();
+                if($leaves){
+                    $statement['msg'] = 'This employee has already taken Maternity leave !';
+                }else{
+                    $statement['stat'] = "true";
+                    $statement['msg'] = $leaves->maternity;
+                }
             }else{
-                $statement['msg'] = 'This employee has taken Maternity leave already!';
+                $statement['msg'] = 'Male Employees are not eligible for Maternity leave'; 
             }
         }
         if($request->leave_type== "Special"){
@@ -328,153 +284,10 @@ class LeaveApplicationController extends Controller
         }
         return $statement;
     }
+
     public function leaveLeangthCheck(Request $request){
 
-        $associate_id= $request->associate_id;
-        $info = Employee::select(
-                        'as_id',
-                        'associate_id',
-                        'as_unit_id',
-                        'as_gender'
-                    )
-                    ->where('associate_id', $request->associate_id)
-                    ->first();
-        $table = get_att_table($info->as_unit_id).' AS a';
-        $statement = [];
-        $statement['stat'] = "false";
-        if(isset($request->usertype) && $request->usertype == 'ess'){
-            $hello = 'You have';
-        }else{
-            $hello = 'This employee has';
-        }
-        if($request->leave_type== "Earned"){
-
-            $yearAtt = DB::table($table)
-                        ->select(DB::raw('count(as_id) as att'))
-                        ->where('a.as_id',$info->as_id)
-                        ->groupBy(DB::raw('Year(in_time)'))
-                        ->first();
-            //dd($yearAtt);
-            $earnedTotal = 0;
-            if($yearAtt!= null){
-                foreach ($yearAtt as $key => $att) {
-                    $earnedTotal += intval($att/18);    
-                }
-                
-            }
-            if($earnedTotal > $request->sel_days){
-                $statement['stat'] = "true";
-            }else{
-                if($earnedTotal >0){
-                    $statement['msg'] = $hello.' only '.$earnedTotal.' day(s) of Earned Leave';
-                }else{
-                    $statement['msg'] = $hello.' 0 Earned Leave';
-                }
-            }
-        }
-        // Casual Leave Restriction
-        if($request->leave_type== "Casual"){
-            $leaves = DB::table("hr_leave") 
-                ->select(
-                    DB::raw("
-                        SUM(CASE WHEN leave_type = 'Casual' THEN DATEDIFF(leave_to, leave_from)+1 END) AS casual
-                    ")
-                )
-                ->where("leave_ass_id", $info->associate_id) 
-                ->where("leave_status", "1") 
-                ->where(function ($q){
-                    $q->where(DB::raw("YEAR(leave_from)"), '=', date("Y"));
-                }) 
-                ->first();
-            $casual = 10-$leaves->casual;
-            if($request->sel_days < $casual){
-                $statement['stat'] = "true";
-            }else{
-                $statement['msg'] = $hello.' '.$casual.' day(s) of Casual Leave';
-            }
-        }
-        // Sick Leave Restriction
-        if($request->leave_type== "Sick"){
-            $leaves = DB::table("hr_leave") 
-                ->select(
-                    DB::raw("
-                        SUM(CASE WHEN leave_type = 'Sick' THEN DATEDIFF(leave_to, leave_from)+1 END) AS sick
-                    ")
-                )
-                ->where("leave_ass_id", $info->associate_id) 
-                ->where("leave_status", "1") 
-                ->where(function ($q){
-                    $q->where(DB::raw("YEAR(leave_from)"), '=', date("Y"));
-                }) 
-                ->first();
-            $sick = 14-$leaves->sick;
-            if($request->sel_days < $sick){
-                $statement['stat'] = "true";
-            }else{
-                $statement['msg'] = $hello.' '.$sick.' day(s) of Sick(14) Leave';
-            }
-        }
-        // Maternity Leave Restriction
-        if($request->leave_type== "Maternity"){
-            $leaves = DB::table("hr_leave") 
-                ->select(
-                    DB::raw("
-                        SUM(CASE WHEN leave_type = 'Maternity' THEN DATEDIFF(leave_to, leave_from)+1 END) AS maternity
-                    ")
-                )
-                ->where("leave_ass_id", $request->associate_id) 
-                ->where("leave_status", 1) 
-                ->where(function ($q){
-                    $q->where(DB::raw("YEAR(leave_from)"), '=', date("Y"));
-                }) 
-                ->first();
-            $remain = 112-($leaves->maternity??0);
-            //dd($request->sel_days);
-            if($leaves == null || ($leaves != null && $request->sel_days< $remain) ) {
-                $statement['stat'] = "true";
-            }else if (($leaves != null && $request->sel_days > $remain)){
-                $statement['msg'] = $hello.' only '.$remain.' day(s) remain';   
-            }else{
-                $statement['msg'] = $hello.' already taken Maternity Leave';   
-            }
-        }
-        if($request->leave_type== "Special"){
-            $statement['stat'] = "true";
-        }
-
-        if($statement['stat'] == 'true'){
-            $from_date = new \DateTime($request->from_date);
-            $to_date = new \DateTime($request->to_date);
-            $to_date->modify("+1 day");
-            $interval = DateInterval::createFromDateString('1 day');
-            $period = new DatePeriod($from_date, $interval, $to_date);
-            //dd($period );
-            $statement['msg'] = $hello.' already taken/applied for leave at <br>';
-            foreach ($period as $dt) {
-                $leave = Leave::whereDate('leave_from','<=', $dt->format("Y-m-d"))
-                            ->whereDate('leave_to','>=', $dt->format("Y-m-d"))
-                            ->where('leave_ass_id', $request->associate_id)
-                            //->where("leave_status", "1")
-                            ->when($request, function($query) use ($request) {
-                                if(isset($request->leave_id)){
-                                    $query->where('id', '!=', $request->leave_id);
-                                }
-                            })
-                            ->first();
-                if($leave){
-                    if($leave->leave_status == 1){
-                        $status = '<span style="color:#00b300;">Approved</span>';
-                    }else if($leave->leave_status == 0){
-                        $status = 'Applied';
-                    }else{
-                        $status = '';
-                    }
-                    $statement['stat'] = "false";
-                    $statement['msg'] .= $dt->format("Y-m-d").' <span style="color:#000;">--- '.$leave->leave_type.'---</span> '.$status.'<br>';
-                }
-            }
-        }
-        return $statement;
+        return emp_remain_leave_check($request);
     }
 
     public function thisleaveLeangthCheck($request){

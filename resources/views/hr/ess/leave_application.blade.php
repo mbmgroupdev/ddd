@@ -1,5 +1,5 @@
 @extends('user.layout')
-@section('title', 'User Dashboard')
+@section('title', 'Leave Application')
 @section('main-content')
 <div class="main-content">
 	<div class="main-content-inner">
@@ -37,25 +37,18 @@
                                 <label  for="leave_type">Leave Type</label>
                             </div>
 
-                            <!-- <div class="form-group">
-                                <label  for="multipleDate"> Multiple Date</label>
-                                <div class="col-sm-7"> 
-                                    <input id="multipleDate" class="ace ace-switch ace-switch-6" type="checkbox">
-                                    <span class="lbl" style="margin:6px 0 0 0"></span>
-                                </div>
-                            </div> -->
      
                             <div class="form-group">
                                 <label  for="leave_from">Leave Date </label>
                                 <div class="row">
                                     
                                     <div class="col-sm-6 input-icon no-padding-left">
-                                        <input type="text" name="leave_from" id="leave_from" class="datepicker form-control" placeholder="Y-m-d" data-validation="required" data-validation-error-msg="The Start Date field is required" autocomplete="off"/>
+                                        <input type="date" name="leave_from" id="leave_from" class="datepicker form-control" placeholder="Y-m-d" required="required"  autocomplete="off"/>
                                     </div> 
                                     <div class="col-sm-6 input-icon input-icon-right  no-padding-right" id="multipleDateAccept">
-                                        <input type="text" placeholder="Y-m-d" name="leave_to" id="leave_to" class=" datepicker form-control" data-validation="required" data-validation-error-msg="The End Date field is required" autocomplete="off"/> 
+                                        <input type="date" placeholder="Y-m-d" name="leave_to" id="leave_to" class=" datepicker form-control" required="required" /> 
                                     </div> 
-                                    <label id="select_day" style="font-size:12px;width: 100%;"></label>
+                                    <label id="select_day" class="col-sm-12" style="font-size:12px;"></label>
                                 </div>
                             </div>
 
@@ -156,14 +149,7 @@ $(document).ready(function()
     });
 
 
-   /* var multipleDate = $("#multipleDate");
-    var multipleDateAccept = $("#multipleDateAccept");
-    multipleDate.on('click', function(){
-        multipleDateAccept.children().val('');
-        $('#select_day').html('');
-        multipleDateAccept.toggleClass('hide');
-    })
-*/
+   
 
     $("#leave_type").on("change", function(e){
         $.ajax({
@@ -182,7 +168,7 @@ $(document).ready(function()
                     $("#leave_type").val('');
                     toastr.options.progressBar = true ;
                     toastr.options.positionClass = 'toast-top-center';
-                    toastr.error('You are allowed to take '+leave+' Leave');
+                    toastr.error(data.msg);
                 }
 
 
@@ -199,11 +185,11 @@ $(document).ready(function()
     });  
 
     //Dates entry alerts......................................
-    $('#leave_from').on('dp.change',function(){
+   /* $('#leave_from').on('dp.change',function(){
         $('#leave_to').val( $('#leave_from').val());    
-    });
+    });*/
 
-    $(document).on('dp.change','#leave_from,#leave_to', function(){
+    $(document).on('change','#leave_from,#leave_to', function(){
         var formval = $('#leave_from').val();
         var lv_to_date = $('#leave_to').val();
         var l_type = $('#leave_type').val();
@@ -240,16 +226,20 @@ $(document).ready(function()
                                 "_token": "{{ csrf_token() }}",
                                 associate_id: associate_id, 
                                 leave_type: l_type,
-                                sel_days: diffDays,
+                                sel_days: diffDays+1,
                                 from_date: $('#leave_from').val(),
                                 to_date: $('#leave_to').val(),
                                 usertype : 'ess'
                             },
                             success: function(data)
                             {
+                                console.log(data);
                                 if(data.stat == 'false'){
                                     $('#select_day').html('<span style="color:#da0000;">'+data.msg+'</div>');
                                     $('#leave_entry').attr("disabled",true);
+                                    toastr.options.progressBar = true ;
+                                    toastr.options.positionClass = 'toast-top-center';
+                                    toastr.error(data.msg);
                                 }else{
                                     $('#leave_entry').attr("disabled",false);
                                 }
