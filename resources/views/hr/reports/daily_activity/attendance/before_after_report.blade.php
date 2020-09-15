@@ -197,7 +197,7 @@
 			            </thead>
 			            <tbody>
 			            @php
-			             $i = 0; $month = date('Y-m',strtotime($input['date'])); 
+			             $i = 0; $month = date('Y-m',strtotime($input['present_date'])); 
 			            @endphp
 			            @if(count($getEmployee) > 0)
 			            @foreach($getEmployee as $employee)

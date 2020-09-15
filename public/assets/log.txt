@@ -1,3 +1,6 @@
+2020-09-14 15:43:22 "20F025017D" Training Activated 2
+2020-09-14 15:43:15 "20F025017D" Training Inactivated 2
+2020-09-14 15:39:00 "20F025017D" Training Entry Saved 
 2020-09-10 12:58:01 "17F005001B" Permission Education Setup revoked from 32 
 2020-09-10 11:35:33 "17F005001B" Permission Education Setup assigned to 32 
 2020-09-09 10:46:11 "17F005001B" Permission Job Card assigned to 34 
