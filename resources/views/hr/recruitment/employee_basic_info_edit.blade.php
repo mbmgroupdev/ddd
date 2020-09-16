@@ -63,7 +63,7 @@
                         <a href='{{ url("hr/recruitment/operation/advance_info_edit/$employee->associate_id") }}' class="btn  btn-info" title="Advance Info"><i class="las la-id-card"></i></a>
                         <a href='{{ url("hr/employee/benefits?associate_id=$employee->associate_id") }}' class="btn  btn-primary" title="Benefits"><i class="las la-dollar-sign"></i></a>
                         {{-- <a href='{{ url("hr/ess/medical_incident?associate_id=$employee->associate_id") }}' class="btn  btn-warning" title="Medical Incident"><i class="las la-procedures"></i></a> --}}
-                        {{-- <a href='{{ url("hr/operation/servicebook?associate_id=$employee->associate_id") }}' class="btn  btn-danger" title="Service Book"><i class="las la-address-book"></i></a> --}}
+                        <a href='{{ url("hr/employee/servicebook?associate_id=$employee->associate_id") }}' class="btn  btn-danger" title="Service Book"><i class="las la-address-book"></i></a>
 
                     </div>
                 </h6>

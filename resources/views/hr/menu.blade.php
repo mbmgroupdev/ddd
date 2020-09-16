@@ -71,6 +71,11 @@
                <a href="{{ url('hr/employee/benefits') }}"><i class="las la-gifts"></i> Benefits</a>
             </li>
             @endif
+            @if($user->can('Medical Incident') || $user->hasRole('Super Admin'))
+            <li class="@if($segment2 == 'employee' && $segment3=='medical_incident') active @endif">
+               <a href="{{ url('hr/employee/medical_incident') }}"><i class="las la-folder-plus"></i>Medical Incident</a>
+            </li>
+            @endif
             @if($user->canany(['Cost Distribution']) || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'cost-mapping') active @endif">
                <a href="{{ url('hr/employee/cost-mapping') }}"><i class="las la-gifts"></i> Cost Distribution</a>

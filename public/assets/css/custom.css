@@ -874,3 +874,8 @@ span.lib-label {
     border-radius: 5px;
     list-style-type: none;
 }
+.red{
+    font-size: 10px !important;
+    color: #ff0000;
+    display: block;
+}

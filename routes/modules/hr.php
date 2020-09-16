@@ -1198,7 +1198,7 @@ Route::post('hr/setup/buyer_template_update', 'Hr\Setup\BuyerModeSetupController
 
 	//Service Book
 
-	Route::get('hr/operation/servicebook', 'Hr\ServiceBook\ServiceBookController@showForm');
+	Route::get('hr/employee/servicebook', 'Hr\ServiceBook\ServiceBookController@showForm');
 	Route::post('hr/operation/servicebookstore', 'Hr\ServiceBook\ServiceBookController@servicebookStore');
 	Route::get('hr/operation/servicebookedit/{sb_id?}', 'Hr\ServiceBook\ServiceBookController@servicebookEdit');
 	Route::post('hr/operation/servicebookupdate', 'Hr\ServiceBook\ServiceBookController@servicebookUpdate');
@@ -1318,11 +1318,11 @@ Route::post('hr/ess/associates_leave', 'Hr\Ess\LeaveApplicationController@associ
 Route::post('hr/ess/attendance_check', 'Hr\Ess\LeaveApplicationController@attendanceCheck');
 
 // Medical Incident
-Route::get('hr/ess/medical_incident', 'Hr\Ess\MedicalIncidentController@medicalIncident');
+Route::get('hr/employee/medical_incident', 'Hr\Ess\MedicalIncidentController@medicalIncident');
 Route::post('hr/ess/medical_incident', 'Hr\Ess\MedicalIncidentController@medicalIncidentStore');
 Route::get('hr/ess/medical_incident_edit/{id}', 'Hr\Ess\MedicalIncidentController@medicalIncidentEdit');
 Route::post('hr/ess/medical_incident_update', 'Hr\Ess\MedicalIncidentController@update');
-Route::get('hr/ess/medical_incident_list', 'Hr\Ess\MedicalIncidentController@medicalIncidentList');
+Route::get('hr/employee/medical_incident_list', 'Hr\Ess\MedicalIncidentController@medicalIncidentList');
 Route::post('hr/ess/medical_incident_data', 'Hr\Ess\MedicalIncidentController@medicalIncidentData');
 
 //Out Side Request
