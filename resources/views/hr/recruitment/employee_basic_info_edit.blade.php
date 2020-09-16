@@ -63,7 +63,7 @@
                         <a href='{{ url("hr/recruitment/operation/advance_info_edit/$employee->associate_id") }}' class="btn  btn-info" title="Advance Info"><i class="las la-id-card"></i></a>
                         <a href='{{ url("hr/employee/benefits?associate_id=$employee->associate_id") }}' class="btn  btn-primary" title="Benefits"><i class="las la-dollar-sign"></i></a>
                         {{-- <a href='{{ url("hr/ess/medical_incident?associate_id=$employee->associate_id") }}' class="btn  btn-warning" title="Medical Incident"><i class="las la-procedures"></i></a> --}}
-                        {{-- <a href='{{ url("hr/operation/servicebook?associate_id=$employee->associate_id") }}' class="btn  btn-danger" title="Service Book"><i class="las la-address-book"></i></a> --}}
+                        <a href='{{ url("hr/employee/servicebook?associate_id=$employee->associate_id") }}' class="btn  btn-danger" title="Service Book"><i class="las la-address-book"></i></a>
 
                     </div>
                 </h6>
@@ -150,7 +150,7 @@
                             @endif
                             <div class="form-group has-required has-float-label">
 
-                                <input name="as_dob" type="date" id="date" placeholder="Date of Birth" class="age-validate form-control" required="required" max="{{date('Y-m-d')}}" value="{{ $employee->as_dob }}" />
+                                <input name="as_dob" type="date" id="date" placeholder="Date of Birth" class="age-validate form-control" required="required" max="{{\Carbon\Carbon::now()->subYears(18)->format('Y-m-d')}}" value="{{ $employee->as_dob }}" />
                                 <label  for="as_dob"> Date of Birth </label>
                             </div>
                             <div class="form-group">
@@ -519,15 +519,7 @@ $(document).ready(function()
    
 });
 
-/*$(window).load(function(){
 
- // disable Active radio button   
-   var status=$('input[name=as_status]:checked').val();
-   if(status==2||status==3||status==5){
-     $('#active_status').prop('disabled', true);
-   }
-});*/
- 
 </script>
 <script type="text/javascript">
         function readURL(input,image_load_id) {

@@ -3,14 +3,23 @@
 namespace App\Http\Controllers\Hr\Recruitment;
 
 use App\Http\Controllers\Controller;
-use App\Models\Hr\Area;
+use Illuminate\Http\Request;
 use App\Models\Hr\EmpType;
-use App\Models\Hr\Unit;
 use App\Models\Hr\WorkerRecruitment;
+use App\Models\Employee;
+use App\Models\Hr\AdvanceInfo;
+use App\Models\Hr\MedicalInfo;
+use App\Models\Hr\Unit;
+use App\Models\Hr\Area;
+use App\Models\Hr\Department;
+use App\Models\Hr\Designation;
+use App\Models\Hr\Section;
+use App\Models\Hr\Subsection;
+use App\Models\Hr\Location;
 use Auth, Validator, DB;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
+use App\Http\Controllers\Hr\IDGenerator as IDGenerator;
 
 class RecruitController extends Controller
 {
@@ -28,6 +37,7 @@ class RecruitController extends Controller
     {
         return view('hr.recruitment.recruit.bulk');
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -37,6 +47,7 @@ class RecruitController extends Controller
     {
         DB::statement(DB::raw('set @rownum=0'));
         $data = WorkerRecruitment::with(['employee_type:emp_type_id,hr_emp_type_name', 'designation:hr_designation_id,hr_designation_name','unit:hr_unit_id,hr_unit_short_name', 'area:hr_area_id,hr_area_name'])
+        ->where('worker_is_migrated','!=' ,1)
         ->orderBy('worker_id','DESC')->get();
         return DataTables::of($data)
         ->addIndexColumn()
@@ -63,20 +74,16 @@ class RecruitController extends Controller
             }
         })
         ->addColumn('ie_info', function ($data) {
-            if($data->worker_is_migrated == 1){
+            if($data->worker_pigboard_test == 1 || $data->worker_finger_test == 1 || $data->worker_color_join == 1 || $data->worker_color_band_join == 1 || $data->worker_clip_join == 1 || $data->worker_box_pleat_join == 1 || $data->worker_color_top_stice){
                 return '<i class="las f-18 la-check-circle text-success"></i>';
             }else{
                 return '<i class="las f-18 la-times-circle text-danger"></i>';
             }
         })
         ->addColumn('action', function ($data) {
-            $buttons= '<i class="las f-18 la-check-circle text-success"></i>';
-            if($data->worker_is_migrated != 1){
-                $buttons= '<a class="btn btn-primary btn-sm" href="'.url('hr/recruitment/worker/migrate/'.$data->worker_id).'" data-toggle="tooltip" data-placement="top" title="" data-original-title="Migrate To Employee" title="Migrate to Employee"><i class="las la-heart"></i></a>';
-            }
 
-            return $buttons;
-
+                return '<div style="width:80px;"><a class="btn btn-primary btn-sm mb-1" href="'.url('hr/recruitment/recruit/'.$data->worker_id.'/edit/').'" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit Employee Information"><i class="las la-pencil-alt f-18"></i></a>
+                <a class="btn btn-success btn-sm" href="'.url('hr/recruitment/worker/migrate/'.$data->worker_id).'" data-toggle="tooltip" data-placement="top" title="" data-original-title="Migrate to Employee"><i class="las la-external-link-alt f-18"></i></a></div>';
         })
         ->rawColumns(['DT_RowIndex', 'hr_emp_type_name', 'hr_designation_name', 'hr_unit_short_name','hr_area_name','worker_name','worker_contact','worker_doj','medical_info','ie_info','action'])
         ->make(true);
@@ -357,5 +364,137 @@ class RecruitController extends Controller
         
     }
 
+
+    public function migrate(Request $request)
+    {
+        if (empty($request->worker_id)){
+            return back()->with("error", "Unable to start the migration: Invalid user!");
+        }
+        
+        DB::beginTransaction();
+        try {
+           
+            $data = WorkerRecruitment::where("worker_id", $request->worker_id)
+            ->where("worker_doctor_acceptance", "1")
+            ->where("worker_is_migrated", "0");
+            $location= Location::first(['hr_location_id']); 
+            $worker = $data->first();
+            if ($data->exists() && ($worker->worker_unit_id != null || $worker->worker_unit_id != ''))
+            {
+                $shift_exist= DB::table('hr_shift')
+                        ->where('hr_shift_unit_id', $worker->worker_unit_id)
+                        ->where('hr_shift_default', 1)
+                        ->pluck('hr_shift_name')
+                        ->first();
+                /*
+                * @function - IDGenerator
+                * @parameter - department and join_date
+                * @return   - ID and Temporary_ID
+                */
+                $IDGenerator = (new IDGenerator)->generator2(array(
+                    'department' => $worker->worker_department_id,
+                    'date' => $worker->worker_doj
+                ));
+
+                if (!empty($IDGenerator['error']))
+                {
+                    toastr()->error($IDGenerator['error']);
+                    return back()->with("error", $IDGenerator['error']);
+                }
+                else if(strlen($IDGenerator['id']) != 10)
+                {
+                    toastr()->error("Unable to start the migration: Alphanumeric Associate's ID required with exactly 10 characters ");
+                    return back()->with("error", "Unable to start the migration: Alphanumeric Associate's ID required with exactly 10 characters ");
+                }
+                else if($shift_exist == null)
+                {
+                    toastr()->error("Unable to start the migration: Default Shift Doesn't Exist ");
+                    return back()->with("error", "Unable to start the migration: Default Shift Doesn't Exist ");
+                }
+                else
+                {
+                    //Default Shift Code
+                    $default_shift= DB::table('hr_shift')
+                    ->where('hr_shift_unit_id', $worker->worker_unit_id)
+                    ->where('hr_shift_default', 1)
+                    ->pluck('hr_shift_name')
+                    ->first();
+                    /*---INSERT INTO BASIC INFO TABLE---*/
+                    $check = Employee::insert(array(
+                        'as_emp_type_id'  => $worker->worker_emp_type_id,
+                        'as_unit_id'      => $worker->worker_unit_id,
+                        'as_shift_id'     => $default_shift,
+                        'as_area_id'      => $worker->worker_area_id,
+                        'as_department_id' => $worker->worker_department_id,
+                        'as_section_id'  => $worker->worker_section_id,
+                        'as_subsection_id'  => $worker->worker_subsection_id,
+                        'as_designation_id' => $worker->worker_designation_id,
+                        'as_doj'         => (!empty($worker->worker_doj)?date('Y-m-d',strtotime($worker->worker_doj)):null),
+                        'temp_id'        => $IDGenerator['temp'],
+                        'associate_id'   => $IDGenerator['id'],
+                        'as_name'        => $worker->worker_name,
+                        'as_gender'      => $worker->worker_gender,
+                        'as_dob'         => (!empty($worker->worker_dob)?date('Y-m-d',strtotime($worker->worker_dob)):null),
+                        'as_contact'     => $worker->worker_contact,
+                        'as_ot'          => $worker->worker_ot,
+                        'as_oracle_code' => $worker->as_oracle_code,
+                        'as_rfid_code'   => $worker->as_rfid,
+                        'as_pic'         => null,
+                        'created_at'     => date("Y-m-d H:i:s"),
+                        'created_by'     => Auth::user()->id,
+                        'as_status'      => 1 ,
+                        'as_location'    => $location->hr_location_id
+                    ));
+
+                    MedicalInfo::insert(array(
+                        'med_as_id'       => $IDGenerator['id'],
+                        'med_height'      => $worker->worker_height,
+                        'med_weight'      => $worker->worker_weight,
+                        'med_tooth_str'   => $worker->worker_tooth_structure,
+                        'med_blood_group' => $worker->worker_blood_group,
+                        'med_ident_mark'  => (!empty($worker->worker_identification_mark)?$worker->worker_identification_mark:"N/A"),
+                        'med_doct_comment'   => $worker->worker_doctor_comments,
+                        'med_doct_conf_age'  => $worker->worker_doctor_age_confirm,
+                        'med_doct_signature' => $worker->worker_doctor_signature
+                    ));
+
+                    AdvanceInfo::insert(array(
+                        'emp_adv_info_as_id' => $IDGenerator['id'],
+                        'emp_adv_info_nid'   => $worker->worker_nid
+                    ));
+
+
+                    WorkerRecruitment::where('worker_id', $request->worker_id)
+                        ->update(array('worker_is_migrated' => '1'));
+
+
+                    DB::commit();
+                    toastr()->success('Migration successful!');
+                    $this->logFileWrite("Employee migration updated", $request->worker_id);
+                    return back()->with("success", "Migration successful!");
+                }
+            }
+            else
+            {
+                toastr()->error("Unable to start the migration: Please check the user's medical status or user already migrated!");
+                return back()->with("error", "Unable to start the migration: Please check the user's medical status or user already migrated!");
+            }
+            
+        } catch (\Exception $e) {
+            DB::rollback();
+            $bug = $e->getMessage();
+            if(isset($e->errorInfo)){
+                $duplicate = $e->errorInfo[1];
+                if($duplicate == 1062){
+                    $message = $e->errorInfo[2];
+                    toastr()->error($message);
+                    return back()->with('error', $message);
+                }
+            }
+            toastr()->error($bug);
+            // return $bug;
+            return back()->with('error', $bug);
+        }
+    }
 
 }

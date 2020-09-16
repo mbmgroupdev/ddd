@@ -16,45 +16,34 @@
 			</ul><!-- /.breadcrumb -->
 		</div>
 
+        @include('inc/message')
 		<div class="panel">  
+            <div class="panel-heading">
+                <h6>Service Book</h6>
+            </div>
+            <div class="panel-body">
+                <form class="form-horizontal" role="form" method="post" action="{{ url('hr/operation/servicebookstore') }}" enctype="multipart/form-data"> 
 
-            <div class="row">
-                 @include('inc/message')
-                <div class="col-xs-7">
-                  <h5 class="page-header">Service Book Entry</h5>
-                    <form class="form-horizontal" role="form" method="post" action="{{ url('hr/operation/servicebookstore') }}" enctype="multipart/form-data"> 
-
-                         {{ csrf_field() }} 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label no-padding-right" for="job_app_id"> Associate's ID <span style="color: red; vertical-align: top;">&#42;</span> :</label>
-                            <div class="col-sm-8">
-                                 {{ Form::select('associate_id', [Request::get('associate_id') => Request::get('associate_id')], Request::get('associate_id'),['placeholder'=>'Select Associate\'s ID', 'data-validation'=> 'required', 'id'=>'associate_id',  'class'=> 'associates no-select col-xs-10 col-sm-10']) }} 
-                                
+                    {{ csrf_field() }} 
+                    <div class="row justify-content-center">
+                        <div class="col-sm-3">
+                            <div class="form-group has-required has-float-label select-search-group mt-3">
+                                {{ Form::select('associate_id', [Request::get('associate_id') => Request::get('associate_id')], Request::get('associate_id'),['placeholder'=>'Select Associate\'s ID', 'required'=> 'required', 'id'=>'associate_id',  'class'=> 'associates form-control']) }} 
+                                <label for="job_app_id"> Associate's ID </label>
+                                    
                             </div>
                         </div>
-                       <div class="space-10"></div>
-                       <div id="form-element"> <!---Image Fields --></div>
-                       
-                        <div class="clearfix form-actions no-padding-right">
-                            <div class="col-md-offset-5 col-md-10" style="padding-left: 141px;"> 
-                                <button class="btn btn-sm btn-success" type="submit">
-                                    <i class="ace-icon fa fa-check bigger-110"></i> Add
-                                </button>
-                                &nbsp
-                                <button class="btn btn-sm" type="reset">
-                                    <i class="ace-icon fa fa-undo bigger-110"></i> Reset
-                                </button>
-                            </div>
-                        </div> 
+                    </div>
+                   <div id="form-element"> <!---Image Fields --></div>
+                   
                      
-                    </form>
-                    <!-- PAGE CONTENT ENDS -->
-                </div>
-                <!-- /.col --> 
+                 
+                </form>
             </div>
-		</div><!-- /.page-content -->
+		</div>
 	</div>
 </div>
+@push('js')
 <script type="text/javascript">
 function drawNewBtn(associate_id)
 {
@@ -72,33 +61,7 @@ function drawNewBtn(associate_id)
  
 
 $(document).ready(function(){   
-    // retrive all information  
-
-    $('select.associates').select2({
-        ajax: {
-            url: '{{ url("hr/associate-search") }}',
-            dataType: 'json',
-            delay: 250,
-            data: function (params) {
-                return { 
-                    keyword: params.term
-                }; 
-            },
-            processResults: function (data) { 
-                return {
-                    results:  $.map(data, function (item) {
-                        return {
-                            text: item.associate_name,
-                            id: item.associate_id
-                        }
-                    }) 
-                };
-            },
-            cache: true
-        }
-    });
-
-    // Form Based on Emloyee Id
+    
     var action_element = $("#form-element");
     var associate_id = '{{ request()->get("associate_id") }}';
 
@@ -116,7 +79,6 @@ $(document).ready(function(){
     });
 
     function ajaxLoad(associate_id){
-        // Action Element list
         $.ajax({
             url : "{{ url('hr/operation/servicebookpage') }}",
             type: 'get',
@@ -138,19 +100,6 @@ $(document).ready(function(){
 </script>
 <script type="text/javascript">
     $(document).ready(function(){
-        //File validation Script..........................
-        // $('#page1', '#page2', '#inp_page3','#page4','#page5','#page6','#page7').change(function () {
-        //     var fileExtension = ['pdf','doc','docx','jpg','jpeg','png','xls','xlsx'];
-        //     if ($.inArray($(this).val().split('.').pop().toLowerCase(), fileExtension) == -1) {
-        //         $(this).next().show();
-        //         // alert("Please Upload only xls/xlsx type file.");
-        //         $(this).val('');
-        //     }
-        //     else{ 
-        //             $(this).next().hide();
-        //         }
-        // });
-
 
 
         $('body').on('change','#page1',function () {
@@ -158,7 +107,7 @@ $(document).ready(function(){
             var fileExtension = ['pdf','doc','docx','jpg','jpeg','png','xls','xlsx'];
             if ($.inArray($(this).val().split('.').pop().toLowerCase(), fileExtension) == -1) {
                 $('#upload_error_1').show();
-                // alert("Please Upload only xls/xlsx type file.");
+                $.notify("Please Upload only xls/xlsx type file.", 'error');
                 $(this).val('');
             }
             else{ 
@@ -169,7 +118,7 @@ $(document).ready(function(){
             var fileExtension = ['pdf','doc','docx','jpg','jpeg','png','xls','xlsx'];
             if ($.inArray($(this).val().split('.').pop().toLowerCase(), fileExtension) == -1) {
                 $('#upload_error_2').show();
-                // alert("Please Upload only xls/xlsx type file.");
+                $.notify("Please Upload only xls/xlsx type file.", 'error');
                 $(this).val('');
             }
             else{ 
@@ -180,7 +129,7 @@ $(document).ready(function(){
             var fileExtension = ['pdf','doc','docx','jpg','jpeg','png','xls','xlsx'];
             if ($.inArray($(this).val().split('.').pop().toLowerCase(), fileExtension) == -1) {
                 $('#upload_error_3').show();
-                // alert("Please Upload only xls/xlsx type file.");
+                $.notify("Please Upload only xls/xlsx type file.", 'error');
                 $(this).val('');
             }
             else{ 
@@ -191,7 +140,7 @@ $(document).ready(function(){
             var fileExtension = ['pdf','doc','docx','jpg','jpeg','png','xls','xlsx'];
             if ($.inArray($(this).val().split('.').pop().toLowerCase(), fileExtension) == -1) {
                 $('#upload_error_4').show();
-                // alert("Please Upload only xls/xlsx type file.");
+                $.notify("Please Upload only xls/xlsx type file.", 'error');
                 $(this).val('');
             }
             else{ 
@@ -202,7 +151,7 @@ $(document).ready(function(){
             var fileExtension = ['pdf','doc','docx','jpg','jpeg','png','xls','xlsx'];
             if ($.inArray($(this).val().split('.').pop().toLowerCase(), fileExtension) == -1) {
                 $('#upload_error_5').show();
-                // alert("Please Upload only xls/xlsx type file.");
+                $.notify("Please Upload only xls/xlsx type file.", 'error');
                 $(this).val('');
             }
             else{ 
@@ -213,7 +162,7 @@ $(document).ready(function(){
             var fileExtension = ['pdf','doc','docx','jpg','jpeg','png','xls','xlsx'];
             if ($.inArray($(this).val().split('.').pop().toLowerCase(), fileExtension) == -1) {
                 $('#upload_error_6').show();
-                // alert("Please Upload only xls/xlsx type file.");
+                $.notify("Please Upload only xls/xlsx type file.", 'error');
                 $(this).val('');
             }
             else{ 
@@ -224,15 +173,14 @@ $(document).ready(function(){
             var fileExtension = ['pdf','doc','docx','jpg','jpeg','png','xls','xlsx'];
             if ($.inArray($(this).val().split('.').pop().toLowerCase(), fileExtension) == -1) {
                 $('#upload_error_7').show();
-                // alert("Please Upload only xls/xlsx type file.");
+                $.notify("Please Upload only xls/xlsx type file.", 'error');
                 $(this).val('');
             }
             else{ 
                     $('#upload_error_7').hide();
                 }
         }); 
-    //File validation Script End......................
     });
 </script>
-
+@endpush
 @endsection

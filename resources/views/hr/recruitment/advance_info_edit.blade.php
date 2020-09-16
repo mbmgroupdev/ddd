@@ -19,7 +19,6 @@
             </ul><!-- /.breadcrumb -->
  
         </div>
-        <div class="col-xs-12">
         <div class="panel">
             <div class="panel-heading">
                 <h6>Advance : {{$advance->emp_adv_info_as_id}}
@@ -29,10 +28,10 @@
                         
 
                         <a href='{{ url("hr/recruitment/operation/advance_info_edit/$advance->emp_adv_info_as_id") }}' class="btn  btn-info" title="Advance Info"><i class="las la-id-card"></i></a>
-                        <a href='{{ url("hr/recruitment/operation/benefits?associate_id=$advance->emp_adv_info_as_id") }}' class="btn  btn-primary" title="Benefits"><i class="las la-dollar-sign"></i></a>
+                        <a href='{{ url("hr/employee/benefits?associate_id=$advance->emp_adv_info_as_id") }}' class="btn  btn-primary" title="Benefits"><i class="las la-dollar-sign"></i></a>
                         <a  href="{{url("hr/recruitment/operation/medical_info_edit/$advance->emp_adv_info_as_id")}}" target="_blank" data-tooltip="Edit Medical Info" data-tooltip-location="left" class="btn  btn-warning" style="border-radius: 2px !important; padding: 4px;"><i class="las la-stethoscope bigger-100" ></i></a>
-                        <a href='{{ url("hr/ess/medical_incident?associate_id=$advance->emp_adv_info_as_id") }}' class="btn  btn-warning" title="Medical Incident"><i class="las la-procedures"></i></a>
-                        <a href='{{ url("hr/operation/servicebook?associate_id=$advance->emp_adv_info_as_id") }}' class="btn  btn-danger" title="Service Book"><i class="las la-address-book"></i></a>
+                        <a href='{{ url("hr/employee/medical_incident?associate_id=$advance->emp_adv_info_as_id") }}' class="btn  btn-warning" title="Medical Incident"><i class="las la-procedures"></i></a>
+                        <a href='{{ url("hr/employee/servicebook?associate_id=$advance->emp_adv_info_as_id") }}' class="btn  btn-danger" title="Service Book"><i class="las la-address-book"></i></a>
                     </div>
                 </h6>
             </div>
@@ -554,183 +553,121 @@
                                 </form>
                             </div>
                             <div class="tab-pane fade" id="bangla" role="tabpanel" aria-labelledby="v-pills-messages-tab">
-                               <div class="col-sm-6">
-                                    {{ Form::open(['url'=>'hr/recruitment/employee/add_employee_bn',  'class'=>'form-horizontal']) }}
-
-                                        <input type="hidden" name="hr_bn_id" id="hr_bn_id"/> 
-
-                                        <div class="form-group has-float-label">
-                                            <label  for="emp_adv_info_as_id"> Associate's ID </label>
-                                            <div class="col-sm-9">
-                                                <input type="text" name="hr_bn_associate_id" placeholder="Associate's ID" class="col-xs-12" value="{{ (!empty($advance->emp_adv_info_as_id)?$advance->emp_adv_info_as_id:(request()->route('emp_adv_info_as_id'))) }}" readonly /> 
-                                            </div>
-                                        </div>  
-
-                                        <div class="form-group has-float-label">
-                                            <label  for="hr_bn_associate_name"> নাম </label>
-                                            <div class="col-sm-9">
-                                                <input name="hr_bn_associate_name" type="text" id="hr_bn_associate_name" placeholder="নাম" class="col-xs-12" data-validation="required length" data-validation-length="1-255"/>
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group has-float-label">
-                                            <label  for="hr_bn_unit"> ইউনিট </label>
-                                            <div class="col-sm-9">
-                                                <input type="text" id="hr_bn_unit" placeholder="ইউনিটের নাম" value="{{ (!empty($bangla->hr_unit_name_bn)?$bangla->hr_unit_name_bn:null) }}" class="col-xs-12" data-validation="required" readonly />
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="form-group has-float-label">
-                                            <label  for="hr_bn_department"> ডিপার্টমেন্ট </label>
-                                            <div class="col-sm-9">
-                                                <input type="text" id="hr_bn_department" placeholder="ডিপার্টমেন্টের নাম" value="{{ (!empty($bangla->hr_department_name_bn)?$bangla->hr_department_name_bn:null) }}" class="col-xs-12" data-validation="required" readonly />
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group has-float-label">
-                                            <label  for="hr_bn_designation"> পদবি </label>
-                                            <div class="col-sm-9">
-                                                <input type="text" id="hr_bn_designation" placeholder="পদবি" value="{{ (!empty($bangla->hr_designation_name_bn)?$bangla->hr_designation_name_bn:null) }}" class="col-xs-12" data-validation="required" readonly />
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group has-float-label">
-                                            <label  for="hr_bn_doj"> যোগদানের তারিখ </label>
-                                            <div class="col-sm-9">
-                                                <input type="text" id="hr_bn_doj" placeholder="যোগদানের তারিখ" value="{{ (!empty($bangla->as_doj)?$bangla->as_doj:null) }}" class="col-xs-12" data-validation="required" readonly />
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group has-float-label">
-                                            <label  for="hr_bn_father_name">পিতার নাম </label>
-                                            <div class="col-sm-9">
-                                                <input name="hr_bn_father_name" type="text" id="hr_bn_father_name" placeholder="পিতার নাম" class="col-xs-12" data-validation="required length" data-validation-length="1-255"/>
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group has-float-label">
-                                            <label  for="hr_bn_mother_name">মাতার নাম </label>
-                                            <div class="col-sm-9">
-                                                <input name="hr_bn_mother_name" type="text" id="hr_bn_mother_name" placeholder="মাতার নাম" class="col-xs-12" data-validation="required length" data-validation-length="1-255"/>
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group has-float-label">
-                                            <label  for="hr_bn_spouse_name">স্বামী/স্ত্রীর নাম </label>
-                                            <div class="col-sm-9">
-                                                <input name="hr_bn_spouse_name" type="text" id="hr_bn_spouse_name" placeholder="স্বামী/স্ত্রীর নাম (ঐচ্ছিক)" class="col-xs-12" data-validation="length" data-validation-length="0-255"/>
-                                            </div>
-                                        </div>
-
-                                        <legend><small>স্থায়ী ঠিকানা </small></legend>
-                                        <div class="form-group has-float-label">
-                                            <label  for="hr_bn_permanent_village"> গ্রাম  </label>
-                                            <div class="col-sm-9">
-                                                <input name="hr_bn_permanent_village" type="text" id="hr_bn_permanent_village" placeholder="গ্রামের নাম"  class="col-xs-12" data-validation="required length" data-validation="length" data-validation-length="1-255"/>
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group has-float-label">
-                                            <label  for="hr_bn_permanent_po"> ডাকঘর </label>
-                                            <div class="col-sm-9">
-                                                <input name="hr_bn_permanent_po" type="text" id="hr_bn_permanent_po" placeholder="ডাকঘরের নাম"  class="col-xs-12" data-validation="required length" data-validation="length" data-validation-length="1-255"/>
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group has-float-label">
-                                            <label  for="hr_bn_permanent_upazilla"> উপজেলা </label>
-                                            <div class="col-sm-9">
-                                                <input type="text" id="hr_bn_permanent_upazilla" placeholder="উপজেলার নাম" value="{{ (!empty($bangla->permanent_upazilla_bn)?$bangla->permanent_upazilla_bn:null) }}" class="col-xs-12" data-validation="required" readonly />
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group has-float-label">
-                                            <label  for="hr_bn_permanent_district"> জেলা </label>
-                                            <div class="col-sm-9">
-                                                <input type="text" id="hr_bn_permanent_district" placeholder="জেলার নাম" value="{{ (!empty($bangla->permanent_district_bn)?$bangla->permanent_district_bn:null) }}" class="col-xs-12" data-validation="required" readonly />
-                                            </div>
-                                        </div>
-
-                                        <legend><small>বর্তমান ঠিকানা</small></legend>
-                                        <div class="form-group has-float-label">
-                                            <label  for="hr_bn_present_road"> রোড নং </label>
-                                            <div class="col-sm-9">
-                                                <input name="hr_bn_present_road" type="text" id="hr_bn_present_road" placeholder="রোড নং "  class="col-xs-12" data-validation="required length" data-validation="length" data-validation-length="1-255"/>
-                                            </div>
-                                        </div> 
-
-                                        <div class="form-group has-float-label">
-                                            <label  for="hr_bn_present_house"> বাড়ি নং </label>
-                                            <div class="col-sm-9">
-                                                <input name="hr_bn_present_house" type="text" id="hr_bn_present_house" placeholder="বাড়ি নং"  class="col-xs-12" data-validation="required length" data-validation="length" data-validation-length="1-255"/>
-                                            </div>
-                                        </div> 
-
-                                        <div class="form-group has-float-label">
-                                            <label  for="hr_bn_present_po"> ডাকঘর </label>
-                                            <div class="col-sm-9">
-                                                <input name="hr_bn_present_po" type="text" id="hr_bn_present_po" placeholder="ডাকঘরের নাম"  class="col-xs-12" data-validation="required length" data-validation="length" data-validation-length="1-255"/>
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group has-float-label">
-                                            <label  for="hr_bn_present_upazilla"> উপজেলা </label>
-                                            <div class="col-sm-9">
-                                                <input type="text" id="hr_bn_present_upazilla" placeholder="উপজেলার নাম" value="{{ (!empty($bangla->present_upazilla_bn)?$bangla->present_upazilla_bn:null) }}" class="col-xs-12" data-validation="required" readonly />
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group has-float-label">
-                                            <label  for="hr_bn_present_district"> জেলা </label>
-                                            <div class="col-sm-9">
-                                                <input type="text" id="hr_bn_present_district" placeholder="জেলার নাম" value="{{ (!empty($bangla->present_district_bn)?$bangla->present_district_bn:null) }}" class="col-xs-12" data-validation="required" readonly />
-                                            </div>
-                                        </div>
-
+                                {{ Form::open(['url'=>'hr/recruitment/employee/add_employee_bn',  'class'=>'form-horizontal']) }}
+                                    <div class="row">
                                     
-                                </div>
-                                <div class="col-sm-6" id="associateInformation">
-                                    <dl class="dl-horizontal">
-                                        <dt>Associate's ID</dt><dd>{{ (!empty($bangla->associate_id)?$bangla->associate_id:" ") }}</dd>
-                                        <dt>Associate's Name</dt><dd>{{ (!empty($bangla->as_name)?$bangla->as_name:" ") }}</dd>
-                                        <dt>Unit</dt><dd>{{ (!empty($bangla->hr_unit_name)?$bangla->hr_unit_name:" ") }}</dd>
-                                        <dt>Department</dt><dd>{{ (!empty($bangla->hr_department_name)?$bangla->hr_department_name:" ") }}</dd>
-                                        <dt>Designation</dt><dd>{{ (!empty($bangla->hr_designation_name)?$bangla->hr_designation_name:" ") }}</dd>
-                                        <dt>Date of Joining</dt><dd>{{ (!empty($bangla->as_doj)?$bangla->as_doj:" ") }}</dd>
+                                        <div class="col-sm-4">
 
-                                        <dt>Father's Name</dt><dd>{{ (!empty($bangla->emp_adv_info_fathers_name)?$bangla->emp_adv_info_fathers_name:" ") }}</dd>
-                                        <dt>Mother's Name</dt><dd>{{ (!empty($bangla->emp_adv_info_mothers_name)?$bangla->emp_adv_info_mothers_name:" ") }}</dd>
-                                        <dt>Spouse's Name</dt><dd>{{ (!empty($bangla->emp_adv_info_spouse)?$bangla->emp_adv_info_spouse:" ") }}</dd>
+                                            <input type="hidden" name="hr_bn_id" id="hr_bn_id"/> 
 
-                                        <legend><small>Permanent Address</small></legend>
-                                        <dt>Village</dt><dd>{{ (!empty($bangla->emp_adv_info_per_vill)?$bangla->emp_adv_info_per_vill:" ") }}</dd>
-                                        <dt>Post Office</dt><dd>{{ (!empty($bangla->emp_adv_info_per_po)?$bangla->emp_adv_info_per_po:" ") }}</dd>
-                                        <dt>Upazilla</dt><dd>{{ (!empty($bangla->permanent_upazilla)?$bangla->permanent_upazilla:" ") }}</dd>
-                                        <dt>District</dt><dd>{{ (!empty($bangla->permanent_district)?$bangla->permanent_district:" ") }}</dd>
+                                            <div class="form-group has-float-label">
+                                                <input type="text" name="hr_bn_associate_id" placeholder="Associate's ID" class="form-control" value="{{ (!empty($advance->emp_adv_info_as_id)?$advance->emp_adv_info_as_id:(request()->route('emp_adv_info_as_id'))) }}" readonly /> 
+                                                <label  for="emp_adv_info_as_id"> Associate's ID </label>
+                                            </div>  
 
-                                        <legend><small>Present Address</small></legend>
-                                        <dt>House No</dt><dd>{{ (!empty($bangla->emp_adv_info_pres_house_no)?$bangla->emp_adv_info_pres_house_no:" ") }}</dd>
-                                        <dt>Road No</dt><dd>{{ (!empty($bangla->emp_adv_info_pres_road)?$bangla->emp_adv_info_pres_road:" ") }}</dd>
-                                        <dt>Post Office</dt><dd>{{ (!empty($bangla->emp_adv_info_pres_po)?$bangla->emp_adv_info_pres_po:" ") }}</dd>
-                                        <dt>Upazilla</dt><dd>{{ (!empty($bangla->present_district)?$bangla->present_district:" ") }}</dd>
-                                        <dt>District</dt><dd>{{ (!empty($bangla->present_upazilla)?$bangla->present_upazilla:" ") }}</dd>
-                                    </dl>
-                                </div>
-                                <div class="col-sm-12">
-                                        <div class="clearfix form-actions" style="padding-left: 87px;">
-                                            <div class="col-md-offset-3 col-md-4">
+                                            <div class="form-group has-float-label">
+                                                <input name="hr_bn_associate_name" type="text" id="hr_bn_associate_name" placeholder="নাম" class="form-control" required="required" />
+                                                <label  for="hr_bn_associate_name"> নাম </label>
+                                            </div>
+
+                                            <div class="form-group has-float-label">
+                                                <input type="text" id="hr_bn_unit" placeholder="ইউনিটের নাম" value="{{ (!empty($bangla->hr_unit_name_bn)?$bangla->hr_unit_name_bn:null) }}" class="form-control" data-validation="required" readonly />
+                                                <label  for="hr_bn_unit"> ইউনিট </label>
+                                            </div>
+                                            
+                                            <div class="form-group has-float-label">
+                                                <input type="text" id="hr_bn_department" placeholder="ডিপার্টমেন্টের নাম" value="{{ (!empty($bangla->hr_department_name_bn)?$bangla->hr_department_name_bn:null) }}" class="form-control" data-validation="required" readonly />
+                                                <label  for="hr_bn_department"> ডিপার্টমেন্ট </label>
+                                            </div>
+
+                                            <div class="form-group has-float-label">
+                                                <input type="text" id="hr_bn_designation" placeholder="পদবি" value="{{ (!empty($bangla->hr_designation_name_bn)?$bangla->hr_designation_name_bn:null) }}" class="form-control" data-validation="required" readonly />
+                                                <label  for="hr_bn_designation"> পদবি </label>
+                                            </div>
+
+                                            <div class="form-group has-float-label">
+                                                <input type="text" id="hr_bn_doj" placeholder="যোগদানের তারিখ" value="{{ (!empty($bangla->as_doj)?$bangla->as_doj->format('Y-m-d'):null) }}" class="form-control" data-validation="required" readonly />
+                                                <label  for="hr_bn_doj"> যোগদানের তারিখ </label>
+                                            </div>
+
+                                            <div class="form-group has-float-label">
+                                                <input name="hr_bn_father_name" type="text" id="hr_bn_father_name" placeholder="পিতার নাম" class="form-control" data-validation="required length" data-validation-length="1-255"/>
+                                                <label  for="hr_bn_father_name">পিতার নাম </label>
+                                            </div>
+
+                                            <div class="form-group has-float-label">
+                                                <input name="hr_bn_mother_name" type="text" id="hr_bn_mother_name" placeholder="মাতার নাম" class="form-control" data-validation="required length" data-validation-length="1-255"/>
+                                                <label  for="hr_bn_mother_name">মাতার নাম </label>
+                                            </div>
+
+                                            <div class="form-group has-float-label">
+                                                <input name="hr_bn_spouse_name" type="text" id="hr_bn_spouse_name" placeholder="স্বামী/স্ত্রীর নাম (ঐচ্ছিক)" class="form-control" data-validation="length" data-validation-length="0-255"/>
+                                                <label  for="hr_bn_spouse_name">স্বামী/স্ত্রীর নাম </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <legend><small>স্থায়ী ঠিকানা </small></legend>
+                                            <div class="form-group has-float-label">
+                                                <input name="hr_bn_permanent_village" type="text" id="hr_bn_permanent_village" placeholder="গ্রামের নাম"  class="form-control" data-validation="required length" data-validation="length" data-validation-length="1-255"/>
+                                                <label  for="hr_bn_permanent_village"> গ্রাম  </label>
+                                            </div>
+
+                                            <div class="form-group has-float-label">
+                                                <input name="hr_bn_permanent_po" type="text" id="hr_bn_permanent_po" placeholder="ডাকঘরের নাম"  class="form-control" data-validation="required length" data-validation="length" data-validation-length="1-255"/>
+                                                <label  for="hr_bn_permanent_po"> ডাকঘর </label>
+                                            </div>
+
+                                            <div class="form-group has-float-label">
+                                                <input type="text" id="hr_bn_permanent_upazilla" placeholder="উপজেলার নাম" value="{{ (!empty($bangla->permanent_upazilla_bn)?$bangla->permanent_upazilla_bn:null) }}" class="form-control" data-validation="required" readonly />
+                                                <label  for="hr_bn_permanent_upazilla"> উপজেলা </label>
+                                            </div>
+
+                                            <div class="form-group has-float-label">
+                                                <input type="text" id="hr_bn_permanent_district" placeholder="জেলার নাম" value="{{ (!empty($bangla->permanent_district_bn)?$bangla->permanent_district_bn:null) }}" class="form-control" data-validation="required" readonly />
+                                                <label  for="hr_bn_permanent_district"> জেলা </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <legend><small>বর্তমান ঠিকানা</small></legend>
+                                            <div class="form-group has-float-label">
+                                                    <input name="hr_bn_present_road" type="text" id="hr_bn_present_road" placeholder="রোড নং "  class="form-control" data-validation="required length" data-validation="length" data-validation-length="1-255"/>
+                                                <label  for="hr_bn_present_road"> রোড নং </label>
+                                            </div> 
+
+                                            <div class="form-group has-float-label">
+                                                    <input name="hr_bn_present_house" type="text" id="hr_bn_present_house" placeholder="বাড়ি নং"  class="form-control" data-validation="required length" data-validation="length" data-validation-length="1-255"/>
+                                                <label  for="hr_bn_present_house"> বাড়ি নং </label>
+                                            </div> 
+
+                                            <div class="form-group has-float-label">
+                                                    <input name="hr_bn_present_po" type="text" id="hr_bn_present_po" placeholder="ডাকঘরের নাম"  class="form-control" data-validation="required length" data-validation="length" data-validation-length="1-255"/>
+                                                <label  for="hr_bn_present_po"> ডাকঘর </label>
+                                            </div>
+
+                                            <div class="form-group has-float-label">
+                                                    <input type="text" id="hr_bn_present_upazilla" placeholder="উপজেলার নাম" value="{{ (!empty($bangla->present_upazilla_bn)?$bangla->present_upazilla_bn:null) }}" class="form-control" data-validation="required" readonly />
+                                                <label  for="hr_bn_present_upazilla"> উপজেলা </label>
+                                            </div>
+
+                                            <div class="form-group has-float-label">
+                                                    <input type="text" id="hr_bn_present_district" placeholder="জেলার নাম" value="{{ (!empty($bangla->present_district_bn)?$bangla->present_district_bn:null) }}" class="form-control" data-validation="required" readonly />
+                                                <label  for="hr_bn_present_district"> জেলা </label>
+                                            </div>
+                                            <div class="form-group">
                                                 <button type="submit" class="btn btn-sm btn-success" type="button">
                                                     <i class="ace-icon fa fa-check bigger-110"></i> Submit
                                                 </button>
 
-                                                &nbsp; &nbsp; &nbsp;
                                                 <button class="btn btn-sm" type="reset">
                                                     <i class="ace-icon fa fa-undo bigger-110"></i> Reset
                                                 </button>
                                             </div>
-                                        </div>
+
+                                        
+                                            
+                                    </div>
+                                    {{ Form::close() }}
                                 </div>
-                                {{ Form::close() }}
                             </div>
                          </div>
                       </div>
@@ -997,10 +934,7 @@ $(document).ready(function()
 
     
 
-    // Translate english date to bangla
-    var string = $("#hr_bn_doj");
     
-    string.val(convertE2B(string.val()));
     showInfo(associate_id);
     educationHistory(associate_id);
    
@@ -1047,7 +981,7 @@ function showInfo(associate_id)
             $("#hr_bn_unit").empty().val(data.hr_unit_name_bn);
             $("#hr_bn_department").empty().val(data.hr_department_name_bn);
             $("#hr_bn_designation").empty().val(data.hr_designation_name_bn);
-            $("#hr_bn_doj").empty().val(convertE2B(data.as_doj));
+            $("#hr_bn_doj").empty().val((data.as_doj));
             $("#hr_bn_father_name").empty().val(data.hr_bn_father_name);
             $("#hr_bn_mother_name").empty().val(data.hr_bn_mother_name);
             $("#hr_bn_spouse_name").empty().val(data.hr_bn_spouse_name);

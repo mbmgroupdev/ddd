@@ -107,7 +107,6 @@ class LeaveSearchController extends Controller
                     $join->where('b.as_subsection_id', $where['subsection']);
                 }
             })
-            // ->groupBy('a.leave_ass_id')
             ->get();
             $leave_type_list = $leave_type_list->groupBy('leave_type')->toArray();
         } else if($type == 'month') {
@@ -276,39 +275,15 @@ class LeaveSearchController extends Controller
                 $request = ['category'=> $request['category'], 'type' => $request['type']];
                 $request = array_merge($request2, $request);
             }
-            // return $request;
-            $unit_list      = Unit::where('hr_unit_status',1)->get();
-            $employee_list  = Employee::where('as_status',1)->get();
-            $count = 0;
-            $leave_type_list_count = [];
-            foreach($unit_list as $k=>$unit){
-                $newArr[$unit->hr_unit_id] = $this->getLeaveFromDate1($date, $request['type'],['unit'=>$unit->hr_unit_id]);
-                // foreach($newArr[$unit->hr_unit_id] as $year=>$newA) {
-                //     foreach($newA as $month=>$newa) {
-                //         foreach($newa as $type=>$newaa) {
-                //             if(!isset($newArr2[$year][$month][$type])) {
-                //                 $newArr2[$year][$month][$type] = 0;
-                //             }
-                //             $newArr2[$year][$month][$type] += count($newaa);
-                //         }
-                //     }
-                // }
-                // select month or date
-                foreach($newArr[$unit->hr_unit_id] as $type=>$newA) {
-                    $empList = [];
-                    if(!isset($leave_type_list_count[$type])) {
-                        $leave_type_list_count[$type] = 0;
-                    }
-                    foreach($newA as $k2=>$newA2) {
-                        $empList[$newA2->leave_ass_id] = $newA2->leave_ass_id;
-                    }
-                    $leave_type_list_count[$type] += count($empList);
-                }
-            }
-            // $leave_type_list_count  = $this->getLeaveFromDate($date, $request['type']);
+
+            $unit_list      = Unit::where('hr_unit_status',1)->count();
+            $employee_list  = Employee::whereIn('as_status',[1,6])->count();
+            $leave = $this->getLeaveFromDate1($date, $request['type'],[]);
+            $groups = collect($leave);//->groupBy('leave_type',true);
+          
             $result = [];
             $result['page'] = view('hr.search.leave.allleave',
-                compact('unit_list','employee_list','showTitle','leave_type_list_count', 'request'))->render();
+                compact('unit_list','employee_list','showTitle','leave', 'groups','request'))->render();
             $result['url'] = url('hr/search?').http_build_query($request);
             return $result;
         } catch(\Exception $e) {
@@ -645,11 +620,12 @@ class LeaveSearchController extends Controller
         $leave_emp_list->where($where);
         $leave_emp_list->leftJoin('hr_designation AS dsg', 'dsg.hr_designation_id', 'hr_as_basic_info.as_designation_id');
         $leave_emp_list->leftJoin("hr_unit AS u", "u.hr_unit_id", "=", "hr_as_basic_info.as_unit_id");
-        if(!empty($leavetype) && $request['type'] == 'date') {
+        /*if(!empty($leavetype) && $request['type'] == 'date') {
             $leave_emp_list->groupBy('b.leave_ass_id');
-        }
+        }*/
         $leave_emp_list->orderBy('dsg.hr_designation_name');
-        $leave_emp_list->get($select);
+        $leave_emp_list->select($select);
+        $leave_emp_list->get();
         // $leave_emp_list->get()->toArray();
         return $leave_emp_list;
     }
@@ -718,12 +694,8 @@ class LeaveSearchController extends Controller
         $empLeaveMonth->join(DB::raw('(' . $basic_emp_sql. ') AS a'), function($join) use ($basic_emp_list) {
             $join->on('a.associate_id', '=', 'b.leave_ass_id')->addBinding($basic_emp_list->getBindings());
         });
-        // $empLeaveMonth->leftjoin(DB::raw('(' . $shif_list_sql. ') AS s'), function($join) use ($shif_list) {
-        //     $join->on('s.hr_shift_unit_id', '=', 'a.as_unit_id')->addBinding($shif_list->getBindings());
-        //     $join->where('s.hr_shift_default', '=', '1')->addBinding($shif_list->getBindings());
-        // });
         $empLeaveMonth->leftJoin('hr_designation AS dsg', 'dsg.hr_designation_id', 'a.as_designation_id');
-        $empLeaveMonth->groupBy('b.leave_ass_id');
+        /*$empLeaveMonth->groupBy('b.leave_ass_id');*/
         $empLeaveMonth->orderBy('dsg.hr_designation_name');
         $empLeaveMonth->get();
         return $empLeaveMonth;
