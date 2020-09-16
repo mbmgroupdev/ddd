@@ -1,7 +1,6 @@
 @extends('hr.layout')
 @section('title', 'Edit Recruitment')
 @push('css')
-   {{-- <link rel="stylesheet" href="{{ asset('assets/css/select2.min.css')}}"> --}}
    <link rel="stylesheet" href="{{ asset('assets/css/recruitment.css')}}">
 @endpush
 @section('main-content')
@@ -84,7 +83,7 @@
                                            @enderror
 
                                            <div class="form-group has-float-label has-required">
-                                              <input type="date" class="form-control @error('worker_dob') is-invalid @enderror" value="{{ $worker->worker_dob??'' }}" id="dob" name="worker_dob"  autocomplete="off" />
+                                              <input type="date" class="form-control @error('worker_dob') is-invalid @enderror" value="{{ $worker->worker_dob??'' }}" id="dob" name="worker_dob"  autocomplete="off" max="{{\Carbon\Carbon::now()->subYears(18)->format('Y-m-d')}}"/>
                                               <label for="dob">Date Of Birth</label>
                                            </div>
                                            @error('worker_dob')
@@ -254,7 +253,7 @@
                               </div>
                            </div>
                         </div>
-                        <div class="row setup-content" id="medical-info">
+                        <div class="row setup-content" id="medical-info" style="display: none;">
                            <div class="col-sm-12">
                               <div class="col-md-12 p-0">
                                  <div class="form-card text-left">
@@ -372,7 +371,7 @@
                            </div>
                         </div>
                         
-                        <div class="row setup-content" id="ie-info">
+                        <div class="row setup-content" id="ie-info" style="display: none;">
                            <div class="col-sm-12">
                               <div class="col-md-12 p-0">
                                  <div class="form-card text-left">

@@ -58,6 +58,9 @@
                                             <div class="form-group has-float-label has-required">
                                               <input type="text" class="form-control @error('worker_name') is-invalid @enderror" id="associate-name" name="worker_name" placeholder="Type Associate Name" required="required" value="{{ old('worker_name') }}" autocomplete="off" />
                                               <label for="associate-name">Associate Name</label>
+                                              <div class="invalid-feedback">
+                                                Please choose an Associate name.
+                                             </div>
                                            </div>
                                            @error('worker_name')
                                              <span class="invalid-feedback" role="alert">
@@ -66,7 +69,7 @@
                                            @enderror
 
                                            <div class="form-group has-float-label has-required">
-                                              <input type="text" class="form-control @error('worker_contact') is-invalid @enderror" id="contactNo" name="worker_contact" placeholder="Type Contact Number" value="{{ old('worker_contact') }}" required="required" autocomplete="off"  pattern="[0-9]{10,15}"/>
+                                              <input type="text" class="form-control @error('worker_contact') is-invalid @enderror" id="contactNo" name="worker_contact" placeholder="format: 01700000000" value="{{ old('worker_contact') }}" required="required" autocomplete="off"  pattern="[0-9]{10,15}"/>
                                               <label for="contactNo">Contact No.</label>
                                            </div>
                                            @error('worker_contact')
@@ -86,7 +89,7 @@
                                            @enderror
 
                                            <div class="form-group has-float-label has-required">
-                                              <input type="date" max="{{date('Y-m-d')}}" class="age-validate form-control @error('worker_dob') is-invalid @enderror" value="{{ old('worker_dob') }}" id="dob" name="worker_dob" required="required" autocomplete="off" />
+                                              <input type="date" max="{{\Carbon\Carbon::now()->subYears(18)->format('Y-m-d')}}" class="age-validate form-control @error('worker_dob') is-invalid @enderror" value="{{ old('worker_dob') }}" id="dob" name="worker_dob" required="required" autocomplete="off" />
                                               <label for="dob">Date Of Birth</label>
                                            </div>
                                            @error('worker_dob')
@@ -97,8 +100,8 @@
 
                                               
 
-                                           <div class="form-group has-float-label ">
-                                              <input type="text" class="form-control @error('worker_nid') is-invalid @enderror" id="nid" value="{{ old('worker_nid') }}" name="worker_nid" placeholder="Type NID/Birth Certificate Number" autocomplete="off" />
+                                           <div class="form-group has-float-label has-required">
+                                              <input type="text" class="form-control @error('worker_nid') is-invalid @enderror" id="nid" value="{{ old('worker_nid') }}" name="worker_nid" placeholder="Type NID/Birth Certificate Number" autocomplete="off" required />
                                               <label for="nid">NID/Birth Certificate</label>
                                            </div>
                                            @error('worker_nid')
@@ -249,7 +252,7 @@
                                  </div>
                                  <div class="pull-right">
                                    <button class="btn btn-success" type="button" id="saveSubmit"> Save Now <i class="fa fa-save"></i></button> &nbsp; &nbsp;
-                                   <button class="btn btn-primary nextBtn btn-lg pull-right" type="button" >Continue <i class="fa fa-forward"></i></button>
+                                   <button class="btn btn-primary nextBtn btn-lg pull-right" type="button" >Continue <i class="las la-angle-double-right f-18"></i></button>
                                  </div>
                               </div>
                            </div>
@@ -364,7 +367,7 @@
                                     </div>
                                  </div>
                                  <button class="btn btn-success btn-lg text-center" type="button" id="saveMedicalSubmit"><i class="fa fa-save"></i> Save and New</button>
-                                 <button class="btn btn-primary nextBtn btn-lg pull-right" type="button" >Continue <i class="fa fa-forward"></i></button>
+                                 <button class="btn btn-primary nextBtn btn-lg pull-right" type="button" >Continue <i class="las la-angle-double-right f-18"></i></button>
 
                               </div>
                            </div>

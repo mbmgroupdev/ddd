@@ -541,7 +541,7 @@ Route::get('hr/payroll/salary', 'Hr\Payroll\SalaryController@view');
 		Route::post('hr/recruitment/worker/ie_skill_test', 'Hr\Recruitment\WorkerController@ieSkillStore');
 	});
 
-	Route::get('hr/recruitment/worker/migrate/{worker_id}', 'Hr\Recruitment\WorkerController@migrate');
+	Route::get('hr/recruitment/worker/migrate/{worker_id}', 'Hr\Recruitment\RecruitController@migrate');
 
 	// Employee
 	Route::group(['middleware' => 'permission:Employee List'], function(){

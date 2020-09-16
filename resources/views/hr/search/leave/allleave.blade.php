@@ -22,7 +22,7 @@
                  MBM Group 
             </li>
         </ul>
-        <a href="#" id="printButton" class="btn btn-xs btn-info pull-right" onclick='printDiv({{json_encode($leave_type_list_count)}},"{{$showTitle}}")'>Print</a>
+        <a href="#" id="printButton" class="btn btn-xs btn-info pull-right" onclick='printDiv('',"{{$showTitle}}")'>Print</a>
     </div>
     <hr>
     <p class="search-title">Search results of  {{ $showTitle }}</p>
@@ -37,7 +37,7 @@
 
 						<div class="widget-body">
 							<div class="widget-main center">
-								<span class="infobox-data-number">{{ count($unit_list) }}</span>
+								<span class="infobox-data-number">{{ $unit_list }}</span>
 							</div>
 						</div>
 					</div>
@@ -54,13 +54,7 @@
 						<div class="widget-body">
 							<div class="widget-main center <?php echo $request['type']=='year'?'after-load':''?>">
 								<span class="infobox-data-number" id="tLeave">
-								@php
-									$totalLeave = 0;
-									foreach($leave_type_list_count as $type=>$leave_type){
-										$totalLeave += $leave_type;
-									}
-									echo $totalLeave;
-								@endphp
+								{{count($leave)}}
 								</span>
 							</div>
 						</div>
@@ -68,13 +62,13 @@
 				</div>
 			</div>
 			@if($request['type'] == 'month' || $request['type'] == 'date')
-				@if(count($leave_type_list_count) > 0)
+				@if(count($groups) > 0)
 				@endif
 				<div class="row justify-content-center">
 				@php
 					$lCount = 0;
 				@endphp
-				@foreach($leave_type_list_count as $type=>$leave_type)
+				@foreach($groups as  $type => $leave_type)
 				@php
 					$lCount++;
 				@endphp
@@ -86,7 +80,7 @@
 
 							<div class="widget-body">
 								<div class="widget-main center">
-									<span class="infobox-data-number" id="t{{ $type }}">{{ $leave_type }}</span>
+									<span class="infobox-data-number" id="t{{ $type }}">{{ count($leave_type) }}</span>
 								</div>
 							</div>
 						</div>

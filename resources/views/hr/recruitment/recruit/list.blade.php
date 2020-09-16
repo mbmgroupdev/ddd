@@ -5,33 +5,30 @@
   <link rel="stylesheet" href="{{ asset('assets/css/recruitment.css')}}">
   <style>
     #recruit th:nth-child(2) input{
-      width: 100px !important;
-    }
-    #recruit th:nth-child(3) input{
-      width: 80px !important;
+      width: 120px !important;
     }
     #recruit th:nth-child(4) input{
-      width: 65px !important;
+      width: 120px !important;
     }
     #recruit th:nth-child(5) input{
-      width: 90px !important;
+      width: 60px !important;
     }
     #recruit th:nth-child(6) input{
-      width:120px !important;
+      width: 70px !important;
     }
     #recruit th:nth-child(7) input{
-      width: 100px !important;
+      width:80px !important;
+    }
+    #recruit th:nth-child(3) input{
+      width: 60px !important;
     }
     #recruit th:nth-child(8) input{
-      width: 100px !important;
+      width: 70px !important;
     }
     
-    /*table.dataTable {
-      border-spacing: 1px;
-    }
-    .badge {
-      font-size: 100%;
-    }*/
+    table.dataTable thead>tr>td.sorting, table.dataTable thead>tr>td.sorting_asc, table.dataTable thead>tr>td.sorting_desc, table.dataTable thead>tr>th.sorting, table.dataTable thead>tr>th.sorting_asc, table.dataTable thead>tr>th.sorting_desc {
+    padding-right: 16px;
+}
   </style>
 @endpush
 @section('main-content')
@@ -59,16 +56,16 @@
                   <thead>
                      <tr>
                         <th width="5%">Sl</th>
+                        <th>Name</th>
                         <th>Employee Type</th>
                         <th>Designation</th>
                         <th width="5%">Unit</th>
                         <th>Area</th>
-                        <th>Name</th>
                         <th>Contact</th>
                         <th>DOJ</th>
                         <th>Medical</th>
                         <th>IE</th>
-                        <th>Action</th>
+                        <th width="10%">Action</th>
                      </tr>
                   </thead>
                </table>
@@ -171,11 +168,11 @@
           ],
           columns: [  
                {data: 'DT_RowIndex', name: 'DT_RowIndex'}, 
+               {data: 'worker_name', name: 'worker_name'}, 
                {data: 'hr_emp_type_name', name: 'hr_emp_type_name'}, 
                {data: 'hr_designation_name', name: 'hr_designation_name'}, 
                {data: 'hr_unit_short_name', name: 'hr_unit_short_name'}, 
                {data: 'hr_area_name', name: 'hr_area_name'}, 
-               {data: 'worker_name', name: 'worker_name'}, 
                {data: 'worker_contact', name: 'worker_contact'}, 
                {data: 'worker_doj', contact: 'worker_doj'},
                {data: 'medical_info', contact: 'medical_info'},
