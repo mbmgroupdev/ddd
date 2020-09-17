@@ -28,6 +28,23 @@
                                 <div class="row">
                                     <div class="col-3">
                                         <div class="form-group has-float-label has-required select-search-group">
+                                            <?php
+                                                $type = ['Present'=>'Present','Intime-Outtime Empty'=>'Intime-Outtime Empty','Present(Intime Empty)'=>'Present (In Time Empty)','Present(Outtime Empty)'=>'Present (Out Time Empty)','Present (Halfday)'=>'Present (Halfday)','Absent'=>'Absent','Leave'=>'Leave','Present (Late)'=>'Late','Present (Late(Outtime Empty))'=>'Late (Out Time Empty)'];
+                                            ?>
+                                            {{ Form::select('type', $type, 'Absent', ['placeholder'=>'Select Report Type ', 'class'=>'form-control capitalize select-search', 'id'=>'type', 'required'=>'required']) }}
+                                            <label for="type">Report Type</label>
+                                        </div>
+                                        <div class="form-group has-float-label has-required">
+                                          <input type="date" class="report_date datepicker form-control" id="report_from" name="report_from" placeholder="Y-m-d" required="required" value="{{ date('Y-m-d') }}" autocomplete="off" />
+                                          <label for="report_from">Report From</label>
+                                        </div>
+                                        <div class="form-group has-float-label has-required">
+                                          <input type="date" class="report_date datepicker form-control" id="report_to" name="report_to" placeholder="Y-m-d" required="required" value="{{ date('Y-m-d') }}" autocomplete="off" />
+                                          <label for="report_to">Report To</label>
+                                        </div>
+                                      </div>
+                                      <div class="col-3">
+                                        <div class="form-group has-float-label has-required select-search-group">
                                             <select name="unit" class="form-control capitalize select-search" id="unit" required="">
                                                 <option selected="" value="">Choose...</option>
                                                 @foreach($unitList as $key => $value)
@@ -79,14 +96,11 @@
                                             </select>
                                             <label for="line_id">Line</label>
                                         </div>
-                                        <div class="form-group has-float-label has-required">
-                                          <input type="date" class="report_date datepicker form-control" id="report_from" name="report_from" placeholder="Y-m-d" required="required" value="{{ date('Y-m-d') }}" autocomplete="off" />
-                                          <label for="report_from">Report From</label>
-                                        </div>
+                                        
                                         <div class="row">
                                           <div class="col-5 pr-0">
                                             <div class="form-group has-float-label has-required">
-                                              <input type="number" class="report_date min_sal form-control" id="min_salary" name="min_salary" placeholder="Min Salary" required="required" value="50000" min="{{$data['salaryMin']}}" max="{{$data['salaryMax']}}" autocomplete="off" />
+                                              <input type="number" class="report_date min_sal form-control" id="min_salary" name="min_salary" placeholder="Min Salary" required="required" value="0" min="0" max="{{$data['salaryMax']}}" autocomplete="off" />
                                               <label for="min_salary">Range From</label>
                                             </div>
                                           </div>
@@ -100,25 +114,10 @@
                                             </div>
                                           </div>
                                         </div>
-                                        
-                                    </div>
-                                    <div class="col-3">
-                                        <div class="form-group has-float-label has-required select-search-group">
-                                            <?php
-                                                $type = ['Present'=>'Present','Intime-Outtime Empty'=>'Intime-Outtime Empty','Present(Intime Empty)'=>'Present (In Time Empty)','Present(Outtime Empty)'=>'Present (Out Time Empty)','Present (Halfday)'=>'Present (Halfday)','Absent'=>'Absent','Leave'=>'Leave','Present (Late)'=>'Late','Present (Late(Outtime Empty))'=>'Late (Out Time Empty)'];
-                                            ?>
-                                            {{ Form::select('type', $type, 'Absent', ['placeholder'=>'Select Report Type ', 'class'=>'form-control capitalize select-search', 'id'=>'type', 'required'=>'required']) }}
-                                            <label for="type">Report Type</label>
-                                        </div>
-                                        
-                                        <div class="form-group has-float-label has-required">
-                                          <input type="date" class="report_date datepicker form-control" id="report_to" name="report_to" placeholder="Y-m-d" required="required" value="{{ date('Y-m-d') }}" autocomplete="off" />
-                                          <label for="report_to">Report To</label>
-                                        </div>
                                         <div class="form-group">
                                           <button class="btn btn-primary nextBtn btn-lg pull-right" type="submit" id="attendanceReport"><i class="fa fa-save"></i> Generate</button>
                                         </div>
-                                    </div>   
+                                    </div>  
                                 </div>
                                 
                             </div>
@@ -138,18 +137,20 @@
                   <div class="table d-table hide">
                       <div class="iq-card">
                         <div class="iq-card-body">
-                          <table id="dataTables" class="table table-striped table-bordered table-head table-responsive w-100" >
+                          <table id="dataTables" class="table table-striped table-bordered table-head table-responsive1 w-100" >
                              <thead>
                                 <tr>
+                                  <th>Sl.</th>
                                   <th>Picture</th>
                                   <th>Associate ID</th>
-                                  <th>Unit</th>
+                                  {{-- <th>Unit</th> --}}
                                   <th>Name</th>
                                   <th>Contact</th>
-                                  <th>Section</th>
-                                  <th>Designation</th>
-                                  <th>Dates</th>
+                                  <th width="10%">Section</th>
+                                  <th width="10%">Designation</th>
+                                  <th width="30%">Dates</th>
                                   <th>Total</th>
+                                  <th>Action</th>
                                 </tr>
                              </thead>
                           </table>
@@ -268,14 +269,14 @@
         });
 
     });
-    var searchable = [1,5,6,7,8];
+    var searchable = [2,5,6,7,8];
     // var selectable = []; //use 4,5,6,7,8,9,10,11,....and * for all
     var dropdownList = {};
     var printCounter = 0;
     var dTable =  $('#dataTables').DataTable({
 
-      order: [], //reset auto order
-      lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+      order: [[ 8, "desc" ]], //reset auto order
+      lengthMenu: [[25, 50, 100, -1], [25, 50, 100,"All"]],
       processing: true,
       responsive: false,
       serverSide: true,
@@ -385,16 +386,17 @@
       ],
 
       columns: [
-        // { data: 'DT_RowIndex', name: 'DT_RowIndex' },
+        { data: 'DT_RowIndex', name: 'DT_RowIndex' },
         { data: 'pic', name: 'pic' },
         { data: 'associate_id',  name: 'associate_id' },
-        { data: 'hr_unit_name',  name: 'hr_unit_name' },
+        // { data: 'hr_unit_name',  name: 'hr_unit_name' },
         { data: 'as_name', name: 'as_name' },
         { data: 'cell', name: 'cell' },
         { data: 'section', name: 'section' },
         { data: 'hr_designation_name', name: 'hr_designation_name' },
         { data: 'dates', name: 'dates' },
         { data: 'absent_count', name: 'absent_count' },
+        { data: 'action', name: 'action' },
         // {
         //     "render": function(data, type, row){
         //         return data.split(";").join("<br/>");
@@ -413,7 +415,7 @@
           input.setAttribute('style', 'width: 80px; height:32px; border:1px solid whitesmoke; color: black;');
 
           $(input).appendTo($(column.header()).empty())
-          .on('keyup', function () {
+          .on('keyup', function (e) {
             if(e.keyCode == 13){
               column.search($(this).val(), false, false, true).draw();
             }
@@ -433,7 +435,7 @@
         var max = parseFloat($('#max_salary').val());
 
         if(min > max){
-          alert('Minimum Salry is Greater than Maximum Salary');
+          alert('Minimum Salary is Greater than Maximum Salary');
           $('#min_salary').val('');
           $('#max_salary').val('');
         }
@@ -447,7 +449,7 @@
       var max = parseFloat($('#max_salary').val());
 
       if(min > max){
-        alert('Minimum Salry is Greater than Maximum Salary');
+        alert('Minimum Salary is Greater than Maximum Salary');
         $('#min_salary').val('');
         $('#max_salary').val('');
       }
@@ -475,6 +477,7 @@
       }
       else{
         $(".d-table").removeClass('hide');
+        $('[data-toggle="tooltip"]').tooltip();
         dTable.draw();
       }
     });

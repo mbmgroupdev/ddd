@@ -195,7 +195,7 @@
 								@endphp
 			                	@if($head != '')
 			                    <th colspan="2">{{ $head }}</th>
-			                    <th colspan="9">{{ $body }}</th>
+			                    <th colspan="10">{{ $body }}</th>
 			                    @endif
 			                </tr>
 			                @endif
@@ -357,6 +357,17 @@
 											$body = $department[$group]['hr_department_name']??'';
 										}elseif($format == 'as_designation_id'){
 											$body = $designation[$group]['hr_designation_name']??'';
+										}elseif($format == 'ot_hour'){
+											$otHourEx = explode('.', $group);
+						                    $minute = '00';
+						                    if(isset($otHourEx[1])){
+						                        $minute = $otHourEx[1];
+						                        if($minute == 50){
+						                            $minute = 30;
+						                        }
+						                    }
+						                    $otHourBody = $otHourEx[0].'.'.$minute;
+											$body = $otHourBody??'N/A';
 										}else{
 											$body = 'N/A';
 										}

@@ -114,6 +114,10 @@ li{
 .avatar-130{
 	border-radius: 50%;
 }
+
+.avatar-radius-4{
+    border-radius: 4% !important;
+}
 .iq-card .iq-card-header {
     margin-bottom: 10px;
 }

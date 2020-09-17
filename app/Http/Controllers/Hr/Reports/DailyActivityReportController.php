@@ -330,8 +330,8 @@ class DailyActivityReportController extends Controller
                 $attData->leftjoin(DB::raw('(' . $shiftDataSql. ') AS s'), function($join) use ($shiftData) {
                     $join->on('a.hr_shift_code', '=', 's.hr_shift_code')->addBinding($shiftData->getBindings());
                 });
-                $attData->whereNotNull('a.in_time');
-                $attData->whereNotNull('a.out_time');
+                // $attData->whereNotNull('a.in_time');
+                // $attData->whereNotNull('a.out_time');
                 if($input['report_format'] == 1 && $input['report_group'] != null){
                     $groupBy = 'emp.'.$input['report_group'];
                     
