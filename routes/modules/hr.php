@@ -1035,12 +1035,17 @@ Route::get('hr/setup/retirement/get_employee_details', 'Hr\Setup\RetirementPolic
 	Route::get('hr/reports/salary_sheet', 'Hr\Reports\SalarySheetController@showForm')->middleware(['permission:Salary Sheet']);
 	Route::any('hr/reports/save_salary_sheet', 'Hr\Reports\SalarySheetController@saveSalarySheet')->middleware(['permission:Salary Sheet']);
 	Route::any('hr/reports/print_salary_sheet', 'Hr\Reports\SalarySheetController@printPage')->middleware(['permission:Salary Sheet']);
-	// save salary report (Rubel)
+	
 	/*Route::get('hr/reports/salary_sheet_unit_wise', 'Hr\Reports\SalarySheetController@salarySheetUnitWise');
 	Route::post('hr/reports/save_salary_sheet_unit_wise', 'Hr\Reports\SalarySheetController@saveSalarySheetUnit');
 	Route::get('hr/reports/salary_sheet_unit_wise_day', 'Hr\Reports\SalarySheetController@salarySheetUnitWiseday');
 
 	Route::post('hr/reports/save_salary_sheet_unit_wise_data', 'Hr\Reports\SalarySheetController@saveSalarySheetUnitData');*/
+	// warning notice
+	Route::get('hr/operation/warning-notice', 'Hr\Operation\WarningNoticeController@index');
+
+	Route::get('hr/reports/warning-notices', 'Hr\Operation\WarningNoticeController@list');
+	Route::get('hr/reports/warning-notice-data', 'Hr\Operation\WarningNoticeController@listData');
 
 	Route::get('hr/operation/payslip', 'Hr\Reports\PayslipController@showForm')->middleware(['permission:Payslip']);
 

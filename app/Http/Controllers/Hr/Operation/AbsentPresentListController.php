@@ -249,27 +249,30 @@ class AbsentPresentListController extends Controller
       $min_salary   = (double)(isset($request['min_salary'])?$request['min_salary']:'');
       $max_salary   = (double)(isset($request['max_salary'])?$request['max_salary']:'');
       // dd($min_salary, $max_salary);exit;
-
+      $getEmployee = DB::table('hr_as_basic_info')->where('as_unit_id', $request['unit']);
+      $employeeToSql = $getEmployee->toSql();
+      $getDesignation = designation_by_id();
+      $getSection = section_by_id();
       $absentData = DB::table('hr_absent')
       ->where('hr_unit',$request['unit'])
       ->whereBetween('date',array($request['report_from'],$request['report_to']))
       ->when(!empty($areaid), function ($query) use($areaid){
-        return $query->where('hr_as_basic_info.as_area_id',$areaid);
+        return $query->where('b.as_area_id',$areaid);
       })
       ->when(!empty($departmentid), function ($query) use($departmentid){
-        return $query->where('hr_as_basic_info.as_department_id',$departmentid);
+        return $query->where('b.as_department_id',$departmentid);
       })
       ->when(!empty($lineid), function ($query) use($lineid){
-        return $query->where('hr_as_basic_info.as_line_id', $lineid);
+        return $query->where('b.as_line_id', $lineid);
       })
       ->when(!empty($florid), function ($query) use($florid){
-        return $query->where('hr_as_basic_info.as_floor_id',$florid);
+        return $query->where('b.as_floor_id',$florid);
       })
       ->when(!empty($section), function ($query) use($section){
-        return $query->where('hr_as_basic_info.as_section_id', $section);
+        return $query->where('b.as_section_id', $section);
       })
       ->when(!empty($subSection), function ($query) use($subSection){
-        return $query->where('hr_as_basic_info.as_subsection_id', $subSection);
+        return $query->where('b.as_subsection_id', $subSection);
       })
       ->when(!empty($min_salary), function ($query) use($min_salary){
         return $query->where('hr_benefits.ben_current_salary','>=', $min_salary);
@@ -277,12 +280,14 @@ class AbsentPresentListController extends Controller
       ->when(!empty($max_salary), function ($query) use($max_salary){
         return $query->where('hr_benefits.ben_current_salary','<=', $max_salary);
       })
-      ->leftJoin('hr_as_basic_info','hr_absent.associate_id','hr_as_basic_info.associate_id')
-      ->leftJoin('hr_designation', 'hr_designation.hr_designation_id', 'hr_as_basic_info.as_designation_id')
-      ->leftJoin("hr_unit", "hr_unit.hr_unit_id", "hr_as_basic_info.as_unit_id")
-      // ->leftJoin("hr_shift", "hr_shift.hr_shift_id", "hr_as_basic_info.as_shift_id")
-      ->leftJoin("hr_section", "hr_section.hr_section_id", "hr_as_basic_info.as_section_id")
-      ->leftJoin("hr_benefits", "hr_benefits.ben_as_id", "hr_as_basic_info.associate_id")
+      ->leftjoin(DB::raw('(' . $employeeToSql. ') AS b'), function($join) use ($getEmployee) {
+        $join->on('hr_absent.associate_id', '=', 'b.associate_id')->addBinding($getEmployee->getBindings());
+      })
+      //->leftJoin('b','hr_absent.associate_id','b.associate_id')
+      //->leftJoin('hr_designation', 'hr_designation.hr_designation_id', 'b.as_designation_id')
+      //->leftJoin("hr_unit", "hr_unit.hr_unit_id", "b.as_unit_id")
+      //->leftJoin("hr_section", "hr_section.hr_section_id", "b.as_section_id")
+      ->leftJoin("hr_benefits", "hr_benefits.ben_as_id", "b.associate_id")
       ->orderBy('date','DESC')
       ->get()->groupBy('associate_id');
 
@@ -303,14 +308,14 @@ class AbsentPresentListController extends Controller
           if($ck < sizeof($absent)){ $dates .= ', '; }
 
           $d->associate_id 		= $abs->associate_id;
-          $d->as_unit_id   		= $abs->hr_unit;
+          $d->as_unit_id   		= $abs->as_unit_id;
           $d->as_name     		= $abs->as_name;
-          $d->cell     			= $abs->as_contact;
-          $d->section     		= $abs->hr_section_name;
+          $d->cell     			  = $abs->as_contact;
+          $d->section     		= $getSection[$abs->as_section_id]['hr_section_name']??'';
           $d->as_pic      		= $abs->as_pic;
           $d->as_gender    		= $abs->as_gender;
-          $d->hr_designation_name = $abs->hr_designation_name;
-          $d->hr_unit_name      	= $abs->hr_unit_short_name;
+          $d->hr_designation_name = $getDesignation[$abs->as_designation_id]['hr_designation_name']??'';
+          //$d->hr_unit_name      	= $abs->hr_unit_short_name;
         }
         $d->dates         = $dates;
         $data[$i] = $d; //assigning object into array
@@ -327,7 +332,7 @@ class AbsentPresentListController extends Controller
 
     public function attendanceReportData(Request $request){
 
-      // dd($request->all());exit;
+      $input = $request->all();
       #-----------------------------------------------------------#
       $data = [];
       $type = $request->type;
@@ -613,18 +618,10 @@ class AbsentPresentListController extends Controller
       }
 
       $date = isset($request->report_from)?$request->report_from:date('Y-m-d');
+      $actionMonth = isset($request->report_to)?date('Y-m', strtotime($request->report_to)):date('Y-m');
       return DataTables::of($data)->addIndexColumn()
       ->addColumn('pic', function ($data) {
-        if(!empty($data->as_pic)){
-          return '<img src="'.$data->as_pic.'" style="width:40px;height:50px;">';
-        }else{
-          if($data->as_gender == 'Female'){
-            return '<img src="'.url('/').'/assets/images/employee/female-default.png" style="width:40px;height:50px;">';
-          }else{
-            return '<img src="'.url('/').'/assets/images/employee/male_default.png" style="width:40px;height:50px;">';
-          }
-
-        }
+        return '<img src="'.emp_profile_picture($data).'" class="min-img-file">';
       })
       ->editColumn('dates', function($data){
         return $data->dates;
@@ -632,7 +629,11 @@ class AbsentPresentListController extends Controller
       ->editColumn('absent_count', function($data){
         return $data->absent_count;
       })
-      ->rawColumns(['pic', 'dates', 'absent_count'])
+      ->addColumn('action', function($data) use ($actionMonth){
+        $url = url("hr/operation/warning-notice?associate=$data->associate_id&month_year=$actionMonth");
+        return '<a href="'.$url.'" class="btn btn-sm btn-outline-success" target="blank" data-toggle="tooltip" data-placement="top" title="Take action for '.$data->as_name.'" data-original-title="Take action for '.$data->as_name.'"><i class="las la-random"></i></a>';
+      })
+      ->rawColumns(['pic', 'dates', 'absent_count', 'action'])
       ->make(true);
     }
 }
