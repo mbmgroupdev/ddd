@@ -21,10 +21,7 @@ class WorkerRecruitment extends Model
 
     public static function checkRecruitmentWorker($data)
     {
-    	return WorkerRecruitment::where('worker_name', $data['worker_name'])
-    	->where('worker_dob', $data['worker_dob'])
-    	->where('worker_contact', $data['worker_contact'])
-    	->exists();
+    	return WorkerRecruitment::where('worker_nid', $data['worker_nid'])->exists();
     }
 
     public function employee_type()

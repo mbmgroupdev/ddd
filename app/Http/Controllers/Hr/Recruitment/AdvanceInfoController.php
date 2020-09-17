@@ -43,6 +43,8 @@ class AdvanceInfoController extends Controller
             $bangla = $this->getDataByID(Session::get('associate_id'));
         }
 
+
+
         return view('hr/recruitment/advance_info',compact('districtList','resultList','levelList','degreeList', 'bangla'));
     }
 
@@ -304,6 +306,7 @@ class AdvanceInfoController extends Controller
         {
             $bangla = $this->getDataByID(Session::get('associate_id'));
         }
+
 
         return view('hr/recruitment/advance_info_edit',compact('advance', 'districtList','resultList','levelList','degreeList', 'bangla', 'upazillaList', 'all_employee_list', 'nomineeList'));
    }

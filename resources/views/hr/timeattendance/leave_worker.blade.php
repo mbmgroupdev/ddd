@@ -185,58 +185,7 @@
 <script type="text/javascript">
 $(document).ready(function()
 {
-    function formatState (state) {
-        //console.log(state.element);
-        if (!state.id) {
-            return state.text;
-        }
-        var baseUrl = "/user/pages/images/flags";
-        var $state = $(
-        '<span><img /> <span></span></span>'
-        );
-        // Use .text() instead of HTML string concatenation to avoid script injection issues
-        var targetName = state.name;
-        $state.find("span").text(targetName);
-        // $state.find("img").attr("src", baseUrl + "/" + state.element.value.toLowerCase() + ".png");
-        return $state;
-    };
-    $('select.associates').select2({
-        templateSelection:formatState,
-        placeholder: 'Select Associate\'s ID',
-        ajax: {
-            url: '{{ url("hr/associate-search") }}',
-            dataType: 'json',
-            delay: 250,
-            data: function (params) {
-                return { 
-                    keyword: params.term
-                }; 
-            },
-            processResults: function (data) { 
-                return {
-                    results:  $.map(data, function (item) {
-                        var oCode = '';
-                        if(item.as_oracle_code !== null){
-                            oCode = item.as_oracle_code + ' - ';
-                        }
-                        return {
-                            text: oCode + item.associate_name,
-                            id: item.associate_id,
-                            name: item.associate_name
-                        }
-                    })
-                };
-          },
-          cache: true
-        }
-    }); 
-    // Select Multiple Dates
-    /*var multipleDate = $("#multipleDate");
-    var multipleDateAccept = $("#multipleDateAccept");
-    multipleDate.on('click', function(){
-        //multipleDateAccept.children().val('');
-        multipleDateAccept.toggleClass('hide');
-    });*/
+    
 
     $("#leave_type").on("change", function(e){
         if(!($("#leave_ass_id").val())){
@@ -259,11 +208,10 @@ $(document).ready(function()
                 success: function(data)
                 {
                     if(data.stat == 'false'){
-                        var leave = $("#leave_type").val();
                         $("#leave_type").val('');
                         toastr.options.progressBar = true ;
                         toastr.options.positionClass = 'toast-top-center';
-                        toastr.error('This Employee is not allowed to take '+leave+' Leave');
+                        toastr.error(data.msg);
                     }
                 },
                 error: function(xhr)
@@ -277,6 +225,7 @@ $(document).ready(function()
         $('#select_day').html('');
         $('#leave_entry').attr("disabled",true);
     }); 
+
     $("#leave_ass_id").on("change", function(e){
         if(($("#leave_ass_id").val())){
             $.ajax({
@@ -288,14 +237,12 @@ $(document).ready(function()
                 },
                 success: function(res)
                 {
-                    console.log(res);
                     $('#associate-leave').html(res);
                     $("#leave_type").val('');
                     $('#leave_to').val('');
                     $('#leave_from').val('');
                     $('#select_day').html('');
                     $('#leave_entry').attr("disabled",true);
-                    //console.log(res);
                 },
                 error: function(xhr)
                 {
@@ -349,7 +296,7 @@ $(document).ready(function()
                                 "_token": "{{ csrf_token() }}",
                                 associate_id: associate_id, 
                                 leave_type: l_type,
-                                sel_days: diffDays,
+                                sel_days: diffDays+1,
                                 from_date: $('#leave_from').val(),
                                 to_date: $('#leave_to').val()
                             },

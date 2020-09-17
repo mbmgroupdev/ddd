@@ -395,7 +395,7 @@ class AttendaceSearchController extends Controller
         $subSection   = !empty($request['subsection'])?$request['subsection']:'';
 
         // basic table
-        $hr_basic_list = DB::table('hr_as_basic_info')->where('as_status', 1);
+        $hr_basic_list = Employee::where('as_status', 1);
         if (!empty($unit)) {
             $hr_basic_list->where('as_unit_id',$unit);
         }
@@ -432,8 +432,6 @@ class AttendaceSearchController extends Controller
             'b.as_dob',
             'a.in_time',
             'a.late_status'
-            // 's.hr_shift_start_time',
-            // 's.hr_shift_name'
         ];
         $tableName = $this->getTableName($unit);
         $attData = DB::table($tableName)->select($select);
@@ -446,7 +444,6 @@ class AttendaceSearchController extends Controller
         $attData->join(DB::raw('(' . $hr_basic_sql. ') AS b'), function($join) use ($hr_basic_list){
             $join->on('a.as_id', '=', 'b.as_id')->addBinding($hr_basic_list->getBindings()); ;
         });
-        $attData->leftJoin("hr_shift AS s", "a.hr_shift_code", "=", "s.hr_shift_code");
         $attData->groupBy('a.as_id');
 
 
@@ -461,8 +458,8 @@ class AttendaceSearchController extends Controller
         $leaveData->join(DB::raw('(' . $hr_basic_sql. ') AS b'), function($join) use ($hr_basic_list){
             $join->on('a.leave_ass_id', '=', 'b.associate_id')->addBinding($hr_basic_list->getBindings()); ;
         });
-        $leaveData->groupBy('a.leave_ass_id');
-
+        //$leaveData->groupBy('b.associate_id');
+        //dd( $leaveData->count());
         // absent count
         $absentData = DB::table('hr_absent AS a');
         if (!empty($associate_id)) {
@@ -472,9 +469,7 @@ class AttendaceSearchController extends Controller
         $absentData->join(DB::raw('(' . $hr_basic_sql. ') AS b'), function($join) use ($hr_basic_list){
             $join->on('a.associate_id', '=', 'b.associate_id')->addBinding($hr_basic_list->getBindings()); ;
         });
-        // $absentData->groupBy('a.associate_id');
 
-        //  calculate total late
         $result['total_leave']  = $leaveData->count();
         $result['total_absent'] = $absentData->count();
         foreach($attData->get() as $k=>$att) {
@@ -558,9 +553,6 @@ class AttendaceSearchController extends Controller
         });
         $attData->leftJoin('hr_designation AS dsg', 'dsg.hr_designation_id', 'b.as_designation_id');
         $attData->leftJoin("hr_unit AS u", "u.hr_unit_id", "=", "b.as_unit_id");
-        $attData->leftJoin("hr_shift AS s", "a.hr_shift_code", "=", "s.hr_shift_code");
-        
-
         $attData->leftJoin("hr_floor AS f", 'f.hr_floor_id', '=', 'b.as_floor_id');
        
         $attData->groupBy('a.as_id');
@@ -590,10 +582,7 @@ class AttendaceSearchController extends Controller
         });
         $leaveData->leftJoin('hr_designation AS dsg', 'dsg.hr_designation_id', 'b.as_designation_id');
         $leaveData->leftJoin("hr_unit AS u", "u.hr_unit_id", "=", "b.as_unit_id");
-        // $leaveData->leftJoin("hr_shift AS s", "s.hr_shift_id", "=", "b.as_shift_id");
         $leaveData->leftJoin("hr_floor AS f", 'f.hr_floor_id', '=', 'b.as_floor_id');
-        // $leaveData->leftJoin("hr_section AS sec", 'sec.hr_section_id', '=', 'b.as_section_id');
-        // $leaveData->leftJoin("hr_line AS li", 'li.hr_line_id', '=', 'b.as_line_id');
         $leaveData->groupBy('a.leave_ass_id');
 
         // absent count
@@ -619,13 +608,7 @@ class AttendaceSearchController extends Controller
         });
         $absentData->leftJoin('hr_designation AS dsg', 'dsg.hr_designation_id', 'b.as_designation_id');
         $absentData->leftJoin("hr_unit AS u", "u.hr_unit_id", "=", "b.as_unit_id");
-        // $absentData->leftJoin("hr_shift AS s", "s.hr_shift_id", "=", "b.as_shift_id");
         $absentData->leftJoin("hr_floor AS f", 'f.hr_floor_id', '=', 'b.as_floor_id');
-        // $absentData->leftJoin("hr_section AS sec", 'sec.hr_section_id', '=', 'b.as_section_id');
-        // $absentData->leftJoin("hr_line AS li", 'li.hr_line_id', '=', 'b.as_line_id');
-        // $absentData->groupBy('a.associate_id');
-
-        // leave employee list
         $resultLe = [];
         if($leaveData->count() > 0 && ($request['attstatus'] == 'leave' || $request['attstatus'] == 'all')) {
             $result = array_merge($result,$leaveData->get()->toArray());
@@ -649,20 +632,7 @@ class AttendaceSearchController extends Controller
                             $presentResult[$att->associate_id]->status = 'present';
                         }
                     }
-                // } else {
-                //     $time = explode(' ',$att->in_time);
-                //     if(strtotime($time[1]) >(strtotime($att->hr_shift_start_time)+180)){
-                //         if($request['attstatus'] == 'late' || $request['attstatus'] == 'all'){
-                //             $presentResult[$att->associate_id] = $att;
-                //             $presentResult[$att->associate_id]->status = 'late';
-                //         }
-                //     } else {
-                //         if($request['attstatus'] == 'present' || $request['attstatus'] == 'all') {
-                //             $presentResult[$att->associate_id] = $att;
-                //             $presentResult[$att->associate_id]->status = 'present';
-                //         }
-                //     }
-                // }
+                
             }
         }
         $result = array_merge($result,$presentResult);

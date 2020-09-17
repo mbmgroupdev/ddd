@@ -10,7 +10,7 @@ use App\Models\Merch\Buyer;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\User;
-use DB,DataTables,Hash,Validator;
+use DB,DataTables,Hash,Validator,Auth;
 
 class UserController extends Controller
 {
