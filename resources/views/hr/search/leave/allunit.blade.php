@@ -31,7 +31,7 @@
     <hr>
     <p class="search-title">Search results of  {{ $showTitle }}</p>
     <div class="panel-body">
-        <div class="row choice_2_div" id="choice_2_div" name="choice_2_div">
+        <div class=" choice_2_div" id="choice_2_div" name="choice_2_div">
             
             @php
                 // dump($unit_leave_wise)
@@ -51,7 +51,7 @@
                                 <h5 class="widget-title smaller" title="{{ strlen($unit->hr_unit_name)>28?$unit->hr_unit_name:'' }}">  {{ strlen($unit->hr_unit_name)>28?substr($unit->hr_unit_name,0,28).'...':$unit->hr_unit_name  }}</h5></a>
                         </div>
 
-                        <div class="widget-body">
+                        <div class="widget-body" style="min-height: 220px;">
                             <div class="widget-main padding-6">
                                 <div class="profile-info-row">
                                     <div class="profile-info-name search_area" data-unit="{{ $unit->hr_unit_id }}"> Total Area </div>

@@ -29,6 +29,78 @@ p.search-title{
 .text-att{
     text-align: center; padding: 5px;color:#fff;
 }
+.field-title{
+    font-weight: 600;
+    font-size: 11px;
+}
+.field-data{
+    font-weight: 600;
+    color: #099faf;
+}
+.iq-accordion.career-style.mat-style .accordion-title:before {
+    position: absolute;
+    top: -8px;
+    right: 15px;
+    display: inline-block;
+    cursor: pointer;
+    transition: all ease 500ms;
+    color: #099fb0;
+    font-size: 24px;
+    content: "\003e";
+    font-weight: 600;
+}
+.iq-accordion.career-style.mat-style .iq-accordion-block.accordion-active .accordion-title:before {
+    content: "\003e";
+    transform: rotate(90deg);
+}
+
+.mat-container{
+    position: relative;
+    cursor: pointer;
+}
+.media-support-info h6{
+    color: #099fb0;
+}
+.header-title {
+    border-left: 3px solid #099fb0;
+    line-height: 18px;
+    padding-left: 10px;
+    display: block;
+    font-weight: bold;
+    font-size: 14px;
+    color: #099fb0;
+}
+.checkup-details{
+    padding-left: 52px;
+    position: relative;
+}
+.accordion-toggle span.header-title::before {
+    position: absolute;
+    top: 0;
+    right: 30px;
+    display: inline-block;
+    cursor: pointer;
+    transition: all ease 500ms;
+    color: #099fb0;
+    font-size: 24px;
+    content: "\003e";
+    font-weight: 600;
+    transform: rotate(90deg);
+}
+
+.accordion-toggle.collapsed span.header-title::before {
+    
+    transition: all ease 500ms;
+    transform: rotate(0);
+}
+.checkup-details::before {
+    content: '';
+    border-left: 1px solid #ceebee;
+    position: absolute;
+    height: 100%;
+    left: 20px;
+    top: -10px;
+}
 .f-60{
     font-size: 60px;
 }
@@ -58,7 +130,9 @@ div.dataTables_wrapper, div.dataTables_processing {
     background: #f3f3f3;
     cursor: pointer;
 }
-.active .iq-arrow-right{color: rgba(8, 155, 171, 1);}
+.active .iq-arrow-right {
+    color: rgba(8, 155, 171, 1) !important;
+}
 .search_ot_shift:hover{
     color:#27960b;
 }
@@ -91,9 +165,29 @@ div.dataTables_wrapper, div.dataTables_processing {
 @media print {
     #printOutputSection {display: block;}
 }
-/*.wrapper {
-    background: linear-gradient(to right, #1469b0 0%, rgb(233 248 10) 100%);
-}*/
+.custom-switch.custom-switch-icon .custom-control-label::before, .custom-switch.custom-switch-text .custom-control-label::before {
+    height: 26px;
+    top: -3px;
+    left: 1px;
+    width: 3.5rem;
+}
+.custom-switch-22.custom-switch-icon .custom-control-label::before, 
+.custom-switch-22.custom-switch-text .custom-control-label::before {
+    height: 22px;
+    top: -1px;
+}
+.rounded-div{
+    height: 40px;
+    width: 40px;
+    display: block;
+    text-align: center;
+    line-height: 38px;
+    font-size: 18px;
+    border-radius: 50%;
+}
+.w-80{
+    width: 80px;
+}
 .justify-center{
     justify-content: center;
 }
@@ -113,6 +207,7 @@ li{
 }
 .avatar-130{
 	border-radius: 50%;
+    object-fit: cover;
 }
 
 .avatar-radius-4{
@@ -124,6 +219,9 @@ li{
 .iq-submenu {
     background: #fff;
     border-radius: 0 0 15px 15px;
+}
+.active .iq-sidebar-menu i {
+    color: #099faf;
 }
 .has-float-label label{
     color: #9a9a9a !important;
@@ -155,6 +253,15 @@ li{
     padding-top: 5px;
     min-width: 120px !important;
     text-align: right;
+}
+
+.alert ul {
+    padding-left: 15px;
+    list-style: square;
+}
+
+.alert ul li{
+    color:#ff0000;
 }
 
 .form-group.required label:after {
@@ -882,4 +989,10 @@ span.lib-label {
     font-size: 10px !important;
     color: #ff0000;
     display: block;
+}
+.alert{border-radius: 15px;
+    background: #fff!important;
+}
+table.dataTable thead>tr>td.sorting, table.dataTable thead>tr>td.sorting_asc, table.dataTable thead>tr>td.sorting_desc, table.dataTable thead>tr>th.sorting, table.dataTable thead>tr>th.sorting_asc, table.dataTable thead>tr>th.sorting_desc {
+    padding-right: 15px;
 }

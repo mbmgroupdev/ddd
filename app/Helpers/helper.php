@@ -176,7 +176,7 @@ if(!function_exists('log_file_write')){
         $logs = UserLog::where('log_as_id', auth()->id())->orderBy('updated_at','ASC')->get();
 
         if(count($logs)<3){
-            $user_log= new UserLog;
+            $user_log= new UserLog();
         }else{
             $user_log = $logs->first();
             $user_log->id = $logs->first()->id;
@@ -459,7 +459,8 @@ if(!function_exists('get_employee_by_id'))
             ->where("hr_as_basic_info.associate_id", $associate_id)
             ->whereIn('hr_as_basic_info.as_unit_id', auth()->user()->unit_permissions())
             ->first();
-        if($emp != null){
+            
+        if($emp){
             $emp->as_pic = emp_profile_picture($emp);
         }
 

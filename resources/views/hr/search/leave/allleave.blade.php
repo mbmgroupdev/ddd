@@ -27,44 +27,23 @@
     <hr>
     <p class="search-title">Search results of  {{ $showTitle }}</p>
     <div class="panel-body">
-    	<div class="row choice_2_div" id="choice_2_div" name="choice_2_div">
+    	<div class="row justify-content-center choice_2_div" id="choice_2_div" name="choice_2_div">
 	        
-				<div class="col-sm-offset-3 col-xs-4 col-sm-3 pricing-box">
-					<div class="widget-box widget-color-dark search_unit">
-						<div class="widget-header">
-							<h5 class="widget-title bigger lighter">Total Unit</h5>
-						</div>
-
-						<div class="widget-body">
-							<div class="widget-main center">
-								<span class="infobox-data-number">{{ $unit_list }}</span>
-							</div>
-						</div>
+			<div class="col-sm-3 pricing-box">
+				<div class="widget-box widget-color-dark search_unit">
+					<div class="widget-header">
+						<h5 class="widget-title bigger lighter">Total Unit</h5>
 					</div>
-				</div>
 
-				
-
-				<div class="col-xs-4 col-sm-3 pricing-box">
-					<div class="widget-box widget-color-red">
-						<div class="widget-header">
-							<h5 class="widget-title bigger lighter">Total Leave</h5>
-						</div>
-
-						<div class="widget-body">
-							<div class="widget-main center <?php echo $request['type']=='year'?'after-load':''?>">
-								<span class="infobox-data-number" id="tLeave">
-								{{count($leave)}}
-								</span>
-							</div>
+					<div class="widget-body">
+						<div class="widget-main center">
+							<span class="infobox-data-number">{{ $unit_list }}</span>
 						</div>
 					</div>
 				</div>
 			</div>
 			@if($request['type'] == 'month' || $request['type'] == 'date')
-				@if(count($groups) > 0)
-				@endif
-				<div class="row justify-content-center">
+				
 				@php
 					$lCount = 0;
 				@endphp
@@ -72,10 +51,10 @@
 				@php
 					$lCount++;
 				@endphp
-					<div class="col-xs-4 col-sm-3 pricing-box search_emp" data-leavetype="{{ $type }}">
+					<div class=" col-sm-2 pricing-box search_emp" data-leavetype="{{ $type }}">
 						<div class="widget-box widget-color-{{ $lCount % 2 == 0? 'red':'orange' }}">
 							<div class="widget-header">
-								<h5 class="widget-title bigger lighter">Total {{ $type }} Leave</h5>
+								<h5 class="widget-title bigger lighter">{{ $type }} Leave</h5>
 							</div>
 
 							<div class="widget-body">

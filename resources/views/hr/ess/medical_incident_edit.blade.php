@@ -1,5 +1,5 @@
 @extends('hr.layout')
-@section('title', 'Medical Incident')
+@section('title', 'Medical Incident Edit')
 @section('main-content')
 <div class="main-content">
     <div class="main-content-inner">
@@ -10,192 +10,129 @@
                     <a href="#">Human Resource</a>
                 </li>
                 <li>
-                    <a href="#">Recruitment</a>
+                    <a href="#">Employee</a>
                 </li>
-                <li>
-                    <a href="#">Operation</a>
-                </li>
-                <li class="active">Medical Incident</li>
+                <li class="active">Medical Incident Edit</li>
             </ul><!-- /.breadcrumb --> 
         </div>
-        <div class="page-content"> 
-            <div class="page-header">
-                <h1>Recruitment<small> <i class="ace-icon fa fa-angle-double-right"></i> Operation  <i class="ace-icon fa fa-angle-double-right"></i> Medical Incident</small></h1>
+        @include('inc/message')
+        <div class="panel"> 
+
+            <div class="panel-heading">
+                <h6>Medical Incident Edit
+                    <a href="{{url('hr/employee/medical_incident_update')}}" class="btn btn-sm btn-primary pull-right">List</a>
+                </h6>
             </div>
+            <div class="panel-body">
 
-            <div class="row">
-                <div class="col-xs-12">
-                    <!-- PAGE CONTENT BEGINS -->
-
-                    <!-- Display Erro/Success Message -->
-                    @include('inc/message')
-
-                    {{ Form::open(['url'=>'hr/ess/medical_incident_update', 'method'=>'POST', 'files' => true, 'class'=>'form-horizontal']) }}
-                        <input type="hidden" name="id" value="{{ $medical->id }}">
+                {{ Form::open(['url'=>'hr/ess/medical_incident', 'method'=>'POST', 'files' => true, 'class'=>'form-horizontal']) }}
+                    <input type="hidden" name="id" value="{{ $medical->id }}">
+                    <div class="row">
                         
-                        <div class="col-sm-5">
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label no-padding-right" for="hr_med_incident_as_id"> Associate's ID <span style="color: red; vertical-align: top;">&#42;</span> </label>
-                            <div class="col-sm-8"> 
-                                <input name="hr_med_incident_as_id" type="text" id="hr_med_incident_as_id" placeholder="Associate's Name" class="col-xs-12" data-validation="required length custom"   data-validation-length="3-64" data-validation-error-msg="The Associate's Name should contain only alphabet between 3-64 characters" readonly value="{{ $medical->hr_med_incident_as_id }}" />
+                    
+                        <div class="col-sm-4">
+                            <div class="form-group has-float-label has-required "> 
+                                <input name="hr_med_incident_as_id" type="text" id="hr_med_incident_as_id" placeholder="Associate's Name" class="form-control"  readonly value="{{ $medical->hr_med_incident_as_id }}" />
+                                <label  for="hr_med_incident_as_id"> Associate's ID  </label> 
                             </div>
-                        </div>
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label no-padding-right" for="hr_med_incident_as_name"> Associate's Name <span style="color: red; vertical-align: text-top;">*</span></label>
-                            <div class="col-sm-8">
-                                <input name="hr_med_incident_as_name" type="text" id="hr_med_incident_as_name" placeholder="Associate's Name" class="col-xs-12" data-validation="required length custom"   data-validation-length="3-64" data-validation-error-msg="The Associate's Name should contain only alphabet between 3-64 characters" readonly  value="{{ $medical->hr_med_incident_as_name }}"/>
+                            <div class="form-group has-float-label has-required">
+                                    <input name="hr_med_incident_as_name" type="text" id="hr_med_incident_as_name" placeholder="Associate's Name" class="form-control" required="required"  value="{{ $medical->hr_med_incident_as_name }}" readonly/>
+                                <label  for="hr_med_incident_as_name"> Associate's Name</label>
+                            </div> 
+
+                            <div class="form-group has-float-label has-required">
+
+                                    <input type="date" name="hr_med_incident_date" id="hr_med_incident_date" class="form-control datepicker" required="required" placeholder="Y-m-d" value="{{ $medical->hr_med_incident_date }}"/>
+                                <label  for="hr_med_incident_date">Date  </label>
                             </div>
-                        </div> 
 
-                        <div class="form-group">
-
-                            <label class="col-sm-4 control-label no-padding-right" for="hr_med_incident_date">Date <span style="color: red; vertical-align: top;">&#42;</span> </label>
-                            <div class="col-sm-8">
-                                <input type="date" name="hr_med_incident_date" id="hr_med_incident_date" class="col-xs-12" data-validation="required"  value="{{ $medical->hr_med_incident_date }}"/>
-
+                            <div class="form-group has-float-label">
+                                   <input type="text" name="hr_med_incident_details" id="hr_med_incident_details" placeholder="Incident Details" class="form-control" value="{{ $medical->hr_med_incident_details }}"/>
+                                <label  for="hr_med_incident_details"> Incident Details </label>
                             </div>
-                        </div>
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label no-padding-right" for="hr_med_incident_details"> Incident Details <span style="color: red; vertical-align: text-top;">*</span></label>
-                            <div class="col-sm-8">
-                               <input type="text" name="hr_med_incident_details" id="hr_med_incident_details" placeholder="Incident Details" class="col-xs-12" data-validation="length" data-validation-length="0-128" data-validation-error-msg="Incident Details should be between 0-128 characters"  value="{{ $medical->hr_med_incident_details }}"/>
+                            <div class="form-group has-float-label">
+                                   <input name="hr_med_incident_doctors_name" type="text" id="hr_med_incident_doctors_name" placeholder="Doctors Name" class="form-control" value="{{ $medical->hr_med_incident_doctors_name }}"/>
+                                <label  for="hr_med_incident_doctors_name"> Doctors Name </label>
                             </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label no-padding-right" for="hr_med_incident_doctors_name"> Doctors Name <span style="color: red; vertical-align: text-top;">*</span></label>
-                            <div class="col-sm-8">
-                               <input name="hr_med_incident_doctors_name" type="text" id="hr_med_incident_doctors_name" placeholder="Doctors Name" class="col-xs-12" data-validation="length custom" data-validation-optional="true"  data-validation-length="0-128" data-validation-error-msg="Doctors Name be contain only alphabet between 0-64 characters"  value="{{ $medical->hr_med_incident_doctors_name }}"/>
-                            </div>
-                        </div>
                         
                         </div>
-                        <div class="col-sm-2"></div>
 
-                        <div class="col-sm-5">
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label no-padding-right" for="hr_med_incident_doctors_recommendation"> Doctors Recommendation <span style="color: red; vertical-align: text-top;">*</span></label>
-                            <div class="col-sm-8">
-                               <input type="text" name="hr_med_incident_doctors_recommendation" id="hr_med_incident_doctors_recommendation" placeholder="Doctors Recommendation" class="col-xs-12" data-validation="length " data-validation-optional="true" data-validation-length="0-128" data-validation-error-msg="Doctors Recommendation contain alphanumeric value between 0-128 characters"  value="{{ $medical->hr_med_incident_doctors_recommendation }}"/>
+                        <div class="col-sm-4">
+
+                            <div class="form-group has-float-label">
+                                   <input type="text" name="hr_med_incident_doctors_recommendation" id="hr_med_incident_doctors_recommendation" placeholder="Doctors Recommendation" class="form-control" value="{{ $medical->hr_med_incident_doctors_recommendation }}"/>
+                                <label class="col-sm-4 control-label no-padding-right no-padding-top" for="hr_med_incident_doctors_recommendation"> Recommendation </label>
+                                
                             </div>
-                        </div>
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label no-padding-right" for="hr_med_incident_supporting_file">Supporting File <span>(pdf|doc|docx|jpg|jpeg|png)</span></label>
-                            <div class="col-sm-8">
-                                @if(!empty($medical->hr_med_incident_supporting_file))
-                                <a href="{{ url($medical->hr_med_incident_supporting_file) }}" class="btn btn-xs btn-primary" target="_blank" title="View"><i class="fa fa-eye"></i> View</a>
-                                @else
-                                    <strong class="text-danger">No file found!</strong>
-                                @endif
-                                <input type="hidden" name="old_supporting_file" value="{{ $medical->hr_med_incident_supporting_file }}">
-                                <input type="file" name="hr_med_incident_supporting_file" id="hr_med_incident_supporting_file" data-validation="mime size" data-validation-allowing="docx,doc,pdf,jpeg,png,jpg" data-validation-max-size="1M"
-                                data-validation-error-msg-size="You can not upload images larger than 512kb" data-validation-error-msg-mime="You can only upload docx, doc, pdf, jpeg, jpg or png type file">
-                                <span id="file_upload_error" class="red" style="display: none; font-size: 13px;">Only <strong>docx, doc, pdf, jpeg, jpg or png </strong>type file supported(<1MB).</span>
+
+                            <div class="form-group ">
+                                <label for="hr_med_incident_supporting_file">Supporting File <span>(pdf|doc|docx|jpg|jpeg|png) </span></label>
+                                    @if(!empty($medical->hr_med_incident_supporting_file))
+                                    
+                                    <a href="{{ url($medical->hr_med_incident_supporting_file) }}" class="btn btn-xs btn-primary" target="_blank" title="View"><i class="fa fa-eye"></i> View</a>
+                                    @else
+                                        <p class="text-danger">No file found!</p>
+                                    @endif
+                                    <input type="hidden" name="old_supporting_file" value="{{ $medical->hr_med_incident_supporting_file }}">
+
+                                    <input type="file" name="hr_med_incident_supporting_file" id="hr_med_incident_supporting_file" >
+                                    <span id="upload_error" class="red" style="display: none; font-size: 14px;">You can only upload <strong>docx, doc, pdf, jpeg, jpg or png</strong> type file(<1 MB).</span>
+                            </div> 
+
+                            <div class="form-group has-float-label">
+                                   <input type="text" name="hr_med_incident_action" id="hr_med_incident_action" placeholder="Company's Action" class="form-control" value="{{ $medical->hr_med_incident_action }}"/>
+                                <label  for="hr_med_incident_action"> Company's Action </label>
                             </div>
-                        </div>
 
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label no-padding-right" for="hr_med_incident_action"> Company's Action <span style="color: red; vertical-align: text-top;">*</span></label>
-                            <div class="col-sm-8">
-                               <input type="text" name="hr_med_incident_action" id="hr_med_incident_action" placeholder="Company's Action" class="col-xs-12" data-validation="custom length"  data-validation-optional="true" data-validation-length="0-128" data-validation-error-msg="Company's Action should contain alphanumeric value between 0-128 characters"  value="{{ $medical->hr_med_incident_action }}"/>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label no-padding-right" for="hr_med_incident_allowance"> Allowance <span style="color: red; vertical-align: text-top;">*</span></label>
-                            <div class="col-sm-8">
-                                <input name="hr_med_incident_allowance" type="text" id="hr_med_incident_allowance" placeholder="Allowance" class="col-xs-12" data-validation="required length number" data-validation-optional="true" data-validation-length="1-11" data-validation-error-msg="Allowance should contain numeric value between 0-11 digits"  value="{{ $medical->hr_med_incident_allowance }}"/>
-                            </div>
-                        </div>
-                        </div>
-
-                    <!-- /.row --> 
-                  
-
-                    <!-- PAGE CONTENT ENDS -->
-                </div>
-                <!-- /.col -->
-                <div class="col-sm-12">
-                         <div class="clearfix form-actions">
-                            <div class="col-md-offset-4 col-md-4 text-center">
+                            <div class="form-group has-float-label">
+                                    <input name="hr_med_incident_allowance" type="text" id="hr_med_incident_allowance" placeholder="Allowance" class="form-control"  value="{{ $medical->hr_med_incident_allowance }}"/>
+                                <label  for="hr_med_incident_allowance"> Allowance </label>
+                            </div>  
+                            <div class="form-group has-float-label">
                                 <button class="btn btn-sm btn-success" type="submit">
-                                    <i class="ace-icon fa fa-check bigger-110"></i> Update
+                                    <i class="ace-icon fa fa-check bigger-110"></i> Submit
                                 </button>
 
                                 &nbsp; &nbsp; &nbsp;
                                 <button class="btn btn-sm" type="reset">
                                     <i class="ace-icon fa fa-undo bigger-110"></i> Reset
                                 </button>
-                            </div>
+                            </div>        
+                        
                         </div>
-                </div>
+                    </div>
+                    
                 {{ Form::close() }}
+                <!-- /.col -->
             </div>
-        </div><!-- /.page-content -->
+        </div>
     </div>
 </div>
 
 
  
 <script type="text/javascript">
+
+
 $(document).ready(function()
 {   
-    $('select.associates').select2({
-        placeholder: 'Select Associate\'s ID',
-        ajax: {
-            url: '{{ url("hr/associate-search") }}',
-            dataType: 'json',
-            delay: 250,
-            data: function (params) {
-                return { 
-                    keyword: params.term
-                }; 
-            },
-            processResults: function (data) { 
-                return {
-                    results:  $.map(data, function (item) {
-                        return {
-                            text: item.associate_name,
-                            id: item.associate_id
-                        }
-                    }) 
-                };
-          },
-          cache: true
-        }
-    }); 
-  
-
-    // retrive all information 
-    var name         = $("input[name=hr_med_incident_as_name]");
-    $('body').on('change', '.associates', function(){
-        $.ajax({
-            url: '{{ url("hr/associate") }}',
-            dataType: 'json',
-            data: {associate_id: $(this).val()},
-            success: function(data)
-            {
-                name.val(data.as_name);
-            },
-            error: function(xhr)
-            {
-                alert('failed...');
-            }
-        });
-    });
-
-    //file upload validation....
+    
     $('#hr_med_incident_supporting_file').on('change', function(){
-        var fileExtension = ['docx','doc','pdf','jpeg','png','jpg'];
-        if ($.inArray($(this).val().split('.').pop().toLowerCase(), fileExtension) == -1) {
-            $('#file_upload_error').show();
-            $(this).val('');
-        }
+        var x = $(this).val();
+        var extension = x.substr(x.indexOf(".")+1, x.length-1);
+        if( (extension.localeCompare("pdf")  == 0)||  
+            (extension.localeCompare("docx") == 0)||   
+            (extension.localeCompare("jpg")  == 0)||   
+            (extension.localeCompare("jpeg") == 0)||  
+            (extension.localeCompare("png")  == 0)  ){ 
+                $('#upload_error').hide();
+            }
         else{
-            $('#file_upload_error').hide();
+            $('#upload_error').show();
+            $(this).val('');
         }
     });
 

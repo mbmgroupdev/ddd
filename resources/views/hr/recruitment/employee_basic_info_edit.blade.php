@@ -14,21 +14,21 @@
 
     .slide_upload {
         width: 240px;
+        height: 240px;
         position: relative;
         cursor: pointer;
         background: #fff;
-        height: 240px;
+        height: auto;
         border: 1px solid #cfdecd;
-        border-radius: 50%;
+        border-radius: 15px;
         padding: 10px;
     }
     .slide_upload img {
         width: 220px;
-        max-height: 220px;
+        height: 220px;
         padding: 2px;
-        background-size: cover;
-        border-radius: 50%;
-        
+        border-radius: 15px;
+        object-fit: cover;
     }
     .slide_upload::before{content: "+";position: absolute;top: 50%;color: #211515;left: 50%;font-size: 52px;margin-left: -17px;margin-top: -37px;}
 

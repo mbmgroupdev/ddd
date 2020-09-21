@@ -41,7 +41,7 @@ Route::group(['middleware' => 'auth'], function(){
 	
 	//---------USER MANAGEMENT-----------//
 
-	Route::get('users_management/users', 'Users_Management\UsersController@index')->middleware(['permission:View User']);
+	/*Route::get('users_management/users', 'Users_Management\UsersController@index')->middleware(['permission:View User']);
 	Route::get('users_management/get_emp_as_pic', 'Users_Management\UsersController@getEmpAsPic');
 	Route::post('users_management/user/data', 'Users_Management\UsersController@getUserData');
 	Route::get('users_management/user/create', 'Users_Management\UsersController@create')->middleware(['permission:Add User']);
@@ -72,7 +72,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('users_management/top_management_edit/{id}','Users_Management\TopManagementController@topManagementEdit');
     Route::post('users_management/top_management_update','Users_Management\TopManagementController@updateTopManagement');
     Route::get('users_management/top_management_delete/{id}','Users_Management\TopManagementController@deleteTopManagement');
-	
+	*/
 	
     //user dashboard
 	Route::get('/', 'UserDashboardController@index');

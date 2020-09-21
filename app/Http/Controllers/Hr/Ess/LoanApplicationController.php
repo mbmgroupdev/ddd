@@ -84,6 +84,63 @@ class LoanApplicationController extends Controller
             ->toJson();
     }
 
+    public function loanStore(Request $request)
+    {
+        
+        $validator = Validator::make($request->all(), [
+            'associate_id'             => 'required',
+            'hr_la_name'               => 'required',
+            'hr_la_designation'        => 'required',
+            'hr_la_date_of_join'       => 'required|date',
+            'hr_la_type_of_loan'       => 'required|max:64',
+            'hr_la_applied_amount'     => 'required',
+            'hr_la_no_of_installments' => 'required',
+            'hr_la_applied_date'       => 'required|date',
+            'hr_la_purpose_of_loan'    => 'required|max:512'
+        ]);
+
+        if ($validator->fails())
+        {
+            return back()
+                ->withInput()
+                ->withErrors($validator)
+                ->with("error", "Please fillup all required fields!");
+        }else{
+            // purpose of loan
+            $hr_la_purpose_of_loan = "";
+            if (sizeof($request->hr_la_purpose_of_loan) > 0){
+               foreach ($request->hr_la_purpose_of_loan as $value) {
+                $hr_la_purpose_of_loan .= "$value, ";
+               }
+            }
+
+            $store = new LoanApplication();
+            $store->hr_la_as_id          = $request->associate_id;
+            $store->hr_la_name           = $request->hr_la_name;
+            $store->hr_la_designation    = $request->hr_la_designation;
+            $store->hr_la_date_of_join   = $request->hr_la_date_of_join;
+            $store->hr_la_type_of_loan   = $request->hr_la_type_of_loan;
+            $store->hr_la_applied_amount = $request->hr_la_applied_amount;
+            $store->hr_la_approved_amount = $request->hr_la_approved_amount;
+            $store->hr_la_no_of_installments = $request->hr_la_no_of_installments;
+            $store->hr_la_no_of_installments_approved = $request->hr_la_no_of_installments_approved;
+            $store->hr_la_applied_date = $request->hr_la_applied_date;
+            $store->hr_la_purpose_of_loan = $hr_la_purpose_of_loan;
+            $store->hr_la_note = $request->hr_la_note;
+            $store->hr_la_supervisors_comment = $request->hr_la_supervisors_comment;
+            $store->hr_la_updated_at = null;
+            $store->hr_la_status = $request->hr_la_status??0;
+
+            if($store->save())
+            {
+                log_file_write("Loan Application Entry Saved", $store->hr_la_id );
+                return back()->withInput()->with('success', 'Save Successful.');
+            }else{
+                return back()->withInput()->with('error', 'Please try again.');
+            }
+        }
+    }
+
 
     # show form
     public function showForm()
@@ -98,9 +155,7 @@ class LoanApplicationController extends Controller
 
     public function saveData(Request $request)
     {
-        //ACL::check(["permission" => "hr_ess_loan_application"]);
-        #-----------------------------------------------------------#
-        // return $request->all();
+        
     	$validator = Validator::make($request->all(), [
     		'hr_la_name'               => 'required|max:64',
     		'hr_la_designation'        => 'required|max:150',
@@ -151,7 +206,7 @@ class LoanApplicationController extends Controller
 
 			if ($store->save())
 			{
-                $this->logFileWrite("Loan Application Entry Saved", $store->hr_la_id );
+                log_file_write("Loan Application Entry Saved", $store->hr_la_id );
 	     		return back()
 	                 ->withInput()
 	                 ->with('success', 'Save Successful.');
@@ -227,7 +282,7 @@ class LoanApplicationController extends Controller
 	                'hr_loan_application.hr_la_updated_at' => date('Y-m-d H:i:s'),
 	                'hr_loan_application.hr_la_status' => 1
 	            ]);
-                $this->logFileWrite("Loan Application Entry Updated", $request->hr_la_id );
+                log_file_write("Loan Application Entry Updated", $request->hr_la_id );
             	return redirect('hr/ess/loan_list')->with('success','Loan Approved Successfully');
 
             }
@@ -241,7 +296,7 @@ class LoanApplicationController extends Controller
                     'hr_loan_application.hr_la_updated_at' => date('Y-m-d H:i:s'),
                     'hr_loan_application.hr_la_status' => 2
                 ]);
-                $this->logFileWrite("Loan Application Entry Updated", $request->hr_la_id );
+                log_file_write("Loan Application Entry Updated", $request->hr_la_id );
             	return redirect('hr/ess/loan_list')->with('success','Loan Rejected Successfully');
             }
         }
