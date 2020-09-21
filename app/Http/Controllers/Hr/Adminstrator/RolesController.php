@@ -43,7 +43,6 @@ class RolesController extends Controller
     public function store(Request $request)
     {     
             
-        //dd($request->all());
         $validator = Validator::make($request->all(),[ 
             'name' => 'required|string|max:255|unique:roles,name,'. $request->id,
         ]);  
@@ -52,6 +51,7 @@ class RolesController extends Controller
         { 
             return redirect()->back()->withErrors($validator)->withInput();
         }
+        dd($request->all());
 
         $role = new Role();
         $role->name = $request->name;
@@ -62,9 +62,9 @@ class RolesController extends Controller
             $role->givePermissionTo($request->permissions);
             log_file_write($role->name ." - role created: ", $role->id);
 
-            return redirect('hr/adminstrator/edit/role/'.$role->id)
-                ->with("success", "Save Successful!");
         }
+        return redirect('hr/adminstrator/edit/role/'.$role->id)
+                ->with("success", "Save Successful!");
              
     }
     

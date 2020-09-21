@@ -4,8 +4,23 @@
 @push('css')
 <style type="text/css">
 	tr td:nth-child(2){
-	    display: inline-block;
-	    width: 80px;
+		display: block;
+	    width: 70px !important;
+	}
+	tr th:nth-child(3) input{
+		width: 80px !important;
+	}
+	tr th:nth-child(6) input{
+		width: 70px !important;
+	}
+	tr th:nth-child(7) input{
+		width: 80px !important;
+	}
+	tr th:nth-child(8) select{
+		width: 80px !important;
+	}
+	tr th:nth-child(9) select{
+		width: 100px !important;
 	}
 </style>
 @endpush

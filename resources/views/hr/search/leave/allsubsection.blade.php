@@ -46,7 +46,7 @@
     <hr>
     <p class="search-title">Search results of  {{ $showTitle }}</p>
     <div class="panel-body">
-        <div class="row choice_2_div" id="choice_2_div" name="choice_2_div">
+        <div class=" choice_2_div" id="choice_2_div" name="choice_2_div">
             
             @php
                 $count = 0;
@@ -65,17 +65,9 @@
                                 <h5 class="widget-title smaller">  {{ $subsection->hr_subsec_name }} </h5></a>
                         </div>
 
-                        <div class="widget-body">
+                        <div class="widget-body" style="min-height: 220px;">
                             <div class="widget-main padding-6">
-                                {{-- <a href="#" class="search_emp" data-subsection="{{ $subsection->hr_subsec_id }}" data-leavetype="all">
-                                    <div class="profile-info-row">
-                                        <div class="profile-info-name"> Total Employee </div>
-
-                                        <div class="profile-info-value">
-                                            <span>{{ count($subsection->getSubSectionWiseEmp($request1['unit'],$request1['area'],$request1['department'],$request1['floor'],$request1['section'],$subsection->hr_subsec_id)) }}</span>
-                                        </div>
-                                    </div>
-                                </a> --}}
+                                
                                 @php
                                     $totalLeaveCount = 0;
                                     $empArry = [];

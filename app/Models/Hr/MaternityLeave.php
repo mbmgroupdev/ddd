@@ -8,5 +8,16 @@ class MaternityLeave extends Model
 {
     protected $table = "hr_maternity_leave";
 
-    public $timestamps = false;
+    protected $guarded = [];
+
+    protected $dates = [
+        'created_at', 'updated_at'
+    ];
+
+
+    public function medical()
+    {
+    	return $this->hasOne('App\Models\Hr\MaternityMedical','hr_maternity_leave_id','id');
+    }
+    
 }

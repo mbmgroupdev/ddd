@@ -276,7 +276,8 @@ Index Of Script
         Page faq
         -----------------------------------------------------------------------*/
         jQuery('.iq-accordion .iq-accordion-block .accordion-details').hide();
-        jQuery('.iq-accordion .iq-accordion-block:first').addClass('accordion-active').children().slideDown('slow');
+        jQuery('.faq-style .iq-accordion-block:first').addClass('accordion-active').children().slideDown('slow');
+        jQuery('.mat-style .iq-accordion-block:last').addClass('accordion-active').children().slideDown('slow');
         jQuery(document).on("click", '.iq-accordion .iq-accordion-block', function() {
             if (jQuery(this).children('div.accordion-details ').is(':hidden')) {
                 jQuery('.iq-accordion .iq-accordion-block').removeClass('accordion-active').children('div.accordion-details ').slideUp('slow');

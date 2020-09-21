@@ -44,7 +44,7 @@
     <hr>
     <p class="search-title">Search results of  {{ $showTitle }}</p>
     <div class="panel-body">
-        <div class="row choice_2_div" id="choice_2_div" name="choice_2_div">
+        <div class=" choice_2_div" id="choice_2_div" name="choice_2_div">
             
             @php
                 $count = 0;
@@ -63,7 +63,7 @@
                                 <h5 class="widget-title smaller">  {{ $section->hr_section_name }} </h5></a>
                         </div>
 
-                        <div class="widget-body">
+                        <div class="widget-body" style="min-height: 220px;">
                             <div class="widget-main padding-6">
                                 <div class="profile-info-row">
                                     <div class="profile-info-name search_subsection" data-section="{{ $section->hr_section_id }}"> Total Sub-Section </div>

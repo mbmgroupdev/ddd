@@ -554,6 +554,7 @@ class AttendaceSearchController extends Controller
         $attData->leftJoin('hr_designation AS dsg', 'dsg.hr_designation_id', 'b.as_designation_id');
         $attData->leftJoin("hr_unit AS u", "u.hr_unit_id", "=", "b.as_unit_id");
         $attData->leftJoin("hr_floor AS f", 'f.hr_floor_id', '=', 'b.as_floor_id');
+        $attData->leftJoin("hr_shift AS s", "s.hr_shift_code", "=", "a.hr_shift_code");
        
         $attData->groupBy('a.as_id');
 
@@ -641,13 +642,14 @@ class AttendaceSearchController extends Controller
 
     public function hrAttSearchEmpData(Request $request)
     {
+
         $data = $this->getEmpAttGetData($request->all());
         $date = $request->query('rangeFrom');
-        $month = date("m",strtotime($date)); // convert date to month number
+        $month = date("Y-m",strtotime($date)); // convert date to month number
         // $data = (array) $data;
         return DataTables::of($data)->addIndexColumn()
             ->editColumn('associate_id', function ($data) use ($month) {
-                return HtmlFacade::link("hr/search/single_emp/{$data->associate_id}/{$month}",$data->associate_id,['class' => 'employee-att-details']);
+                return '<a href="'.url('hr/operation/job_card').'?associate='.$data->associate_id.'&month_year='.$month.'">'.$data->associate_id.'</a>';
             })
             ->addColumn('att_date', function ($data) {
                 return '';
@@ -655,7 +657,7 @@ class AttendaceSearchController extends Controller
             ->addColumn('att_status', function ($data) {
                 return $data->status;
             })
-            ->rawColumns(['att_date','att_status'])
+            ->rawColumns(['att_date','att_status','associate_id'])
             ->make(true);
             // ->toJson();
     }
@@ -678,12 +680,13 @@ class AttendaceSearchController extends Controller
 
     public function hrAttSearchAllEmpData(Request $request)
     {
+
         $unit_list  = Unit::where('hr_unit_status',1)->get();
         $rangeFrom  = $request->rangeFrom;
         $rangeTo    = $request->rangeTo;
         $dataTotal  = [];
         $data       = [];
-        $month = date("m",strtotime($rangeFrom)); // convert date to month number
+        $month = date("Y-m",strtotime($rangeFrom)); // convert date to month number
         foreach($unit_list as $k=>$unit) {
             $params = [
                 'unit'          => $unit->hr_unit_id,
@@ -704,8 +707,7 @@ class AttendaceSearchController extends Controller
         }
         return DataTables::of($dataTotal)->addIndexColumn()
             ->editColumn('associate_id', function ($dataTotal) use ($month) {
-                // hr/search/single_emp/{$dataTotal->associate_id}
-                return HtmlFacade::link("hr/search/single_emp/{$dataTotal->associate_id}/{$month}",$dataTotal->associate_id,['class' => 'employee-att-details']);
+                return '<a href="'.url('hr/operation/job_card').'?associate='.$dataTotal->associate_id.'&month_year='.$month.'">'.$dataTotal->associate_id.'</a>';
             })
             ->addColumn('att_date', function ($dataTotal) {
                 return '';
@@ -713,7 +715,7 @@ class AttendaceSearchController extends Controller
             ->addColumn('att_status', function ($dataTotal) {
                 return $dataTotal->status;
             })
-            ->rawColumns(['att_date','att_status'])
+            ->rawColumns(['att_date','att_status','associate_id'])
             ->make(true);
             // ->toJson();
     }
@@ -756,7 +758,7 @@ class AttendaceSearchController extends Controller
                         $result[$i] = 'Leave';
                         $events[] = $this->getEvents($i,'Leave','#E67E22','#fff');
                     }
-                }
+                } 
                 $calendar = \Calendar::addEvents($events) //add an array with addEvents
                     ->setOptions([ //set fullcalendar options
                         'firstDay' => 1,

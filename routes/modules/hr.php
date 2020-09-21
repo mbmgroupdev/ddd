@@ -20,6 +20,7 @@ Route::group(['prefix' => 'hr','namespace' => 'Hr'], function(){
 		Route::get('user/sync-permission', 'UserController@syncPermission');
 
 		Route::get('employee/search', 'UserController@employeeSearch');
+		Route::get('employee/female-associates', 'UserController@femaleSearch');
 		Route::get('user/search', 'UserController@userSearch');
 
 		Route::get('roles', 'RolesController@index');
@@ -393,8 +394,20 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 	Route::post('hr/timeattendance/leave_worker',  'Hr\TimeAttendance\LeaveWorkerController@saveData')->middleware(['permission:Manage Leave']);
 
 	//Operation - Maternity Leave
-	Route::get('hr/timeattendance/operation/maternity_leave', 'Hr\TimeAttendance\MaternityLeaveController@showForm');
-	Route::post('hr/timeattendance/operation/maternity_leave', 'Hr\TimeAttendance\MaternityLeaveController@saveData');
+	Route::get('hr/operation/maternity-leave', 'Hr\Operation\MaternityPaymentController@showForm');
+	Route::post('hr/operation/maternity-leave', 'Hr\Operation\MaternityPaymentController@leaveApplication');
+	Route::get('hr/operation/maternity-leave/list', 'Hr\Operation\MaternityPaymentController@index');
+	Route::get('hr/operation/maternity-leave/listData', 'Hr\Operation\MaternityPaymentController@listData');
+
+	Route::get('hr/operation/maternity-medical-process/{id}', 'Hr\Operation\MaternityPaymentController@medicalProcess');
+	Route::post('hr/operation/maternity-medical-basic/', 'Hr\Operation\MaternityPaymentController@storeMedicalBasic');
+	Route::post('hr/operation/maternity-medical-record/', 'Hr\Operation\MaternityPaymentController@storeMedicalRecord');
+
+	Route::get('hr/operation/maternity-leave-payment', 'Hr\Operation\MaternityPaymentCOntroller@index')->middleware(['permission:Maternity Payment']);
+	Route::get('hr/operation/get_maternity_employees', 'Hr\Operation\MaternityPaymentCOntroller@getMaternityEmployees');
+	Route::get('hr/operation/get_maternity_employee_details', 'Hr\Operation\MaternityPaymentCOntroller@getMaternityEmployeeDetails');
+	Route::get('hr/operation/save_maternity_salary_disburse', 'Hr\Operation\MaternityPaymentCOntroller@saveMaternityDisburse')->middleware(['permission:Maternity Payment']);
+
 
 	//Operation - Leave Approval
 	Route::get('hr/timeattendance/operation/leave_approval',  'Hr\TimeAttendance\LeaveApprovalController@showForm')->middleware(['permission:Leave Approve']);
@@ -1313,6 +1326,8 @@ Route::post('hr/ess/grievance/appeal', 'Hr\Ess\GrievanceAppealController@saveDat
 // Loan Application
 Route::get('hr/payroll/loan_list', 'Hr\Ess\LoanApplicationController@loanList');
 Route::get('hr/payroll/loan', 'Hr\Ess\LoanApplicationController@loan');
+Route::post('hr/payroll/loan', 'Hr\Ess\LoanApplicationController@loanStore');
+
 Route::post('hr/ess/loan_data', 'Hr\Ess\LoanApplicationController@getData');
 Route::get('hr/ess/loan_application', 'Hr\Ess\LoanApplicationController@showForm');
 Route::post('hr/ess/loan_application', 'Hr\Ess\LoanApplicationController@saveData');
@@ -1332,7 +1347,7 @@ Route::post('hr/ess/attendance_check', 'Hr\Ess\LeaveApplicationController@attend
 // Medical Incident
 Route::get('hr/employee/medical_incident', 'Hr\Ess\MedicalIncidentController@medicalIncident');
 Route::post('hr/ess/medical_incident', 'Hr\Ess\MedicalIncidentController@medicalIncidentStore');
-Route::get('hr/ess/medical_incident_edit/{id}', 'Hr\Ess\MedicalIncidentController@medicalIncidentEdit');
+Route::get('hr/employee/medical_incident_edit/{id}', 'Hr\Ess\MedicalIncidentController@medicalIncidentEdit');
 Route::post('hr/ess/medical_incident_update', 'Hr\Ess\MedicalIncidentController@update');
 Route::get('hr/employee/medical_incident_list', 'Hr\Ess\MedicalIncidentController@medicalIncidentList');
 Route::post('hr/ess/medical_incident_data', 'Hr\Ess\MedicalIncidentController@medicalIncidentData');
@@ -1383,10 +1398,7 @@ Route::post("hr/operation/attendance-rollback", "Hr\Operation\AttendanceRollback
 
 
 //new operations routes
-Route::get('hr/operation/maternity-leave-payment', 'Hr\Operation\MaternityPaymentCOntroller@index')->middleware(['permission:Maternity Payment']);
-Route::get('hr/operation/get_maternity_employees', 'Hr\Operation\MaternityPaymentCOntroller@getMaternityEmployees');
-Route::get('hr/operation/get_maternity_employee_details', 'Hr\Operation\MaternityPaymentCOntroller@getMaternityEmployeeDetails');
-Route::get('hr/operation/save_maternity_salary_disburse', 'Hr\Operation\MaternityPaymentCOntroller@saveMaternityDisburse')->middleware(['permission:Maternity Payment']);
+
 
 
 //system setting routes

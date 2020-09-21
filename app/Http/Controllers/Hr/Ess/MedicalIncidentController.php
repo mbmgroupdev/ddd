@@ -108,7 +108,7 @@ class MedicalIncidentController extends Controller
             })
             ->addColumn('action', function ($data) {
                 return "<div class=\"btn-group\">
-                    <a href=".url('hr/ess/medical_incident_edit/'.$data->id)." class=\"btn btn-xs btn-primary\" data-toggle=\"tooltip\" title=\"Edit\">
+                    <a href=".url('hr/employee/medical_incident_edit/'.$data->id)." class=\"btn btn-xs btn-primary\" data-toggle=\"tooltip\" title=\"Edit\">
                         <i class=\"ace-icon fa fa-pencil bigger-120\"></i>
                     </a>
                 </div>";
