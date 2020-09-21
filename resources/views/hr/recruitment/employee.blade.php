@@ -229,7 +229,7 @@ table th {
 											<td>{{ $station->hr_line_name }}</td>
 											<td>{{ $station->start_date }}</td>
 											<td>{{ $station->end_date }}</td>
-											<td>{{ $station->as_name }}-{{ $station->updated_by }}</td>
+											<td>{{ $station->name }}</td>
 										</tr>
 										@else
 										<tr><td colspan="5"> No data found!</td></tr>

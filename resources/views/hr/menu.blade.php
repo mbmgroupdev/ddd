@@ -285,6 +285,7 @@
             <li class="@if($segment3 == 'daily-attendance-activity') active @endif"><a href="{{ url('hr/reports/daily-attendance-activity') }}"><i class="las la-fingerprint"></i>Daily Attendance</a></li>
             @if($user->can('Attendance Consecutive Report') || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'absent_present_list') active @endif"><a href="{{ url('hr/reports/attendance-consecutive') }}"><i class="las la-fingerprint"></i>Attendance Consecutive</a></li>
+            <li class="@if($segment3 == 'warning-notices') active @endif"><a href="{{ url('hr/reports/warning-notices') }}"><i class="las la-fingerprint"></i>Warning Notices</a></li>
             @endif
 
             <li class="@if($segment3 == 'monthly-reports') active @endif"><a href="{{ url('hr/reports/monthly-reports') }}"><i class="las la-chart-area"></i>Monthly Report</a></li>

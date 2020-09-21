@@ -75,22 +75,7 @@
                                 <th>Action</th>
                             </tr>
                         </thead>
-                         <tfoot>
-                            <tr>
-                                <th>SL</th>
-                                <th>Unit</th>
-                                <th>Associate ID</th>
-                                <th>Name</th>
-                                <th>Floor</th>
-                                <th>Line</th>
-                                <th>Changed Floor</th>
-                                <th>Changed Line</th>
-                                <th>Start</th>
-                                <th>End</th>
-                                <th>Changed By</th>
-                                <th>Action</th>
-                            </tr>
-                        </tfoot>  
+                         
                     </table>
 
                     <!-- PAGE CONTENT ENDS -->

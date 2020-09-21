@@ -2,6 +2,7 @@
 
 namespace App\Models\Hr;
 
+use App\Models\Employee;
 use App\Models\Hr\WarningNotice;
 use Illuminate\Database\Eloquent\Model;
 
@@ -21,5 +22,10 @@ class WarningNotice extends Model
     	where('associate_id', $data['associate'])
     	->where('month_year', $data['month_year'])
     	->first();
+    }
+
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class, 'associate_id', 'associate_id');
     }
 }

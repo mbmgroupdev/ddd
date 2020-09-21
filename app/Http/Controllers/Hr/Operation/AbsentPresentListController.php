@@ -298,12 +298,15 @@ class AbsentPresentListController extends Controller
       $i = 0;
       foreach ($absentData as $absent) {
         $dates = '';
+        $firstDate = '';
         $d = new Shift; // creating a blank object
         $d->absent_count = sizeof($absent);
         $ck = 0;
         foreach ($absent as $key => $abs) {
           $ck++;
           $dt=explode('-', $abs->date);
+          $firstDate = $abs->date;
+          
           $dates .= $dt[2].'/'.$dt[1];
           if($ck < sizeof($absent)){ $dates .= ', '; }
 
@@ -317,6 +320,7 @@ class AbsentPresentListController extends Controller
           $d->hr_designation_name = $getDesignation[$abs->as_designation_id]['hr_designation_name']??'';
           //$d->hr_unit_name      	= $abs->hr_unit_short_name;
         }
+        $d->first_date = $firstDate;
         $d->dates         = $dates;
         $data[$i] = $d; //assigning object into array
 
@@ -619,6 +623,7 @@ class AbsentPresentListController extends Controller
 
       $date = isset($request->report_from)?$request->report_from:date('Y-m-d');
       $actionMonth = isset($request->report_to)?date('Y-m', strtotime($request->report_to)):date('Y-m');
+      
       return DataTables::of($data)->addIndexColumn()
       ->addColumn('pic', function ($data) {
         return '<img src="'.emp_profile_picture($data).'" class="min-img-file">';
@@ -629,9 +634,14 @@ class AbsentPresentListController extends Controller
       ->editColumn('absent_count', function($data){
         return $data->absent_count;
       })
-      ->addColumn('action', function($data) use ($actionMonth){
-        $url = url("hr/operation/warning-notice?associate=$data->associate_id&month_year=$actionMonth");
-        return '<a href="'.$url.'" class="btn btn-sm btn-outline-success" target="blank" data-toggle="tooltip" data-placement="top" title="Take action for '.$data->as_name.'" data-original-title="Take action for '.$data->as_name.'"><i class="las la-random"></i></a>';
+      ->addColumn('action', function($data) use ($actionMonth, $type){
+        if($type == 'Absent'){
+          $url = url("hr/operation/warning-notice?associate=$data->associate_id&month_year=$actionMonth&start_date=$data->first_date&days=$data->absent_count");
+          return '<a href="'.$url.'" class="btn btn-sm btn-outline-success" target="blank" data-toggle="tooltip" data-placement="top" title="Take action for '.$data->as_name.'" data-original-title="Take action for '.$data->as_name.'"><i class="las la-random"></i></a>';
+        }else{  
+          return '';
+        }
+        
       })
       ->rawColumns(['pic', 'dates', 'absent_count', 'action'])
       ->make(true);
