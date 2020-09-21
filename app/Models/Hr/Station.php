@@ -2,6 +2,7 @@
 
 namespace App\Models\Hr;
 
+use App\Models\Employee;
 use App\Models\Hr\Station;
 use Illuminate\Database\Eloquent\Model;
 
@@ -43,5 +44,10 @@ class Station extends Model
     public function line()
     {
         return $this->belongsTo('App\Models\Hr\Line', 'changed_line', 'hr_line_id');
+    }
+
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class, 'associate_id', 'associate_id');
     }
 }

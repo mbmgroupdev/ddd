@@ -351,7 +351,10 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 	Route::get("hr/timeattendance/station_multiple_as_info", "Hr\TimeAttendance\StationController@multipleAsInfo");
 	Route::post("hr/operation/line-change-multiple", "Hr\TimeAttendance\StationController@saveFormMultiple");
 	Route::post("hr/operation/line-change-single", "Hr\TimeAttendance\StationController@saveFormSingle");
-
+	// line change report
+	Route::get('hr/reports/line-changes', 'Hr\TimeAttendance\StationController@listOf');
+	Route::get('hr/reports/line-changes-data', 'Hr\TimeAttendance\StationController@listOfData');
+	Route::post('hr/operation/line-change-close', 'Hr\TimeAttendance\StationController@updateLine');
 	//shift assign
 	Route::get('hr/operation/shift_assign', 'Hr\TimeAttendance\ShiftRoasterController@shiftAssign')->middleware(['permission:Shift Assign']);
 	Route::post('hr/timeattendance/shift_assign', 'Hr\TimeAttendance\ShiftRoasterController@saveAssignedShift')->middleware(['permission:Shift Assign']);
