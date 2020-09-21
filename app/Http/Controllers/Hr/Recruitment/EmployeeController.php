@@ -1236,26 +1236,6 @@ class EmployeeController extends Controller
     public function associtaeSearch(Request $request)
     {
 
-     //dd(auth()->user()->management_permissions());
-     if(auth()->user()->hasRole('power user 3')){
-       $cantacces = ['power user 2','advance user 2'];
-     }elseif (auth()->user()->hasRole('power user 2')) {
-       $cantacces = ['power user 3','advance user 2'];
-     }elseif (auth()->user()->hasRole('advance user 2')) {
-       $cantacces = ['power user 3','power user 2'];
-     }else{
-       $cantacces = [];
-     }
-     $userIdNotAccessible = DB::table('roles')
-               ->whereIn('name',$cantacces)
-               ->leftJoin('model_has_roles','roles.id','model_has_roles.role_id')
-               ->pluck('model_has_roles.model_id');
-
-         $asIds = DB::table('users')
-                  ->whereIn('id',$userIdNotAccessible)
-                  ->pluck('associate_id');
-
-
         $data = [];
         if($request->has('keyword'))
         {
@@ -1268,7 +1248,28 @@ class EmployeeController extends Controller
                 })
                 ->whereIn('as_unit_id', auth()->user()->unit_permissions())
                 ->whereNotIn('as_id', auth()->user()->management_permissions())
-                ->whereNotIn('associate_id',$asIds)
+                ->take(20)
+                ->get();
+        }
+
+        return response()->json($data);
+    }
+
+    public function femaleSearch(Request $request)
+    {
+        $data = [];
+        if($request->has('keyword'))
+        {
+            $search = $request->keyword;
+            $data = Employee::select("associate_id","as_pic","as_oracle_code",DB::raw('CONCAT_WS(" - ", associate_id, as_name) AS associate_name'))
+                ->where(function($q) use($search) {
+                    $q->where("associate_id", "LIKE" , "%{$search}%");
+                    $q->orWhere("as_name", "LIKE" , "%{$search}%");
+                    $q->orWhere("as_oracle_code", "LIKE" , "%{$search}%");
+                })
+                ->whereIn('as_unit_id', auth()->user()->unit_permissions())
+                ->whereNotIn('as_id', auth()->user()->management_permissions())
+                ->where('as_gender','Female')
                 ->take(20)
                 ->get();
         }

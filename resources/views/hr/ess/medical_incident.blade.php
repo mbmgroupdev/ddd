@@ -42,7 +42,7 @@
 
                             <div class="form-group has-float-label has-required">
 
-                                    <input type="text" name="hr_med_incident_date" id="hr_med_incident_date" class="form-control datepicker" required="required" placeholder="Y-m-d" />
+                                    <input type="date" name="hr_med_incident_date" id="hr_med_incident_date" class="form-control datepicker" required="required" placeholder="Y-m-d" />
                                 <label  for="hr_med_incident_date">Date  </label>
                             </div>
 

@@ -594,6 +594,25 @@ class UserController extends Controller
         return response()->json($data);
     }
 
+    public function femaleSearch(Request $request)
+    {
+        $data = []; 
+        if($request->has('keyword')){
+            $search = $request->keyword;
+            $data = Employee::select("associate_id", DB::raw('CONCAT_WS(" - ", associate_id, as_name) AS user_name'))
+                ->where('as_gender', 'Female')
+                ->where(function($q) use($search) {
+                    $q->where("associate_id", "LIKE" , "%{$search}%");
+                    $q->orWhere("as_name", "LIKE" , "%{$search}%");
+                    $q->orWhere("as_oracle_code", "LIKE" , "%{$search}%");
+                })
+                ->take(10)
+                ->get();
+        }
+
+        return response()->json($data);
+    }
+
 
     public function userSearch(Request $request)
     {

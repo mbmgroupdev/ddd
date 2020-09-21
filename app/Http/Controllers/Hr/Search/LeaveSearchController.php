@@ -634,8 +634,7 @@ class LeaveSearchController extends Controller
     {
         $unit         = $request['unit'] != 'NaN'?$request['unit']:'';
         $associate_id = !empty($request['associate_id'])?$request['associate_id']:'';
-        $rangeFrom    = !empty($request['rangeFrom'])?$request['rangeFrom']:'';
-        $rangeTo      = !empty($request['rangeTo'])?$request['rangeTo']:'';
+        $month    = !empty($request['month'])?$request['month']:'';
         $lineid       = !empty($request['line'])?$request['line']:'';
         $floorid      = $request['floor'] != 'NaN'?$request['floor']:'';
         $departmentid = $request['department'] != 'NaN'?$request['department']:'';
@@ -665,12 +664,12 @@ class LeaveSearchController extends Controller
         if(!empty($subSection)) {
             $where['as_subsection_id'] = $subSection;
         }
+
+        $monthStart = $month'-01';
+        $monthEnd = \Carbon\Carbon::parse($monthStart)->endOfMonth()->format('Y-m-d');
+
         $where['as_status'] = 1;
         $basic_emp_list = DB::table('hr_as_basic_info')->where($where)->groupBy('as_id');
-
-        $shif_list = DB::table('hr_shift')->groupBy('hr_shift_id');
-
-        $shif_list_sql    = $shif_list->toSql();
         $basic_emp_sql    = $basic_emp_list->toSql();
         $select = [
             'a.associate_id',
@@ -683,9 +682,10 @@ class LeaveSearchController extends Controller
             'b.id'
         ];
         $empLeaveMonth = DB::table('hr_leave AS b')->select($select)->whereYear('leave_from', '>=', $rangeFrom);
-        $empLeaveMonth->whereMonth('b.leave_from', '>=', $rangeTo);
-        $empLeaveMonth->whereYear('b.leave_to', '<=', $rangeFrom);
-        $empLeaveMonth->whereMonth('b.leave_to', '<=', $rangeTo);
+        $empLeaveMonth->where('b.leave_from', '>=', $monthStart);
+        $empLeaveMonth->where('b.leave_from', '<=', $monthEnd);
+        $empLeaveMonth->where('b.leave_to', '>=', $monthStart);
+        $empLeaveMonth->where('b.leave_to', '<=', $monthEnd);
         // $empLeaveMonth->where('leave_ass_id',$employee->associate_id);
         $empLeaveMonth->where('b.leave_status', '=', 1);
         if($leavetype != 'all') {
@@ -697,6 +697,7 @@ class LeaveSearchController extends Controller
         $empLeaveMonth->leftJoin('hr_designation AS dsg', 'dsg.hr_designation_id', 'a.as_designation_id');
         /*$empLeaveMonth->groupBy('b.leave_ass_id');*/
         $empLeaveMonth->orderBy('dsg.hr_designation_name');
+        //$empLeaveMonth->groupBy('leave_ass_id',true);
         $empLeaveMonth->get();
         return $empLeaveMonth;
     }
@@ -708,14 +709,48 @@ class LeaveSearchController extends Controller
             $date = $request->query('rangeFrom');
             $month = date("m",strtotime($date)); // convert date to month number
         } else if($request->type == 'month') {
-            $data = $this->monthLeaveCheck($request->all());
-            $month = $request->rangeTo;
+            $data = $this->monthLeaveCheck($request->all())->groupBy('a.associate_id');
+            $month = $request->month;
         }
         $allRequest = $request->all();
+
+        if(isset($request->leavetype) ){
+            $leaves = DB::table('hr_leave')
+                ->select(
+                    DB::raw("
+                        YEAR(leave_from) AS year,
+                        SUM(CASE WHEN leave_type = '".$request->leavetype."' THEN DATEDIFF(leave_to, leave_from)+1 END) AS leave
+                    ")
+                )
+                ->where('leave_status', '1')
+                ->whereMonth('leave_from', '>=', $allRequest['rangeFrom'])
+                ->whereYear('leave_from', '>=', $allRequest['rangeFrom'])
+                ->whereMonth('leave_to', '<=', $allRequest['rangeFrom'])
+                ->whereYear('leave_to', '<=', $allRequest['rangeFrom'])
+                ->groupBy("leave_ass_id")
+                ->get();
+        }else{
+            $leaves = DB::table('hr_leave')
+                ->select(
+                    DB::raw("
+                        SUM(DATEDIFF(leave_to, leave_from)+1) AS leave
+                    ")
+                )
+                ->where('leave_status', '1')
+                ->whereMonth('leave_from', '>=', $allRequest['rangeTo'])
+                ->whereYear('leave_from', '>=', $allRequest['rangeTo'])
+                ->whereMonth('leave_to', '<=', $allRequest['rangeFrom'])
+                ->whereYear('leave_to', '<=', $allRequest['rangeFrom'])
+                ->groupBy("leave_ass_id")
+                ->get();
+        }
+        dd($leaves);
+        
+
         // $data = (array) $data;
         return DataTables::of($data)->addIndexColumn()
             ->editColumn('associate_id', function ($data) use ($month) {
-                return HtmlFacade::link("hr/search/leave_single_emp/{$data->associate_id}/{$month}",$data->associate_id,['class' => 'employee-att-details']);
+                return HtmlFacade::link("hr/recruitment/employee/show/{$data->associate_id}",$data->associate_id,['class' => 'employee-att-details']);
             })
             ->editColumn('hr_shift_name', function ($data) use ($allRequest) {
                 return $data->as_shift_id;
@@ -810,7 +845,6 @@ class LeaveSearchController extends Controller
         return $event;
     }
 
-    // print section =======
     public function hrLeaveSearchPrint(Request $request)
     {
         $data = $request->data;

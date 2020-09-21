@@ -1,2 +1,26 @@
+2020-09-21 10:22:14 "17F005001B" Materny leave medical routine checkup for  6
+2020-09-21 10:13:57 "17F005001B" Materny leave medical routine checkup for  5
+2020-09-21 10:12:56 "17F005001B" Materny leave medical for  3
+2020-09-20 21:01:38 "17F005001B" Materny leave medical routine checkup for  4
+2020-09-20 21:01:23 "17F005001B" Materny leave medical routine checkup for  3
+2020-09-20 21:01:09 "17F005001B" Materny leave medical for  2
+2020-09-20 20:59:44 "17F005001B" Materny leave application for  3
+2020-09-20 17:46:00 "17F005001B" Materny leave medical routine checkup for  2
+2020-09-20 17:24:59 "17F005001B" Materny leave medical routine checkup for  1
+2020-09-20 16:19:56 "17F005001B" Materny leave medical for  1
+2020-09-20 09:34:11 "17F005001B" Materny leave application for  2
+2020-09-19 20:22:41 "17F005001B" Materny leave application for  1
+2020-09-19 16:34:32 "17F005001B" Location Changed for 14 14
+2020-09-17 17:19:10 "17F005001B" Loan Application Entry Saved 
+2020-09-17 15:47:41 "17F005001B" Loan Application Entry Saved 
+2020-09-17 14:48:34 "17F005001B" Medical Incident Saved 1
+2020-09-17 14:19:16 "17F005001B" User information updated 8
+2020-09-17 14:02:01 "17F005001B" User information updated 8
+2020-09-17 14:00:41 "17F005001B" Super Admin- role deleted 4
+2020-09-17 14:00:37 "17F005001B" hr_executive- role deleted 8
+2020-09-17 14:00:33 "17F005001B" hr_executive_recruitment- role deleted 9
+2020-09-17 14:00:28 "17F005001B" hr_executive_training- role deleted 10
+2020-09-17 14:00:22 "17F005001B" hr_executive_asset- role deleted 11
+2020-09-17 14:00:17 "17F005001B" hr_executive_time_att- role deleted 12
 2020-09-16 17:06:08 "17F005001B" Service Book Entry Saved 1
 2020-09-16 15:25:48 "17F005001B" Employee migration updated 174

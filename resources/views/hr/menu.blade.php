@@ -73,7 +73,12 @@
             @endif
             @if($user->can('Medical Incident') || $user->hasRole('Super Admin'))
             <li class="@if($segment2 == 'employee' && $segment3=='medical_incident') active @endif">
-               <a href="{{ url('hr/employee/medical_incident') }}"><i class="las la-folder-plus"></i>Medical Incident</a>
+               <a href="{{ url('hr/employee/medical_incident') }}"><i class="las la-user-md"></i>Medical Incident</a>
+            </li>
+            @endif
+            @if($user->can('Service Book') || $user->hasRole('Super Admin'))
+            <li class="@if($segment2 == 'employee' && $segment3=='servicebook') active @endif">
+               <a href="{{ url('hr/employee/servicebook') }}"><i class="las la-book"></i>Service Book</a>
             </li>
             @endif
             @if($user->canany(['Cost Distribution']) || $user->hasRole('Super Admin'))
@@ -248,9 +253,9 @@
             {{-- <li class="@if($segment3 == 'fixed-salary-sheet') active @endif">
                <a href="{{ url('hr/operation/fixed-salary-sheet') }}"><i class="las la-file-invoice-dollar"></i>Fixed Salary Sheet</a>
             </li> --}}
-            {{-- <li class="@if($segment3 == 'maternity-leave-payment') active @endif">
-               <a href="{{ url('hr/operation/maternity-leave-payment') }}"><i class="las la-file-invoice-dollar"></i>Maternity Payment</a>
-            </li> --}}
+            <li class="@if($segment3 == 'maternity-leave') active @endif">
+               <a href="{{ url('hr/operation/maternity-leave') }}"><i class="las la-file-invoice-dollar"></i>Maternity Leave</a>
+            </li>
             @if($user->can('Station Card') || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'line-change') active @endif">
                <a href="{{ url('hr/operation/line-change') }}"><i class="las la-list-ul"></i>Line Change</a>
