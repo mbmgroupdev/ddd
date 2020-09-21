@@ -49,7 +49,12 @@ class WarningNoticeController extends Controller
     public function listData(Request $request)
     {
     	$input = $request->all();
-    	$data = WarningNotice::with('employee')->where('month_year', $input['month_year'])->get();
+    	$data = WarningNotice::
+        where('month_year', $input['month_year'])
+        ->with(array('employee'=>function($data){
+            $data->whereIn('as_unit_id', auth()->user()->unit_permissions());
+        }))
+        ->get();
     	
     	$getSection = section_by_id();
     	$getDesignation = designation_by_id();

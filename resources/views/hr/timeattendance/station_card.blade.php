@@ -25,7 +25,7 @@
                     <a href="#">Human Resource</a>
                 </li>
                 <li>
-                    <a href="#">Time & Attendance</a>
+                    <a href="#">Operation</a>
                 </li>
                 <li class="active">Line Change</li>
             </ul><!-- /.breadcrumb --> 
@@ -44,7 +44,7 @@
                     </h6> --}}
                     <h6>
                         Employee Line Change
-                        <a class="btn btn-primary pull-right" href="{{ url('#') }}"><i class="fa fa-list"></i> List Of Line Change</a>
+                        <a class="btn btn-primary pull-right" href="{{ url('hr/reports/line-changes') }}"><i class="fa fa-list"></i> List Of Line Change</a>
                     </h6>
                 </div>
 
@@ -79,12 +79,12 @@
 
                                     <div class="form-group has-required has-float-label">
                                         <input type="datetime-local" name="start_date_multiple" id="start_date_multiple" class="datetimepicker form-control " required="required" value="{{ date('Y-m-d') }}T{{ date('H:i')}}">
-                                        <label for="shift_id">Start Date </label>
+                                        <label for="start_date_multiple">Start Date </label>
                                     </div> 
 
                                     <div class="form-group has-float-label">
                                         <input type="datetime-local" name="end_date_multiple" id="end_date_multiple"  class="datetimepicker form-control" placeholder="End Date" >
-                                        <label for="shift_id">End Date </label>
+                                        <label for="end_date_multiple">End Date </label>
                                     </div> 
                                     <div class="form-group">
                                         <button class="btn btn-primary" type="submit">
