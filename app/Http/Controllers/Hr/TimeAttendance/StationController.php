@@ -483,7 +483,99 @@ class StationController extends Controller
 
     }
 
+    public function listOf(Request $request)
+    {
+    	$input = $request->all();
+    	if(!isset($input['month_year'])){
+    		$input['month_year'] = date('Y-m');
+    	}
+    	// return $input;
+    	return view('hr.reports.line_changes', compact('input'));
+    }
 
+    public function listOfData(Request $request)
+    {
+    	$input = $request->all();
+    	// employee basic sql binding
+        $employeeData = DB::table('hr_as_basic_info');
+        $employeeDataSql = $employeeData->toSql();
+    	$data = Station::
+    	where('start_date', 'LIKE', $input['month_year'].'%')
+    	->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
+    	->leftjoin(DB::raw('(' . $employeeDataSql. ') AS b'), function($join) use ($employeeData) {
+            $join->on('b.associate_id','hr_station.associate_id')->addBinding($employeeData->getBindings());
+        })
+    	->orderBy('end_date', 'asc')
+    	->get();
+    	// return $data;
+    	$getLine = line_by_id();
+    	$getFloor = floor_by_id();
+    	$getUnit = unit_by_id();
+    	return Datatables::of($data)
+            ->addIndexColumn()
+            ->addColumn('pic', function($data){
+            	return '<img src="'.emp_profile_picture($data).'" class="small-image min-img-file">';
+            })
+            ->addColumn('associate_id', function($data) use ($input){
+            	$month = $input['month_year'];
+            	$jobCard = url("hr/operation/job_card?associate=$data->associate_id&month_year=$month");
+            	return '<a href="'.$jobCard.'" target="_blank">'.$data->associate_id.'</a>';
+            })
+            ->addColumn('hr_unit_name', function($data) use ($getUnit){
+            	return $getUnit[$data->as_unit_id]['hr_unit_short_name']??'';
+            })
+            ->addColumn('as_name', function($data){
+            	return $data->as_name. ' - '.$data->as_contact;
+            })
+            ->addColumn('current_line', function($data) use ($getFloor, $getLine){
+            	return $getFloor[$data->as_floor_id]['hr_floor_name'].' - '.$getLine[$data->as_line_id]['hr_line_name'];
+            })
+            ->addColumn('changed_floor', function($data) use ($getFloor){
+            	return $getFloor[$data->changed_floor]['hr_floor_name'];
+            })
+            ->addColumn('changed_line', function($data) use ($getLine){
+            	return $getLine[$data->changed_line]['hr_line_name'];
+            })
+            ->addColumn('action', function($data) use ($input, $getFloor, $getLine){
+            	$floor = $getFloor[$data->changed_floor]['hr_floor_name'];
+            	$line = $getLine[$data->changed_line]['hr_line_name'];
+            	if($data->end_date != '' || $data->end_date != null){
+            		$dir = '';
+            	}else{
+            		// $dir = '<a class="btn btn-sm btn-success text-white" data-toggle="tooltip" data-placement="top" title="" data-original-title="Back to the line"><i class="las la-undo"></i></a> &nbsp; &nbsp;';
+            		$dir = '';
+            	}
+            	$action = $dir.' <a class="btn btn-sm btn-success text-white changed-action" data-toggle="tooltip" data-id="'.$data->station_id.'" data-asid="'.$data->associate_id.'" data-ename="'.$data->as_name.'" data-line="'.$line.'" data-floor="'.$floor.'"  data-placement="top" title="" data-original-title="Back to the line modification time"><i class="las la-history"></i></a>';
+            	return $action;
+            })
+            ->rawColumns([
+                'pic', 'associate_id', 'hr_unit_name', 'as_name', 'current_line', 'changed_floor', 'changed_line', 'start_date', 'action'
+            ])
+            ->make(true);
+    }
+
+    public function updateLine(Request $request)
+    {
+    	$input = $request->all();
+    	try {
+    		if($input['station_id'] != null && $input['end_date'] != null){
+    			$end_date = date('Y-m-d H:i', strtotime($input['end_date']));
+    			$station = Station::where('station_id', $input['station_id'])
+    			->update([
+    				'end_date' => $end_date
+    			]);
+    			$msg = 'Successfully Done';
+    		}else{
+    			$msg = 'Something wrong, please try again';
+    		}
+    		toastr()->success($msg);
+    		return back();
+    	} catch (\Exception $e) {
+    		$bug = $e->getMessage();
+    		toastr()->error($bug);
+    		return back();
+    	}
+    }
 
     //Write Every Events in Log File
 
