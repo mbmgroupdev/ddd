@@ -95,9 +95,9 @@
                             </div>    
                             <div class="row">
                                 <div class="col-12">
-                                    <div class="form-group has-required  ">
-                                        <label for="usg_report" >USG Report</label><br>
+                                    <div class="form-group has-required has-float-label">
                                         <input id="usg_report" type="file"  name="usg_report"  required>
+                                        <label for="usg_report" >USG Report</label><br>
                                     </div>
                                 </div>
                             </div>

@@ -284,6 +284,7 @@ Index Of Script
                 jQuery(this).toggleClass('accordion-active').children('div.accordion-details ').slideDown('slow');
             }
         });
+        jQuery('.track-style .accordion-active').children('div.accordion-details ').slideDown('slow');
 
 
         /*---------------------------------------------------------------------

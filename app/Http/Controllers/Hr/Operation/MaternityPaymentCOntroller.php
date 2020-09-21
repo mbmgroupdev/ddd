@@ -44,14 +44,21 @@ class MaternityPaymentController extends Controller
 	            ->addColumn('action', function($data){
 	            	$buttons = '<div class="center">';
 	            	if($data->medical){
-	            		$buttons .= '<a class="btn btn-sm btn-primary" href=""><i class="las la-eye"></i></a>';
+	            		$buttons .= '<a class="btn btn-sm btn-primary" href="'.url('hr/operation/maternity-leave/'.$data->id).'"><i class="las la-eye"></i></a>';
 	            	}else{
 	            		$buttons .= ' <a class="btn btn-sm btn-success" href=""><i class="las la-pen"></i></a>';
 	            	}
 	            	$buttons .= ' <a class="btn btn-sm btn-primary" href="'.url('hr/operation/maternity-medical-process/'.$data->id).'"><i class="las la-stethoscope"></i></a>';
-	            	if($data->doctors_clearence){
+	            	
+	            		
+	            	if($data->status == 'Approved'){
 	            		$buttons .= ' <a class="btn btn-sm btn-danger" href="">Pay</a> <a class="btn btn-sm btn-warning" href=""><i class="las la-file-invoice-dollar"></i></a>';
+	            	}else{
+	            		if($data->doctors_clearence){
+	            			$buttons .= ' <a class="btn btn-sm btn-danger" href="">Approve</a>';
+	            		}
 	            	}
+
 	            	$buttons .= '</div>';
 	            	return $buttons;
 	            })
@@ -79,7 +86,7 @@ class MaternityPaymentController extends Controller
         	if($check){
         		return back()
     			->withInput()
-    			->with('error', 'Already have a pending request!');
+    			->with('error', 'Already have a pending request !  <a href="'.url('hr/operation/maternity-leave/'.$check->id).'"> View </a>');
         	}
          	DB::beginTransaction();
          	try {
@@ -123,8 +130,33 @@ class MaternityPaymentController extends Controller
 	public function view($id, Request $request)
 	{
 		$leave = MaternityLeave::with('medical','medical.record')->findOrFail($id);
+		$employee = get_employee_by_id($leave->associate_id);
+		$tabs = array(
+			'initial_checkup' => false,
+			'routine_checkup' => false,
+			'doctors_clearence' => false,
+			'leave_approval' => false,
+			'reports' => false,
+			'verification' => false,
+			'payment' => false,
+		);
 
-		return view('hr.operation.maternity.maternity_view','leave');
+		if($leave->medical){
+			$tabs['initial_checkup'] = true;
+			if($leave->medical->record){
+				$tabs['routine_checkup'] = true;
+				if($leave->doctors_clearence == 1){
+					$tabs['doctors_clearence'] = true;
+				}
+				if($leave->status == 1){
+					$tabs['leave_approval'] = true;
+					$tabs['reports'] = true;
+				}
+
+			}
+		}
+
+		return view('hr.operation.maternity.maternity_view',compact('leave','employee', 'tabs'));
 
 	}
 
@@ -231,6 +263,45 @@ class MaternityPaymentController extends Controller
     	}
 	}
 
+	public function doctorsClearance($id, Request $request)
+	{
+		$leave = MaternityLeave::with('medical','medical.record')->findOrFail($id);
+
+		$employee = get_employee_by_id($leave->associate_id);
+
+		return view('hr.operation.maternity.doctors_clearence',compact('leave','employee'));
+	}
+
+	public function clearenceLetter(Request $request)
+	{
+		$validator= Validator::make($request->all(),[
+            'hr_maternity_leave_id'=>'required',
+    		'edd'=>'required',
+    		'leave_from_suggestion' => 'required'
+
+    	]);
+    	if($validator->fails()){
+    		return back()
+    			->withErrors($validator)
+    			->withInput()
+    			->with('error', 'Please fillup all required fields!');
+    	}
+    	else
+        {
+        	$leave = MaternityLeave::findOrFail($request->hr_maternity_leave_id);
+        	if($leave->doctors_clearence == 1){
+        		return redirect('hr/operation/maternity-leave/doctors-clearence/'.$request->hr_maternity_leave_id);
+        	}
+        	$leave->edd = $request->edd;
+        	$leave->leave_from_suggestion = $request->leave_from_suggestion;
+        	$leave->doctors_clearence = 1;
+        	$leave->status = 'Processing';
+        	$leave->save();
+
+        	return redirect('hr/operation/maternity-leave/doctors-clearence/'.$request->hr_maternity_leave_id)->with('success', 'Maternity leave clearence by doctor and proceed to HR!');
+        }
+
+	}
 
 	public function storeMedicalRecord(Request $request)
 	{

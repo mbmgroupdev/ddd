@@ -63,13 +63,14 @@ p.search-title{
 }
 .header-title {
     border-left: 3px solid #099fb0;
-    line-height: 18px;
+    line-height: 25px;
     padding-left: 10px;
     display: block;
     font-weight: bold;
-    font-size: 14px;
+    font-size: 16px;
     color: #099fb0;
 }
+.header-title i{position: relative;top: 2px;}
 .checkup-details{
     padding-left: 52px;
     position: relative;
