@@ -770,7 +770,7 @@ class EmployeeController extends Controller
             $station= DB::table('hr_station AS s')
                         ->where('s.associate_id', $request->associate_id)
                         ->whereDate('s.start_date', "<=", date('Y-m-d'))
-                        ->whereDate('s.end_date', ">=", date("Y-m-d"))
+                        ->orWhereDate('s.end_date', ">=", date("Y-m-d"))
                         ->select([
                             "s.associate_id",
                             "s.changed_floor",
@@ -780,15 +780,16 @@ class EmployeeController extends Controller
                             "s.end_date",
                             "f.hr_floor_name",
                             "l.hr_line_name",
-                            "b.as_name"
+                            "u.name"
                         ])
                         ->leftJoin('hr_floor AS f', 'f.hr_floor_id', 's.changed_floor')
                         ->leftJoin('hr_line AS l', 'l.hr_line_id', 's.changed_line')
-                        ->leftJoin('hr_as_basic_info AS b', 'b.associate_id', 's.updated_by')
+                        ->leftJoin('users AS u', 'u.id', 's.created_by')
                         ->first();
+            
 
         $getSalaryList      = HrMonthlySalary::where('as_id', $request->associate_id)
-                            ->where('year',2019)
+                            ->where('year',date('Y'))
                             ->get();
         $getEmployee        = Employee::getEmployeeAssociateIdWise($request->associate_id);
         $title              = 'Unit : '.($getEmployee->unit != null?$getEmployee->unit['hr_unit_name_bn']:'').' - Location : '.($getEmployee->location != null?$getEmployee->location['hr_unit_name_bn']:'');
@@ -1591,5 +1592,28 @@ class EmployeeController extends Controller
             })
             ->rawColumns(["name"])
             ->make(true);
+    }
+
+    public function statusUpdate(Request $request)
+    {
+        $input = $request->all();
+        // return $input;
+        try {
+            $employee = Employee::getEmployeeAssociateIdWise($input['associate_id']);
+            if($employee != null){
+                Employee::where('as_id', $employee->as_id)
+                ->update([
+                    'as_status'      => $input['as_status'],
+                    'as_status_date' => $input['as_status_date'],
+                    'as_remarks'     => $input['as_remarks']
+                ]);
+            }
+            toastr()->success('Successful Status Updated');
+            return back();
+        } catch (\Exception $e) {
+            $bug = $e->getMessage();
+            toastr()->error($bug);
+            return $bug;
+        }
     }
 }

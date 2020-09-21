@@ -24,58 +24,45 @@
                 <div class="col">
                   <div class="iq-card">
                     <div class="iq-card-header d-flex mb-0">
-                               <div class="iq-header-title w-100">
-                                  <div class="row">
-                                    <div class="col-3">
-                                        <div class="action-section">
-                                            <h4 class="card-title capitalize inline">
-                                                <button type="button" onClick="printMe1('result-data')" class="btn view list_view no-padding" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Job Card">
-                                                   <i class="fa fa-print"></i>
-                                                </button>
-                                                <button type="button" id="excel" class="btn view list_view no-padding" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download Job Card">
-                                                   <i class="fa fa-file-excel-o"></i>
-                                                </button>
-                                            </h4>
-                                        </div>
-                                    </div>
-                                    <div class="col-6 text-center">
-                                      <h4 class="card-title capitalize inline">
-                                        @php
-                                            $associate = request()->associate;
-                                            $nextMonth = date('Y-m', strtotime(request()->month_year.' +1 month'));
-                                            $prevMonth = date('Y-m', strtotime(request()->month_year.' -1 month'));
+                     <div class="iq-header-title w-100">
+                        <div class="row">
+                          <div class="col-3">
+                              <div class="action-section">
+                                  
+                              </div>
+                          </div>
+                          <div class="col-6 text-center">
+                            <h4 class="card-title capitalize inline">
+                              @php
+                                  $associate = request()->associate;
+                                  $nextMonth = date('Y-m', strtotime($input['month_year'].' +1 month'));
+                                  $prevMonth = date('Y-m', strtotime($input['month_year'].' -1 month'));
 
-                                            $prevUrl = url("hr/operation/job_card?associate=$associate&month_year=$prevMonth");
-                                            $nextUrl = url("hr/operation/job_card?associate=$associate&month_year=$nextMonth");
-                                        @endphp
-                                        <a href="{{ $prevUrl }}" class="btn view prev_btn" data-toggle="tooltip" data-placement="top" title="" data-original-title="Previous Month Job Card" >
-                                          <i class="las la-chevron-left"></i>
-                                        </a>
-                                        <b class="f-16" id="result-head">{{ request()->month_year }} </b>
-                                        @if($month < $thisMonth)
-                                        <a href="{{ $nextUrl }}" class="btn view next_btn" data-toggle="tooltip" data-placement="top" title="" data-original-title="Next Month Job Card" >
-                                          <i class="las la-chevron-right"></i>
-                                        </a>
-                                        @endif
-                                      </h4>
-                                    </div>
-                                    @php 
-                                        $yearMonth = request()->month_year; 
-                                    @endphp
-                                    <div class="col-3">
-                                      @if(($lastMonth == $month && $lockActivity == 0)|| $month == date('m'))
-                                      <div class="text-right">
-                                        <h4 class="card-title capitalize inline">
-                                        <a href='{{url("hr/timeattendance/attendance_bulk_manual?associate=$info->associate_id&month=$yearMonth")}}' class="btn view list_view no-padding" data-toggle="tooltip" data-placement="top" title="" data-original-title="Manual Edit Job Card">
-                                          <i class="fa fa-edit bigger-120"></i>
-                                        </a>
-                                        </h4>
-                                      </div>
-                                      @endif
-                                    </div>
-                                  </div>
-                               </div>
-                            </div>
+                                  $prevUrl = url("hr/reports/warning-notices?month_year=$prevMonth");
+                                  $nextUrl = url("hr/reports/warning-notices?month_year=$nextMonth");
+                                  $month = date('Y-m');
+                              @endphp
+                              <a href="{{ $prevUrl }}" class="btn view prev_btn" data-toggle="tooltip" data-placement="top" title="" data-original-title="Previous Month Report" >
+                                <i class="las la-chevron-left"></i>
+                              </a>
+
+                              <b class="f-16" id="result-head">{{ $input['month_year'] }} </b>
+                              
+                              <a href="{{ $nextUrl }}" class="btn view next_btn" data-toggle="tooltip" data-placement="top" title="" data-original-title="Next Month Report" >
+                                <i class="las la-chevron-right"></i>
+                              </a>
+                              
+                            </h4>
+                          </div>
+                          @php 
+                              $yearMonth = $input['month_year']; 
+                          @endphp
+                          <div class="col-3">
+                            
+                          </div>
+                        </div>
+                     </div>
+                  </div>
                   </div>
                   <div class="table d-table">
                       <div class="iq-card">
@@ -94,7 +81,7 @@
                                   <th>First Step</th>
                                   <th>Second Step</th>
                                   <th>Third Step</th>
-                                  <th>Action</th>
+                                  <th>&nbsp;</th>
                                 </tr>
                              </thead>
                           </table>
@@ -112,7 +99,7 @@
   $(document).ready(function(){   
     var loader = '<div class="panel"><div class="panel-body"><p style="text-align:center;margin:100px;"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>';
 
-    var searchable = [2,5,6,7,8];
+    var searchable = [2,5,6,7,8,9,10];
     // var selectable = []; //use 4,5,6,7,8,9,10,11,....and * for all
     var dropdownList = {};
     var printCounter = 0;
@@ -219,19 +206,16 @@
         { data: 'DT_RowIndex', name: 'DT_RowIndex' },
         { data: 'pic', name: 'pic' },
         { data: 'associate_id',  name: 'associate_id' },
-        // { data: 'hr_unit_name',  name: 'hr_unit_name' },
+        { data: 'hr_unit_name',  name: 'hr_unit_name' },
         { data: 'as_name', name: 'as_name' },
-        { data: 'cell', name: 'cell' },
+        { data: 'reason', name: 'reason' },
         { data: 'section', name: 'section' },
         { data: 'hr_designation_name', name: 'hr_designation_name' },
-        { data: 'dates', name: 'dates' },
-        { data: 'absent_count', name: 'absent_count' },
+        { data: 'first_step_date', name: 'first_step_date' },
+        { data: 'second_step_date', name: 'second_step_date' },
+        { data: 'third_step_date', name: 'third_step_date' },
         { data: 'action', name: 'action' },
-        // {
-        //     "render": function(data, type, row){
-        //         return data.split(";").join("<br/>");
-        //     }
-        // }
+        
 
       ],
       initComplete: function () {
