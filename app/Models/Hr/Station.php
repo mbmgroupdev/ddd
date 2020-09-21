@@ -22,10 +22,10 @@ class Station extends Model
 
     public static function checkDateRangeWiseStartDateExists($asId, $startDate, $endDate)
     {
-    	return Station::
-    	where('associate_id', $asId)
-    	->whereBetween('start_date',array($startDate, $endDate))
-    	->first();
+        return Station::
+        where('associate_id', $asId)
+        ->whereBetween('start_date',array($startDate, $endDate))
+        ->first();
     }
 
     public static function checkDateRangeWiseEndDateExists($asId, $startDate, $endDate)

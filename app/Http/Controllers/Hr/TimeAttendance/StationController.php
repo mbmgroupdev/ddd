@@ -19,6 +19,7 @@ class StationController extends Controller
 		
 		$data['unitList'] = Unit::where('hr_unit_status', '1')
                 ->whereIn('hr_unit_id', auth()->user()->unit_permissions())
+                ->orderBy('hr_unit_name', 'desc')
                 ->pluck('hr_unit_name', 'hr_unit_id');
 
 		return view('hr/timeattendance/station_card',$data);
@@ -228,11 +229,10 @@ class StationController extends Controller
     	//dd($request->all());
 		$validator= Validator::make($request->all(),[
 
-			"multiple_associate_id" => "required|max:10",
-  			"floor_id_multiple" => "required|max:10",
+			"multiple_associate_id" => "required",
+  			"floor_id_multiple" => "required",
   			"line_id_multiple" => "required|max:10",
   			"start_date_multiple" => "required",
-  			"end_date_multiple" => "required",
   			"unit" => "required"
 		]);
 
@@ -241,37 +241,53 @@ class StationController extends Controller
 					->withInput()
 					->with("error", "Incorrect Input!");
 		}
-		else{
-
+		$input = $request->all();
+		// return $input;
+		try {
 			$as_ids=$request->multiple_associate_id;
-			//dd($as_ids);
+			$startDate = date('Y-m-d H:i', strtotime($request->start_date_multiple));
+			if($request->end_date_multiple){
+				$endDate = date('Y-m-d H:i', strtotime($request->end_date_multiple));
+			}else{
+				$endDate = null;
+			}
 			foreach($as_ids as $as_id){
-				$getStation = Station::checkDateRangeWiseStartDateExists($as_id, $request->start_date_multiple, $request->end_date_multiple);
-				if($getStation != null){
-					return redirect()->back()->with('error', $as_id.' is already assigned.');
+				if($endDate != null){
+					$getStation = Station::checkDateRangeWiseStartDateExists($as_id, $startDate, $endDate);
+					if($getStation != null){
+						return redirect()->back()->with('error', $as_id.' is already assigned.');
+					}
+					$getStation = Station::checkDateRangeWiseEndDateExists($as_id, $startDate, $endDate);
+					if($getStation != null){
+						return redirect()->back()->with('error', $as_id.' is already assigned.');
+					}
+				}else{
+					$getStation = Station::checkDateWiseExists($startDate, $as_id);
+					if($getStation != null){
+						return redirect()->back()->with('error', $as_id.' is already assigned.');
+					}
 				}
-				$getStation = Station::checkDateRangeWiseEndDateExists($as_id, $request->start_date_multiple, $request->end_date_multiple);
-				if($getStation != null){
-					return redirect()->back()->with('error', $as_id.' is already assigned.');
-				}
-
+				
 			 	$station= new Station();
 			 	$station->associate_id = $as_id;
 			 	$station->unit_id = $request->unit;
 			 	$station->changed_floor = $request->floor_id_multiple;
 			 	$station->changed_line = $request->line_id_multiple;
-			 	$station->start_date = $request->start_date_multiple;
-			 	$station->end_date = $request->end_date_multiple;
-			 	$station->updated_at = date("Y-m-d H:i:s");
-			 	$station->updated_by = Auth()->user()->associate_id;
+			 	$station->start_date = $startDate;
+			 	$station->end_date = $endDate;
+			 	$station->created_by = Auth()->user()->id;
 			 	$station->save();
+
+				$this->logFileWrite("$as_id - Employee Line Change Successfully", $station->id);
 			}
 			//log file
-			$this->logFileWrite("Station Card Created", $station->id);
-			return back()
-				->with('success', 'Station Card saved successfully!');
+			toastr()->success('Employee Line Change Successfully');
+			return back();
+		} catch (\Exception $e) {
+			$bug = $e->getMessage();
+			toastr()->error($bug);
+			return back();
 		}
-
 	}
 
 

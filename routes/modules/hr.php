@@ -73,6 +73,7 @@ Route::get('hr/user-dashboard', 'Hr\DashboardController@userDashboard');
 Route::post('hr/user-dashboard/events', 'Hr\DashboardController@eventSettings');
 Route::get('hr/user/pdf', 'Hr\ProfileController@employeeProfile');
 Route::get('hr/user/attendance_calendar/{as_id}', 'Hr\ProfileController@attendanceCalendar');
+Route::post('hr/employee-status-update', 'Hr\Recruitment\EmployeeController@statusUpdate');
 
 Route::get('hr/associate-info', 'Hr\Operation\LocationChangeController@getUnit');
 
@@ -1043,6 +1044,9 @@ Route::get('hr/setup/retirement/get_employee_details', 'Hr\Setup\RetirementPolic
 	Route::post('hr/reports/save_salary_sheet_unit_wise_data', 'Hr\Reports\SalarySheetController@saveSalarySheetUnitData');*/
 	// warning notice
 	Route::get('hr/operation/warning-notice', 'Hr\Operation\WarningNoticeController@index');
+	Route::post('hr/operation/warning-notice-first', 'Hr\Operation\WarningNoticeController@firstStep');
+	Route::post('hr/operation/warning-notice-second', 'Hr\Operation\WarningNoticeController@secondStep');
+	Route::post('hr/operation/warning-notice-third', 'Hr\Operation\WarningNoticeController@thirdStep');
 
 	Route::get('hr/reports/warning-notices', 'Hr\Operation\WarningNoticeController@list');
 	Route::get('hr/reports/warning-notice-data', 'Hr\Operation\WarningNoticeController@listData');

@@ -35,11 +35,16 @@
         <div id="accordion" class="accordion-style panel-group">
             <div class="panel panel-info">
                 <div class="panel-heading station-card-content">
-                    <h6 class="panel-title">
+                    {{-- <h6 class="panel-title">
+
                         <a class="accordion-toggle collasped" data-toggle="collapse" data-parent="#accordion" href="#multi-search" aria-expanded="false">
                             <i class="ace-icon fa fa-angle-right bigger-110" data-icon-hide="ace-icon fa fa-angle-down" data-icon-show="ace-icon fa fa-angle-right"></i>
                             &nbsp;Multiple Employee 
                         </a>
+                    </h6> --}}
+                    <h6>
+                        Employee Line Change
+                        <a class="btn btn-primary pull-right" href="{{ url('#') }}"><i class="fa fa-list"></i> List Of Line Change</a>
                     </h6>
                 </div>
 
@@ -58,13 +63,10 @@
                                             
                                         </select>
                                     </div> 
-                                    <div class="form-group">
-                                        <button class="btn btn-primary" type="submit">
-                                            <i class="ace-icon fa fa-check bigger-110"></i> Submit
-                                        </button>
-                                    </div>
+                                    
                                     
                                 </div>
+                                
                                 <div class="col-sm-3">
                                     <div class="form-group has-required has-float-label select-search-group">
                                         {{Form::select('floor_id_multiple', [], null, ['id'=> 'floor_id_multiple', 'placeholder' => "Select Floor", 'class'=> "no-select form-control", 'required'=>'required'])}}
@@ -76,14 +78,19 @@
                                     </div>     
 
                                     <div class="form-group has-required has-float-label">
-                                        <input type="date" name="start_date_multiple" id="start_date_multiple" class="datetimepicker form-control " placeholder="Start Date" required="required">
+                                        <input type="datetime-local" name="start_date_multiple" id="start_date_multiple" class="datetimepicker form-control " required="required" value="{{ date('Y-m-d') }}T{{ date('H:i')}}">
                                         <label for="shift_id">Start Date </label>
                                     </div> 
 
-                                    <div class="form-group has-required has-float-label">
-                                        <input type="date" name="end_date_multiple" id="end_date_multiple"  class="datetimepicker form-control" placeholder="End Date" required="required">
+                                    <div class="form-group has-float-label">
+                                        <input type="datetime-local" name="end_date_multiple" id="end_date_multiple"  class="datetimepicker form-control" placeholder="End Date" >
                                         <label for="shift_id">End Date </label>
                                     </div> 
+                                    <div class="form-group">
+                                        <button class="btn btn-primary" type="submit">
+                                            <i class="ace-icon fa fa-check bigger-110"></i> Submit
+                                        </button>
+                                    </div>
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="multiple_station_info row ">
@@ -95,7 +102,7 @@
                     </div>
                 </div>
             </div>
-            <div class="panel panel-info">
+            {{-- <div class="panel panel-info">
                 <div class="panel-heading station-card-content">
                     <h6 class="panel-title">
                         <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#individual">
@@ -186,7 +193,7 @@
                         {{ Form::close() }}
                     </div>
                 </div>
-            </div>
+            </div> --}}
             
         </div>
     </div>
@@ -250,9 +257,9 @@ $(document).ready(function()
 
     //dates validation..............................
 
-    $('#start_date').on('dp.change', function(){
-        $('#end_date').val($('#start_date').val());
-    });    
+    // $('#start_date').on('dp.change', function(){
+    //     $('#end_date').val($('#start_date').val());
+    // });    
     
     $('#end_date').on('dp.change', function(){
         var end_date   = new Date($(this).val());
