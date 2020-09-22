@@ -31,7 +31,7 @@
             <div class="panel-body">
                 <div class="row">
                     <div class="col-4">
-                        {{Form::open(['url'=>'hr/operation/maternity-leave', 'class'=>'form-horizontal needs-validation', 'novalidate'])}}
+                        {{Form::open(['url'=>'hr/operation/maternity-leave', 'class'=>'form-horizontal needs-validation', 'novalidate', "enctype" => "multipart/form-data"])}}
                             <div class="row">
                                 <div class="col-12">
                                     <div class="form-group has-required has-float-label  select-search-group">
@@ -95,9 +95,9 @@
                             </div>    
                             <div class="row">
                                 <div class="col-12">
-                                    <div class="form-group has-required  ">
-                                        <label for="usg_report" >USG Report</label><br>
+                                    <div class="form-group has-required has-float-label">
                                         <input id="usg_report" type="file"  name="usg_report"  required>
+                                        <label for="usg_report" >USG Report</label><br>
                                     </div>
                                 </div>
                             </div>

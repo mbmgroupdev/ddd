@@ -68,14 +68,24 @@
                                      <td><i class="field-title">Last Child Age</i> <span class="field-data">: {{ $leave->last_child_age }} </span></td>
                                  </tr>
                              </table>
+                             <br>
+                             @if($leave->medical)
+                                @if(count($leave->medical->record) > 0)
+                                    <a href="{{url('hr/operation/maternity-leave/doctors-clearence/'.$leave->id)}}" class="btn btn-primary w-100">Doctors Clearence</a>
+                                @endif
+                             @endif
                         </div>
                     </div>
                     <div class="col-sm-9">
                         <div id="accordion" class="accordion-style panel-group">
                             
-                            <a class="accordion-toggle mb-3 d-block @if($leave->medical) collapsed @endif" data-toggle="collapse" data-parent="#accordion" href="#basic-service"><span class="header-title"> Basic Checkup </span> </a>
+                            <a class="accordion-toggle mb-3 d-block @if($leave->medical) collapsed @endif" data-toggle="collapse" data-parent="#accordion" href="#basic-service">
+                                <span class="header-title"> Basic Checkup 
+                                    @if($leave->medical)<i class="las la-check-circle f-18 text-success"></i> @endif
+                                </span>  
+                            </a>
                             
-                           <div class="panel-collapse in collapse pt-3 @if(!$leave->medical)show @endif" id="basic-service">
+                           <div class="panel-collapse in collapse @if(!$leave->medical)show @endif" id="basic-service">
                                 <form action="{{url('hr/operation/maternity-medical-basic')}}" method="post" class="needs-validation" novalidate>
                                     @csrf
                                     @if($leave->medical)
@@ -244,7 +254,10 @@
                                 </form>
                            </div>
                         </div>
-                        <h4 class="header-title mb-3 mt-3">Routine Checkup</h4>
+                        <h4 class="header-title mb-3 mt-3">
+                            Routine Checkup 
+                            @if($leave->doctors_clearence == 1)<i class="las la-check-circle f-18 text-success"></i> @endif
+                        </h4>
                         @php $next_checkup = date('Y-m-d'); @endphp
                         @if($leave->medical)
                         <div class="iq-accordion career-style mat-style">
@@ -361,7 +374,7 @@
                                         <div class="row mt-3">
                                             <div class="col-sm-4">
                                                 <div class="form-group  has-float-label has-required">
-                                                    <input type="date" id="checkup_date" type="checkup_date" name="checkup_date" class="form-control"  value="{{date('Y-m-d')}}" required> 
+                                                    <input type="date" id="checkup_date" type="checkup_date" name="checkup_date" class="form-control"  value="{{$next_checkup}}" required> 
                                                     <label for="checkup_date">Checkup Date</label>
                                                 </div>
                                                 <div class="form-group  has-float-label has-required">
@@ -416,8 +429,8 @@
                                                     <input type="text" id="others" type="others" name="others" class="form-control"  value="N/A">
                                                     <label for="others">Others</label>
                                                 </div>
-                                                <div class="form-group  has-float-label has-required">
-                                                    <input type="date" id="next_checkup_date" type="next_checkup_date" name="next_checkup_date" class="form-control"  value="" required>
+                                                <div class="form-group  has-float-label">
+                                                    <input type="date" id="next_checkup_date" type="next_checkup_date" name="next_checkup_date" class="form-control"  value="" >
                                                     <label for="next_checkup_date">Next Checkup</label>
                                                 </div>
                                                 <div class="form-group  has-float-label ">

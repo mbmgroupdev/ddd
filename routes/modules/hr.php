@@ -399,10 +399,15 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 	Route::post('hr/operation/maternity-leave', 'Hr\Operation\MaternityPaymentController@leaveApplication');
 	Route::get('hr/operation/maternity-leave/list', 'Hr\Operation\MaternityPaymentController@index');
 	Route::get('hr/operation/maternity-leave/listData', 'Hr\Operation\MaternityPaymentController@listData');
+	Route::get('hr/operation/maternity-leave/{id}', 'Hr\Operation\MaternityPaymentController@view');
+	Route::get('hr/operation/maternity-leave-approval/{id}', 'Hr\Operation\MaternityPaymentController@approval');
 
 	Route::get('hr/operation/maternity-medical-process/{id}', 'Hr\Operation\MaternityPaymentController@medicalProcess');
 	Route::post('hr/operation/maternity-medical-basic/', 'Hr\Operation\MaternityPaymentController@storeMedicalBasic');
 	Route::post('hr/operation/maternity-medical-record/', 'Hr\Operation\MaternityPaymentController@storeMedicalRecord');
+
+	Route::get('hr/operation/maternity-leave/doctors-clearence/{id}', 'Hr\Operation\MaternityPaymentController@doctorsClearance');
+	Route::post('hr/operation/doctor-clearence-letter', 'Hr\Operation\MaternityPaymentController@clearenceLetter');
 
 	Route::get('hr/operation/maternity-leave-payment', 'Hr\Operation\MaternityPaymentCOntroller@index')->middleware(['permission:Maternity Payment']);
 	Route::get('hr/operation/get_maternity_employees', 'Hr\Operation\MaternityPaymentCOntroller@getMaternityEmployees');

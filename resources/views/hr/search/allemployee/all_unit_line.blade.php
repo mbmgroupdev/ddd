@@ -1,51 +1,6 @@
 <style type="text/css">
 
-    @media only screen and (max-width: 1280px){
-        .search-result-div{width: 33.33%;}
-    }
-    @media only screen and (max-width: 767px) {
-        .search-result-div{width: 50%;}
-    }
-    @media only screen and (max-width: 579px) {
-        .search-result-div{width: 100%;}
-    }
-    @media print {
-        #printOutputSection {display: block;}
-    }
-    .progress[data-percent]:after {
-         color: #fff !important; 
-    }
-    .progress{
-        margin-bottom: 0!important;
-    }
-    ul.color-bar {
-        list-style: none;
-        display: block;
-        height: auto;
-        padding: 5px;
-        margin: 5px auto;
-        padding-left: 20%;
-        
-    }
-    .color-bar li {
-        display: inline-block;
-        vertical-align: middle;
-        width: 10.5%;
-        height: 20px;
-        padding: 0 3px;
-    }
-    span.color-label {
-        width: 40px;
-        display: block;
-        height: 20px;
-        float: left;
-        margin: 0 5px;
-    }
-    span.lib-label {
-        text-align: left;
-        display: grid;
-        padding-top: 2px;
-    }
+
     .lib-male{background-color:#288402!important;}
     .lib-female{background-color:#b95907!important;}
     .lib-absent{background-color:#e9e9e9!important;}

@@ -75,7 +75,7 @@
                                 <label> Unit </label>
                             </div> 
                             <div class="form-group has-float-label">
-                                <input type="text" id="requested_place" name="requested_place" class="form-control" readonly>
+                                <input type="text" id="requested_place" name="requested_place" class="form-control" readonly placeholder="Enter outside location">
                                 <label> Requested Place </label>
                             </div> 
                             <div class="form-group has-float-label">
@@ -184,12 +184,12 @@
         $("body").on("change", ".requested_location", function(){
             
             if($(this).val()== "Outside"){
-                $(this).parent().next().find("#requested_place").prop("required", true);
-                $(this).parent().next().find("#requested_place").removeAttr("readonly");
+                $("#requested_place").prop("required", true);
+                $("#requested_place").removeAttr("readonly");
             }
             else{
-                $(this).parent().next().find("#requested_place").removeAttr("required", true);
-                $(this).parent().next().find("#requested_place").prop("readonly", "readonly");
+                $("#requested_place").removeAttr("required", true);
+                $("#requested_place").prop("readonly", "readonly");
             }
         });
   

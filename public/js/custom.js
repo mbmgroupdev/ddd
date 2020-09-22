@@ -319,6 +319,18 @@ function rosterReportHeader(title, parameter)
 }
 
 
+function printMe(el)
+{ 
+    var myWindow=window.open('','','width=800,height=800');
+    myWindow.document.write('<html><head></head><body style="font-size:9px;">');
+    myWindow.document.write(document.getElementById(el).innerHTML);
+    myWindow.document.write('</body></html>');
+    // myWindow.document.close();
+    myWindow.focus();
+    myWindow.print();
+    myWindow.close();
+}
+
 
 
 /*---------------------------------------------------------------------
@@ -453,6 +465,8 @@ function setProgressBar(curStep) {
     jQuery(".progress-bar")
         .css("width", percent + "%")
 }
+
+
 
 jQuery(".submit").click(function() {
     return false;
