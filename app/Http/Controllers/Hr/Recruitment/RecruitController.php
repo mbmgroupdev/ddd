@@ -81,9 +81,12 @@ class RecruitController extends Controller
             }
         })
         ->addColumn('action', function ($data) {
-
-                return '<div style="width:80px;"><a class="btn btn-primary btn-sm mb-1" href="'.url('hr/recruitment/recruit/'.$data->worker_id.'/edit/').'" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit Employee Information"><i class="las la-pencil-alt f-18"></i></a>
-                <a class="btn btn-success btn-sm" href="'.url('hr/recruitment/worker/migrate/'.$data->worker_id).'" data-toggle="tooltip" data-placement="top" title="" data-original-title="Migrate to Employee"><i class="las la-external-link-alt f-18"></i></a></div>';
+            if($data->worker_doctor_acceptance == 1){
+                $migrate = '<a class="btn btn-success btn-sm" href="'.url('hr/recruitment/worker/migrate/'.$data->worker_id).'" data-toggle="tooltip" data-placement="top" title="" data-original-title="Migrate to Employee"><i class="las la-external-link-alt f-18"></i></a>';
+            }else{
+                $migrate = '';
+            }
+            return '<div style="width:80px;"><a class="btn btn-primary btn-sm" href="'.url('hr/recruitment/recruit/'.$data->worker_id.'/edit/').'" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit Recruitment Information"><i class="las la-pencil-alt f-18"></i></a> '.$migrate.'</div>';
         })
         ->rawColumns(['DT_RowIndex', 'hr_emp_type_name', 'hr_designation_name', 'hr_unit_short_name','hr_area_name','worker_name','worker_contact','worker_doj','medical_info','ie_info','action'])
         ->make(true);
@@ -124,20 +127,24 @@ class RecruitController extends Controller
             'worker_gender'         => 'required',
             'worker_dob'            => 'required',
             'worker_contact'        => 'required',
+            'worker_nid'            => 'required|unique:hr_worker_recruitment',
             'as_oracle_code'        => 'nullable|unique:hr_worker_recruitment',
             'as_rfid'               => 'nullable|unique:hr_worker_recruitment'
         ]);
         if($validator->fails()){
-            toastr()->error('Some field validation fails');
+            foreach ($validator->errors()->all() as $message){
+                toastr()->error($message);
+            }
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
         $input = $request->except('_token');
 
-        $worker = WorkerRecruitment::checkRecruitmentWorker($input);
+        // check existing Employee
+        $worker = AdvanceInfo::checkExistID($input['worker_nid']);
         if($worker != null){
-            toastr()->error($input['worker_name'].' info already exists');
-            return back();
+            toastr()->error($input['worker_name'].' Employee NID/Birth already exists');
+            return redirect()->back()->withErrors($validator)->withInput();
         }
 
         $input['worker_ot'] = isset($input['worker_ot'])?1:0;
@@ -156,7 +163,7 @@ class RecruitController extends Controller
             return redirect('/hr/recruitment/recruit');
         } catch (\Exception $e) {
             $bug = $e->getMessage();
-            return $bug;
+            // return $bug;
             toastr()->error($bug);
             return back();
         }
@@ -173,13 +180,16 @@ class RecruitController extends Controller
     public function edit($id)
     {
         $data['getEmpType'] = EmpType::getActiveEmpType();
-        $data['getUnit'] = Unit::getActiveUnit();
+        $data['getUnit'] = unit_list();
         $data['getArea'] = Area::getActiveArea();
 
         $worker = WorkerRecruitment::where('worker_id',$id)->firstOrFail();
+        $getDepartment = Department::getDepartmentAreaIdWise($worker->worker_area_id);
+        $getSection = Section::getSectionDepartmentIdWise($worker->worker_department_id);
+        $getSubSection = Subsection::getSubSectionSectionIdWise($worker->worker_section_id);
+        $getDesignation = Designation::getDesignationEmpTypeIdWise($worker->worker_emp_type_id);
 
-
-        return view('hr.recruitment.recruit.edit', compact('data','worker'));
+        return view('hr.recruitment.recruit.edit', compact('data','worker', 'getDepartment', 'getSection', 'getSubSection', 'getDesignation'));
     }
 
     /**
@@ -212,10 +222,16 @@ class RecruitController extends Controller
 
         $input = $request->except('_token');
 
-        $worker = WorkerRecruitment::checkRecruitmentWorker($input);
+        $worker = WorkerRecruitment::checkRecruitmentWorkerUpdate($input);
         if($worker != null){
             toastr()->error($input['worker_name'].' info already exists');
             return back();
+        }
+        // check existing Employee
+        $worker = AdvanceInfo::checkExistID($input['worker_nid']);
+        if($worker != null){
+            toastr()->error($input['worker_name'].' Employee NID/Birth already exists');
+            return redirect()->back()->withErrors($validator)->withInput();
         }
 
         $input['worker_ot'] = isset($input['worker_ot'])?1:0;
@@ -273,19 +289,21 @@ class RecruitController extends Controller
             'worker_gender'         => 'required',
             'worker_dob'            => 'required',
             'worker_contact'        => 'required',
+            'worker_nid'            => 'required|unique:hr_worker_recruitment',
             'as_oracle_code'        => 'nullable|unique:hr_worker_recruitment',
             'as_rfid'               => 'nullable|unique:hr_worker_recruitment'
         ]);
         $data = array();
         $data['type'] = 'error';
         $input = $request->all();
-        
-        // check existing worker
-        $worker = WorkerRecruitment::checkRecruitmentWorker($input);
+
+        // check existing Employee
+        $worker = AdvanceInfo::checkExistID($input['worker_nid']);
         if($worker != null){
-            $data['message'] = $input['worker_name'].' info already exists';
+            $data['message'] = $input['worker_name'].' Employee NID/Birth already exists';
             return response()->json($data);
         }
+
         try {
             $input['worker_ot'] = isset($input['worker_ot'])?1:0;
             $input['worker_created_by'] = Auth::user()->id;
@@ -294,6 +312,68 @@ class RecruitController extends Controller
             $data['type'] = 'success';
             $data['url'] = url()->previous();
             $data['message'] = "Recruitment successfully done.";
+            return response()->json($data);
+        } catch (\Exception $e) {
+            $bug = $e->getMessage();
+            $data['message'] = $bug;
+            return response()->json($data);
+        }
+        
+    }
+
+    /**
+     * Basic info recurment update.
+     *
+     * @param  Request
+     * @return \Illuminate\Http\Response
+     */
+    public function recruitUpdate(Request $request, $type)
+    {
+        $request->validate([
+            'worker_name'           => 'required|max:128',
+            'worker_doj'            => 'required|date',
+            'worker_emp_type_id'    => 'required',
+            'worker_designation_id' => 'required',
+            'worker_unit_id'        => 'required',
+            'worker_area_id'        => 'required',
+            'worker_department_id'  => 'required',
+            'worker_section_id'     => 'required',
+            'worker_subsection_id'  => 'required',
+            'worker_gender'         => 'required',
+            'worker_dob'            => 'required',
+            'worker_contact'        => 'required',
+            'worker_nid'            => 'required',
+            'as_oracle_code'        => 'nullable',
+            'as_rfid'               => 'nullable'
+        ]);
+        $data = array();
+        $data['type'] = 'error';
+        $input = $request->all();
+        // return $input;
+        $worker = WorkerRecruitment::checkRecruitmentWorkerUpdate($input);
+        if($worker != null){
+            toastr()->error($input['worker_name'].' Recruitment info already exists');
+            return back();
+        }
+        // check existing Employee
+        $worker = AdvanceInfo::checkExistID($input['worker_nid']);
+        if($worker != null){
+            $data['message'] = $input['worker_name'].' Employee NID/Birth already exists';
+            return response()->json($data);
+        }
+
+        try {
+            if($type == 'first'){
+                $input['worker_ot'] = isset($input['worker_ot'])?1:0;
+            }elseif($type == 'second'){
+                $input['worker_doctor_acceptance'] = isset($input['worker_doctor_acceptance'])?1:2;
+            }
+            $input['updated_by'] = Auth::user()->id;
+            WorkerRecruitment::where('worker_id', $input['worker_id'])->update($input);
+
+            $data['type'] = 'success';
+            $data['url'] = url()->previous();
+            $data['message'] = "Recruitment successfully updated done.";
             return response()->json($data);
         } catch (\Exception $e) {
             $bug = $e->getMessage();
@@ -324,6 +404,7 @@ class RecruitController extends Controller
             'worker_gender'              => 'required',
             'worker_dob'                 => 'required',
             'worker_contact'             => 'required',
+            'worker_nid'                 => 'required|unique:hr_worker_recruitment',
             'as_oracle_code'             => 'nullable|unique:hr_worker_recruitment',
             'as_rfid'                    => 'nullable|unique:hr_worker_recruitment',
             'worker_height'              => 'required',
@@ -338,10 +419,10 @@ class RecruitController extends Controller
         $data['type'] = 'error';
         $input = $request->all();
 
-        // check existing worker
-        $worker = WorkerRecruitment::checkRecruitmentWorker($input);
+        // check existing Employee
+        $worker = AdvanceInfo::checkExistID($input['worker_nid']);
         if($worker != null){
-            $data['message'] = $input['worker_name'].' info already exists';
+            $data['message'] = $input['worker_name'].' Employee NID/Birth already exists';
             return response()->json($data);
         }
         try {
@@ -370,7 +451,7 @@ class RecruitController extends Controller
         if (empty($request->worker_id)){
             return back()->with("error", "Unable to start the migration: Invalid user!");
         }
-        
+
         DB::beginTransaction();
         try {
            
@@ -465,7 +546,7 @@ class RecruitController extends Controller
 
 
                     WorkerRecruitment::where('worker_id', $request->worker_id)
-                        ->update(array('worker_is_migrated' => '1'));
+                        ->delete();
 
 
                     DB::commit();

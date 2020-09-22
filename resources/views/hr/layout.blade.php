@@ -202,6 +202,7 @@
     <script src="{{asset('assets/js/all.js')}}"></script>
     <!-- Custom JavaScript -->
     @stack('js')
+    @toastr_render
     <script>
       $( document ).ajaxComplete(function() {
         // Required for Bootstrap tooltips in DataTables
