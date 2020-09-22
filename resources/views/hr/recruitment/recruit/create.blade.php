@@ -10,8 +10,8 @@
             <div class="panel-heading">
                   <h6>Recruitment Process
                       <div class="pull-right">
-                        <a class="btn btn-primary" href="{{ url('hr/recruitment/recruit-bulk-upload') }}">Recruit Bulk</a>
-                        <a class="btn btn-primary" href="{{ url('hr/recruitment/recruit') }}">Recruit List</a>
+                        <a class="btn btn-primary" href="{{ url('hr/recruitment/recruit-bulk-upload') }}"><i class="las la-users"></i> Recruit Bulk</a>
+                        <a class="btn btn-primary" href="{{ url('hr/recruitment/recruit') }}"><i class="las la-list"></i> Recruit List</a>
                         
                     </div>
                   </h6>
@@ -79,7 +79,7 @@
                                            @enderror
 
                                            <div class="form-group has-float-label has-required select-search-group">
-                                              {{ Form::select('worker_gender', ['male'=>'Male', 'female'=>'Female', 'others'=>'Others'], old('worker_gender'), ['placeholder'=>'Select Gender', 'id'=>'gender', 'class'=> 'form-control' . ($errors->has('worker_gender') ? ' is-invalid' : ''), 'required']) }} 
+                                              {{ Form::select('worker_gender', ['Male'=>'Male', 'Female'=>'Female', 'others'=>'Others'], old('worker_gender'), ['placeholder'=>'Select Gender', 'id'=>'gender', 'class'=> 'form-control' . ($errors->has('worker_gender') ? ' is-invalid' : ''), 'required']) }} 
                                               <label class="gender" for="gender">Gender</label>
                                            </div>
                                            @error('worker_gender')
@@ -663,7 +663,7 @@
                   data: curInputs.serialize(), // serializes the form's elements.
                   success: function(response)
                   {
-                     console.log(response);
+                     // console.log(response);
                      $.notify(response.message, {
                         type: response.type,
                         allow_dismiss: true,
@@ -678,15 +678,25 @@
                      }
                   },
                   error: function (reject) {
-                      if( reject.status === 400 ) {
-                          var data = $.parseJSON(reject.responseText);
-                           $.notify(data.message, {
-                              type: data.type,
-                              allow_dismiss: true,
-                              delay: 100,
-                              timer: 300
-                          });
+                    console.log(reject);
+                    if( reject.status === 400) {
+                        var data = $.parseJSON(reject.responseText);
+                         $.notify(data.message, {
+                            type: data.type,
+                            allow_dismiss: true,
+                            delay: 100,
+                            timer: 300
+                        });
+                    }else if(reject.status === 422){
+                      var data = $.parseJSON(reject.responseText);
+                      var errors = data.errors;
+                      // console.log(errors);
+                      for (var key in errors) {
+                        var value = errors[key];
+                        $.notify(value[0], 'error');
                       }
+                       
+                    }
                   }
                });
             }else{
@@ -742,15 +752,25 @@
                      }
                   },
                   error: function (reject) {
-                      if( reject.status === 400 ) {
-                          var data = $.parseJSON(reject.responseText);
-                           $.notify(data.message, {
-                              type: data.type,
-                              allow_dismiss: true,
-                              delay: 100,
-                              timer: 300
-                          });
+                    console.log(reject);
+                    if( reject.status === 400) {
+                        var data = $.parseJSON(reject.responseText);
+                         $.notify(data.message, {
+                            type: data.type,
+                            allow_dismiss: true,
+                            delay: 100,
+                            timer: 300
+                        });
+                    }else if(reject.status === 422){
+                      var data = $.parseJSON(reject.responseText);
+                      var errors = data.errors;
+                      // console.log(errors);
+                      for (var key in errors) {
+                        var value = errors[key];
+                        $.notify(value[0], 'error');
                       }
+                       
+                    }
                   }
                });
             }else{

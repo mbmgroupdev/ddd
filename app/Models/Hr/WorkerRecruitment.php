@@ -24,6 +24,11 @@ class WorkerRecruitment extends Model
     	return WorkerRecruitment::where('worker_nid', $data['worker_nid'])->exists();
     }
 
+    public static function checkRecruitmentWorkerUpdate($data)
+    {
+        return WorkerRecruitment::where('worker_id', '!=', $data['worker_id'])->where('worker_nid', $data['worker_nid'])->exists();
+    }
+
     public function employee_type()
     {
         return $this->belongsTo(EmpType::class, 'worker_emp_type_id', 'emp_type_id');

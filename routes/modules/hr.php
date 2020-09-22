@@ -47,6 +47,7 @@ Route::group(['prefix' => 'hr','namespace' => 'Hr'], function(){
 		Route::get('recruit-data-list', 'RecruitController@list');
 		Route::post('first-step-recruitment', 'RecruitController@basicRecruitStore');
 		Route::post('second-step-recruitment', 'RecruitController@medicalRecruitStore');
+		Route::post('update-step-recruitment/{type}', 'RecruitController@recruitUpdate');
 	});
 
 	// common routes
@@ -637,15 +638,7 @@ Route::get('hr/payroll/salary', 'Hr\Payroll\SalaryController@view');
 	Route::post('hr/recruitment/job_portal/joining_letter','Hr\Recruitment\JoiningLetterController@LetterSave')->middleware(['permission:Appointment Letter']);
 	Route::get('hr/recruitment/job_portal/pdfview/{ arg}','Hr\Recruitment\JoiningLetterController@pdfDownload');
 
-
-
-
 	//---------HR / Training-----------//
-
-
-	
-
-
 	//---------HR / Assets Management-----------//
 
 	Route::get('hr/assets/assign', 'Hr\Assets\AssetController@showForm');
@@ -721,10 +714,6 @@ Route::get('hr/payroll/salary', 'Hr\Payroll\SalaryController@view');
 		Route::get('hr/setup/shift/{hr_shift_id}','Hr\Setup\ShiftController@shiftDelete');
 		Route::get('hr/setup/shift_update/{hr_shift_id}','Hr\Setup\ShiftController@shiftUpdate');
 		Route::post('hr/setup/shift_update','Hr\Setup\ShiftController@shiftUpdateStore');
-		
-
-
-		
 
 		//department
 		Route::get('hr/setup/department','Hr\Setup\DepartmentController@department');
@@ -826,11 +815,6 @@ Route::get('hr/payroll/salary', 'Hr\Payroll\SalaryController@view');
 
 	//---------HR / Profile-----------//
 
-
-
-
-
-
 	//---------HR / Notification-----------//
 
 	Route::get('hr/notification/loan/loan_app_list', 'Hr\Notification\NotifLoanController@ShowLoan');
@@ -855,8 +839,6 @@ Route::get('hr/payroll/salary', 'Hr\Payroll\SalaryController@view');
 	Route::get('hr/notification/leave/leave_app_data', 'Hr\Notification\NotifLeaveController@LeaveData');
 	Route::get('hr/notification/leave/leave_approve/{hr_leave_id?}', 'Hr\Notification\NotifLeaveController@LeaveView');
 	Route::post('hr/notification/leave/leave_approve/approve_reject', 'Hr\Notification\NotifLeaveController@LeaveStatus');
-
-
 
 	//---------HR / Reports-----------//
 	//application letter

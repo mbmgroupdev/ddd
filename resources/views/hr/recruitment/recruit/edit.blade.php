@@ -9,7 +9,7 @@
          <div class="panel h-min-400">
             <div class="panel-heading">
                   <h6>Recruitment Edit
-                      <a class="btn btn-primary pull-right" href="{{url('hr/recruitment/recruit')}}">Recruit List</a>
+                      <a class="btn btn-primary pull-right" href="{{url('hr/recruitment/recruit')}}"> <i class="fa fa-list"></i> Recruit List</a>
                   </h6>
             </div>
             <div class="panel-body">
@@ -39,7 +39,7 @@
                   <div class="col-sm-9">
                      <form action="{{url('hr/recruitment/recruit/'.$worker->worker_id.'/update')}}" method="POST" enctype="multipart/form-data" >
                         {{-- class="needs-validation form" novalidate --}}
-                        <input type="hidden" name="worker_id" value="{{$worker->worker_id}}">
+                        
                         @csrf
                         <div class="row setup-content" id="basic-info">
                            <div class="col-sm-12">
@@ -52,6 +52,7 @@
                                     </div>
                                     <div class="row form-card-details pt-3">
                                         <div class="col-sm-4">
+                                            <input type="hidden" name="worker_id" value="{{$worker->worker_id}}">
                                             <div class="form-group has-float-label has-required">
                                               <input type="text" class="form-control @error('worker_name') is-invalid @enderror" id="associate-name" name="worker_name" placeholder="Type Associate Name"  value="{{ $worker->worker_name??'' }}" autocomplete="off" />
                                               <label for="associate-name">Associate Name</label>
@@ -73,7 +74,7 @@
                                            @enderror
 
                                            <div class="form-group has-float-label has-required select-search-group">
-                                              {{ Form::select('worker_gender', ['male'=>'Male', 'female'=>'Female', 'others'=>'Others'], $worker->worker_gender??null, ['placeholder'=>'Select Gender', 'id'=>'gender', 'class'=> 'form-control' . ($errors->has('worker_gender') ? ' is-invalid' : ''), 'required']) }} 
+                                              {{ Form::select('worker_gender', ['Male'=>'Male', 'Female'=>'Female', 'others'=>'Others'], $worker->worker_gender??null, ['placeholder'=>'Select Gender', 'id'=>'gender', 'class'=> 'form-control' . ($errors->has('worker_gender') ? ' is-invalid' : ''), 'required']) }} 
                                               <label class="gender" for="gender">Gender</label>
                                            </div>
                                            @error('worker_gender')
@@ -83,7 +84,7 @@
                                            @enderror
 
                                            <div class="form-group has-float-label has-required">
-                                              <input type="date" class="form-control @error('worker_dob') is-invalid @enderror" value="{{ $worker->worker_dob??'' }}" id="dob" name="worker_dob"  autocomplete="off" max="{{\Carbon\Carbon::now()->subYears(18)->format('Y-m-d')}}"/>
+                                              <input type="date" class="form-control @error('worker_dob') is-invalid @enderror" value="{{ date('Y-m-d', strtotime($worker->worker_dob)) }}" id="dob" name="worker_dob"  autocomplete="off" max="{{\Carbon\Carbon::now()->subYears(18)->format('Y-m-d')}}"/>
                                               <label for="dob">Date Of Birth</label>
                                            </div>
                                            @error('worker_dob')
@@ -91,8 +92,6 @@
                                                  <strong>{{ $message }}</strong>
                                              </span>
                                            @enderror
-
-                                              
 
                                            <div class="form-group has-float-label ">
                                               <input type="text" class="form-control @error('worker_nid') is-invalid @enderror" id="nid" value="{{ $worker->worker_nid??'' }}" name="worker_nid" placeholder="Type NID/Birth Certificate Number" autocomplete="off" />
@@ -104,7 +103,7 @@
                                              </span>
                                            @enderror
                                            <div class="custom-control custom-switch">
-                                              <input name="worker_ot" type="checkbox" class="custom-control-input @error('worker_ot') is-invalid @enderror" id="otHolder" value="{{ $worker->worker_ot??1 }}">
+                                              <input name="worker_ot" type="checkbox" class="custom-control-input @error('worker_ot') is-invalid @enderror" id="otHolder" value="{{ $worker->worker_ot??1 }}" @if($worker->worker_ot == 1) checked @endif>
                                               <label class="custom-control-label" for="otHolder">OT Holder</label>
                                            </div>
                                            @error('worker_ot')
@@ -116,12 +115,8 @@
                                         <!-- basic location-->
                                         <div class="col-sm-4">
                                            <div class="form-group has-float-label has-required select-search-group">
-                                              <select name="worker_unit_id" class="form-control capitalize select-search @error('worker_unit_id') is-invalid @enderror" id="unit" required="">
-                                                 <option selected="" disabled="" value="">Choose...</option>
-                                                 @foreach($data['getUnit'] as $unit)
-                                                 <option value="{{ $unit->hr_unit_id }}">{{ $unit->hr_unit_name }}</option>
-                                                 @endforeach
-                                              </select>
+                                            {{ Form::select('worker_unit_id', $data['getUnit'], $worker->worker_unit_id??null, ['placeholder'=>'Select Unit', 'id'=>'unit', 'class'=> 'form-control capitalize' . ($errors->has('worker_unit_id') ? ' is-invalid' : ''), 'required']) }} 
+                                              
                                               <label for="unit">Unit</label>
                                            </div>
                                            @error('worker_unit_id')
@@ -131,9 +126,9 @@
                                            @enderror
                                            <div class="form-group has-float-label has-required select-search-group">
                                               <select name="worker_area_id" class="form-control capitalize select-search @error('worker_area_id') is-invalid @enderror" id="area" required="" onchange="areaWiseDepartment(this.value)">
-                                                 <option selected="" disabled="" value="">Choose...</option>
+                                                 <option selected="" value="">Choose...</option>
                                                  @foreach($data['getArea'] as $area)
-                                                 <option value="{{ $area->hr_area_id }}">{{ $area->hr_area_name }}</option>
+                                                 <option value="{{ $area->hr_area_id }}" @if($worker->worker_area_id == $area->hr_area_id) selected @endif>{{ $area->hr_area_name }}</option>
                                                  @endforeach
                                               </select>
                                               <label for="area">Area</label>
@@ -144,9 +139,11 @@
                                              </span>
                                            @enderror
                                            <div class="form-group has-float-label has-required select-search-group">
-                                              <select name="worker_department_id" class="form-control capitalize select-search @error('worker_department_id') is-invalid @enderror" id="department" required="" disabled onchange="departmentWiseSection(this.value)">
-                                                 <option selected="" disabled="" value="">Choose...</option>
-                                                 
+                                              <select name="worker_department_id" class="form-control capitalize select-search @error('worker_department_id') is-invalid @enderror" id="department" required=""  onchange="departmentWiseSection(this.value)">
+                                                <option selected="" value="">Choose...</option>
+                                                @foreach($getDepartment as $department)
+                                                <option value="{{ $department->hr_department_id }}" @if($department->hr_department_id == $worker->worker_department_id) selected @endif>{{ $department->hr_department_name }}</option>
+                                                @endforeach
                                               </select>
                                               <label for="department">Department</label>
                                            </div>
@@ -156,9 +153,11 @@
                                              </span>
                                            @enderror
                                            <div class="form-group has-float-label has-required select-search-group">
-                                              <select name="worker_section_id" class="form-control capitalize select-search @error('worker_section_id') is-invalid @enderror" id="section" required="" disabled onchange="sectionWiseSubSection(this.value)">
-                                                 <option selected="" disabled="" value="">Choose...</option>
-                                                 
+                                              <select name="worker_section_id" class="form-control capitalize select-search @error('worker_section_id') is-invalid @enderror" id="section" required=""  onchange="sectionWiseSubSection(this.value)">
+                                                <option selected="" value="">Choose...</option>
+                                                @foreach($getSection as $section)
+                                                <option value="{{ $section->hr_section_id }}" @if($section->hr_section_id == $worker->worker_section_id) selected @endif>{{ $section->hr_section_name }}</option>
+                                                @endforeach 
                                               </select>
                                               <label for="section">Section</label>
                                            </div>
@@ -168,9 +167,11 @@
                                              </span>
                                            @enderror
                                            <div class="form-group has-float-label has-required select-search-group">
-                                              <select name="worker_subsection_id" class="form-control capitalize select-search @error('worker_subsection_id') is-invalid @enderror" id="subSection" required="" disabled>
-                                                 <option selected="" disabled="" value="">Choose...</option>
-                                                 
+                                              <select name="worker_subsection_id" class="form-control capitalize select-search @error('worker_subsection_id') is-invalid @enderror" id="subSection" required="" >
+                                                <option selected="" value="">Choose...</option>
+                                                @foreach($getSubSection as $subsection)
+                                                <option value="{{ $subsection->hr_subsec_id }}" @if($subsection->hr_subsec_id == $worker->worker_subsection_id) selected @endif>{{ $subsection->hr_subsec_name }}</option>
+                                                @endforeach 
                                               </select>
                                               <label for="subSection">Sub Section</label>
                                            </div>
@@ -183,9 +184,9 @@
                                         <div class="col-sm-4">
                                            <div class="form-group has-float-label has-required select-search-group">
                                               <select name="worker_emp_type_id" class="form-control capitalize select-search @error('worker_emp_type_id') is-invalid @enderror" id="employeeType" required="" onchange="employeeTypeWiseDesignation(this.value)">
-                                                 <option selected="" disabled="" value="">Choose...</option>
+                                                 <option selected="" value="">Choose...</option>
                                                  @foreach($data['getEmpType'] as $emptype)
-                                                 <option value="{{ $emptype->emp_type_id }}">{{ $emptype->hr_emp_type_name }}</option>
+                                                 <option value="{{ $emptype->emp_type_id }}" @if($emptype->emp_type_id == $worker->worker_emp_type_id) selected @endif>{{ $emptype->hr_emp_type_name }}</option>
                                                  @endforeach
                                               </select>
                                               <label for="employeeType">Employee Type</label>
@@ -197,8 +198,11 @@
                                            @enderror
 
                                            <div class="form-group has-float-label has-required select-search-group">
-                                              <select name="worker_designation_id" class="form-control capitalize select-search @error('worker_designation_id') is-invalid @enderror" id="designation" required="" disabled>
-                                                 <option selected="" disabled="" value="">Choose...</option>
+                                              <select name="worker_designation_id" class="form-control capitalize select-search @error('worker_designation_id') is-invalid @enderror" id="designation" required="" >
+                                                <option selected="" value="">Choose...</option>
+                                                @foreach($getDesignation as $designation)
+                                                <option value="{{ $designation->hr_designation_id }}" @if($designation->hr_designation_id == $worker->worker_designation_id) selected @endif>{{ $designation->hr_designation_name }}</option>
+                                                @endforeach 
                                               </select>
                                               <label for="designation">Designation</label>
                                            </div>
@@ -209,7 +213,7 @@
                                            @enderror
 
                                            <div class="form-group has-float-label has-required">
-                                              <input type="date" class="form-control @error('worker_doj') is-invalid @enderror" value="{{ $worker->worker_doj??'' }}" id="doj" name="worker_doj"  autocomplete="off" />
+                                              <input type="date" class="form-control @error('worker_doj') is-invalid @enderror" value="{{ date('Y-m-d', strtotime($worker->worker_doj))??'' }}" id="doj" name="worker_doj"  autocomplete="off" />
                                               <label for="doj">Date of Joining</label>
                                            </div>
                                            @error('worker_doj')
@@ -217,8 +221,6 @@
                                                  <strong>{{ $message }}</strong>
                                              </span>
                                            @enderror
-
-                                           
 
                                            <div class="form-group has-float-label">
                                               <input type="text" class="form-control @error('as_oracle_code') is-invalid @enderror" id="oracleId" name="as_oracle_code" placeholder="Type Oracle ID" value="{{ $worker->as_oracle_code??'' }}" autocomplete="off" />
@@ -239,7 +241,6 @@
                                                  <strong>{{ $message }}</strong>
                                              </span>
                                            @enderror
-
                                            
                                         </div>
                                         
@@ -625,7 +626,7 @@
          
          jQuery('#saveSubmit').click(function(event) {
             var curStep = jQuery(this).closest(".setup-content"),
-              curInputs = curStep.find("input[type='text'],input[type='email'],input[type='password'],input[type='url'],input[type='date'],input[type='checkbox'],input[type='radio'],textarea,select"),
+              curInputs = curStep.find("input[type='hidden'],input[type='text'],input[type='email'],input[type='password'],input[type='url'],input[type='date'],input[type='checkbox'],input[type='radio'],textarea,select"),
               isValid = true;
             jQuery(".form-group").removeClass("has-error");
             for (var i = 0; i < curInputs.length; i++) {
@@ -637,7 +638,7 @@
             if (isValid){
                $.ajax({
                   type: "POST",
-                  url: '{{ url("/hr/recruitment/first-step-recruitment") }}',
+                  url: '{{ url("/hr/recruitment/update-step-recruitment/first") }}',
                   headers: {
                       'X-CSRF-TOKEN': '{{ csrf_token() }}',
                   },
@@ -659,15 +660,25 @@
                      }
                   },
                   error: function (reject) {
-                      if( reject.status === 400 ) {
-                          var data = $.parseJSON(reject.responseText);
-                           $.notify(data.message, {
-                              type: data.type,
-                              allow_dismiss: true,
-                              delay: 100,
-                              timer: 300
-                          });
+                    console.log(reject);
+                    if( reject.status === 400) {
+                        var data = $.parseJSON(reject.responseText);
+                         $.notify(data.message, {
+                            type: data.type,
+                            allow_dismiss: true,
+                            delay: 100,
+                            timer: 300
+                        });
+                    }else if(reject.status === 422){
+                      var data = $.parseJSON(reject.responseText);
+                      var errors = data.errors;
+                      // console.log(errors);
+                      for (var key in errors) {
+                        var value = errors[key];
+                        $.notify(value[0], 'error');
                       }
+                       
+                    }
                   }
                });
             }else{
@@ -684,10 +695,10 @@
 
          jQuery('#saveMedicalSubmit').click(function(event) {
             var basicId = jQuery("#basic-info"),
-               basicInputs = basicId.find("input[type='text'],input[type='email'],input[type='password'],input[type='url'],input[type='date'],input[type='checkbox'],input[type='radio'],textarea,select");
+               basicInputs = basicId.find("input[type='hidden'],input[type='text'],input[type='email'],input[type='password'],input[type='url'],input[type='date'],input[type='checkbox'],input[type='radio'],textarea,select");
 
             var curStep = jQuery(this).closest(".setup-content"),
-              curMeInputs = curStep.find("input[type='text'],input[type='email'],input[type='password'],input[type='url'],input[type='date'],input[type='checkbox'],input[type='radio'],textarea,select"),
+              curMeInputs = curStep.find("input[type='hidden'],input[type='text'],input[type='email'],input[type='password'],input[type='url'],input[type='date'],input[type='checkbox'],input[type='radio'],textarea,select"),
               isValid = true;
             jQuery(".form-group").removeClass("has-error");
             for (var i = 0; i < curMeInputs.length; i++) {
@@ -700,7 +711,7 @@
                var data = curMeInputs.serialize() + '&' + basicInputs.serialize();
                $.ajax({
                   type: "POST",
-                  url: '{{ url("/hr/recruitment/second-step-recruitment") }}',
+                  url: '{{ url("/hr/recruitment/update-step-recruitment/second") }}',
                   headers: {
                       'X-CSRF-TOKEN': '{{ csrf_token() }}',
                   },
@@ -723,15 +734,25 @@
                      }
                   },
                   error: function (reject) {
-                      if( reject.status === 400 ) {
-                          var data = $.parseJSON(reject.responseText);
-                           $.notify(data.message, {
-                              type: data.type,
-                              allow_dismiss: true,
-                              delay: 100,
-                              timer: 300
-                          });
+                    console.log(reject);
+                    if( reject.status === 400) {
+                        var data = $.parseJSON(reject.responseText);
+                         $.notify(data.message, {
+                            type: data.type,
+                            allow_dismiss: true,
+                            delay: 100,
+                            timer: 300
+                        });
+                    }else if(reject.status === 422){
+                      var data = $.parseJSON(reject.responseText);
+                      var errors = data.errors;
+                      // console.log(errors);
+                      for (var key in errors) {
+                        var value = errors[key];
+                        $.notify(value[0], 'error');
                       }
+                       
+                    }
                   }
                });
             }else{
