@@ -378,6 +378,38 @@ class MaternityPaymentController extends Controller
     	}
 	}
 
+	public function approval($id, Request $request)
+	{
+		$leave = MaternityLeave::with('medical','medical.record')->findOrFail($id);
+		$employee = get_employee_by_id($leave->associate_id);
+		$tabs = array(
+			'initial_checkup' => false,
+			'routine_checkup' => false,
+			'doctors_clearence' => false,
+			'leave_approval' => false,
+			'reports' => false,
+			'verification' => false,
+			'payment' => false,
+		);
+
+		if($leave->medical){
+			$tabs['initial_checkup'] = true;
+			if($leave->medical->record){
+				$tabs['routine_checkup'] = true;
+				if($leave->doctors_clearence == 1){
+					$tabs['doctors_clearence'] = true;
+				}
+				if($leave->status == 1){
+					$tabs['leave_approval'] = true;
+					$tabs['reports'] = true;
+				}
+
+			}
+		}
+
+		return view('hr.operation.maternity.leave_approval',compact('leave','employee', 'tabs'));
+
+	}
 
 	public function getMaternityEmployees(Request $request){
 		

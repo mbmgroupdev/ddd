@@ -88,7 +88,7 @@
                                   </div>
                                </div>
                                <div class="accordion-details checkup-details">
-                                    fdghjkl
+                                    
                                </div>
                             </div>
 
@@ -96,10 +96,15 @@
                                <div class="active-mat ">
                                   <div class="mat-container">
                                     <a class="accordion-title d-flex">
-                                        <div class="rounded-div @if($tabs['routine_checkup']) iq-bg-primary @else iq-bg-danger @endif"><i class="las la-stethoscope f-18"></i></div> 
+                                        <div class="rounded-div @if($tabs['routine_checkup']) iq-bg-primary @else iq-bg-danger @endif"><i class="las la-diagnoses f-18"></i></div> 
                                         <div class="media-support-info ml-3">
                                           <h6>Routine Checkup </h6>
-                                          <p id="line" class="mb-0">dddd</p>
+                                          <p id="line" class="mb-0">
+                                              @if($tabs['routine_checkup']) 
+                                                {{$leave->medical->record->last()->checkup_date}}
+                                              @else
+                                              @endif
+                                          </p>
                                        </div>
                                     </a>
                                   </div>
@@ -152,28 +157,28 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                        @if($leave->medical) 
-                                            @if($leave->medical->record) 
+                                        @if($tabs['routine_checkup']) 
                                         
-                                                @foreach($leave->medical->record as $key => $record)
-                                                    <tr>
-                                                        <td>{{$record->checkup_date}}</td>
-                                                        <td>{{$record->weight}}</td>
-                                                        <td>{{$record->bp}}</td>
-                                                        <td>{{$record->edema}}</td>
-                                                        <td></td>
-                                                        <td>{{$record->jaundice}}</td>
-                                                        <td>{{$record->uterus_height}}</td>
-                                                        <td>{{$record->baby_position}}</td>
-                                                        <td>{{$record->baby_movement}}</td>
-                                                        <td>{{$record->albumine}}</td>
-                                                        <td>{{$record->sugar}}</td>
-                                                        <td>{{$record->others}}</td>
-                                                        <td>{{$record->comment}}</td>
-                                                        <td></td>
-                                                    </tr>
-                                                @endforeach
-                                            @endif
+                                            @foreach($leave->medical->record as $key => $record)
+                                                <tr>
+                                                    <td>{{$record->checkup_date}}</td>
+                                                    <td>{{$record->weight}}</td>
+                                                    <td>{{$record->bp}}</td>
+                                                    <td>{{$record->edema}}</td>
+                                                    <td></td>
+                                                    <td>{{$record->jaundice}}</td>
+                                                    <td>{{$record->uterus_height}}</td>
+                                                    <td>{{$record->baby_position}}</td>
+                                                    <td>{{$record->baby_movement}}</td>
+                                                    <td>{{$record->albumine}}</td>
+                                                    <td>{{$record->sugar}}</td>
+                                                    <td>{{$record->others}}</td>
+                                                    <td>{{$record->comment}}</td>
+                                                    <td></td>
+                                                </tr>
+                                            @endforeach
+                                        @else
+                                            <tr><td colspan="14">No medical record found!</td></tr>
                                         @endif
                                         </tbody>
                                     </table>
@@ -184,10 +189,10 @@
                                <div class="active-mat ">
                                   <div class="mat-container">
                                     <a class="accordion-title d-flex">
-                                        <div class="rounded-div @if($tabs['doctors_clearence']) iq-bg-primary @else iq-bg-danger @endif"><i class="las la-stethoscope f-18"></i></div> 
+                                        <div class="rounded-div @if($tabs['doctors_clearence']) iq-bg-primary @else iq-bg-danger @endif"><i class="las la-notes-medical f-18"></i></div> 
                                         <div class="media-support-info ml-3">
                                           <h6>Doctor Clearence </h6>
-                                          <p id="line" class="mb-0">dddd</p>
+                                          <p id="line" class="mb-0"></p>
                                        </div>
                                     </a>
                                   </div>
@@ -204,10 +209,10 @@
                                <div class="active-mat ">
                                   <div class="mat-container">
                                     <a class="accordion-title d-flex">
-                                        <div class="rounded-div @if($tabs['leave_approval']) iq-bg-primary @else iq-bg-danger @endif"><i class="las la-stethoscope f-18"></i></div> 
+                                        <div class="rounded-div @if($tabs['leave_approval']) iq-bg-primary @else iq-bg-danger @endif"><i class="las la-user-check f-18"></i></div> 
                                         <div class="media-support-info ml-3">
                                           <h6>Leave Approval </h6>
-                                          <p id="line" class="mb-0">dddd</p>
+                                          <p id="line" class="mb-0"></p>
                                        </div>
                                     </a>
                                   </div>
@@ -220,10 +225,10 @@
                                <div class="active-mat ">
                                   <div class="mat-container">
                                     <a class="accordion-title d-flex">
-                                        <div class="rounded-div @if($tabs['reports']) iq-bg-primary @else iq-bg-danger @endif"><i class="las la-stethoscope f-18"></i></div> 
+                                        <div class="rounded-div @if($tabs['reports']) iq-bg-primary @else iq-bg-danger @endif"><i class="las la-file-invoice f-18"></i></div> 
                                         <div class="media-support-info ml-3">
                                           <h6>Reports </h6>
-                                          <p id="line" class="mb-0">dddd</p>
+                                          <p id="line" class="mb-0"></p>
                                        </div>
                                     </a>
                                   </div>
@@ -236,10 +241,10 @@
                                <div class="active-mat ">
                                   <div class="mat-container">
                                     <a class="accordion-title d-flex">
-                                        <div class="rounded-div @if($tabs['verification']) iq-bg-primary @else iq-bg-danger @endif"><i class="las la-stethoscope f-18"></i></div> 
+                                        <div class="rounded-div @if($tabs['verification']) iq-bg-primary @else iq-bg-danger @endif"><i class="las la-money-check-alt f-18"></i></div> 
                                         <div class="media-support-info ml-3">
                                           <h6>Verification </h6>
-                                          <p id="line" class="mb-0">dddd</p>
+                                          <p id="line" class="mb-0"></p>
                                        </div>
                                     </a>
                                   </div>
@@ -252,10 +257,10 @@
                                <div class="active-mat ">
                                   <div class="mat-container">
                                     <a class="accordion-title d-flex">
-                                        <div class="rounded-div @if($tabs['payment']) iq-bg-primary @else iq-bg-danger @endif"><i class="las la-stethoscope f-18"></i></div> 
+                                        <div class="rounded-div @if($tabs['payment']) iq-bg-primary @else iq-bg-danger @endif"><i class="las la-file-invoice-dollar f-18"></i></div> 
                                         <div class="media-support-info ml-3">
                                           <h6>Payment </h6>
-                                          <p id="line" class="mb-0">dddd</p>
+                                          <p id="line" class="mb-0"></p>
                                        </div>
                                     </a>
                                   </div>

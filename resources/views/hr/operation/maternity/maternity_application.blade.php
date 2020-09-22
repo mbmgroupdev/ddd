@@ -31,7 +31,7 @@
             <div class="panel-body">
                 <div class="row">
                     <div class="col-4">
-                        {{Form::open(['url'=>'hr/operation/maternity-leave', 'class'=>'form-horizontal needs-validation', 'novalidate'])}}
+                        {{Form::open(['url'=>'hr/operation/maternity-leave', 'class'=>'form-horizontal needs-validation', 'novalidate', "enctype" => "multipart/form-data"])}}
                             <div class="row">
                                 <div class="col-12">
                                     <div class="form-group has-required has-float-label  select-search-group">
