@@ -7,6 +7,9 @@
     #recruit th:nth-child(2) input{
       width: 120px !important;
     }
+    #recruit th:nth-child(3) input{
+      width: 120px !important;
+    }
     #recruit th:nth-child(4) input{
       width: 120px !important;
     }
@@ -19,9 +22,7 @@
     #recruit th:nth-child(7) input{
       width:80px !important;
     }
-    #recruit th:nth-child(3) input{
-      width: 60px !important;
-    }
+
     #recruit th:nth-child(8) input{
       width: 70px !important;
     }
@@ -63,6 +64,7 @@
                         <th>Area</th>
                         <th>Contact</th>
                         <th>DOJ</th>
+                        <th>NID/Birth</th>
                         <th>Medical</th>
                         <th>IE</th>
                         <th width="10%">Action</th>
@@ -175,6 +177,7 @@
                {data: 'hr_area_name', name: 'hr_area_name'}, 
                {data: 'worker_contact', name: 'worker_contact'}, 
                {data: 'worker_doj', contact: 'worker_doj'},
+               {data: 'worker_nid', contact: 'worker_nid'},
                {data: 'medical_info', contact: 'medical_info'},
                {data: 'ie_info', contact: 'ie_info'},
                {data: 'action', name: 'action', orderable: false, searchable: false}

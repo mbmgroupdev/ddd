@@ -24,6 +24,11 @@ class Area extends Model
     {
     	return DB::table('hr_area')->where('hr_area_status', 1)->get();
     }
+
+    public static function getActiveAreaList()
+    {
+        return DB::table('hr_area')->where('hr_area_status', 1)->pluck('hr_area_name', 'hr_area_id');
+    }
     public function getAreaWiseEmp($unitId, $areaId)
     {
         $where = [

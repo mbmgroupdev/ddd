@@ -59,6 +59,6 @@ class Unit extends Model
     }
     public static function getActiveUnit()
     {
-    	return DB::table('hr_unit')->where('hr_unit_status', 1)->get();
+    	return DB::table('hr_unit')->where('hr_unit_status', 1)->orderBy('hr_unit_name', 'desc')->get();
     }
 }
