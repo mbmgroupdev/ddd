@@ -37,7 +37,7 @@ p.search-title{
     font-weight: 600;
     color: #099faf;
 }
-.iq-accordion.career-style.mat-style .accordion-title:before {
+.iq-accordion.career-style.mat-style .accordion-title:before, .iq-accordion.career-style.faq-style .accordion-title:before {
     position: absolute;
     top: -8px;
     right: 15px;
@@ -49,11 +49,16 @@ p.search-title{
     content: "\003e";
     font-weight: 600;
 }
-.iq-accordion.career-style.mat-style .iq-accordion-block.accordion-active .accordion-title:before {
+.iq-accordion.career-style.mat-style .iq-accordion-block.accordion-active .accordion-title:before, .iq-accordion.career-style.faq-style .iq-accordion-block.accordion-active .accordion-title:before {
     content: "\003e";
     transform: rotate(90deg);
 }
-
+.underline{
+    text-decoration: underline;
+}
+.br-1{
+    border-right:1px solid #ccc;
+}
 .mat-container{
     position: relative;
     cursor: pointer;
@@ -759,6 +764,15 @@ div#choice_2_div {
     font-size: 16px;
 
 }
+.top-nav-btn{
+    position: absolute; right: 36px;
+}
+.top-nav-btn:before{
+    display:none;
+}
+.top-nav-btn a{
+    font-size: 12px;
+}
 #v-pills-tab .nav-link{
     text-align: left;
 }
@@ -1000,7 +1014,6 @@ table.dataTable thead>tr>td.sorting, table.dataTable thead>tr>td.sorting_asc, ta
 }
 .btn i {
     margin: 0 3px;
-    font-size: 15px;
 }
 .block-title{
     font-size: 14px;

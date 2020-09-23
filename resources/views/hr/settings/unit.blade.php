@@ -149,8 +149,8 @@
 		                                    <td>
 		                                        <div class="btn-group">
 		                                            {{-- <a type="button" href="{{ url('hr/setup/unit_update/'.$unit->hr_unit_id) }}" class='btn btn-xs btn-primary' data-toggle="tooltip" title="Edit">Edit </a> --}}
-		                                            <a href="{{ url('hr/setup/unit/'.$unit->hr_unit_id) }}" type="button" class='btn btn-xs btn-danger' data-toggle="tooltip" title="Delete" onclick="return confirm('Are you sure?')">
-		                                            	Trash
+		                                            <a href="{{ url('hr/setup/unit/'.$unit->hr_unit_id) }}" type="button" class='btn btn-sm btn-danger' data-toggle="tooltip" title="Delete" onclick="return confirm('Are you sure?')">
+		                                            	<i class="las la-trash"></i>
 		                                            </a>
 		                                        </div>
 		                                    </td>

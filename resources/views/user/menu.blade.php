@@ -19,9 +19,9 @@
          @endif  
 
          @if(auth()->user()->hasRole('Super Admin'))
-         <li class="@if($segment1 == 'mmr-report') active @endif">
+         {{-- <li class="@if($segment1 == 'mmr-report') active @endif">
             <a href="{{ url('/mmr-report') }}" class="iq-waves-effect"><i class="las la-file"></i><span>MMR Report</span></a>
-         </li> 
+         </li>  --}}
          @endif                   
          {{-- <li>
             <a href="#" class="iq-waves-effect"><i class="las la-user-secret"></i><span>Merchandising </span></a>

@@ -72,6 +72,7 @@
         </div>
         <div class="row">
             <div class="col">
+              @if(!empty($info))
                 <div class="panel">
                     <div class="panel-body">
                         <div id="leave_content_section" class="row">
@@ -79,7 +80,7 @@
                             @include('inc/message')
 
                             <div class="offset-1 col-sm-10 col-xs-12" id="PrintArea" style="padding-top: 20px;">
-                                @if(!empty($info))
+                                
                                 <div id="html-2-pdfwrapper" class="col-sm-12" style="margin:20px auto">
                                     <div class="col-sm-12 text-center page-header" style="margin-bottom: 15px;">
                                         <h3 {{-- style="margin:4px 10px;text-align:center;font-weight:600" --}}>{{ $info->unit }}</h3>
@@ -176,11 +177,12 @@
                                       </tbody>
                                     </table>
                                 </div>
-                                @endif
+                                
                             </div>
                         </div> 
                     </div>
                 </div>
+              @endif
             </div>
         </div>
     </div><!-- /.page-content -->

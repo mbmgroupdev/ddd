@@ -796,7 +796,7 @@ class EmployeeController extends Controller
         $pageHead['current_date']   = date('d-m-Y');
         $pageHead['current_time']   = date('H:i');
         $pageHead['pay_date']       = '';
-        $pageHead['unit_name']      = $getEmployee->unit['hr_unit_name_bn'];
+        $pageHead['unit_name']      = $getEmployee->unit['hr_unit_name_bn']??'';
         $pageHead['for_date']       = 'Jan, '.date('Y').' - '.date('M, Y');
         $pageHead['floor_name']     = ($getEmployee->floor != null?$getEmployee->floor['hr_floor_name_bn']:'');
 
@@ -963,11 +963,11 @@ class EmployeeController extends Controller
                             ->where('year',2019)
                             ->get();
         $getEmployee        = Employee::getEmployeeAssociateIdWise($request->associate_id);
-        $title              = 'Unit : '.$getEmployee->unit['hr_unit_name_bn'].' - Location : '.$getEmployee->location['hr_unit_name_bn'];
+        $title              = 'Unit : '.$getEmployee->unit['hr_unit_name_bn']??''.' - Location : '.$getEmployee->location['hr_unit_name_bn'];
         $pageHead['current_date']   = date('d-m-Y');
         $pageHead['current_time']   = date('H:i');
         $pageHead['pay_date']       = '';
-        $pageHead['unit_name']      = $getEmployee->unit['hr_unit_name_bn'];
+        $pageHead['unit_name']      = $getEmployee->unit['hr_unit_name_bn']??'';
         $pageHead['for_date']       = 'Jan, '.date('Y').' - '.date('M, Y');
         $pageHead['floor_name']     = $getEmployee->floor['hr_floor_name_bn'];
 

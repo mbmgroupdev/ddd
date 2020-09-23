@@ -345,7 +345,7 @@ $(document).ready(function()
             },
             error: function()
             {
-                alert('failed...');
+                console.log('failed...');
             }
         });
     });
@@ -360,7 +360,7 @@ $(document).ready(function()
             },
             error: function()
             {
-                alert('failed...');
+                console.log('failed...');
             }
         });
     });
@@ -376,11 +376,11 @@ $(document).ready(function()
             },
             error: function()
             {
-                alert('failed...');
+                console.log('failed...');
             }
         });
     });
-    line.on("change",function(){
+    /*line.on("change",function(){
         $.ajax({
             url : "{{ url('hr/setup/getShiftListByLineID') }}",
             type: 'get',
@@ -391,10 +391,10 @@ $(document).ready(function()
             },
             error: function()
             {
-                alert('failed...');
+                console.log('failed...');
             }
         });
-    });
+    });*/
 
     //Load Department List By Area ID
     var area       = $("#as_area_id");
@@ -412,7 +412,7 @@ $(document).ready(function()
             },
             error: function()
             {
-                alert('failed...');
+                console.log('failed...');
             }
         });
     });
@@ -436,7 +436,7 @@ $(document).ready(function()
             },
             error: function()
             {
-                alert('failed...');
+                console.log('failed...');
             }
         });
     });
@@ -457,7 +457,7 @@ $(document).ready(function()
             },
             error: function()
             {
-                alert('failed...');
+                console.log('failed...');
             }
         });
     });

@@ -24,25 +24,8 @@
                     <form class="" role="form" id="attendanceReport" method="get" action="#"> 
                         <div class="panel">
                             
-                            <div class="panel-body">
+                            <div class="panel-body pb-0">
                                 <div class="row">
-                                    <div class="col-3">
-                                        <div class="form-group has-float-label has-required select-search-group">
-                                            <?php
-                                                $type = ['Present'=>'Present','Intime-Outtime Empty'=>'Intime-Outtime Empty','Present(Intime Empty)'=>'Present (In Time Empty)','Present(Outtime Empty)'=>'Present (Out Time Empty)','Present (Halfday)'=>'Present (Halfday)','Absent'=>'Absent','Leave'=>'Leave','Present (Late)'=>'Late','Present (Late(Outtime Empty))'=>'Late (Out Time Empty)'];
-                                            ?>
-                                            {{ Form::select('type', $type, 'Absent', ['placeholder'=>'Select Report Type ', 'class'=>'form-control capitalize select-search', 'id'=>'type', 'required'=>'required']) }}
-                                            <label for="type">Report Type</label>
-                                        </div>
-                                        <div class="form-group has-float-label has-required">
-                                          <input type="date" class="report_date datepicker form-control" id="report_from" name="report_from" placeholder="Y-m-d" required="required" value="{{ date('Y-m-d') }}" autocomplete="off" />
-                                          <label for="report_from">Report From</label>
-                                        </div>
-                                        <div class="form-group has-float-label has-required">
-                                          <input type="date" class="report_date datepicker form-control" id="report_to" name="report_to" placeholder="Y-m-d" required="required" value="{{ date('Y-m-d') }}" autocomplete="off" />
-                                          <label for="report_to">Report To</label>
-                                        </div>
-                                      </div>
                                       <div class="col-3">
                                         <div class="form-group has-float-label has-required select-search-group">
                                             <select name="unit" class="form-control capitalize select-search" id="unit" required="">
@@ -62,19 +45,14 @@
                                             </select>
                                             <label for="area">Area</label>
                                         </div>
+                                        
+                                      </div>
+                                      <div class="col-3">
                                         <div class="form-group has-float-label select-search-group">
                                             <select name="department" class="form-control capitalize select-search" id="department" disabled>
                                                 <option selected="" value="">Choose...</option>
                                             </select>
                                             <label for="department">Department</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-3">
-                                        <div class="form-group has-float-label select-search-group">
-                                            <select name="floor_id" class="form-control capitalize select-search" id="floor_id" disabled >
-                                                <option selected="" value="">Choose...</option>
-                                            </select>
-                                            <label for="floor_id">Floor</label>
                                         </div>
                                         <div class="form-group has-float-label select-search-group">
                                             <select name="section" class="form-control capitalize select-search " id="section" disabled>
@@ -88,8 +66,14 @@
                                             </select>
                                             <label for="subSection">Sub Section</label>
                                         </div>
-                                    </div> 
-                                    <div class="col-3">
+                                      </div> 
+                                      <div class="col-3">
+                                        <div class="form-group has-float-label select-search-group">
+                                            <select name="floor_id" class="form-control capitalize select-search" id="floor_id" disabled >
+                                                <option selected="" value="">Choose...</option>
+                                            </select>
+                                            <label for="floor_id">Floor</label>
+                                        </div>
                                         <div class="form-group has-float-label select-search-group">
                                             <select name="line_id" class="form-control capitalize select-search" id="line_id" disabled >
                                                 <option selected="" value="">Choose...</option>
@@ -114,10 +98,40 @@
                                             </div>
                                           </div>
                                         </div>
+                                        
+                                      </div>  
+                                      <div class="col-3">
+                                        <div class="form-group has-float-label has-required select-search-group">
+                                            <?php
+                                                $type = ['Present'=>'Present','Intime-Outtime Empty'=>'Intime-Outtime Empty','Present(Intime Empty)'=>'Present (In Time Empty)','Present(Outtime Empty)'=>'Present (Out Time Empty)','Present (Halfday)'=>'Present (Halfday)','Absent'=>'Absent','Leave'=>'Leave','Present (Late)'=>'Late','Present (Late(Outtime Empty))'=>'Late (Out Time Empty)'];
+                                            ?>
+                                            {{ Form::select('type', $type, 'Absent', ['placeholder'=>'Select Report Type ', 'class'=>'form-control capitalize select-search', 'id'=>'type', 'required'=>'required']) }}
+                                            <label for="type">Report Type</label>
+                                        </div>
+                                        <div id="double-date">
+                                          <div class="row">
+                                            <div class="col pr-0">
+                                                <div class="form-group has-float-label has-required">
+                                                  <input type="date" class="report_date datepicker form-control" id="report_from" name="report_from" placeholder="Y-m-d" required="required" value="{{ date('Y-m-d') }}" autocomplete="off" />
+                                                  <label for="report_from">Report From</label>
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="form-group has-float-label has-required">
+                                                  <input type="date" class="report_date datepicker form-control" id="report_to" name="report_to" placeholder="Y-m-d" required="required" value="{{ date('Y-m-d') }}" autocomplete="off" />
+                                                  <label for="report_to">Report To</label>
+                                                </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                        
+                                        
                                         <div class="form-group">
                                           <button class="btn btn-primary nextBtn btn-lg pull-right" type="submit" id="attendanceReport"><i class="fa fa-save"></i> Generate</button>
                                         </div>
-                                    </div>  
+                                      </div>
+                                      
+                                      
                                 </div>
                                 
                             </div>

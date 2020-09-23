@@ -46,7 +46,7 @@
                 <li>
                     <a href="#">Reports</a>
                 </li>
-                <li class="active"> Monthly Salary</li>
+                <li class="active"> Monthly Salary Report</li>
             </ul>
         </div>
 
@@ -55,10 +55,10 @@
                 <div class="col-12">
                     <form class="" role="form" id="activityReport" method="get" action="#"> 
                         <div class="panel">
-                            <div class="panel-heading">
+                            {{-- <div class="panel-heading">
                                 <h6>Monthly Salary Report</h6>
-                            </div>
-                            <div class="panel-body">
+                            </div> --}}
+                            <div class="panel-body pb-0">
                                 <div class="row">
                                     <div class="col-3">
                                         <div class="form-group has-float-label has-required select-search-group">
@@ -87,12 +87,7 @@
                                         </div>
                                     </div>
                                     <div class="col-3">
-                                        <div class="form-group has-float-label select-search-group">
-                                            <select name="floor_id" class="form-control capitalize select-search" id="floor_id" disabled >
-                                                <option selected="" value="">Choose...</option>
-                                            </select>
-                                            <label for="floor_id">Floor</label>
-                                        </div>
+                                       
                                         <div class="form-group has-float-label select-search-group">
                                             <select name="section" class="form-control capitalize select-search " id="section" disabled>
                                                 <option selected="" value="">Choose...</option>
@@ -105,8 +100,15 @@
                                             </select>
                                             <label for="subSection">Sub Section</label>
                                         </div>
+                                        <div class="form-group has-float-label select-search-group">
+                                            <select name="floor_id" class="form-control capitalize select-search" id="floor_id" disabled >
+                                                <option selected="" value="">Choose...</option>
+                                            </select>
+                                            <label for="floor_id">Floor</label>
+                                        </div>
                                     </div> 
                                     <div class="col-3">
+
                                         <div class="form-group has-float-label select-search-group">
                                             <select name="line_id" class="form-control capitalize select-search" id="line_id" disabled >
                                                 <option selected="" value="">Choose...</option>
@@ -121,9 +123,6 @@
                                             </select>
                                             <label for="otnonot">OT/Non-OT</label>
                                         </div>
-                                        
-                                        <input type="hidden" id="reportformat" name="report_format" value="0">
-                                        <input type="hidden" id="reportGroup" name="report_group" value="as_line_id">
                                         <div class="row">
                                           <div class="col-5 pr-0">
                                             <div class="form-group has-float-label has-required">
@@ -141,6 +140,9 @@
                                             </div>
                                           </div>
                                         </div>
+                                        <input type="hidden" id="reportformat" name="report_format" value="0">
+                                        <input type="hidden" id="reportGroup" name="report_group" value="as_line_id">
+                                        
                                     </div>
                                     <div class="col-3">
                                         
@@ -156,12 +158,12 @@
                                             <label for="estatus">Status</label>
                                         </div>
                                         <div class="form-group">
-                                          <button class="btn btn-primary nextBtn btn-lg pull-right" type="submit" ><i class="fa fa-filter"></i> Filter</button>
+                                          <button class="btn btn-primary nextBtn btn-lg pull-right" type="submit" ><i class="fa fa-save"></i> Generate</button>
                                         </div>
                                         
                                     </div>   
                                 </div>
-                                
+                               
                             </div>
                         </div>
                         <div class="single-employee-search" id="single-employee-search" style="display: none;">

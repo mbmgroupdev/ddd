@@ -21,6 +21,9 @@ class WarningNoticeController extends Controller
     		if($input['associate'] != null && $input['month_year'] != null){
     			$info = Employee::getEmployeeAssociateIdWise($input['associate']);
     			$notice = WarningNotice::getEmployeeMonthWiseNotice($input);
+                $getUnit = unit_by_id();
+                $unitAddress = $getUnit[$info->as_unit_id]['hr_unit_address_bn']??'';
+                
     			$firstManagerBan = '';
     			$secondManagerBan = '';
     			if($notice != null){
@@ -28,8 +31,10 @@ class WarningNoticeController extends Controller
     				$secondManagerBan = $notice->second_manager != null?$this->employeeBanglaName($notice->second_manager):'';
     			}
     			// return $firstManagerBan;
-    		}
-    		return view('hr.operation.warning_notice.index', compact('info', 'notice', 'firstManagerBan', 'secondManagerBan'));
+    		    return view('hr.operation.warning_notice.index', compact('info', 'notice', 'firstManagerBan', 'secondManagerBan', 'unitAddress'));
+    		}else{
+                return back();
+            }
     	} catch (\Exception $e) {
     		$bug = $e->getMessage();
     		return back();

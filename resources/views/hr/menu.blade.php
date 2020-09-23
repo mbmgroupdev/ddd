@@ -278,13 +278,18 @@
       <li class="@if($segment2 == 'reports') active @endif">
          <a href="#report" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="las la-file-invoice"></i><span>Reports</span><i class="las la-angle-right iq-arrow-right"></i></a>
          <ul id="report" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+            @if(auth()->user()->hasRole('Super Admin'))
+            <li class="@if($segment1 == 'mmr-report') active @endif">
+               <a href="{{ url('/mmr-report') }}" class="iq-waves-effect"><i class="las la-file"></i><span>MMR Report</span></a>
+            </li> 
+            @endif 
             @if($user->can('Attendance Summary Report') || $user->hasRole('Super Admin'))
                   <li class="@if($segment3 == 'attendance_summary_report') active @endif"><a href="{{ url('hr/reports/attendance_summary_report') }}"><i class="las la-fingerprint"></i>Attendance Summary</a></li>
             @endif
             
             <li class="@if($segment3 == 'daily-attendance-activity') active @endif"><a href="{{ url('hr/reports/daily-attendance-activity') }}"><i class="las la-fingerprint"></i>Daily Attendance</a></li>
             @if($user->can('Attendance Consecutive Report') || $user->hasRole('Super Admin'))
-            <li class="@if($segment3 == 'absent_present_list') active @endif"><a href="{{ url('hr/reports/attendance-consecutive') }}"><i class="las la-fingerprint"></i>Attendance Consecutive</a></li>
+            <li class="@if($segment3 == 'attendance-consecutive') active @endif"><a href="{{ url('hr/reports/attendance-consecutive') }}"><i class="las la-fingerprint"></i>Attendance Consecutive</a></li>
             <li class="@if($segment3 == 'warning-notices') active @endif"><a href="{{ url('hr/reports/warning-notices') }}"><i class="las la-fingerprint"></i>Warning Notices</a></li>
             @endif
 
@@ -297,7 +302,7 @@
                <li class="@if($segment3 == 'shift_roaster') active @endif">
                   <a href="{{ url('hr/reports/shift_roaster') }}"><i class="las la-fingerprint"></i>Shift Roster Summary</a>
                </li>
-               <li class="@if($segment3 == 'roaster_view') active @endif">
+               <li class="@if($segment3 == 'holiday-roster') active @endif">
                   <a href="{{ url('hr/reports/holiday-roster') }}"><i class="las la-fingerprint"></i>Holiday Roster</a>
                </li>
             @endif

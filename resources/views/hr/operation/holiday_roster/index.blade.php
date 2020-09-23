@@ -28,14 +28,20 @@
                     <a href="#"> Operation </a>
                 </li>
                 <li class="active"> Holiday Roster Assign </li>
+                <li class="top-nav-btn">
+                    <a href="{{ url('hr/timeattendance/shift_roaster')}}" target="_blank" class="btn btn-warning btn-sm pull-right"> <i class="fa fa-eye"></i> Shift Roster</a>
+                </li>
+                <li class="top-nav-btn">
+                    <a href="{{ url('/hr/shift_roaster/roaster_view')}}" target="_blank" class="btn btn-primary btn-sm pull-right"> <i class="fa fa-eye"></i> View Holiday Roster</a>
+                </li>
             </ul><!-- /.breadcrumb -->
         </div>
 
         <div class="panel panel-info">
-            <div class="panel-heading">
+            {{-- <div class="panel-heading">
                 <h6>Holiday Roster Assign <a href="{{ url('hr/timeattendance/shift_roaster')}}" target="_blank" class="btn btn-warning btn-sm pull-right"> <i class="fa fa-eye"></i> Shift Roster</a> &nbsp; <a href="{{ url('/hr/shift_roaster/roaster_view')}}" target="_blank" class="btn btn-primary btn-sm pull-right"> <i class="fa fa-eye"></i> View Holiday Roster</a></h6>
-            </div>
-            <div class="panel-body">
+            </div> --}}
+            <div class="panel-body pb-0">
                 @include('inc/message')
                 <div class="row">
                     <div class="col-12">
@@ -55,10 +61,8 @@
                                 </div>
                             </div>
                             <div class="col-sm-3">
-                                <div class="form-group has-float-label select-search-group">
-                                    {{ Form::select('emp_type', $employeeTypes, null, ['placeholder'=>'Select Employee Type', 'class'=> 'form-control']) }} 
-                                    <label  for="emp_type">Employee Type </label>
-                                </div>
+                                
+                                
                                 <div class="form-group has-float-label select-search-group">
                                     {{ Form::select('section', [], null, ['placeholder'=>'Select Section','id'=>'section_shift', 'class'=> 'form-control','disabled']) }} 
                                     <label  for="section">Section </label>
@@ -66,16 +70,6 @@
                                 <div class="form-group has-float-label select-search-group">
                                     {{ Form::select('subsection', [], null, ['placeholder'=>'Select Sub Section','id'=>'subsection_shift', 'class'=> 'form-control', 'disabled']) }}
                                     <label  for="subsection">Sub Section </label>
-                                </div>
-                            </div>
-                            <div class="col-sm-3"> 
-                                <div class="form-group has-float-label select-search-group">
-                                    <select name="otnonot" id="otnonot" class="form-control">
-                                        <option value="">Select OT/Non-OT</option>
-                                        <option value="0">Non-OT</option>
-                                        <option value="1">OT</option>
-                                    </select>
-                                    <label  for="otnonot">OT/Non-OT </label>
                                 </div>
                                 <div class="form-group has-float-label select-search-group">
                                     <select class="form-control" id="emp_status" name="emp_status">
@@ -85,6 +79,21 @@
                                     </select> 
                                     <label  for="emp_status" style="color: maroon;">Employee Status </label>
                                 </div>
+                            </div>
+                            <div class="col-sm-3"> 
+                                <div class="form-group has-float-label select-search-group">
+                                    {{ Form::select('emp_type', $employeeTypes, null, ['placeholder'=>'Select Employee Type', 'class'=> 'form-control']) }} 
+                                    <label  for="emp_type">Employee Type </label>
+                                </div>
+                                <div class="form-group has-float-label select-search-group">
+                                    <select name="otnonot" id="otnonot" class="form-control">
+                                        <option value="">Select OT/Non-OT</option>
+                                        <option value="0">Non-OT</option>
+                                        <option value="1">OT</option>
+                                    </select>
+                                    <label  for="otnonot">OT/Non-OT </label>
+                                </div>
+                                
                                 <div class="form-group has-float-label select-search-group">
                                     <select class="form-control" id="dayType" name="searchtype">
                                         <option value="">Select Type</option>
