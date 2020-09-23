@@ -52,6 +52,14 @@
                                      <td class="field-data">: {{ $employee->associate_id }}</td>
                                  </tr>
                                  <tr>
+                                     <td><i class="field-title">Date of Join</i></td>
+                                     <td class="field-data">: {{ $employee->as_doj->format('Y-m-d') }}</td>
+                                 </tr>
+                                 <tr>
+                                     <td><i class="field-title">Age</i></td>
+                                     <td class="field-data">: {{ $employee->as_dob->age }} Years</td>
+                                 </tr>
+                                 <tr>
                                      <td><i class="field-title">Husband Name</i></td>
                                      <td class="field-data">: {{ $leave->husband_name }}</td>
                                  </tr>
@@ -68,10 +76,22 @@
                                      <td><i class="field-title">Last Child Age</i> <span class="field-data">: {{ $leave->last_child_age }} </span></td>
                                  </tr>
                              </table>
-                             <br>
+                             
+                             <p>
+                                <i class="las la-file-prescription f-18 text-success" ></i> 
+                                <a href="{{ asset($leave->usg_report) }}" style="    vertical-align: text-bottom;">view USG report</a>
+                             </p>
+
                              @if($leave->medical)
                                 @if(count($leave->medical->record) > 0)
-                                    <a href="{{url('hr/operation/maternity-leave/doctors-clearence/'.$leave->id)}}" class="btn btn-primary w-100">Doctors Clearence</a>
+                                    <a href="{{url('hr/operation/maternity-leave/doctors-clearence/'.$leave->id)}}" class="btn btn-primary w-100">
+                                        @if($leave->doctors_clearence)
+                                            View
+                                        @else
+                                            Doctors
+                                        @endif
+                                        Clearence
+                                    </a>
                                 @endif
                              @endif
                         </div>
@@ -80,7 +100,7 @@
                         <div id="accordion" class="accordion-style panel-group">
                             
                             <a class="accordion-toggle mb-3 d-block @if($leave->medical) collapsed @endif" data-toggle="collapse" data-parent="#accordion" href="#basic-service">
-                                <span class="header-title"> Basic Checkup 
+                                <span class="header-title"> Initial Checkup 
                                     @if($leave->medical)<i class="las la-check-circle f-18 text-success"></i> @endif
                                 </span>  
                             </a>
@@ -245,9 +265,11 @@
                                                   </div>
                                                </div>
                                             </div>
+                                            @if($leave->doctors_clearence != 1)
                                             <div class="form-group ">
-                                                <button type="submit" class="btn btn-primary pull-right w-80">@if($leave->medical) Update @else Save @endif</button>
+                                                <button type="submit" class="btn btn-primary ">@if($leave->medical) Update @else Proceed to routine checkup @endif</button>
                                             </div>
+                                            @endif
                                         </div>
                                         <div class="col-sm-12"><hr></div>
                                     </div>
@@ -343,9 +365,11 @@
                                                             <textarea id="comments_{{$record->id}}" type="comments" name="comments" class="form-control"  placeholder="Enter doctor comments"></textarea> 
                                                             <label for="comments">Comments</label>
                                                         </div>
+                                                        @if($leave->doctors_clearence != 1)
                                                         <div class="form-group">
                                                             <button type="submit" class="btn btn-primary pull-right w-80">Update</button>
                                                         </div>
+                                                        @endif
                                                     </div>
                                                 </div>
                                             </form>
@@ -374,7 +398,7 @@
                                         <div class="row mt-3">
                                             <div class="col-sm-4">
                                                 <div class="form-group  has-float-label has-required">
-                                                    <input type="date" id="checkup_date" type="checkup_date" name="checkup_date" class="form-control"  value="{{$next_checkup}}" required> 
+                                                    <input type="date" id="checkup_date" type="checkup_date" name="checkup_date" class="form-control" min="{{date('Y-m-d')}}"   value="{{$next_checkup}}" required> 
                                                     <label for="checkup_date">Checkup Date</label>
                                                 </div>
                                                 <div class="form-group  has-float-label has-required">
@@ -430,16 +454,18 @@
                                                     <label for="others">Others</label>
                                                 </div>
                                                 <div class="form-group  has-float-label">
-                                                    <input type="date" id="next_checkup_date" type="next_checkup_date" name="next_checkup_date" class="form-control"  value="" >
+                                                    <input type="date" id="next_checkup_date" type="next_checkup_date" name="next_checkup_date" class="form-control" min="{{date('Y-m-d')}}"  value="{{\Carbon\Carbon::create($next_checkup)->addMonths(3)->format('Y-m-d')}}" >
                                                     <label for="next_checkup_date">Next Checkup</label>
                                                 </div>
                                                 <div class="form-group  has-float-label ">
                                                     <textarea id="comments" type="comments" name="comments" class="form-control"  placeholder="Enter doctor comments"></textarea> 
                                                     <label for="comments">Comments</label>
                                                 </div>
+                                                @if($leave->doctors_clearence != 1)
                                                 <div class="form-group">
                                                     <button type="submit" class="btn btn-primary pull-right w-80">Save</button>
                                                 </div>
+                                                @endif
                                             </div>
                                         </div>
                                     </form>
@@ -466,6 +492,12 @@
                 $('#'+id).hide();
             }
         }
+
+        $(document).on('change', '#checkup_date', function(){
+            var d = new Date($(this).val());
+            d.setMonth(d.getMonth() + 3);
+            $('#next_checkup_date').val(JSON.stringify(new Date(d)).slice(1,11));
+        });
     </script>
 @endpush
 @endsection

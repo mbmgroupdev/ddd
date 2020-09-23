@@ -736,7 +736,6 @@
                   data: data, // serializes the form's elements.
                   success: function(response)
                   {
-                     console.log(response);
                      $.notify(response.message, {
                         type: response.type,
                         allow_dismiss: true,

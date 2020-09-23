@@ -1014,5 +1014,10 @@ table.dataTable thead>tr>td.sorting, table.dataTable thead>tr>td.sorting_asc, ta
 }
 .btn i {
     margin: 0 3px;
-    /*font-size: 14px;*/
+}
+.block-title{
+    font-size: 14px;
+    border-left: 3px solid #099dae;
+    padding-left: 10px;
+    font-weight: bold;
 }

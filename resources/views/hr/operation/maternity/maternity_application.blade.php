@@ -16,18 +16,16 @@
                     <a href="#"> Maternity Leave </a>
                 </li>
                 <li class="active">Application </li>
+                <li class="top-nav-btn">
+                    <a href="{{url('hr/operation/maternity-leave/list')}}" target="_blank" class="btn btn-sm btn-primary pull-right" >List <i class="fa fa-list bigger-120"></i></a>
+                </li>
             </ul>
         </div>
 
         
         @include('inc/message')
         <div class="panel panel-success" style="">
-            <div class="panel-heading page-headline-bar">
-                <h6>
-                    Maternity Leave Application
-                    <a href="{{url('hr/operation/maternity-leave/list')}}" target="_blank" class="btn btn-primary pull-right" >List <i class="fa fa-list bigger-120"></i></a>
-                </h6>
-            </div>
+            
             <div class="panel-body">
                 <div class="row">
                     <div class="col-4">
@@ -63,6 +61,7 @@
                                         <label for="no_of_daughter">Daughter</label>
                                     </div>
                                 </div>
+                                
                                 <div class="col-sm-6">
                                     <div class="form-group has-required has-float-label ">
                                         <input id="last_child_age" type="text" name="last_child_age" class="form-control" required placeholder="Enter no of daughter" value="0">
@@ -103,7 +102,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-12">
-                                    <button type="submit" class="btn btn-primary" >Save</button>
+                                    <button type="submit" class="btn btn-primary" >Proceed to Checkup!</button>
                                 </div>
                             </div>
                             

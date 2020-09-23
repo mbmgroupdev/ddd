@@ -16,17 +16,14 @@
                     <a href="#"> Maternity Leave </a>
                 </li>
                 <li class="active">Doctor's Clearence </li>
+                <li class="top-nav-btn">
+                    <a href="{{url('hr/operation/maternity-leave/list')}}" target="_blank" class="btn btn-primary pull-right" >List <i class="fa fa-list bigger-120"></i></a>
+                </li>
             </ul>
         </div>
 
         @include('inc/message')
         <div class="panel panel-success" style="">
-            <div class="panel-heading page-headline-bar">
-                <h6>
-                    Doctor's Clearence
-                    <a href="{{url('hr/operation/maternity-leave/list')}}" target="_blank" class="btn btn-primary pull-right" >List <i class="fa fa-list bigger-120"></i></a>
-                </h6>
-            </div>
             <div class="panel-body">
                 <div class="row">
                     
@@ -71,7 +68,7 @@
                         </div>
                     </div>
                     <div class="col-sm-9">
-                        <h3 class="border-left-heading"> Doctor's Acceptance </h3>
+                        <h3 class="border-left-heading"> Doctor's Clearence </h3>
                         @if($leave->doctors_clearence)
                             @include('hr.operation.maternity.doctor_leave_suggestion')
                         @else
@@ -81,14 +78,14 @@
                                 <div class="row">
                                     <div class="col-sm-3">
                                         <div class="form-group has-required has-float-label">
-                                            <input id="edd" type="date" name="edd" class="form-control" required>
-                                            <label for="edd">Confirm EDD</label>
+                                            <input id="edd" type="date" name="edd" class="form-control" required min="{{date('Y-m-d')}}" value="{{$leave->medical->edd}}">
+                                            <label for="edd" >Confirm EDD</label>
                                         </div>
                                         
                                     </div>
                                     <div class="col-sm-3">
                                         <div class="form-group has-required has-float-label">
-                                            <input id="leave_from_suggestion" type="date" name="leave_from_suggestion" class="form-control" required>
+                                            <input id="leave_from_suggestion" type="date" name="leave_from_suggestion" class="form-control" required min="{{date('Y-m-d')}}" value="{{\Carbon\Carbon::create($leave->medical->edd)->subMonths(2)->format('Y-m-d')}}">
                                             <label for="leave_from_suggestion">Leave From</label>
                                         </div>
                                         

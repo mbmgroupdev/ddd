@@ -11,7 +11,7 @@ class MaternityLeave extends Model
     protected $guarded = [];
 
     protected $dates = [
-        'created_at', 'updated_at'
+        'created_at', 'updated_at','leave_from','leave_to'
     ];
 
 

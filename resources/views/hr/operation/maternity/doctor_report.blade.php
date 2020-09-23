@@ -8,7 +8,7 @@
 	        	আইডি নং<span style="border-bottom: 1px dotted #d1d1d1;display:inline-block;min-width:80px;font-weight:bold;text-align:center;">{{$employee->associate_id}}</span> &nbsp;
 	        	নাম<span style="border-bottom: 1px dotted #d1d1d1;display:inline-block;min-width:150px;font-weight:bold;text-align:center;">{{$employee->as_name}}</span>
 	        	পদবী<span style="border-bottom: 1px dotted #d1d1d1;display:inline-block;min-width:100px;font-weight:bold;text-align:center;">{{$employee->hr_designation_name}}</span> &nbsp;
-	        	বয়স<span style="border-bottom: 1px dotted #d1d1d1;display:inline-block;min-width:60px;font-weight:bold;text-align:center;">২৫</span> <br>
+	        	বয়স<span style="border-bottom: 1px dotted #d1d1d1;display:inline-block;min-width:60px;font-weight:bold;text-align:center;">{{$employee->as_dob->age}}</span> <br>
 	        	
 	        	স্বামীর নামঃ<span style="border-bottom: 1px dotted #d1d1d1;display:inline-block;min-width:100px;font-weight:bold;text-align:center;">{{$leave->husband_name}}</span>
 	        	স্বামীর বয়স<span style="border-bottom: 1px dotted #d1d1d1;display:inline-block;min-width:60px;font-weight:bold;text-align:center;">{{$leave->husband_age}}</span> &nbsp;
