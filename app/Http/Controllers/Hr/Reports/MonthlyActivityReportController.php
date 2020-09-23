@@ -61,6 +61,10 @@ class MonthlyActivityReportController extends Controller
             // employee basic sql binding
             $employeeData = DB::table('hr_as_basic_info');
             $employeeData_sql = $employeeData->toSql();
+            // employee basic sql binding
+            $designationData = DB::table('hr_designation');
+            $designationData_sql = $designationData->toSql();
+
             $getEmployee = array();
             $format = $request['report_group'];
             $uniqueGroups = ['all'];
@@ -100,14 +104,18 @@ class MonthlyActivityReportController extends Controller
             $queryData->leftjoin(DB::raw('(' . $employeeData_sql. ') AS emp'), function($join) use ($employeeData) {
                 $join->on('emp.associate_id','s.as_id')->addBinding($employeeData->getBindings());
             });
+            $queryData->leftjoin(DB::raw('(' . $designationData_sql. ') AS deg'), function($join) use ($designationData) {
+                $join->on('deg.hr_designation_id','emp.as_designation_id')->addBinding($designationData->getBindings());
+            });
             if($input['report_format'] == 1 && $input['report_group'] != null){
-                $queryData->select('emp.'.$input['report_group'], DB::raw('count(*) as total'), DB::raw('sum(total_payable) as groupSalary'))->groupBy('emp.'.$input['report_group']);
+                $queryData->select('deg.hr_designation_position','deg.hr_designation_name','emp.'.$input['report_group'], DB::raw('count(*) as total'), DB::raw('sum(total_payable) as groupSalary'))->groupBy('emp.'.$input['report_group']);
 
             }else{
-                $queryData->select('emp.as_id','emp.as_gender', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_section_id', 's.present', 's.absent', 's.ot_hour', 's.total_payable');
+                $queryData->select('deg.hr_designation_position','deg.hr_designation_name','emp.as_id','emp.as_gender', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_section_id', 's.present', 's.absent', 's.ot_hour', 's.total_payable');
                 $totalSalary = round($queryData->sum("s.total_payable"));
             }
-            $getEmployee = $queryData->get();
+            $getEmployee = $queryData->orderBy('deg.hr_designation_position', 'asc')->get();
+            // dd($getEmployee);
             if($input['report_format'] == 1 && $input['report_group'] != null){
                 $totalSalary = round(array_sum(array_column($getEmployee->toArray(),'groupSalary')));
                 $totalEmployees = array_sum(array_column($getEmployee->toArray(),'total'));
@@ -172,16 +180,17 @@ class MonthlyActivityReportController extends Controller
     public function empSalaryModal(Request $request)
     {
         $input = $request->all();
+        // return $input;
         try {
             $data['as_id'] = $input['as_id'];
             $data['month'] = date('m', strtotime($input['year_month']));
             $data['year'] = date('Y', strtotime($input['year_month']));
             $salary = HrMonthlySalary::getEmployeeSalaryWithMonthWise($data);
-
+            // dd($salary);
             return view('hr.reports.monthly_activity.salary.employee-single-salary', compact('salary'));
         } catch (\Exception $e) {
             $bug = $e->getMessage();
-            // return $bug;
+            return $bug;
             return 'error';
         }
     }

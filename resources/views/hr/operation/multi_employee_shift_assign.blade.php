@@ -8,7 +8,10 @@
 		    transform: scale(1.5);
 		}
         .form-group { margin-bottom: 25px;}
-
+        .sticky-th {
+            padding-top: 0px !important;
+            padding-bottom: 0px !important;
+        }
     </style>
 @endpush
 <div class="main-content">
@@ -100,11 +103,11 @@
                     <div class="col-6">
                         <div class="panel-body">
                             <div class="row">
-                                <div class="col-sm-6 text-center" style="background-color: lightcoral; color: #fff;">
-                                    <p style="padding-top: 8px;">Selected Employee: <span id="selectEmp" style="font-weight: bold;"></span></p>
+                                <div class="col-sm-6" style="background-color: #CEEBEE;color: #3f3f3f;font-weight: bold;border-radius: 3px;">
+                                    <p style="padding-top: 2px;">Selected Employee: <span id="selectEmp" style="font-weight: bold;"></span></p>
                                 </div>
-                                <div class="col-sm-6 text-center" style="background-color: #87B87F; color: #fff;">
-                                    <p style="padding-top: 8px;">Total Employee: <span id="totalEmp" style="font-weight: bold;"></span></p>
+                                <div class="col-sm-6" style="background-color: #225f9f;color: #fff;border-radius: 3px;">
+                                    <p style="padding-top: 2px;">Total Employee: <span id="totalEmp" style="font-weight: bold;"></span></p>
                                 </div>
                             </div>
                             <div class="row" style="height: 400px; overflow: auto;">

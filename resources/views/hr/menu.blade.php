@@ -234,7 +234,7 @@
             @endif
             @if($user->canany(['Salary Generate - HR','Salary Audit - Audit','Salary Verify - Accounts','Salary Confirmation - Management','Salary Sheet']) || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'salary-sheet') active @endif">
-               <a href="{{ url('hr/operation/salary-sheet') }}"><i class="las la-file-invoice-dollar"></i>Salary Disbursed</a>
+               <a href="{{ url('hr/operation/salary-sheet') }}"><i class="las la-file-invoice-dollar"></i>Salary Disburse</a>
             </li>
             @endif
             {{-- @if($user->can('Payslip') || $user->hasRole('Super Admin'))

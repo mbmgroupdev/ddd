@@ -249,10 +249,6 @@
                                                     <span style="text-align: right;width: 30%; float: right;  white-space: wrap;"><font style="color:hotpink">{{ ($list['salary']['add_deduct'] == null) ? Custom::engToBnConvert('0.00') : Custom::engToBnConvert($list['salary']['add_deduct']['advp_deduct']) }} </font>
                                                     </span>
 
-
-
-                                                  {{--   অগ্রিম গ্রহণ বাবদ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:hotpink">= {{ ($list->add_deduct == null) ? '0.00' : $list->add_deduct->advp_deduct }} </font> --}}
-
                                                 </p>
                                                 <p style="margin:0;padding:0">
 
@@ -290,15 +286,6 @@
                                                     </span>
                                                     <span style="text-align: right;width: 30%; float: right;  white-space: wrap;"><font style="color:hotpink">{{ ($list['salary']['add_deduct'] == null) ? Custom::engToBnConvert('0.00') : Custom::engToBnConvert($list['salary']['add_deduct']['others_deduct']) }} </font>
                                                     </span>
-
-                                             {{--        ভোগ্যপণ্য ক্রয় &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:hotpink">= {{ ($list->add_deduct == null) ? '0.00' : isset($list->add_deduct['cg_product'])?$list->add_deduct['cg_product']:'' }}</font>
-                                                </p>
-                                                <p style="margin:0;padding:0">
-                                                    খাবার বাবদ কর্তন &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:hotpink">= {{ ($list->add_deduct == null) ? '0.00' : $list->add_deduct->food_deduct }} </font>
-                                                </p>
-                                                <p style="margin:0;padding:0">
-                                                    অন্যান্য &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font style="color:hotpink">= {{ ($list->add_deduct == null) ? '0.00' : $list->add_deduct->others_deduct }} </font> --}}
-
                                                 </p>
                                             </td>
 

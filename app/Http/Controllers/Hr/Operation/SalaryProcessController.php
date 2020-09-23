@@ -207,7 +207,7 @@ class SalaryProcessController extends Controller
             });
                 
             $getSalaryList = $queryData->select('s.*', 'emp.as_doj', 'emp.as_ot', 'emp.as_designation_id', 'emp.as_location', 'bemp.hr_bn_associate_name')->get();
-
+            // dd($getSalaryList);
             $employeeAssociates = $queryData->select('emp.associate_id')->pluck('emp.associate_id')->toArray();
             // salary adjust
             $salaryAddDeduct = DB::table('hr_salary_add_deduct')

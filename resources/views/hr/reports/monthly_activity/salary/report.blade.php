@@ -211,7 +211,7 @@
 			            @if(count($getEmployee) > 0)
 			            @foreach($getEmployee as $employee)
 			            	@php
-			            		$designationName = $designation[$employee->as_designation_id]['hr_designation_name']??'';
+			            		$designationName = $employee->hr_designation_name??'';
 			            		$otHourEx = explode('.', $employee->ot_hour);
 		                        $minute = '00';
 		                        if(isset($otHourEx[1])){
@@ -239,7 +239,7 @@
 				            	<td><b>{{ $otHour }}</b></td>
 				            	<td>{{ number_format($employee->total_payable, 2, '.', ',') }}</td>
 				            	<td>
-				            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Yearly Activity Report' ><i class="fa fa-eye"></i></button>
+				            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-yearmonth="{{ $input['month'] }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Yearly Activity Report' ><i class="fa fa-eye"></i></button>
 				            	</td>
 			            	</tr>
 			            	@else
