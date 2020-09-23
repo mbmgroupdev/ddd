@@ -13,17 +13,14 @@
                     <a href="#">Operation</a>
                 </li>
                 <li class="active">Outside Entry</li>
+                <li class="top-nav-btn">
+                    <a class="pull-right btn btn-sm btn-primary" href="{{url('hr/operation/location_change/list')}}"><i class="fa fa-list"></i> Outside List</a>
+                </li>
             </ul><!-- /.breadcrumb --> 
         </div>
         @include('inc/message')
         <div class="panel panel-info">
-            <div class="panel-heading station-card-content">
-                <h6 class="panel-title">
-                        Outside Entry
-
-                        <a class="pull-right btn btn-primary" href="{{url('hr/operation/location_change/list')}}">Outside List</a>
-                </h6>
-            </div>
+            {{--  --}}
             <div class="panel-body">
                 {{ Form::open(['url'=>'hr/operation/location_change/entry', 'class'=>'form-horizontal', 'method'=>'POST']) }}
                     <div class="row"> 

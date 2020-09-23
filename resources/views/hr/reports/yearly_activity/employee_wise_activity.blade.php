@@ -22,7 +22,7 @@
         <li>
           <a href="#">Reports</a>
         </li>
-        <li class="active"> Yearly Employee Activity</li>
+        <li class="active"> Yearly Employee Activity Report</li>
       </ul><!-- /.breadcrumb -->
     </div>
 
@@ -31,9 +31,9 @@
             <div class="col">
                 <form class="widget-container-col" role="form" id="activityReport" method="get" action="#">
                     <div class="panel">
-                        <div class="panel-heading">
+                        {{-- <div class="panel-heading">
                             <h6>Yearly Employee Activity Report</h6>
-                        </div>
+                        </div> --}}
                         <div class="panel-body">
                             <div class="row">
                                 <div class="col-4">

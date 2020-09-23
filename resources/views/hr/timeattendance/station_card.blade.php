@@ -14,6 +14,12 @@
     .panel-group { margin-bottom: 5px;}
     h3.smaller {font-size: 13px;}
     .header {margin-top: 0;}
+    .select2-selection--multiple{
+         max-height: 50px; overflow: auto;
+    }
+    .separator {
+        width: 63% !important;
+    }
 </style>
 @endpush
 <div class="main-content">
@@ -28,71 +34,74 @@
                     <a href="#">Operation</a>
                 </li>
                 <li class="active">Line Change</li>
+                <li class="top-nav-btn">
+                    <a class="btn btn-primary btn-sm pull-right" href="{{ url('hr/reports/line-changes') }}"><i class="fa fa-list"></i> List Of Line Change</a>
+                </li>
             </ul><!-- /.breadcrumb --> 
         </div>
 
         @include('inc/message')
         <div id="accordion" class="accordion-style panel-group">
             <div class="panel panel-info">
-                <div class="panel-heading station-card-content">
-                    {{-- <h6 class="panel-title">
-
-                        <a class="accordion-toggle collasped" data-toggle="collapse" data-parent="#accordion" href="#multi-search" aria-expanded="false">
-                            <i class="ace-icon fa fa-angle-right bigger-110" data-icon-hide="ace-icon fa fa-angle-down" data-icon-show="ace-icon fa fa-angle-right"></i>
-                            &nbsp;Multiple Employee 
-                        </a>
-                    </h6> --}}
-                    <h6>
-                        Employee Line Change
-                        <a class="btn btn-primary pull-right" href="{{ url('hr/reports/line-changes') }}"><i class="fa fa-list"></i> List Of Line Change</a>
-                    </h6>
-                </div>
-
                 <div class="panel-collapse collapse in show" id="multi-search">
                     <div class="panel-body">
                         {{ Form::open(['url'=>'hr/operation/line-change-multiple', 'class'=>'form-horizontal', 'method'=>'POST']) }}
                             <div class="row">
-                                <div class="col-sm-3">
+                                <div class="col">
                                     <div class="form-group has-required has-float-label select-search-group">
                                         {{ Form::select('unit', $unitList, null, ['placeholder'=>'Select Unit', 'id'=>'unit', 'required'=>'required','class'=>'multiple_unit']) }}
                                         <label for="unit"> Unit </label>
-                                    </div>   
-                                    <div class="form-group">
-                                        <label for="associate_id"> Associate's ID </label>
+                                    </div> 
+                                </div>
+                                <div class="col">  
+                                    <div class="form-group has-float-label select-search-group">
                                         <select id="multiple_associate_id" class="form-control" name="multiple_associate_id[]" multiple="multiple" placeholder="Select employee's" style="height: auto;">
-                                            
                                         </select>
+                                        <label for="multiple_associate_id"> Associate's ID </label>
                                     </div> 
                                     
                                     
                                 </div>
                                 
-                                <div class="col-sm-3">
+                                <div class="col">
                                     <div class="form-group has-required has-float-label select-search-group">
                                         {{Form::select('floor_id_multiple', [], null, ['id'=> 'floor_id_multiple', 'placeholder' => "Select Floor", 'class'=> "no-select form-control", 'required'=>'required'])}}
                                         <label for="floor_id_multiple">Changed Floor </label>
-                                    </div>      
+                                    </div> 
+                                </div>
+                                <div class="col">     
                                     <div class="form-group has-required has-float-label select-search-group">
                                         {{Form::select('line_id_multiple', [], null, ['id'=> 'line_id_multiple', 'placeholder' => "Select Line", 'class'=> "no-select form-control ", 'required'=>'required'])}}
                                         <label for="line_id_multiple">Changed Line </label>
                                     </div>     
-
+                                </div>
+                                <div class="col">
                                     <div class="form-group has-required has-float-label">
                                         <input type="datetime-local" name="start_date_multiple" id="start_date_multiple" class="datetimepicker form-control " required="required" value="{{ date('Y-m-d') }}T{{ date('H:i')}}">
                                         <label for="start_date_multiple">Start Date </label>
                                     </div> 
-
+                                </div>
+                                <div class="col">
                                     <div class="form-group has-float-label">
                                         <input type="datetime-local" name="end_date_multiple" id="end_date_multiple"  class="datetimepicker form-control" placeholder="End Date" >
                                         <label for="end_date_multiple">End Date </label>
                                     </div> 
-                                    <div class="form-group">
-                                        <button class="btn btn-primary" type="submit">
-                                            <i class="ace-icon fa fa-check bigger-110"></i> Submit
-                                        </button>
+                                </div>
+                                
+                            </div>
+                            <div class="row">
+                                <div class="offset-10 col-2">
+                                    <div class="">
+                                        <div class="form-group">
+                                            <button class="btn btn-primary pull-right" type="submit">
+                                                <i class="ace-icon fa fa-check bigger-110"></i> Submit
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-sm-6">
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
                                     <div class="multiple_station_info row ">
                                         
                                     </div>

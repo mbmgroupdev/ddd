@@ -192,6 +192,7 @@ class StationController extends Controller
 
     		$data=Employee::where('as_unit_id',$request->unit_id)
     							->select('as_name', 'associate_id', 'as_pic')
+                                ->where('as_ot', 1)
     							->get()
     							->toArray();
     		// dd($data);exit;

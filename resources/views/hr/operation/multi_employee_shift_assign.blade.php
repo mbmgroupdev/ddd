@@ -46,23 +46,25 @@
                                 </div>
                              </div>
                             <div class="col-3">
-                                <div class="form-group has-float-label select-search-group">
-                                    {{ Form::select('emp_type', $employeeTypes, null, ['placeholder'=>'Select Employee Type', 'class'=> 'form-control filter']) }} 
-                                    <label  for="emp_type">Employee Type </label>
-                                </div>
+                                
                                 <div class="form-group has-float-label select-search-group">
                                     <select name="department" id="department_shift" class= "form-control filter" disabled ><option value="">Select Department</option></select>
                                     <label  for="department">Department </label>
                                 </div>
-                             </div>
-                            <div class="col-3"> 
                                 <div class="form-group has-float-label select-search-group">
                                     {{ Form::select('section', [], null, ['placeholder'=>'Select Section','id'=>'section_shift', 'class'=> 'form-control filter','disabled']) }} 
                                     <label  for="section">Section </label>
                                 </div>
+                             </div>
+                            <div class="col-3"> 
+                                
                                 <div class="form-group has-float-label select-search-group">
                                     {{ Form::select('subsection', [], null, ['placeholder'=>'Select Sub Section','id'=>'subsection_shift', 'class'=> 'form-control filter', 'disabled']) }}
                                     <label  for="subsection">Sub Section </label>
+                                </div>
+                                <div class="form-group has-float-label select-search-group">
+                                    {{ Form::select('emp_type', $employeeTypes, null, ['placeholder'=>'Select Employee Type', 'class'=> 'form-control filter']) }} 
+                                    <label  for="emp_type">Employee Type </label>
                                 </div>
                              </div>
                             <div class="col-3"> 

@@ -28,6 +28,9 @@
                     <a href="#">Operation</a>
                 </li>
                 <li class="active"> Holiday Roster Assign List</li>
+                <li class="top-nav-btn">
+                  <a href="{{ url('/hr/operation/holiday-roster')}}" class="btn btn-success btn-sm pull-right"> <i class="fa fa-plus"></i> Holiday Roster Assign</a>
+                </li>
             </ul>
         </div>
 
@@ -36,10 +39,10 @@
                 <div class="col-12"> 
                     <form class="" role="form" id="holidayRosterReport" method="get" action="#">
                         <div class="panel">
-                          <div class="panel-heading">
+                          {{-- <div class="panel-heading">
                             <h6>Holiday Roster List <a href="{{ url('/hr/operation/holiday-roster')}}" class="btn btn-success btn-sm pull-right"> <i class="fa fa-plus"></i> Holiday Roster Assign</a></h6>
-                          </div>
-                          <div class="panel-body">
+                          </div> --}}
+                          <div class="panel-body pb-0">
                               <div class="row">
                                   <div class="col-3">
                                       <div class="form-group has-float-label has-required select-search-group">
@@ -68,12 +71,7 @@
                                       </div>
                                   </div>
                                   <div class="col-3">
-                                      <div class="form-group has-float-label select-search-group">
-                                          <select name="floor_id" class="form-control capitalize select-search" id="floor_id" disabled >
-                                              <option selected="" value="">Choose...</option>
-                                          </select>
-                                          <label for="floor_id">Floor</label>
-                                      </div>
+                                      
                                       <div class="form-group has-float-label select-search-group">
                                           <select name="section" class="form-control capitalize select-search " id="section" disabled>
                                               <option selected="" value="">Choose...</option>
@@ -85,6 +83,12 @@
                                               <option selected="" value="">Choose...</option> 
                                           </select>
                                           <label for="subSection">Sub Section</label>
+                                      </div>
+                                      <div class="form-group has-float-label select-search-group">
+                                          <select name="floor_id" class="form-control capitalize select-search" id="floor_id" disabled >
+                                              <option selected="" value="">Choose...</option>
+                                          </select>
+                                          <label for="floor_id">Floor</label>
                                       </div>
                                   </div> 
                                   <div class="col-3">
