@@ -14,6 +14,8 @@ use App\Models\Hr\Location;
 use App\Models\Hr\Unit;
 use App\Models\Hr\EarnedLeave;
 use App\Models\Hr\Leave;
+use App\Models\District;
+use App\Models\Upazilla;
 use App\Models\UserLog;
 use App\User;
 use Carbon\Carbon;
@@ -98,6 +100,16 @@ if(!function_exists('eng_to_bn')){
         $bn = array('০', '১', '২', '৩',  '৪', '৫', '৬', '৭', '৮', '৯', 'জানুয়ারী', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন', 'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর',',');
 
         return str_replace($en, $bn, $value);
+    }
+}
+
+if(!function_exists('num_to_bn_month')){
+    function num_to_bn_month($value)
+    {
+
+        $month = array('','জানুয়ারী', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন', 'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর');
+
+        return $month[(int) $value];
     }
 }
 
@@ -877,6 +889,30 @@ if(!function_exists('area_by_id')){
     {
        return  Cache::remember('area', 10000000, function () {
             return Area::get()->keyBy('hr_area_id')->toArray();
+        });      
+
+    }
+}
+
+
+
+
+if(!function_exists('district_by_id')){
+    function district_by_id()
+    {
+       
+       return  Cache::rememberForever('district_by_id', function () {
+            return District::pluck('dis_name', 'dis_id')->toArray();
+        });      
+
+    }
+}
+
+if(!function_exists('upzila_by_id')){
+    function upzila_by_id()
+    {
+       return  Cache::rememberForever('upzila_by_id', function () {
+            return Upazilla::pluck('upa_name', 'upa_id')->toArray();
         });      
 
     }

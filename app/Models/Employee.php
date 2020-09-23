@@ -18,7 +18,7 @@ class Employee extends Model
     protected $guarded = [];
 
     protected $dates = [
-        'as_doj', 'created_at', 'updated_at'
+        'as_doj', 'created_at', 'updated_at', 'as_dob'
     ];
 
     public static function getEmployeeAssociateIdWise($as_id)

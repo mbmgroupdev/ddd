@@ -3,7 +3,7 @@
 </button>
 <div class="col-xs-12 no-padding-left" id="leave-suggestion" style="font-size: 9px;">
     <div class="tinyMceLetter" style="font-size: 10px;">
-    	<p>Name: {{$employee->as_name}} Age: ......... Date: .................</p>
+    	<p>Name: {{$employee->as_name}} Age: {{$employee->as_dob->age}} Date: {{date('Y-m-d')}}</p>
     	<hr>
     	<br>
     	<br>
