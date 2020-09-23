@@ -45,15 +45,12 @@
                                     {{ Form::select('area', $areaList, null, ['placeholder'=>'Select Area','id'=>'area_shift', 'class'=> 'form-control ', 'disabled']) }} 
                                     <label  for="area">Area </label>
                                 </div>
-                                <div class="form-group has-float-label select-search-group">
-                                    <select name="department" id="department_shift" class= "form-control" disabled ><option value="">Select Department</option></select>
-                                    <label  for="department">Department </label>
-                                </div>
+                                
                              </div>
                             <div class="col-sm-3">
                                 <div class="form-group has-float-label select-search-group">
-                                    {{ Form::select('emp_type', $employeeTypes, null, ['placeholder'=>'Select Employee Type', 'class'=> 'form-control']) }} 
-                                    <label  for="emp_type">Employee Type </label>
+                                    <select name="department" id="department_shift" class= "form-control" disabled ><option value="">Select Department</option></select>
+                                    <label  for="department">Department </label>
                                 </div>
                                 <div class="form-group has-float-label select-search-group">
                                     {{ Form::select('section', [], null, ['placeholder'=>'Select Section','id'=>'section_shift', 'class'=> 'form-control','disabled']) }} 
@@ -63,9 +60,14 @@
                                     {{ Form::select('subsection', [], null, ['placeholder'=>'Select Sub Section','id'=>'subsection_shift', 'class'=> 'form-control', 'disabled']) }}
                                     <label  for="subsection">Sub Section </label>
                                 </div>
+
                              </div>
                             
                             <div class="col-sm-3"> 
+                                <div class="form-group has-float-label select-search-group">
+                                    {{ Form::select('emp_type', $employeeTypes, null, ['placeholder'=>'Select Employee Type', 'class'=> 'form-control']) }} 
+                                    <label  for="emp_type">Employee Type </label>
+                                </div>
                                 <div class="form-group has-float-label select-search-group">
                                     <select class="col-sm-12" id="current_status" name="current_status">
                                         <option value="">Select Status</option>

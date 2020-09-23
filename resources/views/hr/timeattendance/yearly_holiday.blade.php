@@ -16,12 +16,15 @@
 					<a href="#">Operation</a>
 				</li>
 				<li class="active"> Yearly Holiday Planner</li>
+                <li class="top-nav-btn">
+                    <a href="{{ url('hr/operation/yearly_holidays')}}" class="pull-right btn btn-sm btn-success"><i class="fa fa-list"></i> Holiday list</a>
+                </li>
 			</ul><!-- /.breadcrumb --> 
 		</div>
 		<div class="page-content"> 
             @include('inc/message')
             <div class="panel panel-info">
-                <div class="panel-heading"><h6>Yearly Holiday Planner<a href="{{ url('hr/operation/yearly_holidays')}}" class="pull-right btn btn-sm btn-success"><i class="fa fa-list"></i> Holiday list</a></h6></div> 
+                {{-- <div class="panel-heading"><h6>Yearly Holiday Planner<a href="{{ url('hr/operation/yearly_holidays')}}" class="pull-right btn btn-sm btn-success"><i class="fa fa-list"></i> Holiday list</a></h6></div>  --}}
                     <div class="panel-body">
 
                         <div class="row">

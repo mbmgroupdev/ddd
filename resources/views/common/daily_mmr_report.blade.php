@@ -1,4 +1,4 @@
-@extends('user.layout')
+@extends('hr.layout')
 @section('title', 'MMR Report')
 @section('main-content')
 @php 

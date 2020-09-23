@@ -44,7 +44,7 @@
                 <li>
                     <a href="#">Reports</a>
                 </li>
-                <li class="active"> Daily Attendance</li>
+                <li class="active"> Daily Attendance Report</li>
             </ul>
         </div>
 
@@ -53,10 +53,10 @@
                 <div class="col-12">
                     <form class="" role="form" id="activityReport" method="get" action="#"> 
                         <div class="panel">
-                            <div class="panel-heading">
-                                <h6>Daily Attendance Report</h6>
-                            </div>
-                            <div class="panel-body">
+                            {{-- <div class="panel-heading">
+                                <h6>Daily Attendance </h6>
+                            </div> --}}
+                            <div class="panel-body pb-0">
                                 <div class="row">
                                     <div class="col-3">
                                         <div class="form-group has-float-label has-required select-search-group">
@@ -77,19 +77,15 @@
                                             </select>
                                             <label for="area">Area</label>
                                         </div>
+                                        
+                                    </div>
+                                    <div class="col-3">
+                                        
                                         <div class="form-group has-float-label select-search-group">
                                             <select name="department" class="form-control capitalize select-search" id="department" disabled>
                                                 <option selected="" value="">Choose...</option>
                                             </select>
                                             <label for="department">Department</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-3">
-                                        <div class="form-group has-float-label select-search-group">
-                                            <select name="floor_id" class="form-control capitalize select-search" id="floor_id" disabled >
-                                                <option selected="" value="">Choose...</option>
-                                            </select>
-                                            <label for="floor_id">Floor</label>
                                         </div>
                                         <div class="form-group has-float-label select-search-group">
                                             <select name="section" class="form-control capitalize select-search " id="section" disabled>
@@ -103,8 +99,15 @@
                                             </select>
                                             <label for="subSection">Sub Section</label>
                                         </div>
+                                        
                                     </div> 
                                     <div class="col-3">
+                                      <div class="form-group has-float-label select-search-group">
+                                            <select name="floor_id" class="form-control capitalize select-search" id="floor_id" disabled >
+                                                <option selected="" value="">Choose...</option>
+                                            </select>
+                                            <label for="floor_id">Floor</label>
+                                        </div>
                                         <div class="form-group has-float-label select-search-group">
                                             <select name="line_id" class="form-control capitalize select-search" id="line_id" disabled >
                                                 <option selected="" value="">Choose...</option>
@@ -123,6 +126,7 @@
                                         <input type="hidden" id="reportGroup" name="report_group" value="as_line_id">
                                     </div>
                                     <div class="col-3">
+                                      
                                         <div class="form-group has-float-label select-search-group">
                                             <?php
                                                 $reportType = ['absent'=>'Absent', 'before_absent_after_present'=>'Present After Being Absent','leave'=>'Leave','ot'=>'OT', 'working_hour'=>'Working Hour', 'late'=>'Late'];
@@ -154,13 +158,16 @@
                                             </div>
                                           </div>
                                         </div>
+                                        <div class="form-group">
+                                          <button class="btn btn-primary nextBtn btn-lg pull-right" type="submit" ><i class="fa fa-save"></i> Generate</button>
+                                        </div>
                                     </div>   
                                 </div>
-                                <div class="row">
+                                {{-- <div class="row">
                                     <div class="offset-8 col-4">
-                                        <button class="btn btn-primary nextBtn btn-lg pull-right" type="submit" ><i class="las la-filter"></i> Filter</button>
+                                        
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                         <div class="single-employee-search" id="single-employee-search" style="display: none;">

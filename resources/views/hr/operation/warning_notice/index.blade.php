@@ -337,6 +337,8 @@
                     <h6 class="">
                         <button type="button" onClick="printMe1('result-data')" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report"><i class="fa fa-print"></i>
                         </button>
+                        <button type="button" onClick="printMe1('result-data-cover')" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Envelope"><i class="las la-envelope"></i>
+                        </button>
                     </h6>
                 </div>
                 <div class="panel-body row">
@@ -345,7 +347,7 @@
                             <div class="step_one" id="step_one" style="display: none">
                                 <div class="stepLetter" id="letter" style="font-size: 12px;">
                                     <p>
-                                    <center><b>“রেজিস্ট্রি ডাক যোগে প্রেরিত”</b></center>
+                                    <center><h3 class="underline">“রেজিস্ট্রি ডাক যোগে প্রেরিত”</h3></center>
                                     <p>তারিখ :&nbsp; <b id="firstIssueDate">@if($notice != null){{ eng_to_bn(date('d-m-Y', strtotime($notice->first_step_date))) }} @endif</b> ইং</p>
                                     <p>বরাবর,</p>
                                     <p>নামঃ {{ $info->employee_bengali['hr_bn_associate_name']?$info->employee_bengali['hr_bn_associate_name']:'' }}</p>
@@ -380,21 +382,22 @@
                                     <br>
                                     <b id="firsrtManagerName"> ( {{ $firstManagerBan }} )</b>
                                     <p>ব্যবস্থাপক-মানব সম্পদ প্রশাসন ও কমপ্লাইন্স</p>
+                                    <br>
                                     <p>অনুলিপিঃ </p>
-                                    <p>১। মাননীয় ব্যবস্থাপনা পরিচালক মহোদয় (সদয় অবগণ),</p>
-                                    <p>২। সহকারী ব্যবস্থাপনা পরিচালক (সদয় অবগতণ),</p>
-                                    <p>৩। উৎপাদক ব্যবস্থাপকগন),</p>
-                                    <p>৪। কারখানার নোটিশ বোর্ড,</p>
-                                    <p>৫। ব্যাক্তিগত নথি,</p>
-                                    <p>৬। মাস্টার ফাইল,</p>
-                                    <p>৭। সিকিউরিটি সুপারভাইজার।</p>
+                                    <p><small>১। মাননীয় ব্যবস্থাপনা পরিচালক মহোদয় (সদয় অবগণ),</small></p>
+                                    <p><small>২। সহকারী ব্যবস্থাপনা পরিচালক (সদয় অবগতণ),</small></p>
+                                    <p><small>৩। উৎপাদক ব্যবস্থাপকগন),</small></p>
+                                    <p><small>৪। কারখানার নোটিশ বোর্ড,</small></p>
+                                    <p><small>৫। ব্যাক্তিগত নথি,</small></p>
+                                    <p><small>৬। মাস্টার ফাইল,</small></p>
+                                    <p><small>৭। সিকিউরিটি সুপারভাইজার।</small></p>
                                     </p>
                                 </div>
                             </div>
                             <div class="step_two" id="step_two" style="display: none">
                                 <div class="stepLetter" id="letter" style="font-size: 12px;">
                                     <p>
-                                    <center><b>“রেজিস্ট্রি ডাক যোগে প্রেরিত”</b></center>
+                                    <center><h3 class="underline">“রেজিস্ট্রি ডাক যোগে প্রেরিত”</h3></center>
                                     <p>তারিখ :&nbsp; <b id="secondIssueDate">@if($notice != null){{ eng_to_bn(date('d-m-Y', strtotime($notice->second_step_date))) }} @endif</b> ইং</p>
                                     <p>বরাবর,</p>
                                     <p>নামঃ {{ $info->employee_bengali['hr_bn_associate_name']?$info->employee_bengali['hr_bn_associate_name']:'' }}</p>
@@ -430,21 +433,22 @@
                                     <br>
                                     <b id="secondManagerName"> ( {{ $secondManagerBan }} )</b>
                                     <p>ব্যবস্থাপক-মানব সম্পদ প্রশাসন ও কমপ্লাইন্স</p>
+                                    <br>
                                     <p>অনুলিপিঃ </p>
-                                    <p>১। মাননীয় ব্যবস্থাপনা পরিচালক মহোদয় (সদয় অবগণ),</p>
-                                    <p>২। সহকারী ব্যবস্থাপনা পরিচালক (সদয় অবগতণ),</p>
-                                    <p>৩। উৎপাদক ব্যবস্থাপকগন),</p>
-                                    <p>৪। কারখানার নোটিশ বোর্ড,</p>
-                                    <p>৫। ব্যাক্তিগত নথি,</p>
-                                    <p>৬। মাস্টার ফাইল,</p>
-                                    <p>৭। সিকিউরিটি সুপারভাইজার।</p>
+                                    <p><small>১। মাননীয় ব্যবস্থাপনা পরিচালক মহোদয় (সদয় অবগণ),</small></p>
+                                    <p><small>২। সহকারী ব্যবস্থাপনা পরিচালক (সদয় অবগতণ),</small></p>
+                                    <p><small>৩। উৎপাদক ব্যবস্থাপকগন),</small></p>
+                                    <p><small>৪। কারখানার নোটিশ বোর্ড,</small></p>
+                                    <p><small>৫। ব্যাক্তিগত নথি,</small></p>
+                                    <p><small>৬। মাস্টার ফাইল,</small></p>
+                                    <p><small>৭। সিকিউরিটি সুপারভাইজার।</small></p>
                                     </p>
                                 </div>
                             </div>
                             <div class="step_three" id="step_three" style="display: none">
                                 <div class="stepLetter" id="letter" style="font-size: 12px;">
                                     <p>
-                                    <center><b>“রেজিস্ট্রি ডাক যোগে প্রেরিত”</b></center>
+                                    <center><h3 class="underline">“রেজিস্ট্রি ডাক যোগে প্রেরিত”</h3></center>
                                     <p>তারিখ :&nbsp; <b id="thirdIssueDate"></b> ইং</p>
                                     <p>বরাবর,</p>
                                     <p>নামঃ {{ $info->employee_bengali['hr_bn_associate_name']?$info->employee_bengali['hr_bn_associate_name']:'' }}</p>
@@ -481,19 +485,40 @@
                                     <br>
                                     <b id="thirdManagerName"></b>
                                     <p>ব্যবস্থাপক-মানব সম্পদ প্রশাসন ও কমপ্লাইন্স</p>
+                                    <br>
                                     <p>অনুলিপিঃ </p>
-                                    <p>১। মাননীয় ব্যবস্থাপনা পরিচালক মহোদয় (সদয় অবগণ),</p>
-                                    <p>২। সহকারী ব্যবস্থাপনা পরিচালক (সদয় অবগতণ),</p>
-                                    <p>৩। উৎপাদক ব্যবস্থাপকগন),</p>
-                                    <p>৪। কারখানার নোটিশ বোর্ড,</p>
-                                    <p>৫। ব্যাক্তিগত নথি,</p>
-                                    <p>৬। মাস্টার ফাইল,</p>
-                                    <p>৭। সিকিউরিটি সুপারভাইজার।</p>
+                                    <p><small>১। মাননীয় ব্যবস্থাপনা পরিচালক মহোদয় (সদয় অবগণ),</small></p>
+                                    <p><small>২। সহকারী ব্যবস্থাপনা পরিচালক (সদয় অবগতণ),</small></p>
+                                    <p><small>৩। উৎপাদক ব্যবস্থাপকগন),</small></p>
+                                    <p><small>৪। কারখানার নোটিশ বোর্ড,</small></p>
+                                    <p><small>৫। ব্যাক্তিগত নথি,</small></p>
+                                    <p><small>৬। মাস্টার ফাইল,</small></p>
+                                    <p><small>৭। সিকিউরিটি সুপারভাইজার।</small></p>
                                     </p>
                                 </div>
                             </div>
                         </div>
-                        
+                        <div class="hide">
+                            <div class="envelope-content" id="result-data-cover">
+                                <div class="address_section">
+                                        <div class="address_left">
+                                            <p><b class="underline">প্রেরক: </b></p>
+                                            <p>এমবিএম গ্রুপ</p>
+                                            <p>{{ $unitAddress }} </p>
+                                        </div>
+                                        <div class="address_right pl-5">
+                                            <p><b class="underline">প্রাপক: </b></p>
+                                            <p>নামঃ {{ $info->employee_bengali['hr_bn_associate_name']?$info->employee_bengali['hr_bn_associate_name']:'' }}</p>
+                                            <p>পিতাঃ {{ $info->employee_bengali['hr_bn_father_name']?$info->employee_bengali['hr_bn_father_name']:'' }} </p>
+                                            <p><b class="underline">বর্তমান ঠিকানাঃ </b></p>
+                                            <p>বাসা নংঃ {{ $info->employee_bengali['hr_bn_present_house']?$info->employee_bengali['hr_bn_present_house']:'' }}</p>
+                                            <p>পোষ্টঃ {{ $info->employee_bengali['hr_bn_present_po']?$info->employee_bengali['hr_bn_present_po']:'' }}</p>
+                                            <p>থানাঃ </p>
+                                            <p>জেলাঃ</p>
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
                     </div>
                     
                 </div>

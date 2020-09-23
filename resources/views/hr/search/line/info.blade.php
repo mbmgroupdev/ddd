@@ -44,7 +44,7 @@
 				<div class="widget-box widget-color-green2 search_line">
 					<div class="widget-header">
 							<h5 class="widget-title bigger lighter">
-								Line
+								Line Count
 							</h5>
 					</div>
 
@@ -74,7 +74,7 @@
                 <div class="widget-box widget-color-green2 line_change">
                     <div class="widget-header">
                             <h5 class="widget-title bigger lighter">
-                                Line Change
+                                Line Change Status
                             </h5>
                     </div>
 
