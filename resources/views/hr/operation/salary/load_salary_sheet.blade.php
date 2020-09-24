@@ -346,8 +346,14 @@
                                                         <span style="text-align: right;width: 30%; float: right;  white-space: wrap;">
                                                             <font style="color:hotpink">{{ Custom::engToBnConvert($list->attendance_bonus) }}</font>
                                                         </span>
+                                                </p>
+                                                <p style="margin:0;padding:0">
 
-
+                                                    <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">প্রোডাকশন বোনস </span>
+                                                        <span style="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=</span>
+                                                        <span style="text-align: right;width: 30%; float: right;  white-space: wrap;">
+                                                            <font style="color:hotpink">{{ Custom::engToBnConvert($list->production_bouns) }}</font>
+                                                        </span>
                                                 </p>
                                                 <p style="margin:0;padding:0">
 

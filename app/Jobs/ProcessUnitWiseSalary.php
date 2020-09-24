@@ -200,11 +200,13 @@ class ProcessUnitWiseSalary implements ShouldQueue
                     if($getAddDeduct != null){
                         $deductCost = ($getAddDeduct->advp_deduct + $getAddDeduct->cg_deduct + $getAddDeduct->food_deduct + $getAddDeduct->others_deduct);
                         $deductSalaryAdd = $getAddDeduct->salary_add;
+                        $productionBonus = $getAddDeduct->bonus_add;
                         $deductId = $getAddDeduct->id;
                     }else{
                         $deductCost = 0;
                         $deductSalaryAdd = 0;
                         $deductId = null;
+                        $productionBonus = 0;
                     }
                     
                     //get add absent deduct calculation
@@ -292,7 +294,7 @@ class ProcessUnitWiseSalary implements ShouldQueue
 
                     $ot = round((float)($overtime_rate) * ($getPresentOT->ot));
                     
-                    $totalPayable = $salaryPayable + $ot + $deductSalaryAdd + $attBonus + $leaveAdjust;
+                    $totalPayable = $salaryPayable + $ot + $deductSalaryAdd + $attBonus + $productionBonus + $leaveAdjust;
 
                     if($getSalary == null){
                         $salary = [
@@ -317,6 +319,7 @@ class ProcessUnitWiseSalary implements ShouldQueue
                             'ot_rate' => $overtime_rate,
                             'ot_hour' => $getPresentOT->ot,
                             'attendance_bonus' => $attBonus,
+                            'production_bonus' => $productionBonus,
                             'leave_adjust' => $leaveAdjust,
                             'total_payable' => $totalPayable,
                         ];
@@ -340,6 +343,7 @@ class ProcessUnitWiseSalary implements ShouldQueue
                             'ot_rate' => $overtime_rate,
                             'ot_hour' => $getPresentOT->ot,
                             'attendance_bonus' => $attBonus,
+                            'production_bonus' => $productionBonus,
                             'leave_adjust' => $leaveAdjust,
                             'total_payable' => $totalPayable,
                         ];

@@ -154,6 +154,7 @@
                     </td>
 
                     @php
+                    
                         $otHourEx = explode('.', $salary['ot_hour']);
                         $minute = '00';
                         if(isset($otHourEx[1])){
@@ -212,21 +213,24 @@
                                 <span style="text-align: right;width: 28%; float: right;  white-space: wrap;">
                                     <font style="color:hotpink">{{ Custom::engToBnConvert($salary['attendance_bonus']) }}</font>
                                 </span>
-
-
+                        </p>
+                        <p style="margin:0;padding:0">
+                            <span style="text-align: left; width: 57%; float: left;  white-space: wrap;">প্রোডাকশন বোনস </span>
+                                <span style="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=</span>
+                                <span style="text-align: right;width: 30%; float: right;  white-space: wrap;">
+                                    <font style="color:hotpink">{{ Custom::engToBnConvert($salary->production_bouns) }}</font>
+                                </span>
                         </p>
                         <p style="margin:0;padding:0">
 
                             <span style="text-align: left; width: 57%; float: left;  white-space: wrap;">বেতন/মজুরী অগ্রিম/সমন্বয়</span>
                             <span style="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=
                             </span>
-                            <span style="text-align: right;width: 28%; float: right;  white-space: wrap;">
+                            <span style="text-align: right;width: 30%; float: right;  white-space: wrap;">
                                 <font style="color:hotpink">{{ Custom::engToBnConvert($salaryAdd) }}</font>
                             </span>
-
-                           
-
                         </p>
+                        
 
                         <p style="margin:0;padding:0">
 
