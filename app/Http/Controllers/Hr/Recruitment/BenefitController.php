@@ -243,8 +243,6 @@ class BenefitController extends Controller
 
     public function benefitUpdate(Request $request)
     {
-        //ACL::check(["permission" => "hr_payroll_benefit_list"]);
-        #-----------------------------------------------------------#
         $user= Auth::user()->associate_id;
         $validator= Validator::make($request->all(), [
             'ben_id'                  => 'required|max:11',

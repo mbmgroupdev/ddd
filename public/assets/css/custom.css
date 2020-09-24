@@ -1021,3 +1021,6 @@ table.dataTable thead>tr>td.sorting, table.dataTable thead>tr>td.sorting_asc, ta
     padding-left: 10px;
     font-weight: bold;
 }
+.f-100{
+    font-size: 100px !important;
+}

@@ -10,6 +10,7 @@
         padding: 5px;
     }
 </style>
+<link href="{{ asset('assets/css/sweetalert.min.css')}}" rel="stylesheet"/>
 @endpush
 <div class="main-content">
     <div class="main-content-inner">
@@ -23,62 +24,65 @@
                     <a href="#"> Time & Attendance </a>
                 </li>
                 <li class="active"> Employee's Leave </li>
-            </ul><!-- /.breadcrumb -->
+                <li class="top-nav-btn">
+                    <a href="{{ url('hr/timeattendance/all_leaves') }}" class="btn btn-sm btn-primary pull-right" rel='tooltip' data-tooltip-location='left' data-tooltip='Leave List'>
+                            List <i class="fa fa-list"> </i>
+                        </a>
+                </li>
+            </ul>
         </div>
         <div class="page-content"> 
             <div class="panel panel-success">
-                <div class="panel-heading page-headline-bar">
-                    <h6>
-                        Leave Entry
-                        <a href="{{ url('hr/timeattendance/all_leaves') }}" class="btn btn-primary pull-right" rel='tooltip' data-tooltip-location='left' data-tooltip='Leave List'>
-                            <i class="fa fa-list"> Leave List</i>
-                        </a>
-                    </h6>
-                 </div> 
                 <div class="panel-body">
                     <div class="row">
                         @include('inc/message')
-                        <div class="col-6" style="padding-top: 20px;border-right: 1px solid #d1d1d1;">
-                            {{ Form::open(['url'=>'hr/timeattendance/leave_worker', 'class'=>'form-horizontal', 'files' => true]) }}
+                        <div class="col-sm-5" style="padding-top: 10px;border-right: 1px solid #d1d1d1;">
+                            {{ Form::open(['url'=>'hr/timeattendance/leave_worker', 'class'=>'form-horizontal needs-validation', 'files' => true, 'novalidate']) }}
                                 <div class="form-group has-required has-float-label select-search-group">
                                     {{ Form::select('leave_ass_id', [], null, ['placeholder'=>'Select Associate\'s ID', 'id'=>'leave_ass_id', 'class'=> 'associates form-control', 'required'=>'required']) }}  
                                     <label for="leave_ass_id"> Associate's ID </label>
                                 </div>
-                                <div class="form-group has-required has-float-label select-search-group">
-                                    <select name="leave_type" id="leave_type" class="form-control"  required="required" >
-                                        <option value="">Select Leave Type</option>
-                                        <option value="Casual">Casual</option>
-                                        <option value="Earned">Earned</option>
-                                        <option value="Sick">Sick</option> 
-                                        <option value="Maternity">Maternity</option>
-                                        <option value="Special">Special</option> 
-                                    </select>
-                                    <label for="leave_type">Leave Type</label>
+                                <div class="row mb-3">
+                                    <div class="col-sm-6">
+                                        <div class="form-group has-required has-float-label select-search-group">
+                                            <select name="leave_type" id="leave_type" class="form-control"  required="required" >
+                                                <option value="">Select Leave Type</option>
+                                                <option value="Casual">Casual</option>
+                                                <option value="Earned">Earned</option>
+                                                <option value="Sick">Sick</option> 
+                                                <option value="Special">Special</option> 
+                                            </select>
+                                            <label for="leave_type">Leave Type</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group has-required has-float-label">
+                                            <input type="date" name="leave_applied_date" id="leave_applied_date" class="form-control" required placeholder="YYYY-MM-DD"   value="{{date('Y-m-d')}}"/>
+                                            <label  for="leave_applied_date"> Applied Date  </label>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="row mb-2">
+                                <div class="row mb-3">
                                     <div class="col-6">
                                         
                                         <div class="form-group has-required has-float-label mb-0">
-                                            <input type="text" name="leave_from" id="leave_from" class="form-control" required />
+                                            <input type="date" name="leave_from" id="leave_from" class="form-control" required />
                                             <label  for="leave_from">Leave From </label>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div id="multipleDateAccept" class="form-group has-required has-float-label mb-0">
-                                            <input type="text" name="leave_to" id="leave_to" class="form-control" required />
+                                            <input type="date"  name="leave_to" id="leave_to" class="form-control" required />
                                             <label  for="leave_from">Leave From </label>
                                         </div>
                                         
                                     </div>
-                                    <div class="col-12">
-                                        <p id="select_day" style="font-size:12px;width: 100%;"></p>
-                                        <p style="font-size:12px;width: 100%;">Date format must be <span style="color: red">YYYY-MM-DD</span></p>
+                                    <div class="col-sm-12">
+                                        <p id="select_day" class="text-success"></p>
+                                        <p id="error_leave_text" class="text-danger"></p>
                                     </div>
                                 </div>
-                                <div class="form-group has-required has-float-label">
-                                    <label  for="leave_applied_date"> Applied Date  </label>
-                                    <input type="date" name="leave_applied_date" id="leave_applied_date" class="form-control" required placeholder="YYYY-MM-DD"   value="{{date('Y-m-d')}}"/>
-                                </div>
+                                
                                 <div class="form-group  file-zone mb-0">
                                     <label  for="file"> Supporting File </label>
                                     <input type="file" name="leave_supporting_file" class="file-type-validation" data-file-allow='["docx","doc","pdf","jpeg","png","jpg"]' autocomplete="off" />
@@ -106,72 +110,59 @@
                                 </div>
                             {{ Form::close() }}
                         </div>
-                        <div class="col-6">
-                            <div class="center" id="associate-leave">
-                                <div class="user-details-block benefit-employee">
-                                      <div class="user-profile text-center mt-0">
+                        <div class="col-sm-7 pt-3">
+                            <div class="row" id="associates_leave">
+                                <div class="col-sm-5">
+                                    <div class="user-details-block benefit-employee">
+                                        <div class="user-profile text-center mt-0">
                                             <img id="avatar" class="avatar-130 img-fluid" src="{{ asset('assets/images/user/09.jpg') }} " onerror="this.onerror=null;this.src='{{ asset("assets/images/user/09.jpg") }}';">
-                                      </div>
-                                      <div class="text-center mt-3">
-                                         <h4><b id="user-name">Selected User</b></h4>
-                                        <p class="mb-0" id="designation">
-                                            Associate ID: ----------</p>
-                                        <p class="mb-0" id="designation">
-                                            Oracle ID: ----------</p>
-                                         
-                                      </div>
+                                        </div>
+                                        <div class="text-center mt-3">
+                                            <h4><b id="user-name">Selected User</b></h4>
+                                            <p class="mb-0" id="designation">
+                                                Associate ID: ----------</p>
+                                            <p class="mb-0" id="designation">
+                                                Oracle ID: ----------</p>
+                                             
+                                          </div>
+                                    </div>
                                 </div>
-                                <h5 class="center">Leave log {{date('Y')}}</h5>
-                                <table class="table table-bordered table-stripped" >
-                                    <thead>
-                                    <tr>
-                                        <th >Leave Type</th>
-                                        <th >Total</th>
-                                        <th >Taken</th>
-                                        <th >Due</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <th >Casual</th>
-                                        <td >10</td>
-                                        <td >0</td>
-                                        <td >10</td>
-                                    </tr>
-                                    <tr>
-                                        <th >Earned</th>
-                                        <td >0</td>
-                                        <td >0</td>
-                                        <td >0</td>
-                                    </tr>
-                                    <tr>
-                                        <th >Sick</th>
-                                        <td >14</td>
-                                        <td >0</td>
-                                        <td >14</td>
-                                    </tr>
-                                    <tr>
-                                        <th >Special</th>
-                                        <td > - </td>
-                                        <td >0</td>
-                                        <td > - </td>
-                                    </tr>
-                                    <tr>
-                                        <th >Maternity</th>
-                                        <td >112</td>
-                                        <td >0</td>
-                                        <td >112</td>
-                                    </tr>
-                                    </tbody>
-                                    <tfoot>
-                                        <tr style="background: #efefef;"> 
-                                            <th >Subtotal</th>
-                                            <td >136</td>
-                                            <td >0</td>
-                                            <td >136</td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
+                                        
+                                
+                                <div class="col-sm-7">
+                                    <ul class="speciality-list m-0 p-0">
+                                        <li class="d-flex mb-4 align-items-center">
+                                           <div class="user-img img-fluid"><a href="#" class="iq-bg-primary"><i class="las f-18 la-calendar-day"></i></a></div>
+                                           <div class="media-support-info ml-3">
+                                              <h6>Casual Leave</h6>
+                                              <p class="mb-0">Total:  <span class="text-danger" id="total_earn_leave">10</span class="text-danger"> Enjoyed: <span class="text-warning" id="enjoyed_earn_leave">0</span > Remained: <span class="text-success" id="remained_earn_leave">0</span></p>
+                                           </div>
+                                        </li>
+                                        <li class="d-flex mb-4 align-items-center">
+                                           <div class="user-img img-fluid"><a href="#" class="iq-bg-warning"><i class="las f-18 la-stethoscope"></i></a></div>
+                                           <div class="media-support-info ml-3">
+                                              <h6>Sick Leave</h6>
+                                              <p class="mb-0">Total:  <span class="text-danger" id="total_earn_leave">14</span class="text-danger"> Enjoyed: <span class="text-warning" id="enjoyed_earn_leave">0</span > Remained: <span class="text-success" id="remained_earn_leave">0</span></p>
+                                           </div>
+                                        </li>
+                                        
+                                        <li class="d-flex mb-4 align-items-center">
+                                           <div class="user-img img-fluid"><a href="#" class="iq-bg-info"><i class="las f-18 la-dollar-sign"></i></a></div>
+                                           <div class="media-support-info ml-3">
+                                              <h6>Earned Leave</h6>
+                                              <p class="mb-0">Total:  <span class="text-danger" id="total_earn_leave">0</span class="text-danger"> Enjoyed: <span class="text-warning" id="enjoyed_earn_leave">0</span > Remained: <span class="text-success" id="remained_earn_leave">0</span></p>
+                                           </div>
+                                        </li>
+                                        <li class="d-flex mb-4 align-items-center">
+                                           <div class="user-img img-fluid"><a href="#" class="iq-bg-warning"><i class="las f-18 la-gift "></i></a></div>
+                                           <div class="media-support-info ml-3">
+                                              <h6>Special Leave</h6>
+                                              <p class="mb-0">---</p>
+                                           </div>
+                                        </li>
+                                     </ul>
+                                    
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -182,6 +173,7 @@
 </div>
 
 @push('js')
+<script src="{{ asset('assets/js/sweetalert.min.js') }}"></script>
 <script type="text/javascript">
 $(document).ready(function()
 {
@@ -189,13 +181,12 @@ $(document).ready(function()
 
     $("#leave_type").on("change", function(e){
         if(!($("#leave_ass_id").val())){
-            toastr.options.progressBar = true ;
-            toastr.options.positionClass = 'toast-top-center';
-            toastr.error('Please Select Associates!');
+            $.notify('Please Select Associates!','error');
             $(this).val(0);
             $("#leave_type").val('');
         }
         else{
+            $('.app-loader').show();
             $.ajax({
                 url: '{{ url("hr/ess/leave_check") }}',
                 type: 'post',
@@ -207,27 +198,28 @@ $(document).ready(function()
                 },
                 success: function(data)
                 {
+                    $('.app-loader').hide();
                     if(data.stat == 'false'){
                         $("#leave_type").val('');
-                        toastr.options.progressBar = true ;
-                        toastr.options.positionClass = 'toast-top-center';
-                        toastr.error(data.msg);
+                        $.notify(data.msg,'error');
                     }
                 },
                 error: function(xhr)
                 {
-                    alert('failed...');
+                    $.notify('failed...');
                 }
             });
         }
         $('#leave_to').val('');
         $('#leave_from').val('');
         $('#select_day').html('');
+        $('#error_leave_text').html('');
         $('#leave_entry').attr("disabled",true);
     }); 
 
     $("#leave_ass_id").on("change", function(e){
         if(($("#leave_ass_id").val())){
+            $('.app-loader').show();
             $.ajax({
                 url: '{{ url("hr/ess/associates_leave") }}',
                 type: 'post',
@@ -237,149 +229,130 @@ $(document).ready(function()
                 },
                 success: function(res)
                 {
-                    $('#associate-leave').html(res);
+                    $('#associates_leave').html(res);
                     $("#leave_type").val('');
                     $('#leave_to').val('');
                     $('#leave_from').val('');
                     $('#select_day').html('');
+                    $('#error_leave_text').html('');
                     $('#leave_entry').attr("disabled",true);
+                    $('.app-loader').hide();
                 },
                 error: function(xhr)
                 {
-                    console.log(xhr);
+                    
                 }
             });
         }
     }); 
 
 
-    $('#leave_from').on('keyup',function(){
+    $(document).on('change','#leave_from',function(){
         var leave_from = $('#leave_from').val();
-        //validate date format using regex
-        if(/[12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])/.test(leave_from)){
-            $('#leave_to').val(leave_from);
-            $('#leave_applied_date').val(leave_from);
-        }else{
-            $('#leave_to').val('');
-            $('#leave_applied_date').val('{{date("Y-m-d")}}');
-        }
+        $('#leave_to').val(leave_from).attr('min',leave_from);
     });
-    $(document).on('keyup','#leave_from,#leave_to', function(){
+
+    $(document).on('change','#leave_from,#leave_to', function(){
         var formval = $('#leave_from').val();
         var lv_to_date = $('#leave_to').val();
         var associate_id = $("#leave_ass_id").val();
         var l_type = $('#leave_type').val();
         if(associate_id && l_type){
-            //validate date format
-            if((/[12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])/).test(formval) && (/[12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])/).test(lv_to_date) && formval && lv_to_date){
-                const from_date = new Date(formval);
-                const to_date   = new Date(lv_to_date); 
-                if(from_date > to_date){
-                    $(this).val(formval);
-                    toastr.options.progressBar = true ;
-                    toastr.options.positionClass = 'toast-top-center';
-                    toastr.error('From date is later than To date'); 
-                }
-                    const from = new Date($('#leave_from').val());
-                    const to   = new Date($('#leave_to').val());
-                    const diffTime = Math.abs(to.getTime() - from.getTime());
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                    if(isNaN(diffDays)){
-                        $('#select_day').html('');
-                    }else{
-                        $('#select_day').html('You have selected  <span style="color: #ff0909;font-weight:600;">'+(diffDays+1)+'</span> day(s).');
-                        $.ajax({
-                            url: '{{ url("hr/ess/leave_length_check") }}',
-                            type: 'post',
-                            dataType: 'json',
-                            data: {
-                                "_token": "{{ csrf_token() }}",
-                                associate_id: associate_id, 
-                                leave_type: l_type,
-                                sel_days: diffDays+1,
-                                from_date: $('#leave_from').val(),
-                                to_date: $('#leave_to').val()
-                            },
-                            success: function(data)
-                            {
-                                if(data.stat == 'false'){
-                                    $('#select_day').html('<span style="color:#da0000;">'+data.msg+'</div>');
-                                    $('#leave_entry').attr("disabled",true);
-                                }else{
-                                    $('#leave_entry').attr("disabled",false);
-                                }
-                            },
-                            error: function(xhr)
-                            {
-                                console.log(xhr);
-                            }
-                        });
-                        $.ajax({
-                            url: '{{ url("hr/ess/attendance_check") }}',
-                            type: 'post',
-                            dataType: 'json',
-                            data: {
-                                "_token": "{{ csrf_token() }}",
-                                associate_id: associate_id,
-                                from_date: $('#leave_from').val(),
-                                to_date: $('#leave_to').val()
-                            },
-                            success: function(data)
-                            {
-                                if(data.stat == false){
-                                    swal(data.msg+'. Do you want to delete attendance?', {
-                                        buttons: {
-                                            cancel: "Cancel",
-                                            catch: {
-                                                text: "OK",
-                                                value: "catch",
-                                            },
-                                        },
-                                    })
-                                    .then((value) => {
-                                        switch (value) {
-                                            case "catch":
-                                                break;
-                                            default:
-                                                $('#select_day').html('');
-                                                $('#leave_from').val('');
-                                                $('#leave_to').val('');
-                                                $('#leave_entry').attr("disabled",true);
-                                        }
-                                    });
-                                }
-                                //console.log(data);
-                            },
-                            error: function(xhr)
-                            {
-                                alert('failed...');
-                            }
-                        });
-                    }
-            }else{
+            const from_date = new Date(formval);
+            const to_date   = new Date(lv_to_date); 
+            if(from_date > to_date){
+                $(this).val(formval);
+                $.notify('From date is later than To date'); 
+            }
+            const from = new Date($('#leave_from').val());
+            const to   = new Date($('#leave_to').val());
+            const diffTime = Math.abs(to.getTime() - from.getTime());
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            if(isNaN(diffDays)){
                 $('#select_day').html('');
+                $('#error_leave_text').html('');
+            }else{
+                $('#select_day').html('You have selected  <span style="color: #ff0909;font-weight:600;">'+(diffDays+1)+'</span> day(s).');
+                $.ajax({
+                    url: '{{ url("hr/ess/leave_length_check") }}',
+                    type: 'post',
+                    dataType: 'json',
+                    data: {
+                        "_token": "{{ csrf_token() }}",
+                        associate_id: associate_id, 
+                        leave_type: l_type,
+                        sel_days: diffDays+1,
+                        from_date: $('#leave_from').val(),
+                        to_date: $('#leave_to').val()
+                    },
+                    success: function(data)
+                    {
+                        if(data.stat == 'false'){
+                            $.notify(data.msg, 'error');
+                            $('#error_leave_text').html('<span style="color:#da0000;">'+data.msg+'</div>');
+                            $('#leave_entry').attr("disabled",true);
+                        }else{
+                            $('#leave_entry').attr("disabled",false);
+                            $.ajax({
+                                url: '{{ url("hr/ess/attendance_check") }}',
+                                type: 'post',
+                                dataType: 'json',
+                                data: {
+                                    "_token": "{{ csrf_token() }}",
+                                    associate_id: associate_id,
+                                    from_date: $('#leave_from').val(),
+                                    to_date: $('#leave_to').val()
+                                },
+                                success: function(data)
+                                {
+                                    if(data.stat == false){
+                                        swal(data.msg+'. Do you want to delete attendance?', {
+                                            buttons: {
+                                                cancel: "Cancel",
+                                                catch: {
+                                                    text: "OK",
+                                                    value: "catch",
+                                                },
+                                            },
+                                        })
+                                        .then((value) => {
+                                            switch (value) {
+                                                case "catch":
+                                                    break;
+                                                default:
+                                                    $('#select_day').html('');
+                                                    $('#error_leave_text').html('');
+                                                    $('#leave_from').val('');
+                                                    $('#leave_to').val('');
+                                                    $('#leave_entry').attr("disabled",true);
+                                            }
+                                        });
+                                    }
+                                },
+                                error: function(xhr)
+                                {
+                                }
+                            });
+                        }
+                    },
+                    error: function(xhr)
+                    {
+                        
+                    }
+                });
+
+                            
             }
         }else{
             $('#select_day').html('');
+            $('#error_leave_text').html('');
             $('#leave_to').val('');
             $('#leave_from').val('');
-            toastr.options.progressBar = true ;
-            toastr.options.positionClass = 'toast-top-center';
-            toastr.error('Please select associates and leave type!');
+            $.notify('Please select associates or leave type!','error');
         }
     });
 
-   //file upload validation
-    $("#leave_supporting_file").change(function () {
-        var fileExtension = ['pdf','doc','docx','jpg','jpeg','png'];
-        if ($.inArray($(this).val().split('.').pop().toLowerCase(), fileExtension) == -1) {
-            $('#file_upload_error').show();
-            $(this).val('');
-        }
-        else{
-                $('#file_upload_error').hide();
-            }
-    });
+
 });
 </script>
 @endpush
