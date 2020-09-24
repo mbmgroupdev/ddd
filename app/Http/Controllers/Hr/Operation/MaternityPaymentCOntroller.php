@@ -32,6 +32,15 @@ class MaternityPaymentController extends Controller
 		return view('hr.operation.maternity.maternity_application');
 	}
 
+	public function report(Request $request)
+	{
+		$leave = DB::table('hr_maternity_leave as l')
+				->leftJoin('hr_as_basic_info AS b','l.associate_id', 'b.associate_id')
+				->get();
+
+		return view('hr.operation.maternity.maternity_report');
+	}
+
 	public function listData()
 	{
 		$data = DB::table('hr_maternity_leave as l')
@@ -56,10 +65,10 @@ class MaternityPaymentController extends Controller
 	            	
 	            		
 	            	if($data->status == 'Approved'){
-	            		$buttons .= ' <a class="btn btn-sm btn-danger" href="">Pay</a> <a class="btn btn-sm btn-warning" href=""><i class="las la-file-invoice-dollar"></i></a>';
+	            		$buttons .= ' <a class="btn btn-sm btn-danger" href="'.url('hr/operation/maternity-leave/'.$data->id).'">Pay</a> <a class="btn btn-sm btn-warning" href=""><i class="las la-file-invoice-dollar"></i></a>';
 	            	}else{
 	            		if($data->doctors_clearence){
-	            			$buttons .= ' <a class="btn btn-sm btn-danger" href="'.url('hr/operation/maternity-leave-approval/'.$data->id).'">Approve</a>';
+	            			$buttons .= ' <a class="btn btn-sm btn-danger" href="'.url('hr/operation/maternity-leave/'.$data->id).'">Approve</a>';
 	            		}
 	            	}
 
@@ -119,8 +128,7 @@ class MaternityPaymentController extends Controller
          		DB::commit();
          		log_file_write("Materny leave application for ".$request->associate_id, $application->id);
 
-            	return back()
-                    ->with('success', 'Maternity leave application saved succesfully and proceeded to doctor for verification!');
+            	return redirect('hr/operation/maternity-leave/'.$application->id)->with('success', 'Maternity leave application saved succesfully and proceeded to doctor for checkup!');
             }
             catch (\Exception $e) {
             	DB::rollback();
@@ -149,12 +157,12 @@ class MaternityPaymentController extends Controller
 
 		if($leave->medical){
 			$tabs['initial_checkup'] = true;
-			if($leave->medical->record){
+			if(count($leave->medical->record) > 0 ){
 				$tabs['routine_checkup'] = true;
 				if($leave->doctors_clearence == 1){
 					$tabs['doctors_clearence'] = true;
 				}
-				if($leave->status == 1){
+				if($leave->status == 'Approved'){
 					$tabs['leave_approval'] = true;
 					$tabs['reports'] = true;
 
@@ -386,40 +394,9 @@ class MaternityPaymentController extends Controller
     	}
 	}
 
-	public function approval($id, Request $request)
-	{
-		$leave = MaternityLeave::with('medical','medical.record')->findOrFail($id);
-		$employee = get_employee_by_id($leave->associate_id);
-		$tabs = array(
-			'initial_checkup' => false,
-			'routine_checkup' => false,
-			'doctors_clearence' => false,
-			'leave_approval' => false,
-			'reports' => false,
-			'verification' => false,
-			'payment' => false,
-		);
+	
 
-		if($leave->medical){
-			$tabs['initial_checkup'] = true;
-			if($leave->medical->record){
-				$tabs['routine_checkup'] = true;
-				if($leave->doctors_clearence == 1){
-					$tabs['doctors_clearence'] = true;
-				}
-				if($leave->status == 1){
-					$tabs['leave_approval'] = true;
-					$tabs['reports'] = true;
-				}
-
-			}
-		}
-
-		return view('hr.operation.maternity.leave_approval',compact('leave','employee', 'tabs'));
-
-	}
-
-	public function calculateMaternityPayment($leave, $employee)
+	public function calculateMaternityPayment($leave, $employee, $request = null)
 	{
 		$salary = array();
 		$totalcalc = array(
@@ -433,8 +410,10 @@ class MaternityPaymentController extends Controller
 			'eid_bonus' => 0,
 			'total' => 0
 		);
+
 		$lastmonth = $leave->leave_from->subMonth()->format('Y-m');
 
+		// get last 3 month salary
 		for ($i=0; $i < 3 ; $i++) { 
 
 			$monthyear = explode('-', $lastmonth);
@@ -465,31 +444,71 @@ class MaternityPaymentController extends Controller
 			$lastmonth = $dt = Carbon::create($monthyear[0], $monthyear[1], 1, 0)->subMonth()->format('Y-m');
 		}
 
-		# per wages calculation
-		$total_present = $totalcalc['present'] == 0 ? 1: $totalcalc['present'];
-		$totalcalc['per_wages'] = round(($totalcalc['total'] / $total_present),2);
-		$totalcalc['total_pay'] = round(($totalcalc['per_wages']*112),2);
-		$totalcalc['first_pay'] = round(($totalcalc['total_pay']/2),2);
-		$totalcalc['second_pay'] = $totalcalc['total_pay'];
+		if($leave->status == 'Approved'){
 
-		$view = view('hr.operation.maternity.payment_slip', compact('leave','employee','totalcalc','salary'))->render();
+		}else if($leave->status == 'Processing'){
+			# per wages calculation
+			$total_present = $totalcalc['present'] == 0 ? 1: $totalcalc['present'];
+			$totalcalc['per_wages'] = round(($totalcalc['total'] / $total_present),2);
 
-		$return = array(
-			'totalcalc' => $totalcalc,
-			'view' => $view
-		);
+			if(($leave->no_of_son + $leave->no_of_daughter) > 1){
+				$benefit = $employee->ben_house_rent + $employee->medical + $employee->transport + $employee->food;
+				$totalcalc['per_benefits'] = round(($benefit/30),2);
+				$total_leave = $request->earned_leave + $request->sick_leave;
+				$ben_day = 112 - $total_leave;
+				$first_pay_day = 56 - $total_leave;
+				$totalcalc['earned_leave'] = $request->earned_leave;
+				$totalcalc['sick_leave'] = $request->sick_leave;
+				$totalcalc['total_leave'] = $total_leave;
+				$totalcalc['ben_day'] = $ben_day;
+				$totalcalc['first_pay_day'] = $first_pay_day;
+				$totalcalc['first_pay'] = round((($totalcalc['per_wages']*$total_leave) + ($totalcalc['per_benefits']*$first_pay_day)),2);
+				$totalcalc['second_pay'] = round(($totalcalc['per_wages']*56),2);
+				$totalcalc['total_pay'] = round(($totalcalc['first_pay'] + $totalcalc['second_pay']),2);
 
-		return $return; 
+				// insert into tabel
+				$payment = new MaternityPayment();
+				$payment->hr_maternity_leave_id = $request->hr_maternity_leave_id;
+				$payment->wages_day = $totalcalc['total_leave'];
+				$payment->benefits_day = $totalcalc['ben_day'];
+				$payment->per_day_wages = $totalcalc['per_wages'];
+				$payment->earned_leave = $totalcalc['earned_leave'];
+				$payment->sick_leave = $totalcalc['sick_leave'];
+				$payment->per_day_benefit = $totalcalc['per_benefits'];
+				$payment->first_payment = $totalcalc['first_pay'];
+				$payment->second_payment = $totalcalc['second_pay'];
+				$payment->maternity_for_3 = 1;
+				$payment->save();
+
+			}else{
+
+				$totalcalc['total_pay'] = round(($totalcalc['per_wages']*112),2);
+				$totalcalc['first_pay'] = round(($totalcalc['total_pay']/2),2);
+				$totalcalc['second_pay'] = $totalcalc['total_pay'];
+
+				$payment = new MaternityPayment();
+				$payment->hr_maternity_leave_id = $request->hr_maternity_leave_id;
+				$payment->wages_day = 112;
+				$payment->per_day_wages = $totalcalc['per_wages'];
+				$payment->first_payment = $totalcalc['first_pay'];
+				$payment->second_payment = $totalcalc['second_pay'];
+				$payment->save();
+
+			}
+
+		}
+
+		return view('hr.operation.maternity.payment_slip', compact('leave','employee','totalcalc','salary'))->render();
 	}
 
 	public function approve(Request $request)
 	{
 		$leave = MaternityLeave::with('medical','medical.record')->findOrFail($request->hr_maternity_leave_id);
 
-		if($leave->status == 0){
+		if($leave->status == 'Pending'){
 			$leave->leave_from = $request->leave_from;
 			$leave->leave_to = $request->leave_to;
-			$leave->status = 1;
+			$leave->status = 'Approved';
 			
 			if($leave->save()){
 				# store nominee information
@@ -513,31 +532,11 @@ class MaternityPaymentController extends Controller
 				$nominee->save();
 
 				$employee = get_employee_by_id($leave->associate_id);
+				$view = $this->calculateMaternityPayment($leave, $employee, $request);
 
-				$calc = $this->calculateMaternityPayment($leave, $employee);
-
-
-				# calculate payment for child below 3
-				if(($leave->no_of_son + $leave->no_of_daughter) > 2){
-
-				}else{
-					$payment = new MaternityPayment();
-					$payment->hr_maternity_leave_id = $request->hr_maternity_leave_id;
-					$payment->wages_day = 112;
-					$payment->per_day_wages = $calc['totalcalc']['per_wages'];
-					$payment->first_payment = $calc['totalcalc']['first_pay'];
-					$payment->second_payment = $calc['totalcalc']['second_pay'];
-					$payment->save();
-
-
-					return response(['view' => $calc['view']]);
-				}
+				return response(['view' => $view]);
 
 			}
-
-
-			
-
 		}
 	}
 

@@ -394,6 +394,8 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 	Route::get('hr/timeattendance/leave-entry',  'Hr\TimeAttendance\LeaveWorkerController@showForm')->middleware(['permission:Manage Leave']);
 	Route::post('hr/timeattendance/leave_worker',  'Hr\TimeAttendance\LeaveWorkerController@saveData')->middleware(['permission:Manage Leave']);
 
+	Route::get('hr/reports/maternity-leave', 'Hr\Operation\MaternityPaymentController@report');
+
 	//Operation - Maternity Leave
 	Route::get('hr/operation/maternity-leave', 'Hr\Operation\MaternityPaymentController@showForm');
 	Route::post('hr/operation/maternity-leave', 'Hr\Operation\MaternityPaymentController@leaveApplication');
@@ -1398,3 +1400,7 @@ Route::get('hr/setup/default_system_setting_delete/{id}','Hr\Setup\SystemSetting
 
 Route::get('hr/att-json', 'Hr\AttArchiveController@index');
 Route::get('hr/line-report', 'Hr\LineReportController@index');
+
+
+Route::get('hr/operation/voucher', 'Hr\Operation\VoucherController@index');
+Route::post('hr/operation/voucher', 'Hr\Operation\VoucherController@voucher');

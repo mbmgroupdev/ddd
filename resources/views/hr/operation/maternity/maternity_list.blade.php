@@ -9,12 +9,14 @@
                     <a href="#">Maternity Leave</a>
                 </li>
                 <li class="active">Application List</li>
+                <li class="top-nav-btn">
+                    <a href="{{url('hr/operation/maternity-leave')}}" target="_blank" class="btn btn-primary pull-right" >Application</i></a>
+                </li>
             </ul>
         </div>
 
         @include('inc/message')
         <div class="panel panel-success mb-3">
-            <div class="panel-heading"><h6>Application List</h6></div> 
             <div class="panel-body mb-3"> 
                     <table id="mat-leave" class="table table-striped table-bordered" style="display:table;overflow-x: auto;width: 100%;">
                         <thead>

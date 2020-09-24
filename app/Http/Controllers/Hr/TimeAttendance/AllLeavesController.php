@@ -21,14 +21,14 @@ class AllLeavesController extends Controller
 {
    public function allLeaves()
    {
-        //ACL::check(["permission" => "hr_time_leaves"]);
+        
         $unit=Unit::pluck('hr_unit_name');
         #--------------------------------------------------------#
    	    return view('hr/timeattendance/all_leaves', compact('unit'));
    }
    public function allLeavesData()
    {
-      //ACL::check(["permission" => "hr_time_leaves"]);
+      
       #-----------------------------------------------------------#
         $data = DB::table('hr_leave AS l')
             ->select([
@@ -46,6 +46,10 @@ class AllLeavesController extends Controller
             ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
             ->orderBy('l.id','desc')
             ->get();
+        $perm = false;
+        if(auth()->user()->canAny(['Manage Leave','Leave Approve']) || auth()->user()->hasRole('Super Admin')){
+            $perm = true;
+        }
 
         return DataTables::of($data)
             ->addColumn('leave_duration', function ($data) {
@@ -69,8 +73,9 @@ class AllLeavesController extends Controller
                   return  "<span class='label label-primary label-xs' style='width: 70px;'>Applied
                     </span>";
             })
-            ->addColumn('action', function ($data) {
-                  if(auth()->user()->canAny(['Manage Leave','Leave Approve']) || auth()->user()->hasRole('Super Admin')){
+            ->addColumn('action', function ($data) use ($perm) {
+                  if($perm){
+                    return '';
                     return "<div class=\"btn-group\">
 
                         <a href=\"#\" class=\"btn btn-xs btn-success\" data-toggle=\"tooltip\" title=\"View\">
@@ -110,8 +115,6 @@ class AllLeavesController extends Controller
 
    public function leaveView($id)
    {
-      //ACL::check(["permission" => "hr_time_leaves"]);
-      #-----------------------------------------------------------#
       $previous_leaves= DB::table('hr_leave AS l')->where('l.leave_ass_id', '=',"XTQGMOKVJI")->get();
         $leave= DB::table('hr_leave AS l')
             ->where('l.id', '=', $id)
