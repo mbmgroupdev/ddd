@@ -1,0 +1,16 @@
+<?php
+
+namespace {{ namespace }};
+
+use Illuminate\Database\Eloquent\Model;
+
+class {{ class }} extends Model
+{
+	protected $table = '';
+	protected $primaryKey = 'id';
+    protected $guarded = [];
+
+    protected $dates = [
+        'created_at', 'updated_at'
+    ];
+}

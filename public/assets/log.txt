@@ -1,0 +1,11 @@
+2020-09-26 09:38:55 "20F025017D" Yearly Holiday Entry Saved 231
+2020-09-26 09:38:55 "20F025017D" Yearly Holiday Entry Saved 230
+2020-09-26 09:38:55 "20F025017D" Yearly Holiday Entry Saved 229
+2020-09-26 09:38:55 "20F025017D" Yearly Holiday Entry Saved 228
+2020-09-24 15:21:46 "20F025017D" Employee Data Updated 9071
+2020-09-23 10:38:23 "17F005001B" Materny leave medical routine checkup for  2
+2020-09-23 10:30:27 "17F005001B" Materny leave medical for  2
+2020-09-23 10:28:14 "17F005001B" Materny leave application for  2
+2020-09-22 12:02:04 "17F005001B" Materny leave medical routine checkup for  1
+2020-09-22 11:41:03 "17F005001B" Materny leave medical for  1
+2020-09-22 11:18:51 "17F005001B" Materny leave application for  1

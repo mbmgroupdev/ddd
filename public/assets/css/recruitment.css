@@ -1,0 +1,82 @@
+.stepwizard-row .wizard-step i {
+    display: inline;
+    margin: 0 20px 0 0;
+}
+.stepwizard-row .wizard-step a.btn {
+	padding: 0px 15px;
+}
+.setup-content {
+    margin-top: 10px;
+}
+.form-card-details{
+	max-height: 440px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+
+.card-body {
+    padding-bottom: 0;
+}
+.iq-card-body {
+    padding: 0px 20px;
+    padding-bottom: 30px;
+
+}
+.require-section .wizard-step {
+   width: 100%;
+}
+
+/*tab nav vertical */
+#top-tabbar-vertical-section {
+    overflow: hidden;
+    color: #777D74;
+    margin: 0 -20px 60px;
+}
+
+#top-tabbar-vertical-section .active {
+    color: #089bab;
+}
+#top-tabbar-vertical-section .wizard-step {
+    list-style-type: none;
+    font-size: 18px;
+    width: 100%;
+    float: left;
+    position: relative;
+    font-weight: 400;
+}
+
+#top-tabbar-vertical-section #user.active a {
+    background: #eff7f8;
+}
+#top-tabbar-vertical-section .wizard-step a {
+    background: #fff;
+    color: #000;
+    display: block;
+    padding: 5px 15px;
+    margin: 5px 20px;
+    border-radius: 20px;
+    -webkit-border-radius: 20px;
+    text-decoration: none;
+    border: 1px solid #dddddd;
+    text-align: left;
+}
+#top-tabbar-vertical-section .wizard-step.active a {
+    border-color: transparent;
+}
+#top-tabbar-vertical-section .wizard-step#user i {
+    background: #eff7f8;
+    color: #089bab;
+}
+#top-tabbar-vertical-section .wizard-step.active i {
+    background: #fff !important;
+}
+#top-tabbar-vertical-section .wizard-step i {
+    display: inline-block;
+    text-align: center;
+    height: 50px;
+    width: 50px;
+    line-height: 50px;
+    font-size: 20px;
+    border-radius: 50%;
+    margin: 0 20px 0 0;
+}
