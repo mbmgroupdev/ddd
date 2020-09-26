@@ -115,6 +115,7 @@ class MaternityPaymentController extends Controller
          		$application = new MaternityLeave();
          		$application->associate_id = $request->associate;
          		$application->applied_date = $request->applied_date;
+         		$application->edd = $request->edd;
          		$application->no_of_son = $request->no_of_son;
          		$application->no_of_daughter = $request->no_of_daughter;
          		$application->last_child_age = $request->last_child_age;
@@ -166,7 +167,7 @@ class MaternityPaymentController extends Controller
 					$tabs['leave_approval'] = true;
 					$tabs['reports'] = true;
 
-					$view = $this->calculateMaternityPayment($leave, $employee)['view'];
+					$view = $this->calculateMaternityPayment($leave, $employee, []);
 				}
 
 			}
@@ -445,6 +446,19 @@ class MaternityPaymentController extends Controller
 		}
 
 		if($leave->status == 'Approved'){
+
+			$payment = MaternityPayment::where('hr_maternity_leave_id', $leave->id)->first()->toArray();
+			$totalcalc['ben_day'] = $payment['benefits_day']; 
+			$totalcalc['total_leave'] = ($payment['earned_leave'] + $payment['sick_leave']); 
+			$totalcalc['first_pay_day'] = (56 - $totalcalc['total_leave']) ; 
+			$totalcalc['per_wages'] = $payment['per_day_wages']; 
+			$totalcalc['per_benefits'] = $payment['per_day_benefit']; 
+			$totalcalc['first_pay'] = $payment['first_payment']; 
+			$totalcalc['second_pay'] = $payment['second_payment']; 
+			$totalcalc['total_pay'] = ($payment['first_payment'] + $payment['second_payment']); 
+			$totalcalc = array_merge ($totalcalc, $payment);
+
+			//dd($totalcalc);
 
 		}else if($leave->status == 'Processing'){
 			# per wages calculation

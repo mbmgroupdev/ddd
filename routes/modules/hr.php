@@ -76,6 +76,7 @@ Route::post('hr/user-dashboard/events', 'Hr\DashboardController@eventSettings');
 Route::get('hr/user/pdf', 'Hr\ProfileController@employeeProfile');
 Route::get('hr/user/attendance_calendar/{as_id}', 'Hr\ProfileController@attendanceCalendar');
 Route::post('hr/employee-status-update', 'Hr\Recruitment\EmployeeController@statusUpdate');
+Route::get('hr/get-associates-by', 'Hr\Recruitment\EmployeeController@getAssociateBy');
 
 Route::get('hr/associate-info', 'Hr\Operation\LocationChangeController@getUnit');
 
@@ -571,6 +572,11 @@ Route::get('hr/payroll/salary', 'Hr\Payroll\SalaryController@view');
 	// Employee
 	Route::group(['middleware' => 'permission:Employee List'], function(){
 		Route::get('hr/employee/list', 'Hr\Recruitment\EmployeeController@showList');
+		Route::get('hr/employee/today', 'Hr\Recruitment\EmployeeController@today');
+		Route::get('hr/recruitment/employee/today_employee_data', 'Hr\Recruitment\EmployeeController@getTodayData');
+
+		Route::get('hr/employee/incomplete-list', 'Hr\Recruitment\EmployeeController@incompleteEmployee');
+		Route::get('hr/recruitment/employee/incomplete_employee_data', 'Hr\Recruitment\EmployeeController@getIncompleteData');
 
 		Route::get('hr/recruitment/employee/employee_list_details', 'Hr\Recruitment\EmployeeController@showListDetails');
 		Route::get('hr/recruitment/employee/employee_data', 'Hr\Recruitment\EmployeeController@getData');
@@ -616,6 +622,12 @@ Route::get('hr/payroll/salary', 'Hr\Payroll\SalaryController@view');
 		Route::post('hr/recruitment/operation/benefits','Hr\Recruitment\BenefitController@benefitStore');
 		Route::get('hr/recruitment/get_benefit_by_id','Hr\Recruitment\BenefitController@getBenefitByID');
 	});
+
+	Route::get('hr/operation/production-bonus','Hr\Operation\VoucherController@productionBonus');
+	Route::post('hr/operation/production-bonus','Hr\Operation\VoucherController@storeProductionBonus');
+	Route::get('hr/operation/production-bonus-list','Hr\Operation\VoucherController@productionList');
+	Route::post('hr/operation/production-bonus-list-data','Hr\Operation\VoucherController@productionListData');
+
 	//Job Portal
 	Route::get('hr/recruitment/job_portal/cv', 'Hr\Recruitment\CvController@CV');
 	Route::get('hr/recruitment/job_portal/job_posting', 'Hr\Recruitment\JobController@JobPosting')->middleware(['permission:Job Posting']);

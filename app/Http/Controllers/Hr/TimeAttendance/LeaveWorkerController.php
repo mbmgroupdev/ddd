@@ -55,7 +55,7 @@ class LeaveWorkerController extends Controller
             $check->sel_days = (int)date_diff(date_create($request->leave_from),date_create($request->leave_to))->format("%a");
 
             $avail = emp_remain_leave_check($check);
-            //dd($avail->stat);
+            
             if($avail->stat != 'false'){
 
                 $leave_supporting_file = null;

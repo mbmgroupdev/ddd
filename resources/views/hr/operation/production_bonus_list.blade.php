@@ -30,9 +30,10 @@
                                     <th>Name</th>
                                     <th>Oracle ID</th>
                                     <th>Unit</th>
-                                    <th>Joining Salary</th>
-                                    <th>Current Salary</th>
-                                    <th>Basic Salary</th>
+                                    <th>Department</th>
+                                    <th>Line</th>
+                                    <th>Month</th>
+                                    <th>Bonus Amount</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -53,8 +54,8 @@ $(document).ready(function(){
         '3' :[@foreach($unitList as $e) <?php echo "'$e'," ?> @endforeach]
     };
 
-    var exportColName = ['Associate ID','Name','Oracle ID','Unit','Joining Salary', 'Current Salary', 'Basic Salary'];
-    var exportCol = [0,1,2,3,4,5,6];
+    var exportColName = ['Associate ID','Name','Oracle ID','Unit','Department', 'Line','Month' ,'Bonus Amount'];
+    var exportCol = [0,1,2,3,4,5,6,7];
     
     var dt = $('#dataTables').DataTable({
         order: [], //reset auto order
@@ -68,7 +69,7 @@ $(document).ready(function(){
 
         },
         ajax: {
-            url: '{!! url("hr/payroll/benefit_list_data") !!}',
+            url: '{!! url("hr/operation/production-bonus-list-data") !!}',
             type: "POST",
             headers: {
                   'X-CSRF-TOKEN': '{{ csrf_token() }}'
@@ -146,13 +147,14 @@ $(document).ready(function(){
             } 
         ], 
         columns: [ 
-            { data: 'ben_as_id', name: 'ben_as_id' }, 
+            { data: 'associate_id', name: 'associate_id' }, 
             { data: 'as_name',  name: 'as_name' }, 
             { data: 'as_oracle_code', name: 'as_oracle_code' }, 
-            { data: 'unit_name',  name: 'unit_name' }, 
-            { data: 'ben_joining_salary', name: 'ben_joining_salary' }, 
-            { data: 'ben_current_salary', name: 'ben_current_salary' }, 
-            { data: 'ben_basic', name: 'ben_basic' }, 
+            { data: 'hr_unit_short_name',  name: 'hr_unit_short_name' }, 
+            { data: 'hr_department_name', name: 'hr_department_name' }, 
+            { data: 'hr_line_name', name: 'hr_line_name' }, 
+            { data: 'month', name: 'month' }, 
+            { data: 'bonus_add', name: 'bonus_add' }, 
             { data: 'action', name: 'action', orderable: false, searchable: false }
         ], 
         initComplete: function () {   

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Benefits extends Model
 {
     protected $table= "hr_benefits";
+    protected $primaryKey = 'ben_id';
     public $timestamps = false;
     protected $guarded = [];
 

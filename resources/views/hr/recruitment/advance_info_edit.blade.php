@@ -157,7 +157,7 @@
 
                                             <div class="form-group has-float-label select-search-group">
                                                 
-                                                <select name="emp_adv_info_religion" class="form-control no-select" id="religion" data-validation-error-msg="The Religion field is required">
+                                                <select name="emp_adv_info_religion" class="form-control no-select" id="religion" required-error-msg="The Religion field is required">
                                                     @if(!empty($advance->emp_adv_info_religion))
                                                     <option value="{{$advance->emp_adv_info_religion}}">{{$advance->emp_adv_info_religion}}</option>
                                                     @endif
@@ -172,12 +172,12 @@
                                             
                      
                                             <div class="form-group has-float-label">
-                                                <input name="emp_adv_info_pre_org" type="text" id="previous_org_name" placeholder="Name of Previous Organization" class="form-control" value="{{ $advance->emp_adv_info_pre_org }}"   data-validation-length="3-255" />
+                                                <input name="emp_adv_info_pre_org" type="text" id="previous_org_name" placeholder="Name of Previous Organization" class="form-control" value="{{ $advance->emp_adv_info_pre_org }}"   required-length="3-255" />
                                                 <label  for="emp_adv_info_pre_org"> Last Organization </label>
                                             </div>
                      
                                             <div class="form-group has-float-label">
-                                                <input name="emp_adv_info_work_exp" type="text" id="experience" placeholder="Work Experience in Year" class="form-control" value="{{$advance->emp_adv_info_work_exp}}" data-validation="number"  data-validation-allowing="range[0;50,float]" data-validation-error-msg="The Work Experience my be 0 to 50 years" />
+                                                <input name="emp_adv_info_work_exp" type="text" id="experience" placeholder="Work Experience in Year" class="form-control" value="{{$advance->emp_adv_info_work_exp}}" required="number"  required-allowing="range[0;50,float]" required-error-msg="The Work Experience my be 0 to 50 years" />
                                                 <label  for="emp_adv_info_work_exp"> Work Experience </label>
                                             </div>
                                             
@@ -288,7 +288,7 @@
                                                         <strong class="text-danger">No file found!</strong>
                                                     @endif
                                                     <div class="file-zone-emp">
-                                                        <input type="file" class="file-type-validation" name="emp_adv_info_birth_cer" id="emp_adv_info_birth_cer"  data-validation-allowing="docx,doc,pdf,jpeg,png,jpg">
+                                                        <input type="file" class="file-type-validation" name="emp_adv_info_birth_cer" id="emp_adv_info_birth_cer"  required-allowing="docx,doc,pdf,jpeg,png,jpg">
                                                         <span id="file_upload_error1" class="red" style="display: none; font-size: 13px;">Only <strong>docx, doc, pdf, jpeg, jpg or png </strong>type file supported(<1MB).</span>
                                                     </div>
                                             </div>
@@ -308,7 +308,7 @@
                                                         <strong class="text-danger">No file found!</strong>
                                                     @endif
                                                     <div class="file-zone-emp">
-                                                        <input type="file" class="file-type-validation" name="emp_adv_info_city_corp_cer" id="emp_adv_info_city_corp_cer"  data-validation-allowing="docx,doc,pdf,jpeg,png,jpg" data-validat data-validation-error-msg-mime="You can only upload docx, doc, pdf, jpeg, jpg or png type file">
+                                                        <input type="file" class="file-type-validation" name="emp_adv_info_city_corp_cer" id="emp_adv_info_city_corp_cer"  required-allowing="docx,doc,pdf,jpeg,png,jpg" data-validat required-error-msg-mime="You can only upload docx, doc, pdf, jpeg, jpg or png type file">
                                                         <span id="file_upload_error2" class="red" style="display: none; font-size: 13px;">Only <strong>docx, doc, pdf, jpeg, jpg or png </strong>type file supported(<1MB).</span>
 
                                                     </div>
@@ -329,7 +329,7 @@
                                                         <strong class="text-danger">No file found!</strong>
                                                     @endif
                                                     <div class="file-zone-emp">
-                                                        <input type="file" class="file-type-validation" name="emp_adv_info_police_veri" id="emp_adv_info_police_veri"  data-validation-allowing="docx,doc,pdf,jpeg,png,jpg" data-validat data-validation-error-msg-mime="You can only upload docx, doc, pdf, jpeg, jpg or png type file">
+                                                        <input type="file" class="file-type-validation" name="emp_adv_info_police_veri" id="emp_adv_info_police_veri"  required-allowing="docx,doc,pdf,jpeg,png,jpg" data-validat required-error-msg-mime="You can only upload docx, doc, pdf, jpeg, jpg or png type file">
                                                         <span id="file_upload_error3" class="red" style="display: none; font-size: 13px;">Only <strong>docx, doc, pdf, jpeg, jpg or png </strong>type file supported(<1MB).</span>
                                                     </div>
                                             </div>
@@ -351,7 +351,7 @@
                                                     <div class="file-zone-emp">
                                                         <input name="emp_adv_info_job_app" type="file" class="file-type-validation" id="as_job_appl"
                                                         
-                                                        data-validation-allowing="docx,doc,pdf,jpeg,png,jpg">
+                                                        required-allowing="docx,doc,pdf,jpeg,png,jpg">
                                                         <span id="file_upload_error4" class="red" style="display: none; font-size: 13px;">Only <strong>docx, doc, pdf, jpeg, jpg or png </strong>type file supported(<1MB).</span>
                                                     </div>
                                             </div>
@@ -373,7 +373,7 @@
                                                     <div class="file-zone-emp">
                                                         <input name="emp_adv_info_cv" type="file" class="file-type-validation" id="as_cv"
                                                         
-                                                        data-validation-allowing="docx,doc,pdf,jpeg,png,jpg">
+                                                        required-allowing="docx,doc,pdf,jpeg,png,jpg">
                                                         <span id="file_upload_error5" class="red" style="display: none; font-size: 13px;">Only <strong>docx, doc, pdf, jpeg, jpg or png </strong>type file supported(<1MB).</span>
                                                     </div>
                                             </div>
@@ -419,8 +419,8 @@
                                                     <div class="file-zone-emp">
                                                         <input name="emp_adv_info_signature" type="file" class="file-type-validation" id="Signature"
                                                         
-                                                        data-validation-allowing="jpeg,png,jpg"
-                                                        data-validation-error-msg-mime="You can only upload jpeg, jpg or png images">
+                                                        required-allowing="jpeg,png,jpg"
+                                                        required-error-msg-mime="You can only upload jpeg, jpg or png images">
                                                         <span id="file_upload_error7" class="red" style="display: none; font-size: 13px;">Only <strong>jpeg, jpg or png </strong>type file supported(<512kb).</span>
                                                     </div>
                                             </div>
@@ -442,7 +442,7 @@
                                                     <div class="file-zone-emp">
                                                         <input name="emp_adv_info_auth_sig" type="file" class="file-type-validation" id="authority_signature" 
                                                         
-                                                        data-validation-allowing="jpeg,png,jpg">
+                                                        required-allowing="jpeg,png,jpg">
                                                         <span id="file_upload_error8" class="red" style="display: none; font-size: 13px;">Only <strong>jpeg, jpg or png </strong>type file supported(<512kb).</span>
                                                     </div>
                                             </div>
@@ -521,7 +521,7 @@
 
                                             <div class="form-group has-float-label select-search-group">
                                                 
-                                                <select  name="education_passing_year" id="education_passing_year" data-validation="required">
+                                                <select  name="education_passing_year" id="education_passing_year" required="required">
                                                     <option value="">Selecet Passing Year</option>
                                                     @for($year=1950; $year<=date('Y') ; $year++)
                                                     <option value="{{ $year }}">{{ $year }}</option>
@@ -571,86 +571,86 @@
                                             </div>
 
                                             <div class="form-group has-float-label">
-                                                <input type="text" id="hr_bn_unit" placeholder="ইউনিটের নাম" value="{{ (!empty($bangla->hr_unit_name_bn)?$bangla->hr_unit_name_bn:null) }}" class="form-control" data-validation="required" readonly />
+                                                <input type="text" id="hr_bn_unit" placeholder="ইউনিটের নাম" value="{{ (!empty($bangla->hr_unit_name_bn)?$bangla->hr_unit_name_bn:null) }}" class="form-control" required="required" readonly />
                                                 <label  for="hr_bn_unit"> ইউনিট </label>
                                             </div>
                                             
                                             <div class="form-group has-float-label">
-                                                <input type="text" id="hr_bn_department" placeholder="ডিপার্টমেন্টের নাম" value="{{ (!empty($bangla->hr_department_name_bn)?$bangla->hr_department_name_bn:null) }}" class="form-control" data-validation="required" readonly />
+                                                <input type="text" id="hr_bn_department" placeholder="ডিপার্টমেন্টের নাম" value="{{ (!empty($bangla->hr_department_name_bn)?$bangla->hr_department_name_bn:null) }}" class="form-control" required="required" readonly />
                                                 <label  for="hr_bn_department"> ডিপার্টমেন্ট </label>
                                             </div>
 
                                             <div class="form-group has-float-label">
-                                                <input type="text" id="hr_bn_designation" placeholder="পদবি" value="{{ (!empty($bangla->hr_designation_name_bn)?$bangla->hr_designation_name_bn:null) }}" class="form-control" data-validation="required" readonly />
+                                                <input type="text" id="hr_bn_designation" placeholder="পদবি" value="{{ (!empty($bangla->hr_designation_name_bn)?$bangla->hr_designation_name_bn:null) }}" class="form-control" required="required" readonly />
                                                 <label  for="hr_bn_designation"> পদবি </label>
                                             </div>
 
                                             <div class="form-group has-float-label">
-                                                <input type="text" id="hr_bn_doj" placeholder="যোগদানের তারিখ" value="{{ (!empty($bangla->as_doj)?$bangla->as_doj->format('Y-m-d'):null) }}" class="form-control" data-validation="required" readonly />
+                                                <input type="text" id="hr_bn_doj" placeholder="যোগদানের তারিখ" value="{{ (!empty($bangla->as_doj)?$bangla->as_doj->format('Y-m-d'):null) }}" class="form-control" required="required" readonly />
                                                 <label  for="hr_bn_doj"> যোগদানের তারিখ </label>
                                             </div>
 
                                             <div class="form-group has-float-label">
-                                                <input name="hr_bn_father_name" type="text" id="hr_bn_father_name" placeholder="পিতার নাম" class="form-control" data-validation="required length" data-validation-length="1-255"/>
+                                                <input name="hr_bn_father_name" type="text" id="hr_bn_father_name" placeholder="পিতার নাম" class="form-control" required="required length" required-length="1-255"/>
                                                 <label  for="hr_bn_father_name">পিতার নাম </label>
                                             </div>
 
                                             <div class="form-group has-float-label">
-                                                <input name="hr_bn_mother_name" type="text" id="hr_bn_mother_name" placeholder="মাতার নাম" class="form-control" data-validation="required length" data-validation-length="1-255"/>
+                                                <input name="hr_bn_mother_name" type="text" id="hr_bn_mother_name" placeholder="মাতার নাম" class="form-control" required="required length" required-length="1-255"/>
                                                 <label  for="hr_bn_mother_name">মাতার নাম </label>
                                             </div>
 
                                             <div class="form-group has-float-label">
-                                                <input name="hr_bn_spouse_name" type="text" id="hr_bn_spouse_name" placeholder="স্বামী/স্ত্রীর নাম (ঐচ্ছিক)" class="form-control" data-validation="length" data-validation-length="0-255"/>
+                                                <input name="hr_bn_spouse_name" type="text" id="hr_bn_spouse_name" placeholder="স্বামী/স্ত্রীর নাম (ঐচ্ছিক)" class="form-control" required="length" required-length="0-255"/>
                                                 <label  for="hr_bn_spouse_name">স্বামী/স্ত্রীর নাম </label>
                                             </div>
                                         </div>
                                         <div class="col-sm-4">
                                             <legend><small>স্থায়ী ঠিকানা </small></legend>
                                             <div class="form-group has-float-label">
-                                                <input name="hr_bn_permanent_village" type="text" id="hr_bn_permanent_village" placeholder="গ্রামের নাম"  class="form-control" data-validation="required length" data-validation="length" data-validation-length="1-255"/>
+                                                <input name="hr_bn_permanent_village" type="text" id="hr_bn_permanent_village" placeholder="গ্রামের নাম"  class="form-control" required="required length" required="length" required-length="1-255"/>
                                                 <label  for="hr_bn_permanent_village"> গ্রাম  </label>
                                             </div>
 
                                             <div class="form-group has-float-label">
-                                                <input name="hr_bn_permanent_po" type="text" id="hr_bn_permanent_po" placeholder="ডাকঘরের নাম"  class="form-control" data-validation="required length" data-validation="length" data-validation-length="1-255"/>
+                                                <input name="hr_bn_permanent_po" type="text" id="hr_bn_permanent_po" placeholder="ডাকঘরের নাম"  class="form-control" required="required length" required="length" required-length="1-255"/>
                                                 <label  for="hr_bn_permanent_po"> ডাকঘর </label>
                                             </div>
 
                                             <div class="form-group has-float-label">
-                                                <input type="text" id="hr_bn_permanent_upazilla" placeholder="উপজেলার নাম" value="{{ (!empty($bangla->permanent_upazilla_bn)?$bangla->permanent_upazilla_bn:null) }}" class="form-control" data-validation="required" readonly />
+                                                <input type="text" id="hr_bn_permanent_upazilla" placeholder="উপজেলার নাম" value="{{ (!empty($bangla->permanent_upazilla_bn)?$bangla->permanent_upazilla_bn:null) }}" class="form-control" required="required" readonly />
                                                 <label  for="hr_bn_permanent_upazilla"> উপজেলা </label>
                                             </div>
 
                                             <div class="form-group has-float-label">
-                                                <input type="text" id="hr_bn_permanent_district" placeholder="জেলার নাম" value="{{ (!empty($bangla->permanent_district_bn)?$bangla->permanent_district_bn:null) }}" class="form-control" data-validation="required" readonly />
+                                                <input type="text" id="hr_bn_permanent_district" placeholder="জেলার নাম" value="{{ (!empty($bangla->permanent_district_bn)?$bangla->permanent_district_bn:null) }}" class="form-control" required="required" readonly />
                                                 <label  for="hr_bn_permanent_district"> জেলা </label>
                                             </div>
                                         </div>
                                         <div class="col-sm-4">
                                             <legend><small>বর্তমান ঠিকানা</small></legend>
                                             <div class="form-group has-float-label">
-                                                    <input name="hr_bn_present_road" type="text" id="hr_bn_present_road" placeholder="রোড নং "  class="form-control" data-validation="required length" data-validation="length" data-validation-length="1-255"/>
+                                                    <input name="hr_bn_present_road" type="text" id="hr_bn_present_road" placeholder="রোড নং "  class="form-control" required="required length" required="length" required-length="1-255"/>
                                                 <label  for="hr_bn_present_road"> রোড নং </label>
                                             </div> 
 
                                             <div class="form-group has-float-label">
-                                                    <input name="hr_bn_present_house" type="text" id="hr_bn_present_house" placeholder="বাড়ি নং"  class="form-control" data-validation="required length" data-validation="length" data-validation-length="1-255"/>
+                                                    <input name="hr_bn_present_house" type="text" id="hr_bn_present_house" placeholder="বাড়ি নং"  class="form-control" required="required length" required="length" required-length="1-255"/>
                                                 <label  for="hr_bn_present_house"> বাড়ি নং </label>
                                             </div> 
 
                                             <div class="form-group has-float-label">
-                                                    <input name="hr_bn_present_po" type="text" id="hr_bn_present_po" placeholder="ডাকঘরের নাম"  class="form-control" data-validation="required length" data-validation="length" data-validation-length="1-255"/>
+                                                    <input name="hr_bn_present_po" type="text" id="hr_bn_present_po" placeholder="ডাকঘরের নাম"  class="form-control" required="required length" required="length" required-length="1-255"/>
                                                 <label  for="hr_bn_present_po"> ডাকঘর </label>
                                             </div>
 
                                             <div class="form-group has-float-label">
-                                                    <input type="text" id="hr_bn_present_upazilla" placeholder="উপজেলার নাম" value="{{ (!empty($bangla->present_upazilla_bn)?$bangla->present_upazilla_bn:null) }}" class="form-control" data-validation="required" readonly />
+                                                    <input type="text" id="hr_bn_present_upazilla" placeholder="উপজেলার নাম" value="{{ (!empty($bangla->present_upazilla_bn)?$bangla->present_upazilla_bn:null) }}" class="form-control" required="required" readonly />
                                                 <label  for="hr_bn_present_upazilla"> উপজেলা </label>
                                             </div>
 
                                             <div class="form-group has-float-label">
-                                                    <input type="text" id="hr_bn_present_district" placeholder="জেলার নাম" value="{{ (!empty($bangla->present_district_bn)?$bangla->present_district_bn:null) }}" class="form-control" data-validation="required" readonly />
+                                                    <input type="text" id="hr_bn_present_district" placeholder="জেলার নাম" value="{{ (!empty($bangla->present_district_bn)?$bangla->present_district_bn:null) }}" class="form-control" required="required" readonly />
                                                 <label  for="hr_bn_present_district"> জেলা </label>
                                             </div>
                                             <div class="form-group">

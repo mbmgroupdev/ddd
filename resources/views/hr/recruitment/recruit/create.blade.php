@@ -317,7 +317,7 @@
                                                 </div>
                                                 <div class="col-md-6">
                                                    <div class="form-group has-float-label has-required">
-                                                      <input type="text" class="form-control @error('worker_identification_mark') is-invalid @enderror" id="identificationMark" name="worker_identification_mark" placeholder="Type Identification Mark" value="{{ old('worker_identification_mark') }}" required="required" autocomplete="off" />
+                                                      <input type="text" class="form-control @error('worker_identification_mark') is-invalid @enderror" id="identificationMark" name="worker_identification_mark" placeholder="Type Identification Mark" value="{{ old('worker_identification_mark')??'N/A' }}" required="required" autocomplete="off" />
                                                       <label for="identificationMark">Identification Mark</label>
                                                    </div>
                                                    @error('worker_identification_mark')
@@ -328,7 +328,7 @@
                                                 </div>
                                                 <div class="col-md-6">
                                                    <div class="form-group has-float-label has-required select-search-group">
-                                                      {{ Form::select('worker_doctor_age_confirm', ['18-20'=>'18-20', '21-25'=>'21-25', '26-30'=>'26-30','31-35'=>'31-35', '36-40'=>'36-40', '41-45'=>'41-45', '46-50'=>'46-50', '51-55'=>'51-55', '56-60'=>'56-60', '61-65'=>'61-65', '66-70'=>'66-70'], old('worker_doctor_age_confirm'), ['placeholder'=>'Select Blood Group', 'id'=>'age-confirmation', 'class'=> 'form-control' . ($errors->has('worker_doctor_age_confirm') ? ' is-invalid' : ''), 'required']) }}
+                                                      {{ Form::select('worker_doctor_age_confirm', ['18-20'=>'18-20', '21-25'=>'21-25', '26-30'=>'26-30','31-35'=>'31-35', '36-40'=>'36-40', '41-45'=>'41-45', '46-50'=>'46-50', '51-55'=>'51-55', '56-60'=>'56-60', '61-65'=>'61-65', '66-70'=>'66-70'], old('worker_doctor_age_confirm'), ['placeholder'=>'Select Age Group', 'id'=>'age-confirmation', 'class'=> 'form-control' . ($errors->has('worker_doctor_age_confirm') ? ' is-invalid' : ''), 'required']) }}
                                                       <label for="age-confirmation">Doctor's Age Confirmation</label>
                                                    </div>
                                                    @error('worker_doctor_age_confirm')
@@ -339,7 +339,7 @@
                                                 </div>
                                                 <div class="col-md-6">
                                                    <div class="form-group has-float-label has-required">
-                                                      <input type="text" class="form-control @error('worker_doctor_comments') is-invalid @enderror" id="doctorComments" name="worker_doctor_comments" value="{{ old('worker_doctor_comments') }}" placeholder="Type Doctor's Comments" required="required" autocomplete="off" />
+                                                      <input type="text" class="form-control @error('worker_doctor_comments') is-invalid @enderror" id="doctorComments" name="worker_doctor_comments" value="{{ old('worker_doctor_comments') }}??'Good'" placeholder="Type Doctor's Comments" required="required" autocomplete="off" />
                                                       <label for="doctorComments">Doctor's Comments</label>
                                                    </div>
                                                    @error('worker_doctor_comments')
@@ -499,7 +499,7 @@
       </div>
    </div>
    @push('js')
-    
+      <script src="{{ asset('assets/js/chart-custom.js') }}"></script>
       <script>
          $(".select-search").select2({});
 

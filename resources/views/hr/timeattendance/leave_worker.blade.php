@@ -10,7 +10,6 @@
         padding: 5px;
     }
 </style>
-<link href="{{ asset('assets/css/sweetalert.min.css')}}" rel="stylesheet"/>
 @endpush
 <div class="main-content">
     <div class="main-content-inner">
@@ -31,11 +30,11 @@
                 </li>
             </ul>
         </div>
+        @include('inc/message')
         <div class="page-content"> 
             <div class="panel panel-success">
                 <div class="panel-body">
                     <div class="row">
-                        @include('inc/message')
                         <div class="col-sm-5" style="padding-top: 10px;border-right: 1px solid #d1d1d1;">
                             {{ Form::open(['url'=>'hr/timeattendance/leave_worker', 'class'=>'form-horizontal needs-validation', 'files' => true, 'novalidate']) }}
                                 <div class="form-group has-required has-float-label select-search-group">
@@ -173,7 +172,6 @@
 </div>
 
 @push('js')
-<script src="{{ asset('assets/js/sweetalert.min.js') }}"></script>
 <script type="text/javascript">
 $(document).ready(function()
 {
@@ -287,6 +285,7 @@ $(document).ready(function()
                     },
                     success: function(data)
                     {
+                        
                         if(data.stat == 'false'){
                             $.notify(data.msg, 'error');
                             $('#error_leave_text').html('<span style="color:#da0000;">'+data.msg+'</div>');
@@ -305,28 +304,12 @@ $(document).ready(function()
                                 },
                                 success: function(data)
                                 {
+                                   
                                     if(data.stat == false){
-                                        swal(data.msg+'. Do you want to delete attendance?', {
-                                            buttons: {
-                                                cancel: "Cancel",
-                                                catch: {
-                                                    text: "OK",
-                                                    value: "catch",
-                                                },
-                                            },
-                                        })
-                                        .then((value) => {
-                                            switch (value) {
-                                                case "catch":
-                                                    break;
-                                                default:
-                                                    $('#select_day').html('');
-                                                    $('#error_leave_text').html('');
-                                                    $('#leave_from').val('');
-                                                    $('#leave_to').val('');
-                                                    $('#leave_entry').attr("disabled",true);
-                                            }
-                                        });
+                                        $.notify(data.msg,'error');
+                                        $('#error_leave_text').html(data.msg+' Attendance will be removed!');
+                                    }else{
+                                        $('#error_leave_text').html('');
                                     }
                                 },
                                 error: function(xhr)
