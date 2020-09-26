@@ -30,6 +30,7 @@
                 </div> 
                 <div class="panel-body">
                     
+
                     <form class="form-horizontal needs-validation" novalidate role="form" method="post" action="{{ url('hr/setup/floor')  }}" enctype="multipart/form-data">
                         {{ csrf_field() }} 
                         <div class="row">

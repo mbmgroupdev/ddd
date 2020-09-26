@@ -1864,7 +1864,6 @@ class EmployeeController extends Controller
         }
     }
 
-
     public function getAssociateBy(Request $request)
     {   
         // dd($request->all());exit;

@@ -24,7 +24,6 @@
 
         @include('inc/message')
         <div class="panel panel-success" style="">
-            
             <div class="panel-body">
                 <div class="row">
                     

@@ -36,6 +36,7 @@
                                     <th>Action</th>
                                 </tr>
                             </thead>
+
                         </table>
                     </div> 
                 </div>
@@ -46,6 +47,7 @@
 @push('js')
 <script type="text/javascript">
 $(document).ready(function(){ 
+
     var searchable = [0,1,2];
     var selectable = [3]; 
 

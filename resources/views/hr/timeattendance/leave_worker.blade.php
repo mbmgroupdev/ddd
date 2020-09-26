@@ -23,6 +23,7 @@
                     <a href="#"> Time & Attendance </a>
                 </li>
                 <li class="active"> Employee's Leave </li>
+
                 <li class="top-nav-btn">
                     <a href="{{ url('hr/timeattendance/all_leaves') }}" class="btn btn-sm btn-primary pull-right" rel='tooltip' data-tooltip-location='left' data-tooltip='Leave List'>
                             List <i class="fa fa-list"> </i>
@@ -37,6 +38,7 @@
                     <div class="row">
                         <div class="col-sm-5" style="padding-top: 10px;border-right: 1px solid #d1d1d1;">
                             {{ Form::open(['url'=>'hr/timeattendance/leave_worker', 'class'=>'form-horizontal needs-validation', 'files' => true, 'novalidate']) }}
+
                                 <div class="form-group has-required has-float-label select-search-group">
                                     {{ Form::select('leave_ass_id', [], null, ['placeholder'=>'Select Associate\'s ID', 'id'=>'leave_ass_id', 'class'=> 'associates form-control', 'required'=>'required']) }}  
                                     <label for="leave_ass_id"> Associate's ID </label>
@@ -71,6 +73,7 @@
                                     </div>
                                     <div class="col-6">
                                         <div id="multipleDateAccept" class="form-group has-required has-float-label mb-0">
+
                                             <input type="date"  name="leave_to" id="leave_to" class="form-control" required />
                                             <label  for="leave_from">Leave From </label>
                                         </div>
@@ -81,7 +84,6 @@
                                         <p id="error_leave_text" class="text-danger"></p>
                                     </div>
                                 </div>
-                                
                                 <div class="form-group  file-zone mb-0">
                                     <label  for="file"> Supporting File </label>
                                     <input type="file" name="leave_supporting_file" class="file-type-validation" data-file-allow='["docx","doc","pdf","jpeg","png","jpg"]' autocomplete="off" />
@@ -109,6 +111,7 @@
                                 </div>
                             {{ Form::close() }}
                         </div>
+
                         <div class="col-sm-7 pt-3">
                             <div class="row" id="associates_leave">
                                 <div class="col-sm-5">
@@ -334,8 +337,6 @@ $(document).ready(function()
             $.notify('Please select associates or leave type!','error');
         }
     });
-
-
 });
 </script>
 @endpush

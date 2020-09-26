@@ -16,6 +16,7 @@
 			</ul><!-- /.breadcrumb -->
 
 		</div>
+
         @include('inc/message')
 		<div class="page-content">  
            <div class="panel panel-success">
@@ -43,6 +44,7 @@
                                 <div class="row">
                                     <div class="col-6">
                                         <div class="form-group has-float-label has-required">
+
                                             <input type="text" name="ben_basic" id="ben_basic" placeholder="Basic Salary" value="" class="form-control" required  readonly/>
                                             <label  for="ben_basic"> Basic Salary</label>
                                         </div>
@@ -53,12 +55,16 @@
                                         </div>
 
                                         <div class="form-group has-float-label has-required">
+
                                             <input type="text" name="ben_medical" id="ben_medical" placeholder="Medical" class="form-control" value="{{ $structure->medical }}" required  readonly/>
+
                                             <label  for="ben_medical"> Medical</label>
                                         </div>
 
                                         <div class="form-group has-float-label has-required">
+
                                             <input type="text" name="ben_transport" id="ben_transport" value="{{ $structure->transport }}" placeholder="Transportation" class="form-control" readonly/ required>
+
                                             <label  for="ben_transport"> Transportation</label>
                                         </div>
 
@@ -191,8 +197,6 @@ $(document).ready(function(){
         }
     });
 
-   
-
     function get_benefit(associate_id)
     {
         $.ajax({
@@ -205,6 +209,7 @@ $(document).ready(function(){
                 draw_new_button(associate_id);
                 $('#avatar').attr('src',result.employee.as_pic);
                 $('#user-name').text(result.employee.as_name);
+
                 $('#designation').text(result.employee.hr_designation_name);
 
                 if (result.benefit)
@@ -375,8 +380,6 @@ $(document).ready(function(){
         }
     });
 
-    
-
     $('form').submit(function(e){
         var salary   = parseFloat($('#ben_joining_salary').val());
         var basic    = parseFloat($('#ben_basic').val());
@@ -388,13 +391,13 @@ $(document).ready(function(){
         var total_check_b;
 
         total_check_a = totalSalary(salary,basic,house,medical,transport,food);
-
        
         if(total_check_a==0){
-            $.notify("Invalid Salary Calculation");            
+            $.notify("Invalid Salary Calculation");  
             e.preventDefault();
         }
     });
+
 
     function totalSalary(salary,basic,house,medical,transport,food){  
 

@@ -222,15 +222,8 @@
 			            @foreach($getEmployee as $employee)
 			            	@php
 			            		$designationName = $designation[$employee->as_designation_id]['hr_designation_name']??'';
-			            		$otHourEx = explode('.', $employee->ot_hour);
-			                    $minute = '00';
-			                    if(isset($otHourEx[1])){
-			                        $minute = $otHourEx[1];
-			                        if($minute == 50){
-			                            $minute = 30;
-			                        }
-			                    }
-			                    $otHour = $otHourEx[0].'.'.$minute;
+			            		
+			                    $otHour = numberToTimeClockFormat($employee->ot_hour);
 
 			            	@endphp
 			            	@if($head == '')

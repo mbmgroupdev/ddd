@@ -350,7 +350,6 @@
                                                     @endif
                                                     <div class="file-zone-emp">
                                                         <input name="emp_adv_info_job_app" type="file" class="file-type-validation" id="as_job_appl"
-                                                        
                                                         required-allowing="docx,doc,pdf,jpeg,png,jpg">
                                                         <span id="file_upload_error4" class="red" style="display: none; font-size: 13px;">Only <strong>docx, doc, pdf, jpeg, jpg or png </strong>type file supported(<1MB).</span>
                                                     </div>
@@ -372,7 +371,6 @@
                                                     @endif
                                                     <div class="file-zone-emp">
                                                         <input name="emp_adv_info_cv" type="file" class="file-type-validation" id="as_cv"
-                                                        
                                                         required-allowing="docx,doc,pdf,jpeg,png,jpg">
                                                         <span id="file_upload_error5" class="red" style="display: none; font-size: 13px;">Only <strong>docx, doc, pdf, jpeg, jpg or png </strong>type file supported(<1MB).</span>
                                                     </div>
@@ -418,7 +416,6 @@
                                                     @endif
                                                     <div class="file-zone-emp">
                                                         <input name="emp_adv_info_signature" type="file" class="file-type-validation" id="Signature"
-                                                        
                                                         required-allowing="jpeg,png,jpg"
                                                         required-error-msg-mime="You can only upload jpeg, jpg or png images">
                                                         <span id="file_upload_error7" class="red" style="display: none; font-size: 13px;">Only <strong>jpeg, jpg or png </strong>type file supported(<512kb).</span>
@@ -441,7 +438,6 @@
                                                     @endif
                                                     <div class="file-zone-emp">
                                                         <input name="emp_adv_info_auth_sig" type="file" class="file-type-validation" id="authority_signature" 
-                                                        
                                                         required-allowing="jpeg,png,jpg">
                                                         <span id="file_upload_error8" class="red" style="display: none; font-size: 13px;">Only <strong>jpeg, jpg or png </strong>type file supported(<512kb).</span>
                                                     </div>

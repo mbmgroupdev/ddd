@@ -151,6 +151,7 @@
                             <div class="form-group has-required has-float-label">
 
                                 <input name="as_dob" type="date" id="date" placeholder="Date of Birth" class="age-validate form-control" required="required"  value="{{ $employee->as_dob->format('Y-m-d') }}" />
+
                                 <label  for="as_dob"> Date of Birth </label>
                             </div>
                             <div class="form-group">

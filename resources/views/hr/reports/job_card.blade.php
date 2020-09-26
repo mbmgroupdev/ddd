@@ -164,7 +164,7 @@
                                                 <th>
                                                    <p style="margin:0;padding:4px 10px"><strong>Total Present </strong>: <b >{{ $info->present }}</b> </p>
                                                    <p style="margin:0;padding:4px 10px"><strong>Total Absent </strong>: <b >{{ $info->absent }}</b></p>
-                                                   <p style="margin:0;padding:4px 10px"><strong>Total OT </strong>: <b>{{number_to_time_format($info->ot_hour)}}</b> </p>
+                                                   <p style="margin:0;padding:4px 10px"><strong>Total OT </strong>: <b>{{ numberToTimeClockFormat($info->ot_hour) }}</b> </p>
                                                 </th>
                                             </tr>
                                         </table>
@@ -235,7 +235,7 @@
                                                     <td>{{!empty($value['out_time'])?$value['out_time']:null}}</td>
                                                     <td>
                                                     @if($info->as_ot==1)
-                                                        {{number_to_time_format($value['overtime_time'])}}
+                                                        {{numberToTimeClockFormat($value['overtime_time'])}}
                                                     @endif
                                                     </td>
                                                 </tr>
@@ -257,7 +257,9 @@
                                                     <th style="text-align:right">Total Over Time</th>
                                                     <th>
                                                     @if($info->as_ot==1)
-                                                        {{number_to_time_format($info->ot_hour)}}
+
+                                                        {{numberToTimeClockFormat($info->ot_hour)}}
+
                                                         <input type="hidden" id="ot" value="0">
                                                     @endif
                                                     </th>

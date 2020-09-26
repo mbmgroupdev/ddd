@@ -117,6 +117,7 @@
             </tr>
         </table>
         <br><br><br>
+
         @if( ($leave->no_of_son + $leave->no_of_daughter) > 1)
             <strong style="text-align: center;"> 
                 @if($totalcalc['earned_leave'] > 0)

@@ -256,6 +256,7 @@
                                             <input name="per_village" type="text" id="per_village" placeholder="Permanent village" class="form-control"  required/>
                                             <label  for="per_village"> Village </label>
                                         </div>
+
                                         @if( ($leave->no_of_son + $leave->no_of_daughter ) > 1)
                                             <div class="row">
                                                 <div class="col-sm-6">

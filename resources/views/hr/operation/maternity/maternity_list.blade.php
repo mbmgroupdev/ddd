@@ -45,7 +45,6 @@ $(document).ready(function(){
     var searchable = [1,2];
     var selectable = [];
     var orderable = [];
-
     var exportColName = ['Sl.','Associate ID','Name','Applied Date','EDD','Status'];
     var exportCol = [0,1,2,3,4,5];
 
@@ -143,6 +142,7 @@ $(document).ready(function(){
             { data: 'associate_id', name: 'associate_id' }, 
             { data: 'as_name',  name: 'as_name' }, 
             { data: 'applied_date',  name: 'applied_date' }, 
+
             { data: 'edd',  name: 'edd' }, 
             { data: 'status', name: 'status' }, 
             { data: 'action', name: 'action', orderable: false, searchable: false }

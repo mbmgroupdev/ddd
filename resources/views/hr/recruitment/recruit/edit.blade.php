@@ -492,6 +492,7 @@
       </div>
    </div>
    @push('js')
+      <script src="{{ asset('assets/js/chart-custom.js') }}"></script>
      <!-- Select2 JavaScript -->
       <script src="{{ asset('assets/js/select2.min.js') }}"></script>
       <script>

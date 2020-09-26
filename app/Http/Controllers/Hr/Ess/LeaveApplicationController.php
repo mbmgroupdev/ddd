@@ -254,7 +254,6 @@ class LeaveApplicationController extends Controller
                 $statement['msg'] = 'This employee has taken 14 day(s) of Sick(14) Leave';
             }
         }
-        
      
         if($request->leave_type== "Special"){
             $statement['stat'] = "true";
@@ -267,7 +266,6 @@ class LeaveApplicationController extends Controller
         return emp_remain_leave_check($request);
     }
 
-    
     public function attendanceCheck(Request $request)
     {
         $associate_id= $request->associate_id;
@@ -286,7 +284,7 @@ class LeaveApplicationController extends Controller
         $to_date->modify("+1 day");
         $interval    = DateInterval::createFromDateString('1 day');
         $period      = new DatePeriod($from_date, $interval, $to_date);
-        
+
         $statement = [];
         $statement['stat'] = true; 
         $statement['msg']  = 'This employee already has atteandance at ';

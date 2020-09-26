@@ -227,7 +227,7 @@
                                             @endif
                                             <td> 
                                                 @if($info->as_ot==1)
-                                                   {{Custom::numberToTimeFormat($data['overtime_time'])}}
+                                                    {{ numberToTimeClockFormat($data['overtime_time']) }} 
                                                 @endif
                                             </td>
                                         </tr>
@@ -242,7 +242,7 @@
                                                 <th>
                                                     @if($info->as_ot==1)
                                                         <input type="hidden" id="ot" value="{{ $info->ot_hour }}">
-                                                        {{Custom::numberToTimeFormat($info->ot_hour)}}
+                                                        {{ numberToTimeClockFormat($info->ot_hour) }}
                                                     @endif
                                                 </th>
                                             </tr>

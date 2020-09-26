@@ -33,7 +33,6 @@
                             <div class="row">
                                 <div class="col-12">
                                     <div class="form-group has-required has-float-label  select-search-group">
-                                        
                                         {{ Form::select('associate',  [Request::get('associate') => Request::get('associate')], Request::get('associate'), ['placeholder'=>'Select Associate\'s ID', 'id'=>'femaleassociates', 'class'=> 'female-associates form-control', 'required'=>'required']) }}
                                         <label >Employee</label>
                                         
@@ -47,6 +46,7 @@
                                         <label for="applied_date">Applied Date</label>
                                     </div>
                                 </div>
+
                                 <div class="col-sm-6">
                                     <div class="form-group has-float-label ">
                                         <input id="edd" type="date" name="edd" class="form-control" required placeholder="Enter EDD" value="">

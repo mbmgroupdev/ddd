@@ -44,6 +44,7 @@ class BenefitController extends Controller
             'ben_transport'       => 'required',
             'ben_food'            => 'required'
         ]);
+
         /*$validator->sometimes('ben_as_id', 'unique:hr_benefits', function($request) {
             return $request->ben_id != '';
         });*/
@@ -372,7 +373,6 @@ class BenefitController extends Controller
     public function getBenefitByID(Request $request)
     {
         $result['employee'] = get_employee_by_id($request->id);
-
         $result['benefit']= DB::table('hr_benefits')
                     ->where('ben_as_id', $request->id)
                     ->select('hr_benefits.*')

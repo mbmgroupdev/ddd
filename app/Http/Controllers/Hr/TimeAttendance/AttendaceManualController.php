@@ -258,6 +258,9 @@ class AttendaceManualController extends Controller
         return $data;
     }
 public function calculateOt(Request $request){
+
+    // return $request->all();
+
   $employee = Employee::select('as_id','associate_id', 'shift_roaster_status', 'as_unit_id', 'as_ot')->where('associate_id',$request->associateId)->first();
   $overtimes = 0;
   if($employee != null && $employee->as_ot == 1)
@@ -266,11 +269,14 @@ public function calculateOt(Request $request){
     $outtime = strtotime($request->in_time)>strtotime($request->out_time)?date('Y-m-d',strtotime("+1 day", strtotime($request->att_date))).' '.$request->out_time:$request->att_date.' '.$request->out_time;
 
     $overtimes = EmployeeHelper::daliyOTCalculation($intime, $outtime, $request->hr_shift_start_time, $request->hr_shift_end_time, $request->hr_shift_break_time, $request->hr_shift_night_flag, $employee->associate_id, $employee->shift_roaster_status, $employee->as_unit_id);
-    $overtime = explode('.', $overtimes);
-    $h = $overtime[0];
-    $m = isset($overtime[1]) ? $overtime[1] : 00;
+    
+    $overtime = numberToTimeClockFormat($overtimes);
+    // $overtime = explode('.', $overtime);
+    // $h = $overtime[0];
+    // $m = isset($overtime[1]) ? $overtime[1] : 00;
 
-    return json_encode(['s_ot' => ($overtimes), 'n_ot' => ($h.':'.($m =='50'?'30':'00'))]);
+    return json_encode(['s_ot' => ($overtimes), 'n_ot' => ($overtime)]);
+
     // return json_encode(['s_ot' => ($h.'.'.($m =='30'?'50':'00')), 'n_ot' => ($h.':'.$m)]);
   }else{
     return json_encode(0);

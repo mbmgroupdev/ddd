@@ -231,6 +231,7 @@ if(!function_exists('emp_remain_leave_check')){
                 }
             }
         }
+
         if($request->leave_type== "Casual"){
             $leaves = DB::table("hr_leave") 
                 ->select(
@@ -915,4 +916,25 @@ if(!function_exists('upzila_by_id')){
 
     }
 }
+
+// ot format calculation 
+function numberToTimeClockFormat($number){
+    // $number = round($number,1);
+    $hour = explode(".", $number);
+
+    if(isset($hour[1])){
+        $hour[1] = '0.'.$hour[1];    
+        $hour[1] = ($hour[1]*60);     
+        $hour[1] = sprintf("%02d", round($hour[1]));     
+        // return $hour[1];
+    }else{
+        $hour[1] = '00';
+    }
+    
+    if(empty($hour[0])){
+        $hour[0] = 0;
+    }
+    return $hour[0].':'.$hour[1];
+}
+
 

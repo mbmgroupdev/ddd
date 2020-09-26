@@ -21,14 +21,12 @@ class AllLeavesController extends Controller
 {
    public function allLeaves()
    {
-        
         $unit=Unit::pluck('hr_unit_name');
         #--------------------------------------------------------#
    	    return view('hr/timeattendance/all_leaves', compact('unit'));
    }
    public function allLeavesData()
    {
-      
       #-----------------------------------------------------------#
         $data = DB::table('hr_leave AS l')
             ->select([
@@ -46,6 +44,7 @@ class AllLeavesController extends Controller
             ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
             ->orderBy('l.id','desc')
             ->get();
+
         $perm = false;
         if(auth()->user()->canAny(['Manage Leave','Leave Approve']) || auth()->user()->hasRole('Super Admin')){
             $perm = true;

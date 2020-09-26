@@ -40,7 +40,6 @@ class MaternityPaymentController extends Controller
 
 		return view('hr.operation.maternity.maternity_report');
 	}
-
 	public function listData()
 	{
 		$data = DB::table('hr_maternity_leave as l')
@@ -393,9 +392,7 @@ class MaternityPaymentController extends Controller
           }
 
     	}
-	}
-
-	
+	}	
 
 	public function calculateMaternityPayment($leave, $employee, $request = null)
 	{
@@ -546,6 +543,7 @@ class MaternityPaymentController extends Controller
 				$nominee->save();
 
 				$employee = get_employee_by_id($leave->associate_id);
+
 				$view = $this->calculateMaternityPayment($leave, $employee, $request);
 
 				return response(['view' => $view]);
