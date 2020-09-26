@@ -33,8 +33,7 @@
                                 <div class="col-sm-12 responsive-hundred">
                                     <!-- PAGE CONTENT BEGINS -->
                                     <div class="row">
-                                        <div class="col-sm-4">
-                                            {{--  --}}
+                                        <div class="col-sm-8 offset-4">
                                             <div class="form-group has-float-label has-required select-search-group">
                                                 <select name="as_unit_id" class="form-control capitalize select-search" id="unit" required="">
                                                     <option selected="" value="">Choose...</option>
@@ -46,7 +45,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-sm-4">
+                                        <div class="col-sm-8 offset-4">
                                             <div class="form-group has-float-label has-required">
                                                 <input type="month" class="report_date form-control" id="month_year" name="month_year" placeholder=" Month-Year"required="required" value="{{ date('Y-m')}}"autocomplete="off" />
                                                 <label for="month_year"> Month </label>

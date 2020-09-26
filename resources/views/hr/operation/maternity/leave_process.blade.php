@@ -26,9 +26,9 @@
         <div class="panel panel-success" style="">
             <div class="panel-body">
                 <div class="row">
-                    <div class="col-sm-3">        
-                        <div class="user-details-block" style="padding-top: 0.5rem;">
-                            <div class="user-profile text-center mt-0">
+                    <div class="col-sm-3" style="border-right:1px solid #d1d1d1;">        
+                        <div class="user-details-block" style="padding-top: 0;">
+                            <div class="user-profile text-center mt-0 " >
                                 <img id="avatar" class="avatar-130 img-fluid" src="{{ $employee->as_pic }} " >
                             </div>
                             <div class="text-center mt-3">
@@ -80,16 +80,106 @@
                         </div>
                     </div>
                     <div class="col-sm-9" >
-                        <div id="leave-process">
+                        <div class="leave- d-flex justify-content-center">
+                            <div class="step d-flex mr-3">
+                                <div class="rounded-div @if($tabs['initial_checkup']) iq-bg-primary @else iq-bg-danger @endif"><i class="las la-stethoscope f-18"></i></div> 
+                                <div class="media-support-info ml-3">
+                                  <h6>Initial Checkup </h6>
+                                  <p id="line" class="mb-0">
+                                      @if($tabs['initial_checkup']) 
+                                        {{$leave->medical->created_at->format('Y-m-d')}}
+                                      @else
+                                        ----------
+                                      @endif
+                                  </p>
+                               </div>
+                                
+                            </div>
+                            <div class="step d-flex mr-3">
+                                <div class="rounded-div @if($tabs['routine_checkup']) iq-bg-primary @else iq-bg-danger @endif"><i class="las la-notes-medical f-18"></i></div> 
+                                <div class="media-support-info ml-3">
+                                  <h6>Routine Checkup </h6>
+                                  <p id="line" class="mb-0">
+                                      @if($tabs['routine_checkup']) 
+                                        {{$leave->medical->record->last()->checkup_date}}
+                                      @else
+                                        ----------
+                                      @endif
+                                  </p>
+                               </div>
+                                
+                            </div>
+                            <div class="step d-flex mr-3">
+                                <div class="rounded-div @if($tabs['doctors_clearence']) iq-bg-primary @else iq-bg-danger @endif"><i class="las la-file-prescription f-18"></i></div> 
+                                <div class="media-support-info ml-3">
+                                  <h6>Doctor's Clearence </h6>
+                                  <p id="line" class="mb-0">
+                                      @if($tabs['doctors_clearence']) 
+                                        {{$leave->medical->record->last()->checkup_date}}
+                                      @else
+                                        ----------
+                                      @endif
+                                  </p>
+                               </div>
+                                
+                            </div>
+                            <div class="step d-flex ">
+                                <div class="rounded-div @if($tabs['leave_approval']) iq-bg-primary @else iq-bg-danger @endif"><i class="las la-user-check f-18"></i></div> 
+                                <div class="media-support-info ml-3">
+                                  <h6>Leave Approval </h6>
+                                  <p id="line" class="mb-0">
+                                      @if($tabs['leave_approval']) 
+                                        {{$leave->medical->record->last()->checkup_date}}
+                                      @else
+                                        ----------
+                                      @endif
+                                  </p>
+                               </div>
+                                
+                            </div>
+                        </div>
+                        <div id="leave-process" class="mt-5">
+                            {{-- link for initial checkup --}}
+                            @if(!$tabs['initial_checkup'])
+                                <div class="text-center mt-5">
+                                    
+                                    <i class="las la-stethoscope f-100 text-danger"></i>
+                                    <br>
+                                    <h5 class="text-primary">Initial checkup is not completed yet!</h5>
+                                    <br>
+                                    <a href="{{url('hr/operation/maternity-medical-process/'.$leave->id)}}" class="btn btn-primary btn-200">Initial Checkup</a>
+                                </div>
+                            @endif 
+                            @if($tabs['initial_checkup'] == true && $tabs['routine_checkup'] == false)
+                                <div class="text-center mt-5">
+                                    
+                                    <i class="las la-notes-medical f-100 text-danger"></i>
+                                    <br>
+                                    <h5 class="text-primary">Routine checkup is not completed yet!</h5>
+                                    <br>
+                                    <a href="{{url('hr/operation/maternity-medical-process/'.$leave->id)}}" class="btn btn-primary btn-200">Routine Checkup</a>
+                                </div>
+                            @endif 
+
+                            @if($tabs['initial_checkup'] == true && $tabs['routine_checkup'] == true && $tabs['doctors_clearence'] == false)
+                                <div class="text-center mt-5">
+                                    
+                                    <i class="las la-file-prescription f-100 text-danger"></i>
+                                    <br>
+                                    <h5 class="text-primary">Waiting for doctors clearence!</h5>
+                                    <br>
+                                    <a href="{{url('hr/operation/maternity-leave/doctors-clearence/'.$leave->id)}}" class="btn btn-primary btn-200">Doctors Clearence</a>
+                                </div>
+                            @endif 
                             <!-- leave approval form start -->
                             @if($tabs['doctors_clearence'] == true && $tabs['leave_approval'] == false)
-                            <form id="approval-form" action=""  class="needs-validation" novalidate>
+                            <form id="approval-form" action=""  class="needs-validation " novalidate>
                                 
                                 <div class="row">
                                     <div class="col-sm-4">
                                         <input type="hidden" name="hr_maternity_leave_id" value="{{$leave->id}}">
-                                        <legend class="block-title">Leave Information</legend>
-                                        <div class="form-group  has-float-label has-required">
+                                        <legend class="block-title ">Leave Information</legend>
+                                        <div class="form-group  has-float-label has-required mt-2">
                                             <input type="date" id="leave_from" type="leave_from" name="leave_from" class="form-control" min="{{date('Y-m-d')}}"   value="{{$leave->leave_from_suggestion}}" required > 
                                             <label for="leave_from">Leave From</label>
                                         </div>
@@ -117,10 +207,10 @@
                                     </div>
                                     
                                     <div class="col-sm-4">
-                                        <legend class="block-title">Nominee Present Address</legend>
+                                        <legend class="block-title ">Nominee Present Address</legend>
                                        
 
-                                        <div class="form-group has-required has-float-label select-search-group">
+                                        <div class="form-group has-required has-float-label select-search-group mt-2">
                                             {{ Form::select('pr_district', district_by_id(), null, ['placeholder'=>'Select District', 'id'=>'pr_district', 'class'=> 'form-control', 'required']) }}  
                                             <label  for="pr_district"> District </label>
                                         </div>
@@ -147,9 +237,9 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
-                                        <legend class="block-title">Nominee Permanent Address</legend>
+                                        <legend class="block-title ">Nominee Permanent Address</legend>
                                         
-                                        <div class="form-group has-float-label select-search-group has-required">
+                                        <div class="form-group has-float-label select-search-group has-required mt-2">
                                             {{ Form::select('per_district', district_by_id(), null, ['placeholder'=>'Select District', 'id'=>'per_district', 'class'=> 'form-control','required']) }}  
                                             <label  for="per_district"> District </label>
                                         </div>
@@ -166,6 +256,23 @@
                                             <input name="per_village" type="text" id="per_village" placeholder="Permanent village" class="form-control"  required/>
                                             <label  for="per_village"> Village </label>
                                         </div>
+
+                                        @if( ($leave->no_of_son + $leave->no_of_daughter ) > 1)
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <div class="form-group has-float-label has-required">
+                                                        <input name="earned_leave" type="text" id="earned_leave" placeholder="Earned Leave" class="form-control"  required/>
+                                                        <label  for="earned_leave"> Earned Leave </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="form-group has-float-label has-required">
+                                                        <input name="sick_leave" type="text" id="sick_leave" placeholder="Sick Leave" class="form-control"  required/>
+                                                        <label  for="sick_leave"> Sick Leave </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
                                         <div class="form-group has-float-label select-search-group has-required">
                                             <button id="approve" class="btn btn-primary w-100" type="submit">Approve and Process Payment</button>
                                         </div>

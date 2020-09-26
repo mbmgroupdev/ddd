@@ -36,16 +36,25 @@ class BenefitController extends Controller
     {
         $user= Auth::user()->associate_id;
         $validator= Validator::make($request->all(), [
-            'ben_as_id'           => 'unique:hr_benefits|max:10|min:10|alpha_num',
             'ben_joining_salary'  => 'required',
-            'ben_cash_amount'     => 'required',
-            'ben_bank_amount'     => 'required',
+            'salary_type'         => 'required',
             'ben_basic'           => 'required',
             'ben_house_rent'      => 'required',
             'ben_medical'         => 'required',
             'ben_transport'       => 'required',
             'ben_food'            => 'required'
         ]);
+
+        /*$validator->sometimes('ben_as_id', 'unique:hr_benefits', function($request) {
+            return $request->ben_id != '';
+        });*/
+
+        $validator->sometimes('ben_cash_amount', 'required', function($request) {
+            return $request->salary_type == 'Cash';
+        });
+        $validator->sometimes('ben_bank_amount', 'required', function($request) {
+            return $request->salary_type == 'Bank';
+        });
 
         if($validator->fails()) {
             return back()
@@ -55,12 +64,15 @@ class BenefitController extends Controller
         }
         else
         {
-            $benefits= new Benefits();
-            $benefits->ben_as_id               = $request->ben_as_id ;
-            $benefits->ben_joining_salary      = $request->ben_joining_salary ;
+            $benefits = Benefits::where('ben_as_id', $request->ben_as_id)->first();
+            if(!$benefits){
+                $benefits= new Benefits();
+                $benefits->ben_as_id               = $request->ben_as_id ;
+                $benefits->ben_joining_salary      = $request->ben_joining_salary ;
+            }
             $benefits->ben_current_salary      = $request->ben_joining_salary ;
-            $benefits->ben_cash_amount         = $request->ben_cash_amount ;
-            $benefits->ben_bank_amount         = $request->ben_bank_amount ;
+            $benefits->ben_cash_amount         = $request->ben_cash_amount??0 ;
+            $benefits->ben_bank_amount         = $request->ben_bank_amount??0 ;
             $benefits->ben_basic               = $request->ben_basic ;
             $benefits->ben_house_rent          = $request->ben_house_rent ;
             $benefits->ben_medical             = $request->ben_medical ;
@@ -71,40 +83,21 @@ class BenefitController extends Controller
             $benefits->ben_updated_at          = date('Y-m-d H:i:s');
 
             if ($benefits->save())
-                {
+            {
+                log_file_write("Employee benefits updated successfully", $benefits->ben_id);
 
-                    if($request->fixed_check){
-                        $fixSalary= new FixedSalary();
-                        $fixSalary->as_id               = $request->ben_as_id ;
-                        $fixSalary->joining_salary      = $request->ben_joining_salary_fixed ;
-                        $fixSalary->fixed_amount        = $request->ben_joining_salary_fixed ;
-                        $fixSalary->cash_amount         = $request->ben_cash_amount_fixed ;
-                        $fixSalary->bank_amount         = $request->ben_bank_amount_fixed ;
-                        $fixSalary->basic               = $request->ben_basic_fixed ;
-                        $fixSalary->house_rent          = $request->ben_house_rent_fixed ;
-                        $fixSalary->medical             = $request->ben_medical_fixed ;
-                        $fixSalary->transport           = $request->ben_transport_fixed ;
-                        $fixSalary->food                = $request->ben_food_fixed;
-                        $fixSalary->status              = 1 ;
-                        $fixSalary->created_by          = $user;
-                        $fixSalary->created_at          = date('Y-m-d H:i:s');
-                        $fixSalary->save();
-
-                    }
-
-                    log_file_write("Benefits Entry Saved", $benefits->ben_id);
-
-                    return back()
+                return redirect('hr/employee/benefits?associate_id='.$request->ben_as_id)
                         ->withInput()
-                        ->with('success', 'Save Successful.');
+                        ->with('success', 'Employee benefits updated successfully.');
 
-                }
-                else
-                {
-                    return back()
-                        ->withInput()->with('error', 'Please try again.');
-                }
             }
+            else
+            {
+                return back()
+                        ->withInput()->with('error', 'Please try again.');
+                
+            }
+        }
     }
 
 
@@ -129,13 +122,15 @@ class BenefitController extends Controller
                     'b.ben_current_salary',
                     'b.ben_basic',
                     'a.as_name',
+                    'a.as_oracle_code',
                     'a.as_unit_id',
                     'u.hr_unit_name AS unit_name'
                 )
                 ->leftJoin('hr_as_basic_info as a', 'a.associate_id', '=', 'b.ben_as_id')
                 ->leftJoin('hr_unit AS u', 'u.hr_unit_id', 'a.as_unit_id')
                 ->whereIn('a.as_unit_id', auth()->user()->unit_permissions())
-                ->whereNotIn('a.as_id', auth()->user()->management_permissions()) 
+                ->whereNotIn('a.as_id', auth()->user()->management_permissions())
+                ->where('a.as_status',1)
                 ->orderBy('b.ben_id', 'desc')
                 ->get();
 
@@ -243,8 +238,6 @@ class BenefitController extends Controller
 
     public function benefitUpdate(Request $request)
     {
-        //ACL::check(["permission" => "hr_payroll_benefit_list"]);
-        #-----------------------------------------------------------#
         $user= Auth::user()->associate_id;
         $validator= Validator::make($request->all(), [
             'ben_id'                  => 'required|max:11',
@@ -379,7 +372,7 @@ class BenefitController extends Controller
 
     public function getBenefitByID(Request $request)
     {
-        $result['employee'] = Employee::where('associate_id',$request->id)->first()->toArray();
+        $result['employee'] = get_employee_by_id($request->id);
         $result['benefit']= DB::table('hr_benefits')
                     ->where('ben_as_id', $request->id)
                     ->select('hr_benefits.*')

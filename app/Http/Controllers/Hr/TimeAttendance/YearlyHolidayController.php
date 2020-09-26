@@ -108,118 +108,62 @@ class YearlyHolidayController extends Controller
 
 
     public function store(Request $request)
-
     {
-
-        //ACL::check(["permission" => "hr_time_op_holiday"]);
-
-        #-----------------------------------------------------------#
-
-
-
     	$validator= Validator::make($request->all(), [
-
             'hr_yhp_dates_of_holidays' 	=> 'required|max:10',
-
             'hr_yhp_comments' 			=> 'required|max:64'
-
         ]);
 
-
-
         if($validator->fails())
-
         {
-
         	return back()
-
                 ->withErrors($validator)
-
                 ->withInput()
-
                 ->with('error', 'Please fillup all required fileds!.');
-
         }
-
-        else
-
-        {
-
-
-
-        	for($i=0; $i<sizeof($request->hr_yhp_dates_of_holidays); $i++)
-
+        // return $request->all();
+        try {
+            for($i=0; $i<sizeof($request->hr_yhp_dates_of_holidays); $i++)
             {
+                if($request->hr_yhp_dates_of_holidays[$i] != null){
+                    $date = (date("Y-m-d", strtotime($request->hr_yhp_dates_of_holidays[$i])));
+                    if (YearlyHolyDay::where('hr_yhp_unit', $request->as_unit_id)->where('hr_yhp_dates_of_holidays', $date)->exists())
+                    {
+                        YearlyHolyDay::where('hr_yhp_unit', $request->as_unit_id)->where('hr_yhp_dates_of_holidays', $date)
+                        ->update([
+                            'hr_yhp_unit'               => $request->as_unit_id,
+                            'hr_yhp_dates_of_holidays'  => $date,
+                            'hr_yhp_comments' => $request->hr_yhp_comments[$i],
+                            'hr_yhp_status' => 1
+                        ]);
+                        $last_id = YearlyHolyDay::where('hr_yhp_unit', $request->as_unit_id)->where('hr_yhp_dates_of_holidays', $date)
+                        ->value('hr_yhp_id');
+                        $this->logFileWrite("Yearly Holiday Entry Updated", $last_id);
+                    }
+                    else
+                    {
+                        YearlyHolyDay::insert([
+                            'hr_yhp_unit'               => $request->as_unit_id,
+                            'hr_yhp_dates_of_holidays'  => $date,
+                            'hr_yhp_comments'            => $request->hr_yhp_comments[$i],
+                            'hr_yhp_status' => 1
+                        ]);
 
-                $date = (date("Y-m-d", strtotime($request->hr_yhp_dates_of_holidays[$i])));
+                        $last_id = DB::getPdo()->lastInsertId();
 
-
-
-                if (YearlyHolyDay::where('hr_yhp_unit', $request->as_unit_id)->where('hr_yhp_dates_of_holidays', $date)->exists())
-
-                {
-
-                    YearlyHolyDay::where('hr_yhp_unit', $request->as_unit_id)->where('hr_yhp_dates_of_holidays', $date)
-
-                    ->update([
-
-                        'hr_yhp_unit'               => $request->as_unit_id,
-
-                        'hr_yhp_dates_of_holidays'  => $date,
-
-                        'hr_yhp_comments' => $request->hr_yhp_comments[$i],
-
-                        'hr_yhp_status' => 1
-
-                    ]);
-
-
-
-                    $last_id = YearlyHolyDay::where('hr_yhp_unit', $request->as_unit_id)->where('hr_yhp_dates_of_holidays', $date)
-
-                                                                             ->value('hr_yhp_id');
-
-                    $this->logFileWrite("Yearly Holiday Entry Updated", $last_id);
-
+                        $this->logFileWrite("Yearly Holiday Entry Saved", $last_id);
+                    }
                 }
+            }
 
-                else
-
-                {
-
-                    YearlyHolyDay::insert([
-
-                        'hr_yhp_unit'               => $request->as_unit_id,
-
-                        'hr_yhp_dates_of_holidays'  => $date,
-
-                        'hr_yhp_comments'            => $request->hr_yhp_comments[$i],
-
-                        'hr_yhp_status' => 1
-
-                    ]);
-
-                    $last_id = DB::getPdo()->lastInsertId();
-
-                    $this->logFileWrite("Yearly Holiday Entry Saved", $last_id);
-
-                }
-
-         	}
-
-
-
-            return back()
-
-                ->with('success', 'Saved Successful.');
-
+            toastr()->success('Successful Completed');
+            return back();
+        } catch (\Exception $e) {
+            $bug = $e->getMessage();
+            toastr()->error($bug);
+            return back();
         }
-
     }
-
-
-
-
 
     public function status(Request $request)
 

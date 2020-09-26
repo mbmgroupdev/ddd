@@ -33,7 +33,7 @@
 
         <div class="panel panel-info">
             <div class="panel-heading">
-                <h6>Holiday Roster Assign <a href="{{ url('hr/timeattendance/shift_roaster')}}" target="_blank" class="btn btn-warning btn-sm pull-right"> <i class="fa fa-eye"></i> Shift Roster</a> &nbsp; <a href="{{ url('/hr/shift_roaster/roaster_view')}}" target="_blank" class="btn btn-primary btn-sm pull-right"> <i class="fa fa-eye"></i> View Holiday Roster</a></h6>
+                <h6>Holiday Roster Assign <a href="{{ url('hr/operation/shift_assign')}}" target="_blank" class="btn btn-warning btn-sm pull-right"> <i class="fa fa-eye"></i> Shift Roster</a> &nbsp; <a href="{{ url('hr/reports/holiday-roster')}}" target="_blank" class="btn btn-primary btn-sm pull-right"> <i class="fa fa-eye"></i> View Holiday Roster</a></h6>
             </div>
             <div class="panel-body">
                 @include('inc/message')

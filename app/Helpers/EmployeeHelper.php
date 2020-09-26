@@ -65,6 +65,7 @@ class EmployeeHelper
 			if($diff < 0){
 				$diff = 0;
 			}
+
 			$diff = round($diff, 2);
 			$diffExplode = explode('.', $diff);
 			$minutes = (isset($diffExplode[1]) ? $diffExplode[1] : 0);

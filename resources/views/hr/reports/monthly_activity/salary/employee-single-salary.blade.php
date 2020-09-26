@@ -154,16 +154,8 @@
                     </td>
 
                     @php
-                    
-                        $otHourEx = explode('.', $salary['ot_hour']);
-                        $minute = '00';
-                        if(isset($otHourEx[1])){
-                            $minute = $otHourEx[1];
-                            if($minute == 5){
-                                $minute = 30;
-                            }
-                        }
-                        $otHour = $otHourEx[0].'.'.$minute;
+                        $otHour = numberToTimeClockFormat($salary['ot_hour']);
+
                         // $otHour = $salary['ot_hour'];
                         $ot = round((float)($salary['ot_rate']) * $salary['ot_hour']);
                         $salaryAdd = ($salary['salary_add_deduct'] == null) ? '0.00' : $salary['salary_add_deduct']['salary_add'];

@@ -319,6 +319,7 @@
             var hr_shift_break_time = updatedRow.data().hr_shift_break_time;
             var hr_shift_night_flag = updatedRow.data().hr_shift_night_flag;
             var att_date = updatedRow.data().att_date;
+
             $.ajax({
               url: '/hr/timeattendance/calculate_ot',
               method: "GET",

@@ -9,12 +9,14 @@
                     <a href="#">Maternity Leave</a>
                 </li>
                 <li class="active">Application List</li>
+                <li class="top-nav-btn">
+                    <a href="{{url('hr/operation/maternity-leave')}}" target="_blank" class="btn btn-primary pull-right" >Application</i></a>
+                </li>
             </ul>
         </div>
 
         @include('inc/message')
         <div class="panel panel-success mb-3">
-            <div class="panel-heading"><h6>Application List</h6></div> 
             <div class="panel-body mb-3"> 
                     <table id="mat-leave" class="table table-striped table-bordered" style="display:table;overflow-x: auto;width: 100%;">
                         <thead>
@@ -23,6 +25,7 @@
                                 <th>Associate ID</th>
                                 <th>Name</th>
                                 <th>Applied Date</th>
+                                <th>EDD</th>
                                 <th>Status</th>
                                 <th style="text-align: center;">Action</th>
                             </tr>
@@ -42,8 +45,7 @@ $(document).ready(function(){
     var searchable = [1,2];
     var selectable = [];
     var orderable = [];
-
-    var exportColName = ['Sl.','Associate ID','Name','Unit','Amount','Status'];
+    var exportColName = ['Sl.','Associate ID','Name','Applied Date','EDD','Status'];
     var exportCol = [0,1,2,3,4,5];
 
     var dt = $('#mat-leave').DataTable({
@@ -140,6 +142,8 @@ $(document).ready(function(){
             { data: 'associate_id', name: 'associate_id' }, 
             { data: 'as_name',  name: 'as_name' }, 
             { data: 'applied_date',  name: 'applied_date' }, 
+
+            { data: 'edd',  name: 'edd' }, 
             { data: 'status', name: 'status' }, 
             { data: 'action', name: 'action', orderable: false, searchable: false }
         ]  

@@ -29,28 +29,6 @@ class AttendanceOperationController extends Controller
 
         // return $data[0]->shift;
         return DataTables::of($data)->addIndexColumn()
-        /*->addColumn('edit_jobcard', function($data) {
-          //dd($data);exit;
-            $date = '';
-            if ($data->in_time != null) {
-                $date = date('Y-F-d', strtotime($data->in_time));
-            } elseif($data->in_time == null && $data->out_time == null && $data->status == 'Absent' ){
-                $date = date('Y-F-d', strtotime($data->date));
-            } elseif($data->in_time == null && $data->out_time == null && $data->status != 'Absent' && $data->status != 'Holiday' ){
-                $date = date('Y-F-d', strtotime($data->leave_from));
-            } elseif($data->in_time == null && $data->out_time == null && $data->status == 'Holiday' ){
-
-                $date = date('Y-F-d', strtotime($data->dates));
-            }
-
-            else {
-                $date = date('Y-F-d', strtotime($data->out_time));
-            }
-
-            list($year,$month,$day) = explode('-',$date);
-            $url = 'hr/reports/job_card?associate='.$data->associate_id.'&month='.$month.'&year='.$year;
-            return '<a href="'.url($url).'" target="blank">Job Card</a>';
-        })*/
         ->addColumn('associate_id', function($data) {
             // return $data->associate_id;
             $date = '';
@@ -70,7 +48,9 @@ class AttendanceOperationController extends Controller
             }
 
             list($year,$month,$day) = explode('-',$date);
-            $url = 'hr/reports/job_card?associate='.$data->associate_id.'&month='.$month.'&year='.$year;
+            $yearMonth = date('Y-m', strtotime($date));
+            $url = 'hr/operation/job_card?associate='.$data->associate_id.'&month_year='.$yearMonth;
+
             return '<a href="'.url($url).'" target="blank">'.$data->associate_id.'</a>';
         })
         ->addColumn('att_date', function ($data) use ($date) {
@@ -148,7 +128,7 @@ class AttendanceOperationController extends Controller
                  return '<span class="inline badge badge-warning">Late</span><span class="inline badge badge-primary">Present</span> <button class="inline btn btn-xs btn-round btn-danger make-halfday" >Make Halfday</button>';
                }elseif ($data->out_time == null && $data->remarks == 'HD') {
                  $time = explode(' ',$data->in_time);
-                 if(strtotime($time[1]) >(strtotime($data->hr_shift_start_time)+180)){
+                 if($data->late_status == 1){
                    return '<span class="inline badge badge-warning">Late</span><span class="badge badge-primary">Present</span> <span class="inline badge badge-danger">Halfday</span>';
 
                  } else {
@@ -167,7 +147,7 @@ class AttendanceOperationController extends Controller
                  return '<span class="inline badge badge-primary">Present</span> <button class="inline btn btn-xs btn-round btn-danger make-halfday" >Make Halfday</button>';
                }elseif ($data->out_time == null && $data->remarks == 'HD') {
                  $time = explode(' ',$data->in_time);
-                 if(strtotime($time[1]) >(strtotime($data->hr_shift_start_time)+180)){
+                 if($data->late_status == 1){
                    return '<span class="inline badge badge-warning">Late</span><span class=" inline badge badge-primary">Present</span> <span class="inline badge badge-danger">Halfday</span>';
                  } else {
                    return '<span class="inline badge badge-primary">Present</span> <span class="inline badge badge-danger">Halfday</span>';
@@ -202,9 +182,8 @@ class AttendanceOperationController extends Controller
 
         ->addColumn('ot', function ($data) {
           if ($data->as_ot == 1){
+            return numberToTimeClockFormat($data->ot_hour);
             
-            $expdata = explode('.',$data->ot_hour);
-            return !empty($expdata[1])?$expdata[0].':'.($expdata[1]=='50'?'30':'00'):$data->ot_hour;
           }else{
             return 'Non OT';
           }

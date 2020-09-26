@@ -973,7 +973,9 @@ class OTSearchController extends Controller
             return DataTables::of($empList)->addIndexColumn()
                     ->editColumn('associate_id', function ($empList) use($request1){
                         if(isset($request1['month'])){
-                            $link = HtmlFacade::link(url('hr/reports/job_card?associate=').$empList->associate_id.'&month='.date('F', strtotime($request1['month'])).'&year='.date('Y', strtotime($request1['month'])),$empList->associate_id);
+                            $yearMonth = date('Y-m', strtotime($request1['month']));
+                            
+                            $link = HtmlFacade::link(url('hr/operation/job_card?associate=').$empList->associate_id.'&month='.$yearMonth,$empList->associate_id);
                         }else{
 
                             $link = HtmlFacade::link(url('hr/recruitment/employee/show').'/'.$empList->associate_id,$empList->associate_id);

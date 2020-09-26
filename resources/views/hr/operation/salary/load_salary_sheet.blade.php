@@ -293,15 +293,8 @@
                                             </td>
 
                                             @php
-                                                $otHourEx = explode('.', $list->ot_hour);
-                                                $minute = '00';
-                                                if(isset($otHourEx[1])){
-                                                    $minute = $otHourEx[1];
-                                                    if($minute == 5){
-                                                        $minute = 30;
-                                                    }
-                                                }
-                                                $otHour = $otHourEx[0].'.'.$minute;
+                                                
+                                                $otHour = numberToTimeClockFormat($list->ot_hour);
                                                 $ot = round((float)($list->ot_rate) * $list->ot_hour);
                                                 $salaryAdd = ($list->salary_add_deduct_id == null) ? '0.00' : ($salaryAddDeduct[$list->as_id]['salary_add']);
                                                 // $total = ($list->salary_payable + $ot + $list->attendance_bonus + $salaryAdd);
