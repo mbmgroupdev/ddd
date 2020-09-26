@@ -581,66 +581,34 @@ class AdvanceInfoController extends Controller
     }
 
 
-    public function educationHistory(Request $request){
+    public function educationHistory(Request $request)
+    {
 
         $html = "";
         if($request->has('associate_id'))
         {
             $data = DB::table('hr_education AS e')
-                ->where("e.education_as_id", $request->associate_id)
-                ->select(
-                    'l.education_level_title',
-                    'dt.education_degree_title',
-                    'e.education_level_id',
-                    'e.education_degree_id_2',
-                    'e.education_major_group_concentation',
-                    'e.education_institute_name',
-                    'r.education_result_title',
-                    'e.education_result_id',
-                    'e.education_result_marks',
-                    'e.education_result_cgpa',
-                    'e.education_result_scale',
-                    'e.education_passing_year'
-                )
-                ->leftJoin('hr_education_level AS l', 'l.id', '=', 'e.education_level_id')
-                ->leftJoin('hr_education_degree_title AS dt', 'dt.id', '=', 'e.education_degree_id_1')
-                ->leftJoin('hr_education_result AS r', 'r.id', '=', 'e.education_result_id')
-                ->get();
-
-        foreach($data as $education):
-            $html .= "<tr>
-                <td>
-                    <strong>Lavel of Education:</strong> $education->education_level_title
-                    <br>
-
-                    <strong>Institute:</strong> $education->education_institute_name
-                </td>
-                <td>
-                    <strong>Exam/Degree Title:</strong>
-                    $education->education_degree_title
-                    <br>";
-                    if(!in_array($education->education_level_id, [1,2,8])):
-                        $html .= "<strong>Concentration/Major/Group:</strong> $education->education_major_group_concentation";
-                    endif;
-
-                    if(in_array($education->education_level_id, [8])):
-                        $html .= "<strong>Concentration/Major/Group:</strong>$education->education_degree_id_2";
-                    endif;
-
-                $html .= "</td>
-                <td>
-                    <strong>Year:</strong> $education->education_passing_year
-                    <br/>
-                    <strong>Result:</strong> $education->education_result_title <br/>";
-                    if(in_array($education->education_result_id, [1,2,3])):
-                         $html .= "<strong>Marks:</strong> $education->education_result_marks  <br/>";
-                    elseif(in_array($education->education_result_id,[4])):
-                         $html .= "<strong>CGPA:</strong> $education->education_result_cgpa  <br/>
-                                <strong>Scale:</strong> $education->education_result_scale";
-                    endif;
-                $html .= "</td>
-            </tr>";
-        endforeach;
+                    ->where("e.education_as_id", $request->associate_id)
+                    ->select(
+                        'l.education_level_title',
+                        'dt.education_degree_title',
+                        'e.education_level_id',
+                        'e.education_degree_id_2',
+                        'e.education_major_group_concentation',
+                        'e.education_institute_name',
+                        'r.education_result_title',
+                        'e.education_result_id',
+                        'e.education_result_marks',
+                        'e.education_result_cgpa',
+                        'e.education_result_scale',
+                        'e.education_passing_year'
+                    )
+                    ->leftJoin('hr_education_level AS l', 'l.id', '=', 'e.education_level_id')
+                    ->leftJoin('hr_education_degree_title AS dt', 'dt.id', '=', 'e.education_degree_id_1')
+                    ->leftJoin('hr_education_result AS r', 'r.id', '=', 'e.education_result_id')
+                    ->get();
+                    
+            $html = view('hr.recruitment.education_history', compact('data'))->render();
 
         }
 
