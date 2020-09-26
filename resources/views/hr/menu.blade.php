@@ -66,6 +66,18 @@
                <a href="{{ url('hr/employee/list') }}"><i class="las la-list-ul"></i>All Employee</a>
             </li>
             @endif
+            @if($user->canany(['Employee List','Employee Hierarchy','
+            Manage Employee']) || $user->hasRole('Super Admin'))
+            <li class="@if($segment2 == 'employee' && $segment3=='today') active @endif">
+               <a href="{{ url('hr/employee/today') }}"><i class="las la-list-ul"></i>Today Entry</a>
+            </li>
+            @endif
+            @if($user->canany(['Employee List','Employee Hierarchy','
+            Manage Employee']) || $user->hasRole('Super Admin'))
+            <li class="@if($segment2 == 'employee' && $segment3=='incomplete-list') active @endif">
+               <a href="{{ url('hr/employee/incomplete-list') }}"><i class="las la-list-ul"></i>Missing Info</a>
+            </li>
+            @endif
             @if($user->canany(['Assign Benefit']) || $user->hasRole('Super Admin'))
             <li class="@if($segment2 == 'employee' && $segment3=='benefits') active @endif">
                <a href="{{ url('hr/employee/benefits') }}"><i class="las la-gifts"></i> Benefits</a>
@@ -264,6 +276,11 @@
             @if($user->can('Manage Outside') || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'location_change') active @endif">
                <a href="{{ url('hr/operation/location_change/entry') }}"><i class="las la-list-ul"></i>Outside Work</a>
+            </li>
+            @endif
+            @if($user->can('Production Bonus') || $user->hasRole('Super Admin'))
+            <li class="@if($segment3 == 'production-bonus') active @endif">
+               <a href="{{ url('hr/operation/production-bonus') }}"><i class="las la-list-ul"></i>Production Bonus</a>
             </li>
             @endif
             {{-- <li class="@if($segment4 == 'idcard') active @endif">

@@ -16,7 +16,7 @@ use App\Models\Hr\Designation;
 use App\Models\Hr\Section;
 use App\Models\Hr\Subsection;
 use App\Models\Hr\Location;
-use Auth, Validator, DB;
+use Auth, Validator, DB, Cache;
 use Carbon\Carbon;
 use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Hr\IDGenerator as IDGenerator;
@@ -548,7 +548,7 @@ class RecruitController extends Controller
                     WorkerRecruitment::where('worker_id', $request->worker_id)
                         ->delete();
 
-
+                    Cache::forget('employee_count');
                     DB::commit();
                     toastr()->success('Migration successful!');
                     $this->logFileWrite("Employee migration updated", $request->worker_id);

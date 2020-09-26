@@ -167,7 +167,7 @@ class YearlyHolidayController extends Controller
 
                         'hr_yhp_dates_of_holidays'  => $date,
 
-                        'hr_yhp_comments' => $request->hr_yhp_comments[$i],
+                        'hr_yhp_comments' => $request->hr_yhp_comments[$i]??'',
 
                         'hr_yhp_status' => 1
 

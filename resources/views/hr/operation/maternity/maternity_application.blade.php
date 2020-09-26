@@ -34,17 +34,23 @@
                                 <div class="col-12">
                                     <div class="form-group has-required has-float-label  select-search-group">
                                         
-                                        {{ Form::select('associate',  [Request::get('associate') => Request::get('associate')], Request::get('associate'), ['placeholder'=>'Select Associate\'s ID', 'id'=>'associate', 'class'=> 'female-associates form-control', 'required'=>'required']) }}
+                                        {{ Form::select('associate',  [Request::get('associate') => Request::get('associate')], Request::get('associate'), ['placeholder'=>'Select Associate\'s ID', 'id'=>'femaleassociates', 'class'=> 'female-associates form-control', 'required'=>'required']) }}
                                         <label >Employee</label>
                                         
                                     </div>
                                 </div>
                             </div> 
                             <div class="row">
-                                <div class="col-12">
+                                <div class="col-sm-6">
                                     <div class="form-group has-required has-float-label ">
                                         <input id="applied_date" type="date" name="applied_date" class="form-control" required placeholder="Enter baby no" value="{{date('Y-m-d')}}">
                                         <label for="applied_date">Applied Date</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group has-float-label ">
+                                        <input id="edd" type="date" name="edd" class="form-control" required placeholder="Enter EDD" value="">
+                                        <label for="applied_date">EDD</label>
                                     </div>
                                 </div>
                             </div> 
@@ -94,8 +100,8 @@
                             </div>    
                             <div class="row">
                                 <div class="col-12">
-                                    <div class="form-group has-required has-float-label">
-                                        <input id="usg_report" type="file"  name="usg_report"  required>
+                                    <div class="form-group  has-float-label">
+                                        <input id="usg_report" type="file"  name="usg_report"  >
                                         <label for="usg_report" >USG Report</label><br>
                                     </div>
                                 </div>
@@ -192,7 +198,35 @@
 @push('js')
 <script type="text/javascript">
     $(document).ready(function(){
-        $('#associate').on('change', function(){
+        const baseurl = window.location.protocol + "//" + window.location.host + "/",
+          loader = '<p class="display-1 m-5 p-5 text-center text-warning">'+
+                        '<i class="fas fa-circle-notch fa-spin "></i>'+
+                    '</p>';
+         $('#femaleassociates').select2({
+            placeholder: 'Select Employee',
+            ajax: {
+                url: baseurl+'hr/adminstrator/employee/female-associates',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return { 
+                        keyword: params.term
+                    }; 
+                },
+                processResults: function (data) { 
+                    return {
+                        results:  $.map(data, function (item) {
+                            return {
+                                text: item.user_name,
+                                id: item.associate_id
+                            }
+                        }) 
+                    };
+                },
+                cache: true
+            }
+        });
+        $('#femaleassociates').on('change', function(){
             var emp_id = $(this).val();
             if(emp_id != ""){
                 $('.app-loader').show();

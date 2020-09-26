@@ -30,7 +30,7 @@ use App\Models\Hr\Station;
 use App\Models\Hr\Subsection;
 use App\Models\Hr\Unit;
 use App\Models\Hr\promotion;
-use Auth, DB, Validator, Image, Session, ACL, PDF, Response;
+use Auth, DB, Validator, Image, Session, ACL, PDF, Response, Cache;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
@@ -128,6 +128,7 @@ class EmployeeController extends Controller
             if ($user->save())
             {
                 $this->logFileWrite("Employee Entry Data Saved", $user->as_id);
+                Cache::forget('employee_count');
                 return back()
                     ->with('associate_id', $request->associate_id)
                     ->with('associate_name', $request->as_name)
@@ -180,6 +181,251 @@ class EmployeeController extends Controller
             "allUnit",
             "empTypes"
         ));
+    }
+    
+    public function today()
+    {
+        
+        $reportCount = employee_count();
+
+        $employeeTypes = EmpType::where('hr_emp_type_status', '1')->distinct()->orderBy('hr_emp_type_name', 'ASC')->pluck('hr_emp_type_name');
+        $empTypes = EmpType::where('hr_emp_type_status', '1')
+                            ->pluck('hr_emp_type_name', 'emp_type_id');
+        $unitList  = Unit::where('hr_unit_status', '1')
+            ->distinct()
+            ->whereIn('hr_unit_id', auth()->user()->unit_permissions())
+            ->orderBy('hr_unit_short_name', 'ASC')
+            ->pluck('hr_unit_short_name');
+        $allUnit= Unit::whereIn('hr_unit_id', auth()->user()->unit_permissions())
+                        ->pluck('hr_unit_name', 'hr_unit_id');
+        $floorList = Floor::where('hr_floor_status', '1')->distinct()->orderBy('hr_floor_name', 'ASC')->pluck('hr_floor_name');
+        $lineList  = Line::where('hr_line_status', '1')->distinct()->orderBy('hr_line_name', 'ASC')->pluck('hr_line_name');
+        $shiftList  = Shift::where('hr_shift_status', '1')->distinct()->orderBy('hr_shift_name', 'ASC')->pluck('hr_shift_name');
+        $areaList  = Area::where('hr_area_status', '1')->distinct()->orderBy('hr_area_name', 'ASC')->pluck('hr_area_name');
+        $departmentList  = Department::where('hr_department_status', '1')->distinct()->orderBy('hr_department_name', 'ASC')->pluck('hr_department_name');
+        $designationList  = Designation::where('hr_designation_status', '1')->distinct()->orderBy('hr_designation_name', 'ASC')->pluck('hr_designation_name');
+        $sectionList  = Section::where('hr_section_status', '1')->distinct()->orderBy('hr_section_name', 'ASC')->pluck('hr_section_name');
+        $educationList  = EducationLevel::pluck('education_level_title');
+
+        return view('hr.recruitment.employee_today', compact(
+            'reportCount',
+            'employeeTypes',
+            'unitList',
+            'floorList',
+            'lineList',
+            'shiftList',
+            'areaList',
+            'departmentList',
+            'designationList',
+            'sectionList',
+            'educationList',
+            "allUnit",
+            "empTypes"
+        ));
+    }
+
+    public function getTodayData(Request $request)
+    {
+        
+        $data = DB::table('hr_as_basic_info AS b')
+            ->select([
+                DB::raw('b.as_id AS serial_no'),
+                'b.associate_id',
+                'b.as_name',
+                'e.hr_emp_type_name AS hr_emp_type_name',
+                'u.hr_unit_short_name',
+                'f.hr_floor_name',
+                'l.hr_line_name',
+                'dp.hr_department_name',
+                'dg.hr_designation_name',
+                'dg.hr_designation_position',
+                'b.as_gender',
+                'b.as_ot',
+                'b.as_status',
+                'b.as_oracle_code',
+                'b.as_rfid_code'
+            ])
+            ->leftJoin('hr_area AS a', 'a.hr_area_id', '=', 'b.as_area_id')
+            ->leftJoin('hr_emp_type AS e', 'e.emp_type_id', '=', 'b.as_emp_type_id')
+            ->leftJoin('hr_unit AS u', 'u.hr_unit_id', '=', 'b.as_unit_id')
+            ->leftJoin('hr_floor AS f', 'f.hr_floor_id', '=', 'b.as_floor_id')
+            ->leftJoin('hr_line AS l', 'l.hr_line_id', '=', 'b.as_line_id')
+            ->leftJoin('hr_department AS dp', 'dp.hr_department_id', '=', 'b.as_department_id')
+            ->leftJoin('hr_designation AS dg', 'dg.hr_designation_id', '=', 'b.as_designation_id')
+            ->whereIn('b.as_status',[1,6])
+            ->where(function ($query) use ($request) {
+                if($request->otnonot != null){
+                    $query->where('b.as_ot', '=', $request->otnonot);
+                }
+                if($request->emp_type != ""){
+                    $query->where('b.as_emp_type_id', '=', $request->emp_type);
+                }
+                if($request->unit != ""){
+                    $query->where('b.as_unit_id', '=', $request->unit);
+                }
+            })
+            ->whereNotIn('as_id', auth()->user()->management_permissions())
+            ->whereDate('b.created_at',date('Y-m-d'))
+            ->orderBy('dg.hr_designation_position','ASC')
+            ->get();
+
+        
+        return Datatables::of($data)
+            ->addIndexColumn()
+            ->editColumn('as_ot', function($user){
+                if($user->as_ot==1){
+                    $ot_id2="OT";
+                }
+                else{
+                    $ot_id2="Non OT";
+                }
+                return ($ot_id2);
+            })
+            ->editColumn('action', function ($user) {
+
+                $return = "<a href=".url('hr/recruitment/employee/show/'.$user->associate_id)." class=\"btn btn-sm btn-success\" data-toggle='tooltip' data-placement='top' title='' data-original-title='View Employee Profile'>
+                        <i class=\"ace-icon fa fa-eye bigger-120\"></i>
+                    </a>
+                    <a href=".url('hr/recruitment/employee/edit/'.$user->associate_id)." class=\"btn btn-sm btn-primary\" data-toggle=\"tooltip\" title=\"Edit\" style=\"margin-top:1px;\">
+                        <i class=\"ace-icon fa fa-pencil bigger-120\"></i>
+                    </a>";
+                $return .= "</div>";
+                return $return;
+            })
+            ->rawColumns([
+                
+                'as_status',
+                'action',
+                'as_ot'
+            ])
+            ->make(true);
+    }
+    
+    public function incompleteEmployee()
+    {
+        $reportCount = employee_count();
+
+        $employeeTypes = EmpType::where('hr_emp_type_status', '1')->distinct()->orderBy('hr_emp_type_name', 'ASC')->pluck('hr_emp_type_name');
+        $empTypes = EmpType::where('hr_emp_type_status', '1')
+                            ->pluck('hr_emp_type_name', 'emp_type_id');
+        $unitList  = Unit::where('hr_unit_status', '1')
+            ->distinct()
+            ->whereIn('hr_unit_id', auth()->user()->unit_permissions())
+            ->orderBy('hr_unit_short_name', 'ASC')
+            ->pluck('hr_unit_short_name');
+        $allUnit= Unit::whereIn('hr_unit_id', auth()->user()->unit_permissions())
+                        ->pluck('hr_unit_name', 'hr_unit_id');
+        $floorList = Floor::where('hr_floor_status', '1')->distinct()->orderBy('hr_floor_name', 'ASC')->pluck('hr_floor_name');
+        $lineList  = Line::where('hr_line_status', '1')->distinct()->orderBy('hr_line_name', 'ASC')->pluck('hr_line_name');
+        $shiftList  = Shift::where('hr_shift_status', '1')->distinct()->orderBy('hr_shift_name', 'ASC')->pluck('hr_shift_name');
+        $areaList  = Area::where('hr_area_status', '1')->distinct()->orderBy('hr_area_name', 'ASC')->pluck('hr_area_name');
+        $departmentList  = Department::where('hr_department_status', '1')->distinct()->orderBy('hr_department_name', 'ASC')->pluck('hr_department_name');
+        $designationList  = Designation::where('hr_designation_status', '1')->distinct()->orderBy('hr_designation_name', 'ASC')->pluck('hr_designation_name');
+        $sectionList  = Section::where('hr_section_status', '1')->distinct()->orderBy('hr_section_name', 'ASC')->pluck('hr_section_name');
+        $educationList  = EducationLevel::pluck('education_level_title');
+
+        return view('hr.recruitment.employee_incomplete', compact(
+            'reportCount',
+            'employeeTypes',
+            'unitList',
+            'floorList',
+            'lineList',
+            'shiftList',
+            'areaList',
+            'departmentList',
+            'designationList',
+            'sectionList',
+            'educationList',
+            "allUnit",
+            "empTypes"
+        ));
+    }
+
+    public function getIncompleteData(Request $request)
+    {
+        
+        $data = DB::table('hr_as_basic_info AS b')
+            ->select([
+                DB::raw('b.as_id AS serial_no'),
+                'b.associate_id',
+                'b.as_name',
+                'e.hr_emp_type_name AS hr_emp_type_name',
+                'u.hr_unit_short_name',
+                'f.hr_floor_name',
+                'l.hr_line_name',
+                'dp.hr_department_name',
+                'dg.hr_designation_name',
+                'dg.hr_designation_position',
+                'b.as_gender',
+                'b.as_ot',
+                'b.as_status',
+                'b.as_oracle_code',
+                'b.as_rfid_code'
+            ])
+            ->leftJoin('hr_area AS a', 'a.hr_area_id', '=', 'b.as_area_id')
+            ->leftJoin('hr_emp_type AS e', 'e.emp_type_id', '=', 'b.as_emp_type_id')
+            ->leftJoin('hr_unit AS u', 'u.hr_unit_id', '=', 'b.as_unit_id')
+            ->leftJoin('hr_floor AS f', 'f.hr_floor_id', '=', 'b.as_floor_id')
+            ->leftJoin('hr_line AS l', 'l.hr_line_id', '=', 'b.as_line_id')
+            ->leftJoin('hr_department AS dp', 'dp.hr_department_id', '=', 'b.as_department_id')
+            ->leftJoin('hr_designation AS dg', 'dg.hr_designation_id', '=', 'b.as_designation_id')
+            ->leftJoin('hr_benefits AS ben', 'ben.ben_as_id', '=', 'b.associate_id')
+            ->whereIn('b.as_status',[1,6])
+            ->whereIn('b.as_unit_id', [1,4,5])
+            ->where(function ($query) use ($request) {
+                if($request->otnonot != null){
+                    $query->where('b.as_ot', '=', $request->otnonot);
+                }
+                if($request->emp_type != ""){
+                    $query->where('b.as_emp_type_id', '=', $request->emp_type);
+                }
+            })
+            ->where(function ($query) {
+                $query->whereNull('b.as_shift_id');
+                $query->orWhereNull('b.as_oracle_code');
+                $query->orWhereNull('b.as_rfid_code');
+               $query->orWhereNull('ben.ben_joining_salary');
+                $query->orWhereNull('ben.ben_current_salary');
+                $query->orWhereNull('b.as_designation_id');
+            })
+            ->whereNotIn('b.as_id', auth()->user()->management_permissions())
+            ->orderBy('dg.hr_designation_position','ASC')
+            ->get();
+
+        
+        return Datatables::of($data)
+            ->addIndexColumn()
+            ->editColumn('as_ot', function($user){
+                if($user->as_ot==1){
+                    $ot_id2="OT";
+                }
+                else{
+                    $ot_id2="Non OT";
+                }
+                return ($ot_id2);
+            })
+            ->editColumn('action', function ($user) {
+
+                $return = "<a href=".url('hr/recruitment/employee/show/'.$user->associate_id)." class=\"btn btn-sm btn-success\" data-toggle='tooltip' data-placement='top' title='' data-original-title='View Employee Profile'>
+                        <i class=\"ace-icon fa fa-eye bigger-120\"></i>
+                    </a>
+                    <a href=".url('hr/recruitment/employee/edit/'.$user->associate_id)." class=\"btn btn-sm btn-primary\" data-toggle=\"tooltip\" title=\"Edit\" style=\"margin-top:1px;\">
+                        <i class=\"ace-icon fa fa-pencil bigger-120\"></i>
+                    </a>
+                    <a href=".url('hr/employee/benefits?associate_id='.$user->associate_id)." class=\"btn btn-sm btn-primary\" data-toggle=\"tooltip\" title=\"Add Benefit\" style=\"margin-top:1px;\">
+                        <i class=\"las la-file-invoice-dollar bigger-120\"></i>
+                    </a>
+                    ";
+                $return .= "</div>";
+                return $return;
+            })
+            ->rawColumns([
+                
+                'as_status',
+                'action',
+                'as_ot'
+            ])
+            ->make(true);
     }
     public function showListDetails()
     {
@@ -1616,5 +1862,71 @@ class EmployeeController extends Controller
             toastr()->error($bug);
             return $bug;
         }
+    }
+
+
+    public function getAssociateBy(Request $request)
+    {   
+        // dd($request->all());exit;
+        $employees = Employee::where(function($query) use ($request){
+            if ($request->unit != null)
+            {
+                $query->where('as_unit_id', $request->unit);
+            }
+            if ($request->otnonot != null)
+            {
+                $query->where('as_ot', $request->otnonot);
+            }
+            if ($request->area != null)
+            {
+                $query->where('as_area_id', $request->area);
+            }
+            if ($request->department != null)
+            {
+                $query->where('as_department_id', $request->department);
+            }
+            if ($request->area != null)
+            {
+                $query->where('as_area_id', $request->area);
+            }
+            if ($request->department != null)
+            {
+                $query->where('as_department_id', $request->department);
+            }
+            if ($request->section != null)
+            {
+                $query->where('as_section_id', $request->section);
+            }
+            if ($request->subsection != null)
+            {
+                $query->where('as_subsection_id', $request->subsection);
+            }
+            if ($request->line_id != null)
+            {
+                $query->where('as_line_id', $request->line_id);
+            }
+            if ($request->shift_id != null)
+            {
+                $query->where('as_shift_id', $request->shift_id);
+            }
+            $query->where("as_status", 1);
+        })
+        ->whereIn('as_unit_id', auth()->user()->unit_permissions())
+        ->get();
+
+        // show user id
+        $data['filter'] = "<input type=\"text\" id=\"AssociateSearch\" placeholder=\"Search an Associate\" autocomplete=\"off\" class=\"form-control\"/>";
+        $data['result'] = "";
+        $data['total'] = count($employees);
+        foreach($employees as $employee)
+        {
+            $image = ($employee->as_pic == null?'/assets/images/avatars/profile-pic.jpg': $employee->as_pic);
+            $data['result'].= "<tr class='add'>
+                        <td><input type='checkbox' value='$employee->associate_id' name='assigned[$employee->as_id]'/></td><td><span class=\"lbl\"> <img src='".emp_profile_picture($employee)."' class='small-image min-img-file'> </span></td><td><span class=\"lbl\"> $employee->associate_id</span></td>
+                        <td>$employee->as_oracle_code </td>
+                        <td>$employee->as_name </td></tr>";
+        }
+
+        return $data;
     }
 }

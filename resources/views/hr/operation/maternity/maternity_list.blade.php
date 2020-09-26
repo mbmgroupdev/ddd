@@ -25,6 +25,7 @@
                                 <th>Associate ID</th>
                                 <th>Name</th>
                                 <th>Applied Date</th>
+                                <th>EDD</th>
                                 <th>Status</th>
                                 <th style="text-align: center;">Action</th>
                             </tr>
@@ -45,7 +46,7 @@ $(document).ready(function(){
     var selectable = [];
     var orderable = [];
 
-    var exportColName = ['Sl.','Associate ID','Name','Unit','Amount','Status'];
+    var exportColName = ['Sl.','Associate ID','Name','Applied Date','EDD','Status'];
     var exportCol = [0,1,2,3,4,5];
 
     var dt = $('#mat-leave').DataTable({
@@ -142,6 +143,7 @@ $(document).ready(function(){
             { data: 'associate_id', name: 'associate_id' }, 
             { data: 'as_name',  name: 'as_name' }, 
             { data: 'applied_date',  name: 'applied_date' }, 
+            { data: 'edd',  name: 'edd' }, 
             { data: 'status', name: 'status' }, 
             { data: 'action', name: 'action', orderable: false, searchable: false }
         ]  

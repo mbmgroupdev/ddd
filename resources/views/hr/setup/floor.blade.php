@@ -30,7 +30,7 @@
                 </div> 
                 <div class="panel-body">
                     
-                    <form class="form-horizontal" role="form" method="post" action="{{ url('hr/setup/floor')  }}" enctype="multipart/form-data">
+                    <form class="form-horizontal needs-validation" novalidate role="form" method="post" action="{{ url('hr/setup/floor')  }}" enctype="multipart/form-data">
                         {{ csrf_field() }} 
                         <div class="row">
                             <div class="col-sm-4">
@@ -51,7 +51,7 @@
                             </div>
                             <div class="col-sm-4">
                                 <div class="form-group has-float-label">
-                                    <input type="text" id="hr_floor_name_bn" name="hr_floor_name_bn" placeholder="ফ্লোরের নাম" class="form-control" required/>
+                                    <input type="text" id="hr_floor_name_bn" name="hr_floor_name_bn" placeholder="ফ্লোরের নাম" class="form-control" />
                                     <label  for="hr_floor_name_bn" > ফ্লোর (বাংলা) </label>
                                 </div>
                                 <div class="form-group"> 
