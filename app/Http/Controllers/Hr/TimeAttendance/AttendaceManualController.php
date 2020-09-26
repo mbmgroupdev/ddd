@@ -258,7 +258,9 @@ class AttendaceManualController extends Controller
         return $data;
     }
 public function calculateOt(Request $request){
-    return $request->all();
+
+    // return $request->all();
+
   $employee = Employee::select('as_id','associate_id', 'shift_roaster_status', 'as_unit_id', 'as_ot')->where('associate_id',$request->associateId)->first();
   $overtimes = 0;
   if($employee != null && $employee->as_ot == 1)
@@ -274,6 +276,7 @@ public function calculateOt(Request $request){
     // $m = isset($overtime[1]) ? $overtime[1] : 00;
 
     return json_encode(['s_ot' => ($overtimes), 'n_ot' => ($overtime)]);
+
     // return json_encode(['s_ot' => ($h.'.'.($m =='30'?'50':'00')), 'n_ot' => ($h.':'.$m)]);
   }else{
     return json_encode(0);

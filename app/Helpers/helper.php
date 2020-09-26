@@ -231,8 +231,7 @@ if(!function_exists('emp_remain_leave_check')){
                 }
             }
         }
-                //dd($statement);
-        // Casual Leave Restriction
+
         if($request->leave_type== "Casual"){
             $leaves = DB::table("hr_leave") 
                 ->select(
@@ -240,7 +239,7 @@ if(!function_exists('emp_remain_leave_check')){
                         SUM(CASE WHEN leave_type = 'Casual' THEN DATEDIFF(leave_to, leave_from)+1 END) AS casual
                     ")
                 )
-                ->where("leave_ass_id", $info->associate_id) 
+                ->where("leave_ass_id", $associate_id) 
                 ->where("leave_status", "1") 
                 ->where(function ($q){
                     $q->where(DB::raw("YEAR(leave_from)"), '=', date("Y"));
@@ -262,7 +261,7 @@ if(!function_exists('emp_remain_leave_check')){
                         SUM(CASE WHEN leave_type = 'Sick' THEN DATEDIFF(leave_to, leave_from)+1 END) AS sick
                     ")
                 )
-                ->where("leave_ass_id", $info->associate_id) 
+                ->where("leave_ass_id", $associate_id) 
                 ->where("leave_status", "1") 
                 ->where(function ($q){
                     $q->where(DB::raw("YEAR(leave_from)"), '=', date("Y"));
@@ -917,6 +916,7 @@ if(!function_exists('upzila_by_id')){
 
     }
 }
+
 // ot format calculation 
 function numberToTimeClockFormat($number){
     // $number = round($number,1);
@@ -936,4 +936,5 @@ function numberToTimeClockFormat($number){
     }
     return $hour[0].':'.$hour[1];
 }
+
 

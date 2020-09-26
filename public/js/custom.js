@@ -139,6 +139,7 @@ $(function() {
             ext = f_name.substring(f_name.lastIndexOf('.')+1);
         if ($.inArray( ext, allow) == -1) {
             $(this).val('');
+            $.notify('Only '+allow.toString()+' type files are allowed!','error');
             if($(this).parent().find('.file-input-error').length){
                 $(this).parent().find('.file-input-error').text('Only '+allow.toString()+' type files are allowed!')
             }else{

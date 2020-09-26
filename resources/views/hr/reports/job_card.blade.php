@@ -257,7 +257,9 @@
                                                     <th style="text-align:right">Total Over Time</th>
                                                     <th>
                                                     @if($info->as_ot==1)
+
                                                         {{numberToTimeClockFormat($info->ot_hour)}}
+
                                                         <input type="hidden" id="ot" value="0">
                                                     @endif
                                                     </th>

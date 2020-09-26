@@ -387,7 +387,6 @@ class AttendaceBulkManualController extends Controller
                             //check OT hour if out time exist
                             if($intime != null && $outtime != null && $Att->remarks != 'DSI' && $info->as_ot == 1){
                                 $overtimes = EmployeeHelper::daliyOTCalculation($update['in_time'],$update['out_time'], $shift_start, $shift_end, $break, $nightFlag, $info->associate_id, $info->shift_roaster_status, $unit);
-                                // dd($overtimes);
                                 /*$h = floor($overtimes/60) ? ((floor($overtimes/60)<10)?("0".floor($overtimes/60)):floor($overtimes/60)) : '00';
                                 $m = $overtimes%60 ? (($overtimes%60<10)? ("0".$overtimes%60):($overtimes%60)) : '00';
                                 $update['ot_hour'] = ($h.'.'.($m =='30'?'50':'00'));*/
@@ -444,6 +443,7 @@ class AttendaceBulkManualController extends Controller
                     }
                 }
             }
+
             // sent to queue for salary calculation
             $year = date('Y', strtotime($request->year));
             $month = date('m', strtotime($request->month));

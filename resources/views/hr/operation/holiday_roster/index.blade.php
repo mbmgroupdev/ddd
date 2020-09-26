@@ -37,7 +37,7 @@
         </div>
 
         <div class="panel panel-info">
-            
+
             <div class="panel-body pb-0">
                 @include('inc/message')
                 <div class="row">

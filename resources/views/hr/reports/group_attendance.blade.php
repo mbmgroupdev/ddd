@@ -155,12 +155,14 @@
                                                 @if(isset($employe['associate']) && $employe['associate'] != null)
                                                 @php
                                                 	$associate = $employe['associate'];
+
                                                   $monthYear = $year.'-'.$month;
                                                   $monthYear = date('Y-m', strtotime($monthYear));
                                                 @endphp
                                                 <tr>
                                                     <td>{{ $employe['area'] }}</td>
                                                     <td><a target="_blank" href='{{ URL::to("hr/operation/job_card?associate=$associate&month=$monthYear") }}'>{{$associate}}</a></td>
+
                                                     <td>{{$employe['name']}}</td>
                                                     <td>{{$employe['designation']}}</td>
 

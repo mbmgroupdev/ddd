@@ -16,17 +16,14 @@
                     <a href="#"> Maternity Leave </a>
                 </li>
                 <li class="active">Medical </li>
+                <li class="top-nav-btn">
+                    <a href="{{url('hr/operation/maternity-leave/list')}}" target="_blank" class="btn btn-primary pull-right" >List <i class="fa fa-list bigger-120"></i></a>
+                </li>
             </ul>
         </div>
 
         @include('inc/message')
         <div class="panel panel-success" style="">
-            <div class="panel-heading page-headline-bar">
-                <h6>
-                    Maternity Leave Medical
-                    <a href="{{url('hr/operation/maternity-leave/list')}}" target="_blank" class="btn btn-primary pull-right" >List <i class="fa fa-list bigger-120"></i></a>
-                </h6>
-            </div>
             <div class="panel-body">
                 <div class="row">
                     

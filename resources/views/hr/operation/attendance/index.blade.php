@@ -319,39 +319,36 @@
             var hr_shift_break_time = updatedRow.data().hr_shift_break_time;
             var hr_shift_night_flag = updatedRow.data().hr_shift_night_flag;
             var att_date = updatedRow.data().att_date;
-            console.log(associateId);
-            console.log(hr_shift_start_time);
-            console.log(hr_shift_end_time);
-            console.log(hr_shift_break_time);
-            // $.ajax({
-            //   url: '/hr/timeattendance/calculate_ot',
-            //   method: "GET",
-            //   dataType: 'json',
-            //   data: {
-            //     'att_date' : att_date,
-            //     'out_time' : out_time,
-            //     'in_time': in_time,
-            //     'associateId' : associateId,
-            //     'hr_shift_start_time' : hr_shift_start_time,
-            //     'hr_shift_end_time' : hr_shift_end_time,
-            //     'hr_shift_break_time' : hr_shift_break_time,
-            //     'hr_shift_night_flag' : hr_shift_night_flag
-            //   },
-            //   success: function(data)
-            //   {
-            //     console.log(data);
-            //     // if(hr_shift_start_time){
-            //     //   if(data.s_ot) {
-            //     //     // console.log('sss');
-            //     //     $('#'+stripHtml(updatedRow.data().associate_id)+index+'_ot').text(data.n_ot);
-            //     //     updatedRow.data().ot = data.s_ot;
-            //     //   } else {
-            //     //     // $('#'+updatedRow.data().associate_id+'_ot').text(0);
-            //     //     // updatedRow.data().ot = 0;
-            //     //   }
-            //     // }
-            //   }
-            // });
+
+            $.ajax({
+              url: '/hr/timeattendance/calculate_ot',
+              method: "GET",
+              dataType: 'json',
+              data: {
+                'att_date' : att_date,
+                'out_time' : out_time,
+                'in_time': in_time,
+                'associateId' : associateId,
+                'hr_shift_start_time' : hr_shift_start_time,
+                'hr_shift_end_time' : hr_shift_end_time,
+                'hr_shift_break_time' : hr_shift_break_time,
+                'hr_shift_night_flag' : hr_shift_night_flag
+              },
+              success: function(data)
+              {
+                // console.log(data);
+                if(hr_shift_start_time){
+                  if(data.s_ot) {
+                    // console.log('sss');
+                    $('#'+stripHtml(updatedRow.data().associate_id)+index+'_ot').text(data.n_ot);
+                    updatedRow.data().ot = data.s_ot;
+                  } else {
+                    // $('#'+updatedRow.data().associate_id+'_ot').text(0);
+                    // updatedRow.data().ot = 0;
+                  }
+                }
+              }
+            });
         }
 
         setTimeout(function () {
@@ -363,58 +360,58 @@
            }
            //console.log('{{ Auth::user()->hasRole('super user')}}');
 
-           // $.ajax({
-           //   url : "{{ url('hr/attendance/save_from_report') }}",
-           //   type: 'get',
-           //   data: {
-           //     unit : updatedRow.data().as_unit_id,
-           //     associate_id:stripHtml(updatedRow.data().associate_id),
-           //     date:updatedRow.data().att_date,
-           //     in_punch_new:updatedRow.data().in_punch,
-           //     out_punch_new:updatedRow.data().out_punch,
-           //     ot_new:updatedRow.data().ot,
-           //     type:type
-           //   },
-           //   success: function(data)
-           //   {
-           //    console.log(data);
-           //    $('#'+stripHtml(updatedRow.data().associate_id)+index+'_in').css('background-color','yellow');
-           //    $('#'+stripHtml(updatedRow.data().associate_id)+index+'_out').css('background-color','yellow');
-           //    $('#'+stripHtml(updatedRow.data().associate_id)+index+'_ot').css('background-color','yellow');
-           //     toastr.success(' ','Attendance Udated Successfully.');
-           //     // $('#dataTables').DataTable().ajax.reload()
-           //   },
-           //   error: function()
-           //   {
-           //     toastr.error('Please Try Again Later.','Something Went Wrong!!');
-           //   }
-           // });
+           $.ajax({
+             url : "{{ url('hr/attendance/save_from_report') }}",
+             type: 'get',
+             data: {
+               unit : updatedRow.data().as_unit_id,
+               associate_id:stripHtml(updatedRow.data().associate_id),
+               date:updatedRow.data().att_date,
+               in_punch_new:updatedRow.data().in_punch,
+               out_punch_new:updatedRow.data().out_punch,
+               ot_new:updatedRow.data().ot,
+               type:type
+             },
+             success: function(data)
+             {
+              console.log(data);
+              $('#'+stripHtml(updatedRow.data().associate_id)+index+'_in').css('background-color','yellow');
+              $('#'+stripHtml(updatedRow.data().associate_id)+index+'_out').css('background-color','yellow');
+              $('#'+stripHtml(updatedRow.data().associate_id)+index+'_ot').css('background-color','yellow');
+               toastr.success(' ','Attendance Udated Successfully.');
+               // $('#dataTables').DataTable().ajax.reload()
+             },
+             error: function()
+             {
+               toastr.error('Please Try Again Later.','Something Went Wrong!!');
+             }
+           });
          }else{
 
-           // $.ajax({
-           //   url : "{{ url('hr/attendance/save_from_report_absent') }}",
-           //   type: 'get',
-           //   data: {
-           //     unit : updatedRow.data().as_unit_id,
-           //     associate_id:stripHtml(updatedRow.data().associate_id),
-           //     date:updatedRow.data().att_date,
-           //     in_punch_new:updatedRow.data().in_punch,
-           //     out_punch_new:updatedRow.data().out_punch,
-           //     ot_new:updatedRow.data().ot
-           //   },
-           //   success: function(data)
-           //   {
-           //    $('#'+stripHtml(updatedRow.data().associate_id)+index+'_in').css('background-color','yellow');
-           //    $('#'+stripHtml(updatedRow.data().associate_id)+index+'_out').css('background-color','yellow');
-           //    $('#'+stripHtml(updatedRow.data().associate_id)+index+'_ot').css('background-color','yellow');
-           //     toastr.success(' ','Attendance Updated Successfully.');
-           //     //$('#dataTables').DataTable().ajax.reload()
-           //   },
-           //   error: function()
-           //   {
-           //     toastr.error('Please Try Again Later.','Something Went Wrong!!');
-           //   }
-           // });
+           $.ajax({
+             url : "{{ url('hr/attendance/save_from_report_absent') }}",
+             type: 'get',
+             data: {
+               unit : updatedRow.data().as_unit_id,
+               associate_id:stripHtml(updatedRow.data().associate_id),
+               date:updatedRow.data().att_date,
+               in_punch_new:updatedRow.data().in_punch,
+               out_punch_new:updatedRow.data().out_punch,
+               ot_new:updatedRow.data().ot
+             },
+             success: function(data)
+             {
+              $('#'+stripHtml(updatedRow.data().associate_id)+index+'_in').css('background-color','yellow');
+              $('#'+stripHtml(updatedRow.data().associate_id)+index+'_out').css('background-color','yellow');
+              $('#'+stripHtml(updatedRow.data().associate_id)+index+'_ot').css('background-color','yellow');
+               toastr.success(' ','Attendance Updated Successfully.');
+               //$('#dataTables').DataTable().ajax.reload()
+             },
+             error: function()
+             {
+               toastr.error('Please Try Again Later.','Something Went Wrong!!');
+             }
+           });
          }
          },1000);
         }

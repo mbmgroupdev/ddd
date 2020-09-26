@@ -77,6 +77,8 @@ Route::get('hr/user/pdf', 'Hr\ProfileController@employeeProfile');
 Route::get('hr/user/attendance_calendar/{as_id}', 'Hr\ProfileController@attendanceCalendar');
 Route::post('hr/employee-status-update', 'Hr\Recruitment\EmployeeController@statusUpdate');
 
+Route::get('hr/get-associates-by', 'Hr\Recruitment\EmployeeController@getAssociateBy');
+
 Route::get('hr/associate-info', 'Hr\Operation\LocationChangeController@getUnit');
 
 
@@ -394,6 +396,8 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 	Route::get('hr/timeattendance/leave-entry',  'Hr\TimeAttendance\LeaveWorkerController@showForm')->middleware(['permission:Manage Leave']);
 	Route::post('hr/timeattendance/leave_worker',  'Hr\TimeAttendance\LeaveWorkerController@saveData')->middleware(['permission:Manage Leave']);
 
+	Route::get('hr/reports/maternity-leave', 'Hr\Operation\MaternityPaymentController@report');
+
 	//Operation - Maternity Leave
 	Route::get('hr/operation/maternity-leave', 'Hr\Operation\MaternityPaymentController@showForm');
 	Route::post('hr/operation/maternity-leave', 'Hr\Operation\MaternityPaymentController@leaveApplication');
@@ -569,6 +573,11 @@ Route::get('hr/payroll/salary', 'Hr\Payroll\SalaryController@view');
 	// Employee
 	Route::group(['middleware' => 'permission:Employee List'], function(){
 		Route::get('hr/employee/list', 'Hr\Recruitment\EmployeeController@showList');
+		Route::get('hr/employee/today', 'Hr\Recruitment\EmployeeController@today');
+		Route::get('hr/recruitment/employee/today_employee_data', 'Hr\Recruitment\EmployeeController@getTodayData');
+
+		Route::get('hr/employee/incomplete-list', 'Hr\Recruitment\EmployeeController@incompleteEmployee');
+		Route::get('hr/recruitment/employee/incomplete_employee_data', 'Hr\Recruitment\EmployeeController@getIncompleteData');
 
 		Route::get('hr/recruitment/employee/employee_list_details', 'Hr\Recruitment\EmployeeController@showListDetails');
 		Route::get('hr/recruitment/employee/employee_data', 'Hr\Recruitment\EmployeeController@getData');
@@ -614,6 +623,12 @@ Route::get('hr/payroll/salary', 'Hr\Payroll\SalaryController@view');
 		Route::post('hr/recruitment/operation/benefits','Hr\Recruitment\BenefitController@benefitStore');
 		Route::get('hr/recruitment/get_benefit_by_id','Hr\Recruitment\BenefitController@getBenefitByID');
 	});
+	// production bonus section
+	Route::get('hr/operation/production-bonus','Hr\Operation\VoucherController@productionBonus');
+	Route::post('hr/operation/production-bonus','Hr\Operation\VoucherController@storeProductionBonus');
+	Route::get('hr/operation/production-bonus-list','Hr\Operation\VoucherController@productionList');
+	Route::post('hr/operation/production-bonus-list-data','Hr\Operation\VoucherController@productionListData');
+
 	//Job Portal
 	Route::get('hr/recruitment/job_portal/cv', 'Hr\Recruitment\CvController@CV');
 	Route::get('hr/recruitment/job_portal/job_posting', 'Hr\Recruitment\JobController@JobPosting')->middleware(['permission:Job Posting']);
@@ -1398,3 +1413,7 @@ Route::get('hr/setup/default_system_setting_delete/{id}','Hr\Setup\SystemSetting
 
 Route::get('hr/att-json', 'Hr\AttArchiveController@index');
 Route::get('hr/line-report', 'Hr\LineReportController@index');
+// voucher section
+Route::get('hr/operation/voucher', 'Hr\Operation\VoucherController@index');
+Route::post('hr/operation/voucher', 'Hr\Operation\VoucherController@voucher');
+

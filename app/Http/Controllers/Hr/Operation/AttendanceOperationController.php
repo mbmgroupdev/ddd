@@ -29,7 +29,6 @@ class AttendanceOperationController extends Controller
 
         // return $data[0]->shift;
         return DataTables::of($data)->addIndexColumn()
-        
         ->addColumn('associate_id', function($data) {
             // return $data->associate_id;
             $date = '';
@@ -51,6 +50,7 @@ class AttendanceOperationController extends Controller
             list($year,$month,$day) = explode('-',$date);
             $yearMonth = date('Y-m', strtotime($date));
             $url = 'hr/operation/job_card?associate='.$data->associate_id.'&month_year='.$yearMonth;
+
             return '<a href="'.url($url).'" target="blank">'.$data->associate_id.'</a>';
         })
         ->addColumn('att_date', function ($data) use ($date) {

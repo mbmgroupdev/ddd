@@ -34,7 +34,6 @@
                                     <!-- PAGE CONTENT BEGINS -->
                                     <div class="row">
                                         <div class="col-sm-8 offset-4">
-                                            {{--  --}}
                                             <div class="form-group has-float-label has-required select-search-group">
                                                 <select name="as_unit_id" class="form-control capitalize select-search" id="unit" required="">
                                                     <option selected="" value="">Choose...</option>

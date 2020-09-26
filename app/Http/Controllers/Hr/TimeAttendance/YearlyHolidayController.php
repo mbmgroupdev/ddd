@@ -108,9 +108,7 @@ class YearlyHolidayController extends Controller
 
 
     public function store(Request $request)
-
     {
-
     	$validator= Validator::make($request->all(), [
             'hr_yhp_dates_of_holidays' 	=> 'required|max:10',
             'hr_yhp_comments' 			=> 'required|max:64'
@@ -165,12 +163,7 @@ class YearlyHolidayController extends Controller
             toastr()->error($bug);
             return back();
         }
-
     }
-
-
-
-
 
     public function status(Request $request)
 
