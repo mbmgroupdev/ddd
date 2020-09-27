@@ -181,7 +181,7 @@
                                    <th>In Time</th>
                                    <th>Out Time</th>
                                    <th>OT</th>
-                                   <th>Status</th>
+                                   <th width="10%">Status</th>
                                 </tr>
                              </thead>
                           </table>
@@ -319,7 +319,7 @@
             var hr_shift_break_time = updatedRow.data().hr_shift_break_time;
             var hr_shift_night_flag = updatedRow.data().hr_shift_night_flag;
             var att_date = updatedRow.data().att_date;
-
+            
             $.ajax({
               url: '/hr/timeattendance/calculate_ot',
               method: "GET",
@@ -328,24 +328,17 @@
                 'att_date' : att_date,
                 'out_time' : out_time,
                 'in_time': in_time,
-                'associateId' : associateId,
-                'hr_shift_start_time' : hr_shift_start_time,
-                'hr_shift_end_time' : hr_shift_end_time,
-                'hr_shift_break_time' : hr_shift_break_time,
-                'hr_shift_night_flag' : hr_shift_night_flag
+                'associateId' : associateId
               },
               success: function(data)
               {
                 // console.log(data);
-                if(hr_shift_start_time){
-                  if(data.s_ot) {
-                    // console.log('sss');
-                    $('#'+stripHtml(updatedRow.data().associate_id)+index+'_ot').text(data.n_ot);
-                    updatedRow.data().ot = data.s_ot;
-                  } else {
-                    // $('#'+updatedRow.data().associate_id+'_ot').text(0);
-                    // updatedRow.data().ot = 0;
-                  }
+                if(data.s_ot) {
+                  $('#'+stripHtml(updatedRow.data().associate_id)+index+'_ot').text(data.n_ot);
+                  updatedRow.data().ot = data.s_ot;
+                } else {
+                  // $('#'+updatedRow.data().associate_id+'_ot').text(0);
+                  // updatedRow.data().ot = 0;
                 }
               }
             });
@@ -358,8 +351,7 @@
            if(updatedRow.data().in_time == null){
              var type = 'in';
            }
-           //console.log('{{ Auth::user()->hasRole('super user')}}');
-
+           
            $.ajax({
              url : "{{ url('hr/attendance/save_from_report') }}",
              type: 'get',
@@ -405,7 +397,6 @@
               $('#'+stripHtml(updatedRow.data().associate_id)+index+'_out').css('background-color','yellow');
               $('#'+stripHtml(updatedRow.data().associate_id)+index+'_ot').css('background-color','yellow');
                toastr.success(' ','Attendance Updated Successfully.');
-               //$('#dataTables').DataTable().ajax.reload()
              },
              error: function()
              {
