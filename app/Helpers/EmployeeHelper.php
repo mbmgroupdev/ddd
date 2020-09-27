@@ -65,16 +65,18 @@ class EmployeeHelper
 			if($diff < 0){
 				$diff = 0;
 			}
-
-			$diff = round($diff, 2);
+			// $diff = round($diff, 2);
 			$diffExplode = explode('.', $diff);
+
 			$minutes = (isset($diffExplode[1]) ? $diffExplode[1] : 0);
 			$minutes = floatval('0.'.$minutes);
-			if($minutes >= 0.25 && $minutes < 0.7833) $minutes = '.50';
-		    else if($minutes >= 0.7833) $minutes = '1';
-		    else $minutes = '0';
+			// return $minutes;
+			if($minutes > 0.11667 && $minutes <= 0.75) $minutes = $minutes;
+		    else if($minutes >= 0.75) $minutes = 1;
+		    else $minutes = 0;
 		    
 		    $overtimes = $diffExplode[0]+$minutes;
+		    
 		    $overtimes = number_format((float)$overtimes, 2, '.', '');
 	    }
 	    return $overtimes;

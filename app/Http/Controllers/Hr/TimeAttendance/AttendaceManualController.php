@@ -259,28 +259,61 @@ class AttendaceManualController extends Controller
     }
 public function calculateOt(Request $request){
 
-    // return $request->all();
+    $employee = Employee::where('associate_id',$request->associateId)
+    ->with('shift')
+    ->first();
+    $shiftData = DB::table('hr_shift');
+    $shiftDataSql = $shiftData->toSql();
+    // 
+    $overtimes = 0;
+    if($employee != null && $employee->as_ot == 1)
+    {
+        $day_of_date = date('j', strtotime($request->att_date));
+        $month = date('m', strtotime($request->att_date));
+        $year = date('Y', strtotime($request->att_date));
+        $day_num = "day_".$day_of_date;
+        $shift= DB::table("hr_shift_roaster")
+        ->where('shift_roaster_month', $month)
+        ->where('shift_roaster_year', $year)
+        ->where("shift_roaster_user_id", $employee->as_id)
+        ->select([
+            $day_num,
+            's.hr_shift_id',
+            's.hr_shift_start_time',
+            's.hr_shift_end_time',
+            's.hr_shift_break_time',
+            's.hr_shift_night_flag'
+        ])
+        ->leftjoin(DB::raw('(' . $shiftDataSql. ') AS s'), function($q) use ($shiftData, $day_num, $employee) {
+            $q->on('s.hr_shift_name', 'hr_shift_roaster.'.$day_num)->addBinding($shiftData->getBindings());
+            $q->where('s.hr_shift_unit_id', $employee->as_unit_id);
+        })
+        ->orderBy('s.hr_shift_id', 'desc')
+        ->first(); 
+        if(!empty($shift) && $shift->$day_num != null){
+            $cShifStart = $shift->hr_shift_start_time;
+            $cShifEnd = $shift->hr_shift_end_time;
+            $cBreak = $shift->hr_shift_break_time;
+            $nightFlag = $shift->hr_shift_night_flag;
+        }
+        else{
+            $cShifStart = $employee->shift['hr_shift_start_time'];
+            $cShifEnd = $employee->shift['hr_shift_end_time'];
+            $cBreak = $employee->shift['hr_shift_break_time'];
+            $nightFlag = $employee->shift['hr_shift_night_flag'];
+        }
+        $intime = $request->att_date.' '.$request->in_time;
+        $outtime = strtotime($request->in_time)>strtotime($request->out_time)?date('Y-m-d',strtotime("+1 day", strtotime($request->att_date))).' '.$request->out_time:$request->att_date.' '.$request->out_time;
 
-  $employee = Employee::select('as_id','associate_id', 'shift_roaster_status', 'as_unit_id', 'as_ot')->where('associate_id',$request->associateId)->first();
-  $overtimes = 0;
-  if($employee != null && $employee->as_ot == 1)
-  {
-    $intime = $request->att_date.' '.$request->in_time;
-    $outtime = strtotime($request->in_time)>strtotime($request->out_time)?date('Y-m-d',strtotime("+1 day", strtotime($request->att_date))).' '.$request->out_time:$request->att_date.' '.$request->out_time;
-
-    $overtimes = EmployeeHelper::daliyOTCalculation($intime, $outtime, $request->hr_shift_start_time, $request->hr_shift_end_time, $request->hr_shift_break_time, $request->hr_shift_night_flag, $employee->associate_id, $employee->shift_roaster_status, $employee->as_unit_id);
-    
-    $overtime = numberToTimeClockFormat($overtimes);
-    // $overtime = explode('.', $overtime);
-    // $h = $overtime[0];
-    // $m = isset($overtime[1]) ? $overtime[1] : 00;
-
-    return json_encode(['s_ot' => ($overtimes), 'n_ot' => ($overtime)]);
+        $overtimes = EmployeeHelper::daliyOTCalculation($intime, $outtime, $cShifStart, $cShifEnd, $cBreak, $nightFlag, $employee->associate_id, $employee->shift_roaster_status, $employee->as_unit_id);
+        
+        $overtime = numberToTimeClockFormat($overtimes);
+        return json_encode(['s_ot' => ($overtimes), 'n_ot' => ($overtime)]);
 
     // return json_encode(['s_ot' => ($h.'.'.($m =='30'?'50':'00')), 'n_ot' => ($h.':'.$m)]);
-  }else{
-    return json_encode(0);
-  }
+    }else{
+        return json_encode(0);
+    }
 }
 public function manualAttLog(){
     return view('hr/timeattendance/attendance_manual_log');
