@@ -13,8 +13,7 @@ class TrainingController extends Controller
 	// Show Add Training Form
     public function showForm()
     {
-        //ACL::check(["permission" => "hr_training_add"]);
-        #-----------------------------------------------------------#
+
     	$trainingNames = TrainingNames::where('hr_tr_status', '1')
     					->pluck('hr_tr_name', 'hr_tr_name_id');
 
