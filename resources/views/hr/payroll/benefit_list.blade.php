@@ -33,6 +33,7 @@
                                     <th>Joining Salary</th>
                                     <th>Current Salary</th>
                                     <th>Basic Salary</th>
+                                    <th>House Rent</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -155,6 +156,7 @@ $(document).ready(function(){
             { data: 'ben_joining_salary', name: 'ben_joining_salary' }, 
             { data: 'ben_current_salary', name: 'ben_current_salary' }, 
             { data: 'ben_basic', name: 'ben_basic' }, 
+            { data: 'ben_house_rent', name: 'ben_house_rent' }, 
             { data: 'action', name: 'action', orderable: false, searchable: false }
         ], 
         initComplete: function () {   

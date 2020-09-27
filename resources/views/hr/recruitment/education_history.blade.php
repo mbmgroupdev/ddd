@@ -28,7 +28,7 @@
               </p>
            </div>
            <div class="action-area">
-               <a href="" class="btn btn-sm btn-primary" data-edu="{{json_encode($education)}}" data-toggle="modal" data-target="#editModal"><i class="fa fa-edit"></i></a>
+               <a href=""  class="btn btn-sm btn-primary edit-education" data-education='{{json_encode($education)}}' data-toggle="modal" data-target="#editModal"><i class="fa fa-edit"></i></a>
                <a href="" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a>
            </div>
         </li>

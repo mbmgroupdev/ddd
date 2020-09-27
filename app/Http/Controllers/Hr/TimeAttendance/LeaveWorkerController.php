@@ -23,26 +23,26 @@ class LeaveWorkerController extends Controller
     public function showForm()
     {
         //ACL::check(["permission" => "hr_time_worker_leave"]);
-    	return view('hr/timeattendance/leave_worker');
+        return view('hr/timeattendance/leave_worker');
     }
     # store data
     public function saveData(Request $request)
     {
-    	$validator = Validator::make($request->all(), [
-    		'leave_ass_id'            => 'required',
-    		'leave_type'              => 'required',
-    		'leave_from'              => 'required|date',
-    		'leave_to'                => 'date',
-    		'leave_applied_date'      => 'required|date',
+        $validator = Validator::make($request->all(), [
+            'leave_ass_id'            => 'required',
+            'leave_type'              => 'required',
+            'leave_from'              => 'required|date',
+            'leave_to'                => 'date',
+            'leave_applied_date'      => 'required|date',
             'leave_supporting_file'   => 'mimes:docx,doc,pdf,jpg,png,jpeg|max:1024',
         ]);
-    	if ($validator->fails())
-    	{
-    		return back()
-    			->withInput()
-    			->withErrors($validator)
-    			->with('error', 'Please fill up all required fields!');
-    	}
+        if ($validator->fails())
+        {
+            return back()
+                ->withInput()
+                ->withErrors($validator)
+                ->with('error', 'Please fill up all required fields!');
+        }
         $input = $request->all();
         // return $input;
         DB::beginTransaction();
@@ -55,7 +55,7 @@ class LeaveWorkerController extends Controller
             $check->sel_days = (int)date_diff(date_create($request->leave_from),date_create($request->leave_to))->format("%a");
 
             $avail = emp_remain_leave_check($check);
-            if($avail->stat != 'false'){
+            if($avail['stat'] != 'false'){
 
                 $leave_supporting_file = null;
                 if($request->hasFile('leave_supporting_file')){

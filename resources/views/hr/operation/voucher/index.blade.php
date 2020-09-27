@@ -1,5 +1,5 @@
 @extends('hr.layout')
-@section('title', 'Daily Attendance')
+@section('title', 'Voucher')
 
 @section('main-content')
 <div class="main-content">

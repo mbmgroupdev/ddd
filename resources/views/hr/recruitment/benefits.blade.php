@@ -215,7 +215,7 @@ $(document).ready(function(){
                 if (result.benefit)
                 {
                     $('#ben_id').val(result.benefit['ben_id']);
-                    $('#ben_joining_salary').val(result.benefit['ben_joining_salary']);
+                    $('#ben_joining_salary').val(result.benefit['ben_current_salary']);
                     $('#ben_cash_amount').val(result.benefit['ben_cash_amount']);
                     $('#ben_bank_amount').val(result.benefit['ben_bank_amount']);
                     $('#ben_basic').val(result.benefit['ben_basic']);

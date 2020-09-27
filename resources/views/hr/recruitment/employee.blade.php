@@ -70,14 +70,18 @@ table th {
 		                     <p class="">{{ $info->hr_unit_name }}</p>
 		                  	 <p class="mb-0">Associate ID: {{ $info->associate_id }} </p>
 		                     <p class="">Today's Status: 
-								 @if($status['status']==2)
-								    <span class="label label-warning "> Leave </span>
-								    <span class="label label-success "> {{ $status['type'] }} </span>
-								 @elseif($status['status']==1)
-								    <span class="label label-success"> Present </span>
-								 @else
-								    <span class="label label-danger "> Absent </span>
-								 @endif
+		                     	@if($info->as_status == 1)
+									 @if($status['status']==2)
+									    <span class="label label-warning "> Leave </span>
+									    <span class="label label-success "> {{ $status['type'] }} </span>
+									 @elseif($status['status']==1)
+									    <span class="label label-success"> Present </span>
+									 @else
+									    <span class="label label-danger "> Absent </span>
+									 @endif
+								@elseif($info->as_status == 6)
+									<span class="label label-success"> Maternity </span>
+								@endif
 							 </p>
 							 <div class="buttons mt-3">
 			                	@if(auth()->user()->canany(['Manage Employee']) || auth()->user()->hasRole('Super Admin'))
@@ -150,7 +154,13 @@ table th {
 									<div class="profile-info-row">
 										<div class="profile-info-name"> Status</div>
 										<div class="profile-info-value">
-											<span>@if($info->as_status == 1) Active @else Inactive @endif </span>
+											<span>
+												@if($info->as_status == 1) 
+													Active 
+												@elseif($info->as_status == 6) 
+													Maternity
+												@else Inactive @endif 
+											</span>
 										</div>
 									</div>
 
@@ -946,7 +956,7 @@ table th {
 					                </div>
 					            </div>
 					            @endif
-
+					            @if(auth()->user()->canany(['Salary Sheet','Salary Report','Manage Promotion','Manage Increment']) || auth()->user()->hasRole('Super Admin'))
 								<div id="employment" class="tab-pane">
                     						<div class="row"> 
 							                    <div class="col-sm-6">
@@ -1053,7 +1063,7 @@ table th {
 						                    </div>
 									
 								</div><!-- /#friends -->
-
+								@endif
 								<div id="loan" class="tab-pane">
 									<div class=" transparent">
 												<div class="">

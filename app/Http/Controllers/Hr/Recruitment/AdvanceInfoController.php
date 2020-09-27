@@ -568,9 +568,8 @@ class AdvanceInfoController extends Controller
 
 
         if($education->save()){
-
             $this->logFileWrite("Education Information Saved", $education->id);
-            return back()
+            return redirect('hr/recruitment/operation/advance_info_edit/'.$request->education_as_id.'#education')
             ->with('success',"Education information Successfully Saved!!");
         }
         else{
@@ -607,7 +606,7 @@ class AdvanceInfoController extends Controller
                     ->leftJoin('hr_education_degree_title AS dt', 'dt.id', '=', 'e.education_degree_id_1')
                     ->leftJoin('hr_education_result AS r', 'r.id', '=', 'e.education_result_id')
                     ->get();
-                    
+
             $html = view('hr.recruitment.education_history', compact('data'))->render();
 
         }

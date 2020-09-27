@@ -499,7 +499,7 @@ class EmployeeController extends Controller
             ->leftJoin('hr_line AS l', 'l.hr_line_id', '=', 'b.as_line_id')
             ->leftJoin('hr_department AS dp', 'dp.hr_department_id', '=', 'b.as_department_id')
             ->leftJoin('hr_designation AS dg', 'dg.hr_designation_id', '=', 'b.as_designation_id')
-            ->whereIn('b.as_status',[1,6])
+            ->where('b.as_status',1)
             ->where(function ($query) use ($request) {
                 if($request->otnonot != null){
                     $query->where('b.as_ot', '=', $request->otnonot);
@@ -1469,6 +1469,7 @@ class EmployeeController extends Controller
                 }
             }
             $this->logFileWrite("Employee Data Updated", $request->as_id);
+            Cache::forget('employee_count');
             DB::commit();
             return back()->with('success', 'Update Successful.');
             

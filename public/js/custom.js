@@ -31,7 +31,7 @@ $(function() {
         }
     });
 
-    $('select.female-associates').select2({
+    $('.female-associates').select2({
         placeholder: 'Select Employee',
         ajax: {
             url: baseurl+'hr/adminstrator/employee/female-associates',

@@ -37,7 +37,9 @@ class AllLeavesController extends Controller
                'l.leave_status',
                'l.leave_from',
                'l.leave_to',
-               'u.hr_unit_name'
+               'l.created_at',
+               'u.hr_unit_name',
+               DB::raw("(DATEDIFF(leave_to, leave_from)+1 ) AS days")
             ])
             ->leftJoin('hr_as_basic_info AS b', 'l.leave_ass_id', '=', 'b.associate_id')
             ->leftJoin('hr_unit AS u', 'b.as_unit_id', '=', 'u.hr_unit_id' )
@@ -74,6 +76,13 @@ class AllLeavesController extends Controller
             })
             ->addColumn('action', function ($data) use ($perm) {
                   if($perm){
+                    if(date('Y-m-d',strtotime($data->created_at)) == date('Y-m-d')){
+                      return "<a href=".url('hr/timeattendance/leave_delete/'.$data->id)." class=\"btn btn-xs btn-danger btn-round\" onclick=\"return confirm('Are you sure you want to delete this item?');\" data-toggle=\"tooltip\" title=\"Delete\">
+
+                              <i class=\"ace-icon fa fa-trash bigger-120\"></i> 
+
+                          </a>";
+                    }
                     return '';
                     return "<div class=\"btn-group\">
 

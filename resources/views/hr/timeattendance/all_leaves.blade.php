@@ -3,44 +3,12 @@
 @section('main-content')
 @push('css')
 <style type="text/css">
-    {{-- removing the links in print and adding each page header --}}
-    /*a[href]:after { content: none !important; }
-    thead {display: table-header-group;}
-    input::-webkit-input-placeholder {
-        color: black;
-        font-weight: bold;
-        font-size: 12px;
+    #dataTables th:nth-child(6) input{
+      width: 40px !important;
     }
-    input:-moz-placeholder {
-        color: black;
-        font-weight: bold;
-        font-size: 12px;
-    }
-    input:-ms-input-placeholder {
-        color: black;
-        font-weight: bold;
-        font-size: 12px;
-    }
-    th{
-        font-size: 12px;
-        font-weight: bold;
-    }
-
-    .dataTables_wrapper .dt-buttons {
-        text-align: center;
-        padding-left: 20%;
-    }
-    
-    
-    .dataTables_processing {
-        top: 200px !important;
-        z-index: 11000 !important;
-        border: 0px !important;
-        box-shadow: none !important;
-        background: transparent !important;
-    }*/
 </style>
 @endpush
+
 <div class="main-content">
     <div class="main-content-inner">
         <div class="breadcrumbs ace-save-state" id="breadcrumbs">
@@ -57,8 +25,8 @@
  
         </div>
 
+        @include('inc/message')
         <div class="page-content"> 
-            @include('inc/message')
             <div class="panel panel-info">
                 <div class="panel-heading"><h6>All Leaves<a href="{{ url('hr/timeattendance/leave-entry')}}" class="pull-right btn  btn-primary">Leave Entry</a></h6></div> 
                 <div class="panel-body">
@@ -71,21 +39,11 @@
                                 <th width="20%">Unit</th>
                                 <th width="10%">Leave Type</th>
                                 <th width="20%">Leave Duration</th>
+                                <th width="10%" style="text-align: center;"> Day(s)</th>
                                 <th width="10%">Leave Status</th>
                                 <th width="20%">Action</th>
                             </tr>
-                        </thead> 
-                         <tfoot>
-                            <tr>
-                                <th width="10%">Associate ID</th>
-                                <th width="20%">Name</th>
-                                <th width="20%">Unit</th>
-                                <th width="10%">Leave Type</th>
-                                <th width="20%">Leave Duration</th>
-                                <th width="10%">Leave Status</th>
-                                <th width="20%">Action</th>
-                            </tr>
-                        </tfoot> 
+                        </thead>  
                     </table>
                 </div>
             </div>
@@ -95,13 +53,13 @@
 @push('js')
 <script type="text/javascript">
 $(document).ready(function(){ 
-    var searchable = [0,1,4];
-    var selectable = [2,3,5]; //use 2,4....and * for all
+    var searchable = [0,1,4,5];
+    var selectable = [2,3,6]; //use 2,4....and * for all
     // dropdownList = {column_number: {'key':value}};
     var dropdownList = {
         '2':[@foreach($unit as $u) <?php echo "'$u'," ?> @endforeach],
         '3':['Casual','Earned','Sick', 'Special','Maternity'],
-        '5':['Applied','Approved','Declined'] 
+        '6':['Applied','Approved','Declined'] 
     };
 
     var dt = $('#dataTables').DataTable({
@@ -175,6 +133,7 @@ $(document).ready(function(){
             { data: 'hr_unit_name',  name: 'hr_unit_name' , orderable: false}, 
             { data: 'leave_type', name: 'leave_type' , orderable: false}, 
             { data: 'leave_duration', name: 'leave_duration' , orderable: false}, 
+            { data: 'days', name: 'days' , orderable: false}, 
             { data: 'leave_status', name: 'leave_status' , orderable: false}, 
             { data: 'action', name: 'action', orderable: false, searchable: false}
         ], 
