@@ -208,6 +208,10 @@
                                         {{ Form::radio('as_status', '5', (($employee->as_status=="5")?true:false), ['class'=>'ace']) }}
                                         <span class="lbl"> Left</span>
                                     </label>
+                                    <label>
+                                        {{ Form::radio('as_status', '6', (($employee->as_status=="6")?true:false), ['class'=>'ace']) }}
+                                        <span class="lbl"> Maternity</span>
+                                    </label>
                                 </div>
                             </div>
                                     

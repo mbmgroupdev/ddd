@@ -15,6 +15,17 @@
       <div class="iq-card icon-card">
          <div class="iq-card-body text-center">
             <div class="doc-profile">
+               <i class="img-fluid icon-70 las la-file-prescription"></i>
+            </div>
+            <div class="iq-doc-info">
+               <h4> Maternity</h4>
+               <p class="mb-0">{{$emp_count['maternity']}}</p>
+            </div>
+         </div>
+      </div>
+      <div class="iq-card icon-card">
+         <div class="iq-card-body text-center">
+            <div class="doc-profile">
                <i class="img-fluid icon-70 las la-male"></i>
             </div>
             <div class="iq-doc-info">

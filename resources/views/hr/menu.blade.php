@@ -121,6 +121,12 @@
                <a href="{{ url('hr/timeattendance/leave-entry') }}"><i class="las la-file-alt"></i>Employee Leave</a>
             </li>
             @endif
+
+            @if($user->canany(['Manage Leave','Leave List']) || $user->hasRole('Super Admin'))
+            <li class="@if($segment3 == 'all_leaves') active @endif">
+               <a href="{{ url('hr/timeattendance/all_leaves') }}"><i class="las la-file-alt"></i>Leave List</a>
+            </li>
+            @endif
          </ul>
       </li>
       @endif

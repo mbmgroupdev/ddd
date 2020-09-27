@@ -121,6 +121,7 @@ class BenefitController extends Controller
                     'b.ben_joining_salary',
                     'b.ben_current_salary',
                     'b.ben_basic',
+                    'b.ben_house_rent',
                     'a.as_name',
                     'a.as_oracle_code',
                     'a.as_unit_id',

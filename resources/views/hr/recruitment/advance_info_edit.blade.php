@@ -19,6 +19,7 @@
             </ul><!-- /.breadcrumb -->
  
         </div>
+        @include('inc/message')
         <div class="panel">
             <div class="panel-heading">
                 <h6>Advance : {{$advance->emp_adv_info_as_id}}
@@ -172,7 +173,7 @@
                                             
                      
                                             <div class="form-group has-float-label">
-                                                <input name="emp_adv_info_pre_org" type="text" id="previous_org_name" placeholder="Name of Previous Organization" class="form-control" value="{{ $advance->emp_adv_info_pre_org }}"   required-length="3-255" />
+                                                <input name="emp_adv_info_pre_org" type="text" id="previous_org_name" placeholder="Name of Previous Organization" class="form-control" value="{{ $advance->emp_adv_info_pre_org }}"   required-="3-255" />
                                                 <label  for="emp_adv_info_pre_org"> Last Organization </label>
                                             </div>
                      
@@ -481,41 +482,38 @@
 
                                             <div class="form-group hide has-float-label" id="major">
                                                 <label  for="education_major_group_concentation">Concentration/ Major/Group </label>
-                                                <input name="education_major_group_concentation" type="text" id="education_major_group_concentation" placeholder="Concentration/ Major/Group" class="form-control"  required="required" />
+                                                <input name="education_major_group_concentation" type="text" id="education_major_group_concentation" placeholder="Concentration/ Major/Group" class="form-control"   />
                                             
                                             </div>
 
-                                            <div class="form-group has-float-label">
+                                            <div class="form-group has-float-label has-required">
                                                 <label  for="education_institute_name">Institute Name </label>
                                                 <input name="education_institute_name" type="text" id="education_institute_name" placeholder="Institute Name" class="form-control"  required="required" />
                                             </div>
 
-                                            <div class="form-group has-float-label select-search-group">
-                                                {{ Form::select('education_result_id', $resultList, null, ['placeholder'=>'Select Education Level', 'id'=>'education_result_id',  'required'=> 'required']) }}
+                                            <div class="form-group has-float-label select-search-group has-required">
+                                                {{ Form::select('education_result_id', $resultList, null, ['placeholder'=>'Result Type', 'id'=>'education_result_id','required']) }}
                                                 <label  for="education_result_id"> Result </label>
                                             </div>
 
                                             <div class="hide" id="cgpa_scale">
                                                 <div class="form-group has-float-label">
-                                                    <input type="text" name="education_result_cgpa" id="education_result_cgpa" placeholder="CGPA" class="form-control" required="required" />
+                                                    <input type="text" name="education_result_cgpa" id="education_result_cgpa" placeholder="CGPA" class="form-control" />
                                                     <label  for="education_result_cgpa"> CGPA </label>
                                                 </div>
                                             </div>
 
                                             <div class="form-group has-float-label">
-                                                <input type="text" name="education_result_scale" id="education_result_scale" placeholder="Scale" class="form-control" required="required"/>
+                                                <input type="text" name="education_result_scale" id="education_result_scale" placeholder="Scale" class="form-control" />
                                                 <label  for="education_result_scale"> Scale </label>
                                             </div>
 
 
                                             <div class="form-group hide has-float-label" id="division_mark">
-                                                <input type="text" name="education_result_marks" id="education_result_marks" placeholder="Marks" class="form-control" required="required" />
+                                                <input type="text" name="education_result_marks" id="education_result_marks" placeholder="Marks" class="form-control"  />
                                                 <label  for="education_result_marks"> Marks(%) </label>
                                             </div>
-                                        </div>
-                                        <div class="col-sm-4" >
-
-                                            <div class="form-group has-float-label select-search-group">
+                                            <div class="form-group has-float-label select-search-group has-required">
                                                 
                                                 <select  name="education_passing_year" id="education_passing_year" required="required">
                                                     <option value="">Selecet Passing Year</option>
@@ -525,25 +523,18 @@
                                                 </select>
                                                 <label  for="education_level_title"> Passing Year </label>
                                             </div>
-                                        </div>
+                                            <div class="form-group">
+                                                <button class="btn btn-sm btn-success" type="submit">
+                                                    <i class="ace-icon fa fa-check bigger-110"></i> Submit
+                                                </button>
 
-                                        <div class="col-sm-6">
-                                        <table class="table table-info" style="border: 1px solid;">
-                                        <tbody id="educationHistory"> 
-                                        </tbody> 
-                                        </table>
+                                                &nbsp; &nbsp; &nbsp;
+                                                <button class="btn btn-sm" type="reset">
+                                                    <i class="ace-icon fa fa-undo bigger-110"></i> Reset
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="clearfix form-actions">
-                                        <div class="col-md-offset-4 col-md-4">
-                                            <button class="btn btn-sm btn-success" type="submit">
-                                                <i class="ace-icon fa fa-check bigger-110"></i> Submit
-                                            </button>
-
-                                            &nbsp; &nbsp; &nbsp;
-                                            <button class="btn btn-sm" type="reset">
-                                                <i class="ace-icon fa fa-undo bigger-110"></i> Reset
-                                            </button>
+                                        <div class="col-sm-8" id="educationHistory">
                                         </div>
                                     </div>
                                 </form>
@@ -561,55 +552,52 @@
                                                 <label  for="emp_adv_info_as_id"> Associate's ID </label>
                                             </div>  
 
-                                            <div class="form-group has-float-label">
+                                            <div class="form-group has-float-label has-required">
                                                 <input name="hr_bn_associate_name" type="text" id="hr_bn_associate_name" placeholder="নাম" class="form-control" required="required" />
                                                 <label  for="hr_bn_associate_name"> নাম </label>
                                             </div>
 
-                                            <div class="form-group has-float-label">
+                                            <div class="form-group has-float-label has-required">
                                                 <input type="text" id="hr_bn_unit" placeholder="ইউনিটের নাম" value="{{ (!empty($bangla->hr_unit_name_bn)?$bangla->hr_unit_name_bn:null) }}" class="form-control" required="required" readonly />
                                                 <label  for="hr_bn_unit"> ইউনিট </label>
                                             </div>
                                             
-                                            <div class="form-group has-float-label">
+                                            <div class="form-group has-float-label has-required">
                                                 <input type="text" id="hr_bn_department" placeholder="ডিপার্টমেন্টের নাম" value="{{ (!empty($bangla->hr_department_name_bn)?$bangla->hr_department_name_bn:null) }}" class="form-control" required="required" readonly />
                                                 <label  for="hr_bn_department"> ডিপার্টমেন্ট </label>
                                             </div>
 
-                                            <div class="form-group has-float-label">
+                                            <div class="form-group has-float-label has-required">
                                                 <input type="text" id="hr_bn_designation" placeholder="পদবি" value="{{ (!empty($bangla->hr_designation_name_bn)?$bangla->hr_designation_name_bn:null) }}" class="form-control" required="required" readonly />
                                                 <label  for="hr_bn_designation"> পদবি </label>
                                             </div>
 
-                                            <div class="form-group has-float-label">
-                                                <input type="text" id="hr_bn_doj" placeholder="যোগদানের তারিখ" value="{{ (!empty($bangla->as_doj)?$bangla->as_doj->format('Y-m-d'):null) }}" class="form-control" required="required" readonly />
-                                                <label  for="hr_bn_doj"> যোগদানের তারিখ </label>
-                                            </div>
+                                           
 
-                                            <div class="form-group has-float-label">
-                                                <input name="hr_bn_father_name" type="text" id="hr_bn_father_name" placeholder="পিতার নাম" class="form-control" required="required length" required-length="1-255"/>
+                                            <div class="form-group has-float-label ">
+                                                <input name="hr_bn_father_name" type="text" id="hr_bn_father_name" placeholder="পিতার নাম" class="form-control" required="required" />
                                                 <label  for="hr_bn_father_name">পিতার নাম </label>
                                             </div>
 
                                             <div class="form-group has-float-label">
-                                                <input name="hr_bn_mother_name" type="text" id="hr_bn_mother_name" placeholder="মাতার নাম" class="form-control" required="required length" required-length="1-255"/>
+                                                <input name="hr_bn_mother_name" type="text" id="hr_bn_mother_name" placeholder="মাতার নাম" class="form-control" required="required " />
                                                 <label  for="hr_bn_mother_name">মাতার নাম </label>
                                             </div>
 
                                             <div class="form-group has-float-label">
-                                                <input name="hr_bn_spouse_name" type="text" id="hr_bn_spouse_name" placeholder="স্বামী/স্ত্রীর নাম (ঐচ্ছিক)" class="form-control" required="length" required-length="0-255"/>
+                                                <input name="hr_bn_spouse_name" type="text" id="hr_bn_spouse_name" placeholder="স্বামী/স্ত্রীর নাম (ঐচ্ছিক)" class="form-control"  />
                                                 <label  for="hr_bn_spouse_name">স্বামী/স্ত্রীর নাম </label>
                                             </div>
                                         </div>
                                         <div class="col-sm-4">
                                             <legend><small>স্থায়ী ঠিকানা </small></legend>
                                             <div class="form-group has-float-label">
-                                                <input name="hr_bn_permanent_village" type="text" id="hr_bn_permanent_village" placeholder="গ্রামের নাম"  class="form-control" required="required length" required="length" required-length="1-255"/>
+                                                <input name="hr_bn_permanent_village" type="text" id="hr_bn_permanent_village" placeholder="গ্রামের নাম"  class="form-control" required="required "  />
                                                 <label  for="hr_bn_permanent_village"> গ্রাম  </label>
                                             </div>
 
                                             <div class="form-group has-float-label">
-                                                <input name="hr_bn_permanent_po" type="text" id="hr_bn_permanent_po" placeholder="ডাকঘরের নাম"  class="form-control" required="required length" required="length" required-length="1-255"/>
+                                                <input name="hr_bn_permanent_po" type="text" id="hr_bn_permanent_po" placeholder="ডাকঘরের নাম"  class="form-control" required="required "  />
                                                 <label  for="hr_bn_permanent_po"> ডাকঘর </label>
                                             </div>
 
@@ -626,17 +614,17 @@
                                         <div class="col-sm-4">
                                             <legend><small>বর্তমান ঠিকানা</small></legend>
                                             <div class="form-group has-float-label">
-                                                    <input name="hr_bn_present_road" type="text" id="hr_bn_present_road" placeholder="রোড নং "  class="form-control" required="required length" required="length" required-length="1-255"/>
+                                                    <input name="hr_bn_present_road" type="text" id="hr_bn_present_road" placeholder="রোড নং "  class="form-control" required="required "  />
                                                 <label  for="hr_bn_present_road"> রোড নং </label>
                                             </div> 
 
                                             <div class="form-group has-float-label">
-                                                    <input name="hr_bn_present_house" type="text" id="hr_bn_present_house" placeholder="বাড়ি নং"  class="form-control" required="required length" required="length" required-length="1-255"/>
+                                                    <input name="hr_bn_present_house" type="text" id="hr_bn_present_house" placeholder="বাড়ি নং"  class="form-control" required="required "  />
                                                 <label  for="hr_bn_present_house"> বাড়ি নং </label>
                                             </div> 
 
                                             <div class="form-group has-float-label">
-                                                    <input name="hr_bn_present_po" type="text" id="hr_bn_present_po" placeholder="ডাকঘরের নাম"  class="form-control" required="required length" required="length" required-length="1-255"/>
+                                                    <input name="hr_bn_present_po" type="text" id="hr_bn_present_po" placeholder="ডাকঘরের নাম"  class="form-control" required="required "  />
                                                 <label  for="hr_bn_present_po"> ডাকঘর </label>
                                             </div>
 
@@ -672,59 +660,140 @@
         </div><!-- /.page-content -->
     </div>
 </div>
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog" role="document">
+     <div class="modal-content">
+        <div class="modal-header">
+           <h5 class="modal-title" id="exampleModalLabel">Edit education</h5>
+           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+           <span aria-hidden="true">×</span>
+           </button>
+        </div>
+        <div class="modal-body" style="width:250px;margin: 0 auto;">
+            <input type="hidden" name="education_id">
+            <div class="form-group has-float-label select-search-group">
+                {{ Form::select('education_level_id', $levelList, null, ['placeholder'=>'Select Education Level', 'id'=>'edit_education_level_id', 'required'=> 'required']) }}
+                <label for="edit_education_level_id"> Education Level </label>
+            </div>
+
+            <div class="form-group hide has-float-label select-search-group" id="edit_degrreforPhd">
+                {{ Form::select('education_degree_id_1', [], null, ['id'=>'edit_education_degree_id_1']) }}
+                <label  for="edit_education_degree_id_1"> Exam/Degree Title </label>
+            </div>
+
+            <div class="form-group hide has-float-label" id="edit_PhdTitle">
+                <input name="education_degree_id_2" type="text" id="edit_education_degree_id_2" placeholder="Exam/Degree Title" class="form-control"/>
+                <label  for="edit_education_degree_id_2">Exam/Degree Title</label>
+            </div>
+
+            <div class="form-group hide has-float-label" id="edit_major">
+                <input name="education_major_group_concentation" type="text" id="edit_education_major_group_concentation" placeholder="Concentration/ Major/Group" class="form-control"  required="required" />
+                <label  for="edit_education_major_group_concentation">Concentration/ Major/Group </label>
+            
+            </div>
+
+            <div class="form-group has-float-label">
+                <input name="education_institute_name" type="text" id="edit_education_institute_name" placeholder="Institute Name" class="form-control"  required="required" />
+                <label  for="edit_education_institute_name">Institute Name </label>
+            </div>
+
+            <div class="form-group has-float-label select-search-group">
+                {{ Form::select('education_result_id', $resultList, null, ['placeholder'=>'Select Education Level', 'id'=>'edit_education_result_id']) }}
+                <label  for="edit_education_result_id"> Result </label>
+            </div>
+
+            <div class="hide" id="edit_cgpa_scale">
+                <div class="form-group has-float-label">
+                    <input type="text" name="education_result_cgpa" id="edit_education_result_cgpa" placeholder="CGPA" class="form-control" />
+                    <label  for="edit_education_result_cgpa"> CGPA </label>
+                </div>
+            </div>
+
+            <div class="form-group has-float-label">
+                <input type="text" name="education_result_scale" id="edit_education_result_scale" placeholder="Scale" class="form-control" required="required"/>
+                <label  for="edit_education_result_scale"> Scale </label>
+            </div>
+
+
+            <div class="form-group hide has-float-label" id="edit_division_mark">
+                <input type="text" name="education_result_marks" id="edit_education_result_marks" placeholder="Marks" class="form-control"  />
+                <label  for="edit_education_result_marks"> Marks(%) </label>
+            </div>
+            <div class="form-group has-float-label select-search-group">
+                
+                <select  name="education_passing_year" id="edit_education_passing_year" required="required">
+                    <option value="">Selecet Passing Year</option>
+                    @for($year=1950; $year<=date('Y') ; $year++)
+                    <option value="{{ $year }}">{{ $year }}</option>
+                    @endfor
+                </select>
+                <label  for="edit_education_passing_year"> Passing Year </label>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+           <button type="button" class="btn btn-primary">Update</button>
+        </div>
+     </div>
+  </div>
+</div>
 @push('js')
-<script type="text/javascript">
-    //file upload validation....
-    $("#emp_adv_info_birth_cer, #emp_adv_info_city_corp_cer, #emp_adv_info_police_veri, #as_job_appl, #as_cv").change(function(){
-        
-        var fileExtension1 = ['docx','doc','pdf','jpeg','png','jpg'];
-        var ext = $(this).val().split('.').pop().toLowerCase();
-
-        var size= $(this)[0].files[0].size/1024/1024;
-        //console.log(size);
-
-        if($.inArray($(this).val().split('.').pop().toLowerCase(), fileExtension1) == -1) {
-            $(this).next().show();
-            $(this).val('');
-        }
-        else{
-            $(this).next().hide();
-        }
-
-        if(ext=='pdf'|| ext== 'doc' || ext =='docx'){
-            if(size>1){
-                $(this).val('');
-                alert('too big! maximum is 1MB');
-            }
-
-        }
-
-
-
-    });
-
-    $("#finger_print, #Signature, #authority_signature").change(function(){
-        var fileExtension2 = ['jpeg','png','jpg'];
-        if($.inArray($(this).val().split('.').pop().toLowerCase(), fileExtension2) == -1) {
-            $(this).next().show();
-            $(this).val('');
-        }
-        else{
-            $(this).next().hide();
-        }
-    });
-
-</script>
-
 <script type="text/javascript">
 $(document).ready(function()
 {  
+    $('.app-loader').show();
+    var associate_id = '{{ (request()->route("emp_adv_info_as_id")) }}';
+    showInfo(associate_id);
+    educationHistory(associate_id);
+    if( window.location.hash == '#education' || window.location.hash == '#bangla'){
+        $(".nav-link").removeClass('active')
+        $("a[href='"+window.location.hash+"']").addClass('active');
+        $(".tab-pane").addClass('active').removeClass('active show')
+        $(window.location.hash).addClass('active show');
+
+    }
+    $('.app-loader').hide();
+
+    
+
     $('#emp_adv_info_as_id').on('change', function(){
           window.location = '{{url('hr/recruitment/operation/advance_info_edit')}}'+'/'+$(this).val();  
     });
 
+    $('#edit-education').on('click', function(){
+        var data = $.parseJSON($('.edit-item-trigger-clicked').data('education'));
+        console.log(data);
+        $('#education_id').val(data.id);
+        $('#edit_education_institute_name').val(data.education_institute_name);
+    });
 
-    var associate_id = '{{ (request()->route("emp_adv_info_as_id")) }}';
+    $(document).on('click', ".edit-education", function() {
+        $(this).addClass('edit-item-trigger-clicked'); 
+
+        var options = {
+          'backdrop': 'static'
+        };
+        $('#editModal').modal(options);
+    });
+    $('#editModal').on('show.bs.modal', function() {
+        var el = $(".edit-item-trigger-clicked"); // See how its usefull right here? 
+        var data = $(".edit-item-trigger-clicked").data('edu');
+        console.log(data);
+        // fill the data in the input fields
+        //$('#education_id').val(data.id);
+        //$('#edit_education_institute_name').val(data.education_institute_name);
+
+    });
+
+      // on modal hide
+      $('#editModal').on('hide.bs.modal', function() {
+        $('.edit-item-trigger-clicked').removeClass('edit-item-trigger-clicked')
+        $("#edit-form").trigger("reset");
+      })
+
+
+    
 
     $('select.associates').select2({
         placeholder: 'Select Associate\'s ID',
@@ -811,7 +880,7 @@ $(document).ready(function()
                 },
                 error: function()
                 {
-                    alert('failed');
+                    $.notify('please try again','error');
                 }
 
             });
@@ -840,7 +909,7 @@ $(document).ready(function()
                 },
                 error: function()
                 {
-                    alert('failed');
+                    $.notify('please try again','error');
                 }
 
             });
@@ -869,7 +938,7 @@ $(document).ready(function()
                 },
                 error: function()
                 {
-                    alert('failed');
+                    $.notify('please try again','error');
                 }
 
             });
@@ -900,6 +969,54 @@ $(document).ready(function()
         }
     });
 
+
+    $("#edit_education_level_id").on('change', function()
+    { 
+        var id = $(this).val();
+        if (id != '')
+        {
+            $.ajax({
+                url: '{{ url("level_wise_degree") }}',
+                type: 'json',
+                method: 'get',
+                data: {id: $(this).val() },
+                success: function(data)
+                {
+                    $("#edit_education_degree_id_1").html(data);
+                },
+                error: function()
+                {
+                    $.notify('please try again','error');
+                }
+
+            });
+        }
+        var status= ['1','2'];
+
+        if (!status.includes($(this).val()))
+        {
+            $("#edit_major").removeClass('hide', 500, "linear");
+        }
+        else
+        {
+            $("#edit_major").addClass('hide', 500, "linear");
+        }
+
+
+        var phd= ['8'];
+
+        if (phd.includes($(this).val()))
+        {
+            $("#edit_PhdTitle").removeClass('hide', 500, "linear");
+            $("#edit_degrreforPhd").addClass('hide', 500, "linear");
+        }
+        else
+        {
+            $("#edit_PhdTitle").addClass('hide', 500, "linear");
+            $("#edit_degrreforPhd").removeClass('hide', 500, "linear");
+        }
+    });
+
     /*
     *----------------------------------------
     *   CGPA and Scale On Grade
@@ -910,30 +1027,42 @@ $(document).ready(function()
         var selected= ['1','2','3'];
         if (status.includes($(this).val()))
         {
-            $("#cgpa_scale").removeClass('hide', 500, "linear");
+            $("#edit_cgpa_scale").removeClass('hide', 500, "linear");
         }
         else
         {
-            $("#cgpa_scale").addClass('hide', 500, "linear");
+            $("#edit_cgpa_scale").addClass('hide', 500, "linear");
         }
         if (selected.includes($(this).val()))
         {
-            $("#division_mark").removeClass('hide', 500, "linear");
+            $("#edit_division_mark").removeClass('hide', 500, "linear");
         }
         else
         {
-            $("#division_mark").addClass('hide', 500, "linear");
+            $("#edit_division_mark").addClass('hide', 500, "linear");
         }
     });
 
-
-
-    
-
-    
-    showInfo(associate_id);
-    educationHistory(associate_id);
-   
+    $("#edit_education_result_id").on('change', function(){
+        var status = ['4'];
+        var selected= ['1','2','3'];
+        if (status.includes($(this).val()))
+        {
+            $("#edit_cgpa_scale").removeClass('hide', 500, "linear");
+        }
+        else
+        {
+            $("#edit_cgpa_scale").addClass('hide', 500, "linear");
+        }
+        if (selected.includes($(this).val()))
+        {
+            $("#edit_division_mark").removeClass('hide', 500, "linear");
+        }
+        else
+        {
+            $("#edit_division_mark").addClass('hide', 500, "linear");
+        }
+    });
 
 
     // retrive all information by associate selction 
@@ -1024,7 +1153,7 @@ function showInfo(associate_id)
         },
         error: function(xhr)
         {
-            alert('failed...');
+            $.notify('please try again...','error');
         }
     });
 }
@@ -1043,11 +1172,54 @@ function educationHistory(associate_id)
         },
         error: function(xhr)
         {
-            alert('failed...');
+            $.notify('please try again...','error');
         }
     });
 }
 
+   
+    //file upload validation....
+    $("#emp_adv_info_birth_cer, #emp_adv_info_city_corp_cer, #emp_adv_info_police_veri, #as_job_appl, #as_cv").change(function(){
+        
+        var fileExtension1 = ['docx','doc','pdf','jpeg','png','jpg'];
+        var ext = $(this).val().split('.').pop().toLowerCase();
+
+        var size= $(this)[0].files[0].size/1024/1024;
+        //console.log(size);
+
+        if($.inArray($(this).val().split('.').pop().toLowerCase(), fileExtension1) == -1) {
+            $(this).next().show();
+            $(this).val('');
+        }
+        else{
+            $(this).next().hide();
+        }
+
+        if(ext=='pdf'|| ext== 'doc' || ext =='docx'){
+            if(size>1){
+                $(this).val('');
+                $.notify('too big! maximum is 1MB','error');
+            }
+
+        }
+
+
+
+    });
+
+    $("#finger_print, #Signature, #authority_signature").change(function(){
+        var fileExtension2 = ['jpeg','png','jpg'];
+        if($.inArray($(this).val().split('.').pop().toLowerCase(), fileExtension2) == -1) {
+            $(this).next().show();
+            $(this).val('');
+        }
+        else{
+            $(this).next().hide();
+        }
+    });
+
 </script>
+
+
 @endpush
 @endsection
