@@ -819,9 +819,9 @@ Route::get('hr/payroll/salary', 'Hr\Payroll\SalaryController@view');
 
 
 	//Shift roaster define...
-	Route::get('hr/operation/shift_roaster_define', 'Hr\Setup\ShiftRoasterDefineCOntroller@shiftRoasterDefine')->middleware(['permission:Sefine Shift Roster']);
+	Route::get('hr/operation/shift_roaster_define', 'Hr\Setup\ShiftRoasterDefineCOntroller@shiftRoasterDefine')->middleware(['permission:Define Shift Roster']);
 	Route::get('hr/operation/get_associate_by_type_unit_shift_roaster', 'Hr\Setup\ShiftRoasterDefineCOntroller@getAssociateByTypeUnitShiftRoaster');
-	Route::post('hr/operation/shift_roaster_status_save', 'Hr\Setup\ShiftRoasterDefineCOntroller@shiftRoasterStatusSave')->middleware(['permission:Sefine Shift Roster']);
+	Route::post('hr/operation/shift_roaster_status_save', 'Hr\Setup\ShiftRoasterDefineCOntroller@shiftRoasterStatusSave')->middleware(['permission:Define Shift Roster']);
 
 	//Multiple Employee Shift Assign
 	Route::get('hr/operation/multiple_emp_shift_assign', 'Hr\Operation\MultiEmpShiftAssignController@index')->middleware(['permission:Employee Shift Assign']);

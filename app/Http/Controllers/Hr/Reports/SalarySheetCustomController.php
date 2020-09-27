@@ -40,6 +40,7 @@ class SalarySheetCustomController extends Controller
             //$data['getEmployees']  = Employee::getSelectIdNameEmployee();
             $data['unitList']      = Unit::where('hr_unit_status', '1')
                 ->whereIn('hr_unit_id', auth()->user()->unit_permissions())
+                ->orderBy('hr_unit_name', 'desc')
                 ->pluck('hr_unit_name', 'hr_unit_id');
             $data['areaList']      = Area::where('hr_area_status', '1')->pluck('hr_area_name', 'hr_area_id');
             $data['floorList']     = Floor::getFloorList();
