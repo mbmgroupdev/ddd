@@ -127,6 +127,7 @@ class AttendanceFileProcessController extends Controller
                 	if($unit == 3 && $input['device'] == 2){
                 		$as_info = Employee::
                 		where('as_id', $asId)
+                        ->where('as_status', 1)
                 		->select([
                 			'as_unit_id',
                 			'as_id',
@@ -140,6 +141,7 @@ class AttendanceFileProcessController extends Controller
                 	}else{
                 		$as_info = Employee::
                 		where('as_rfid_code', $rfid)
+                        ->where('as_status', 1)
                 		->select([
                 			'as_unit_id',
                 			'as_id',
@@ -268,7 +270,7 @@ class AttendanceFileProcessController extends Controller
                 		}
                 	}else{
                 		if($value != null){
-		                	$msg[] = $value." - Basic info/rfid/checktime null ";
+		                	$msg[] = $value." - Basic info/rfid/checktime null or employee not active";
 		                }
                 	}
                 }else{
