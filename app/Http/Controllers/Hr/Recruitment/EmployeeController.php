@@ -164,6 +164,7 @@ class EmployeeController extends Controller
         $departmentList  = Department::where('hr_department_status', '1')->distinct()->orderBy('hr_department_name', 'ASC')->pluck('hr_department_name');
         $designationList  = Designation::where('hr_designation_status', '1')->distinct()->orderBy('hr_designation_name', 'ASC')->pluck('hr_designation_name');
         $sectionList  = Section::where('hr_section_status', '1')->distinct()->orderBy('hr_section_name', 'ASC')->pluck('hr_section_name');
+        $subSectionList  = Subsection::where('hr_subsec_status', '1')->distinct()->orderBy('hr_subsec_name', 'ASC')->pluck('hr_subsec_name');
         $educationList  = EducationLevel::pluck('education_level_title');
 
         return view('hr.recruitment.employee_list', compact(
@@ -177,6 +178,7 @@ class EmployeeController extends Controller
             'departmentList',
             'designationList',
             'sectionList',
+            'subSectionList',
             'educationList',
             "allUnit",
             "empTypes"
@@ -490,7 +492,9 @@ class EmployeeController extends Controller
                 'b.as_ot',
                 'b.as_status',
                 'b.as_oracle_code',
-                'b.as_rfid_code'
+                'b.as_rfid_code',
+                'sec.hr_section_name',
+                'subsec.hr_subsec_name'
             ])
             ->leftJoin('hr_area AS a', 'a.hr_area_id', '=', 'b.as_area_id')
             ->leftJoin('hr_emp_type AS e', 'e.emp_type_id', '=', 'b.as_emp_type_id')
@@ -499,6 +503,8 @@ class EmployeeController extends Controller
             ->leftJoin('hr_line AS l', 'l.hr_line_id', '=', 'b.as_line_id')
             ->leftJoin('hr_department AS dp', 'dp.hr_department_id', '=', 'b.as_department_id')
             ->leftJoin('hr_designation AS dg', 'dg.hr_designation_id', '=', 'b.as_designation_id')
+            ->leftJoin('hr_section AS sec', 'sec.hr_section_id', '=', 'b.as_section_id')
+            ->leftJoin('hr_subsection AS subsec', 'subsec.hr_subsec_id', '=', 'b.as_subsection_id')
             ->where('b.as_status',1)
             ->where(function ($query) use ($request) {
                 if($request->otnonot != null){

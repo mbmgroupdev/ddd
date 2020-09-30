@@ -392,6 +392,7 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 	Route::post('hr/shift_roaster/save_roaster', 'Hr\ShiftRoaster\ShiftRoasterController@saveRoaster')->middleware(['permission:Holiday Roster']);
 	Route::get('hr/shift_roaster/roaster_view_data', 'Hr\ShiftRoaster\ShiftRoasterController@getRoasterData');
 	Route::get('hr/shift_roaster/roaster_save_changes', 'Hr\ShiftRoaster\ShiftRoasterController@roasterSaveChanges');
+	Route::get('hr/shift_roaster/roaster_updated_changes', 'Hr\ShiftRoaster\ShiftRoasterController@roasterUpdatedChanges');
 	//Leave approval for worker
 	Route::get('hr/timeattendance/leave-entry',  'Hr\TimeAttendance\LeaveWorkerController@showForm')->middleware(['permission:Manage Leave']);
 	

@@ -6,10 +6,11 @@ use App\Helpers\Custom;
 use App\Helpers\EmployeeHelper;
 use App\Http\Controllers\Controller;
 use App\Jobs\ProcessUnitWiseSalary;
+use App\Models\Employee;
 use App\Models\Hr\Area;
 use App\Models\Hr\Department;
 use App\Models\Hr\EmpType;
-use App\Models\Employee;
+use App\Models\Hr\HolidayRoaster;
 use App\Models\Hr\Section;
 use App\Models\Hr\Shift;
 use App\Models\Hr\Subsection;
@@ -26,6 +27,7 @@ class ShiftRoasterController extends Controller
       $employeeTypes  = EmpType::where('hr_emp_type_status', '1')->pluck('hr_emp_type_name', 'emp_type_id');
       $unitList  = Unit::where('hr_unit_status', '1')
           ->whereIn('hr_unit_id', auth()->user()->unit_permissions())
+          ->orderBy('hr_unit_name', 'desc')
           ->pluck('hr_unit_short_name', 'hr_unit_id');
 
       $shiftList = Shift::where('hr_shift_status', 1)->pluck("hr_shift_name", "hr_shift_id");
@@ -274,7 +276,9 @@ class ShiftRoasterController extends Controller
       $section      = isset($request->section)?$request->section:'';
       $subSection   = isset($request->subSection)?$request->subSection:'';
       $sdate   = isset($request->date)?$request->date:'';
-      
+      $getUnit = unit_by_id();
+      $getDesignation = designation_by_id();
+      $getSection = section_by_id();
       // dd($sdate);exit;
       $datesday = [];
       $str = $month.'-';
@@ -307,16 +311,10 @@ class ShiftRoasterController extends Controller
         "b.as_gender",
         "b.as_contact as cell",
         "b.as_section_id",
+        "b.as_designation_id",
         "b.as_shift_id",
-        "sec.hr_section_name as section",
         "b.as_emp_type_id",
         "hdr.*",
-        // "s.hr_shift_break_time",
-        // "s.hr_shift_start_time",
-        // "s.hr_shift_end_time",
-        // "s.hr_shift_name",
-        "u.hr_unit_name",
-        'dsg.hr_designation_name',
         "b.as_ot"
         )
         ->where('as_status', 1);
@@ -363,10 +361,6 @@ class ShiftRoasterController extends Controller
         }
 
         $query1->join('holiday_roaster AS hdr', 'hdr.as_id', 'b.associate_id');
-        $query1->leftJoin('hr_designation AS dsg', 'dsg.hr_designation_id', 'b.as_designation_id');
-        $query1->leftJoin("hr_unit AS u", "u.hr_unit_id", "=", "b.as_unit_id");
-        // $query1->leftJoin("hr_shift AS s", "b.as_shift_id", "=", "s.hr_shift_id");
-        $query1->leftJoin("hr_section AS sec", "sec.hr_section_id", "b.as_section_id");
 
         $employee_list = $query1->get();
         // return $employee_list;
@@ -391,14 +385,14 @@ class ShiftRoasterController extends Controller
                 $rs->day_count =$count;
                 $rs->as_oracle_code 		= $d->as_oracle_code;
                 $rs->associate_id     = $d->associate_id;
-                $rs->as_unit_id   		= $d->hr_unit_name;
+                //$rs->as_unit_id   		= $getUnit[$d->as_unit_id]['hr_unit_name']??'';
                 $rs->as_name     		= $d->as_name;
                 $rs->cell     			= $d->cell ;
-                $rs->section     		= $d->section;
+                $rs->section     		= $getSection[$d->as_section_id]['hr_section_name']??'';
                 $rs->as_pic      		= $d->as_pic;
                 $rs->as_gender    		= $d->as_gender;
-                $rs->hr_designation_name = $d->hr_designation_name;
-                $rs->hr_unit_name      	= $d->hr_unit_name;
+                $rs->hr_designation_name = $getDesignation[$d->as_designation_id]['hr_designation_name']??'';
+                //$rs->hr_unit_name      	= $getUnit[$d->as_unit_id]['hr_unit_name']??'';
                 $rs->dates         = $dates;
 
                 $data[$k] = $rs;
@@ -420,11 +414,59 @@ class ShiftRoasterController extends Controller
           return $data->day_count;
         })
         ->addColumn('actions', function($data){
-          return '';
-          // return '<a href="#" class="btn btn-xs btn-primary" data-toggle="modal" data-target="#calendarModal" id="calendar-view">view</a>';
+          // return '';
+          return '<a href="#" class="btn btn-xs btn-primary" data-toggle="modal" data-target="#calendarModal" id="calendar-view">view</a>';
         })
-        ->rawColumns(['pic', 'as_oracle_code', 'associate_id','hr_unit_name','as_name','cell', 'section', 'hr_designation_name', 'dates', 'day_count','actions'])
+        ->rawColumns(['pic', 'as_oracle_code', 'associate_id','as_name','cell', 'section', 'hr_designation_name', 'dates', 'day_count','actions'])
         ->make(true);
+    }
+
+    public function roasterUpdatedChanges(Request $request)
+    {
+      $data['type'] = 'error';
+      $input = $request->all();
+      DB::beginTransaction();
+      try {
+        $year = date('Y', strtotime($input['year_month']));
+        $month = date('m', strtotime($input['year_month']));
+        $getData = HolidayRoaster::where('as_id', $input['as_id'])
+        ->where('month', $month)
+        ->where('year', $year)
+        ->get();
+        if(count($getData) > 0){
+          foreach ($getData as $tdata) {
+            HolidayRoaster::where('id', $tdata->id)->delete();
+          }
+        }
+        // return $getData;
+        //create new
+        $getDates = explode(',', $input['select_dates']);
+
+        for ($i=0; $i < count($getDates); $i++) { 
+          if($getDates[$i] != null){
+            $selectedDate = $input['year_month'].'-'.$getDates[$i];
+            DB::table('holiday_roaster')->insert([
+              'year'=>$year,
+              'month'=>$month,
+              'date'=>$selectedDate,
+              'as_id'=>$input['as_id'],
+              'remarks'=>$input['type'],
+              'status'=>1
+            ]);
+          }
+          
+        }
+        DB::commit();
+        $this->logFileWrite('Successfully Updated Holiday Roster', $input['select_dates']);
+        $data['type'] = 'success';
+        $data['msg'] = 'Successfully Updated Holiday Roster';
+        return $data;
+      } catch (\Exception $e) {
+        DB::rollback();
+        $data['msg'] = $e->getMessage();
+        return $data;
+      }
+      return $input;
     }
 
 }

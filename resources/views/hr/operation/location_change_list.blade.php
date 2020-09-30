@@ -44,9 +44,13 @@
                     <?php $i= 1; ?>
                     <tbody id="unit_change_table_body">
                         @foreach($requestList AS $request)
+                        @php
+                            $yearMonth = date('Y-m', strtotime($request->start_date));
+                            $url = url("/hr/operation/job_card?associate=$request->as_id&month_year=$yearMonth");
+                        @endphp
                             <tr>
                                 <td>{{ $i++ }}</td>
-                                <td>{{ $request->as_id }}</td>
+                                <td><a target="_blank" href="{{ $url }}">{{ $request->as_id }}</a></td>
                                 <td>{{ $request->location_name  }}</td>
                                 <td>
                                     <?php 

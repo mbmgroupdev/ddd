@@ -166,61 +166,30 @@
                   </div>
                   <div class="modal-body">
                     <div class="row" >
-
-                      <div class="row" style="padding: 10px 20px">
-                        <div class="col-md-12">
-                          <div class="col-sm-6 " >
-                            <label class="col-sm-5 control-label no-padding-right" for="typem"> Report Type* </label>
-                            <div class="col-sm-7 no-padding-right" >
-                              <?php
+                      <div class="col-12">
+                        <div class="form-group has-required has-float-label select-search-group">
+                            <?php
                                 $types=['Holiday'=>'Holiday','General'=>'General','OT'=>'OT']
                               ?>
-                                {{ Form::select('typem', $types, null, ['placeholder'=>'Select Type','id'=>'typem', 'class'=> 'form-control']) }}
-                            </div>
-
-                          </div>
-                          <div class="col-sm-6 " >
-                            <label class="col-sm-4 control-label no-padding-right" for="comment"> Comment </label>
-                            <div class="col-sm-7 no-padding-right" >
-                              <input type="text" name="comment" id="comment" class="form-control" value="" placeholder="Comment">
-                            </div>
-
-                          </div>
+                                {{ Form::select('typem', $types, null, ['placeholder'=>'Select Type','id'=>'typem', 'class'=> 'form-control']) }} 
+                            <label  for="typem', 'class'=> 'form-control']) }} " style="color: maroon;">Type </label>
                         </div>
-
-                    </div>
-
-
-
+                      </div>
+                      <div class="col-12">
+                        <div class="form-group has-required has-float-label select-search-group">
+                            <input type="text" name="selected_dates" id="selected_dates" value="" class="form-control">
+                             
+                            <label  for="selected_dates', 'class'=> 'form-control']) }} " style="color: maroon;">Dates </label>
+                        </div>
+                      </div>
+                      
                       <div class="col-md-12">
-                        <div class="widget-box widget-color-blue3">
-                            <div class="widget-header">
-                                <h4 class="widget-title smaller">
-                                  Calendar
-                                </h4>
-                                {{-- <div class="widget-toolbar">
-                                    <a href="#" data-action="collapse">
-                                        <i class="ace-icon fa fa-chevron-down"></i>
-                                    </a>
-                                </div> --}}
-                            </div>
-
-
-                            <div class="widget-body">
-                                <div class="widget-main padding-16">
-                                    <div id="event-calendar">
-
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
+                        
                         <input type="hidden" name="as_id" id="as_id" value="">
-                        <input type="hidden" name="previousDates" id="previousDates" value="">
-                        <input type="hidden" name="previousDatesChanged" id="previousDatesChanged" value="">
+                        {{-- <input type="text" name="previousDates" id="previousDates" value=""> --}}
                       </div>
 
-                </div>
+                    </div>
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -487,197 +456,45 @@ $(document).ready(function(){
   });
 
   $('#calendarModal').on('click','#saveDates',function(){
-
-    console.log($('#as_id').val(),multiselect,singleselect);
-     //$('#typem').val()
-    if(multiselect.length == 0){
-      var req = 1;
-      var dates = singleselect;
-      var selectType = 'single';
-    }else if (singleselect.length == 0) {
-        var req = 1;
-      var dates = multiselect;
-      selectType = 'multi';
-    }else{
-     var dates = [];
-    }
-    //console.log($('#previousDates').val());
-
-
-   pdates =[];
-    $('#event-calendar').find('.previous').each(function(k){
-      var expdata = $(this).data('date').split('-');
-      pdates.push(expdata[2]);
-    });
-    console.log(pdates,$('#previousDates').val());
-    $('previousDatesChanged').val(pdates);
-    console.log(dates.length);
-    if(req==1){
-
       $.ajax({
-        url : "{{ url('hr/shift_roaster/roaster_save_changes') }}",
+        url : "{{ url('hr/shift_roaster/roaster_updated_changes') }}",
         type: 'get',
         data: {
-                as_id : $('#as_id').val(),
-                dates:dates,
-                type:$('#typem').val(),
-                year:$('#year').val(),
-                month:$('#month').val(),
-                previous:$('#previousDates').val(),
-                previousDateChanged:pdates,
-                selectType:selectType,
-                comment:$('#comment').val()
-              },
-        success: function(data)
+          as_id : $('#as_id').val(),
+          type:$('#typem').val(),
+          year_month:$('#month').val(),
+          select_dates:$('#selected_dates').val()
+        },
+        success: function(response)
         {
-          //$("#floor_id").html(data);
-          toastr.success(' ','Attendance Update Successfully.');
-          $('#calendarModal').modal('hide');
+          // console.log(response);
+
+          $.notify(response.msg, response.status);
           dt.draw();
+          $('#calendarModal').modal('hide');
         },
         error: function()
         {
           $.notify('failed', 'error');
         }
       });
-      $.notify('failed', 'error');
-    }else{
-      alert('Please Select Report Type');
-    }
-
-
-
-
   });
 
 $('#dataTables tbody').on('click','#calendar-view',function(e){
-  //console.log('lk');
-  //console.log($(this).parent().parent().find('td').eq(7).html());
   multiselect = [];
   singleselect=[];
   var dates = '';
-  dates = $(this).parent().parent().find('td').eq(7).html().split(',');
-  var asId = $(this).parent().parent().find('td').eq(1).html();
+  dates = $(this).parent().parent().find('td').eq(8).html().split(',');
+  var asId = $(this).parent().parent().find('td').eq(3).html();
   $('#as_id').val(asId);
-  console.log($('#type').val());
+  // console.log($('#type').val());
   var type = $('#type').val();
-  //$('#typem').val(type);
-  // $('#typem option[text="Holiday"').attr('selected','selected');
+  $('#typem').val(type).trigger('change', 'select2');
   dates.pop();
-  console.log(dates);
-  $('#previousDates').val(dates);
-  setTimeout(function(){
-  $('#event-calendar').find('.fc-day').each(function(k){
-    console.log($(this).data('date'));
-
-//      .each(function(v){
-// console.log(v);
-//   });
-    $(this).removeClass('selected').removeClass('multi').removeClass('single').removeClass('previous');
-    for (var i = 0; i < dates.length; i++) {
-      var clss = $(this).attr('class').split(' ');
-      if(!clss.includes("fc-other-month")){
-         var cdate = $(this).data('date').split('-');
-         if(cdate[2] == dates[i]){
-           $(this).addClass('selected');
-           $(this).addClass('previous');
-         }
-      }
-      //console.log(dates[i]);
-    }
-
-  });
-}, 1000);
+  // console.log(dates);
+  $('#selected_dates').val(dates);
 });
-setTimeout(function(){
 
-  $('#event-calendar').on('click', '.fc-day-header', function(e) {
-
-   let day = $(this).text().toLowerCase();
-   //console.log($('.fc-day').filter('.fc-' + day));
-   multiselect = [];
-   singleselect=[];
-   $('.fc-day').filter('.fc-' + day).each(function() {
-       // if(this.value != "on")
-       // {
-       //     checkedBoxes.push($(this).val());
-       //     checkedIds.push($(this).data('id'));
-       // }
-       var clss = $(this).attr('class').split(' ');
-       if(!clss.includes("fc-other-month")){
-         //console.log($(this).data('date'));
-         multiselect.push($(this).data('date'));
-       }
-
-   });
-   //console.log(multiselect);
-
-   $('#multi_select_dates').val(multiselect);
-   $('.fc-day').removeClass('selected')
-               .removeClass('single')
-               .removeClass('previous')
-               .filter('.fc-' + day)
-               .addClass('selected')
-               .addClass('multi');
-   $('.fc-other-month').removeClass('selected')
-               .removeClass('multi');
-
-  });
-
-  $('#event-calendar').on('click', '.fc-day', function(e) {
-
-  let day = $(this).text().toLowerCase();
-
-  var clss = $(this).attr('class').split(' ');
-
-
-  //console.log(singleselect);
-  if(clss.includes("selected") && clss.includes("single")){
-  singleselect.pop($(this).data('date'))
-  $(this).removeClass('selected')
-              .removeClass('single')
-              .removeClass('previous');
-  }else{
-  $(this).addClass('selected');
-  $(this).addClass('single');
-  $('.multi').removeClass('selected').removeClass('multi');
-  $('.fc-other-month').removeClass('selected')
-              .removeClass('single');
-  multiselect = [];
-  //singleselect=[];
-  if(!clss.includes("fc-other-month")){
-    //console.log($(this).data('date'));
-    singleselect.push($(this).data('date'));
-  }
-  $('#single_select_dates').val(singleselect);
-  }
-
-  });
-  $('#event-calendar').on('click', '.fc-day-number', function(e) {
-
-  let day = $(this).data('date');
-  var clss = $(this).attr('class').split(' ');
-  // console.log(day);
-  var currentEl = $(this).parent().parent().parent().parent().parent().find('.fc-bg').find("tr").find("[data-date='" + day + "']");
-
-  if(clss.includes("selected") && clss.includes("single")){
-  currentEl.removeClass('selected')
-             .removeClass('single');
-  }else{
-
-  currentEl.addClass('selected');
-  currentEl.addClass('single');
-
-  $('.multi').removeClass('selected').removeClass('multi');
-  $('.fc-other-month').removeClass('selected')
-             .removeClass('single');
-  }
-
-
-  });
-
-
-}, 1000);
 
 
   $(window).on('shown.bs.modal', function () {

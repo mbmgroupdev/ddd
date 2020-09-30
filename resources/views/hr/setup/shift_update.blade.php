@@ -94,7 +94,7 @@
                                         </div> 
                                     </div> 
                                 </div>
-                                
+                                <input type="hidden" name="hr_shift_id" value="{{ $shift->hr_shift_id}}">
                                 <div class="form-group"> 
                                     <button class="btn pull-right btn-primary" type="submit">Update</button>
                                 </div>

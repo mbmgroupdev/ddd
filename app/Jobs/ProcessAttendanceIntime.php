@@ -53,7 +53,7 @@ class ProcessAttendanceIntime implements ShouldQueue
             if($getEmployee != null && $getEmployee->shift != null){
 
                 // check today holiday but working day count
-                $today = Carbon::parse($getEmpAtt->in_time)->format('Y-m-d');
+                $today = Carbon::parse($getEmpAtt->in_date)->format('Y-m-d');
                 $year = Carbon::parse($getEmpAtt->in_time)->format('Y');
                 $month = Carbon::parse($getEmpAtt->in_time)->format('m');
                 $yearMonth = $year.'-'.$month; 

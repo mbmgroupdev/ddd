@@ -238,11 +238,11 @@ class JobCardController extends Controller
         if($outsideCheck){
           $attendance[$i]['outside'] = 'Outside';
           if($outsideCheck->type==1){
-            $attendance[$i]['outside_msg'] = 'Full Day';
+            $attendance[$i]['outside_msg'] = 'Full Day - '.$outsideCheck->requested_place;
           }else if($outsideCheck->type==2){
-            $attendance[$i]['outside_msg'] = 'First Half' ;
+            $attendance[$i]['outside_msg'] = 'First Half - '.$outsideCheck->requested_place;
           }else if($outsideCheck->type==3){
-            $attendance[$i]['outside_msg'] = 'Second Half' ;
+            $attendance[$i]['outside_msg'] = 'Second Half - '.$outsideCheck->requested_place;
           }
         }
 
