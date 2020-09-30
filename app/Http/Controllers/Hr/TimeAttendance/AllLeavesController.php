@@ -33,6 +33,7 @@ class AllLeavesController extends Controller
                'l.id',
                'l.leave_ass_id',
                'b.as_name',
+               'b.as_oracle_code',
                'l.leave_type',
                'l.leave_status',
                'l.leave_from',
@@ -76,7 +77,7 @@ class AllLeavesController extends Controller
             })
             ->addColumn('action', function ($data) use ($perm) {
                   if($perm){
-                    if(date('Y-m-d',strtotime($data->created_at)) == date('Y-m-d')){
+                    if(date('Y-m-d',strtotime($data->created_at)) >= date('Y-m').'-01' && date('Y-m-d',strtotime($data->created_at)) <= date('Y-m-d')){
                       return "<a href=".url('hr/timeattendance/leave_delete/'.$data->id)." class=\"btn btn-xs btn-danger btn-round\" onclick=\"return confirm('Are you sure you want to delete this item?');\" data-toggle=\"tooltip\" title=\"Delete\">
 
                               <i class=\"ace-icon fa fa-trash bigger-120\"></i> 

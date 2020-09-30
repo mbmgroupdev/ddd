@@ -29,8 +29,7 @@ class AdvanceInfoController extends Controller
 {
     public function advanceInfo()
     {
-        // ACL::check(["permission" => "hr_recruitment_op_adv_info"]);
-        #-----------------------------------------------------------#
+        
 
         $districtList = District::pluck('dis_name', 'dis_id');
         $resultList = EducationResult::pluck('education_result_title', 'id');
@@ -48,7 +47,8 @@ class AdvanceInfoController extends Controller
         return view('hr/recruitment/advance_info',compact('districtList','resultList','levelList','degreeList', 'bangla'));
     }
 
-    public function saveResizedFile($file){
+    public function saveResizedFile($file)
+    {
         $extension= $file->getClientOriginalExtension();
         $filename = uniqid() . '.' . $file->getClientOriginalExtension();
         if($extension=='jpg' || $extension=='jpeg' || $extension=='png' ){
@@ -70,8 +70,7 @@ class AdvanceInfoController extends Controller
 
     public function advanceInfoStore(Request $request)
     {
-        // ACL::check(["permission" => "hr_recruitment_op_adv_info"]);
-        #-----------------------------------------------------------#
+        
 
         $validator = Validator::make($request->all(), [
             'emp_adv_info_as_id'        => 'required|unique:hr_as_adv_info|max:10|min:10|alpha_num',
@@ -211,7 +210,7 @@ class AdvanceInfoController extends Controller
                 $data=DB::table('hr_as_adv_info AS a')->where('a.emp_adv_info_as_id', '=', $advance->emp_adv_info_as_id);
 
                 if ($advance->save()){
-                //Nominee
+                
                 if (sizeof($request->emp_adv_info_nom_name) > 0){
                     for($i=0;$i<sizeof($request->emp_adv_info_nom_name);$i++){
                         Nominee::insert([
@@ -240,15 +239,13 @@ class AdvanceInfoController extends Controller
 
     public function AdvanceInfoList()
     {
-        // ACL::check(["permission" => "hr_recruitment_op_adv_list"]);
-        #-----------------------------------------------------------#
+    
         return view('hr/recruitment/advance_info_list');
     }
 
     public function advanceInfoListData()
     {
-        // ACL::check(["permission" => "hr_recruitment_op_adv_list"]);
-        #-----------------------------------------------------------#
+    
         $data= DB::table('hr_as_adv_info AS adv')
                     ->select(
                         'adv.emp_adv_info_id',
@@ -291,8 +288,7 @@ class AdvanceInfoController extends Controller
 
    public function advanceInfoEdit($emp_adv_info_as_id)
    {
-        // ACL::check(["permission" => "hr_recruitment_op_adv_list"]);
-        #-----------------------------------------------------------#
+    
         $districtList = District::pluck('dis_name', 'dis_id');
         $upazillaList = Upazilla::pluck('upa_name', 'upa_id');
         $resultList = EducationResult::pluck('education_result_title', 'id');
@@ -307,15 +303,32 @@ class AdvanceInfoController extends Controller
             $bangla = $this->getDataByID(Session::get('associate_id'));
         }
 
+        $education_data = DB::table('hr_education AS e')
+                    ->select(
+                        'e.*',
+                        'l.education_level_title',
+                        'dt.education_degree_title',
+                        'r.education_result_title'
+                    )
+                    ->where("e.education_as_id", $emp_adv_info_as_id)
+                    ->leftJoin('hr_education_level AS l', 'l.id', '=', 'e.education_level_id')
+                    ->leftJoin('hr_education_degree_title AS dt', 'dt.id', '=', 'e.education_degree_id_1')
+                    ->leftJoin('hr_education_result AS r', 'r.id', '=', 'e.education_result_id')
+                    ->get();
 
-        return view('hr/recruitment/advance_info_edit',compact('advance', 'districtList','resultList','levelList','degreeList', 'bangla', 'upazillaList', 'all_employee_list', 'nomineeList'));
+        $education = view('hr.recruitment.education_history', compact('education_data'))->render();
+
+
+        
+
+
+        return view('hr/recruitment/advance_info_edit',compact('advance', 'districtList','resultList','levelList','degreeList', 'bangla', 'upazillaList', 'all_employee_list', 'nomineeList', 'education'));
    }
 
 
     public function advanceInfoUpdate(Request $request)
     {
-        // ACL::check(["permission" => "hr_recruitment_op_adv_list"]);
-        #-----------------------------------------------------------#
+    
         $validator = Validator::make($request->all(), [
             'emp_adv_info_stat'         => 'max:1',
             'emp_adv_info_birth_cer'    => 'mimes:docx,doc,pdf,jpg,png,jpeg',
@@ -529,8 +542,7 @@ class AdvanceInfoController extends Controller
 
     public function educationInfoStore(Request $request){
 
-        // ACL::check(["permission" => "hr_recruitment_op_adv_list"]);
-        #-----------------------------------------------------------#
+    
 
         $validator= Validator::make($request->all(),[
             'education_as_id'   => 'required|max:10|min:10',
@@ -573,6 +585,56 @@ class AdvanceInfoController extends Controller
             ->with('success',"Education information Successfully Saved!!");
         }
         else{
+            return redirect('hr/recruitment/operation/advance_info_edit/'.$request->education_as_id.'#education')
+            ->with('error', 'Error!! try again!');
+        }
+        }
+    }
+
+    public function educationInfoUpdate(Request $request)
+    {
+
+    
+
+        $validator= Validator::make($request->all(),[
+            'education_id'   => 'required',
+            'education_level_id'=> 'required|max:11',
+            'education_degree_id_1'=> 'max:11',
+            'education_degree_id_2'=> 'max:128',
+            'education_major_group_concentation'=> 'max:128',
+            'education_institute_name'=> 'required|max:255',
+            'education_result_id'=> 'required|max:11',
+            'education_result_marks'=> 'max:11',
+            'education_result_cgpa'=> 'max:11',
+            'education_result_scale'=> 'max:11',
+            'education_passing_year'=> 'max:11'
+        ]);
+
+        if($validator->fails()){
+            return back()
+                    ->withInput()
+                    ->with('error', "Incorrrect input!!");
+        }
+        else{
+            $education = Education::where('id', $request->education_id)->first();
+            $education->education_level_id = $request->education_level_id;
+            $education->education_degree_id_1 = $request->education_degree_id_1;
+            $education->education_degree_id_2 = $request->education_degree_id_2;
+            $education->education_major_group_concentation = $request->education_major_group_concentation;
+            $education->education_institute_name = $request->education_institute_name;
+            $education->education_result_id = $request->education_result_id;
+            $education->education_result_cgpa = $request->education_result_cgpa;
+            $education->education_result_scale = $request->education_result_scale;
+            $education->education_result_marks = $request->education_result_marks;
+            $education->education_passing_year = $request->education_passing_year;
+
+
+        if($education->save()){
+            $this->logFileWrite("Education Information updated", $education->id);
+            return redirect('hr/recruitment/operation/advance_info_edit/'.$education->education_as_id.'#education')
+            ->with('success',"Education information Successfully Updated!!");
+        }
+        else{
             return back()
             ->with('error', 'Error!! try again!');
         }
@@ -587,21 +649,13 @@ class AdvanceInfoController extends Controller
         if($request->has('associate_id'))
         {
             $data = DB::table('hr_education AS e')
-                    ->where("e.education_as_id", $request->associate_id)
                     ->select(
+                        'e.*',
                         'l.education_level_title',
                         'dt.education_degree_title',
-                        'e.education_level_id',
-                        'e.education_degree_id_2',
-                        'e.education_major_group_concentation',
-                        'e.education_institute_name',
-                        'r.education_result_title',
-                        'e.education_result_id',
-                        'e.education_result_marks',
-                        'e.education_result_cgpa',
-                        'e.education_result_scale',
-                        'e.education_passing_year'
+                        'r.education_result_title'
                     )
+                    ->where("e.education_as_id", $request->associate_id)
                     ->leftJoin('hr_education_level AS l', 'l.id', '=', 'e.education_level_id')
                     ->leftJoin('hr_education_degree_title AS dt', 'dt.id', '=', 'e.education_degree_id_1')
                     ->leftJoin('hr_education_result AS r', 'r.id', '=', 'e.education_result_id')
@@ -612,6 +666,21 @@ class AdvanceInfoController extends Controller
         }
 
         return response()->json($html);
+    }
+
+
+    public function educationDelete($id,$associate)
+    {
+        try {
+
+            $exist = Education::findOrFail($id);
+            $exist->delete();
+
+            return redirect('hr/recruitment/operation/advance_info_edit/'.$associate.'#education')->with('success',"Education information Successfully deleted!!");
+        
+        } catch(\Exception $e) {
+            return $e->getMessage();
+        }
     }
 
 
@@ -632,7 +701,7 @@ class AdvanceInfoController extends Controller
 
         if ($validator->fails())
         {
-            return back()
+            return redirect('hr/recruitment/operation/advance_info_edit/'.$request->hr_bn_associate_id.'#bangla')
                     ->withErrors($validator)
                     ->withInput()
                     ->with('error', 'Please fillup all required fields!');
@@ -658,14 +727,14 @@ class AdvanceInfoController extends Controller
                 if ($user)
                 {
                     $this->logFileWrite("Employee Bengali Updated", $request->hr_bn_id);
-                    return back()
+                    return redirect('hr/recruitment/operation/advance_info_edit/'.$request->hr_bn_associate_id.'#bangla')
                         ->withInput()
                         ->with('bn_flag', true)
                         ->with('success', 'Update Successful.');
                 }
                 else
                 {
-                    return back()
+                    return redirect('hr/recruitment/operation/advance_info_edit/'.$request->hr_bn_associate_id.'#bangla')
                         ->with('bn_flag', true)
                         ->withInput()->with('error', 'Please try again.');
                 }
@@ -691,14 +760,14 @@ class AdvanceInfoController extends Controller
                 if ($user->save())
                 {
                     $this->logFileWrite("Employee Bengali Updated", $user->hr_bn_id);
-                    return back()
+                    return redirect('hr/recruitment/operation/advance_info_edit/'.$request->hr_bn_associate_id.'#bangla')
                         ->withInput()
                         ->with('bn_flag', true)
                         ->with('success', 'Save Successful.');
                 }
                 else
                 {
-                    return back()
+                    return redirect('hr/recruitment/operation/advance_info_edit/'.$request->hr_bn_associate_id.'#bangla')
                         ->with('bn_flag', true)
                         ->withInput()->with('error', 'Please try again.');
                 }

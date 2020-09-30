@@ -68,17 +68,18 @@ $(document).ready(function(){
     $(window).on("load", function(){
         if (associate_id) 
         {
-            ajaxLoad(associate_id);
             drawNewBtn(associate_id);
+            ajaxLoad(associate_id);
         }
     });
     
     $("#associate_id").on("change", function(){ 
-        ajaxLoad($(this).val());
         drawNewBtn($(this).val());
+        ajaxLoad($(this).val());
     });
 
     function ajaxLoad(associate_id){
+        $('.app-loader').show();
         $.ajax({
             url : "{{ url('hr/operation/servicebookpage') }}",
             type: 'get',
@@ -92,9 +93,9 @@ $(document).ready(function(){
                 alert('failed...');
             }
         });
+        $('.app-loader').hide();
     }
 
-     $('#dataTables').DataTable();
     
 });     
 </script>

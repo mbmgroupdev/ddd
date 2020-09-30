@@ -65,10 +65,10 @@
 		                		</div>
 		                		@if($input['otnonot'] != null)
 		                		<div class="col-3 pr-0">
-		                			<b>: @if($input['otnonot'] == 0) No @else Yes @endif </b>
+		                			<b>: OT </b>
 		                		</div>
 		                		<div class="col-9 pl-0">
-		                			<b>: Yes </b>
+		                			<b>: @if($input['otnonot'] == 0) No @else Yes @endif </b>
 		                		</div>
 		                		@endif
 		                		<div class="col-3 pr-0">

@@ -84,10 +84,10 @@
                             <div class="step d-flex mr-3">
                                 <div class="rounded-div @if($tabs['initial_checkup']) iq-bg-primary @else iq-bg-danger @endif"><i class="las la-stethoscope f-18"></i></div> 
                                 <div class="media-support-info ml-3">
-                                  <h6>Initial Checkup </h6>
+                                  <h6><a href="{{url('hr/operation/maternity-medical-process/'.$leave->id)}}">Initial Checkup </a></h6>
                                   <p id="line" class="mb-0">
                                       @if($tabs['initial_checkup']) 
-                                        {{$leave->medical->created_at->format('Y-m-d')}}
+                                        {{$leave->medical->checkup_date}}
                                       @else
                                         ----------
                                       @endif
@@ -98,7 +98,7 @@
                             <div class="step d-flex mr-3">
                                 <div class="rounded-div @if($tabs['routine_checkup']) iq-bg-primary @else iq-bg-danger @endif"><i class="las la-notes-medical f-18"></i></div> 
                                 <div class="media-support-info ml-3">
-                                  <h6>Routine Checkup </h6>
+                                  <h6><a href="{{url('hr/operation/maternity-medical-process/'.$leave->id)}}">Routine Checkup </a></h6>
                                   <p id="line" class="mb-0">
                                       @if($tabs['routine_checkup']) 
                                         {{$leave->medical->record->last()->checkup_date}}
@@ -112,7 +112,7 @@
                             <div class="step d-flex mr-3">
                                 <div class="rounded-div @if($tabs['doctors_clearence']) iq-bg-primary @else iq-bg-danger @endif"><i class="las la-file-prescription f-18"></i></div> 
                                 <div class="media-support-info ml-3">
-                                  <h6>Doctor's Clearence </h6>
+                                  <h6><a href="{{url('hr/operation/maternity-leave/doctors-clearence/'.$leave->id)}}">Doctor's Clearence</a> </h6>
                                   <p id="line" class="mb-0">
                                       @if($tabs['doctors_clearence']) 
                                         {{$leave->medical->record->last()->checkup_date}}
@@ -180,19 +180,19 @@
                                         <input type="hidden" name="hr_maternity_leave_id" value="{{$leave->id}}">
                                         <legend class="block-title ">Leave Information</legend>
                                         <div class="form-group  has-float-label has-required mt-2">
-                                            <input type="date" id="leave_from" type="leave_from" name="leave_from" class="form-control" min="{{date('Y-m-d')}}"   value="{{$leave->leave_from_suggestion}}" required > 
+                                            <input type="date" id="leave_from" type="leave_from" name="leave_from" class="form-control"    value="{{$leave->leave_from_suggestion}}" required > 
                                             <label for="leave_from">Leave From</label>
                                         </div>
                                         <div class="form-group  has-float-label has-required">
-                                            <input type="date" id="leave_to" type="leave_to" name="leave_to" class="form-control" min="{{date('Y-m-d')}}"   value="{{\Carbon\Carbon::create($leave->leave_from_suggestion)->addDays(112)->format('Y-m-d')}}" required readonly> 
+                                            <input type="date" id="leave_to" type="leave_to" name="leave_to" class="form-control"   value="{{\Carbon\Carbon::create($leave->leave_from_suggestion)->addDays(111)->format('Y-m-d')}}" required readonly> 
                                             <label for="leave_to">Leave To</label>
                                         </div>
                                         <div class="form-group  has-float-label has-required">
-                                            <input type="text" id="nominee"  name="nominee" class="form-control"  value="" placeholder="Enter nominee name" required>
+                                            <input type="text" id="nominee"  name="nominee" class="form-control"  value="{{$leave->husband_name??''}}" placeholder="Enter nominee name" required>
                                             <label for="nominee">Nominee</label>
                                         </div>
                                         <div class="form-group  has-float-label has-required">
-                                            <input type="text" id="relation"  name="relation" class="form-control"  value="" placeholder="Enter relation with nominee" required>
+                                            <input type="text" id="relation"  name="relation" class="form-control"  value="Husband" placeholder="Enter relation with nominee" required>
                                             <label for="relation">Relation</label>
                                         </div>
                                         <div class="form-group  has-float-label has-required">
@@ -325,8 +325,60 @@
 
     $(document).on('change', '#leave_from', function(){
         var d = new Date($(this).val());
-        d.setDate(d.getDate() + 112);
+        d.setDate(d.getDate() + 111);
         $('#leave_to').val(JSON.stringify(new Date(d)).slice(1,11));
+    });
+
+    $("#pr_district").on('change', function()
+    { 
+        var id = $(this).val();
+        if (id != '')
+        {
+          $('.app-loader').show();
+            $.ajax({
+                url: '{{ url("district_wise_upazilla") }}',
+                type: 'json',
+                method: 'get',
+                data: {district_id: $(this).val() },
+                success: function(data)
+                {
+                    $("#pr_upzila").html(data);
+                    $('.app-loader').hide();
+                },
+                error: function()
+                {
+                    $('.app-loader').hide();
+                    $.notify('please try again','error');
+                }
+
+            });
+        } 
+    });
+
+    $("#per_district").on('change', function()
+    { 
+        var id = $(this).val();
+        if (id != '')
+        {
+          $('.app-loader').show();
+            $.ajax({
+                url: '{{ url("district_wise_upazilla") }}',
+                type: 'json',
+                method: 'get',
+                data: {district_id: $(this).val() },
+                success: function(data)
+                {
+                    $("#per_upzila").html(data);
+                    $('.app-loader').hide();
+                },
+                error: function()
+                {
+                    $('.app-loader').hide();
+                    $.notify('please try again','error');
+                }
+
+            });
+        } 
     });
     
 </script>

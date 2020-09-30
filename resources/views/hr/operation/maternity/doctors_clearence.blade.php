@@ -65,6 +65,8 @@
                                      <td><i class="field-title">Last Child Age</i> <span class="field-data">: {{ $leave->last_child_age }} </span></td>
                                  </tr>
                              </table>
+                             <br>
+                             <a href="{{url('hr/operation/maternity-leave/'.$leave->id)}}" class="btn btn-primary w-100"> View Status </a>
                         </div>
                     </div>
                     <div class="col-sm-9">
@@ -85,7 +87,7 @@
                                     </div>
                                     <div class="col-sm-3">
                                         <div class="form-group has-required has-float-label">
-                                            <input id="leave_from_suggestion" type="date" name="leave_from_suggestion" class="form-control" required min="{{date('Y-m-d')}}" value="{{\Carbon\Carbon::create($leave->medical->edd)->subMonths(2)->format('Y-m-d')}}">
+                                            <input id="leave_from_suggestion" type="date" name="leave_from_suggestion" class="form-control" required  value="{{\Carbon\Carbon::create($leave->medical->edd)->subMonths(2)->format('Y-m-d')}}">
                                             <label for="leave_from_suggestion">Leave From</label>
                                         </div>
                                         
@@ -108,4 +110,11 @@
         </div>
     </div>
 </div>
+<script type="text/javascript">
+    $(document).on('change', '#edd', function(){
+        var d = new Date($(this).val());
+        d.setMonth(d.getMonth() - 2);
+        $('#leave_from_suggestion').val(JSON.stringify(new Date(d)).slice(1,11));
+    });
+</script>
 @endsection

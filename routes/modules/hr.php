@@ -610,6 +610,9 @@ Route::get('hr/payroll/salary', 'Hr\Payroll\SalaryController@view');
 		Route::get('hr/recruitment/operation/advance_info','Hr\Recruitment\AdvanceInfoController@advanceInfo');
 		Route::post('hr/recruitment/operation/advance_info','Hr\Recruitment\AdvanceInfoController@advanceInfoStore');
 		Route::post('hr/recruitment/operation/education_info','Hr\Recruitment\AdvanceInfoController@educationInfoStore');
+		Route::post('hr/recruitment/operation/education_info/update','Hr\Recruitment\AdvanceInfoController@educationInfoUpdate');
+		Route::get('hr/recruitment/operation/education_info/delete/{id}/{associate}','Hr\Recruitment\AdvanceInfoController@educationDelete');
+		
 		Route::post('hr/recruitment/employee/add_employee_bn', 'Hr\Recruitment\AdvanceInfoController@saveBengali');
 		Route::get('hr/recruitment/operation/advance_info_list','Hr\Recruitment\AdvanceInfoController@advanceInfoList');
 		Route::post('hr/recruitment/operation/advance_info_list_data','Hr\Recruitment\AdvanceInfoController@advanceInfoListData');
@@ -1417,4 +1420,10 @@ Route::get('hr/line-report', 'Hr\LineReportController@index');
 // voucher section
 Route::get('hr/operation/voucher', 'Hr\Operation\VoucherController@index');
 Route::post('hr/operation/voucher', 'Hr\Operation\VoucherController@voucher');
+
+Route::get('hr/operation/partial-salary', 'Hr\Operation\VoucherController@partial');
+Route::post('hr/operation/partial-salary', 'Hr\Operation\VoucherController@partialGenerate');
+Route::post('hr/operation/partial-salary/disburse', 'Hr\Operation\VoucherController@disburse');
+
+Route::get('hr/operation/test', 'Hr\Operation\VoucherController@test');
 

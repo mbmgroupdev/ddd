@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class HolidayRoaster extends Model
 {
     protected $table = "holiday_roaster";
+    protected $guarded = [];
 
     public $timestamps = false;
 

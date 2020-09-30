@@ -535,6 +535,7 @@
                                             </div>
                                         </div>
                                         <div class="col-sm-8" id="educationHistory">
+                                            {!!$education!!}
                                         </div>
                                     </div>
                                 </form>
@@ -670,70 +671,72 @@
            </button>
         </div>
         <div class="modal-body" style="width:250px;margin: 0 auto;">
-            <input type="hidden" name="education_id">
-            <div class="form-group has-float-label select-search-group">
-                {{ Form::select('education_level_id', $levelList, null, ['placeholder'=>'Select Education Level', 'id'=>'edit_education_level_id', 'required'=> 'required']) }}
-                <label for="edit_education_level_id"> Education Level </label>
-            </div>
-
-            <div class="form-group hide has-float-label select-search-group" id="edit_degrreforPhd">
-                {{ Form::select('education_degree_id_1', [], null, ['id'=>'edit_education_degree_id_1']) }}
-                <label  for="edit_education_degree_id_1"> Exam/Degree Title </label>
-            </div>
-
-            <div class="form-group hide has-float-label" id="edit_PhdTitle">
-                <input name="education_degree_id_2" type="text" id="edit_education_degree_id_2" placeholder="Exam/Degree Title" class="form-control"/>
-                <label  for="edit_education_degree_id_2">Exam/Degree Title</label>
-            </div>
-
-            <div class="form-group hide has-float-label" id="edit_major">
-                <input name="education_major_group_concentation" type="text" id="edit_education_major_group_concentation" placeholder="Concentration/ Major/Group" class="form-control"  required="required" />
-                <label  for="edit_education_major_group_concentation">Concentration/ Major/Group </label>
-            
-            </div>
-
-            <div class="form-group has-float-label">
-                <input name="education_institute_name" type="text" id="edit_education_institute_name" placeholder="Institute Name" class="form-control"  required="required" />
-                <label  for="edit_education_institute_name">Institute Name </label>
-            </div>
-
-            <div class="form-group has-float-label select-search-group">
-                {{ Form::select('education_result_id', $resultList, null, ['placeholder'=>'Select Education Level', 'id'=>'edit_education_result_id']) }}
-                <label  for="edit_education_result_id"> Result </label>
-            </div>
-
-            <div class="hide" id="edit_cgpa_scale">
-                <div class="form-group has-float-label">
-                    <input type="text" name="education_result_cgpa" id="edit_education_result_cgpa" placeholder="CGPA" class="form-control" />
-                    <label  for="edit_education_result_cgpa"> CGPA </label>
+            <form class="needs-validation" novalidate action="{{url('hr/recruitment/operation/education_info/update')}}" method="post"> 
+                @csrf
+                <input type="hidden" name="education_id" id="education_id">
+                <div class="form-group has-float-label select-search-group">
+                    {{ Form::select('education_level_id', $levelList, null, ['placeholder'=>'Select Education Level', 'id'=>'edit_education_level_id', 'required'=> 'required']) }}
+                    <label for="edit_education_level_id"> Education Level </label>
                 </div>
-            </div>
 
-            <div class="form-group has-float-label">
-                <input type="text" name="education_result_scale" id="edit_education_result_scale" placeholder="Scale" class="form-control" required="required"/>
-                <label  for="edit_education_result_scale"> Scale </label>
-            </div>
+                <div class="form-group hide has-float-label select-search-group" id="edit_degrreforPhd">
+                    {{ Form::select('education_degree_id_1', [], null, ['id'=>'edit_education_degree_id_1']) }}
+                    <label  for="edit_education_degree_id_1"> Exam/Degree Title </label>
+                </div>
 
+                <div class="form-group hide has-float-label" id="edit_PhdTitle">
+                    <input name="education_degree_id_2" type="text" id="edit_education_degree_id_2" placeholder="Exam/Degree Title" class="form-control"/>
+                    <label  for="edit_education_degree_id_2">Exam/Degree Title</label>
+                </div>
 
-            <div class="form-group hide has-float-label" id="edit_division_mark">
-                <input type="text" name="education_result_marks" id="edit_education_result_marks" placeholder="Marks" class="form-control"  />
-                <label  for="edit_education_result_marks"> Marks(%) </label>
-            </div>
-            <div class="form-group has-float-label select-search-group">
+                <div class="form-group hide has-float-label" id="edit_major">
+                    <input name="education_major_group_concentation" type="text" id="edit_education_major_group_concentation" placeholder="Concentration/ Major/Group" class="form-control"  required="required" />
+                    <label  for="edit_education_major_group_concentation">Concentration/ Major/Group </label>
                 
-                <select  name="education_passing_year" id="edit_education_passing_year" required="required">
-                    <option value="">Selecet Passing Year</option>
-                    @for($year=1950; $year<=date('Y') ; $year++)
-                    <option value="{{ $year }}">{{ $year }}</option>
-                    @endfor
-                </select>
-                <label  for="edit_education_passing_year"> Passing Year </label>
-            </div>
+                </div>
 
-        </div>
-        <div class="modal-footer">
-           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-           <button type="button" class="btn btn-primary">Update</button>
+                <div class="form-group has-float-label">
+                    <input name="education_institute_name" type="text" id="edit_education_institute_name" placeholder="Institute Name" class="form-control"  required="required" />
+                    <label  for="edit_education_institute_name">Institute Name </label>
+                </div>
+
+                <div class="form-group has-float-label select-search-group">
+                    {{ Form::select('education_result_id', $resultList, null, ['placeholder'=>'Select Result type Level', 'id'=>'edit_education_result_id']) }}
+                    <label  for="edit_education_result_id"> Result </label>
+                </div>
+
+                <div class="hide" id="edit_cgpa_scale">
+                    <div class="form-group has-float-label">
+                        <input type="text" name="education_result_cgpa" id="edit_education_result_cgpa" placeholder="CGPA" class="form-control" />
+                        <label  for="edit_education_result_cgpa"> CGPA </label>
+                    </div>
+                </div>
+
+                <div class="form-group has-float-label">
+                    <input type="text" name="education_result_scale" id="edit_education_result_scale" placeholder="Scale" class="form-control" required="required"/>
+                    <label  for="edit_education_result_scale"> Scale </label>
+                </div>
+
+
+                <div class="form-group hide has-float-label" id="edit_division_mark">
+                    <input type="text" name="education_result_marks" id="edit_education_result_marks" placeholder="Marks" class="form-control"  />
+                    <label  for="edit_education_result_marks"> Marks(%) </label>
+                </div>
+                <div class="form-group has-float-label select-search-group">
+                    
+                    <select  name="education_passing_year" id="edit_education_passing_year" required="required">
+                        <option value="">Selecet Passing Year</option>
+                        @for($year=1950; $year<=date('Y') ; $year++)
+                        <option value="{{ $year }}">{{ $year }}</option>
+                        @endfor
+                    </select>
+                    <label  for="edit_education_passing_year"> Passing Year </label>
+                </div>
+                <div class="form-group">
+                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                   <button type="submit" class="btn btn-primary">Update</button>
+                </div>
+            </form>
         </div>
      </div>
   </div>
@@ -745,7 +748,7 @@ $(document).ready(function()
     $('.app-loader').show();
     var associate_id = '{{ (request()->route("emp_adv_info_as_id")) }}';
     showInfo(associate_id);
-    educationHistory(associate_id);
+    //educationHistory(associate_id);
     if( window.location.hash == '#education' || window.location.hash == '#bangla'){
         $(".nav-link").removeClass('active')
         $("a[href='"+window.location.hash+"']").addClass('active');
@@ -761,34 +764,93 @@ $(document).ready(function()
           window.location = '{{url('hr/recruitment/operation/advance_info_edit')}}'+'/'+$(this).val();  
     });
 
-    $('#edit-education').on('click', function(){
+    /*$('#edit-education').on('click', function(){
         var data = $.parseJSON($('.edit-item-trigger-clicked').data('education'));
         console.log(data);
         $('#education_id').val(data.id);
         $('#edit_education_institute_name').val(data.education_institute_name);
-    });
+    });*/
 
     $(document).on('click', ".edit-education", function() {
-        $(this).addClass('edit-item-trigger-clicked'); 
+        var data = $(this).data('edu');
+        $('#education_id').val(data.id);
+        $('#edit_education_level_id').val(data.education_level_id).trigger('change.select2');
+        
+        $.ajax({
+            url: '{{ url("level_wise_degree") }}',
+            type: 'json',
+            method: 'get',
+            data: {id:data.education_level_id },
+            success: function(data)
+            {
+                $("#edit_education_degree_id_1").html(data);
+                
+            },
+            error: function()
+            {
+                $.notify('please try again','error');
+            }
 
+        });
+        var status= ['1','2'];
+
+        if (data.education_level_id == 1 || data.education_level_id == 2 )
+        {
+            $("#edit_major").removeClass('hide', 500, "linear");
+        }
+        else
+        {
+            $("#edit_major").addClass('hide', 500, "linear");
+        }
+
+        if (data.education_level_id == 8)
+        {
+            $("#edit_PhdTitle").removeClass('hide', 500, "linear");
+            $("#edit_degrreforPhd").addClass('hide', 500, "linear");
+        }
+        else
+        {
+            $("#edit_PhdTitle").addClass('hide', 500, "linear");
+            $("#edit_degrreforPhd").removeClass('hide', 500, "linear");
+        }
+        $('#edit_education_institute_name').val(data.education_institute_name);
+        $('#edit_education_passing_year').val(data.education_passing_year).trigger('change.select2');
+        $('#edit_education_result_marks').val(data.education_result_marks);
+        $('#edit_education_result_scale').val(data.education_result_scale);
+        $('#edit_education_result_id').val(data.education_result_id).trigger('change.select2');
+        $('#edit_education_result_cgpa').val(data.education_result_cgpa);
+        $('#edit_education_major_group_concentation').val(data.education_major_group_concentation);
+        $('#edit_education_degree_id_1').val(data.education_degree_id_1).trigger('change.select2');
+        $('#edit_education_degree_id_2').val(data.education_degree_id_2).trigger('change.select2');
+        
+        if (data.education_result_id == 4)
+        {
+
+            $("#edit_cgpa_scale").removeClass('hide');
+        }
+        else
+        {
+            $("#edit_cgpa_scale").addClass('hide');
+        }
+
+        if (data.education_result_id == 1 || data.education_result_id == 2 || data.education_result_id == 3)
+        {
+            $("#edit_division_mark").removeClass('hide');
+        }
+        else
+        {
+            $("#edit_division_mark").addClass('hide');
+        }
+        
         var options = {
           'backdrop': 'static'
         };
         $('#editModal').modal(options);
     });
-    $('#editModal').on('show.bs.modal', function() {
-        var el = $(".edit-item-trigger-clicked"); // See how its usefull right here? 
-        var data = $(".edit-item-trigger-clicked").data('edu');
-        console.log(data);
-        // fill the data in the input fields
-        //$('#education_id').val(data.id);
-        //$('#edit_education_institute_name').val(data.education_institute_name);
 
-    });
 
       // on modal hide
       $('#editModal').on('hide.bs.modal', function() {
-        $('.edit-item-trigger-clicked').removeClass('edit-item-trigger-clicked')
         $("#edit-form").trigger("reset");
       })
 
@@ -886,12 +948,6 @@ $(document).ready(function()
             });
         } 
     });
-
-    /*
-    *----------------------------------------
-    *   Present Address - District & Upazilla
-    *-----------------------------------------
-    */
 
     $("#as_pre_dis").on('change', function()
     { 
@@ -1027,19 +1083,19 @@ $(document).ready(function()
         var selected= ['1','2','3'];
         if (status.includes($(this).val()))
         {
-            $("#edit_cgpa_scale").removeClass('hide', 500, "linear");
+            $("#cgpa_scale").removeClass('hide', 500, "linear");
         }
         else
         {
-            $("#edit_cgpa_scale").addClass('hide', 500, "linear");
+            $("#cgpa_scale").addClass('hide', 500, "linear");
         }
         if (selected.includes($(this).val()))
         {
-            $("#edit_division_mark").removeClass('hide', 500, "linear");
+            $("#division_mark").removeClass('hide', 500, "linear");
         }
         else
         {
-            $("#edit_division_mark").addClass('hide', 500, "linear");
+            $("#division_mark").addClass('hide', 500, "linear");
         }
     });
 

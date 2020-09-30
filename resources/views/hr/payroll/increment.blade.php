@@ -24,22 +24,19 @@
 					<a href="#"> Payroll </a>
 				</li>
 				<li class="active"> Increment </li>
+                <li class="top-nav-btn">
+                    <a href="{{url('hr/payroll/increment-list')}}" class="btn btn-primary pull-right">Increment List</a>
+                </li>
 			</ul><!-- /.breadcrumb --> 
 		</div>
 
+        @include('inc/message')
 		<div class="page-content"> 
             @can('Manage Increment')
             <div class="panel panel-success">
-                <div class="panel-heading">
-                    <h6>Increment Entry
-                        <a href="{{url('hr/payroll/increment-list')}}" class="btn btn-primary pull-right">Increment List</a>
-                    </h6>
-                </div>
                 <div class="panel-body">
-                      <!-- Display Erro/Success Message -->
-                    @include('inc/message')
                     
-                    <form class="form-horizontal" role="form" method="post" action="{{ url('hr/payroll/increment')  }}" enctype="multipart/form-data">
+                    <form class="form-horizontal needs-validation" novalidate role="form" method="post" action="{{ url('hr/payroll/increment')  }}" enctype="multipart/form-data">
                         {{ csrf_field() }} 
                         <div class="row">
                             <div class="col-6">
@@ -67,20 +64,14 @@
                                     </div>
                                     <div class="col-6">
                                         
-                                        <div class="form-group has-float-label ">
+                                        <div class="form-group has-float-label has-required ">
                                             <label for="effective_date"> Effective Date </label>
-                                            <input type="date" name="effective_date" id="effective_date" class="form-control  " placeholder="Enter Date" />
+                                            <input type="date" name="effective_date" id="effective_date" class="form-control" required placeholder="Enter Date" />
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-6">
-                                        <div class="form-group has-float-label has-required">
-                                            <input type="text" name="increment_amount" id="increment_amount" placeholder="Increment Amount/Percentage" class="form-control" required/>
-                                            <label  for="increment_amount">Amount </label>
-                                        </div>
-                                        
-                                    </div>
+                                    
                                     <div class="col-6">
                                         <div class="form-group has-float-label select-search-group has-required">
                                             <select class="form-control" data-validation="required" id="amount_type" name="amount_type">
@@ -90,6 +81,13 @@
                                             </select>
                                             <label>Type</label>
                                         </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group has-float-label has-required">
+                                            <input type="text" name="increment_amount" id="increment_amount" placeholder="Increment Amount/Percentage" class="form-control" required/>
+                                            <label  for="increment_amount">Amount </label>
+                                        </div>
+                                        
                                     </div>
                                 </div>
 

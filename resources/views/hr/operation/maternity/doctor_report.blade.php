@@ -1,9 +1,28 @@
+
 <button type="button" onclick="printMe('doctor_report')" class="btn btn-warning" title="Print">
     <i class="fa fa-print"></i> 
 </button>
- <div class="col-xs-12 no-padding-left" id="doctor_report" style="font-size: 9px;">
-    <div class="tinyMceLetter" style="font-size: 10px;">
-    	<div style="display: flex; justify-content:space-between;">
+ <div class="col-xs-12 no-padding-left" id="doctor_report" style="font-size: 12px;">
+    <div class="tinyMceLetter" style="font-size: 14px;min-height: 600px;border: 1px solid #d1d1d1;padding: 20px;">
+        <style type="text/css">
+
+        </style>
+        <center><h3>{{$employee->hr_unit_name_bn??''}}</h3></center>
+        <center>{{ (!empty($employee->hr_unit_address_bn)?$employee->hr_unit_address_bn:null) }}</center><br><br>
+        <style type="text/css">
+            table{
+                font-size: 12px;
+            }
+            .table-bordered {
+                border-collapse: collapse;
+            }
+            .table-bordered th,
+            .table-bordered td {
+              border: 1px solid #000 !important;
+              padding: 0 5px;
+            }
+        </style>
+    	<div style="display: flex; justify-content:space-between;font-size: 14px;">
 	        <div style="text-align:justify;padding-right: 10px;justify-content:space-between; "> 
 	        	আইডি নং<span style="border-bottom: 1px dotted #d1d1d1;display:inline-block;min-width:80px;font-weight:bold;text-align:center;">{{$employee->associate_id}}</span> &nbsp;
 	        	নাম<span style="border-bottom: 1px dotted #d1d1d1;display:inline-block;min-width:150px;font-weight:bold;text-align:center;">{{$employee->as_name}}</span>
@@ -25,23 +44,27 @@
 	        </div>
 	        <div style="border: 1px solid #000;width: 200px; padding: 10px;">
 	        	Blood Group<span style="border-bottom: 1px dotted #d1d1d1;display:inline-block;min-width:50px;font-weight:bold;text-align:center;">{{$leave->medical->blood_group}}</span><br>
-	        	LMP<span style="border-bottom: 1px dotted #d1d1d1;display:inline-block;min-width:80px;font-weight:bold;text-align:center;">{{$employee->medical->lmp??''}}</span><br>
-	        	EDD<span style="border-bottom: 1px dotted #d1d1d1;display:inline-block;min-width:80px;font-weight:bold;text-align:center;">{{$employee->medical->edd??''}}</span><br>
+	        	LMP<span style="border-bottom: 1px dotted #d1d1d1;display:inline-block;min-width:80px;font-weight:bold;text-align:center;">{{$leave->medical->lmp??''}}</span><br>
+	        	EDD<span style="border-bottom: 1px dotted #d1d1d1;display:inline-block;min-width:80px;font-weight:bold;text-align:center;">{{$leave->medical->edd??''}}</span><br>
 	        </div>
 	        
         </div>
         <p style="text-align: justify;">
-        	অতীতে গর্ভজনিত জটিলতাঃ @if($leave->medical->pregnant_complexity == 1) হ্যাঁ @else না @endif বর্ণনাঃ 
+        	অতীতে গর্ভজনিত জটিলতাঃ @if($leave->medical->pregnant_complexity == 1) হ্যাঁ @else না @endif বর্ণনাঃ {{$leave->medical->pregnant_complexity_details??'--------------------------------'}}
         </p>
         <p style="text-align: justify;">
-        	অতীতের প্রধান অসুস্থতাঃ অপারেশনঃ @if($leave->medical->operation == 1) হ্যাঁ @else না @endif বর্ণনাঃ 
+        	অতীতের প্রধান অসুস্থতাঃ অপারেশনঃ @if($leave->medical->operation == 1) হ্যাঁ @else না @endif বর্ণনাঃ {{$leave->medical->operation_details??'--------------------------------'}}
         </p>
         <p style="text-align: justify;">
-        	STI/RTI অতীত ইতিহাসঃ @if($leave->medical->stl_rtl == 1) হ্যাঁ @else না @endif বর্ণনাঃ ওষুধে এলার্জীঃ @if($leave->medical->alergy == 1) হ্যাঁ @else না @endif মাদকাসক্তির ইতিহাসঃ @if($leave->medical->drug_addiction == 1) হ্যাঁ @else না @endif বর্ণনাঃ 
+        	STI/RTI অতীত ইতিহাসঃ @if($leave->medical->stl_rtl == 1) হ্যাঁ @else না @endif বর্ণনাঃ {{$leave->medical->stl_rtl_details??'--------------------------------'}}
+            ওষুধে এলার্জীঃ @if($leave->medical->alergy == 1) হ্যাঁ @else না @endif 
+        </p>
+        <p style="text-align: justify;">
+            মাদকাসক্তির ইতিহাসঃ @if($leave->medical->drug_addiction == 1) হ্যাঁ @else না @endif বর্ণনাঃ {{$leave->medical->drug_addiction_details??'--------------------------------'}}
         </p>
         <br>
         <h4>গর্ভকালীন সেবাঃ</h4>
-        <table style="width:100%; text-align: center;" border="1">
+        <table style="text-align: center;" class="table-bordered">
         	<thead>
         		<tr>
         			<th rowspan="2">

@@ -44,7 +44,7 @@ class LeaveApplicationController extends Controller
 
             $avail = emp_remain_leave_check($request);
 
-            if($avail->stat != 'false'){
+            if($avail['stat'] != 'false'){
 
                 $leave_supporting_file = null;
                 if($request->hasFile('leave_supporting_file')){
@@ -84,10 +84,11 @@ class LeaveApplicationController extends Controller
             }else{
                 return back()
                 ->withInput()
-                ->with('error', $avail->msg);
+                ->with('error', $avail['msg']);
             }
 		}
 	}
+
     public function leaveHistory(Request $request){
         $history = DB::table('hr_leave')
             ->select(
@@ -199,7 +200,7 @@ class LeaveApplicationController extends Controller
         // Earned Leave Restriction
         if($request->leave_type== "Earned"){
             
-            $earned = DB::table('hr_earned_leave')
+            /*$earned = DB::table('hr_earned_leave')
                         ->select(DB::raw('sum(earned - enjoyed) as l'))
                         ->where('associate_id', $associate_id)
                         ->groupBy('associate_id')->first()->l??0 ;
@@ -210,7 +211,8 @@ class LeaveApplicationController extends Controller
             }else{
                 $statement['stat'] = "false";
                 $statement['msg'] = 'This employee has  '.$earned.' day(s) of Earned Leave and can take only '.$avail. ' day(s)' ;
-            }
+            }*/
+            $statement['stat'] = "true";
         } 
         // Casual Leave Restriction
         if($request->leave_type== "Casual"){
