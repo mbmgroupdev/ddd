@@ -242,7 +242,6 @@ class AttendanceFileProcessController extends Controller
                         ->orderBy('hr_shift.hr_shift_id', 'desc')
                 		->first();
 
-
                 		if(!empty($shift) && $shift->$day_num != null){
                 			$shift_code= $shift->hr_shift_code;
                 			$shift_start= $shift->hr_shift_start_time;
