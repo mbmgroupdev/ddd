@@ -274,6 +274,9 @@
             <li class="@if($segment3 == 'maternity-leave') active @endif">
                <a href="{{ url('hr/operation/maternity-leave') }}"><i class="las la-file-invoice-dollar"></i>Maternity Leave</a>
             </li>
+            <li class="@if($segment3 == 'partial-salary') active @endif">
+               <a href="{{ url('hr/operation/partial-salary') }}"><i class="las la-file-invoice-dollar"></i>Partial Salary</a>
+            </li>
             @if($user->can('Station Card') || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'line-change') active @endif">
                <a href="{{ url('hr/operation/line-change') }}"><i class="las la-list-ul"></i>Line Change</a>
@@ -403,6 +406,8 @@
             @if($user->can('Education Setup') || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'education_title') active @endif"><a  href="{{ url('hr/setup/education_title') }}"><i class="las la-school"></i>Education</a></li>
             @endif
+            <li class="@if($segment3 == 'late_count_default') active @endif"><a  href="{{ url('hr/setup/late_count_default') }}"><i class="las la-comment-dollar"></i>Late Count Default</a></li>
+            <li class="@if($segment3 == 'late_count_customize') active @endif"><a  href="{{ url('hr/setup/late_count_customize') }}"><i class="las la-comment-dollar"></i>Late Count Customize</a></li>
             @if($user->can('Loan Setup') || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'loan_type') active @endif"><a  href="{{ url('hr/setup/loan_type') }}"><i class="las la-comment-dollar"></i>Loan</a></li>
             @endif

@@ -136,8 +136,7 @@ class ProcessMonthlySalary implements ShouldQueue
                             where('unit',$getEmployee->as_unit_id)
                             ->where('status',1)
                             ->first();
-                /*$date1 = strtotime(date("Y-m", strtotime($getEmployee->as_doj)));
-                $date2 = strtotime(date("Y-m", strtotime($today)));*/
+
                 $attBonus = 0;
                 if($getSalary != null){
                     $totalLate = $getSalary->late_count;
@@ -224,7 +223,6 @@ class ProcessMonthlySalary implements ShouldQueue
                         'attendance_bonus' => $attBonus,
                     ];
                     DB::table('hr_monthly_salary')->where('id', $getSalary->id)->update($salary);
-                    // $getSalary->update($salary);
                 }
             }
         }

@@ -34,11 +34,47 @@ class MaternityPaymentController extends Controller
 
 	public function report(Request $request)
 	{
-		$leave = DB::table('hr_maternity_leave as l')
-				->leftJoin('hr_as_basic_info AS b','l.associate_id', 'b.associate_id')
-				->get();
 
-		return view('hr.operation.maternity.maternity_report');
+		$date = Carbon::now();
+		$month = date('Y-m');
+		if($request->month){
+			$dates  = explode(('-'), $request->month);
+			if(isset($dates[1]) ){
+				$month = $request->month;
+				$date = Carbon::createFromFormat("Y-m", $request->month);
+			}else{
+				$date = Carbon::now();
+			}
+		}
+
+		$projected_edd_start = $date->copy()->addMonths(2)->firstOfMonth()->format('Y-m-d');
+		$projected_edd_last = $date->copy()->addMonths(2)->lastOfMonth()->format('Y-m-d');
+
+		$projected_leave_first = $date->copy()->firstOfMonth()->format('Y-m-d');
+		$projected_leave_last = $date->copy()->lastOfMonth()->format('Y-m-d');
+
+
+		$appoxleave = DB::table('hr_maternity_leave as l')
+						->leftJoin('hr_as_basic_info AS b','l.associate_id', 'b.associate_id')
+						->where('l.edd', '>=', $projected_edd_start)
+						->where('l.edd', '<=', $projected_edd_last)
+						->get();
+
+		
+		$appoxbacklist = DB::table('hr_maternity_leave as l')
+						->select(
+							'L.*',
+							'B.*',
+							'P.second_payment'
+						)
+						->leftJoin('hr_as_basic_info AS b','l.associate_id', 'b.associate_id')
+						->leftJoin('hr_maternity_payment AS p','p.hr_maternity_leave_id', 'l.id')
+						->where('l.leave_to', '>=', $projected_leave_first)
+						->where('l.leave_to', '<=', $projected_leave_last)
+						->where('l.status', 'Approved')
+						->get();
+
+		return view('hr.operation.maternity.maternity_report', compact('appoxleave','month','appoxbacklist'));
 	}
 	public function listData()
 	{
@@ -212,6 +248,7 @@ class MaternityPaymentController extends Controller
 	        		// update data
 	        		$check->hr_maternity_leave_id = $request->hr_maternity_leave_id;
 	         		$check->blood_group = $request->blood_group;
+	         		$check->checkup_date = $request->checkup_date;
 	         		$check->lmp = $request->lmp;
 	         		$check->edd = $request->edd;
 	         		$check->anemia = $request->anemia;
@@ -241,6 +278,7 @@ class MaternityPaymentController extends Controller
 	         		$med = new MaternityMedical();;
 	         		$med->hr_maternity_leave_id = $request->hr_maternity_leave_id;
 	         		$med->blood_group = $request->blood_group;
+	         		$med->checkup_date = $request->checkup_date;
 	         		$med->lmp = $request->lmp;
 	         		$med->edd = $request->edd;
 	         		$med->anemia = $request->anemia;
@@ -443,7 +481,6 @@ class MaternityPaymentController extends Controller
 		}
 
 		if($leave->status == 'Approved'){
-
 			$payment = MaternityPayment::where('hr_maternity_leave_id', $leave->id)->first()->toArray();
 			$totalcalc['ben_day'] = $payment['benefits_day']; 
 			$totalcalc['total_leave'] = ($payment['earned_leave'] + $payment['sick_leave']); 
@@ -495,7 +532,7 @@ class MaternityPaymentController extends Controller
 
 				$totalcalc['total_pay'] = round(($totalcalc['per_wages']*112),2);
 				$totalcalc['first_pay'] = round(($totalcalc['total_pay']/2),2);
-				$totalcalc['second_pay'] = $totalcalc['total_pay'];
+				$totalcalc['second_pay'] = $totalcalc['first_pay'];
 
 				$payment = new MaternityPayment();
 				$payment->hr_maternity_leave_id = $request->hr_maternity_leave_id;
@@ -515,12 +552,13 @@ class MaternityPaymentController extends Controller
 	public function approve(Request $request)
 	{
 		$leave = MaternityLeave::with('medical','medical.record')->findOrFail($request->hr_maternity_leave_id);
-
-		if($leave->status == 'Pending'){
+		$view = '';
+		if($leave->status == 'Processing'){
 			$leave->leave_from = $request->leave_from;
 			$leave->leave_to = $request->leave_to;
 			$leave->status = 'Approved';
 			
+
 			if($leave->save()){
 				# store nominee information
 
@@ -542,14 +580,14 @@ class MaternityPaymentController extends Controller
 				$nominee->created_by = auth()->id();
 				$nominee->save();
 
+				$leave->status = 'Processing';
 				$employee = get_employee_by_id($leave->associate_id);
-
 				$view = $this->calculateMaternityPayment($leave, $employee, $request);
 
-				return response(['view' => $view]);
 
 			}
 		}
+		return response(['view' => $view]);
 	}
 
 	public function getMaternityEmployees(Request $request){

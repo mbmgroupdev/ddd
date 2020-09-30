@@ -3,8 +3,17 @@
 @section('main-content')
 @push('css')
 <style type="text/css">
-    #dataTables th:nth-child(6) input{
+    #dataTables th:nth-child(7) input{
       width: 40px !important;
+    }
+    #dataTables th:nth-child(5) select, #dataTables th:nth-child(2) input{
+      width: 80px !important;
+    }
+    #dataTables th:nth-child(1) input{
+      width: 100px !important;
+    }
+    #dataTables th:nth-child(8) select{
+      width: 80px !important;
     }
 </style>
 @endpush
@@ -35,6 +44,7 @@
                         <thead>
                             <tr>
                                 <th width="10%">Associate ID</th>
+                                <th width="10%">Oracle ID</th>
                                 <th width="20%">Name</th>
                                 <th width="20%">Unit</th>
                                 <th width="10%">Leave Type</th>
@@ -53,15 +63,16 @@
 @push('js')
 <script type="text/javascript">
 $(document).ready(function(){ 
-    var searchable = [0,1,4,5];
-    var selectable = [2,3,6]; //use 2,4....and * for all
+    var searchable = [0,1,2,5];
+    var selectable = [3,4,7]; //use 2,4....and * for all
     // dropdownList = {column_number: {'key':value}};
     var dropdownList = {
-        '2':[@foreach($unit as $u) <?php echo "'$u'," ?> @endforeach],
-        '3':['Casual','Earned','Sick', 'Special','Maternity'],
-        '6':['Applied','Approved','Declined'] 
+        '3':[@foreach($unit as $u) <?php echo "'$u'," ?> @endforeach],
+        '4':['Casual','Earned','Sick', 'Special','Maternity'],
+        '7':['Applied','Approved','Declined'] 
     };
-
+    var exportColName = ['Associate ID','Oracle ID','Name','Unit', 'Leave Type', 'Leave Duration','Day(s)'];
+      var exportCol = [0,1,2,3,4,5,6];
     var dt = $('#dataTables').DataTable({
         order: [],  
         processing: true,
@@ -89,7 +100,12 @@ $(document).ready(function(){
                 footer: true,
                 "action": allExport,
                 exportOptions: {
-                    columns: ':visible'
+                    columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                    }
                 }
             }, 
             {
@@ -100,7 +116,12 @@ $(document).ready(function(){
                 footer: true,
                 "action": allExport,
                 exportOptions: {
-                    columns: ':visible'
+                    columns: exportCol,
+                       format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                    }
                 }
             }, 
             {
@@ -111,7 +132,12 @@ $(document).ready(function(){
                 footer: true,
                 "action": allExport,
                 exportOptions: {
-                    columns: ':visible'
+                    columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
                 }
             }, 
             {
@@ -122,13 +148,19 @@ $(document).ready(function(){
                 footer: false,
                 "action": allExport,
                 exportOptions: {
-                    columns: ':visible',
+                    columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      },
                     stripHtml: false
                 } 
             } 
         ], 
         columns: [ 
-            { data: 'leave_ass_id', name: 'leave_ass_id' , orderable: false}, 
+            { data: 'leave_ass_id', name: 'leave_ass_id'}, 
+            { data: 'as_oracle_code', name: 'as_oracle_code' }, 
             { data: 'as_name',  name: 'as_name' , orderable: false}, 
             { data: 'hr_unit_name',  name: 'hr_unit_name' , orderable: false}, 
             { data: 'leave_type', name: 'leave_type' , orderable: false}, 

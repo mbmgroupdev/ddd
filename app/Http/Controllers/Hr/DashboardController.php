@@ -34,6 +34,14 @@ class DashboardController extends Controller
             return cache_att_mbm();
         });
 
+        $att_mfw =  Cache::remember('att_mfw', 10000, function () {
+            return cache_att_mfw();
+        });
+
+        $att_mbm2 =  Cache::remember('att_mbm2', 10000, function () {
+            return cache_att_mbm2();
+        });
+
         $att_aql =  Cache::remember('att_aql', 10000, function () {
             return cache_att_aql();
         });
@@ -50,11 +58,15 @@ class DashboardController extends Controller
             $att_data['mbm'][$thisday] = $att_mbm[$thisday]??0;
             $att_data['ceil'][$thisday] = $att_ceil[$thisday]??0;
             $att_data['aql'][$thisday] = $att_aql[$thisday]??0;
+            $att_data['mfw'][$thisday] = $att_mfw[$thisday]??0;
+            $att_data['mbm2'][$thisday] = $att_mbm2[$thisday]??0;
             $now = $now->subDay();
         }
         $att_data['mbm'] = array_reverse($att_data['mbm']);
         $att_data['ceil'] = array_reverse($att_data['ceil']);
         $att_data['aql'] = array_reverse($att_data['aql']);
+        $att_data['mbm2'] = array_reverse($att_data['mbm2']);
+        $att_data['mfw'] = array_reverse($att_data['mfw']);
         
         return $att_data;
         

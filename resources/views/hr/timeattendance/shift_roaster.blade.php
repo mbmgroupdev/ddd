@@ -141,6 +141,7 @@
                              <th>Id</th>
                              <th>Name</th>
                              <th>Associate Id</th>
+                             <th>Oracle ID</th>
                              <th>Designation</th>
                              <th>Line</th>
                              <th>Floor</th>
@@ -283,7 +284,6 @@
              },
              error: function(reject)
              {
-               console.log(reject);
              }
            });
         });
@@ -294,7 +294,7 @@
         });
 
 
-
+        
 
         $('#shiftRoasterBtn').on('click', function(e) {
             e.preventDefault();
@@ -307,18 +307,15 @@
               var selectable = []; 
               var dropdownList = {};
               var td = 0;
-              var datatable = $('#dataTablesShift').DataTable({
+              var exportColName = ["","Name","Assoiate Id","Oracle ID","Desgnation","Line","Floor","Day 1","Day 2","Day 3","Day 4","Day 5","Day 6","Day 7","Day 8","Day 9","Day 10","Day 11","Day 12","Day 13","Day 14","Day 15","Day 16","Day 17","Day 18","Day 19","Day 20","Day 21","Day 22","Day 23","Day 24","Day 25","Day 26","Day 27","Day 28","Day 29","Day 30","Day 31"];
+              var exportCol = [1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36];
+              var dt = $('#dataTablesShift').DataTable({
                   order: [], //reset auto order
                   lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
                   processing: true,
                   responsive: false,
                   serverSide: true,
-                  cache: false,/*
-                  language: {
-                    processing: function(){
-                        $('.app-loader').html();
-                    },
-                  },*/
+                  cache: false,
                   scroller: {
                     loadingIndicator: false
                   },
@@ -354,23 +351,42 @@
                     {
                       extend: 'csv',
                       className: 'btn-sm btn-success',
-                      exportOptions: {
-                        columns: ':visible'
-                      }
+                      eportOptions: {
+                            columns: exportCol,
+                            format: {
+                                header: function ( data, columnIdx ) {
+                                    return exportColName[columnIdx];
+                                }
+                            }
+                        },
+                       "action": allExport,
+                       messageTop: ''
                     },
                     {
                       extend: 'excel',
                       className: 'btn-sm btn-warning',
-                      exportOptions: {
-                        columns: ':visible'
-                      }
+                      eportOptions: {
+                            columns: exportCol,
+                            format: {
+                                header: function ( data, columnIdx ) {
+                                    return exportColName[columnIdx];
+                                }
+                            }
+                        },
+                       "action": allExport
                     },
                     {
                       extend: 'pdf',
                       className: 'btn-sm btn-primary',
-                      exportOptions: {
-                        columns: ':visible'
-                      }
+                      eportOptions: {
+                            columns: exportCol,
+                            format: {
+                                header: function ( data, columnIdx ) {
+                                    return exportColName[columnIdx];
+                                }
+                            }
+                        },
+                       "action": allExport
                     }
                   ],
 
@@ -378,6 +394,7 @@
                     { data: 'DT_RowIndex', name: 'DT_RowIndex' },
                     { data: 'name', name: 'name' },
                     { data: 'associate', name: 'associate' },
+                    { data: 'as_oracle_code', name: 'as_oracle_code' },
                     { data: 'designation', name: 'designation' },
                     { data: 'line', name: 'line' },
                     { data: 'floor', name: 'floor' },

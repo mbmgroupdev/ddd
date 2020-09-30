@@ -247,7 +247,7 @@ if(!function_exists('emp_remain_leave_check')){
                 ->first();
 
             $casual = 10-$leaves->casual;
-            if($request->sel_days < $casual){
+            if($request->sel_days <= $casual){
                 $statement['stat'] = "true";
             }else{
                 $statement['msg'] = $hello.' '.$casual.' day(s) of Casual Leave';
@@ -269,7 +269,7 @@ if(!function_exists('emp_remain_leave_check')){
                 ->first();
 
             $sick = 14-$leaves->sick;
-            if($request->sel_days < $sick){
+            if($request->sel_days <= $sick){
                 $statement['stat'] = "true";
             }else{
                 $statement['msg'] = $hello.' '.$sick.' day(s) of Sick(14) Leave';
@@ -407,6 +407,8 @@ if(!function_exists('get_employee_by_id'))
                 'u.hr_unit_name',
                 'u.hr_unit_short_name',
                 'u.hr_unit_name_bn',
+                'u.hr_unit_address',
+                'u.hr_unit_address_bn',
                 'f.hr_floor_name',
                 'f.hr_floor_name_bn',
                 'l.hr_line_name',
@@ -611,6 +613,8 @@ if(!function_exists('cache_att_all')){
         Cache::put('att_mbm', cache_att_mbm(), 1000000);
         Cache::put('att_aql', cache_att_aql(), 1000000);
         Cache::put('att_ceil', cache_att_ceil(), 1000000);
+        Cache::put('att_mbm2', cache_att_mbm2(), 1000000);
+        Cache::put('att_mfw', cache_att_mfw(), 1000000);
     }
 }
 
@@ -646,6 +650,38 @@ if(!function_exists('cache_att_mbm')){
         /*->whereMonth('m.in_date','12')
         ->whereYear('m.in_date','2019')*/
         ->where('b.as_unit_id', 1)
+        ->groupBy('m.in_date')
+        ->pluck('present','m.in_date');        
+    }
+}
+
+if(!function_exists('cache_att_mbm2')){
+    function cache_att_mbm2()
+    {
+        return DB::table('hr_attendance_mbm as m')
+        ->selectRaw('count(*) as present, m.in_date')
+        ->whereMonth('m.in_date',date('m'))
+        ->whereYear('m.in_date',date('Y'))
+        ->leftJoin('hr_as_basic_info as b','b.as_id','m.as_id')
+        /*->whereMonth('m.in_date','12')
+        ->whereYear('m.in_date','2019')*/
+        ->where('b.as_unit_id', 5)
+        ->groupBy('m.in_date')
+        ->pluck('present','m.in_date');        
+    }
+}
+
+if(!function_exists('cache_att_mfw')){
+    function cache_att_mfw()
+    {
+        return DB::table('hr_attendance_mbm as m')
+        ->selectRaw('count(*) as present, m.in_date')
+        ->whereMonth('m.in_date',date('m'))
+        ->whereYear('m.in_date',date('Y'))
+        ->leftJoin('hr_as_basic_info as b','b.as_id','m.as_id')
+        /*->whereMonth('m.in_date','12')
+        ->whereYear('m.in_date','2019')*/
+        ->where('b.as_unit_id', 4)
         ->groupBy('m.in_date')
         ->pluck('present','m.in_date');        
     }
@@ -937,5 +973,7 @@ function numberToTimeClockFormat($number){
     }
     return $hour[0].':'.$hour[1];
 }
+
+
 
 
