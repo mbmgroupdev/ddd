@@ -1,3 +1,12 @@
+2020-09-29 19:06:10 "20F025017D" Unit: MBM GARMENTS LTD(UNIT 1). New Shift: Day Head Office Created Successfully. 62
+2020-09-29 19:05:20 "20F025017D" Unit: MBM FASHION WEAR LTD. New Shift: Day Head Office Created Successfully. 61
+2020-09-29 18:34:21 "20F025017D" Unit: MBM GARMENTS LTD. New Shift: Day Head Office Created Successfully. 60
+2020-09-29 10:51:02 "20F025017D" Location Entry Saved 14
+2020-09-29 10:33:23 "20F025017D" Location Entry Saved 13
+2020-09-28 17:59:08 "20F025017D" MBM GARMENTS LTD. Shift Successfully updated 53
+2020-09-28 16:13:24 "20F025017D" Successfully Updated Holiday Roster 04,11,18,24
+2020-09-28 16:07:42 "20F025017D" Successfully Updated Holiday Roster 07,14,21,29
+2020-09-28 09:50:11 "20F025017D" Location Changed for 9071 9
 2020-09-26 17:04:03 "17F005001B" Education Information Saved 2642
 2020-09-26 16:52:27 "17F005001B" Education Information Saved 2641
 2020-09-26 16:35:32 "17F005001B" Employee Data Updated 382

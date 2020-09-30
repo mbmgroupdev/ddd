@@ -52,7 +52,7 @@ class ProcessAttendanceInOutTime implements ShouldQueue
         //punch_in punch out
 
         if($getEmployee != null && $getEmployee->shift != null){
-            $today = Carbon::parse($getEmpAtt->in_time)->format('Y-m-d');
+            $today = Carbon::parse($getEmpAtt->in_date)->format('Y-m-d');
             $year = Carbon::parse($getEmpAtt->in_time)->format('Y');
             $month = Carbon::parse($getEmpAtt->in_time)->format('m');
             //check absent table if exists then delete

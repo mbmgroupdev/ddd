@@ -13,6 +13,13 @@
         .fc-widget-content{
             height: auto !important;
         }
+        .fc-bgevent {
+            background: #0db5c8 !important;
+            color: #fff !important;
+        }
+        .fc-bgevent, .fc-highlight {
+            opacity: .7 !important;
+        }
     </style>
     <link rel="stylesheet" href="{{ asset('assets/css/fullcalendar.min.css') }}">
 @endpush
@@ -174,6 +181,12 @@
                     </div>
                     <div class="col-sm-6 pt-3">
                         <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group has-float-label has-required select-search-group">
+                                    {{ Form::select('associate', [Request::get('associate') => Request::get('associate')], Request::get('associate'), ['placeholder'=>'Select Associate\'s ID', 'id'=>'associate', 'class'=> 'associates no-select col-xs-12','style']) }}
+                                    <label  for="associate"> Associate's ID </label>
+                                </div>
+                            </div>
                             <div class="col-sm-6">
                                 <div class="form-group has-required has-float-label select-search-group">
                                     <select class="form-control" id="targetType" name="type" required>
@@ -433,7 +446,9 @@ $(document).ready(function(){
                 // checkedIds.push($(this).data('id'));
             }
         });
-        if(checkedBoxes.length === 0){
+        var employeeId = $('#associate').val();
+        
+        if(checkedBoxes.length === 0 && employeeId === null){
             msg = "Please Select Employee At Least One";
             flag = 1;
         }
@@ -445,7 +460,11 @@ $(document).ready(function(){
             msg = "Please Select Action Date On The Calendar";
             flag = 1;
         }
-
+        if(employeeId !== ''){
+            checkedBoxes = [];
+            checkedBoxes[0] = employeeId;
+        }
+        // console.log(checkedBoxes);
         if(flag === 0){
             $(".app-loader").show();
             $.ajax({
@@ -471,10 +490,16 @@ $(document).ready(function(){
                         $("#assignDates").val('');
                         totalempcount = 0;
                         // Clear all events
-                        calendar.fullCalendar( 'removeEvents', function(e){
+                        
+                        calendar.fullCalendar('removeEvents', function(eventObject) {
+                            if(eventObject.id !== undefined){
+                                removeEventCalendar(eventObject);
+                                
+                            }
                             return true;
                         });
                         loadEmployeeSearchWise();
+                        window.location.href='{{ url("/hr/operation/holiday-roster") }}';
                     }
                     
                     setTimeout(function(){
@@ -493,7 +518,11 @@ $(document).ready(function(){
         }
 
     });
-
+    function removeEventCalendar(event) {
+        console.log(event);
+        $('#event-calendar').fullCalendar('removeEvents', event.id);
+        $("#assignDates").val('');
+    }
     /// Target & Current Shift
 
     var unit= $("#unit_shift");
@@ -606,6 +635,49 @@ $(document).ready(function(){
     });
 
 });
+function formatState (state) {
+ //console.log(state.element);
+    if (!state.id) {
+        return state.text;
+    }
+    var $state = $(
+        '<span><img /> <span></span></span>'
+    );
+
+    var targetName = state.text;
+    $state.find("span").text(targetName);
+    return $state;
+};
+$('select.associates').select2({
+    templateSelection:formatState,
+    placeholder: 'Select Associate\'s ID',
+    ajax: {
+        url: '{{ url("hr/associate-search") }}',
+        dataType: 'json',
+        delay: 250,
+        data: function (params) {
+            return {
+                keyword: params.term
+            };
+        },
+        processResults: function (data) {
+            return {
+                results:  $.map(data, function (item) {
+                    var oCode = '';
+                    if(item.as_oracle_code !== null){
+                        oCode = item.as_oracle_code + ' - ';
+                    }
+                    return {
+                        text: oCode + item.associate_name,
+                        id: item.associate_id,
+                        name: item.associate_name
+                    }
+                })
+            };
+      },
+      cache: true
+    }
+});
 
 $(document).ready(function() {
     var i = 0;
@@ -645,7 +717,7 @@ $(document).ready(function() {
         },
         selectOverlap: function(event) {
             var selectDate = event.selectDate;
-            // console.log(selectDate);
+            // console.log(event);
             subArrayDate.splice(subArrayDate.indexOf(selectDate), 1);
             // console.log(subArrayDate);
             $('#event-calendar').fullCalendar('removeEvents', event.id);

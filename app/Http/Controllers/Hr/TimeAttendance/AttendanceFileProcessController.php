@@ -39,14 +39,17 @@ class AttendanceFileProcessController extends Controller
             $dataResult = explode(PHP_EOL, $fileData);
             $checkData = json_encode($dataResult);
             if(empty($checkData)){
-                return back()->with('error', 'There is error in your file');
+                toastr()->error('There is error in your file');
+                return back();
             }
             $dataChunk = array_chunk($dataResult, 50);
             $data['arrayDataCount'] = count($dataResult);
             $data['chunkValues'] = $dataChunk;
             return view('hr.timeattendance.att_status', $data);
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Something Error');
+            $bug = $e->getMessage();
+            toastr()->error($bug);
+            return redirect()->back();
         }
     }
 
