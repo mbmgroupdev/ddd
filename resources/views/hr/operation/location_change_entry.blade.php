@@ -27,7 +27,7 @@
                         <div class="col-sm-3">
                             <div class="form-group has-required has-float-label select-search-group">
                                 {{ Form::select('employee_id', [], null, ['placeholder'=>'Select Associate\'s ID', 'id'=>'employee_id', 'class'=> 'associates no-select form-control', 'required'=>'required']) }}  
-                                <label for="associate_id"> Associate's ID </label>
+                                <label for="employee_id"> Associate's ID </label>
                             </div> 
 
                             
@@ -42,7 +42,7 @@
                                         <option value="">No Data</option>
                                     @endif
                                 </select>
-                                <label> Requested Location </label>
+                                <label for="requested_location"> Requested Location </label>
                             </div> 
                             <div class="form-group has-required has-float-label select-search-group">
                                 <select class="col-xs-12 type" id="type" name="type" required="required">
@@ -51,12 +51,12 @@
                                     <option value="2">1st Half</option>
                                     <option value="3">2nd Half</option>
                                 </select>
-                                <label for="floor_id">Type </label>
+                                <label for="type">Type </label>
                             </div> 
                             
                             <div class="form-group has-float-label">
-                                <textarea type="text" name="comment" class="form-control " ></textarea>
-                                <label> Comment </label>
+                                <textarea type="text" name="comment" class="form-control " id="comment"></textarea>
+                                <label for="comment"> Comment </label>
                             </div>
                             <div class="form-group">
                                 <button class="btn btn-primary" type="submit">
@@ -69,19 +69,19 @@
                         <div class="col-sm-3">  
                             <div class="form-group has-float-label">
                                 <input name="previous_unit" type="text" id="unit" class="form-control" readonly>
-                                <label> Unit </label>
+                                <label for="unit"> Unit </label>
                             </div> 
                             <div class="form-group has-float-label">
                                 <input type="text" id="requested_place" name="requested_place" class="form-control" readonly placeholder="Enter outside location">
-                                <label> Requested Place </label>
+                                <label for="requested_place"> Requested Place </label>
                             </div> 
                             <div class="form-group has-float-label">
                                 <input type="date" name="from_date" id="start_date" class="datetimepicker form-control " placeholder="Start Date" required="required">
-                                <label for="shift_id">From Date </label>
+                                <label for="start_date">From Date </label>
                             </div>
                             <div class="form-group has-float-label">
                                 <input type="date" name="to_date" id="end_date"  class="datetimepicker form-control" placeholder="End Date" required="required">
-                                <label for="shift_id">To Date </label>
+                                <label for="end_date">To Date </label>
                             </div> 
                             
                         </div>

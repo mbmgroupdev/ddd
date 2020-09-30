@@ -392,6 +392,7 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 	Route::post('hr/shift_roaster/save_roaster', 'Hr\ShiftRoaster\ShiftRoasterController@saveRoaster')->middleware(['permission:Holiday Roster']);
 	Route::get('hr/shift_roaster/roaster_view_data', 'Hr\ShiftRoaster\ShiftRoasterController@getRoasterData');
 	Route::get('hr/shift_roaster/roaster_save_changes', 'Hr\ShiftRoaster\ShiftRoasterController@roasterSaveChanges');
+	Route::get('hr/shift_roaster/roaster_updated_changes', 'Hr\ShiftRoaster\ShiftRoasterController@roasterUpdatedChanges');
 	//Leave approval for worker
 	Route::get('hr/timeattendance/leave-entry',  'Hr\TimeAttendance\LeaveWorkerController@showForm')->middleware(['permission:Manage Leave']);
 	
@@ -822,9 +823,9 @@ Route::get('hr/payroll/salary', 'Hr\Payroll\SalaryController@view');
 
 
 	//Shift roaster define...
-	Route::get('hr/operation/shift_roaster_define', 'Hr\Setup\ShiftRoasterDefineCOntroller@shiftRoasterDefine')->middleware(['permission:Sefine Shift Roster']);
+	Route::get('hr/operation/shift_roaster_define', 'Hr\Setup\ShiftRoasterDefineCOntroller@shiftRoasterDefine')->middleware(['permission:Define Shift Roster']);
 	Route::get('hr/operation/get_associate_by_type_unit_shift_roaster', 'Hr\Setup\ShiftRoasterDefineCOntroller@getAssociateByTypeUnitShiftRoaster');
-	Route::post('hr/operation/shift_roaster_status_save', 'Hr\Setup\ShiftRoasterDefineCOntroller@shiftRoasterStatusSave')->middleware(['permission:Sefine Shift Roster']);
+	Route::post('hr/operation/shift_roaster_status_save', 'Hr\Setup\ShiftRoasterDefineCOntroller@shiftRoasterStatusSave')->middleware(['permission:Define Shift Roster']);
 
 	//Multiple Employee Shift Assign
 	Route::get('hr/operation/multiple_emp_shift_assign', 'Hr\Operation\MultiEmpShiftAssignController@index')->middleware(['permission:Employee Shift Assign']);

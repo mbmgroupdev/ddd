@@ -226,7 +226,7 @@
 
                                                     @endif
                                                     @if($value['outside'] != null)
-                                                    <span style="height: auto;float:right;cursor:pointer;" class="label label-success pull-right" data-tooltip="{{$value['outside_msg']}}" data-tooltip-location="top">{{$value['outside']}}</span>
+                                                    <span style="height: auto;float:right;cursor:pointer;" class="label label-success pull-right" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{$value['outside_msg']}}" >{{$value['outside']}}</span>
                                                     @endif
                                                     </td>
                                                     <td>{{ $value['floor'] }}</td>

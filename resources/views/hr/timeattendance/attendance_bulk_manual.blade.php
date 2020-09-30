@@ -98,6 +98,7 @@
                                     <tr>
                                         <th style="width:50%">
                                            <p style="margin:0;padding:4px 10px"><strong>ID </strong> # {{ $info->associate_id }}</p>
+                                           <p style="margin:0;padding:4px 10px"><strong>Oracle ID </strong> # {{ $info->as_oracle_code }}</p>
                                            <p style="margin:0;padding:4px 10px"><strong>Name </strong>: {{ $info->as_name }}</p>
                                            <p style="margin:0;padding:4px 10px"><strong>DOJ </strong>: {{ date("d-m-Y", strtotime($info->as_doj)) }}</p>
                                         </th>
