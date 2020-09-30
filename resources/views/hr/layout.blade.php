@@ -13,13 +13,13 @@
     
 
     <!-- Styles -->
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('assets/css/all.css') }}">
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet" media='screen,print'>
+    <link rel="stylesheet" href="{{ asset('assets/css/all.css') }}" media='screen,print'>
     @stack('css')
     {{-- Custom CSS --}}
-    <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}" media='screen,print'>
     <!-- Responsive CSS -->
-    <link rel="stylesheet" href="{{ asset('assets/css/responsive.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/responsive.css') }}" media='screen,print'>
     <script src="{{ asset('js/app.js') }}"></script>
     <script>
         var count = 0;

@@ -1,22 +1,34 @@
 <button type="button" onclick="printMe('payment_slip_data')" class="btn btn-warning" title="Print">
     <i class="fa fa-print"></i> 
 </button>
-<div class="col-xs-12 no-padding-left" id="payment_slip_data" style="font-size: 9px;">
-    <div class="tinyMceLetter" name="job_application" id="job_application" style="font-size: 9px;">
+<div class="col-xs-12 no-padding-left" id="payment_slip_data" style="font-size: 12px;">
+    <div class="tinyMceLetter" name="job_application" id="job_application" style="font-size: 12px;">
         <?php
         date_default_timezone_set('Asia/Dhaka');
         $en = array('0','1','2','3','4','5','6','7','8','9');
         $bn = array('০', '১', '২', '৩',  '৪', '৫', '৬', '৭', '৮', '৯');
-        $date = str_replace($en, $bn, date('Y-m-d H:i:s'));
+        $date = str_replace($en, $bn, date('d-m-Y H:i:s'));
         ?>
         <p>
-        <center><h3>{{$employee->hr_unit_name_bn??''}}</h3></center>
+        <center><h2>{{$employee->hr_unit_name_bn??''}}</h2></center>
         <center>{{ (!empty($employee->hr_unit_address_bn)?$employee->hr_unit_address_bn:null) }}</center>
+        <style type="text/css">
+            table{
+                font-size: 12px;
+            }
+            .table-bordered {
+                border-collapse: collapse;
+            }
+            .table-bordered th,
+            .table-bordered td {
+              border: 1px solid #000 !important;
+            }
+        </style>
         <hr>
         <table border="0" style="width: 100%;">
             <tr>
-                <th colspan="2" style="width:70%" style="text-align: left;">মাতৃত্ব কল্যাণ সুবিধার হিসাব - </th>
-                <th style="width:30%">তারিখঃ {{str_replace($en, $bn, date('Y-m-d'))}}</th>
+                <th colspan="2" style="text-align: left;">মাতৃত্ব কল্যাণ সুবিধার হিসাব - </th>
+                <th style="text-align: right;">তারিখঃ {{str_replace($en, $bn, date('d-m-Y'))}}</th>
             </tr>
             <tr>
                 <td>কর্মকর্তা/করমচারীর নাম </td>
@@ -41,7 +53,7 @@
             </tr>
             <tr>
                 <td>যোগদানের তারিখ</td>
-                <td>{{str_replace($en, $bn, $employee->as_doj->format('Y-m-d'))}}</td>
+                <td>{{str_replace($en, $bn, $employee->as_doj->format('d-m-Y'))}}</td>
                 <td></td>
             </tr>
             <tr>
@@ -51,13 +63,13 @@
             </tr>
             <tr>
                 <td>সন্তান প্রসবের সম্ভাব্য তারিখ</td>
-                <td colspan="2">{{str_replace($en, $bn, $leave->leave_from->format('Y-m-d'))}} তারিখ থেকে {{str_replace($en, $bn, $leave->leave_to->format('Y-m-d'))}} পর্যন্ত</td>
+                <td colspan="2">{{str_replace($en, $bn, $leave->leave_from->format('d-m-Y'))}} তারিখ থেকে {{str_replace($en, $bn, $leave->leave_to->format('d-m-Y'))}} পর্যন্ত</td>
             </tr>
             
         </table>
         <br>
         <strong><u>বিগত ০৩ (তিন) মাসের প্রাপ্ত মজুরীর বিবরনঃ</u></strong>
-        <table border="1" style=" text-align: center;" width="100%" cellpadding="3" >
+        <table class="table-bordered" style=" text-align: center;" width="100%" cellpadding="3" >
             <tr>
                 <th rowspan="2">মাসের নাম</th>
                 <th colspan="3">হাজিরা</th>
@@ -131,7 +143,7 @@
             </strong>
             <table style="border: none; " width="100%" cellpadding="3" width="100%">
                 <tr>
-                    <th style="width: 30%;">০১ (এক) দিনের গড় মজুরী</th>
+                    <td style="width: 30%;">০১ (এক) দিনের গড় মজুরী</td>
                     <td>= তিন মাসের মোট প্রাপ্ত টাকা / (ভাগ) তিন মাসের মোট উপস্থিতি</td>
                 </tr>
                 <tr>
@@ -236,6 +248,7 @@
                 </td>
                 <td style="text-align: center;">
                     <br><br><br>
+
                     হিসাববিভাগ 
                 </td>
                 <td style="text-align: center;">

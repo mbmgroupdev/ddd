@@ -111,6 +111,10 @@
                                     <input type="hidden" name="hr_maternity_leave_id" value="{{$leave->id}}">
                                     <div class="row">
                                         <div class="col-sm-4">
+                                            <div class="form-group  has-float-label ">
+                                                <input id="lmp" type="date" name="checkup_date" class="form-control" value="{{$leave->medical->checkup_date??null}}" >
+                                                <label for="lmp">Checkup Date</label>
+                                            </div>
                                             <div class="form-group has-required has-float-label  select-search-group">
                                                 @php 
                                                     $bloodgroups = array(
@@ -139,7 +143,7 @@
                                                 <label for="lmp">LMP</label>
                                             </div>
                                             <div class="form-group has-required  has-float-label ">
-                                                <input id="edd" type="date" name="edd" class="form-control" placeholder="Enter Anemia Problem"   min="{{date('Y-m-d')}}" required value="{{$leave->medical->edd??null}}">
+                                                <input id="edd" type="date" name="edd" class="form-control" placeholder="Enter Anemia Problem"   min="{{date('Y-m-d')}}" required value="{{$leave->medical->edd??$leave->edd}}">
                                                 <label for="edd">EDD</label>
                                             </div>
 
@@ -395,7 +399,7 @@
                                         <div class="row mt-3">
                                             <div class="col-sm-4">
                                                 <div class="form-group  has-float-label has-required">
-                                                    <input type="date" id="checkup_date" type="checkup_date" name="checkup_date" class="form-control" min="{{date('Y-m-d')}}"   value="{{$next_checkup}}" required> 
+                                                    <input type="date" id="checkup_date" type="checkup_date" name="checkup_date" class="form-control"   value="{{$next_checkup}}" required> 
                                                     <label for="checkup_date">Checkup Date</label>
                                                 </div>
                                                 <div class="form-group  has-float-label has-required">
@@ -451,7 +455,7 @@
                                                     <label for="others">Others</label>
                                                 </div>
                                                 <div class="form-group  has-float-label">
-                                                    <input type="date" id="next_checkup_date" type="next_checkup_date" name="next_checkup_date" class="form-control" min="{{date('Y-m-d')}}"  value="{{\Carbon\Carbon::create($next_checkup)->addMonths(3)->format('Y-m-d')}}" >
+                                                    <input type="date" id="next_checkup_date" type="next_checkup_date" name="next_checkup_date" class="form-control"   value="{{\Carbon\Carbon::create($next_checkup)->addMonths(3)->format('Y-m-d')}}" >
                                                     <label for="next_checkup_date">Next Checkup</label>
                                                 </div>
                                                 <div class="form-group  has-float-label ">

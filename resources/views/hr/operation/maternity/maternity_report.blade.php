@@ -18,102 +18,172 @@
                 </li>
             </ul>
         </div>
+        <form class="needs-validation" novalidate role="form" id="activityReport" method="get" action="#"> 
+            <div class="panel">
+                <div class="panel-body pb-0">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="form-group has-float-label has-required">
+                                <input type="month" class="form-control" id="present_date" name="month" placeholder="Y-m" required="required" value="{{ $month }}" autocomplete="off" />
+                                <label for="present_date">Month</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                              <button class="btn btn-primary" type="submit" ><i class="fa fa-save"></i> Generate</button>
+                        </div>   
+                    </div>
+                </div>
+            </div>
+        </form>
+        @php
+            $unit = unit_by_id();
+            $line = line_by_id();
+            $floor = floor_by_id();
+            $department = department_by_id();
+            $designation = designation_by_id();
+            $section = section_by_id();
+            $subSection = subSection_by_id();
+            $area = area_by_id();
+        @endphp
         <div class="panel">
             <div class="panel-body">
-                <table>
-                    <tr>
-                        <th>Sl</th>
-                        <th>Photo</th>
-                        <th>Associate ID</th>
-                        <th>Name & Phone</th>
-                        <th>Designation</th>
-                        <th>Department</th>     
-                        <th>Floor</th>
-                        <th>Line</th>
-                        <th>Action</th>
-                    </tr>
-                    <tr>
-                        <td>{{ ++$i }}</td>
-                        <td><img src="{{ $employee->as_pic }}" class='small-image' onError='this.onerror=null;this.src="/assets/images/avatars/avatar2.png"' style="height: 40px; width: auto;"></td>
-                        <td>{{ $employee->associate_id }}</td>
-                        <td>
-                            <b>{{ $employee->as_name }}</b>
-                            <p>{{ $employee->as_contact }}</p>
-                        </td>
-                        <td>{{ $designation[$employee->as_designation_id]['hr_designation_name']??'' }}</td>
-                        <td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
-                        <td>{{ $floor[$employee->as_floor_id]['hr_floor_name']??'' }}</td>
-                        <td>{{ $line[$employee->as_line_id]['hr_line_name']??'' }}</td>
-                        <td>
-                            <a class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" rel='tooltip' data-tooltip-location='top' data-tooltip='Yearly Activity Report' ><i class="fa fa-eye"></i></a>
-                        </td>
-                    </tr>
+                <div class="page-header-summery">
+                    
+                    <h2>Maternity Leave (Approximate) </h2>
+                    <h4>Month: <b>{{ \Carbon\Carbon::createFromFormat("Y-m",$month)->format('F, Y') }}</b></h4>
+                    <h4>Total Employee: <b>{{count($appoxleave)}}</b></h4>
+                    <h4>Total Amount: <b>0</b></h4>
+                    <br>
+                </div>
+
+                <table class="table table-bordered table-hover table-head">
+                    <thead>
+                        <tr>
+                            <th>Sl</th>
+                            <th>Photo</th>
+                            <th>Associate ID</th>
+                            <th>Name & Phone</th>
+                            <th>Unit</th>
+                            <th>Designation</th>
+                            <th>Department</th>
+                            <th>Leave From</th>
+                            <th>EDD</th>
+                            <th>Payment (apprx.)</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @php $payment = 0; @endphp
+                        @if(count($appoxleave) > 0)
+                            @foreach($appoxleave as $key => $leave)
+                            @php $payment += 0; @endphp
+                            <tr>
+                                <td>{{$key+1}}</td>
+                                <td><img src="{{ emp_profile_picture($leave) }}" class='small-image' style="height: 40px; width: auto;"></td>
+                                <td><a href='{{ url("hr/recruitment/employee/show/".$leave->associate_id) }}' target="_blank">{{ $leave->associate_id }}</a></td>
+                                <td>
+                                    <b>{{ $leave->as_name }}</b>
+                                    <p>{{ $leave->as_contact }}</p>
+                                </td>
+                                <td>{{ $unit[$leave->as_unit_id]['hr_unit_name']??'' }}</td>
+                                <td>{{ $designation[$leave->as_designation_id]['hr_designation_name']??'' }}</td>
+                                <td>{{ $department[$leave->as_department_id]['hr_department_name']??'' }}</td>
+                                <td>{{ $leave->leave_from?? '' }}</td>
+                                <td>{{ $leave->edd?? '' }}</td>
+                                <td>{{ $leave->edd?? '' }}</td>
+                                <td>
+                                    <a href='{{ url("hr/operation/maternity-leave/".$leave->id) }}' target="_blank">View</a>
+                                </td>
+                            </tr>
+                            @endforeach
+                            <tr>
+                                <td colspan="6"></td>
+                                <td>Total Employee</td>
+                                <td>{{count($appoxleave)}}</td>
+                                <td>Total Payment</td>
+                                <td>{{$payment}}</td>
+                                <td></td>
+                            </tr>
+                        @else
+                            <tr>
+                                <td colspan="11">No record found</td>
+                            </tr>
+                        @endif
+                    </tbody>
+                    
                 </table>
+                                
             </div>
         </div>
-        <div class="row">
-            <div class="col">
-              <div class="iq-card" id="result-section">
-                <div class="iq-card-header d-flex mb-0">
-                   <div class="iq-header-title w-100">
-                      <div class="row">
-                        <div class="col-3">
-                          <h4 class="card-title capitalize inline">
-                              <button class="btn btn-sm btn-primary hidden-print" onclick="printDiv('result-data')" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report"><i class="las la-print"></i> </button>
-                              
-                            </h4>
-                        </div>
-                        <div class="col-6 text-center">
-                          <div id="head-arrow">
-                            <h4 class="card-title capitalize inline">
-                              <a class="btn view prev_btn" data-toggle="tooltip" data-placement="top" title="" data-original-title="Previous Month" >
-                                <i class="las la-chevron-left"></i>
-                              </a>
-                              <b class="f-16" id="result-head"> </b>
-                              <a class="btn view next_btn" data-toggle="tooltip" data-placement="top" title="" data-original-title="Next Month" >
-                                <i class="las la-chevron-right"></i>
-                              </a>
-                            </h4>
-                          </div>
-                        </div>
-                        <div class="col-3">
-                          <div class="row">
-                            <div class="col-7 pr-0">
-                              <div class="format">
-                                <div class="form-group has-float-label select-search-group mb-0">
-                                    <?php
-                                        $type = ['as_unit_id'=>'N/A','as_line_id'=>'Line','as_floor_id'=>'Floor','as_department_id'=>'Department','as_designation_id'=>'Designation'];
-                                    ?>
-                                    {{ Form::select('report_group_select', $type, 'as_line_id', ['class'=>'form-control capitalize', 'id'=>'reportGroupHead']) }}
-                                    <label for="reportGroupHead">Report Format</label>
-                                </div>
-                              </div>
-                            </div>
-                            <div class="col-5 pl-0">
-                              <div class="text-right">
-                                <a class="btn view grid_view no-padding" data-toggle="tooltip" data-placement="top" title="" data-original-title="Summary Report View" id="1">
-                                  <i class="las la-th-large"></i>
-                                </a>
-                                <a class="btn view list_view no-padding" data-toggle="tooltip" data-placement="top" title="" data-original-title="Details Report View" id="0">
-                                  <i class="las la-list-ul"></i>
-                                </a>
-                                
-                              </div>
-                            </div>
-                          </div>
-                          
-                          
-                        </div>
-                      </div>
-                   </div>
-                </div>
-                <div class="iq-card-body no-padding">
-                  <div class="result-data" id="result-data">
+
+         <div class="panel">
+            <div class="panel-body">
+                <div class="page-header-summery">
                     
-                  </div>
+                    <h2>Maternity Leave End </h2>
+                    <h4>Month: <b>{{ \Carbon\Carbon::createFromFormat("Y-m",$month)->format('F, Y') }}</b></h4>
+                    <h4>Total Employee: <b>{{count($appoxbacklist)}}</b></h4>
+                    <h4>Total Amount: <b>{{round($appoxbacklist->sum('second_payment'),2)}}</b></h4>
+                    <br>
                 </div>
-             </div>
-              
+
+                <table class="table table-bordered table-hover table-head">
+                    <thead>
+                        <tr>
+                            <th>Sl</th>
+                            <th>Photo</th>
+                            <th>Associate ID</th>
+                            <th>Name & Phone</th>
+                            <th>Unit</th>
+                            <th>Designation</th>
+                            <th>Department</th>
+                            <th>Leave End</th>
+                            <th>EDD</th>
+                            <th>Payment</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @php $payment = 0; @endphp
+                        @if(count($appoxbacklist) > 0)
+                            @foreach($appoxbacklist as $key => $leave)
+                                @php $payment += $leave->second_payment; @endphp
+                            <tr>
+                                <td>{{$key+1}}</td>
+                                <td><img src="{{ emp_profile_picture($leave) }}" class='small-image' style="height: 40px; width: auto;"></td>
+                                <td><a href='{{ url("hr/recruitment/employee/show/".$leave->associate_id) }}' target="_blank">{{ $leave->associate_id }}</a></td>
+                                <td>
+                                    <b>{{ $leave->as_name }}</b>
+                                    <p>{{ $leave->as_contact }}</p>
+                                </td>
+                                <td>{{ $unit[$leave->as_unit_id]['hr_unit_name']??'' }}</td>
+                                <td>{{ $designation[$leave->as_designation_id]['hr_designation_name']??'' }}</td>
+                                <td>{{ $department[$leave->as_department_id]['hr_department_name']??'' }}</td>
+                                <td>{{ $leave->leave_to?? '' }}</td>
+                                <td>{{ $leave->edd?? '' }}</td>
+                                <td>{{ $leave->second_payment?? '' }}</td>
+                                <td>
+                                    <a href='{{ url("hr/operation/maternity-leave/".$leave->id) }}' target="_blank">View</a>
+                                </td>
+                            </tr>
+                            @endforeach
+                            <tr>
+                                <td colspan="6"></td>
+                                <td>Total Employee</td>
+                                <td>{{count($appoxbacklist)}}</td>
+                                <td>Total Payment</td>
+                                <td>{{$payment}}</td>
+                                <td></td>
+                            </tr>
+                        @else
+                            <tr>
+                                <td colspan="11">No record found</td>
+                            </tr>
+                        @endif
+                    </tbody>
+                    
+                </table>
+                                
             </div>
         </div>
     </div>

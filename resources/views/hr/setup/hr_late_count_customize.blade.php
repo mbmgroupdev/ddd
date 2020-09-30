@@ -1,5 +1,5 @@
 @extends('hr.layout')
-@section('title', '')
+@section('title', 'Late Count Customize')
 @section('main-content')
 @push('css')
 <style>
@@ -12,7 +12,6 @@
     table.dataTable { margin-top: 0px !important; }
 
     @media only screen and (max-width: 767px) and (min-width: 480px) {
-
         .select_div .select2 {width:330px !important;}
     }
 </style>
@@ -35,114 +34,75 @@ $lcc_single = $lateCountCustomize_single;
 				<li class="active"> Late Count Customize </li>
 			</ul>
 		</div>
-
-		<div class="page-content"> 
-            <?php $type='late_count_customize'; ?>
-            <div class="panel panel-info">
-                <div class="panel-heading page-headline-bar"><h5> Late Count Customize <a href="{{URL::to('hr/setup/late_count_default')}}" class="btn btn-info btn-xs" rel='tooltip' data-tooltip-location='top' data-tooltip='Late Count Default'><i class="fa fa-plus"></i> Default</a>
-                    <a>&nbsp;</a>
-                    <a href="{{URL::to('hr/setup/shift')}}" class="btn btn-warning btn-xs" rel='tooltip' data-tooltip-location='top' data-tooltip='Add Shift'><i class="fa fa-plus"></i>  Shift</a></h5> </div>
-                <div class="panel-body" style="padding-bottom: 0; padding-top: 5px;">
-                    <div class="row">
-                        <!-- Display Erro/Success Message -->
-                        @include('inc/message')
-                        <div class="col-sm-8 col-sm-offset-2">
-                            <div class="panel panel-info" style="margin-bottom: 5px;">
-                                <div class="panel-body">
-                                    <!-- PAGE CONTENT BEGINS -->
-                                    @php
+        @include('inc/message')
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="panel">
+                    <div class="panel-body">
+                        @php
                                 // update form
-                                    if(!empty($lcc_single->id)) {
-                                        $url = url('hr/setup/update_late_count_customize/'.$lcc_single->id);
-                                    } else {
-                                // insert form
-                                        $url = url('hr/setup/save_late_count_customize');
-                                    }
-                                    @endphp
-                                    <form class="form-horizontal" role="form" method="post" action="{{ $url }}">
-                                        {{ csrf_field() }}
-                                        <div class="form-group required">
-                                            <label class="col-sm-3 control-label no-padding-right"> Unit Name </label>
-                                            <div class="col-sm-9">
-                                                <select name="hr_unit_id" class="form-control" id="unit_id" data-validation='required'>
-                                                    <option value="">Select Unit</option>
-                                                    @foreach($unit_list as $id=>$unit)
-                                                    <option value="{{ $id }}" {{Custom::sselected($lcc_single->hr_unit_id, $id)}}>{{ $unit }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>    
-                                        </div>
-
-                                        <div class="form-group required">
-                                            <label class="col-sm-3 control-label no-padding-right"> Shift </label>
-                                            <div class="col-sm-9">
-                                                <select name="hr_shift_name" class="form-control" id="shift_id" data-validation='required'>
-                                                    <option value="">Select Shift</option>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group required">
-                                            <label class="col-sm-3 col-xs-12 control-label no-padding-right"> From-To </label>
-
-                                            <div class="col-sm-9" style="padding: 0px;">
-                                                <div class="col-sm-6 col-xs-6" >
-                                                    <input type="text" name="date_from" id="date_from" class="form-control datepicker" id="date_from" value="{{ $lcc_single->date_from }}" data-validation='required'>
-                                                </div>
-                                                <div class="col-sm-6 col-xs-6">
-                                                    <input type="text" name="date_to" id="date_to" class="form-control datepicker" id="date_to" value="{{ $lcc_single->date_to }}" data-validation='required'>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group required">
-                                            <label class="col-sm-3 control-label no-padding-right"> Time </label>
-
-                                            <div class="col-sm-9">
-                                                <input type="text" name="time" class="form-control" id="time" value="{{ $lcc_single->time }}" data-validation='required'>
-                                            </div>  
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label class="col-sm-3 control-label no-padding-right"> Comment </label>
-                                            <div class="col-sm-9 col-xs-12">
-                                                <textarea name="comment" id="" cols="30" rows="5" class="form-control">{{ $lcc_single->comment }}</textarea>
-                                            </div> 
-                                        </div>
-
-                                        <div class="space-4"></div>
-                                        <div class="space-4"></div>
-
-
-                                        <div class="row">
-                                            <div class="{{ !empty($lcc_single->id)?'col-sm-offset-1 col-sm-10':'col-sm-offset-3 col-sm-6' }}">
-                                                @if(!empty($lcc_single->id))
-                                                <a href="{{ url('hr/setup/late_count_customize') }}" class="btn btn-danger btn-xs">
-                                                    <i class="ace-icon fa fa-ban bigger-110"></i> Cancel
-                                                </a>
-                                                @endif
-                                                &nbsp; &nbsp; &nbsp;
-                                                <button class="btn btn-success btn-xs" type="submit">
-                                                    <i class="ace-icon fa fa-check bigger-110"></i> {{ !empty($lcc_single->id)?'Update':'Submit' }}
-                                                </button>
-                                                &nbsp; &nbsp; &nbsp;
-                                                <button class="btn btn-xs" type="reset">
-                                                    <i class="ace-icon fa fa-undo bigger-110"></i> Reset
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <!-- /.row -->
-                                    </form>
-                                    <!-- PAGE CONTENT ENDS -->
-                                </div>
+                            if(!empty($lcc_single->id)) {
+                                $url = url('hr/setup/update_late_count_customize/'.$lcc_single->id);
+                            } else {
+                                $url = url('hr/setup/save_late_count_customize');
+                            }
+                        @endphp
+                        <form class="form-horizontal" role="form" method="post" action="{{ $url }}">
+                            @csrf
+                            <div class="form-group has-float-label has-required select-search-group">
+                                <select name="hr_unit_id" class="form-control" id="unit_id" required='required'>
+                                    <option value="">Select Unit</option>
+                                    @foreach($unit_list as $id=>$unit)
+                                    <option value="{{ $id }}" {{Custom::sselected($lcc_single->hr_unit_id, $id)}}>{{ $unit }}</option>
+                                    @endforeach
+                                </select> 
+                                <label for="hr_unit_id"> Unit Name </label>
                             </div>
-                        </div>
-                    </div>
 
-                    <div class="row">    
-                        <div class="panel panel-info col-sm-12">
-                          <div class="panel-body table-responsive">
-                            <table id="dataTables" class="table table-bordered table-striped" style="display:block;overflow-x: auto;white-space: nowrap; width: 100%;">
+                            <div class="form-group has-float-label has-required select-search-group">
+                                <select name="hr_shift_name" class="form-control" id="shift_id" required='required'>
+                                    <option value="">Select Shift</option>
+                                </select>
+                                <label for="hr_shift_name"> Shift </label>
+                            </div>
+
+                            <div class="form-group has-required has-float-label">
+                                <input type="date" name="date_from" id="date_from" class="form-control" id="date_from" value="{{ $lcc_single->date_from }}" required='required'>
+                                <label for="date_from"> Date From </label>
+                            </div>
+
+                            <div class="form-group has-required has-float-label">
+                                <input type="date" name="date_to" id="date_to" class="form-control" id="date_to" value="{{ $lcc_single->date_to }}" required='required'>
+                                <label for="date_to"> Date To </label>
+                            </div>
+
+                        
+
+                            <div class="form-group has-required has-float-label">
+                                <input type="text" name="time" class="form-control" id="time" value="{{ $lcc_single->time }}" required='required'> 
+                                <label for="time"> Time </label>
+                            </div>
+
+                            <div class="form-group has-required has-float-label">
+                                <label for="comment"> Comment </label>
+                                <textarea name="comment" id="comment" class="form-control">{{ $lcc_single->comment }}</textarea>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-success btn-xs" type="submit">
+                                    <i class="ace-icon fa fa-check bigger-110"></i> {{ !empty($lcc_single->id)?'Update':'Submit' }}
+                                </button>
+                            </div>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <?php $type='late_count_customize'; ?>
+                <div class="panel">
+                    <div class="panel-body">
+                        <table id="dataTables" class="table table-bordered table-striped" style="display:block;overflow-x: auto;white-space: nowrap; width: 100%;">
                                 <thead style="width: 100%;">
                                     <tr>
                                         <td width="20%">#Sl</td>
@@ -181,15 +141,12 @@ $lcc_single = $lateCountCustomize_single;
                                     </tr>
                                     @endforeach
                                 </tbody>
-                            </table>
-                        </div>
+                        </table>
                     </div>
                 </div>
             </div>
-            
         </div>
     </div><!-- /.page-content -->
-</div>
 </div>
 @push('js')
 <script>

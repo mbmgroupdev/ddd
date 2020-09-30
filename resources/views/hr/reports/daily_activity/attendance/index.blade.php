@@ -53,9 +53,6 @@
                 <div class="col-12">
                     <form class="" role="form" id="activityReport" method="get" action="#"> 
                         <div class="panel">
-                            {{-- <div class="panel-heading">
-                                <h6>Daily Attendance </h6>
-                            </div> --}}
                             <div class="panel-body pb-0">
                                 <div class="row">
                                     <div class="col-3">
@@ -176,9 +173,7 @@
                           </div>
                         </div>
                     </form>
-                    <!-- PAGE CONTENT ENDS -->
                 </div>
-                <!-- /.col -->
             </div>
             <div class="row">
                 <div class="col">

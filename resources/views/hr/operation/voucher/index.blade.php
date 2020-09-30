@@ -26,6 +26,23 @@
                                 {{ Form::select('associate', [Request::get('associate') => Request::get('associate')], Request::get('associate'), ['placeholder'=>'Select Associate\'s ID', 'id'=>'associate', 'class'=> 'associates employee ','style', 'required'=>'required']) }}
                                 <label  for="associate"> Associate's ID </label>
                             </div> 
+                            <div class="form-group has-float-label has-required select-search-group">
+                                @php 
+                                    $voucher_type = [
+                                        'Maternity Payment' => 'Maternity Payment',
+                                        'Partial Salary' => 'Partial Salary',
+                                        'Normal Voucher' => 'Normal Voucher'
+                                    ];
+                                @endphp
+                                {{ Form::select('type', $voucher_type, null , ['placeholder'=>'Select type', 'id'=>'type', 'class'=> 'types no-select col-xs-12','style', 'required'=>'required']) }}
+                                <label  for="type"> Select Voucher </label>
+                            </div>
+                            <div class="form-group has-required has-float-label">
+                                <input type="date" name="slary_date" class="form-control" id="slary_date">
+                                <label for="slary_date">Salary Last Date</label>
+                                
+                            </div>
+                            
                             <div class="form-group has-required has-float-label">
                                 <textarea id="description" class="form-control h-80" name="description" required placeholder="Enter Description"></textarea>
                                 <label for="description">Description</label>
@@ -35,16 +52,6 @@
                             </div>
                         </div>
                         <div class="col-sm-3">
-                            <div class="form-group has-float-label has-required select-search-group">
-                                @php 
-                                    $voucher_type = [
-                                        'Maternity Payment' => 'Maternity Payment',
-                                        'Partial Salary' => 'Partial Salary'
-                                    ];
-                                @endphp
-                                {{ Form::select('type', $voucher_type, null , ['placeholder'=>'Select type', 'id'=>'type', 'class'=> 'types no-select col-xs-12','style', 'required'=>'required']) }}
-                                <label  for="type"> Select Voucher </label>
-                            </div>
                             
                             <div class="form-group has-required has-float-label">
                                 <input id="amount" class="form-control" name="amount" required placeholder="Enter amount" />
@@ -74,7 +81,7 @@
                     </div>
                 </form>
 
-                <div id="voucher" class="text-center">
+                <div id="voucher">
                     
                 </div>
             </div>

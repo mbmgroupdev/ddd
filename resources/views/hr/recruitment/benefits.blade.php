@@ -199,6 +199,7 @@ $(document).ready(function(){
 
     function get_benefit(associate_id)
     {
+        $('.app-loader').show();
         $.ajax({
             url: '{{ url("hr/recruitment/get_benefit_by_id") }}',
             data: {
@@ -253,9 +254,12 @@ $(document).ready(function(){
                     $('#ben_transport').val(trans);
                     $('#ben_food').val(food);
                 }
+
+                $('.app-loader').hide();
             },
             error:function(xhr)
             {
+                $('.app-loader').hide();
                 $.notify('No previous salary','error');
             }
         });

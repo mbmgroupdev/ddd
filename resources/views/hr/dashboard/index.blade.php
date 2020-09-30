@@ -153,7 +153,7 @@
                 }],
                 yAxis: [{ // Primary yAxis
                     labels: {
-                        format: '{value} h',
+                        format: '{value} H',
                         style: {
                             color: Highcharts.getOptions().colors[1]
                         }
@@ -185,7 +185,7 @@
                     data: @php echo json_encode(array_values($ot_chart)); @endphp,
                     color: '#FC9F5B',
                     tooltip: {
-                        valueSuffix: 'h'
+                        valueSuffix: ' H'
                     }
                 }]
             });
@@ -250,6 +250,14 @@
                    name: 'MBM',
                    data: @php echo json_encode(array_values($att_chart['mbm'])); @endphp,
                    color: '#089bab'
+               }, {
+                   name: 'MBM2',
+                   data: @php echo json_encode(array_values($att_chart['mbm2'])); @endphp,
+                   color: '#5834eb'
+               }, {
+                   name: 'MFW',
+                   data: @php echo json_encode(array_values($att_chart['mfw'])); @endphp,
+                   color: '#242036'
                }, {
                    name: 'CEIL',
                    data: @php echo json_encode(array_values($att_chart['ceil'])); @endphp,

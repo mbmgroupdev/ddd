@@ -682,6 +682,7 @@ class ShiftRoasterController extends Controller
             $data = Employee::select([
                     'hr_as_basic_info.as_id',
                     'hr_as_basic_info.associate_id',
+                    'hr_as_basic_info.as_oracle_code',
                     'hr_as_basic_info.as_name',
                     'hr_as_basic_info.as_shift_id',
                     'hr_as_basic_info.shift_roaster_status',
@@ -741,6 +742,7 @@ class ShiftRoasterController extends Controller
             $data = DB::table('hr_shift_roaster as s')
                 ->select('emp.as_id',
                     'emp.associate_id',
+                    'emp.as_oracle_code',
                     'emp.as_name',
                     'emp.as_shift_id',
                     'emp.shift_roaster_status',
