@@ -96,18 +96,20 @@
 				</thead>
 				<tbody>
 					@foreach($data as $k=> $page)
-					<tr>
-						<td>{{$k}}</td>
-						<td style="color:#000;">{{$page['name']}}</td>
-						<td>{{ Custom::numberToTime($page['dayot']) }} </td>
-						<td>{{ Custom::numberToTime($page['dayot1']) }} </td>
-						<td>{{ Custom::numberToTime($page['dayot2']) }} </td>
-					</tr>
-					@php 
-						$totalOt+=$page['dayot'];
-						$totalOt1+=$page['dayot1'];
-						$totalOt2+=$page['dayot2'];
-					@endphp
+						@if($page['dayot'] >0 || $page['dayot1'] > 0 || $page['dayot'] > 0)
+						<tr>
+							<td>{{$k}}</td>
+							<td style="color:#000;">{{$page['name']}}</td>
+							<td>{{ Custom::numberToTime($page['dayot']) }} </td>
+							<td>{{ Custom::numberToTime($page['dayot1']) }} </td>
+							<td>{{ Custom::numberToTime($page['dayot2']) }} </td>
+						</tr>
+						@php 
+							$totalOt+=$page['dayot'];
+							$totalOt1+=$page['dayot1'];
+							$totalOt2+=$page['dayot2'];
+						@endphp
+						@endif
 					@endforeach
 					<tr>
 						<td colspan="2"  style="font-weight: bold;">Total</td>
@@ -131,35 +133,35 @@
 			</thead>
 			<tbody>
         		<tr>
-        			<td>1 Hour</td>
+        			<td><= 1 Hour</td>
         			<td>{{$data['1']}}</td>
         		</tr>
         		<tr>
-        			<td>2 Hour</td>
+        			<td><= 2 Hour</td>
         			<td>{{$data['2']}}</td>
         		</tr>
         		<tr>
-        			<td>3 Hour</td>
+        			<td><= 3 Hour</td>
         			<td>{{$data['3']}}</td>
         		</tr>	           	        		
         		<tr>
-        			<td>4 Hour</td>
+        			<td><= 4 Hour</td>
         			<td>{{$data['4']}}</td>
         		</tr>
         		<tr>
-        			<td>5 Hour</td>
+        			<td><= 5 Hour</td>
         			<td>{{$data['5']}}</td>
         		</tr>
         		<tr>
-        			<td>6 Hour</td>
+        			<td><= 6 Hour</td>
         			<td>{{$data['6']}}</td>
         		</tr>
         		<tr>
-        			<td>7 Hour</td>
+        			<td><= 7 Hour</td>
         			<td>{{$data['7']}}</td>
         		</tr>
         		<tr>
-        			<td>8 Hour</td>
+        			<td><= 8 Hour</td>
         			<td>{{$data['8']}}</td>
         		</tr>
         	</tbody>

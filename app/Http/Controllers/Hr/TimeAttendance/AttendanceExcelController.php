@@ -251,7 +251,7 @@ class AttendanceExcelController extends Controller
                         //get existing punch
                         $last_punch= DB::table($tableName)
                         ->where('as_id', $as_info->as_id)
-                        ->whereDate('in_time', '=', date("Y-m-d", strtotime($checktime)))
+                        ->where('in_date', '=', date("Y-m-d", strtotime($checktime)))
                         ->orderBy('id', "DESC")
                         ->first();
                         if($shift_start_begin<= $check_time && $check_time <= $shift_start_end){

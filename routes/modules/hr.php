@@ -4,7 +4,7 @@ Route::group(['prefix' => 'hr','namespace' => 'Hr'], function(){
 	Route::get('/', 'DashboardController@index');
 
 
-	// Adminstrator --------------------------------------------------------
+	// Adminstrator 
 	Route::group(['prefix' => 'adminstrator','namespace' => 'Adminstrator'], function(){
 		Route::get('users', 'UserController@index');
 		Route::post('user/list', 'UserController@getUserList');
@@ -32,7 +32,7 @@ Route::group(['prefix' => 'hr','namespace' => 'Hr'], function(){
 		Route::get('role/sync-permission', 'RolesController@syncPermission');
 	});
 
-	// settings ------------------------------------------------------------
+	// settings 
 	Route::group(['prefix' => 'settings','namespace' => 'Settings'], function(){
 		# unit settings
 		Route::get('unit','UnitController@index');
@@ -272,7 +272,9 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 	Route::get('hr/timeattendance/attendance-upload', 'Hr\TimeAttendance\AttendaceManualController@showForm')->middleware(['permission:Attendance Upload']);
 	Route::post('hr/timeattendance/attendance_manual', 'Hr\TimeAttendance\AttendaceManualController@saveData')->middleware(['permission:Attendance Upload']);
 
-	// Route::post('hr/timeattendance/attendance_manual/excel/import', 'Hr\TimeAttendance\AttendanceExcelController@importFile');
+	Route::get('hr/timeattendance/default-punch', 'Hr\TimeAttendance\AttendaceManualController@defaultPunch')->middleware(['permission:Default Punch']);
+	Route::post('hr/timeattendance/default-punch', 'Hr\TimeAttendance\AttendaceManualController@storeDefaultPunch')->middleware(['permission:Default Punch']);
+	Route::get('hr/timeattendance/employee_by_fields', 'Hr\TimeAttendance\AttendaceManualController@employeeByField');
 
 	Route::get('/hr/timeattendance/attendance_process_wise', 'Hr\TimeAttendance\AttendanceExcelController@importFileProcess');
 	Route::get('hr/timeattendance/attendance_bulk_manual', 'Hr\TimeAttendance\AttendaceBulkManualController@bulkManual');
@@ -398,7 +400,7 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 	
 	Route::post('hr/timeattendance/leave_worker',  'Hr\TimeAttendance\LeaveWorkerController@saveData')->middleware(['permission:Manage Leave']);
 
-	Route::get('hr/reports/maternity-leave', 'Hr\Operation\MaternityPaymentController@report');
+	Route::get('hr/reports/maternity', 'Hr\Operation\MaternityPaymentController@report');
 
 	//Operation - Maternity Leave
 	Route::get('hr/operation/maternity-leave', 'Hr\Operation\MaternityPaymentController@showForm');
@@ -1427,4 +1429,5 @@ Route::post('hr/operation/partial-salary', 'Hr\Operation\VoucherController@parti
 Route::post('hr/operation/partial-salary/disburse', 'Hr\Operation\VoucherController@disburse');
 
 Route::get('hr/operation/test', 'Hr\Operation\VoucherController@test');
+Route::get('hr/test', 'TestController@test');
 

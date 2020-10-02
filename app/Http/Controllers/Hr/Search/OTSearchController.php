@@ -38,12 +38,16 @@ class OTSearchController extends Controller
         }else if($request['type'] == 'yesterday') {
             $date =  date('Y-m-d', strtotime('-1 day'));
         }else if($request['type'] == 'month') {
+            $month = Carbon::createFromFormat("Y-m", $request['month']);
+
             $date = [
-            'month' => date('n', strtotime($request['month'])),
-            'year' => date('Y', strtotime($request['month']))
+                'month' => $request['month'],
+                'start' => $month->copy()->firstOfMonth()->format('Y-m-d'),
+                'end' => $month->copy()->lastOfMonth()->format('Y-m-d')
            ];        
         }
         return $date;
+
     }
 
    
@@ -66,36 +70,12 @@ class OTSearchController extends Controller
 
 
 
-    public function getTableName($unit)
-    {
-        $tableName = "";
-        //CEIL
-        if($unit == 2){
-            $tableName= "hr_attendance_ceil AS a";
-        }
-        //AQl
-        else if($unit == 3){
-            $tableName= "hr_attendance_aql AS a";
-        }
-        // MBM
-        else if($unit == 1 || $unit == 4 || $unit == 5 || $unit == 9){
-            $tableName= "hr_attendance_mbm AS a";
-        }
-        // CEW
-        else if($unit == 8){
-            $tableName= "hr_attendance_cew AS a";
-        }
-        else{
-            $tableName= "hr_attendance_mbm AS a";
-        }
-        return $tableName;
-    }
 
     public function calculateOt($unitId,$date,$where = [])
     {
 
         $tableData_list = [];
-        $tableName      = $this->getTableName($unitId);
+        $tableName      = get_att_table($unitId).' AS a';
         $otData = DB::table($tableName)
                     ->select(
                         DB::raw('sum(a.ot_hour) AS ot_hour'),
@@ -103,11 +83,11 @@ class OTSearchController extends Controller
                     )
                     ->where(function($query) use ($date,$unitId) {
                         if(isset($date['month'])){
-                            $query->whereMonth('a.in_time', $date['month']);
-                            $query->whereYear('a.in_time', $date['year']);
+                            $query->where('a.in_date','>=' ,$date['start']);
+                            $query->where('a.in_date', '<=' ,$date['end']);
                         }else{
-                            $query->where('a.in_time', '>=', $date." 00:00:00");
-                            $query->where('a.in_time', '<=', $date." 23:59:59");     
+                            $query->where('a.in_date',$date);
+                                 
                         }
                         $query->where('b.as_unit_id', $unitId);
                     })
@@ -141,13 +121,14 @@ class OTSearchController extends Controller
                         }
                     })->first();
 
+
         return $otData;
     }
 
     public function getAttOtShift($unitId,$date,$where = [])
     {
         $tableData_list = [];
-        $tableName      = $this->getTableName($unitId);
+        $tableName      = get_att_table($unitId).' AS a';
         $tableData_list = DB::table($tableName)
                         ->select("a.hr_shift_code")
                         ->whereNotNull('b.as_shift_id')
@@ -155,8 +136,14 @@ class OTSearchController extends Controller
                             if (!empty($where['associate_id'])) {
                                 $query->where('b.associate_id', '=', $where['associate_id']);
                             }
-                            $query->where('a.in_time', '>=', $date." 00:00:00");
-                            $query->where('a.in_time', '<=', $date." 23:59:59");
+                            if(isset($date['month'])){
+                                $query->where('a.in_date','>=' ,$date['start']);
+                                $query->where('a.in_date', '<=' ,$date['end']);
+                            }else{
+                                $query->where('a.in_date',$date);
+                                     
+                            }
+                            
                         })
                         ->join("hr_as_basic_info AS b", function($join){
                             $join->on( "b.as_id", "=", "a.as_id");
@@ -198,10 +185,11 @@ class OTSearchController extends Controller
 
             unset($request['view']);
             unset($request['unit'],$request['area'],$request['department'],$request['floor'],$request['section'],$request['subsection']);
-            $unit_list      = Unit::get();
+            $unit_list      = Unit::whereIn('hr_unit_id', auth()->user()->unit_permissions())->get();
             $result = [];
 
             $employee = 0;
+
             if(isset($date['month'])){
                 $otTotal = 0;
                 foreach($unit_list as $k=>$val) {
@@ -338,7 +326,7 @@ class OTSearchController extends Controller
 
     }
     public function hrOtListData($unitId,$date,$where = []){
-        $tableName = $this->getTableName($unitId);
+        $tableName = get_att_table($unitId).' AS a';
         $tableData = DB::table($tableName)
                     ->select(
                         DB::raw('sum(a.ot_hour) as ot_hour'),
@@ -350,13 +338,8 @@ class OTSearchController extends Controller
                         'u.hr_unit_name'
                     )
                     ->where(function($query) use ($date,$unitId) {
-                        if(isset($date['month'])){
-                            $query->whereMonth('a.in_time', $date['month']);
-                            $query->whereYear('a.in_time', $date['year']);
-                        }else{
-                            $query->where('a.in_time', '>=', $date." 00:00:00");
-                            $query->where('a.in_time', '<=', $date." 23:59:59");     
-                        }
+                        
+                        $query->where('a.in_date',$date);
                         $query->where('b.as_unit_id', $unitId);
                     })
                     ->where('a.ot_hour','>',0)
@@ -388,12 +371,15 @@ class OTSearchController extends Controller
                             $condition->where('a.hr_shift_code', $where['shift_code']);
                         }
                         if (!empty($where['hour'])) {
-                            $condition->where(DB::raw('cast(a.ot_hour as int)'), '>=', $where['hour']);
-                            $condition->where(DB::raw('cast(a.ot_hour as int)'), '<', ($where['hour']+1));
+                            $condition->where('a.ot_hour', '>', $where['hour']-1);
+                            if($where['hour'] < 7){
+                                $condition->where('a.ot_hour','<=', ($where['hour']));
+                            }
                         }
                     })
                     ->groupBy('a.as_id')
                     ->get();
+
         return  $tableData;
     }
 
@@ -466,33 +452,33 @@ class OTSearchController extends Controller
                 if(!$tableData->isEmpty()) {
                     foreach ($tableData as $key => $ot) {
                         # code...
-                        if($ot->ot_hour>=1 && $ot->ot_hour<2){$c1++;}
-                        if($ot->ot_hour>=2 && $ot->ot_hour<3){$c2++;}
-                        if($ot->ot_hour>=3 && $ot->ot_hour<4){$c3++;}
-                        if($ot->ot_hour>=4 && $ot->ot_hour<5){$c4++;}
-                        if($ot->ot_hour>=5 && $ot->ot_hour<6){$c5++;}
-                        if($ot->ot_hour>=6 && $ot->ot_hour<7){$c6++;}
-                        if($ot->ot_hour>=7 && $ot->ot_hour<8){$c7++;}
-                        if($ot->ot_hour>=8){$c8++;}
+                        if($ot->ot_hour>0 && $ot->ot_hour<=1){$c1++;}
+                        if($ot->ot_hour>1 && $ot->ot_hour<=2){$c2++;}
+                        if($ot->ot_hour>2 && $ot->ot_hour<=3){$c3++;}
+                        if($ot->ot_hour>3 && $ot->ot_hour<=4){$c4++;}
+                        if($ot->ot_hour>4 && $ot->ot_hour<=5){$c5++;}
+                        if($ot->ot_hour>5 && $ot->ot_hour<=6){$c6++;}
+                        if($ot->ot_hour>6 && $ot->ot_hour<=7){$c7++;}
+                        if($ot->ot_hour>7){$c8++;}
                     }
                 }
             }else{
                 unset($request1['unit'],$request1['area'],$request1['department'],$request1['floor'],$request1['section'],$request1['subsection'],$request1['hour']);
                 //employee count for all ot
-                $unit_list = Unit::get();
+                $unit_list = Unit::whereIn('hr_unit_id', auth()->user()->unit_permissions())->get();
                 foreach($unit_list as $k=>$val) {
                     $unitData = $this->hrOtListData($val->hr_unit_id,$date,[]);
                     if(!$unitData->isEmpty()) {
                         foreach ($unitData as $key => $ot) {
                             # code...
-                            if($ot->ot_hour>=1 && $ot->ot_hour<2){$c1++;}
-                            if($ot->ot_hour>=2 && $ot->ot_hour<3){$c2++;}
-                            if($ot->ot_hour>=3 && $ot->ot_hour<4){$c3++;}
-                            if($ot->ot_hour>=4 && $ot->ot_hour<5){$c4++;}
-                            if($ot->ot_hour>=5 && $ot->ot_hour<6){$c5++;}
-                            if($ot->ot_hour>=6 && $ot->ot_hour<7){$c6++;}
-                            if($ot->ot_hour>=7 && $ot->ot_hour<8){$c7++;}
-                            if($ot->ot_hour>=8){$c8++;}
+                            if($ot->ot_hour>0 && $ot->ot_hour<=1){$c1++;}
+                            if($ot->ot_hour>1 && $ot->ot_hour<=2){$c2++;}
+                            if($ot->ot_hour>2 && $ot->ot_hour<=3){$c3++;}
+                            if($ot->ot_hour>3 && $ot->ot_hour<=4){$c4++;}
+                            if($ot->ot_hour>4 && $ot->ot_hour<=5){$c5++;}
+                            if($ot->ot_hour>5 && $ot->ot_hour<=6){$c6++;}
+                            if($ot->ot_hour>6 && $ot->ot_hour<=7){$c7++;}
+                            if($ot->ot_hour>7){$c8++;}
                         }
                     }
                 }
@@ -530,7 +516,7 @@ class OTSearchController extends Controller
             $showTitle = $this->pageTitle($request);
             unset($request['unit'],$request['area'],$request['department'],$request['floor'],$request['section'],$request['subsection'],$request['hour']);
 
-            $unit_list = Unit::get();
+            $unit_list = Unit::whereIn('hr_unit_id', auth()->user()->unit_permissions())->get();
 
             $unit_data=[];
             $where=[];
@@ -961,7 +947,7 @@ class OTSearchController extends Controller
             if(isset($request->unit)){
                 $empList = $this->hrOtListData($request->unit,$date,$where);
             }else{
-                $unit_list = Unit::get();
+                $unit_list = Unit::whereIn('hr_unit_id', auth()->user()->unit_permissions())->get();
                 foreach($unit_list as $k=>$val) {
                     $toMerge = $this->hrOtListData($val->hr_unit_id,$date,$where)->toArray();
                     $empList = array_merge($empList,$toMerge); 
@@ -975,7 +961,7 @@ class OTSearchController extends Controller
                         if(isset($request1['month'])){
                             $yearMonth = date('Y-m', strtotime($request1['month']));
                             
-                            $link = HtmlFacade::link(url('hr/operation/job_card?associate=').$empList->associate_id.'&month='.$yearMonth,$empList->associate_id);
+                            $link = HtmlFacade::link(url('hr/operation/job_card?associate=').$empList->associate_id.'&month_year='.$yearMonth,$empList->associate_id);
                         }else{
 
                             $link = HtmlFacade::link(url('hr/recruitment/employee/show').'/'.$empList->associate_id,$empList->associate_id);
@@ -984,7 +970,7 @@ class OTSearchController extends Controller
                         return $link;
                     })
                     ->editColumn('ot_hour', function($empList){
-                        return $this->numberToTime($empList->ot_hour).' Hour';
+                        return numberToTimeClockFormat($empList->ot_hour);
                     })
                     ->rawColumns(['associate_id'])
                     ->make(true);

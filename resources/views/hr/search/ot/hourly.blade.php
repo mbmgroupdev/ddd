@@ -111,35 +111,35 @@
 				           	        <table class="table table-bordered  table-hover" style="margin:0!important;height:286px;cursor:pointer;">
 				           	        	<tbody>
 				           	        		<tr class="search_emp" data-hour="1">
-				           	        			<td>1 Hour</td>
+				           	        			<td><= 1 Hour</td>
 				           	        			<td>{{$ot_data['1']}}</td>
 				           	        		</tr>
 				           	        		<tr class="search_emp" data-hour="2">
-				           	        			<td>2 Hour</td>
+				           	        			<td><= 2 Hour</td>
 				           	        			<td>{{$ot_data['2']}}</td>
 				           	        		</tr>
 				           	        		<tr class="search_emp" data-hour="3">
-				           	        			<td>3 Hour</td>
+				           	        			<td><= 3 Hour</td>
 				           	        			<td>{{$ot_data['3']}}</td>
 				           	        		</tr>	           	        		
 				           	        		<tr class="search_emp" data-hour="4">
-				           	        			<td>4 Hour</td>
+				           	        			<td><= 4 Hour</td>
 				           	        			<td>{{$ot_data['4']}}</td>
 				           	        		</tr>
 				           	        		<tr class="search_emp" data-hour="5">
-				           	        			<td>5 Hour</td>
+				           	        			<td><= 5 Hour</td>
 				           	        			<td>{{$ot_data['5']}}</td>
 				           	        		</tr>
 				           	        		<tr class="search_emp" data-hour="6">
-				           	        			<td>6 Hour</td>
+				           	        			<td><= 6 Hour</td>
 				           	        			<td>{{$ot_data['6']}}</td>
 				           	        		</tr>
 				           	        		<tr class="search_emp" data-hour="7">
-				           	        			<td>7 Hour</td>
+				           	        			<td><= 7 Hour</td>
 				           	        			<td>{{$ot_data['7']}}</td>
 				           	        		</tr>
 				           	        		<tr class="search_emp" data-hour="8">
-				           	        			<td>8 Hour</td>
+				           	        			<td>> 7 Hour</td>
 				           	        			<td>{{$ot_data['8']}}</td>
 				           	        		</tr>
 				           	        	</tbody>
