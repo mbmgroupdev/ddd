@@ -141,7 +141,7 @@ class SalaryProcessController extends Controller
             $pageHead['current_date']   = date('Y-m-d');
             $pageHead['current_time']   = date('H:i');
             $pageHead['unit_name']      = $getUnit->hr_unit_name_bn;
-            $pageHead['for_date']       = Custom::engToBnConvert($input['month'].' - '.$input['year']);
+            $pageHead['for_date']       = $input['month_year'];
             $pageHead['floor_name']     = $input['floor'];
             $pageHead['month']     = $input['month'];
             $pageHead['year']     = $input['year'];
@@ -220,7 +220,7 @@ class SalaryProcessController extends Controller
             $pageHead['current_date']   = date('Y-m-d');
             $pageHead['current_time']   = date('H:i');
             $pageHead['unit_name']      = '';
-            $pageHead['for_date']       = Custom::engToBnConvert($input['month'].' - '.$input['year']);
+            $pageHead['for_date']       = $input['emp_month_year'];
             $pageHead['floor_name']     = '';
             $pageHead['month']     = $input['month'];
             $pageHead['year']     = $input['year'];

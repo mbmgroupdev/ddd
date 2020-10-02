@@ -60,15 +60,19 @@
             @php $label=array(); $dataset=array(); @endphp
             @foreach($ot_data as $k=> $ot) 
 
-            <?php 
-                array_push($label, $ot['name']."(".$k.")");
-                array_push($dataset, $ot['dayot']);
-             ?>  
+            @php
+                if($ot['dayot'] > 0) {
+
+                    array_push($label, $ot['name']."(".$k.")");
+                    array_push($dataset, $ot['dayot']);
+                }
+             @endphp  
+             @if($ot['dayot'] >0 || $ot['dayot1'] > 0 || $ot['dayot'] > 0)
                 <div class="col-sm-6">
                     <div class="col-sm-12 shift-div">
                         <center><h4>Shift: {{$k}} {{ $ot['name'] }}</h4></center>
-                        <div class="col-sm-12 col-xs-12">
-                            <div class="col-sm-6 pricing-box" style="padding:0;padding-right:6px;">
+                        <div class="row">
+                            <div class="col-sm-6 pricing-box" >
                                 <div class="widget-box widget-color-orange search_emp" data-shiftcode="{{$k}}">
                                     <div class="widget-header">
                                             <h5 class="widget-title bigger lighter">
@@ -84,7 +88,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-sm-6 pricing-box" style="padding:0;padding-left:6px;">
+                            <div class="col-sm-6 pricing-box" >
                                 <div class="search_ot_hour widget-box widget-color-green2 " data-shiftcode="{{$k}}">
                                     <div class="widget-header">
                                             <h5 class="widget-title bigger lighter">Total OT</h5>
@@ -98,7 +102,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-12 col-xs-12">                            
+                        <div class="">                            
                             <div class="search_ot_hour widget-box widget-color-green2 " data-shiftcode="{{$k}}">
                                 <div class="widget-header">
                                     <h5 class="widget-title bigger lighter">Over Time (Hour)</h5>
@@ -168,6 +172,7 @@
                         </div>
                     </div>
                 </div>
+            @endif
             @endforeach
             </div>
             @if(count($ot_data)>1) 
@@ -185,7 +190,7 @@
                             <div class="widget-main center">
                                <div class="row">
                                     <div class="col-sm-offset-2 col-sm-8 col-xs-12"> 
-                                        <canvas id="otgraph" style="height:300px!important;"></canvas>
+                                        <canvas id="otgraph" ></canvas>
                                         <script type="text/javascript">
                                             $(function(){
                                                 var ctxL = document.getElementById("otgraph").getContext('2d');
@@ -238,7 +243,7 @@
                                                             layout: {
                                                                 padding: {
                                                                     left: 0,
-                                                                    right: 50,
+                                                                    right: 5,
                                                                     top: 0,
                                                                     bottom: 0
                                                                 }

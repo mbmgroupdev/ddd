@@ -8,7 +8,7 @@
       
       
       
-      @if($user->can('Attendance Chart') || $user->hasRole('Super Admin'))
+      @if($user->can('Monthly Attendance') || $user->hasRole('Super Admin'))
       <div class="col-lg-6">
         <div class="panel iq-card-block iq-card-stretch iq-card-height">
             <div class="panel-heading d-flex justify-content-between">
@@ -22,7 +22,7 @@
       </div>  
       @endif
 
-      @if($user->can('Daily Attendance') || $user->hasRole('Super Admin'))
+      @if($user->can('Today Attendance') || $user->hasRole('Super Admin'))
       <div class="col-md-6">
          <div class="panel iq-card-block iq-card-stretch iq-card-height">
             <div class="panel-heading d-flex justify-content-between">
@@ -34,7 +34,7 @@
          </div>
       </div>
       @endif
-      @if($user->can('Monthly Salary') || $user->hasRole('Super Admin'))
+      @if($user->can('Monthly Salary Comparison') || $user->hasRole('Super Admin'))
        <div class="col-lg-6">
          <div class="panel iq-card-block iq-card-stretch iq-card-height">
             <div class="panel-heading d-flex justify-content-between">
@@ -47,7 +47,7 @@
       </div>
       @endif
 
-      @if($user->can('Monthly Overtime') || $user->hasRole('Super Admin'))               
+      @if($user->can('Monthly OT') || $user->hasRole('Super Admin'))               
       <div class="col-md-6">
          <div class="panel iq-card-block iq-card-stretch iq-card-height">
             <div class="panel-heading d-flex justify-content-between">
@@ -77,7 +77,7 @@
 
       <script type="text/javascript">
 
-        @if($user->can('Monthly Salary') || $user->hasRole('Super Admin')) 
+        @if($user->can('Monthly Salary Comparison') || $user->hasRole('Super Admin')) 
         jQuery("#monthly-salary-chart").length && am4core.ready(function() {
             var options = {
                   series: [{
@@ -138,7 +138,7 @@
         })
         @endif
 
-        @if($user->can('Monthly Overtime') || $user->hasRole('Super Admin')) 
+        @if($user->can('Monthly OT') || $user->hasRole('Super Admin')) 
         if (jQuery('#ot-comparison').length) {
             Highcharts.chart('ot-comparison', {
                 chart: {
@@ -192,7 +192,7 @@
         }
         @endif
 
-        @if($user->can('Attendance Chart') || $user->hasRole('Super Admin')) 
+        @if($user->can('Monthly Attendance') || $user->hasRole('Super Admin')) 
         if (jQuery('#att-chart').length) {
            Highcharts.chart('att-chart', {
                chart: {
@@ -270,7 +270,7 @@
            });
         }
         @endif
-        @if($user->can('Daily Attendance') || $user->hasRole('Super Admin')) 
+        @if($user->can('Today Attendance') || $user->hasRole('Super Admin')) 
           if (jQuery('#today-att').length) {
              am4core.ready(function() {
 

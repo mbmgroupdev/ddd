@@ -91,9 +91,7 @@
 						<thead>
 							<tr>
 								<th>Sl.</th>
-								@can('Manage Employee')
 								<th>Action</th>
-								@endcan
 								<th>Associate ID</th>
 								<th>Name</th>
 								<th>Designation</th>
@@ -158,8 +156,8 @@ $(document).ready(function()
 		
 
 		
-		var exportColName = ['Sl.','','Associate ID','Name','Designation','Oracle ID','RFID', 'Employee Type', 'Floor','Line','Department','Gender','OT Status'];
-      	var exportCol = [0,2,3,4,5,6,7,8,9,10,11,12,13,14];
+		var exportColName = ['Sl.','','Associate ID','Name','Designation','Oracle ID','RFID', 'Employee Type', 'Floor','Line','Department','Section','Subsection','Gender','OT Status'];
+      	var exportCol = [2,3,4,5,10,11,12,13];
 
 	    var dt = $('#dataTables').DataTable({
 
@@ -192,9 +190,7 @@ $(document).ready(function()
 	        },
 		    columns: [
 		        {data:'DT_RowIndex', name: 'DT_RowIndex'},
-		        @can('Manage Employee')
 		        {data:'action', name: 'action', orderable: false, searchable: false},
-		        @endcan
 		        {data:'associate_id', name: 'associate_id'},
 		        {data:'as_name',  name: 'as_name'},
 		        {data:'hr_designation_name', name: 'hr_designation_name', orderable: false},

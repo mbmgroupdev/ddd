@@ -110,10 +110,10 @@ jQuery.fn.dataTable.Api.register('MakeCellsEditable()', function (settings) {
 
                 var types = $("#type").val();
                 // console.log(attdate.getMonth(),(currentdate.getMonth() == 0 ? 12 :currentdate.getMonth()));
-
+                console.log(lock, attMonth, currentMonth);
         if((types != 'Leave') && (types != 'Holiday')){
-            if(Object.keys(oldValue).length === 0 || userCheck === '1' ){
-                if(lock == 0  && attMonth == (currentMonth == 0 ? 11 :currentMonth-1) || attMonth == currentMonth){
+            if(Object.keys(oldValue).length === 0 ){
+                if(lock == 0  || attMonth == currentMonth){
                     $('.my-cancel-class').click();
                     // Show input
                     if (!$(cell).find('input').length && !$(cell).find('select').length && !$(cell).find('textarea').length) {
