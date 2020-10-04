@@ -26,14 +26,12 @@ class EmployeeHelper
 	/**/
 	public static function daliyOTCalculation($intimePunch, $outtimePunch, $shiftIntime, $shiftOuttime, $shiftBreak, $shiftNight, $eAsId, $eSRStatus, $eUnit)
 	{
-
 		$shiftIntime = date('Y-m-d', strtotime($intimePunch)).' '.$shiftIntime;
 		if($shiftNight == 0){
 			$shiftOuttime = date('Y-m-d', strtotime($shiftIntime)).' '.$shiftOuttime;
 		}else{
 			$shiftOuttime = date('Y-m-d', strtotime($outtimePunch)).' '.$shiftOuttime;
-		}
-
+		}		
 	    $cOut = strtotime(date("H:i", strtotime($outtimePunch)));
 
 	    $overtimes = 0;
@@ -47,6 +45,7 @@ class EmployeeHelper
 		    if($otCheck == null && $eSRStatus == 0){
 		      $otCheck = YearlyHolyDay::getCheckUnitDayWiseHolidayStatus($eUnit, $today, 2);
 		    }
+		    // return $otCheck;
 
 		    $shiftIntime = strtotime($shiftIntime);
 		    $shiftOuttime = strtotime($shiftOuttime);
@@ -67,16 +66,15 @@ class EmployeeHelper
 			}
 			// $diff = round($diff, 2);
 			$diffExplode = explode('.', $diff);
-
+			// return $diff;
 			$minutes = (isset($diffExplode[1]) ? $diffExplode[1] : 0);
 			$minutes = floatval('0.'.$minutes);
 			// return $minutes;
-			if($minutes > 0.11667 && $minutes <= 0.75) $minutes = $minutes;
+			if($minutes > 0.16667 && $minutes <= 0.75) $minutes = $minutes;
 		    else if($minutes >= 0.75) $minutes = 1;
 		    else $minutes = 0;
 		    
 		    $overtimes = $diffExplode[0]+$minutes;
-		    
 		    $overtimes = number_format((float)$overtimes, 2, '.', '');
 	    }
 	    return $overtimes;

@@ -321,7 +321,7 @@ class ProcessUnitWiseSalary implements ShouldQueue
                             'attendance_bonus' => $attBonus,
                             'production_bonus' => $productionBonus,
                             'leave_adjust' => $leaveAdjust,
-                            'total_payable' => $totalPayable,
+                            'total_payable' => $totalPayable
                         ];
                         HrMonthlySalary::insert($salary);
                     }else{
@@ -345,7 +345,7 @@ class ProcessUnitWiseSalary implements ShouldQueue
                             'attendance_bonus' => $attBonus,
                             'production_bonus' => $productionBonus,
                             'leave_adjust' => $leaveAdjust,
-                            'total_payable' => $totalPayable,
+                            'total_payable' => $totalPayable
                         ];
                         HrMonthlySalary::where('id', $getSalary->id)->update($salary);
                     }
