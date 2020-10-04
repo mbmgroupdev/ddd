@@ -18,13 +18,20 @@ class ShiftRosterController extends Controller
     	DB::beginTransaction();
     	try {
     		$shift = Shift::getShiftNameGetId($input['target_shift']);
+            if (isset($request->month)) {
+                 $year = date('Y', strtotime($request->month));
+                 $month = date('n', strtotime($request->month));
+             } else{
+                $year = date('Y');
+                $month = date('n');
+             }
     		foreach ($input['associate'] as $key => $ass_id) {
                 for($j=$input['start_day']; $j<=$input['end_day']; $j++)
                 {
                     $day= "day_".$j;
                     $roster = ShiftRoaster::where('shift_roaster_associate_id', $ass_id)
-                    ->where('shift_roaster_year', date('Y'))
-                    ->where('shift_roaster_month', date('n'))
+                    ->where('shift_roaster_year', $year)
+                    ->where('shift_roaster_month', $month)
                     ->first();
 
                     
@@ -36,8 +43,8 @@ class ShiftRosterController extends Controller
                         $getId = ShiftRoaster::create([
                             'shift_roaster_associate_id' => $ass_id,
                             'shift_roaster_user_id' => $getBasic->as_id,
-                            'shift_roaster_year' => date('Y'),
-                            'shift_roaster_month' => date('n'),
+                            'shift_roaster_year' => $year,
+                            'shift_roaster_month' => $month,
                             $day => $shift
                         ])->shift_roaster_id;
                     }

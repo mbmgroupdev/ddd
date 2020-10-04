@@ -71,6 +71,7 @@ class MonthlyActivityReportController extends Controller
             $uniqueGroups = ['all'];
 
             $queryData = DB::table('hr_monthly_salary AS s')
+            ->whereNotIn('s.as_id', config('base.ignore_salary'))
             ->where('emp.as_unit_id',$input['unit']);
             if($input['report_format'] == 0 && !empty($input['employee'])){
                 $queryData->where('emp.associate_id', 'LIKE', '%'.$input['employee'] .'%');

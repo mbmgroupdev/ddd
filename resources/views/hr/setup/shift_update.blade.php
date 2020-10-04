@@ -10,31 +10,24 @@
                 <a href="#"> Human Resource </a>
             </li> 
             <li>
-                <a href="#"> Library </a>
+                <a href="#"> Operation </a>
             </li>
-            <li class="active"> Shift </li>
+            <li class="active"> Shift : {{$shift->hr_shift_name}}  </li>
+            <li class="top-nav-btn">
+                <a class="btn btn-success mr-3 btn-sm" href="{{ url('hr/operation/shift_assign') }}"><i class="fa fa-list"></i> Shift List</a>
+                <a class="btn btn-primary pull-right btn-sm" href="#list"><i class="fa fa-users"></i> Shift Assign</a>
+            </li>
         </ul><!-- /.breadcrumb --> 
     </div>
     <div class="row">
-       <div class="col-lg-2 pr-0">
-           <!-- include library menu here  -->
-           @include('hr.settings.library_menu')
-       </div>
-       <div class="col-lg-10 mail-box-detail">
+       <div class="col-sm-12 mail-box-detail">
             <div class="panel panel-info">
-                <div class="panel-heading">
-                    <h6>
-                        Shift : {{ $shift->hr_shift_name }}
-                        <a class="btn btn-success ml-3 pull-right" href="{{ url('hr/operation/shift_assign') }}"><i class="fa fa-list"></i> Shift List</a>
-                        <a class="btn btn-primary pull-right" href="#list"><i class="fa fa-users"></i> Shift Assign</a>
-                    </h6>
-                </div> 
                 <div class="panel-body">
                     
                     <form class="form-horizontal" role="form" method="post" action="{{ url('hr/setup/shift_update')  }}" enctype="multipart/form-data">
                         {{ csrf_field() }} 
                         <div class="row">
-                            <div class="col-sm-4">
+                            <div class="col-sm-3">
                                 <input type="hidden" value="{{$shift->hr_shift_unit_id}}" name="hr_shift_unit_id">  
                                 <div class="form-group has-required has-float-label">
                                     <input type="text" value="{{$shift->hr_unit_name}}" id="hr_shift_unit_id" class="form-control"  readonly="readonly">
@@ -45,6 +38,13 @@
                                     <input type="text" name="hr_shift_name" id="hr_shift_name" placeholder="Shift Name" class="form-control" required="required" value="{{ $shift->hr_shift_name }}"/>
                                     <label  for="hr_shift_name" > Shift Name  </label>
                                 </div> 
+                            </div>
+                            <div class="col-sm-3">
+
+                                <div class="form-group has-required has-float-label">
+                                    <input type="time" name="hr_shift_start_time" id="hr_shift_start_time" class="form-control" required="required" placeholder="--:--:--" onClick="this.select();" value="{{ $shift->hr_shift_start_time }}" />
+                                    <label  for="hr_shift_start_time">Shift Time Start</label>
+                                </div>
 
                                 <div class="form-group has-float-label">
                                     <input type="text" name="hr_shift_name_bn" id="hr_shift_name_bn" placeholder="শিফট এর নাম" class="form-control" value="{{ $shift->hr_shift_name_bn }}"/>
@@ -54,11 +54,8 @@
 
                                 
                             </div>
-                            <div class="col-sm-4">
-                                <div class="form-group has-required has-float-label">
-                                    <input type="time" name="hr_shift_start_time" id="hr_shift_start_time" class="form-control" required="required" placeholder="--:--:--" onClick="this.select();" value="{{ $shift->hr_shift_start_time }}" />
-                                    <label  for="hr_shift_start_time">Shift Time Start</label>
-                                </div>
+                            <div class="col-sm-3">
+                                
                                 <div class="form-group has-required has-float-label">
                                     <input type="time" name="hr_shift_end_time" id="hr_shift_end_time" class="form-control"  placeholder="--:--:--" onClick="this.select();" required value="{{ $shift->hr_shift_end_time }}"/> 
                                     <label  for="hr_shift_end_time">Shift Time End</label>
@@ -77,22 +74,15 @@
                                 $break   = strtotime($breakTime)-strtotime("00:00:00");
                                 $outTime = date("H:i:s",strtotime($shift->hr_shift_end_time)+$break);
                             @endphp
-                            <div class="col-sm-4">
+                            <div class="col-sm-3">
                                 <div class="form-group has-required has-float-label">
                                     <input type="time" id="hr_shift_out_time" name="hr_shift_out_time" required="required" class="form-control" disabled="disabled" value="{{$outTime}}" />
                                     <label  for="hr_shift_out_time">Out Time</label>
                                 </div>
-
-                                <div class="form-group">
-                                    <label  for="gender"> Default Shift</label>
-                                    <div class="control-group"> 
-                                        <div class="checkbox">
-                                            <label>
-                                                <input name="hr_shift_default" type="checkbox" value="1" {{ ($shift->hr_shift_default == 1)?"checked":"" }} >
-                                                <span class="lbl"></span>
-                                            </label>
-                                        </div> 
-                                    </div> 
+    
+                                <div class="custom-control custom-checkbox custom-checkbox-color-check custom-control-inline">
+                                   <input type="checkbox" name="hr_shift_default" class="custom-control-input bg-primary" id="customCheck-1"  value="1" {{ ($shift->hr_shift_default == 1)?"checked":"" }}>
+                                   <label class="custom-control-label" for="customCheck-1"> Default Shift</label>
                                 </div>
                                 <input type="hidden" name="hr_shift_id" value="{{ $shift->hr_shift_id}}">
                                 <div class="form-group"> 
@@ -100,6 +90,7 @@
                                 </div>
                                 
                             </div>
+                            
                                  
 
                             

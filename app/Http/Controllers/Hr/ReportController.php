@@ -81,6 +81,142 @@ class ReportController extends Controller
     	return view('common.daily_mmr_report', compact('chart_data','units','present','operator','mmr_data'));
     }
 
+    public function monthlyOT(Request $request)
+    {
+        $month = $request->month??date('Y-m');
+        $monthFormat = Carbon::createFromFormat("Y-m", $month);
+        $start_date = $monthFormat->copy()->firstOfMonth();
+        $end_date = $monthFormat->copy()->lastOfMonth()->format('Y-m-d');
+
+        $data = DB::table('hr_attendance_mbm')
+                ->select(
+                    DB::raw('sum(ot_hour) as total_ot'),
+                    DB::raw('max(ot_hour) as maximum'),
+                    DB::raw('count(*) as emp'),
+                    DB::raw('round((sum(ot_hour)/count(*)),2) as avg'),
+                    'in_date'
+                )
+                ->where('in_date','>=',$start_date->format('Y-m-d'))
+                ->where('in_date','<=',$end_date)
+                ->where('ot_hour','>',0)
+                ->groupBy('in_date')
+                ->get()
+                ->keyBy('in_date');
+        
+        $totalday = date('d', strtotime($end_date));
+        $chart_data = [];
+        for ($i=0; $i < $totalday; $i++) { 
+            $otday = $start_date->copy()->addDays($i)->format('Y-m-d');
+            $thisday = $start_date->copy()->addDays($i)->format('d M');
+            if(isset($data[$otday])){
+                $thisOT = $data[$otday]->maximum??0;  
+            }else{
+                $thisOT = 0;
+            }
+            $chart_data[] = array(
+                'Date' => $thisday,
+                'Avg'  => $thisOT
+            );
+        }
+
+        return view('common.monthly_ot', compact('chart_data','data'));
+
+    }
+
+
+    public function monthlyMMR(Request $request)
+    {
+        $month = $request->month??date('Y-m');
+        $monthFormat = Carbon::createFromFormat("Y-m", $month);
+        $start_date = $monthFormat->copy()->firstOfMonth();
+        $end_date = $monthFormat->copy()->lastOfMonth()->format('Y-m-d');
+
+ 
+        $units  = unit_by_id();
+        $operator = DB::table('hr_as_basic_info')
+                    ->where('as_status', 1)
+                    ->where('as_subsection_id', 138)
+                    ->orWhere('as_subsection_id', 54)
+                    ->count();
+
+        $present = array();
+
+        $mbm = DB::table('hr_attendance_mbm')
+                ->select(
+                    DB::raw('count(*) AS count'),
+                    'in_date'
+                )
+                ->where('in_date','>=',$start_date->format('Y-m-d'))
+                ->where('in_date','<=',$end_date)
+                ->groupBy('in_date')
+                ->pluck('count', 'in_date');
+
+        $ceil = DB::table('hr_attendance_ceil')
+                ->select(
+                    DB::raw('count(*) AS count'),
+                    'in_date'
+                )
+                ->where('in_date','>=',$start_date->format('Y-m-d'))
+                ->where('in_date','<=',$end_date)
+                ->groupBy('in_date')
+                ->pluck('count', 'in_date');
+
+        $aql = DB::table('hr_attendance_aql')
+                ->select(
+                    DB::raw('count(*) AS count'),
+                    'in_date'
+                )
+                ->where('in_date','>=',$start_date->format('Y-m-d'))
+                ->where('in_date','<=',$end_date)
+                ->groupBy('in_date')
+                ->pluck('count', 'in_date');
+
+        $cew = DB::table('hr_attendance_cew')
+                ->select(
+                    DB::raw('count(*) AS count'),
+                    'in_date'
+                )
+                ->where('in_date','>=',$start_date->format('Y-m-d'))
+                ->where('in_date','<=',$end_date)
+                ->groupBy('in_date')
+                ->pluck('count', 'in_date');
+
+            
+        
+        $totalday = date('d', strtotime($end_date));
+        $chart_data = [];
+        for ($i=0; $i < $totalday; $i++) { 
+            $otday = $start_date->copy()->addDays($i)->format('Y-m-d');
+            $thisday = $start_date->copy()->addDays($i)->format('d M');
+
+            $att = 0 ;
+            if(isset($mbm[$otday])){
+                $att += $mbm[$otday];  
+            }
+            if(isset($ceil[$otday])){
+                $att += $ceil[$otday];  
+            }
+            if(isset($aql[$otday])){
+                $att += $aql[$otday];  
+            }
+            if(isset($cew[$otday])){
+                $att += $cew[$otday];  
+            }
+
+            $mmr = round(($att/$operator),2);
+
+            $chart_data[] = array(
+                'Date' => $thisday,
+                'MMR'  => $mmr
+            );
+        }
+
+        return view('common.monthly_mmr_report', compact('chart_data'));
+
+    }
+
+    
+
 
     public function otEmpAttendance($unit = null, $date = null, $ot)
     {

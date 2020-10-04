@@ -187,8 +187,8 @@
                                                     <td>
                                                         {{ $value['date'] }}
                                                         @if($joinExist)
-                                                            @if($value['date'] == $info->doj)
-                                                                <span class="label label-success arrowed-right arrowed-in pull-right">Join</span>
+                                                            @if($value['date'] == $info->as_doj)
+                                                                <span class="label label-success arrowed-right arrowed-in pull-right">Joined</span>
                                                             @endif
                                                         @endif
                                                         @if($leftExist)
