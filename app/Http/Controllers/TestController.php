@@ -22,6 +22,30 @@ class TestController extends Controller
 {
     public function test()
     {
+
+
+        $att = DB::table('hr_attendance_mbm')
+                ->where('in_date', '>=', '2020-09-01')
+                ->where('in_date', '<=', '2020-09-30')
+                ->pluck('as_id');
+
+        $data = DB::table('hr_as_basic_info')
+                ->whereIN('as_id', $att)
+                ->pluck('associate_id');
+
+        $salary = DB::table('hr_monthly_salary as s')
+                    ->leftJoin('hr_as_basic_info as b','b.associate_id','s.as_id')
+                    ->whereIn('b.as_unit_id', [1,4,5])
+                    ->where('month','09')
+                    ->where('year','2020')
+                    ->whereNotIn('s.as_id', $data)
+                    ->get();
+
+        dd($salary);
+
+
+
+
     	$getData = [];
     
 	    $data = [];

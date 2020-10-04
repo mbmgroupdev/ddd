@@ -105,7 +105,7 @@ class AbsentPresentListController extends Controller
     $tableName = $this->getTableName($unit);
     $attData = DB::table($tableName);
 
-    $attData->whereBetween('a.in_time', [date('Y-m-d',strtotime($report_from))." "."00:00:00", date('Y-m-d',strtotime($report_to))." "."23:59:59"]);
+    $attData->whereBetween('a.in_date', [date('Y-m-d',strtotime($report_from)), date('Y-m-d',strtotime($report_to))]);
 
     $leaveData = DB::table('hr_leave');
 
@@ -133,10 +133,6 @@ class AbsentPresentListController extends Controller
       "a.late_status",
       "a.hr_shift_code",
       "a.remarks",
-      // "s.hr_shift_break_time",
-      // "s.hr_shift_start_time",
-      // "s.hr_shift_end_time",
-      // "s.hr_shift_name",
       "u.hr_unit_name",
       'dsg.hr_designation_name',
       "b.as_ot"
@@ -283,6 +279,7 @@ class AbsentPresentListController extends Controller
       ->leftjoin(DB::raw('(' . $employeeToSql. ') AS b'), function($join) use ($getEmployee) {
         $join->on('hr_absent.associate_id', '=', 'b.associate_id')->addBinding($getEmployee->getBindings());
       })
+      ->where('b.as_status', 1)
       //->leftJoin('b','hr_absent.associate_id','b.associate_id')
       //->leftJoin('hr_designation', 'hr_designation.hr_designation_id', 'b.as_designation_id')
       //->leftJoin("hr_unit", "hr_unit.hr_unit_id", "b.as_unit_id")

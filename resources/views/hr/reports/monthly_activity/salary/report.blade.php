@@ -68,7 +68,7 @@
 		                			Total Employee
 		                			<b>: {{ $totalEmployees }}</b> <br>
 		                			Total Salary
-		                			<b>: {{ bn_money($totalSalary) }} (BDT)</b>
+		                			<b>: {{ bn_money(round($totalSalary,2)) }} (BDT)</b>
 		                		
 		                		
 		                	</div>
@@ -125,7 +125,7 @@
         			<h4>OT: @if($input['otnonot'] == 0) No @else Yes @endif </h4>
         			@endif
         			<h4>Total Employee: <b>{{ $totalEmployees }}</b></h4>
-        			<h4>Total Salary: <b>{{ bn_money($totalSalary) }}</b></h4>
+        			<h4>Total Salary: <b>{{ bn_money(round($totalSalary,2)) }}</b></h4>
 		            		
 		        </div>
 		        @endif
@@ -300,7 +300,7 @@
 									@php $totalEmployee += $employee->total; @endphp
 								</td>
 								<td>
-									{{ bn_money($employee->groupSalary) }} (BDT)
+									{{ bn_money(round($employee->groupSalary,2)) }} (BDT)
 								</td>
 							</tr>
 							@endforeach

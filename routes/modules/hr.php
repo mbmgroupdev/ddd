@@ -577,7 +577,7 @@ Route::get('hr/payroll/salary', 'Hr\Payroll\SalaryController@view');
 	// Employee
 	Route::group(['middleware' => 'permission:Employee List'], function(){
 		Route::get('hr/employee/list', 'Hr\Recruitment\EmployeeController@showList');
-		Route::get('hr/employee/today', 'Hr\Recruitment\EmployeeController@today');
+		Route::get('hr/employee/new-employee', 'Hr\Recruitment\EmployeeController@today');
 		Route::get('hr/recruitment/employee/today_employee_data', 'Hr\Recruitment\EmployeeController@getTodayData');
 
 		Route::get('hr/employee/incomplete-list', 'Hr\Recruitment\EmployeeController@incompleteEmployee');
@@ -694,6 +694,14 @@ Route::get('hr/payroll/salary', 'Hr\Payroll\SalaryController@view');
 		Route::post('hr/performance/appraisal_approve/approve_reject', 'Hr\Performance\AppraisalListController@appraisalStatus');
 	});
 
+	//shift
+	Route::get('hr/operation/shift','Hr\Setup\ShiftController@shift')->middleware(['permission:Shift Assign']);
+	Route::get('hr/operation/shift_update/{hr_shift_id}','Hr\Setup\ShiftController@shiftUpdate')->middleware(['permission:Shift Assign']);
+	Route::get('hr/setup/getShiftListByLineID','Hr\Setup\ShiftController@getShiftListByLineID');
+	Route::post('hr/setup/shift','Hr\Setup\ShiftController@shiftStore');
+	Route::get('hr/setup/shift/{hr_shift_id}','Hr\Setup\ShiftController@shiftDelete');
+	Route::post('hr/setup/shift_update','Hr\Setup\ShiftController@shiftUpdateStore');
+
 
 	//---------HR / Setup-----------//
 
@@ -729,13 +737,7 @@ Route::get('hr/payroll/salary', 'Hr\Payroll\SalaryController@view');
 		Route::get('hr/setup/line_update/{hr_line_id}','Hr\Setup\LineController@lineUpdate');
 		Route::post('hr/setup/line_update','Hr\Setup\LineController@lineUpdateStore');
 
-		//shift
-		Route::get('hr/setup/shift','Hr\Setup\ShiftController@shift');
-		Route::get('hr/setup/getShiftListByLineID','Hr\Setup\ShiftController@getShiftListByLineID');
-		Route::post('hr/setup/shift','Hr\Setup\ShiftController@shiftStore');
-		Route::get('hr/setup/shift/{hr_shift_id}','Hr\Setup\ShiftController@shiftDelete');
-		Route::get('hr/setup/shift_update/{hr_shift_id}','Hr\Setup\ShiftController@shiftUpdate');
-		Route::post('hr/setup/shift_update','Hr\Setup\ShiftController@shiftUpdateStore');
+		
 
 		//department
 		Route::get('hr/setup/department','Hr\Setup\DepartmentController@department');
@@ -1427,6 +1429,9 @@ Route::post('hr/operation/voucher', 'Hr\Operation\VoucherController@voucher');
 Route::get('hr/operation/partial-salary', 'Hr\Operation\VoucherController@partial');
 Route::post('hr/operation/partial-salary', 'Hr\Operation\VoucherController@partialGenerate');
 Route::post('hr/operation/partial-salary/disburse', 'Hr\Operation\VoucherController@disburse');
+
+Route::get('/hr/reports/monthly-ot-report', 'Hr\ReportController@monthlyOT');
+Route::get('/hr/reports/monthly-mmr-report', 'Hr\ReportController@monthlyMMR');
 
 Route::get('hr/operation/test', 'Hr\Operation\VoucherController@test');
 Route::get('hr/test', 'TestController@test');

@@ -119,6 +119,7 @@ class SalarySearchController extends Controller
         $date = $this->getSearchType($request1);
 
         $query= DB::table('hr_monthly_salary')
+                ->whereNotIn('as_id', config('base.ignore_salary'))
                 ->select(
                     DB::raw('sum(total_payable) AS total_payable'),
                     DB::raw('sum(ot_hour*ot_rate) AS ot_payable'),
@@ -174,20 +175,24 @@ class SalarySearchController extends Controller
                     DB::raw('sum(ot_hour*ot_rate) AS ot_payable'),
                     DB::raw('sum(total_payable) AS total_payable'),
                     DB::raw('count(distinct as_id) as emp')
-                )->whereBetween(DB::raw("CONCAT(month, '-', year)"),[$date['from'],$date['to']])->first();
+                )->whereBetween(DB::raw("CONCAT(month, '-', year)"),[$date['from'],$date['to']])
+                ->whereNotIn('as_id', config('base.ignore_salary'))
+                ->first();
             }else{
                 $salaryInfo = HrMonthlySalary::select(
                     DB::raw('sum(ot_hour*ot_rate) AS ot_payable'),
                     DB::raw('sum(total_payable) AS total_payable'),
                     DB::raw('count(distinct as_id) as emp')
-                )->where($date)->first();
+                )->where($date)
+                ->whereNotIn('as_id', config('base.ignore_salary'))
+                ->first();
             }
             $salary = new stdClass();
             $salary->total_payable = round($salaryInfo->total_payable,2);
             $salary->ot_payable = round($salaryInfo->ot_payable,2);
             $salary->salary_payable = round(($salaryInfo->total_payable-$salaryInfo->ot_payable),2);
             $salary->employee  = $salaryInfo->emp;
-            $unit_list      = Unit::get();
+            $unit_list      = Unit::whereIn('hr_unit_id', auth()->user()->unit_permissions())->get();
             $result = [];
             $result['page'] = view('hr.search.salary.allsalary',
                 compact('unit_list','salary','showTitle', 'request'))->render();
@@ -210,7 +215,7 @@ class SalarySearchController extends Controller
             
             unset($request['unit'],$request['area'],$request['department'],$request['floor'],$request['section'],$request['subsection'],$request['salstatus']);
 
-            $unit_list = Unit::get();
+            $unit_list = Unit::whereIn('hr_unit_id', auth()->user()->unit_permissions())->get();
             $area_count = Area::count();
             $result = [];
             $result['page'] = view('hr.search.salary.allunit', 
@@ -531,11 +536,12 @@ class SalarySearchController extends Controller
                     DB::raw('sum(ot_hour*ot_rate) AS ot_payable'),
                     DB::raw('group_concat(month) as month'),
                     'as_id'
-                );
+                )->whereNotIn('as_id', config('base.ignore_salary'));
                 if(isset($date['from'])){
                     $query->whereBetween(DB::raw("CONCAT(month, '-', year)"),[$date['from'],$date['to']]);
                 }else{
                     $query->where($date);
+
                 }
             $salaryData = $query->groupBy('as_id');
             $salaryData_sql = $salaryData->toSql();
@@ -583,9 +589,6 @@ class SalarySearchController extends Controller
                 ->editColumn('ot_payable', function ($empList) {
                     return round(($empList->ot_payable),2);
                 })
-                ->editColumn('associate_id', function ($empList){
-                            return HtmlFacade::link("#",$empList->associate_id,['class' => 'employee_info','data-emp'=>$empList->associate_id]);
-                        })
                 ->rawColumns(['salary','total_payable','month','ot_payable'])
                 ->make(true);
 
@@ -613,7 +616,8 @@ class SalarySearchController extends Controller
     }
 
 
-    public function hrSearchEmpInfo(Request $request){
+    public function hrSearchEmpInfo(Request $request)
+    {
         try {
 
             $parts = parse_url(url()->previous());
