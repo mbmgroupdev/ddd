@@ -17,102 +17,54 @@
 				@if($input['report_format'] == 0 || ($input['report_format'] == 1 && $format != null))
 				<div class="page-header">
 		            <h2 style="margin:4px 10px; font-weight: bold; text-align: center;">Present After Being Absent @if($input['report_format'] == 0) Details @else Summary @endif Report</h2>
-		            
-		            <div class="row">
-		            	<div class="col-5">
-		            		<div class="row">
-		                		
-		                		<div class="col-3 pr-0">
-		                			<h5>Unit</h5>
-		                		</div>
-		                		<div class="col-9">
-		                			<b>: {{ $unit[$input['unit']]['hr_unit_name'] }}</b>
-		                		</div>
-		                		@if($input['area'] != null)
-		                		<div class="col-3 pr-0">
-		                			<h5>Area</h5>
-		                		</div>
-		                		<div class="col-9">
-		                			<b>: {{ $area[$input['area']]['hr_area_name'] }}</b>
-		                		</div>
+
+		            <table class="table no-border f-16" border="0">
+		            	<tr>
+		            		<td>
+		            			Unit <b>: {{ $unit[$input['unit']]['hr_unit_name'] }}</b> <br>
+		            		@if($input['area'] != null)
+		            			Area 
+		                			<b>: {{ $area[$input['area']]['hr_area_name'] }}</b> <br>
 		                		@endif
 		                		@if($input['department'] != null)
-		                		<div class="col-3 pr-0">
-		                			<h5>Department</h5>
-		                		</div>
-		                		<div class="col-9">
-		                			<b>: {{ $department[$input['department']]['hr_department_name'] }}</b>
-		                		</div>
+		                			Department 
+		                			<b>: {{ $department[$input['department']]['hr_department_name'] }}</b> <br>
 		                		@endif
 		                		@if($input['section'] != null)
-		                		<div class="col-3 pr-0">
-		                			<h5>Section</h5>
-		                		</div>
-		                		<div class="col-9">
+		                		Section 
 		                			<b>: {{ $section[$input['section']]['hr_section_name'] }}</b>
-		                		</div>
 		                		@endif
-		            		</div>
-		            	</div>
-		            	<div class="col-4 no-padding">
-		            		<div class="row">
-		                		<div class="col-4 pr-0">
-		                			<h5>Absent Date</h5>
-		                		</div>
-		                		<div class="col-8 pl-0">
-		                			<b>: {{ $input['absent_date'] }}</b>
-		                		</div>
-		                		<div class="col-4 pr-0">
-		                			<h5>Present Date</h5>
-		                		</div>
-		                		<div class="col-8 pl-0">
-		                			<b>: {{ $input['present_date'] }}</b>
-		                		</div>
-		                		
-		                		<div class="col-4 pr-0">
-		                			<h5>Total</h5>
-		                		</div>
-		                		<div class="col-8 pl-0">
+		            		</td>
+		            		<td>
+		            			Absent Date <b>: {{ $input['date']}} </b> <br>
+		            			@if($input['otnonot'] != null)
+		                			<b> OT </b> 
+		                			<b>: @if($input['otnonot'] == 0) No @else Yes @endif </b> <br>
+		                		@endif
+		                		Total Absent
 		                			<b>: {{ $totalEmployees }}</b>
-		                		</div>
-		                	</div>
-		            	</div>
-		            	<div class="col-3 pr-0">
-		            		<div class="row">
 		                		
-		                		@if($input['subSection'] != null)
-		                		<div class="col-3 pr-0">
-		                			<h5>Sub Section</h5>
-		                		</div>
-		                		<div class="col-9 pl-0">
-		                			<b>: {{ $subSection[$input['subSection']]['hr_subsec_name'] }}</b>
-		                		</div>
-		                		@endif
-		                		@if($input['floor_id'] != null)
-		                		<div class="col-3 pr-0">
-		                			<h5>Floor</h5>
-		                		</div>
-		                		<div class="col-9 pl-0">
-		                			<b>: {{ $floor[$input['floor_id']]['hr_floor_name'] }}</b>
-		                		</div>
+		            		</td>
+		            		<td>
+		            			@if($input['subSection'] != null)
+		            			Sub-section <b>: {{ $subSection[$input['subSection']]['hr_subsec_name'] }}</b><br>
+		            			@endif
+		            			@if($input['floor_id'] != null)
+		                			Floor 
+		                			<b>: {{ $floor[$input['floor_id']]['hr_floor_name'] }}</b><br>
 		                		@endif
 		                		@if($input['line_id'] != null)
-		                		<div class="col-3 pr-0">
-		                			<h5>Line</h5>
-		                		</div>
-		                		<div class="col-9 pl-0">
-		                			<b>: {{ $line[$input['line_id']]['hr_line_name'] }}</b>
-		                		</div>
+		                		Line 
+		                			<b>: {{ $line[$input['line_id']]['hr_line_name'] }}</b> <br>
 		                		@endif
-		                		<div class="col-3 pr-0">
-		                			<h5>Format</h5>
-		                		</div>
-		                		<div class="col-9 pl-0">
+		                		Format 
 		                			<b class="capitalize">: {{ isset($formatHead[1])?$formatHead[1]:'N/A' }}</b>
-		                		</div>
-		                	</div>
-		            	</div>
-		            </div>
+		            		</td>
+		            	</tr>
+		            	
+		            </table>
+		            
+		            
 		        </div>
 		        @else
 		        <div class="page-header-summery">
@@ -325,7 +277,5 @@
 			</div>
 		</div>
 
-		{{-- modal --}}
-		@include('hr.reports.daily_activity.attendance.employee_activity_modal')
 	</div>
 </div>

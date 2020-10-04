@@ -8,6 +8,12 @@
 <link rel="stylesheet" href="{{ asset('assets/css/fullcalendar.min.css') }}" />
 @endpush
 
+@if(Request::get('month') != null)
+    <style type="text/css">
+        .search_ot_shift{display: none;}
+    </style>
+@endif
+
 <div class="main-content">
     <div class="main-content-inner">
         <div class="breadcrumbs ace-save-state" id="breadcrumbs">
@@ -59,11 +65,8 @@
                                             <option value="empstatus" {{ sselected($categorySelect,'empstatus') }}>Employee Status</option>
                                             {{-- <option value="absent" {{ sselected($categorySelect,'absent') }}>Absent</option> --}}
                                             {{-- <option value="persent" {{ sselected($categorySelect,'persent') }}>Present</option> --}}
-<<<<<<< HEAD
-                                            {{-- <option value="ot" {{ sselected($categorySelect,'ot') }}>OT</option>  --}}
-=======
+
                                             <option value="ot" {{ sselected($categorySelect,'ot') }}>OT</option> 
->>>>>>> 9a900cd886fb6b0327a5166f8191fb79c174beff
                                             <option value="leave" {{ sselected($categorySelect,'leave') }}>Leave</option>
                                             <option value="line" {{ sselected($categorySelect,'line') }}>Line Change</option>
                                             <option value="salratio" {{ sselected($categorySelect,'salratio') }}>Salary Ratio</option>

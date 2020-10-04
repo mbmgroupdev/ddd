@@ -156,17 +156,28 @@
                                 </select>
                                 <label  for="target_shift" style="color: maroon;">Target Shift </label>
                             </div>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="form-group has-required has-float-label select-search-group">
-                                        {{ Form::selectRange('start_day', 1, 31, date("j"), ['placeholder'=>'Select End Day', 'id'=>'start_day', 'class'=>'form-control', 'required'=> 'required']) }}
-                                        <label for="start_day">Date From</label>
+
+                            <div class="form-group">
+                                
+                                <div class="row">
+
+                                    <div class="col-sm-3">
+                                        <div class="form-group has-required has-float-label select-search-group">
+                                            {{ Form::selectRange('start_day', 1, 31, date("j"), ['placeholder'=>'Select End Day', 'id'=>'start_day', 'class'=>'form-control', 'required'=> 'required']) }}
+                                            <label for="start_day">Date From</label>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group has-required has-float-label select-search-group">
-                                        {{ Form::selectRange('end_day', 1, 31, date("j"), ['placeholder'=>'Select End Day', 'id'=>'end_day', 'class'=>'form-control', 'required'=> 'required']) }}
-                                        <label for="end_day">Date To</label>
+                                    <div class="col-sm-3">
+                                        <div class="form-group has-required has-float-label select-search-group">
+                                            {{ Form::selectRange('end_day', 1, 31, date("j"), ['placeholder'=>'Select End Day', 'id'=>'end_day', 'class'=>'form-control', 'required'=> 'required']) }}
+                                            <label for="end_day">Date To</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 pr-4">
+                                        <div class="form-group has-required has-float-label">
+                                            <input type="month" name="month" class="form-control" required id="shift_month" value="{{date('Y-m')}}">
+                                            <label for="shift_month">Month</label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -180,7 +191,7 @@
                         <div class="change-section">
                             <div class="panel panel-warning">
                                 <div class="panel-heading"><h6>Shift Wise Employee Status (<span id="shiftListCurrentDate">{{date('Y-m-d')}}</span>)</h6></div>
-                                <div class="panel-body">
+                                <div class="panel-body p-0">
                                     <table id="" class="table table-striped table-bordered">
                                         <thead>
                                             <tr>
@@ -409,7 +420,8 @@ $(document).ready(function(){
                     associate: checkedBoxes,
                     target_shift: shift_target,
                     start_day: $("select[name=start_day]").val(),
-                    end_day: $("select[name=end_day]").val()
+                    end_day: $("select[name=end_day]").val(),
+                    month: $("#shift_month").val()
                 },
                 success: function(response)
                 {

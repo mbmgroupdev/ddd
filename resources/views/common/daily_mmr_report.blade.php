@@ -71,9 +71,29 @@
 		        				<td class="text-center">{{$mmr_data[$key]}}</td>
 		        			</tr>
 		        			@endforeach
+                            <tr>
+                                <td>
+                                    MBM Combined (MBM,MFW,MBM-2)
+                                    @php
+                                        $combpresent = (($present[1]??0)+($present[4]??0)+($present[5]??0));
+                                        $comoperator = (($operator[1]??0)+($operator[4]??0)+($operator[5]??0));
+                                        if($comoperator == 0){
+                                            $comoperator = 1;
+                                        }
+                                    @endphp
+                                </td>
+                                <td class="text-center">{{$combpresent}}</td>
+                                <td class="text-center">{{$comoperator}}</td>
+                                <td class="text-center">{{round(($combpresent/$comoperator),2)}}</td>
+                            </tr>
 		        		</tbody>
 		        	</table>
-		        	<h3 class="mb-1 " style="margin: 20px 0;font-size: 14px;font-weight: bold;border-left: 3px solid #099dae;line-height: 18px;padding-left: 10px;">Average MMR</h3>
+		        	<h3 class="mb-1 " style="margin: 20px 0;font-size: 14px;font-weight: bold;border-left: 3px solid #099dae;line-height: 18px;padding-left: 10px;">
+                        Average MMR 
+                        @if($date == date('Y-m-d'))
+                            <span style="font-size:11px;font-weight:normal;">(Current)</span>
+                        @endif
+                    </h3>
                     <div style="padding: 20px 13px;font-size: 40px;font-weight: bold;line-height: 40px;color: #099faf;">{{ round(array_sum($present->toArray())/array_sum($operator->toArray()),2) }}</div>
 	        	</div>
         	</div>

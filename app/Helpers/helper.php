@@ -113,6 +113,24 @@ if(!function_exists('num_to_bn_month')){
     }
 }
 
+if(!function_exists('date_to_bn_month')){
+    function date_to_bn_month($date)
+    {
+        $n_month = date('n', strtotime($date));
+        $n_year = eng_to_bn(date('Y', strtotime($date)));
+
+        $month = array('','জানুয়ারী', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন', 'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর');
+
+        return $month[$n_month].', '.$n_year;
+    }
+}
+
+if(!function_exists('bn_money')){
+    function bn_money($value)
+    {
+        return preg_replace("/(\d+?)(?=(\d\d)+(\d)(?!\d))(\.\d+)?/i", "$1,", $value);
+    }
+}
 
 if(!function_exists('num_to_word')){
     function num_to_word($num)
@@ -619,20 +637,31 @@ if(!function_exists('cache_att_all')){
 }
 
 
+if(!function_exists('cache_today_att')){
+    function cache_today_att($unit = null)
+    {
+        $today = cache('today_att');
+        if($unit == null){
+            $units =  Unit::where('hr_unit_status',1)->get();
+            $today = [];
+            foreach ($units as $key => $u) {
+                $today[$u->hr_unit_id] = unit_wise_today_att($u->hr_unit_id);
+            }
+            
+        }else{
+            $today[$unit] = unit_wise_today_att($unit);
+        }
+
+        return $today;
+    }
+}
+
+
 if(!function_exists('cache_daily_operation')){
     function cache_daily_operation($unit = null)
     {   
-        if($unit == null){
-            $user = auth()->user();
-            if($user){
-                $unit = auth()->user()->employee?auth()->user()->employee['as_unit_id']:1;
-                Cache::put('today_att'.$unit, unit_wise_today_att($unit), 1000000);
-            }else{
-                Cache::put('today_att1', unit_wise_today_att(1), 1000000);
-            }
-        }else{
-            Cache::put('today_att'.$unit, unit_wise_today_att($unit), 1000000);
-        }
+
+        Cache::put('today_att', cache_today_att($unit), 1000000);
         cache_att_all();
         Cache::put('monthly_ot', cache_monthly_ot(), 1000000);
         Cache::put('monthly_salary', cache_monthly_salary(), 1000000);
@@ -718,7 +747,7 @@ if(!function_exists('cache_att_ceil')){
 if(!function_exists('cache_monthly_ot')){
     function cache_monthly_ot()
     {
-        return HrMonthlySalary::selectRaw('sum(ot_hour) as ot, CONCAT(year,"-",month) as ym')
+        return HrMonthlySalary::selectRaw('round(sum(ot_hour),2) as ot, CONCAT(year,"-",month) as ym')
             ->groupBy('month','year')
             ->orderBy('id','DESC')
             ->pluck('ot','ym');      

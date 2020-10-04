@@ -68,8 +68,8 @@
             @endif
             @if($user->canany(['Employee List','Employee Hierarchy','
             Manage Employee']) || $user->hasRole('Super Admin'))
-            <li class="@if($segment2 == 'employee' && $segment3=='today') active @endif">
-               <a href="{{ url('hr/employee/today') }}"><i class="las la-list-ul"></i>Today Entry</a>
+            <li class="@if($segment2 == 'employee' && $segment3=='new-employee') active @endif">
+               <a href="{{ url('hr/employee/new-employee') }}"><i class="las la-list-ul"></i>New Employee</a>
             </li>
             @endif
             @if($user->canany(['Employee List','Employee Hierarchy','
@@ -121,7 +121,6 @@
                <a href="{{ url('hr/timeattendance/leave-entry') }}"><i class="las la-file-alt"></i>Employee Leave</a>
             </li>
             @endif
-
             @if($user->canany(['Manage Leave','Leave List']) || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'all_leaves') active @endif">
                <a href="{{ url('hr/timeattendance/all_leaves') }}"><i class="las la-file-alt"></i>Leave List</a>
@@ -213,6 +212,11 @@
                <a href="{{ url('hr/operation/attendance-operation') }}"><i class="las la-fingerprint"></i> Attendance Operation</a>
             </li>
             @endif
+            @if($user->can('Shift Assign') || $user->hasRole('Super Admin'))
+            <li class="@if($segment3 == 'shift' || $segment3 == 'shift_update') active @endif">
+               <a href="{{ url('hr/operation/shift') }}"><i class="las la-tasks"></i>Add Shift</a>
+            </li>
+            @endif
             @if($user->can('Employee Shift Assign') || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'multiple_emp_shift_assign') active @endif">
                <a href="{{ url('hr/operation/multiple_emp_shift_assign') }}"><i class="las la-tasks"></i> Employee Shift Change</a>
@@ -274,9 +278,11 @@
             <li class="@if($segment3 == 'maternity-leave') active @endif">
                <a href="{{ url('hr/operation/maternity-leave') }}"><i class="las la-file-invoice-dollar"></i>Maternity Leave</a>
             </li>
+            @if($user->can('Partial Salary') || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'partial-salary') active @endif">
                <a href="{{ url('hr/operation/partial-salary') }}"><i class="las la-file-invoice-dollar"></i>Partial Salary</a>
             </li>
+            @endif
             @if($user->can('Station Card') || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'line-change') active @endif">
                <a href="{{ url('hr/operation/line-change') }}"><i class="las la-list-ul"></i>Line Change</a>
@@ -300,13 +306,13 @@
       @endif
 
 
-      @if(auth()->user()->canany(['Shift Roster','Monthly Increment','Attendance Summary Report','Fixed Salary Sheet','Manual Attendance Report','Outside List','Attendance Consecutive Report','Event History','Group Attendance','Leave Log']) || $user->hasRole('Super Admin'))
+      @if(auth()->user()->canany(['Monthly OT','Monthly MMR','Shift Roster','Monthly Increment','Attendance Summary Report','Fixed Salary Sheet','Manual Attendance Report','Outside List','Attendance Consecutive Report','Event History','Group Attendance','Leave Log']) || $user->hasRole('Super Admin'))
       <li class="@if($segment2 == 'reports') active @endif">
          <a href="#report" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="las la-file-invoice"></i><span>Reports</span><i class="las la-angle-right iq-arrow-right"></i></a>
          <ul id="report" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
             @if(auth()->user()->hasRole('Super Admin'))
             <li class="@if($segment1 == 'mmr-report') active @endif">
-               <a href="{{ url('/mmr-report') }}" class="iq-waves-effect"><i class="las la-file"></i><span>MMR Report</span></a>
+               <a href="{{ url('/mmr-report') }}" ><i class="las la-file"></i>MMR Report</a>
             </li> 
             @endif 
             @if($user->can('Attendance Summary Report') || $user->hasRole('Super Admin'))
@@ -319,10 +325,16 @@
             <li class="@if($segment3 == 'warning-notices') active @endif"><a href="{{ url('hr/reports/warning-notices') }}"><i class="las la-fingerprint"></i>Warning Notices</a></li>
             @endif
 
-            <li class="@if($segment3 == 'monthly-reports') active @endif"><a href="{{ url('hr/reports/monthly-reports') }}"><i class="las la-chart-area"></i>Monthly Report</a></li>
+            {{-- <li class="@if($segment3 == 'monthly-reports') active @endif"><a href="{{ url('hr/reports/monthly-reports') }}"><i class="las la-chart-area"></i>Monthly Report</a></li> --}}
             {{-- <li><a href="{{ url('hr/reports/group_attendance') }}"><i class="las la-fingerprint"></i>Group Attendance</a></li> --}}
             @if($user->can('Monthly Increment') || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'monthly-salary') active @endif"><a href="{{ url('hr/reports/monthly-salary') }}"><i class="las la-fingerprint"></i>Monthly Salary</a></li>
+            @endif
+            @if($user->can('Monthly OT') || $user->hasRole('Super Admin'))
+            <li class="@if($segment3 == 'monthly-ot-report') active @endif"><a href="{{ url('hr/reports/monthly-ot-report') }}"><i class="las la-fingerprint"></i>Monthly OT</a></li>
+            @endif
+            @if($user->can('Monthly MMR') || $user->hasRole('Super Admin'))
+            <li class="@if($segment3 == 'monthly-mmr-report') active @endif"><a href="{{ url('hr/reports/monthly-mmr-report') }}"><i class="las la-fingerprint"></i>Monthly MMR</a></li>
             @endif
              @if($user->can('Shift Roster') || $user->hasRole('Super Admin'))
                <li class="@if($segment3 == 'shift_roaster') active @endif">
@@ -332,6 +344,7 @@
                   <a href="{{ url('hr/reports/holiday-roster') }}"><i class="las la-fingerprint"></i>Holiday Roster</a>
                </li>
             @endif
+            <li class="@if($segment3 == 'maternity') active @endif"><a href="{{ url('hr/reports/maternity') }}"><i class="las la-chart-area"></i>Maternity Leave</a></li>
 
             <li class="@if($segment3 == 'unit-wise-shift') active @endif"><a href="{{ url('hr/reports/unit-wise-shift') }}"><i class="las la-fingerprint"></i>Unit Wise Shift</a></li>
             <li class="@if($segment3 == 'employee-yearly-activity') active @endif"><a href="{{ url('hr/reports/employee-yearly-activity') }}"><i class="las la-fingerprint"></i>Employee Yearly Activity</a></li>
@@ -406,8 +419,11 @@
             @if($user->can('Education Setup') || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'education_title') active @endif"><a  href="{{ url('hr/setup/education_title') }}"><i class="las la-school"></i>Education</a></li>
             @endif
+            @if($user->can('Late Count Setup') || $user->hasRole('Super Admin'))
+            
             <li class="@if($segment3 == 'late_count_default') active @endif"><a  href="{{ url('hr/setup/late_count_default') }}"><i class="las la-comment-dollar"></i>Late Count Default</a></li>
             <li class="@if($segment3 == 'late_count_customize') active @endif"><a  href="{{ url('hr/setup/late_count_customize') }}"><i class="las la-comment-dollar"></i>Late Count Customize</a></li>
+            @endif
             @if($user->can('Loan Setup') || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'loan_type') active @endif"><a  href="{{ url('hr/setup/loan_type') }}"><i class="las la-comment-dollar"></i>Loan</a></li>
             @endif

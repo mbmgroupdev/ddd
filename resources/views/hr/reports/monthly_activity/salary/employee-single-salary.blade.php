@@ -31,7 +31,7 @@
                         <p style="margin:0;padding:0;">{{ isset($designation[$designationId]['hr_designation_name_bn'])? Custom::engToBnConvert($designation[$designationId]['hr_designation_name_bn']):'' }} </p>
                         <p style="margin:0;padding:0;color:hotpink">মূল+বাড়ি ভাড়া+চিকিৎসা+যাতায়াত+খাদ্য </p>
                         <p style="margin:0;padding:0;">
-                            {{ Custom::engToBnConvert($salary['basic'].'+'.$salary['house'].'+'.$salary['medical'].'+'.$salary['transport'].'+'.$salary['food']) }}
+                            {{ Custom::engToBnConvert(($salary['basic'].'+'.$salary['house'].'+'.$salary['medical'].'+'.$salary['transport'].'+'.$salary['food'])) }}
                         </p>
                     </td>
                     <td>
@@ -45,7 +45,7 @@
                     </td>
                     <td>
                         <p style="margin:0;padding:0">
-                            {{ Custom::engToBnConvert($salary['gross']) }}
+                            {{ Custom::engToBnConvert(bn_money($salary['gross'])) }}
                         </p>
                     </td>
                     <td>
@@ -167,7 +167,7 @@
                               <span style="text-align: left; width: 57%; float: left;  white-space: wrap;">বেতন/মজুরী </span>
                               <span style="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=</span>
                               <span style="text-align: right;width: 28%; float: right;  white-space: wrap;">
-                                    <font style="color:hotpink"> {{ Custom::engToBnConvert($salary['salary_payable']) }}</font>
+                                    <font style="color:hotpink"> {{ Custom::engToBnConvert(bn_money($salary['salary_payable'])) }}</font>
                              </span>
                         </p>
                         <p style="margin:0;padding:0">
@@ -239,7 +239,7 @@
                         @php
                             $totalSalary = ($salary['total_payable']);
                         @endphp
-                        {{ Custom::engToBnConvert(number_format($totalSalary,2)) }}
+                        {{ Custom::engToBnConvert(bn_money($totalSalary)) }}
                     </td>
                     
                 </tr>

@@ -80,6 +80,7 @@ class SalaryProcessController extends Controller
             ->where('s.year', $input['year'])
             ->where('s.month', $input['month'])
             ->whereBetween('s.gross', [$input['min_sal'], $input['max_sal']])
+            ->whereNotIn('s.as_id', config('base.ignore_salary'))
             ->where('emp.as_unit_id', $input['unit'])
             ->where('emp.as_status', $input['employee_status'])
             ->when(!empty($input['area']), function ($query) use($input){
@@ -141,7 +142,7 @@ class SalaryProcessController extends Controller
             $pageHead['current_date']   = date('Y-m-d');
             $pageHead['current_time']   = date('H:i');
             $pageHead['unit_name']      = $getUnit->hr_unit_name_bn;
-            $pageHead['for_date']       = Custom::engToBnConvert($input['month'].' - '.$input['year']);
+            $pageHead['for_date']       = $input['month_year'];
             $pageHead['floor_name']     = $input['floor'];
             $pageHead['month']     = $input['month'];
             $pageHead['year']     = $input['year'];
@@ -155,6 +156,7 @@ class SalaryProcessController extends Controller
 
     public function employeeWise(Request $request)
     {
+        
         $input = $request->all();
         $input['month'] = date('m', strtotime($input['emp_month_year']));
         $input['year'] = date('Y', strtotime($input['emp_month_year']));
@@ -189,6 +191,7 @@ class SalaryProcessController extends Controller
             $queryData = DB::table('hr_monthly_salary as s')
             ->where('s.year', $input['year'])
             ->where('s.month', $input['month'])
+            ->whereNotIn('s.as_id', config('base.ignore_salary'))
             ->whereIn('s.as_id', $input['as_id']);
             $queryData->leftjoin(DB::raw('(' . $employeeDataSql. ') AS emp'), function($join) use ($employeeData) {
                 $join->on('emp.associate_id','s.as_id')->addBinding($employeeData->getBindings());
@@ -220,7 +223,7 @@ class SalaryProcessController extends Controller
             $pageHead['current_date']   = date('Y-m-d');
             $pageHead['current_time']   = date('H:i');
             $pageHead['unit_name']      = '';
-            $pageHead['for_date']       = Custom::engToBnConvert($input['month'].' - '.$input['year']);
+            $pageHead['for_date']       = $input['emp_month_year'];
             $pageHead['floor_name']     = '';
             $pageHead['month']     = $input['month'];
             $pageHead['year']     = $input['year'];

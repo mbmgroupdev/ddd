@@ -183,7 +183,7 @@
                           <div class="row">
                             <div class="col-3">
                               <h4 class="card-title capitalize inline">
-                                  <button class="btn btn-sm btn-primary hidden-print" onclick="printDiv('result-data')" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report"><i class="las la-print"></i> </button>
+                                  <button class="btn btn-sm btn-primary hidden-print" onclick="printDiv('print-area')" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report"><i class="las la-print"></i> </button>
                                   
                                 </h4>
                             </div>
@@ -231,7 +231,28 @@
                           </div>
                        </div>
                     </div>
-                    <div class="iq-card-body no-padding">
+                    <div class="iq-card-body no-padding" id="print-area">
+                      <style type="text/css">
+                          .table{
+                            width: 100%;
+                          }
+                          a{text-decoration: none;}
+                          .table-bordered {
+                              border-collapse: collapse;
+                          }
+                          .table-bordered th,
+                          .table-bordered td {
+                            border: 1px solid #777 !important;
+                            padding:5px;
+                          }
+                          .no-border td, .no-border th{
+                            border:0 !important;
+                            vertical-align: top;
+                          }
+                          .f-16 th, .f-16 td, .f-16 td b{
+                            font-size: 16px !important;
+                          }
+                      </style>
                       <div class="result-data" id="result-data">
                         
                       </div>
@@ -243,6 +264,7 @@
         </div><!-- /.page-content -->
     </div>
 </div>
+@include('hr.reports.daily_activity.attendance.employee_activity_modal')
 @push('js')
 <script src="{{ asset('assets/js/moment.min.js')}}"></script>
 <script type="text/javascript">

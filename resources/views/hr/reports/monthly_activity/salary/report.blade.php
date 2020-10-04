@@ -1,6 +1,28 @@
 <div class="panel">
 	<div class="panel-body">
-		<div class="report_section">
+		<button class="btn btn-sm btn-primary hidden-print" onclick="printDiv('report_section')" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report"><i class="las la-print"></i> </button>
+		<div id="report_section" class="report_section">
+			<style type="text/css">
+              .table{
+                width: 100%;
+              }
+              a{text-decoration: none;}
+              .table-bordered {
+                  border-collapse: collapse;
+              }
+              .table-bordered th,
+              .table-bordered td {
+                border: 1px solid #777 !important;
+                padding:5px;
+              }
+              .no-border td, .no-border th{
+                border:0 !important;
+                vertical-align: top;
+              }
+              .f-16 th, .f-16 td, .f-16 td b{
+                font-size: 16px !important;
+              }
+                      </style>
 			@php
 				$unit = unit_by_id();
 				$line = line_by_id();
@@ -18,109 +40,59 @@
 				@if($input['report_format'] == 0 || ($input['report_format'] == 1 && $format != null))
 				<div class="page-header">
 		            <h2 style="margin:4px 10px; font-weight: bold; text-align: center;">Salary @if($input['report_format'] == 0) Details @else Summary @endif Report </h2>
-		            
-		            <div class="row">
-		            	<div class="col-5">
-		            		<div class="row">
-		                		<div class="col-2 pr-0">
-		                			<h5>Unit</h5>
-		                		</div>
-		                		<div class="col-10">
-		                			<b>: {{ $unit[$input['unit']]['hr_unit_name'] }}</b>
-		                		</div>
-		                		@if($input['area'] != null)
-		                		<div class="col-2 pr-0">
-		                			<h5>Area</h5>
-		                		</div>
-		                		<div class="col-10">
-		                			<b>: {{ $area[$input['area']]['hr_area_name'] }}</b>
-		                		</div>
+		            <table class="table no-border f-16" border="0">
+		            	<tr>
+		            		<td>
+		            			Unit <b>: {{ $unit[$input['unit']]['hr_unit_name'] }}</b> <br>
+		            		@if($input['area'] != null)
+		            			Area 
+		                			<b>: {{ $area[$input['area']]['hr_area_name'] }}</b> <br>
 		                		@endif
 		                		@if($input['department'] != null)
-		                		<div class="col-2 pr-0">
-		                			<h5>Department</h5>
-		                		</div>
-		                		<div class="col-10">
-		                			<b>: {{ $department[$input['department']]['hr_department_name'] }}</b>
-		                		</div>
+		                			Department 
+		                			<b>: {{ $department[$input['department']]['hr_department_name'] }}</b> <br>
 		                		@endif
 		                		@if($input['section'] != null)
-		                		<div class="col-2 pr-0">
-		                			<h5>Section</h5>
-		                		</div>
-		                		<div class="col-10">
+		                		Section 
 		                			<b>: {{ $section[$input['section']]['hr_section_name'] }}</b>
-		                		</div>
 		                		@endif
-		            		</div>
-		            	</div>
-		            	<div class="col-4 no-padding">
-		            		<div class="row">
-		            			<div class="col-4 p-0">
-		                			<h5>Month</h4>
-		                		</div>
-		                		<div class="col-8 pl-0">
-		                			<b>: {{ date('M Y', strtotime($input['month'])) }} </b>
-		                		</div>
+		            		</td>
+		            		<td>
+
+		                	</div>
+		            			Month <b>: {{ date('M Y', strtotime($input['month'])) }} </b> <br>
 		            			@if($input['otnonot'] != null)
-		                		<div class="col-4 p-0">
-		                			<h5>OT</h5>
-		                		</div>
-		                		<div class="col-8 pl-0">
-		                			<b>: @if($input['otnonot'] == 0) No @else Yes @endif </b>
-		                		</div>
+		                			<b> OT </b> 
+		                			<b>: @if($input['otnonot'] == 0) No @else Yes @endif </b> <br>
 		                		@endif
-		                		<div class="col-4 p-0">
-		                			<h5>Total Employee</h5>
-		                		</div>
-		                		<div class="col-8 pl-0">
-		                			<b>: {{ $totalEmployees }}</b>
-		                		</div>
-		                		<div class="col-4 p-0">
-		                			<h5>Total Salary</h5>
-		                		</div>
-		                		<div class="col-8 pl-0">
-		                			<b>: {{ number_format($totalSalary, 2, '.', ',') }} (BDT)</b>
-		                		</div>
+		                			Total Employee
+		                			<b>: {{ $totalEmployees }}</b> <br>
+		                			Total Salary
+		                			<b>: {{ bn_money(round($totalSalary,2)) }} (BDT)</b>
 		                		
 		                		
 		                	</div>
-		            	</div>
-		            	<div class="col-3 no-padding">
-		            		<div class="row">
-		                		@if($input['subSection'] != null)
-		                		<div class="col-3 pr-0">
-		                			<h5>Sub Section</h5>
-		                		</div>
-		                		<div class="col-9 pl-0">
-		                			<b>: {{ $subSection[$input['subSection']]['hr_subsec_name'] }}</b>
-		                		</div>
-		                		@endif
-		                		@if($input['floor_id'] != null)
-		                		<div class="col-3 pr-0">
-		                			<h5>Floor</h5>
-		                		</div>
-		                		<div class="col-9 pl-0">
-		                			<b>: {{ $floor[$input['floor_id']]['hr_floor_name'] }}</b>
-		                		</div>
+		                		
+		            		</td>
+		            		<td>
+		            			@if($input['subSection'] != null)
+		            			Sub-section <b>: {{ $subSection[$input['subSection']]['hr_subsec_name'] }}</b><br>
+		            			@endif
+		            			@if($input['floor_id'] != null)
+		                			Floor 
+		                			<b>: {{ $floor[$input['floor_id']]['hr_floor_name'] }}</b><br>
 		                		@endif
 		                		@if($input['line_id'] != null)
-		                		<div class="col-3 pr-0">
-		                			<h5>Line</h5>
-		                		</div>
-		                		<div class="col-9 pl-0">
-		                			<b>: {{ $line[$input['line_id']]['hr_line_name'] }}</b>
-		                		</div>
+		                		Line 
+		                			<b>: {{ $line[$input['line_id']]['hr_line_name'] }}</b> <br>
 		                		@endif
-		                		<div class="col-3 pr-0">
-		                			<h5>Format</h5>
-		                		</div>
-		                		<div class="col-9 pl-0">
+		                		Format 
 		                			<b class="capitalize">: {{ isset($formatHead[1])?$formatHead[1]:'N/A' }}</b>
-		                		</div>
-		                	</div>
-		            	</div>
-		            </div>
+		            		</td>
+		            	</tr>
+		            	
+		            </table>
+		            
 		        </div>
 		        @else
 		        <div class="page-header-summery">
@@ -153,7 +125,7 @@
         			<h4>OT: @if($input['otnonot'] == 0) No @else Yes @endif </h4>
         			@endif
         			<h4>Total Employee: <b>{{ $totalEmployees }}</b></h4>
-        			<h4>Total Salary: <b>{{ $totalSalary }}</b></h4>
+        			<h4>Total Salary: <b>{{ bn_money(round($totalSalary,2)) }}</b></h4>
 		            		
 		        </div>
 		        @endif
@@ -224,7 +196,7 @@
 			            	@if($head == '')
 			            	<tr>
 			            		<td>{{ ++$i }}</td>
-				            	<td><img src="{{ emp_profile_picture($employee) }}" class='small-image min-img-file'></td>
+				            	<td><img height="30" src="{{ emp_profile_picture($employee) }}" class='small-image min-img-file'></td>
 				            	<td><a href='{{ url("hr/operation/job_card?associate=$employee->associate_id&month_year=$month") }}' target="_blank">{{ $employee->associate_id }}</a></td>
 				            	<td>
 				            		<b>{{ $employee->as_name }}</b>
@@ -236,7 +208,7 @@
 				            	<td>{{ $employee->present }}</td>
 				            	<td>{{ $employee->absent }}</td>
 				            	<td><b>{{ $otHour }}</b></td>
-				            	<td>{{ number_format($employee->total_payable, 2, '.', ',') }}</td>
+				            	<td>{{ bn_money($employee->total_payable) }}</td>
 				            	<td>
 				            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-yearmonth="{{ $input['month'] }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Yearly Activity Report' ><i class="fa fa-eye"></i></button>
 				            	</td>
@@ -245,7 +217,7 @@
 			            	@if($group == $employee->$format)
 			            	<tr>
 			            		<td>{{ ++$i }}</td>
-				            	<td><img src="{{ emp_profile_picture($employee) }}" class='small-image min-img-file'></td>
+				            	<td><img height="30"  src="{{ emp_profile_picture($employee) }}" class='small-image min-img-file'></td>
 				            	<td><a href='{{ url("hr/operation/job_card?associate=$employee->associate_id&month_year=$month") }}' target="_blank">{{ $employee->associate_id }}</a></td>
 				            	<td>
 				            		<b>{{ $employee->as_name }}</b>
@@ -257,7 +229,7 @@
 				            	<td>{{ $employee->present }}</td>
 				            	<td>{{ $employee->absent }}</td>
 				            	<td><b>{{ $otHour }}</b></td>
-				            	<td>{{ number_format($employee->total_payable, 2, '.', ',') }}</td>
+				            	<td>{{ bn_money($employee->total_payable) }}</td>
 				            	<td>
 				            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-yearmonth="{{ $input['month'] }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Yearly Activity Report' ><i class="fa fa-eye"></i></button>
 				            	</td>
@@ -345,7 +317,7 @@
 									@php $totalEmployee += $employee->total; @endphp
 								</td>
 								<td>
-									{{ number_format($employee->groupSalary, 2, '.', ',') }}
+									{{ bn_money(round($employee->groupSalary,2)) }}
 								</td>
 							</tr>
 							@endforeach
@@ -461,4 +433,22 @@
           $('body').css('overflow', 'unset');
         });
     });
+
+    function printDiv(divName)
+    {   
+        
+
+        var mywindow=window.open('','','width=800,height=800');
+        
+        mywindow.document.write('<html><head><title>Print Contents</title>');
+        mywindow.document.write('<style>@page {size: landscape; color: color;} </style>');
+        mywindow.document.write('</head><body>');
+        mywindow.document.write(document.getElementById(divName).innerHTML);
+        mywindow.document.write('</body></html>');
+
+        mywindow.document.close();  
+        mywindow.focus();           
+        mywindow.print();
+        mywindow.close();
+    }
 </script>

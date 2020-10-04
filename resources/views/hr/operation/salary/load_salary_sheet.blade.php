@@ -1,60 +1,68 @@
-<style>
-    @media print {
-        #unit-info{
-            display:none;
-        }
-        .pagebreak {
-            page-break-before: always !important;
-        }
-    }
-</style>
-<div id="unit-info">
-<h2 style="margin:4px 10px;text-align:center;">
-    {{$pageHead->unit_name}}
-</h2>
-@if(isset($info) && count($info)>1)
-    <h5 style="margin:4px 10px;text-align:center;">
-        @if(!empty($info['floor']))
-            <span style="color:lightseagreen;">ফ্লোর:</span> {{$info['floor']}}
-        @endif
-        @if(!empty($info['area']))
-            <span style="color:lightseagreen;" class="f17">এরিয়া:</span> {{$info['area']}}
-        @endif
-        @if(!empty($info['department']))
-            <span style="color:lightseagreen;" class="f17">ডিপার্টমেন্ট:</span> {{$info['department']}}
-        @endif
-        @if(!empty($info['section']))
-            <span style="color:lightseagreen;">সেকশন:</span> {{$info['section']}}
-        @endif
-        @if(!empty($info['sub_sec']))
-            <span style="color:lightseagreen;">সাব-সেকশন:</span> {{$info['sub_sec']}}
-        @endif
-    </h5>
-@endif
-@php
-    $loc_count = 0;
-    $total_emp = 0;
-    $total_sal = 0;
-    $locations = location_by_id();
-@endphp
-@if($pageHead->unit_name != '')
-    <h3 style="margin:4px 10px;text-align:center;">
-        বেতন/মজুরি এবং অতিরিক্ত সময়ের মজুরী<br/>
-        তারিখঃ {{ Custom::engToBnConvert($pageHead->for_date) }}
-    </h3>
-    
 
-    <h6 style="margin:4px 10px;text-align:center;font-weight:600;font-size:13px;">
-        সর্বমোট টাকার পরিমানঃ
-        <span style="color:hotpink;font-size:15px;" id="total-salary"></span><br/>
-        মোট কর্মী/কর্মচারীঃ
-        <span style="color:hotpink;font-size:15px;" id="emp-count"></span>
-    </h6>
-@endif
-@if(count($getSalaryList) == 0)
-    <b><h5 class="text-center"> No data found !</h5></b>
-@endif
-</div>
+<button class="btn btn-sm btn-primary hidden-print" onclick="printDiv('salary-print')" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report"><i class="las la-print"></i> </button>
+<div id="salary-print">
+    <style>
+        @media print {
+            #unit-info{
+                display:none;
+            }
+            .pagebreak {
+                page-break-before: always !important;
+            }
+            .disburse-button{
+                display: none;
+            }
+        }
+    </style>
+    <div id="unit-info">
+    <h2 style="margin:4px 10px;text-align:center;">
+        {{$pageHead->unit_name}}
+    </h2>
+    @if(isset($info) && count($info)>1)
+        <h5 style="margin:4px 10px;text-align:center;">
+            @if(!empty($info['floor']))
+                <span style="color:lightseagreen;">ফ্লোর:</span> {{$info['floor']}}
+            @endif
+            @if(!empty($info['area']))
+                <span style="color:lightseagreen;" class="f17">এরিয়া:</span> {{$info['area']}}
+            @endif
+            @if(!empty($info['department']))
+                <span style="color:lightseagreen;" class="f17">ডিপার্টমেন্ট:</span> {{$info['department']}}
+            @endif
+            @if(!empty($info['section']))
+                <span style="color:lightseagreen;">সেকশন:</span> {{$info['section']}}
+            @endif
+            @if(!empty($info['sub_sec']))
+                <span style="color:lightseagreen;">সাব-সেকশন:</span> {{$info['sub_sec']}}
+            @endif
+        </h5>
+    @endif
+    @php
+        $loc_count = 0;
+        $total_emp = 0;
+        $total_sal = 0;
+        $locations = location_by_id();
+        $salmonth = date_to_bn_month($pageHead->for_date);
+
+    @endphp
+    @if($pageHead->unit_name != '')
+        <h3 style="margin:4px 10px;text-align:center;">
+            বেতন/মজুরি এবং অতিরিক্ত সময়ের মজুরী<br/>
+            মাসঃ {{  $salmonth }}
+        </h3>
+        
+
+        <h6 style="margin:4px 10px;text-align:center;font-weight:600;font-size:13px;">
+            সর্বমোট টাকার পরিমানঃ
+            <span style="color:hotpink;font-size:15px;" id="total-salary"></span><br/>
+            মোট কর্মী/কর্মচারীঃ
+            <span style="color:hotpink;font-size:15px;" id="emp-count"></span>
+        </h6>
+    @endif
+    @if(count($getSalaryList) == 0)
+        <b><h5 class="text-center"> No data found !</h5></b>
+    @endif
+    </div>
     @foreach($uniqueLocation as $locKey=>$location)
         @php
             $pageKey = 0;
@@ -92,7 +100,7 @@
                             <tr>
                                 <td style="width:14%">
                                     <p style="margin:0;padding:4px 0"><strong>তারিখঃ </strong>
-                                        {{ Custom::engToBnConvert($pageHead->current_date) }}
+                                        {{Custom::engToBnConvert($pageHead->current_date)}}
                                     </p>
                                     <p style="margin:0;padding:4px 0"><strong>&nbsp;সময়ঃ </strong>
                                         {{ Custom::engToBnConvert($pageHead->current_time) }}
@@ -114,7 +122,7 @@
                                     </h3>
                                     <h5 style="margin:4px 10px;text-align:center;font-weight:600;font-size:14px;">বেতন/মজুরি এবং অতিরিক্ত সময়ের মজুরী
                                     <br/>
-                                    তারিখঃ {{ Custom::engToBnConvert($pageHead->for_date) }}</h5>
+                                    মাসঃ {{ $salmonth }}</h5>
                                 </td>
                                 <td width="0%"> &nbsp;</td>
                                 <td style="width:30%" style="text-align: right;">
@@ -126,7 +134,7 @@
                                     </p>
                                     @endif
                                     <p style="margin:0;padding:4px 0;text-align: right;">
-                                        সর্বমোট টাকার পরিমানঃ <span style="color:hotpink" >{{Custom::engToBnConvert($totalSalary_s)}}</span>
+                                        সর্বমোট টাকার পরিমানঃ <span style="color:hotpink" >{{Custom::engToBnConvert(bn_money($totalSalary_s))}}</span>
                                     </p>
                                     @php
                                         $list_total_ot = array_column(array_column($lists, 'salary'),'ot_rate');
@@ -135,7 +143,7 @@
                                         মোট কর্মী/কর্মচারীঃ <span style="color:hotpink" >{{Custom::engToBnConvert($emp)}}</span>
                                     </p>
                                     <p style="margin:0;padding:4px 0;text-align: right;">
-                                        স্ট্যাম্প বাবদঃ <span style="color:hotpink" >{{Custom::engToBnConvert($emp*10)}}</span> | অতিরিক্ত কাজের মজুরীঃ <span style="color:hotpink" id="">{{Custom::engToBnConvert($ot_payable)}}</span>
+                                        স্ট্যাম্প বাবদঃ <span style="color:hotpink" >{{Custom::engToBnConvert($emp*10)}}</span> | অতিরিক্ত কাজের মজুরীঃ <span style="color:hotpink" id="">{{Custom::engToBnConvert(bn_money($ot_payable))}}</span>
                                     </p>
                                 </td>
                             </tr>
@@ -154,7 +162,7 @@
                                     <th width="250">মোট দেয় টাকার পরিমান</th>
                                     <th>সর্বমোট টাকার পরিমান</th>
                                     <th width="80">দস্তখত</th>
-                                    <th width="80">বিতরণ</th>
+                                    <th class="disburse-button" width="80">বিতরণ</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -171,6 +179,9 @@
                                                 <p style="margin:0;padding:0;color:hotpink">মূল+বাড়ি ভাড়া+চিকিৎসা+যাতায়াত+খাদ্য </p>
                                                 <p style="margin:0;padding:0;">
                                                     {{ Custom::engToBnConvert($list->basic.'+'.$list->house.'+'.$list->medical.'+'.$list->transport.'+'.$list->food) }}
+                                                </p>
+                                                <p style="margin:0;padding:0;color:hotpink">
+                                                   {{ $salmonth}}
                                                 </p>
                                             </td>
                                             <td>
@@ -375,11 +386,12 @@
                                                     $loc_emp++;
                                                     $totalSalary = ($list->total_payable);
                                                     $loc_sal = $loc_sal+$totalSalary;
+
                                                 @endphp
-                                                {{ Custom::engToBnConvert(number_format($totalSalary,2)) }}
+                                                {{ Custom::engToBnConvert(bn_money($totalSalary)) }}
                                             </td>
                                             <td></td>
-                                            <td id="{{ $j }}-{{ $list->as_id }}">
+                                            <td class="disburse-button" id="{{ $j }}-{{ $list->as_id }}">
                                                 @if($list->disburse_date == null)
                                                     <a data-id="{{ $j }}-{{ $list->as_id }}" class="btn btn-primary btn-sm disbursed_salary text-white" data-eaid="{{ $list->as_id }}" data-date="{{ $pageHead->for_date }}" data-month="{{ $pageHead->month }}" data-year="{{ $pageHead->year }}" data-name="{{ $list->hr_bn_associate_name }}" data-post="{{ $designation[$list->as_designation_id]['hr_designation_name_bn']}}"  rel='tooltip' data-tooltip-location='top' data-tooltip='বেতন প্রদান করুন' > হয় নি </a>
                                                 @else
@@ -408,6 +420,7 @@
             @endif
         @endforeach
     @endforeach
+</div>
 {{-- modal --}}
 <div class="item_details_section">
     <div class="overlay-modal overlay-modal-details" style="margin-left: 0px; display: none;">

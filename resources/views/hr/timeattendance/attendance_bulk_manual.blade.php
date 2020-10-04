@@ -205,10 +205,10 @@
                                                     <input type="hidden" name="this_shift_end[{{$data['att_id']}}]" value="{{$data['shift_end']}}">
                                                     <input type="hidden" name="this_shift_break[{{$data['att_id']}}]" value="{{$data['shift_break']}}">
                                                     <input type="hidden" name="this_shift_night[{{$data['att_id']}}]" value="{{$data['shift_night']}}">
-                                                    <input class="intime manual" type="text" name="intime[{{$data['att_id']}}]" value="{{!empty($data['in_time'])?$data['in_time']:null}}"  placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}}>
+                                                    <input class="intime manual" type="time" name="intime[{{$data['att_id']}}]" value="{{!empty($data['in_time'])?date("H:i", strtotime($data['in_time'])):null}}"   placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}}>
                                                 </td>
                                                 <td>
-                                                    <input type="text" class="outtime manual" name="outtime[{{$data['att_id']}}]" value="{{!empty($data['out_time'])?$data['out_time']:null}}" step="2" placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}}>
+                                                    <input type="time" class="outtime manual" name="outtime[{{$data['att_id']}}]" value="{{!empty($data['out_time'])?date("H:i", strtotime($data['out_time'])):null}}"  placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}}>
                                                 </td>
                                             @else
                                                 <td>
@@ -220,10 +220,10 @@
                                                     <input type="hidden" name="new_shift_break[]" value="{{$data['shift_break']}}">
                                                     <input type="hidden" name="new_shift_night[]" value="{{$data['shift_night']}}">
 
-                                                    <input class="intime manual" type="time" name="new_intime[]" value=""  placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}}>
+                                                    <input class="intime manual" type="time" name="new_intime[]" value=""   placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}}>
                                                 </td>
                                                 <td>
-                                                    <input type="time" class="outtime manual" name="new_outtime[]" value="" step="2" placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}}>
+                                                    <input type="time" class="outtime manual" name="new_outtime[]" value=""  placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}}>
                                                 </td>
                                             @endif
                                             <td> 

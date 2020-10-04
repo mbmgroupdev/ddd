@@ -267,7 +267,8 @@ class EmployeeController extends Controller
                 }
             })
             ->whereNotIn('as_id', auth()->user()->management_permissions())
-            ->whereDate('b.created_at',date('Y-m-d'))
+            ->whereMonth('b.created_at',date('m'))
+            ->orWhereMonth('b.as_doj',date('m'))
             ->orderBy('dg.hr_designation_position','ASC')
             ->get();
 

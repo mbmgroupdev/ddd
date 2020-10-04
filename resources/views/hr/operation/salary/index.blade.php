@@ -234,6 +234,7 @@
                     <div id="result-process-bar" style="display: none;">
                         <div class="iq-card">
                             <div class="iq-card-body">
+                                
                                 <div class="" id="result-show">
                                     <div class="progress">
                                         <div class="progress-bar progress-bar-info progress-bar-striped active" id="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">
@@ -253,9 +254,27 @@
 </div>
 @push('js')
 <script type="text/javascript">
+    function printDiv(divName)
+    {   
+        
+
+        var mywindow=window.open('','','width=800,height=800');
+        
+        mywindow.document.write('<html><head><title>Print Contents</title>');
+        mywindow.document.write('<style>@page {size: landscape; color: color;} </style>');
+        mywindow.document.write('</head><body>');
+        mywindow.document.write(document.getElementById(divName).innerHTML);
+        mywindow.document.write('</body></html>');
+
+        mywindow.document.close();  
+        mywindow.focus();           
+        mywindow.print();
+        mywindow.close();
+    }
     var loader = '<div class="progress"><div class="progress-bar progress-bar-info progress-bar-striped active" id="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">0%</div></div>';
     $(document).ready(function(){
         //salary range validation------------------
+
         $('#min_sal').on('change',function(){
             $('#max_sal').val('');
 
@@ -430,6 +449,7 @@
         var month = $("#emp-month").val();
         
         if(employee.length > 0 && month !== ''){
+            $('.app-loader').show()
             $("#result-process-bar").show();
             $('#setFlug').val(0);
             processbar(0);
@@ -447,9 +467,11 @@
                             $('#setFlug').val(1); 
                             processbar('success');
                             $("#result-show").html(response);
+                            $('.app-loader').hide();
                         }, 1000);
                     }else{
                         $('#setFlug').val(2); 
+                        $('.app-loader').hide();
                         processbar('error');
                     }
                 },

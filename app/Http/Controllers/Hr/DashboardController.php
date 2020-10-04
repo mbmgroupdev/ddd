@@ -123,16 +123,44 @@ class DashboardController extends Controller
 
     public function today_att()
     {
-        $unit = 1;//auth()->user()->employee['as_unit_id'];
-        $today_att = Cache::remember('today_att'.$unit, 10000, function  () use ($unit) {
-            return unit_wise_today_att($unit);
+
+        $unit_att = Cache::remember('today_att', 1000000, function  (){
+            return cache_today_att();
         });
-        
-        
-        if(isset($today_att['date']) && $today_att['date'] != date('Y-m-d')){
+                
+        if(isset($unit_att[1]['date']) && $unit_att[1]['date'] != date('Y-m-d')){
             
-            $today_att = Cache::put('today_att'.$unit, unit_wise_today_att($unit), 10000);
+            Cache::put('today_att', cache_today_att(), 10000);
+            $unit_att = cache('today_att');
         }
+
+        $units = auth()->user()->unit_permissions();
+
+        $present = 0;
+        $late = 0;
+        $leave   = 0;
+        $absent  = 0;
+        $employee = 0;
+
+        foreach ($units as $key => $unit) {
+            if(isset($unit_att[$unit])){
+
+                $present    += $unit_att[$unit]['present'];
+                $late       += $unit_att[$unit]['late'];
+                $leave      += $unit_att[$unit]['leave'];
+                $absent     += $unit_att[$unit]['absent'];
+                $employee   += $unit_att[$unit]['employee'];
+            }
+        }
+
+        $today_att = [
+          'employee'=> $employee,
+          'present' => $present,
+          'late'    => $late,
+          'absent'  => $absent,
+          'leave'   => $leave,
+          'date'    => date('Y-m-d')
+        ];
 
         return $today_att;
     }

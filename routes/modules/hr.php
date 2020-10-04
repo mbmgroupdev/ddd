@@ -4,7 +4,7 @@ Route::group(['prefix' => 'hr','namespace' => 'Hr'], function(){
 	Route::get('/', 'DashboardController@index');
 
 
-	// Adminstrator --------------------------------------------------------
+	// Adminstrator 
 	Route::group(['prefix' => 'adminstrator','namespace' => 'Adminstrator'], function(){
 		Route::get('users', 'UserController@index');
 		Route::post('user/list', 'UserController@getUserList');
@@ -32,7 +32,7 @@ Route::group(['prefix' => 'hr','namespace' => 'Hr'], function(){
 		Route::get('role/sync-permission', 'RolesController@syncPermission');
 	});
 
-	// settings ------------------------------------------------------------
+	// settings 
 	Route::group(['prefix' => 'settings','namespace' => 'Settings'], function(){
 		# unit settings
 		Route::get('unit','UnitController@index');
@@ -272,7 +272,9 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 	Route::get('hr/timeattendance/attendance-upload', 'Hr\TimeAttendance\AttendaceManualController@showForm')->middleware(['permission:Attendance Upload']);
 	Route::post('hr/timeattendance/attendance_manual', 'Hr\TimeAttendance\AttendaceManualController@saveData')->middleware(['permission:Attendance Upload']);
 
-	// Route::post('hr/timeattendance/attendance_manual/excel/import', 'Hr\TimeAttendance\AttendanceExcelController@importFile');
+	Route::get('hr/timeattendance/default-punch', 'Hr\TimeAttendance\AttendaceManualController@defaultPunch')->middleware(['permission:Default Punch']);
+	Route::post('hr/timeattendance/default-punch', 'Hr\TimeAttendance\AttendaceManualController@storeDefaultPunch')->middleware(['permission:Default Punch']);
+	Route::get('hr/timeattendance/employee_by_fields', 'Hr\TimeAttendance\AttendaceManualController@employeeByField');
 
 	Route::get('/hr/timeattendance/attendance_process_wise', 'Hr\TimeAttendance\AttendanceExcelController@importFileProcess');
 	Route::get('hr/timeattendance/attendance_bulk_manual', 'Hr\TimeAttendance\AttendaceBulkManualController@bulkManual');
@@ -398,7 +400,7 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 	
 	Route::post('hr/timeattendance/leave_worker',  'Hr\TimeAttendance\LeaveWorkerController@saveData')->middleware(['permission:Manage Leave']);
 
-	Route::get('hr/reports/maternity-leave', 'Hr\Operation\MaternityPaymentController@report');
+	Route::get('hr/reports/maternity', 'Hr\Operation\MaternityPaymentController@report');
 
 	//Operation - Maternity Leave
 	Route::get('hr/operation/maternity-leave', 'Hr\Operation\MaternityPaymentController@showForm');
@@ -575,7 +577,7 @@ Route::get('hr/payroll/salary', 'Hr\Payroll\SalaryController@view');
 	// Employee
 	Route::group(['middleware' => 'permission:Employee List'], function(){
 		Route::get('hr/employee/list', 'Hr\Recruitment\EmployeeController@showList');
-		Route::get('hr/employee/today', 'Hr\Recruitment\EmployeeController@today');
+		Route::get('hr/employee/new-employee', 'Hr\Recruitment\EmployeeController@today');
 		Route::get('hr/recruitment/employee/today_employee_data', 'Hr\Recruitment\EmployeeController@getTodayData');
 
 		Route::get('hr/employee/incomplete-list', 'Hr\Recruitment\EmployeeController@incompleteEmployee');
@@ -692,6 +694,14 @@ Route::get('hr/payroll/salary', 'Hr\Payroll\SalaryController@view');
 		Route::post('hr/performance/appraisal_approve/approve_reject', 'Hr\Performance\AppraisalListController@appraisalStatus');
 	});
 
+	//shift
+	Route::get('hr/operation/shift','Hr\Setup\ShiftController@shift')->middleware(['permission:Shift Assign']);
+	Route::get('hr/operation/shift_update/{hr_shift_id}','Hr\Setup\ShiftController@shiftUpdate')->middleware(['permission:Shift Assign']);
+	Route::get('hr/setup/getShiftListByLineID','Hr\Setup\ShiftController@getShiftListByLineID');
+	Route::post('hr/setup/shift','Hr\Setup\ShiftController@shiftStore');
+	Route::get('hr/setup/shift/{hr_shift_id}','Hr\Setup\ShiftController@shiftDelete');
+	Route::post('hr/setup/shift_update','Hr\Setup\ShiftController@shiftUpdateStore');
+
 
 	//---------HR / Setup-----------//
 
@@ -727,13 +737,7 @@ Route::get('hr/payroll/salary', 'Hr\Payroll\SalaryController@view');
 		Route::get('hr/setup/line_update/{hr_line_id}','Hr\Setup\LineController@lineUpdate');
 		Route::post('hr/setup/line_update','Hr\Setup\LineController@lineUpdateStore');
 
-		//shift
-		Route::get('hr/setup/shift','Hr\Setup\ShiftController@shift');
-		Route::get('hr/setup/getShiftListByLineID','Hr\Setup\ShiftController@getShiftListByLineID');
-		Route::post('hr/setup/shift','Hr\Setup\ShiftController@shiftStore');
-		Route::get('hr/setup/shift/{hr_shift_id}','Hr\Setup\ShiftController@shiftDelete');
-		Route::get('hr/setup/shift_update/{hr_shift_id}','Hr\Setup\ShiftController@shiftUpdate');
-		Route::post('hr/setup/shift_update','Hr\Setup\ShiftController@shiftUpdateStore');
+		
 
 		//department
 		Route::get('hr/setup/department','Hr\Setup\DepartmentController@department');
@@ -1426,5 +1430,9 @@ Route::get('hr/operation/partial-salary', 'Hr\Operation\VoucherController@partia
 Route::post('hr/operation/partial-salary', 'Hr\Operation\VoucherController@partialGenerate');
 Route::post('hr/operation/partial-salary/disburse', 'Hr\Operation\VoucherController@disburse');
 
+Route::get('/hr/reports/monthly-ot-report', 'Hr\ReportController@monthlyOT');
+Route::get('/hr/reports/monthly-mmr-report', 'Hr\ReportController@monthlyMMR');
+
 Route::get('hr/operation/test', 'Hr\Operation\VoucherController@test');
+Route::get('hr/test', 'TestController@test');
 

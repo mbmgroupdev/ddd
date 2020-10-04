@@ -8,33 +8,61 @@
       
       
       
-      @if($user->can('Attendance Chart') || $user->hasRole('Super Admin'))
+      @if($user->can('Monthly Attendance') || $user->hasRole('Super Admin'))
       <div class="col-lg-6">
         <div class="panel iq-card-block iq-card-stretch iq-card-height">
             <div class="panel-heading d-flex justify-content-between">
                   <h6>Attendance: {{date('F')}}</h6>
             </div>
             <div class="panel-body">
-               <div id="att-chart"></div>
+                <div id="att-chart"></div>
+               
             </div>
         </div>
          <!--  -->
       </div>  
       @endif
 
-      @if($user->can('Daily Attendance') || $user->hasRole('Super Admin'))
+      @if($user->can('Today Attendance') || $user->hasRole('Super Admin'))
       <div class="col-md-6">
          <div class="panel iq-card-block iq-card-stretch iq-card-height">
             <div class="panel-heading d-flex justify-content-between">
                   <h6>Today's Attendance</h6>
             </div>
-            <div class="iq-card-body">
-               <div id="today-att" style="width: 100%; height: 400px;"></div>
+            <div class="iq-card-body text-center">
+               @if($today_att_chart['present'] > 0 || $today_att_chart['late'] > 0)
+                   <div id="today-att" style="width: 100%; height: 400px;"></div>
+                @else
+                    <p class=" text-danger p-5">Today's Attendance has not been uploaded! Please make sure this step's should done before attendance file upload.</p>
+
+                    <ul class="iq-timeline" style="width:200px;margin:0 auto;">
+                      <li>
+                         <div class="timeline-dots"></div>
+                         <h6 class="mb-1"><a target="_blank" href="{{ url('hr/operation/shift')}}" >Add Shift</a></h6>
+                      </li>
+                      <li>
+                         <div class="timeline-dots border-success"></div>
+                         <h6 class="mb-1"><a target="_blank" href="{{ url('hr/operation/shift_assign')}}" >Shift Assign</a></h6>
+                      </li>
+                      <li>
+                         <div class="timeline-dots border-primary"></div>
+                         <h6 class="mb-1"><a target="_blank" href="{{ url('hr/operation/holiday-roster')}}"  style="width:200px;">Holiday Roster</a></h6>
+                      </li>
+                      <li>
+                         <div class="timeline-dots border-warning"></div>
+                         <h6 class="mb-1"><a target="_blank" href="{{ url('hr/timeattendance/attendance-upload')}}" >Upload Attendance</a></h6>
+                      </li>
+                   </ul>
+                    
+                    
+                    
+                    
+                @endif
             </div>
          </div>
       </div>
       @endif
-      @if($user->can('Monthly Salary') || $user->hasRole('Super Admin'))
+      @if($user->can('Monthly Salary Comparison') || $user->hasRole('Super Admin'))
        <div class="col-lg-6">
          <div class="panel iq-card-block iq-card-stretch iq-card-height">
             <div class="panel-heading d-flex justify-content-between">
@@ -47,7 +75,7 @@
       </div>
       @endif
 
-      @if($user->can('Monthly Overtime') || $user->hasRole('Super Admin'))               
+      @if($user->can('Monthly OT') || $user->hasRole('Super Admin'))               
       <div class="col-md-6">
          <div class="panel iq-card-block iq-card-stretch iq-card-height">
             <div class="panel-heading d-flex justify-content-between">
@@ -77,7 +105,7 @@
 
       <script type="text/javascript">
 
-        @if($user->can('Monthly Salary') || $user->hasRole('Super Admin')) 
+        @if($user->can('Monthly Salary Comparison') || $user->hasRole('Super Admin')) 
         jQuery("#monthly-salary-chart").length && am4core.ready(function() {
             var options = {
                   series: [{
@@ -138,7 +166,7 @@
         })
         @endif
 
-        @if($user->can('Monthly Overtime') || $user->hasRole('Super Admin')) 
+        @if($user->can('Monthly OT') || $user->hasRole('Super Admin')) 
         if (jQuery('#ot-comparison').length) {
             Highcharts.chart('ot-comparison', {
                 chart: {
@@ -192,7 +220,7 @@
         }
         @endif
 
-        @if($user->can('Attendance Chart') || $user->hasRole('Super Admin')) 
+        @if($user->can('Monthly Attendance') || $user->hasRole('Super Admin')) 
         if (jQuery('#att-chart').length) {
            Highcharts.chart('att-chart', {
                chart: {
@@ -246,31 +274,47 @@
                        }
                    }
                },
-               series: [{
+               series: [
+               @if(in_array(1, auth()->user()->unit_permissions()))
+               {
                    name: 'MBM',
                    data: @php echo json_encode(array_values($att_chart['mbm'])); @endphp,
                    color: '#089bab'
-               }, {
+               },
+               @endif 
+               @if(in_array(5, auth()->user()->unit_permissions()))
+               {
                    name: 'MBM2',
                    data: @php echo json_encode(array_values($att_chart['mbm2'])); @endphp,
                    color: '#5834eb'
-               }, {
+               }, 
+               @endif
+               @if(in_array(4, auth()->user()->unit_permissions()))
+               {
                    name: 'MFW',
                    data: @php echo json_encode(array_values($att_chart['mfw'])); @endphp,
                    color: '#242036'
-               }, {
+               }, 
+               @endif
+               @if(in_array(2, auth()->user()->unit_permissions()))
+               {
                    name: 'CEIL',
                    data: @php echo json_encode(array_values($att_chart['ceil'])); @endphp,
                    color: '#FC9F5B'
-               }, {
+               },
+               @endif
+               @if(in_array(3, auth()->user()->unit_permissions())) 
+               {
                    name: 'AQL',
                    data: @php echo json_encode(array_values($att_chart['aql'])); @endphp,
                    color: '#0abb78'
-               }]
+               }
+               @endif
+               ]
            });
         }
         @endif
-        @if($user->can('Daily Attendance') || $user->hasRole('Super Admin')) 
+        @if($user->can('Today Attendance') || $user->hasRole('Super Admin')) 
           if (jQuery('#today-att').length) {
              am4core.ready(function() {
 
