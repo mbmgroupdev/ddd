@@ -141,7 +141,7 @@
                                           </div>
                                         </div>
                                         <input type="hidden" id="reportformat" name="report_format" value="0">
-                                        <input type="hidden" id="reportGroup" name="report_group" value="as_line_id">
+                                        <input type="hidden" id="reportGroup" name="report_group" value="as_department_id">
                                         
                                     </div>
                                     <div class="col-3">
@@ -196,9 +196,9 @@
                                   <div class="format">
                                     <div class="form-group has-float-label select-search-group mb-0">
                                         <?php
-                                            $type = ['as_unit_id'=>'N/A','as_line_id'=>'Line','as_floor_id'=>'Floor','as_department_id'=>'Department','as_designation_id'=>'Designation'];
+                                            $type = ['as_unit_id'=>'N/A','as_line_id'=>'Line','as_floor_id'=>'Floor','as_department_id'=>'Department','as_designation_id'=>'Designation','as_section_id'=>'Section'];
                                         ?>
-                                        {{ Form::select('report_group_select', $type, 'as_line_id', ['class'=>'form-control capitalize', 'id'=>'reportGroupHead']) }}
+                                        {{ Form::select('report_group_select', $type, 'as_department_id', ['class'=>'form-control capitalize', 'id'=>'reportGroupHead']) }}
                                         <label for="reportGroupHead">Report Format</label>
                                     </div>
                                   </div>

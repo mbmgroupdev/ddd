@@ -199,7 +199,7 @@
 
 <script src="{{ asset('assets/js/moment.min.js') }}"></script>
 <script src="{{ asset('assets/js/bootstrap-datetimepicker.min.js') }}"></script>
-<script src="{{ asset('assets/js/dataTables.cellEdit.js') }}"></script>
+<script src="{{ asset('assets/js/datatableedit.js') }}"></script>
 <script type="text/javascript">
     $(document).ready(function(){  
         var loader = '<div class="panel"><div class="panel-body"><p style="text-align:center;margin:100px;"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>';

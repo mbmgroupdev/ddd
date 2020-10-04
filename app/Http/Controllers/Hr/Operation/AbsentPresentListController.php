@@ -105,7 +105,8 @@ class AbsentPresentListController extends Controller
     $tableName = $this->getTableName($unit);
     $attData = DB::table($tableName);
 
-    $attData->whereBetween('a.in_time', [date('Y-m-d',strtotime($report_from))." "."00:00:00", date('Y-m-d',strtotime($report_to))." "."23:59:59"]);
+    // $attData->whereBetween('a.in_time', [date('Y-m-d',strtotime($report_from))." "."00:00:00", date('Y-m-d',strtotime($report_to))." "."23:59:59"]);
+    $attData->whereBetween('a.in_date', [date('Y-m-d',strtotime($report_from)), date('Y-m-d',strtotime($report_to))]);
 
     $leaveData = DB::table('hr_leave');
 

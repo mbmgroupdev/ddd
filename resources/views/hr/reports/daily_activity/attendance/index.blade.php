@@ -193,7 +193,7 @@
                                   <a class="btn view prev_btn" data-toggle="tooltip" data-placement="top" title="" data-original-title="Previous Date Report" >
                                     <i class="las la-chevron-left"></i>
                                   </a>
-                                  <b class="f-16" id="result-head"> </b>
+                                  <b class="f-16 uppercase" id="result-head"> </b>
                                   <a class="btn view next_btn" data-toggle="tooltip" data-placement="top" title="" data-original-title="Next Date Report" >
                                     <i class="las la-chevron-right"></i>
                                   </a>
@@ -487,23 +487,7 @@
        
     });
 
-    function printDiv(divName)
-    {   
-        
-
-        var mywindow=window.open('','','width=800,height=800');
-        
-        mywindow.document.write('<html><head><title>Print Contents</title>');
-        mywindow.document.write('<style>@page {size: landscape; color: color;} </style>');
-        mywindow.document.write('</head><body>');
-        mywindow.document.write(document.getElementById(divName).innerHTML);
-        mywindow.document.write('</body></html>');
-
-        mywindow.document.close();  
-        mywindow.focus();           
-        mywindow.print();
-        mywindow.close();
-    }
+    
 </script>
 @endpush
 @endsection

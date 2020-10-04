@@ -317,15 +317,8 @@ class DailyActivityReportController extends Controller
                     $totalOtHour = $attData->sum("a.ot_hour");
                     
                 }
-                $otHourEx = explode('.', $totalOtHour);
-                $minute = '00';
-                if(isset($otHourEx[1])){
-                    $minute = $otHourEx[1];
-                    if($minute == 50){
-                        $minute = 30;
-                    }
-                }
-                $totalValue = $otHourEx[0].'.'.$minute;
+                
+                $totalValue = numberToTimeClockFormat($totalOtHour);
             }elseif($input['report_type'] == 'working_hour'){
                 $attData->leftjoin(DB::raw('(' . $shiftDataSql. ') AS s'), function($join) use ($shiftData) {
                     $join->on('a.hr_shift_code', '=', 's.hr_shift_code')->addBinding($shiftData->getBindings());

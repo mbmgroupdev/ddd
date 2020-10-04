@@ -104,7 +104,7 @@ class AttendanceFileProcessController extends Controller
                         $time = $checktime[1];
                         $checktime = ((!empty($date) && !empty($time))?date("Y-m-d H:i:s", strtotime("$date $time")):null);
                     }else{
-                        $msg[] = $value." - AQL device mismatch. ";
+                        $msg[] = $value." - AQL device mismatch.";
                         break;
                     }
                 }
@@ -131,29 +131,11 @@ class AttendanceFileProcessController extends Controller
                 		$as_info = Employee::
                 		where('as_id', $asId)
                         ->where('as_status', 1)
-                		->select([
-                			'as_unit_id',
-                			'as_id',
-                			'as_shift_id',
-                			'as_ot',
-                            'shift_roaster_status',
-                            'associate_id',
-                            'as_status'
-                		])
                 		->first();
                 	}else{
                 		$as_info = Employee::
                 		where('as_rfid_code', $rfid)
                         ->where('as_status', 1)
-                		->select([
-                			'as_unit_id',
-                			'as_id',
-                			'as_shift_id',
-                			'as_ot',
-                            'shift_roaster_status',
-                            'associate_id',
-                            'as_status'
-                		])
                 		->first();
                 	}
 
@@ -503,7 +485,7 @@ class AttendanceFileProcessController extends Controller
                 }
 
                 //shift start range
-                $shift_start_begin_new= $shift_in_time_new-5400; // 1.30 hour
+                $shift_start_begin_new= $shift_in_time_new-7200; // 20 hour
                 $shift_start_end_new= $shift_in_time_new+14399; //3 hour 59 minute 59 second
                 //shift end rage
                 $shift_end_begin_new= $shift_start_end_new+1; // 4 hour

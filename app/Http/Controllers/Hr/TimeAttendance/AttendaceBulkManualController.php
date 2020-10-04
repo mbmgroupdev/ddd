@@ -29,6 +29,7 @@ class AttendaceBulkManualController extends Controller
             if($request->month <= date('Y-m')){
 
                 $result = $this->empAttendanceByMonth($request);
+                
                 $attendance = $result['attendance'];
                 $info = $result['info'];
                 $joinExist = $result['joinExist'];
@@ -44,6 +45,7 @@ class AttendaceBulkManualController extends Controller
 
     public function getLateStatus($unit,$shift_id,$date,$intime,$shift_start)
     {
+        //return $unit. ' '.$shift_id;
         $getLateCount = HrLateCount::getUnitShiftIdWiseCheckExists($unit, $shift_id);
         if($getLateCount != null){
             if(date('Y-m-d', strtotime($date))>= $getLateCount->date_from && date('Y-m-d', strtotime($date)) <= $getLateCount->date_to){
@@ -129,7 +131,7 @@ class AttendaceBulkManualController extends Controller
 
     public function bulkManualStore(Request $request)
     {
-        // dd($request->all());
+       
         $unit=$request->unit_att;
         $info = Employee::where('as_id',$request->ass_id)->first();
         $tableName= $this->getTableName($unit);
@@ -247,10 +249,11 @@ class AttendaceBulkManualController extends Controller
             }
 
             //update
-
+            
             if(isset($request->old_date)){
                 foreach ($request->old_date as $key => $date) {
                     $checkDay = EmployeeHelper::employeeDateWiseStatus($date, $info->associate_id, $info->as_unit_id, $info->shift_roaster_status);
+                    
                     if($checkDay == 'open' || $checkDay == 'OT'){
                         $Att = DB::table($tableName)
                         ->where('id', $key)
@@ -274,12 +277,14 @@ class AttendaceBulkManualController extends Controller
                         $update['updated_by'] = auth()->user()->associate_id;
 
                         $intime = $request->intime[$key];
+                        
                         if (strpos($intime, ':') !== false) {
                             list($one,$two,$three) = array_pad(explode(':',$intime),3,0);
                             if((int)$one+(int)$two+(int)$three == 0) {
                                 $intime = null;
                             }
                         }
+                        
                         $outtime = $request->outtime[$key];
                         if (strpos($outtime, ':') !== false) {
                             list($one,$two,$three) = array_pad(explode(':',$outtime),3,0);
@@ -331,62 +336,76 @@ class AttendaceBulkManualController extends Controller
                             $attInsert = 0;
                             if($request->intime[$key] == '00:00:00' || $request->intime[$key] == null){
                                 $empIntime = $shift_start;
-                                $update['remarks'] = 'DSI';
+                                $update['remarks'] = 'BM';
                             }else{
                                 $empIntime = $intime;
                                 $update['remarks'] = 'BM';
                             }
-                            $update['in_time'] = $date.' '.$empIntime;
-                            $update['out_time'] = $date.' '.$outtime;
+                            $update['in_time'] = date('Y-m-d H:i:s', strtotime($date.' '.$empIntime));
+                            $update['out_time'] = date('Y-m-d H:i:s', strtotime($date.' '.$outtime));
                             if($intime != null){
+                                
+
                                 $update['in_unit'] = $unit;
-                                if($outtime != null && $Att->remarks == 'DSI') {
-                                    // in time is yesterday
-                                    if(strtotime($intime) > strtotime($outtime)) {
-                                        $inDate = date('Y-m-d',strtotime($Att->in_time));
-                                        $outDate = date('Y-m-d',strtotime($Att->out_time));
-                                        // if in date and out date are Equuleus then in date are yesterday
-                                        if($inDate == $outDate) {
-                                            $date = date("Y-m-d", strtotime("-1 day", strtotime($date)));
-                                            $update['in_time'] = $date.' '.$intime;
-                                            // check in_time date already exist
-                                            $existAtt = DB::table($tableName)
-                                                ->where('as_id',$request->ass_id)
-                                                ->whereDate('in_time',$date)
-                                                ->first();
-                                            if($existAtt) {
-                                                return back()->with('error', $date.' in time already exist.');
-                                            }
-                                        }
-                                    }
-                                }
+                                // if($outtime != null && $intime == null && $Att->remarks == 'DSI') {
+                                //     // in time is yesterday
+                                //     if(strtotime($intime) > strtotime($outtime)) {
+                                //         $inDate = date('Y-m-d',strtotime($Att->in_time));
+                                //         $outDate = date('Y-m-d',strtotime($Att->out_time));
+                                //         // if in date and out date are Equuleus then in date are yesterday
+                                //         if($inDate == $outDate) {
+                                //             $date = date("Y-m-d", strtotime("-1 day", strtotime($date)));
+                                //             $update['in_time'] = $date.' '.$intime;
+                                //             // check in_time date already exist
+                                //             $existAtt = DB::table($tableName)
+                                //                 ->where('as_id',$request->ass_id)
+                                //                 ->whereDate('in_time',$date)
+                                //                 ->first();
+                                //             if($existAtt) {
+                                //                 return back()->with('error', $date.' in time already exist.');
+                                //             }
+                                //         }
+                                //     }
+                                // }
                                 if($checkDay == 'OT'){
                                     $update['late_status'] = 0;
                                 }else{
+
                                     $update['late_status'] = $this->getLateStatus($unit, $request->this_shift_id[$key],$date,$intime,$shift_start);
+                                    
                                 }
                             }else{
                                 $update['late_status'] = 1;
                             }
                             if($outtime != null){
                                 $update['out_unit'] = $unit;
-                                $update['out_time'] = $date.' '.$outtime;
+                                $update['out_time'] = date('Y-m-d H:i:s', strtotime($date.' '.$outtime));
                                 if($intime != null && $Att->remarks != 'DSI') {
                                     // out time is tomorrow
                                     if(strtotime($outtime) < strtotime($intime)) {
                                         $dateOModify = date("Y-m-d", strtotime("+1 day", strtotime($date)));
-                                        $update['out_time'] = $dateOModify.' '.$outtime;
+                                        $update['out_time'] = date('Y-m-d H:i:s', strtotime($dateOModify.' '.$outtime));
                                     }
                                 }
                                 // set previous out date
                                 if($Att->remarks == 'DSI') {
                                     $dateDSI = date("Y-m-d", strtotime($Att->out_time));
-                                    $update['out_time'] = $dateDSI.' '.$outtime;
+                                    $update['out_time'] = date('Y-m-d H:i:s', strtotime($dateDSI.' '.$outtime));
                                 }
                             }
                             //check OT hour if out time exist
-                            if($intime != null && $outtime != null && $Att->remarks != 'DSI' && $info->as_ot == 1){
+                            
+
+                            /********************************************************
+                             | Previously set outime with DSI. Thats why couldnt updated
+                             |
+                             *******************************************************/
+
+
+
+                            if($intime != null && $outtime != null && $info->as_ot == 1){
                                 $overtimes = EmployeeHelper::daliyOTCalculation($update['in_time'],$update['out_time'], $shift_start, $shift_end, $break, $nightFlag, $info->associate_id, $info->shift_roaster_status, $unit);
+                                // dd($overtimes);
                                 /*$h = floor($overtimes/60) ? ((floor($overtimes/60)<10)?("0".floor($overtimes/60)):floor($overtimes/60)) : '00';
                                 $m = $overtimes%60 ? (($overtimes%60<10)? ("0".$overtimes%60):($overtimes%60)) : '00';
                                 $update['ot_hour'] = ($h.'.'.($m =='30'?'50':'00'));*/
@@ -394,7 +413,7 @@ class AttendaceBulkManualController extends Controller
                             }else {
                                 $update['ot_hour'] = 0;
                             }
-
+                            
                             $event['ot_new'] = $update['ot_hour'];
 
                             if($request->old_status[$key] == 'A' && $Att == null) {
@@ -402,7 +421,7 @@ class AttendaceBulkManualController extends Controller
                                 $update['as_id'] = $request->ass_id;
                                 $update['in_date'] = date('Y-m-d', strtotime($update['in_time']));
                                 DB::table($tableName)->insert($update);
-                                dd('line 396');
+                                
                                 // remove absent
                                 $absentWhere = [
                                     'as_id' => $info->as_id,
@@ -416,6 +435,7 @@ class AttendaceBulkManualController extends Controller
                                 if(strtotime($update['in_time']) != strtotime($Att->in_time) || strtotime($update['out_time']) != strtotime($Att->out_time)) {
                                     $this->eventModified($info->associate_id,1,$Att,$event); // in/out modified
                                 }
+                                
                                 DB::table($tableName)
                                 ->where('id', $key)
                                 ->where('as_id',$request->ass_id)
@@ -428,7 +448,8 @@ class AttendaceBulkManualController extends Controller
                                 Absent::where($absentWhere)->delete();
                             }
                         }
-                    }else{
+                    }
+                    else{
                         $absentWhere = [
                             'associate_id' => $info->associate_id,
                             'date' => $date,
@@ -443,9 +464,9 @@ class AttendaceBulkManualController extends Controller
                     }
                 }
             }
-
+            
             // sent to queue for salary calculation
-            $year = date('Y', strtotime($request->year));
+            $year = date('Y', strtotime($request->month));
             $month = date('m', strtotime($request->month));
             //dd($year);exit;
             $yearMonth = $year.'-'.$month;
@@ -454,7 +475,7 @@ class AttendaceBulkManualController extends Controller
             }else{
                 $totalDay = Carbon::parse($yearMonth)->daysInMonth;
             }
-
+            
             $queue = (new ProcessUnitWiseSalary($tableName, $month, $year, $request->ass_id, $totalDay))
             ->onQueue('salarygenerate')
             ->delay(Carbon::now()->addSeconds(2));
@@ -464,6 +485,7 @@ class AttendaceBulkManualController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
             $bug = $e->getMessage();
+            return $bug;
             return redirect()->back()->with('error',$bug);
         }
     }
@@ -494,7 +516,7 @@ class AttendaceBulkManualController extends Controller
         $year  = $explode[0];
         #------------------------------------------------------
         // ASSOCIATE INFORMATION
-        $fetchUser = Employee::with('shift')->where("associate_id", $associate);
+        $fetchUser = Employee::where("associate_id", $associate);
         //check user exists
         if($fetchUser->exists()) {
           $info = $fetchUser->first();

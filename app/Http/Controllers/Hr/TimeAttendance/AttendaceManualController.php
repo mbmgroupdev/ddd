@@ -260,7 +260,6 @@ class AttendaceManualController extends Controller
 public function calculateOt(Request $request){
 
     $employee = Employee::where('associate_id',$request->associateId)
-    ->with('shift')
     ->first();
     $shiftData = DB::table('hr_shift');
     $shiftDataSql = $shiftData->toSql();

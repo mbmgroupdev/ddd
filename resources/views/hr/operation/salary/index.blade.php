@@ -561,18 +561,7 @@
 
     }
     
-    function printMe1(divName) {   
-        var mywindow=window.open('','','width=800,height=800'); 
-        mywindow.document.write('<html><head><title>Print Contents</title>');
-        mywindow.document.write('<style>@page {size: landscape; color: color;} </style>');
-        mywindow.document.write('</head><body>');
-        mywindow.document.write(document.getElementById(divName).innerHTML);
-        mywindow.document.write('</body></html>');
-        mywindow.document.close();  
-        mywindow.focus();           
-        mywindow.print();
-        mywindow.close();
-    }
+    
     
 </script>
 @endpush

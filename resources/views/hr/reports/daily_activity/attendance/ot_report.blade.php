@@ -179,15 +179,8 @@
 										$body = $designation[$group]['hr_designation_name']??'N/A';
 									}elseif($format == 'ot_hour'){
 										$head = 'OT Hour';
-										$otHourEx = explode('.', $group);
-					                    $minute = '00';
-					                    if(isset($otHourEx[1])){
-					                        $minute = $otHourEx[1];
-					                        if($minute == 50){
-					                            $minute = 30;
-					                        }
-					                    }
-					                    $otHourBody = $otHourEx[0].'.'.$minute;
+										
+					                    $otHourBody = numberToTimeClockFormat($group);
 										$body = $otHourBody??'N/A';
 									}else{
 										$head = '';
@@ -261,8 +254,8 @@
 					            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
 					            	<td>{{ $floor[$employee->as_floor_id]['hr_floor_name']??'' }}</td>
 					            	<td>{{ $line[$employee->as_line_id]['hr_line_name']??'' }}</td>
-					            	<td>{{ $employee->in_time }}</td>
-					            	<td>{{ $employee->out_time }}</td>
+					            	<td>{{ date('H:i:s', strtotime($employee->in_time)) }}</td>
+					            	<td>{{ date('H:i:s', strtotime($employee->out_time)) }}</td>
 					            	<td>{{ $otHour }}</td>
 					            	<td>
 					            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Yearly Activity Report' ><i class="fa fa-eye"></i></button>
@@ -289,15 +282,9 @@
 			            		<td><b>Total OT Hour</b></td>
 			            		<td colspan="2"><b>
 			            			@php
-			            			$otHourEx = explode('.', $totalOt);
-				                    $minute = '00';
-				                    if(isset($otHourEx[1])){
-				                        $minute = $otHourEx[1];
-				                        if($minute == 5){
-				                            $minute = 30;
-				                        }
-				                    }
-				                    echo $otHourEx[0].'.'.$minute;
+			            			
+				                    $otHourE = numberToTimeClockFormat($totalOt);
+				                    echo $otHourE;
 			            			@endphp
 			            		</b></td>
 			            	</tr>
@@ -351,15 +338,8 @@
 										}elseif($format == 'as_designation_id'){
 											$body = $designation[$group]['hr_designation_name']??'';
 										}elseif($format == 'ot_hour'){
-											$otHourEx = explode('.', $group);
-						                    $minute = '00';
-						                    if(isset($otHourEx[1])){
-						                        $minute = $otHourEx[1];
-						                        if($minute == 50){
-						                            $minute = 30;
-						                        }
-						                    }
-						                    $otHourBody = $otHourEx[0].'.'.$minute;
+											
+						                    $otHourBody = numberToTimeClockFormat($group);
 											$body = $otHourBody??'N/A';
 										}else{
 											$body = 'N/A';

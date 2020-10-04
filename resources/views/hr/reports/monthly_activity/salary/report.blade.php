@@ -180,6 +180,12 @@
 									}elseif($format == 'as_designation_id'){
 										$head = 'Designation';
 										$body = $designation[$group]['hr_designation_name']??'';
+									}elseif($format == 'as_section_id'){
+										$head = 'Section';
+										$body = $section[$group]['hr_section_name']??'';
+									}elseif($format == 'as_subsection_id'){
+										$head = 'Sub Section';
+										$body = $subSection[$group]['hr_subsec_name']??'';
 									}else{
 										$head = '';
 									}
@@ -284,6 +290,10 @@
 							$head = 'Department';
 						}elseif($format == 'as_designation_id'){
 							$head = 'Designation';
+						}elseif($format == 'as_section_id'){
+							$head = 'Section';
+						}elseif($format == 'as_subsection_id'){
+							$head = 'Sub Section';
 						}else{
 							$head = '';
 						}
@@ -294,7 +304,7 @@
 								<th>Sl</th>
 								<th> {{ $head }} Name</th>
 								<th>No. Of Employee</th>
-								<th>Salary</th>
+								<th>Salary (BDT)</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -317,6 +327,13 @@
 											$body = $department[$group]['hr_department_name']??'';
 										}elseif($format == 'as_designation_id'){
 											$body = $designation[$group]['hr_designation_name']??'';
+										}elseif($format == 'as_section_id'){
+											$depId = $section[$group]['hr_section_department_id']??'';
+											$seDeName = $department[$depId]['hr_department_name']??'';
+											$seName = $section[$group]['hr_section_name']??'';
+											$body = $seDeName.' - '.$seName;
+										}elseif($format == 'as_subsection_id'){
+											$body = $subSection[$group]['hr_subsec_name']??'';
 										}else{
 											$body = 'N/A';
 										}
@@ -328,7 +345,7 @@
 									@php $totalEmployee += $employee->total; @endphp
 								</td>
 								<td>
-									{{ number_format($employee->groupSalary, 2, '.', ',') }} (BDT)
+									{{ number_format($employee->groupSalary, 2, '.', ',') }}
 								</td>
 							</tr>
 							@endforeach
