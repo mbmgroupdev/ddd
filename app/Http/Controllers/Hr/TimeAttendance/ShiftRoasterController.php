@@ -1420,7 +1420,8 @@ class ShiftRoasterController extends Controller
                 ->get()
                 ->keyBy('hr_shift_name');
 
-            $shift = DB::table('hr_as_basic_info AS b')
+
+            $shiftEmp = DB::table('hr_as_basic_info AS b')
                      ->select('s.hr_shift_start_time','s.hr_shift_end_time','s.hr_shift_break_time','b.as_unit_id','b.as_shift_id','b.associate_id','s.hr_shift_name')
                      ->leftJoin('hr_shift AS s', function($q) {
                          $q->on('s.hr_shift_name', 'b.as_shift_id')
@@ -1437,12 +1438,13 @@ class ShiftRoasterController extends Controller
                      ->where('shift_roaster_month', $month)
                      ->pluck( $column.' AS roaster', 'shift_roaster_associate_id');
 
+            //dd($shiftEmp, $roaster);
             $shiftwise = [];
-            foreach ($shift  as $key => $sf) {
+            foreach ($shiftEmp  as $key => $sf) {
                 if (isset($roaster[$sf->associate_id])) {
                     $shiftwise[$roaster[$sf->associate_id]]['changed'][] = $sf->associate_id;
                 }else{
-                    $shiftwise[$sf->hr_shift_name]['default'][] = $sf->associate_id;
+                    $shiftwise[$sf->as_shift_id]['default'][] = $sf->associate_id;
                 }
             }
             

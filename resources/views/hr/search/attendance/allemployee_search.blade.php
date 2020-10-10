@@ -15,13 +15,14 @@
     <p class="search-title">Search results of  {{ $showTitle }}</p>
     <div class="panel-body">
         <div class="row choice_2_div" id="choice_2_div" name="choice_2_div">
-        	<div class="col-sm-12">
+            <div class="col-sm-12">
                 <div class="table-responsive">
                     <table id="dataTables" class="table table-striped table-bordered" style="width:100%;" >
                         <thead>
                             <tr>
                                 <th>Sl. No</th>
                                 <th>Associate ID</th>
+                                 <th>Oracle Code</th>
                                 <th>Name</th>
                                 <th>Designation</th>
                                 <th>Shift</th>
@@ -155,6 +156,7 @@ $(document).ready(function(){
         columns: [
             { data: 'DT_RowIndex', name: 'DT_RowIndex' },
             { data: 'associate_id',  name: 'associate_id' },
+            { data: 'as_oracle_code',  name: 'as_oracle_code' },
             { data: 'as_name', name: 'as_name' },
             { data: 'hr_designation_name', name: 'hr_designation_name' },
             { data: 'hr_shift_name', name: 'hr_shift_name' },

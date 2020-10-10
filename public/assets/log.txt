@@ -1,0 +1,10 @@
+2020-10-06 17:25:24 "20F025016D" User information updated 18
+2020-10-06 17:25:04 "20F025016D" User information updated 10
+2020-10-06 17:24:17 "20F025016D" Permission Add User revoked from 25 
+2020-10-06 17:24:12 "20F025016D" Permission Role Hierarchy revoked from 25 
+2020-10-06 17:24:10 "20F025016D" Permission Assign Permission revoked from 25 
+2020-10-06 17:24:06 "20F025016D" Permission Manage Role revoked from 25 
+2020-10-06 17:24:03 "20F025016D" Permission Manage User revoked from 25 
+2020-10-06 12:12:17 "20F025015D" User information updated 42
+2020-10-05 17:02:55 "20F025015D" User information updated 42
+2020-10-05 14:39:38 "20F025015D" User information updated 42

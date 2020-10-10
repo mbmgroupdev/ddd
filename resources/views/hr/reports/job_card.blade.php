@@ -71,7 +71,7 @@
             @if(isset($info))
             <div class="panel w-100">
                 <div class="panel-body">
-                    <div class="offset-2 col-8 h-min-400">
+                    <div class="offset-1 col-10 h-min-400">
                         
                         @php
                             $year  = date('Y', strtotime(request()->month_year));
@@ -143,12 +143,12 @@
                             <div class="iq-card-body pt-0">
                                 <div class="result-data" id="result-data">
                                     
-                                    <div id="html-2-pdfwrapper" class="col-sm-12" style="margin:20px auto;">
+                                    <div id="html-2-pdfwrapper" class="col-sm-12" style="margin:30px auto;">
                                         <div class="page-header" id="brand-head" style="border-bottom:2px double #666; text-align: center;">
                                             <h3 style="margin:4px 10px">{{ $info->unit }}</h3>
                                             <h5 style="margin:4px 10px">Job Card Report</h5>
 
-                                            <h5 style="margin:4px 10px">For the month of {{ $month }} - {{ $year }}</h5>
+                                            <h5 style="margin:4px 10px">For the month of {{date('F, Y', strtotime(request()->month_year))}}</h5>
                                         </div>
                                         <table class="table" style="width:100%;border:1px solid #ccc;margin-bottom:0;font-size:14px;text-align:left"  cellpadding="5">
                                             <tr>
@@ -158,6 +158,7 @@
                                                    <p style="margin:0;padding:4px 10px"><strong>DOJ </strong>: {{ date("d-m-Y", strtotime($info->as_doj)) }}</p>
                                                 </th>
                                                 <th>
+                                                    <p style="margin:0;padding:4px 10px"><strong>Oracle ID </strong>: {{ $info->as_oracle_code }} </p>
                                                    <p style="margin:0;padding:4px 10px"><strong>Section </strong>: {{ $info->section }} </p>
                                                    <p style="margin:0;padding:4px 10px"><strong>Designation </strong>: {{ $info->designation }} </p>
                                                 </th>

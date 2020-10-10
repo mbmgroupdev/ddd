@@ -254,7 +254,7 @@ class EmployeeController extends Controller
             ->leftJoin('hr_line AS l', 'l.hr_line_id', '=', 'b.as_line_id')
             ->leftJoin('hr_department AS dp', 'dp.hr_department_id', '=', 'b.as_department_id')
             ->leftJoin('hr_designation AS dg', 'dg.hr_designation_id', '=', 'b.as_designation_id')
-            ->whereIn('b.as_status',[1,6])
+            ->whereIn('b.as_status',[1])
             ->where(function ($query) use ($request) {
                 if($request->otnonot != null){
                     $query->where('b.as_ot', '=', $request->otnonot);
@@ -267,6 +267,7 @@ class EmployeeController extends Controller
                 }
             })
             ->whereNotIn('as_id', auth()->user()->management_permissions())
+            ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
             ->whereMonth('b.created_at',date('m'))
             ->orWhereMonth('b.as_doj',date('m'))
             ->orderBy('dg.hr_designation_position','ASC')
@@ -373,8 +374,8 @@ class EmployeeController extends Controller
             ->leftJoin('hr_department AS dp', 'dp.hr_department_id', '=', 'b.as_department_id')
             ->leftJoin('hr_designation AS dg', 'dg.hr_designation_id', '=', 'b.as_designation_id')
             ->leftJoin('hr_benefits AS ben', 'ben.ben_as_id', '=', 'b.associate_id')
-            ->whereIn('b.as_status',[1,6])
-            ->whereIn('b.as_unit_id', [1,4,5])
+            ->whereIn('b.as_status',[1])
+            ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
             ->where(function ($query) use ($request) {
                 if($request->otnonot != null){
                     $query->where('b.as_ot', '=', $request->otnonot);
@@ -519,6 +520,7 @@ class EmployeeController extends Controller
                 }
             })
             ->whereNotIn('as_id', auth()->user()->management_permissions())
+            ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
             ->orderBy('dg.hr_designation_position','ASC')
             ->get();
 

@@ -29,7 +29,6 @@ class AttendaceBulkManualController extends Controller
             if($request->month <= date('Y-m')){
 
                 $result = $this->empAttendanceByMonth($request);
-                
                 $attendance = $result['attendance'];
                 $info = $result['info'];
                 $joinExist = $result['joinExist'];
@@ -540,7 +539,6 @@ class AttendaceBulkManualController extends Controller
           }
           $tableName= get_att_table($info->as_unit_id).' AS a';
           $associate= $info->associate_id;
-
           $totalDays  = (date('d', strtotime($endDay))-date('d', strtotime($startDay)));
           $total_attends  = 0; $absent = 0; $x=1; $total_ot = 0;
           $attendance=[];
@@ -548,9 +546,11 @@ class AttendaceBulkManualController extends Controller
           $iEx = 0;
           $joinExist = false;
           if($info->as_doj != null) {
-            list($yearE,$monthE,$dateE) = explode('-',$info->as_doj);
+            $yearE = date('Y', strtotime($info->as_doj ));
+            $monthE = date('m', strtotime($info->as_doj ));
+            $dateE = date('d', strtotime($info->as_doj ));
             if($year == $yearE && $month == $monthE) {
-              $iEx = $dateE-1;
+              $iEx = ((int) $dateE )-1;
               $joinExist = true;
               $x = $dateE;
             }
@@ -559,7 +559,9 @@ class AttendaceBulkManualController extends Controller
           $leftExist = false;
           if($info->as_status_date != null) {
             if(in_array($info->as_status,[0,2,3,4,5])!==false) {
-              list($yearL,$monthL,$dateL) = explode('-',$info->as_status_date);
+                $yearL = date('Y', strtotime($info->as_status_date ));
+                $monthL = date('m', strtotime($info->as_status_date ));
+                $dateL = date('d', strtotime($info->as_status_date ));
               if($year == $yearL && $month == $monthL) {
                 if($joinExist == false) {
                   $iEx = 1;
@@ -593,7 +595,7 @@ class AttendaceBulkManualController extends Controller
                       ->where('hr_yhp_unit', $info->as_unit_id)
                       ->get()
                       ->keyBy('hr_yhp_dates_of_holidays')->toArray();
-
+       
           for($i=$iEx; $i<=$totalDays; $i++) {
             $date       = ($year."-".$month."-".$x);
             $thisDay   = date('Y-m-d', strtotime($date));

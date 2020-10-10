@@ -582,6 +582,7 @@ class UserController extends Controller
         if($request->has('keyword')){
             $search = $request->keyword;
             $data = Employee::select("associate_id", DB::raw('CONCAT_WS(" - ", associate_id, as_name) AS user_name'))
+                ->whereIn('as_unit_id', auth()->user()->unit_permissions())
                 ->where(function($q) use($search) {
                     $q->where("associate_id", "LIKE" , "%{$search}%");
                     $q->orWhere("as_name", "LIKE" , "%{$search}%");
@@ -601,6 +602,7 @@ class UserController extends Controller
             $search = $request->keyword;
             $data = Employee::select("associate_id", DB::raw('CONCAT_WS(" - ", associate_id, as_name) AS user_name'))
                 ->where('as_gender', 'Female')
+                ->whereIn('as_unit_id', auth()->user()->unit_permissions())
                 ->where(function($q) use($search) {
                     $q->where("associate_id", "LIKE" , "%{$search}%");
                     $q->orWhere("as_name", "LIKE" , "%{$search}%");

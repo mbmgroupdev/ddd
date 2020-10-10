@@ -8,7 +8,14 @@
 @endphp
 
 <nav class="iq-sidebar-menu">
+
    <ul id="iq-sidebar-toggle" class="iq-menu">
+      <li>
+         <a style="background: #daf0f3;color: #000;">
+            <i class="las la-city "></i>  <span> {!!permitted_units()!!} </span>
+            
+         </a>
+      </li>
       <li>
          <a href="{{ url('/') }}" class="iq-waves-effect"><i class="las la-home"></i><span>Dashboard</span></a>
       </li>

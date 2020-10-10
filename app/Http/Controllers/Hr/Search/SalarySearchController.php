@@ -141,7 +141,8 @@ class SalarySearchController extends Controller
                             DB::raw('sum(a.ot_payable) AS ot_payable'),
                             DB::raw('count(a.as_id) AS emp')
                         )
-                        ->where($infocon);
+                        ->where($infocon)
+                        ->whereIn('e.as_unit_id', auth()->user()->unit_permissions());
             $query1->Join(DB::raw('(' . $salaryData_sql. ') AS a'), function($join) use ($salaryData) {
                         $join->on('a.as_id', '=', 'e.associate_id')->addBinding($salaryData->getBindings()); ;
                     });
@@ -170,12 +171,17 @@ class SalarySearchController extends Controller
             
             $showTitle = $this->pageTitle($request);
             unset($request['unit'],$request['area'],$request['department'],$request['floor'],$request['section'],$request['subsection'],$request['view'],$request['salstatus']); 
+
+            $employees = DB::table('hr_as_basic_info')
+                         ->whereIn('as_unit_id', auth()->user()->unit_permissions())
+                         ->pluck('associate_id');
             if($request['type']=='range'){
                 $salaryInfo = HrMonthlySalary::select(
                     DB::raw('sum(ot_hour*ot_rate) AS ot_payable'),
                     DB::raw('sum(total_payable) AS total_payable'),
                     DB::raw('count(distinct as_id) as emp')
                 )->whereBetween(DB::raw("CONCAT(month, '-', year)"),[$date['from'],$date['to']])
+                ->whereIn('as_id',  $employees)
                 ->whereNotIn('as_id', config('base.ignore_salary'))
                 ->first();
             }else{
@@ -184,6 +190,7 @@ class SalarySearchController extends Controller
                     DB::raw('sum(total_payable) AS total_payable'),
                     DB::raw('count(distinct as_id) as emp')
                 )->where($date)
+                ->whereIn('as_id',  $employees)
                 ->whereNotIn('as_id', config('base.ignore_salary'))
                 ->first();
             }
@@ -560,7 +567,10 @@ class SalarySearchController extends Controller
                         )
                         ->leftJoin('hr_floor as f','f.hr_floor_id','e.as_floor_id')
                         ->leftJoin('hr_designation as d','d.hr_designation_id','e.as_designation_id')
+                        ->whereIn('e.as_unit_id', auth()->user()->unit_permissions())
                         ->where($infocon);
+
+
             $query1->Join(DB::raw('(' . $salaryData_sql. ') AS a'), function($join) use ($salaryData) {
                         $join->on('a.as_id', '=', 'e.associate_id')->addBinding($salaryData->getBindings()); ;
                     });

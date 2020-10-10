@@ -1,5 +1,5 @@
 @extends('hr.layout')
-@section('title', 'End of Job Benefits')
+@section('title', 'End of Job')
 @section('main-content')
 @push('css')
     <style type="text/css">
@@ -21,385 +21,126 @@
                 <li>
                     <a href="#"> Payroll </a>
                 </li>
-                <li class="active">End of Job Benefits </li>
+                <li class="active">End of Job </li>
+                <li class="top-nav-btn"><a href="{{url('hr/payroll/given_benefits_list')}}" target="_blank" class="btn btn-sm btn-primary" >Benefit List <i class="fa fa-list bigger-120"></i></a></li>
             </ul><!-- /.breadcrumb --> 
         </div>
 
         
         @include('inc/message')
         <div class="panel panel-success" style="">
-            <div class="panel-heading page-headline-bar">
-                <h6>
-                    End of Job Benefits
-                    <a href="{{url('hr/payroll/given_benefits_list')}}" target="_blank" class="btn btn-primary pull-right" >Benefit List <i class="fa fa-list bigger-120"></i></a>
-                </h6>
-            </div>
             <div class="panel-body">
-                <div class="row">
-                    <div class="col-4">
-                        {{Form::open(['url'=>'hr/payroll/benefits_save', 'class'=>'form-horizontal'])}}
-                            <div class="row">
-                                <div class="col-12">
-                                    
-                                    <div class="form-group has-required has-float-label select-search-group">
-                                        <select id="benefit_on" name="benefit_on" class="form-control" required="required">
-                                           <option value="">Select Type</option>
-                                           <option value="on_resign">Resign Benefits</option>
-                                           <option value="on_dismiss">Dismiss Benefits</option>
-                                           <option value="on_terminate">Termination Benefits</option>
-                                           <option value="on_death">Death Benefits</option>
-                                           <option value="on_resign">Retirement Benefits</option>
-                                       </select>  
-                                        <label>Benefit Type</label>
-                                    </div>
-                                </div>
-                                
-                                
-                                
-
-                                <div  id="death_reason_div" class="col-12">
-                                    <div  class="form-group has-required has-float-label select-search-group" >
-                                        
-                                        <select  name="death_reason" class="form-control death_reason"  required="required">
-                                           <option value="none">Select One</option>
-                                           <option value="natural_death" >Natural Death on Duty</option>
-                                           <option value="duty_accidental_death">On Duty/On Duty Accidental Death </option>
-                                       </select>
-                                        <label >Death Reason</label>
-                                    </div>
-                                </div>
-                                <div id="suspension_days_div" class="col-12">
-                                    <div class="form-group has-required has-float-label" >
-                                        
-                                        <input type="text" class="form-control" name="suspension_days" id="suspension_days" value="0" required="required">
-                                        <label >Suspension Days</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="form-group has-required has-float-label emp select-search-group" style="pointer-events: none;">
-                                        
-                                        {{ Form::select('associate',  [Request::get('associate') => Request::get('associate')], Request::get('associate'), ['placeholder'=>'Select Associate\'s ID', 'id'=>'associate', 'class'=> 'associates form-control', 'data-validation'=>'required']) }}
-                                        <label >Employee</label>
-                                        
-                                    </div>
-                                </div>
-                                <div id="not_eligible_show" class="col-12">
-                                    <div class="form-group" >
-                                        <label style="color: red;">Sorry Not Eligible (Service < 1 Year)</label>
-                                    </div>
-                                </div>
-                                
-                                <div id="subsistence_allowance_div" class="col-12">
-                                    <div class="form-group  has-float-label" >
-                                        <input class="form-control" type="text" name="subsistence_allowance" id="subsistence_allowance" readonly="readonly">
-                                        <label>Subsistence Allowance</label>
-                                    </div>
-                                </div>
-                                <div id="notice_pay_div" class="col-12">
-                                    <div class="form-group  has-float-label" >
-                                        <input class="form-control" type="text" name="notice_pay" id="notice_pay" readonly="readonly">
-                                        <label>Notice Pay</label>
-                                        
-                                    </div>
-                                </div>
-                                <div id="termination_benefit_div" class="col-12">
-                                    <div class="form-group  has-float-label" >
-                                        
-                                        <input class="form-control" type="text" name="termination_benefit" id="termination_benefit" readonly="readonly">
-                                        <label>Termination Benefit</label>
-                                    </div>
-                                </div>
-                                <div id="natural_death_benefit_div" class="col-12">
-                                    <div class="form-group  has-float-label" >
-                                        
-                                        <input class="form-control" type="text" name="natural_death_benefit" id="natural_death_benefit" readonly="readonly">
-                                        <label>Natural Death Benefits</label>
-                                    </div>
-                                </div>
-                                <div id="on_duty_and_accidental_death_on_duty_div" class="col-12">
-                                    <div class="form-group  has-float-label" >
-                                        
-                                        <input class="form-control" type="text" name="on_duty_and_accidental_death_on_duty" id="on_duty_and_accidental_death_on_duty" readonly="readonly">
-                                        <label>On Duty and Accidental Death On Duty</label>
-                                    </div>
-
-                                </div>
-                                
-                            </div>
-                            <div class="row">
-                                <div id="earn_leave_div" class="col-12">
-                                    <div class="form-group  has-float-label" >
-                                        
-                                        <input class="form-control" type="text" name="earn_leave_due" id="earn_leave_due" readonly="readonly">
-                                        <label>Earn Leave</label>
-                                    </div>
-                                </div>
-                                <div id="service_benefit_div" class="col-12">
-                                    <div class="form-group  has-float-label" >
-                                        <input class="form-control" type="text" name="service_benefit" id="service_benefit" readonly="readonly">
-                                        <label>Service Benefits</label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div id="total_benefit_amount_div" class="col-12">
-                                    <div class="form-group  has-float-label" >
-                                        
-                                        <input class="form-control" type="text" name="total_benefit_amount" id="total_benefit_amount" readonly="readonly" style="background-color: antiquewhite !important;" value="0">
-                                        <label>Total Amount</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-12">
-                                    <button type="button" class="btn btn-primary" id="pay_button"  disabled="disabled">Pay Benefits</button>
-                                </div>
-                            </div>
+                {{Form::open(['url'=>'hr/payroll/benefits_save', 'class'=>'form-horizontal'])}}
+                    <div class="row">
+                        <div class="col-sm-3">
                             
-                        {{Form::close()}}
-                    </div>
-                    <div class="col-8">
-                        <div class=" panel-info" id="basic_info_div">
-                            <div class="panel-body">
-                                <div class="row">
-                                    
-                                    <div class="col-6">
-                                        
-                                        <div class="user-details-block" style="border-left: 1px solid #d1d1d1;padding-top: 3.5rem;">
-                                            <div class="user-profile text-center mt-0">
-                                                <img id="avatar" class="avatar-130 img-fluid" src="{{ asset('assets/images/user/09.jpg') }} " onerror="this.onerror=null;this.src='{{ asset("assets/images/user/09.jpg") }}';">
-                                            </div>
-                                            <div class="text-center mt-3">
-                                             <h4><b id="name">-------------</b></h4>
-                                             <p class="mb-0" id="designation">
-                                                --------------------------</p>
-                                             <p class="mb-0" >
-                                                Oracle ID: <span id="oracle_id" class="text-success">-------------</span>
-                                             </p>
-                                             <p class="mb-0" >
-                                                Associate ID: <span id="associate_id" class="text-success">-------------</span>
-                                             </p>
-                                             <p  class="mb-0">Department: <span id="department" class="text-success">------------------------</span> </p>
-                                             
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <ul class="speciality-list m-0 p-0">
-                                            <li class="d-flex mb-4 align-items-center">
-                                               <div class="user-img img-fluid"><a href="#" class="iq-bg-primary"><i class="las f-18 la-city"></i></a></div>
-                                               <div class="media-support-info ml-3">
-                                                  <h6>Unit</h6>
-                                                  <p id="unit" class="mb-0">------------------------</p>
-                                               </div>
-                                            </li>
-                                            <li class="d-flex mb-4 align-items-center">
-                                               <div class="user-img img-fluid"><a href="#" class="iq-bg-info"><i class="las f-18 la-calendar-day"></i></a></div>
-                                               <div class="media-support-info ml-3">
-                                                  <h6>Date of Joining</h6>
-                                                  <p id="doj" class="mb-0">------------------------</p>
-                                               </div>
-                                            </li>
-                                            <li class="d-flex mb-4 align-items-center">
-                                               <div class="user-img img-fluid"><a href="#" class="iq-bg-warning"><i class="las f-18 la-dollar-sign"></i></a></div>
-                                               <div class="media-support-info ml-3">
-                                                  <h6>Salary</h6>
-                                                  <p class="mb-0">Gross:  <span class="text-danger" id="gross_salary">0</span> Basic: <span class="text-success" id="basic_salary">0</span></p>
-                                               </div>
-                                            </li>
-                                            <li class="d-flex mb-4 align-items-center">
-                                               <div class="user-img img-fluid"><a href="#" class="iq-bg-info"><i class="las f-18 la-database"></i></a></div>
-                                               <div class="media-support-info ml-3">
-                                                  <h6>Earned Leave</h6>
-                                                  <p class="mb-0">Total:  <span class="text-danger" id="total_earn_leave">0</span class="text-danger"> Enjoyed: <span class="text-warning" id="enjoyed_earn_leave">0</span > <br>Remained: <span class="text-success" id="remained_earn_leave">0</span></p>
-                                               </div>
-                                            </li>
-                                            <li class="d-flex mb-4 align-items-center">
-                                               <div class="user-img img-fluid"><a href="#" class="iq-bg-warning"><i class="las f-18 la-history"></i></a></div>
-                                               <div class="media-support-info ml-3">
-                                                  <h6>Total Service</h6>
-                                                  <p id="total_service" class="mb-0">Total:  <span id="total_earn_leave"><span style="color: darkblue; font-weight: 800; padding: 5px; border-radius: 10px; padding-left: 0px;" id="service_Y">0</span>
-                                                       <span style="color: darkblue;">Year/s</span>
-                                                       <span style="color: forestgreen; font-weight: 800; padding: 5px; border-radius: 10px;" id="service_m">0</span>
-                                                       <span style="color: forestgreen;">Month/s</span>
-                                                       <span style="color: maroon; font-weight: 800; padding: 5px; border-radius: 10px;" id="service_d">0</span>
-                                                       <span style="color: maroon;">Day/s</span></p>
-                                               </div>
-                                            </li>
-                                         </ul>
-                                        
-                                    </div>
-                                    
-                                </div>
+                            <div class="form-group has-required has-float-label select-search-group">
+                                <select id="benefit_on" name="benefit_on" class="form-control" required="required">
+                                   <option value="">Select Type</option>
+                                   <option value="on_resign">Resign Benefits</option>
+                                   <option value="on_dismiss">Dismiss Benefits</option>
+                                   <option value="on_terminate">Termination Benefits</option>
+                                   <option value="on_death">Death Benefits</option>
+                                   <option value="on_retirement">Retirement Benefits</option>
+                               </select>  
+                                <label for="benefit_on">Benefit Type</label>
                             </div>
                         </div>
+                        <div  id="death_reason_div" class="col-sm-3">
+                            <div  class="form-group has-required has-float-label select-search-group" >
+                                
+                                <select  name="death_reason" class="form-control death_reason"  required="required">
+                                   <option value="none">Select One</option>
+                                   <option value="natural_death" >Natural Death on Duty</option>
+                                   <option value="duty_accidental_death">On Duty/On Duty Accidental Death </option>
+                               </select>
+                                <label >Death Reason</label>
+                            </div>
+                        </div>
+                        <div id="suspension_days_div" class="col-sm-3">
+                            <div class="form-group has-required has-float-label" >
+                                
+                                <input type="text" class="form-control" name="suspension_days" id="suspension_days" value="0" required="required">
+                                <label >Suspension Days</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group has-required has-float-label emp select-search-group" style="pointer-events: none;">
+                                
+                                {{ Form::select('associate',  [Request::get('associate') => Request::get('associate')], Request::get('associate'), ['placeholder'=>'Select Associate\'s ID', 'id'=>'associate', 'class'=> 'associates form-control', 'data-validation'=>'required']) }}
+                                <label >Employee</label>
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <button type="button" class="btn btn-primary" id="pay_button"  disabled="disabled">Pay Benefits</button>
+                        </div>
                     </div>
-                </div>
+                    
+                {{Form::close()}}
             </div>
         </div>
-
-        <div class="panel panel-success" id="voucher" hidden="hidden">
-            <div class="panel-heading">
-                <h6>Voucher
-                    <button class="btn  btn-danger pull-right printVoucher" style="border-radius: 2px;" data-tooltip="Print" Data-tooltip-location="left"><i class="fa fa-print"></i> Print</button>
-                </h6>
-            </div>
+        <div class="panel panel-success" style="">
             <div class="panel-body">
-                <div class="col-sm-12 print_div" style="border:1px solid grey;"  id="print_div">
-                    <h1 style="text-align: center; color: forestgreen;" id="unit_print"></h1>
-                    <h5 style="text-align: center; " id="unit_addr_print"></h5>
-                    <h5 class="pull-right" style="margin-left: 80%;">তারিখঃ<?php
-                        echo eng_to_bn(date('d-m-Y'));
 
-                    ?></h5>
-
-
-                    <div style="margin-left: 40px; margin-top: 60px;">
-                        <div style="margin-left: 40px; padding: 0px;" id="already_saved_data" hidden="hidden">
-                            <span style="margin-left: 90%; font-weight: 800; color:darkgrey; font-size: 16px;">COPY</span>
+                <div class="row">
+                    <div class="col-sm-4">
+                        
+                        <div class="user-details-block" style="border-right: 1px solid #d1d1d1;padding-top: 3.5rem;">
+                            <div class="user-profile text-center mt-0">
+                                <img id="avatar" class="avatar-130 img-fluid" src="{{ asset('assets/images/user/09.jpg') }} " onerror="this.onerror=null;this.src='{{ asset("assets/images/user/09.jpg") }}';">
+                            </div>
+                            <div class="text-center mt-3">
+                                <h4><b id="name">-------------</b></h4>
+                            </div>
                         </div>
-                        
-                        <h5 style="margin-left: 10%;">অব্যাহতীকালীন সুযোগ-সুবিধার হিসাব-</h5>
-
-                        <table style="border: none; margin-left: 10%; width: 60%; font-size: 11px;">
-                            <tbody>
-                                <tr>
-                                    <th style="padding:2px; text-align: left; width: 30%;">নামঃ</th>
-                                    <th style="padding:2px; text-align: left; width: 60%;" id="emp_name_print">  <br></th>
-                                </tr>
-                                <tr>
-                                    <th style="padding:2px; text-align: left; width: 30%;">পদবীঃ</th>
-                                    <td style="padding:2px; width: 60%;" id="emp_deg_print">  <br></td>
-                                </tr>
-                                <tr>
-                                    <th style="padding:2px; text-align: left; width: 30%;">ডিপার্টমেন্টঃ</th>
-                                    <td style="padding:2px; width: 60%;" id="emp_dep_print">  <br></td>
-                                </tr>
-                                <tr>
-                                    <th style="padding:2px; text-align: left; width: 30%;">আইডি নংঃ</th>
-                                    <td style="padding:2px; width: 60%;" id="emp_ass_id_print">  <br></td>
-                                </tr>
-                                <tr>
-                                    <th style="padding:2px; text-align: left; width: 30%;">মূল বেতনঃ</th>
-                                    <td style="padding:2px; width: 60%;" id="emp_basic_sal_print">  <br></td>
-                                </tr>
-                                <tr>
-                                    <th style="padding:2px; text-align: left; width: 30%;">মোট বেতনঃ</th>
-                                    <td style="padding:2px; width: 60%;" id="emp_current_sal_print">  <br></td>
-                                </tr>
-                                <tr>
-                                    <th style="padding:2px; text-align: left; width: 30%;">চাকুরীর মোট সময়কালঃ</th>
-                                    <td style="padding:2px; width: 60%;" id="total_service_days_print">  <br></td>
-                                </tr>
-                                <tr>
-                                    <th style="padding:2px; text-align: left; width: 30%;">অব্যাহতীর কারনঃ</th>
-                                    <td style="padding:2px; width: 60%;" id="reason_print">  <br></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <div style="margin:0px; padding:0px;" >
-                            <h5 style="margin-top: 10px; margin-left: 10%; text-decoration: underline;">প্রদেয় সুযোগ-সুবিধা সমুহ ও পাওনাদিঃ</h5>
-                            <table style="border: 1px solid darkgrey; margin-left: 10%; width: 60%; border-collapse: collapse; font-size: 11px; ">
-                                <thead>
-                                    <tr style="border: 1px solid darkgrey; padding: 5px;">
-                                        <th style="border: 1px solid darkgrey; padding: 5px;  text-align: left; width: 40%;  padding-left: 30px;">সুযোগ-সুবিধা সমুহ </th>
-                                        <th style="border: 1px solid darkgrey; padding: 5px;  text-align: center;  padding-left: 30px;">টাকার পরিমান</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="the_payble_body_print">
-                                    <tr style="border: 1px solid darkgrey; padding: 5px;" id="earn_leave_row_print">
-                                        <td style="border: 1px solid darkgrey; padding: 5px; padding-left: 30px;">
-                                            আহরিত ছুটির হিসাব বাবদ
-                                        </td>
-                                        <td style="border: 1px solid darkgrey; padding: 5px;  padding-left: 30px; text-align: right;" id="earn_leave_print_value">
-                                                    ৳
-                                        </td>
-                                    </tr>
-                                    <tr style="border: 1px solid darkgrey; padding: 5px;" id="service_benefit_row_print">
-                                        <td style="border: 1px solid darkgrey; padding: 5px; padding-left: 30px;">
-                                            সেবা বাবদ     
-                                        </td>
-                                        <td style="border: 1px solid darkgrey; padding: 5px;  padding-left: 30px;text-align: right" id="service_benefit_print_value">
-                                                    ৳
-                                        </td>
-                                    </tr>
-                                    <tr style="border: 1px solid darkgrey; padding: 5px;" id="subsistence_allowance_row_print" {{-- hidden="hidden" --}}>
-                                        <td style="border: 1px solid darkgrey; padding: 5px; padding-left: 30px;">
-                                            জীবিকা ভাতা বাবদ
-                                        </td>
-                                        <td style="border: 1px solid darkgrey; padding: 5px;  padding-left: 30px;text-align: right" id="subsistence_allowance_print_value">
-                                                    ৳
-                                        </td>
-                                    </tr>
-                                    <tr style="border: 1px solid darkgrey; padding: 5px;" id="notice_pay_row_print">
-                                        <td style="border: 1px solid darkgrey; padding: 5px; padding-left: 30px;">
-                                            নোটিশ পে বাবদ
-                                        </td>
-                                        <td style="border: 1px solid darkgrey; padding: 5px;  padding-left: 30px;text-align: right" id="notice_pay_print_value">
-                                                    ৳
-                                        </td>
-                                    </tr>
-                                    <tr style="border: 1px solid darkgrey; padding: 5px;" id="termination_benefit_row_print">
-                                        <td style="border: 1px solid darkgrey; padding: 5px; padding-left: 30px;">
-                                            অবসান সুবিধা বাবদ
-                                        </td>
-                                        <td style="border: 1px solid darkgrey; padding: 5px;  padding-left: 30px;text-align: right;" id="termination_benefit_print_value">
-                                                    ৳
-                                        </td>
-                                    </tr>
-                                    <tr style="border: 1px solid darkgrey; padding: 5px;" id="natural_death_row_print">
-                                        <td style="border: 1px solid darkgrey; padding: 5px; padding-left: 30px;">
-                                            স্বাভাবিক মৃত্যু
-                                        </td>
-                                        <td style="border: 1px solid darkgrey; padding: 5px;  padding-left: 30px;text-align: right;" id="natural_death_print_value">
-                                                    ৳
-                                        </td>
-                                    </tr>
-                                    <tr style="border: 1px solid darkgrey; padding: 5px;" 
-                                                    id="on_duty_and_accidental_death_row_print">
-                                        <td style="border: 1px solid darkgrey; padding: 5px; padding-left: 30px;">
-                                            কর্তব্যরত অবস্থায় এবং দুর্ঘটনায় মৃত্যু
-                                        </td>
-                                        <td style="border: 1px solid darkgrey; padding: 5px;  padding-left: 30px;text-align: right;" id="on_duty_and_acci_death_print_value">
-                                                    ৳
-                                        </td>
-                                    </tr>
-                                    <tr style="border: 1px solid darkgrey; padding: 5px;">
-                                        <th style="border: 1px solid darkgrey; padding: 5px; text-align: right; color: maroon;">মোট</th>
-                                        <th style="border: 1px solid darkgrey; padding: 5px; text-align: left; color: maroon;  padding-left: 30px;text-align: right;" id="grand_toal_print_value"> ৳</th>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        
-                        
-
-                        <table style="  width: 100%; margin-top: 20%; margin-bottom: 40px; font-size: 10px;">
-                                <tr style=" padding: 5px;">
-                                    <td style=" padding: 4px;">
-                                        প্রস্তুতকারী
-                                    </td>
-                                    <td style=" padding: 4px;">
-                                        হিসাব বিভাগ
-                                    </td>
-                                    <td style=" padding: 4px;">
-                                        সহঃ ব্যবস্থাপক <br> প্রশাসন, মানবসম্পদ ও কমপ্লাইন্স
-                                    </td>
-                                    <td style=" padding: 4px;">
-                                        সহঃ মহাব্যবস্থাপক <br> প্রশাসন, মানবসম্পদ ও কমপ্লাইন্স
-                                    </td>
-                                    <td style=" padding: 4px;">
-                                        এভিপি <br> প্রশাসন, মানবসম্পদ ও কমপ্লাইন্স
-                                    </td>
-                                </tr>
-                        </table>
+                        <ul class="speciality-list m-0 p-0">
+                            <li class="d-flex mb-4 align-items-center">
+                               <div class="user-img img-fluid"><a href="#" class="iq-bg-primary"><i class="las f-18 la-city"></i></a></div>
+                               <div class="media-support-info ml-3">
+                                  <h6 id="designation"></h6>
+                                  <p id="department"  class="mb-0">------------------------</p>
+                               </div>
+                            </li>
+                            <li class="d-flex mb-4 align-items-center">
+                               <div class="user-img img-fluid"><a href="#" class="iq-bg-info"><i class="las f-18 la-calendar-day"></i></a></div>
+                               <div class="media-support-info ml-3">
+                                  <h6>Date of Joining</h6>
+                                  <p id="doj" class="mb-0">------------------------</p>
+                               </div>
+                            </li>
+                            <li class="d-flex mb-4 align-items-center">
+                               <div class="user-img img-fluid"><a href="#" class="iq-bg-warning"><i class="las f-18 la-dollar-sign"></i></a></div>
+                               <div class="media-support-info ml-3">
+                                  <h6>Salary</h6>
+                                  <p class="mb-0">Gross:  <span class="text-danger" id="gross_salary">0</span> Basic: <span class="text-success" id="basic_salary">0</span></p>
+                               </div>
+                            </li>
+                            <li class="d-flex mb-4 align-items-center">
+                               <div class="user-img img-fluid"><a href="#" class="iq-bg-info"><i class="las f-18 la-database"></i></a></div>
+                               <div class="media-support-info ml-3">
+                                  <h6>Earned Leave</h6>
+                                  <p class="mb-0">Total:  <span class="text-danger" id="total_earn_leave">0</span class="text-danger"> Enjoyed: <span class="text-warning" id="enjoyed_earn_leave">0</span > <br>Remained: <span class="text-success" id="remained_earn_leave">0</span></p>
+                               </div>
+                            </li>
+                            <li class="d-flex mb-4 align-items-center">
+                               <div class="user-img img-fluid"><a href="#" class="iq-bg-warning"><i class="las f-18 la-history"></i></a></div>
+                               <div class="media-support-info ml-3">
+                                  <h6>Total Service</h6>
+                                  <p id="total_service" class="mb-0">Total:  <span id="total_earn_leave"><span style="color: darkblue; font-weight: 800; padding: 5px; border-radius: 10px; padding-left: 0px;" id="service_Y">0</span>
+                                       <span style="color: darkblue;">Year/s</span>
+                                       <span style="color: forestgreen; font-weight: 800; padding: 5px; border-radius: 10px;" id="service_m">0</span>
+                                       <span style="color: forestgreen;">Month/s</span>
+                                       <span style="color: maroon; font-weight: 800; padding: 5px; border-radius: 10px;" id="service_d">0</span>
+                                       <span style="color: maroon;">Day/s</span></p>
+                               </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-sm-8">
                     </div>
                 </div>
             </div>
-            
         </div>
            
     </div>
@@ -449,8 +190,6 @@
             $('#associate').val('').change();
 
             var death_reason = $(this).val();
-            // $('#on_duty_and_accidental_death_on_duty_div').attr('hidden', 'hidden');
-            // $('#natural_death_benefit_div').attr('hidden', 'hidden');
             
             if(death_reason == 'none'){
                 $('.emp').attr('style', 'pointer-events:none;');
@@ -467,50 +206,6 @@
                 $('#natural_death_benefit_div').attr('hidden', 'hidden');
             }
         }).change();
-
-        function formatState (state) {
-            //console.log(state.element);
-            if (!state.id) {
-                return state.text;
-            }
-            var baseUrl = "/user/pages/images/flags";
-            var $state = $(
-            '<span><img /> <span></span></span>'
-            );
-            // Use .text() instead of HTML string concatenation to avoid script injection issues
-            var targetName = state.name;
-            $state.find("span").text(targetName);
-            // $state.find("img").attr("src", baseUrl + "/" + state.element.value.toLowerCase() + ".png");
-            return $state;
-        };
-
-        $('select.associates').select2({
-            templateSelection:formatState,
-            placeholder: 'Select Associate\'s ID',
-            ajax: {
-                url: '{{ url("hr/associate-search-only-active") }}',
-                dataType: 'json',
-                delay: 250,
-                data: function (params) {
-                    return { 
-                        keyword: params.term
-                    }; 
-                },
-                processResults: function (data) { 
-                    return {
-                        results:  $.map(data, function (item) {
-                            return {
-                                text: $("<span><img src='"+(item.as_pic ==null?'/assets/images/avatars/profile-pic.jpg':item.as_pic)+"' height='50px' width='auto'/> " + item.associate_name + "</span>"),
-                                id: item.associate_id,
-                                name: item.associate_name
-                            }
-                        }) 
-                    };
-              },
-              cache: true
-            }
-        });
-        
 
         $('#associate').on('change', function(){
             var emp_id = $(this).val();
@@ -678,7 +373,6 @@
 
                 },
                 success: function(data){
-                    console.log('done');
                     if(data == 1){
                         swal("Data Saved. Please Print Out the Voucher", "", "success");
                         $('#loader').attr('hidden', 'hidden');
@@ -690,7 +384,6 @@
                     }
                 },
                 error: function(data){
-                    console.log(data);
                 }
             });
 

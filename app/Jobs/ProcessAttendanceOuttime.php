@@ -120,7 +120,7 @@ class ProcessAttendanceOuttime implements ShouldQueue
             // CALCULATE OVER TIME
             if(!empty($cOut))
             {  
-                if($getEmployee->as_ot == 1 && $getEmpAtt->remarks != 'DSI'){
+                if($getEmployee->as_ot == 1 && $getEmpAtt->remarks != 'DSI' && $getEmpAtt->in_time != null){
                     $otHour = EmployeeHelper::daliyOTCalculation($getEmpAtt->in_time, $getEmpAtt->out_time, $cShifStart, $cShifEnd, $cBreak, $nightFlag, $getEmployee->associate_id, $getEmployee->shift_roaster_status, $getEmployee->as_unit_id);
                 }else{
                     $otHour = 0;
