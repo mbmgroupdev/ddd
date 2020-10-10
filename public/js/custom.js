@@ -136,7 +136,7 @@ $(function() {
     $(document).on("change", ".file-type-validation", function () {
         var allow = $(this).data('file-allow'),
             f_name = $(this).val(),
-            ext = f_name.substring(f_name.lastIndexOf('.')+1);
+            ext = f_name.substring(f_name.lastIndexOf('.')+1).toLowerCase();
         if ($.inArray( ext, allow) == -1) {
             $(this).val('');
             $.notify('Only '+allow.toString()+' type files are allowed!','error');

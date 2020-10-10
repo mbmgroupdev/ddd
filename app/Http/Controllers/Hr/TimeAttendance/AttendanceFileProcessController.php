@@ -42,12 +42,15 @@ class AttendanceFileProcessController extends Controller
                 toastr()->error('There is error in your file');
                 return back();
             }
+
+            dd($checkData);
             $dataChunk = array_chunk($dataResult, 50);
             $data['arrayDataCount'] = count($dataResult);
             $data['chunkValues'] = $dataChunk;
             return view('hr.timeattendance.att_status', $data);
         } catch (\Exception $e) {
             $bug = $e->getMessage();
+            return $bug;
             toastr()->error($bug);
             return redirect()->back();
         }
@@ -287,14 +290,14 @@ class AttendanceFileProcessController extends Controller
                 $shift_out_time= $shift_out_time+86400; // 1 day
             }
             //shift start range
-            $shift_start_begin= $shift_in_time-5400; // 1.30 hour
+            $shift_start_begin= $shift_in_time-7200; // 2 hour
             $shift_start_end= $shift_in_time+14399; //3 hour 59 minute 59 second
             //shift end rage
             $shift_end_begin= $shift_start_end+1; // 4 hour
             // $shift_end_end= $shift_out_time+28800; // 8 hour OT calculate in previous system
             // $shift_end_end= $shift_end_begin+68399; // 18 hour 59 minute 59 second
 
-            $otAllow = 54000 - ($shift_break*60);// 15 hour 00 minute 00 second
+            $otAllow = 46000 - ($shift_break*60);// 13- hour 00 minute 00 second
             $shift_end_end = $shift_out_time+$otAllow;
             //check time
             $check_time= (int)strtotime($checktime);
@@ -305,7 +308,7 @@ class AttendanceFileProcessController extends Controller
             ->orderBy('id', "DESC")
             ->first();
             // print_r($last_punch);exit;
-
+            
             if($shift_start_begin<= $check_time && $check_time <= $shift_start_end  && $checkHolidayFlag == 0){
                 $checkInTimeFlag = 0;
                 if(empty($last_punch)){
@@ -485,13 +488,15 @@ class AttendanceFileProcessController extends Controller
                 }
 
                 //shift start range
-                $shift_start_begin_new= $shift_in_time_new-7200; // 20 hour
+                $shift_start_begin_new= $shift_in_time_new-7200; // 2 hour
                 $shift_start_end_new= $shift_in_time_new+14399; //3 hour 59 minute 59 second
                 //shift end rage
                 $shift_end_begin_new= $shift_start_end_new+1; // 4 hour
                 // $shift_end_end_new= $shift_out_time_new+68399;  // 18 hour 59 minute 59 second
-                $otAllow = 54000 - ($shift_break_new*60);// 15 hour 00 minute 00 second
+                $otAllow = 46000 - ($shift_break_new*60);// 13- hour 00 minute 00 second
                 $shift_end_end_new = $shift_out_time_new+$otAllow;
+
+                
                 if($shift_end_begin_new<= $check_time && $check_time <= $shift_end_end_new){
 
                     if(!empty($last_punch)){
