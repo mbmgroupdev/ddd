@@ -127,4 +127,58 @@ class TestProcessExampleController extends Controller
 
         return 'done';
     }
+
+    public function shiftChange($value='')
+    {
+        $dayNo = 'day_1';
+        $getShift = DB::table('hr_shift_roaster as s')
+        // ->where('day_1', 'Day Early')
+        ->where('b.as_unit_id', 1)
+        ->leftJoin('hr_as_basic_info as b', 'b.associate_id', 's.shift_roaster_associate_id')
+        ->whereNotNull('s.'.$dayNo)
+        ->select('s.'.$dayNo, 's.shift_roaster_id')
+        ->pluck('s.'.$dayNo, 's.shift_roaster_id');
+        dd($getShift);
+        // ->get();
+        $notMacth = array();
+        foreach ($getShift as $key => $shift) {
+            // dd($shift);
+            if($shift == 'Day Early' || $shift == 'MBM New Employee ADD Default'){
+                $change = 'Day 1 (7-15)';
+            }elseif($shift == 'WASHIN GeneraL SHIFT' || $shift == 'General' || $shift == 'DAY WASHING' || $shift == 'Day'){
+                $change = 'Day 2 (8-16)';
+            }elseif($shift == 'SECURITY NIGHT Shift -10' || $shift == 'CUTTING NIGHT'){
+                $change = 'Night 3 (22 - 6)';
+            }elseif($shift == 'SECURITY DAY Shift -2'){
+                $change = 'Afternoon 1 (14-22)';
+            }elseif($shift == 'NIGHT (WASHING)' || $shift == 'Night' || $shift == 'FRIDAY NIGHT (WAS)'){
+                $change = 'Night 1 (20 - 4)';
+            }elseif($shift == 'MBM Morning Shift 01 (COOK)3' || $shift == 'MBM Morning Shift 01 (COOK)'){
+                $change = 'Morning 1 (3-11)';
+            }elseif($shift == 'MBM Morning Shift (COOK)6' || $shift == 'MBM Morning Shift (COOK)' || $shift == 'SECURITY Morning Shift -6'){
+                $change = 'Morning 2 (6-14)';
+            }elseif($shift == 'FRIDAY WASHING'){
+                $change = 'Noon fri(12-18.30)';
+            }elseif($shift == 'FRIDAY GENERAL'){
+                $change = 'Day 2 Fri (8-16)';
+            }elseif($shift == 'Friday'){
+                $change = 'Day 1 Fri(7-15)';
+            }elseif($shift == 'Day Head Office'){
+                $change = 'OfficeTime (9-18)';
+            }elseif($shift == 'CUTTING NIGHT TWO'){
+                $change = 'Night 2 (20.30 - 4.30)';
+            }elseif($shift == 'CUTTING GENEARL'){
+                $change = 'Afternoon 2 (16-24)';
+            }else{
+                $notMacth[] = $shift;
+            }
+
+
+            DB::table('hr_shift_roaster')
+            ->where('shift_roaster_id', $key)
+            ->update([$dayNo => $change]);
+
+        }
+        print_r($notMacth);exit;
+    }
 }

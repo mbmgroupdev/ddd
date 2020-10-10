@@ -113,7 +113,7 @@ class MonthlyActivityReportController extends Controller
                 $queryData->select('deg.hr_designation_position','deg.hr_designation_name','emp.'.$input['report_group'], DB::raw('count(*) as total'), DB::raw('sum(total_payable) as groupSalary'))->groupBy('emp.'.$input['report_group']);
 
             }else{
-                $queryData->select('deg.hr_designation_position','deg.hr_designation_name','emp.as_id','emp.as_gender', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_section_id', 's.present', 's.absent', 's.ot_hour', 's.total_payable');
+                $queryData->select('deg.hr_designation_position','deg.hr_designation_name','emp.as_id','emp.as_gender', 'emp.as_oracle_code', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_section_id', 's.present', 's.absent', 's.ot_hour', 's.total_payable');
                 $totalSalary = round($queryData->sum("s.total_payable"));
             }
             $getEmployee = $queryData->orderBy('deg.hr_designation_position', 'asc')->get();

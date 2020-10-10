@@ -73,10 +73,10 @@ class ProcessEmployeeAbsent implements ShouldQueue
                 if($getEmployee != null){
                     $flag = 0;
                     $shiftFlag = 0;
-                    if($date == date('Y-m-d') && date('H:i') < '12:00'){
-                        $flag = 1;
-                    }
-                    if($flag == 1){
+                    // if($date == date('Y-m-d') && date('H:i') < '12:00'){
+                    //     $flag = 1;
+                    // }
+                    if($flag == 0){
                         $unitId = $getEmployee->as_unit_id;
                             
                         $day_of_date = date('j');
@@ -102,7 +102,7 @@ class ProcessEmployeeAbsent implements ShouldQueue
                         else{
                             $cShifStartTime = strtotime(date("H:i", strtotime($getEmployee->shift['hr_shift_start_time'])));
                         }
-                        if($cShifStartTime > '12:00'){
+                        if($cShifStartTime > '16:00'){
                             $shiftFlag = 1;
                         }
                     }

@@ -143,7 +143,7 @@
 			                @endif
 			                <tr>
 			                    <th>Sl</th>
-			                    <th>Photo</th>
+			                    {{-- <th>Photo</th> --}}
 			                    <th>Associate ID</th>
 			                    <th>Name & Phone</th>
 			                    <th>Designation</th>
@@ -171,7 +171,7 @@
 			            	@if($head == '')
 			            	<tr>
 			            		<td>{{ ++$i }}</td>
-				            	<td><img src="{{ emp_profile_picture($employee) }}" class='small-image' style="height: 40px; width: auto;"></td>
+				            	{{-- <td><img src="{{ emp_profile_picture($employee) }}" class='small-image' style="height: 40px; width: auto;"></td> --}}
 				            	<td><a href='{{ url("hr/operation/job_card?associate=$employee->associate_id&month_year=$month") }}' target="_blank">{{ $employee->associate_id }}</a></td>
 				            	<td>
 				            		<b>{{ $employee->as_name }}</b>
@@ -193,7 +193,7 @@
 				            	@if($group == $employee->$format)
 				            	<tr>
 				            		<td>{{ ++$i }}</td>
-					            	<td><img src="{{ emp_profile_picture($employee) }}" class='small-image' style="height: 40px; width: auto;"></td>
+					            	{{-- <td><img src="{{ emp_profile_picture($employee) }}" class='small-image' style="height: 40px; width: auto;"></td> --}}
 					            	<td><a href='{{ url("hr/operation/job_card?associate=$employee->associate_id&month_year=$month") }}' target="_blank">{{ $employee->associate_id }}</a></td>
 					            	<td>
 					            		<b>{{ $employee->as_name }}</b>

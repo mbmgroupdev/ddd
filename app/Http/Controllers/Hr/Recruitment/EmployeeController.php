@@ -496,7 +496,8 @@ class EmployeeController extends Controller
                 'b.as_oracle_code',
                 'b.as_rfid_code',
                 'sec.hr_section_name',
-                'subsec.hr_subsec_name'
+                'subsec.hr_subsec_name',
+                'b.as_shift_id'
             ])
             ->leftJoin('hr_area AS a', 'a.hr_area_id', '=', 'b.as_area_id')
             ->leftJoin('hr_emp_type AS e', 'e.emp_type_id', '=', 'b.as_emp_type_id')
