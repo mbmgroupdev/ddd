@@ -79,8 +79,8 @@ class AttendaceSearchController extends Controller
                 $request = ['category'=> $request1['category'], 'type' => $request1['type'], 'date' => $request1['date']];
             }
             // $date = $this->getSearchType($request);
-            $unit_list      = Unit::where('hr_unit_status',1)->get();
-            $employee_list  = Employee::where('as_status',1)->get();
+            $unit_list      = Unit::where('hr_unit_status',1)->whereIn('hr_unit_id', auth()->user()->unit_permissions())->get();
+            $employee_list  = Employee::where('as_status',1)->whereIn('as_unit_id', auth()->user()->unit_permissions())->get();
             $result = [];
             $attResultCount['present']  = 0;
             $attResultCount['absent']   = 0;
@@ -122,7 +122,7 @@ class AttendaceSearchController extends Controller
             $request = array_slice($request, 0, $array_slice);
             $showTitle = $this->pageTitle($request);
             $attCountUnitWise = [];
-            $unit_list = Unit::where('hr_unit_status',1)->get();
+            $unit_list = Unit::where('hr_unit_status',1)->whereIn('hr_unit_id', auth()->user()->unit_permissions())->get();
 
             $area_count = Area::where('hr_area_status',1)->count();
             $result = [];
@@ -324,7 +324,7 @@ class AttendaceSearchController extends Controller
                 $data['unit'] = Unit::where(['hr_unit_id' => $request2['as_unit_id'], 'hr_unit_status' => 1])->first();
             }
             $result['page'] = view('hr.search.attendance.allemployee',
-                compact('employee_list','data','request1','request2','showTitle'))->render();
+                compact('data','request1','request2','showTitle'))->render();
             $result['url'] = url('hr/search?').http_build_query($request1);
             return $result;
         } catch(\Exception $e) {
@@ -395,7 +395,7 @@ class AttendaceSearchController extends Controller
         $subSection   = !empty($request['subsection'])?$request['subsection']:'';
 
         // basic table
-        $hr_basic_list = Employee::where('as_status', 1);
+        $hr_basic_list = Employee::orderBy('as_id')->whereIn('as_unit_id', auth()->user()->unit_permissions());
         if (!empty($unit)) {
             $hr_basic_list->where('as_unit_id',$unit);
         }
@@ -420,13 +420,13 @@ class AttendaceSearchController extends Controller
         if (!empty($subSection)) {
             $hr_basic_list->where('as_subsection_id', $subSection);
         }
-        $hr_basic_list->orderBy('as_id');
         // return $hr_basic_list->count();
         $hr_basic_sql    = $hr_basic_list->toSql();  // compiles to SQL
 
         // accendance count
         $select = [
             'b.associate_id',
+            'b.as_oracle_code',
             'b.as_name',
             'b.as_gender',
             'b.as_dob',
@@ -444,7 +444,7 @@ class AttendaceSearchController extends Controller
         $attData->join(DB::raw('(' . $hr_basic_sql. ') AS b'), function($join) use ($hr_basic_list){
             $join->on('a.as_id', '=', 'b.as_id')->addBinding($hr_basic_list->getBindings()); ;
         });
-        $attData->groupBy('a.as_id');
+        $attData->whereIn('b.as_unit_id', auth()->user()->unit_permissions())->groupBy('a.as_id');
 
 
         // leave count
@@ -470,8 +470,8 @@ class AttendaceSearchController extends Controller
             $join->on('a.associate_id', '=', 'b.associate_id')->addBinding($hr_basic_list->getBindings()); ;
         });
 
-        $result['total_leave']  = $leaveData->count();
-        $result['total_absent'] = $absentData->count();
+        $result['total_leave']  = $leaveData->whereIn('b.as_unit_id', auth()->user()->unit_permissions())->count();
+        $result['total_absent'] = $absentData->whereIn('b.as_unit_id', auth()->user()->unit_permissions())->count();
         foreach($attData->get() as $k=>$att) {
             if($att->late_status == 1) {
                 $result['total_late'] += 1;
@@ -499,7 +499,7 @@ class AttendaceSearchController extends Controller
         $subSection   = $request['subsection'] != 'NaN'?$request['subsection']:'';
 
         // basic table
-        $hr_basic_list = Employee::where('as_status', 1);
+        $hr_basic_list = Employee::orderBy('as_id')->whereIn('as_unit_id', auth()->user()->unit_permissions());
         if (!empty($unit)) {
             $hr_basic_list->where('as_unit_id',$unit);
         }
@@ -524,12 +524,12 @@ class AttendaceSearchController extends Controller
         if (!empty($subSection)) {
             $hr_basic_list->where('as_subsection_id', $subSection);
         }
-        $hr_basic_list->orderBy('as_id');
         $hr_basic_sql    = $hr_basic_list->toSql();  // compiles to SQL
 
         // accendance count
         $attSelect = [
             'b.associate_id',
+            'b.as_oracle_code',
             'b.as_name',
             'b.as_gender',
             'b.as_dob',
@@ -563,6 +563,7 @@ class AttendaceSearchController extends Controller
         $leaveSelect = [
             DB::raw('"leave" AS status'),
             'b.associate_id',
+            'b.as_oracle_code',
             'b.as_name',
             'b.as_gender',
             'b.as_dob',
@@ -590,6 +591,7 @@ class AttendaceSearchController extends Controller
         $absSelect = [
             DB::raw('"absent" AS status'),
             'b.associate_id',
+            'b.as_oracle_code',
             'b.as_name',
             'b.as_gender',
             'b.as_dob',

@@ -42,15 +42,12 @@ class AttendanceFileProcessController extends Controller
                 toastr()->error('There is error in your file');
                 return back();
             }
-
-            dd($checkData);
             $dataChunk = array_chunk($dataResult, 50);
             $data['arrayDataCount'] = count($dataResult);
             $data['chunkValues'] = $dataChunk;
             return view('hr.timeattendance.att_status', $data);
         } catch (\Exception $e) {
             $bug = $e->getMessage();
-            return $bug;
             toastr()->error($bug);
             return redirect()->back();
         }
@@ -58,40 +55,40 @@ class AttendanceFileProcessController extends Controller
 
     public function attFileProcess(Request $request)
     {
-    	$data = array();
-    	$data['status'] = 'success';
-    	$fileDate = array();
-    	$msg = array();
-    	$input = $request->all();
-    	$unit = $input['unit'];
-    	try {
-    		foreach($input['getdata'] as $key => $value) {
-    			$lineData = $value;
-    			$rfid="";
+        $data = array();
+        $data['status'] = 'success';
+        $fileDate = array();
+        $msg = array();
+        $input = $request->all();
+        $unit = $input['unit'];
+        try {
+            foreach($input['getdata'] as $key => $value) {
+                $lineData = $value;
+                $rfid="";
                 $checktime = null;
-    			if(($unit==1 || $unit==4 || $unit==5 || $unit==9) && !empty($lineData) && (strlen($lineData)>1)){
-    				$sl = substr($lineData, 0, 2);
-    				$date   = substr($lineData, 3, 8);
-    				$time   = substr($lineData, 12, 6);
-    				$rfid = substr($lineData, 19, 10);
-    				$checktime = ((!empty($date) && !empty($time))?date("Y-m-d H:i:s", strtotime("$date $time")):null);
-    			}
-    			else if($unit==2 && !empty($lineData) && (strlen($lineData)>1)){
-    				$sl = substr($lineData, 0, 2);
-    				$date   = substr($lineData, 2, 8);
-    				$rfid = substr($lineData, 16, 10);
-    				$time   = substr($lineData, 10, 6);
-    				$checktime = ((!empty($date) && !empty($time))?date("Y-m-d H:i:s", strtotime("$date $time")):null);
-    			}
-    			else if($unit==8  &&  !empty($lineData) && (strlen($lineData)>1)){
-		            // if(strlen($lineData)>0){
-    				$lineData = explode(" ", $lineData);
-    				$rfid = $lineData[0];
-    				$date = $lineData[1];
-    				$time = $lineData[2];
-    				$checktime = ((!empty($date) && !empty($time))?date("Y-m-d H:i:s", strtotime("$date $time")):null);
-    			}
-    			else if($unit==3  &&  !empty($lineData) && (strlen($lineData)>1)){
+                if(($unit==1 || $unit==4 || $unit==5 || $unit==9) && !empty($lineData) && (strlen($lineData)>1)){
+                    $sl = substr($lineData, 0, 2);
+                    $date   = substr($lineData, 3, 8);
+                    $time   = substr($lineData, 12, 6);
+                    $rfid = substr($lineData, 19, 10);
+                    $checktime = ((!empty($date) && !empty($time))?date("Y-m-d H:i:s", strtotime("$date $time")):null);
+                }
+                else if($unit==2 && !empty($lineData) && (strlen($lineData)>1)){
+                    $sl = substr($lineData, 0, 2);
+                    $date   = substr($lineData, 2, 8);
+                    $rfid = substr($lineData, 16, 10);
+                    $time   = substr($lineData, 10, 6);
+                    $checktime = ((!empty($date) && !empty($time))?date("Y-m-d H:i:s", strtotime("$date $time")):null);
+                }
+                else if($unit==8  &&  !empty($lineData) && (strlen($lineData)>1)){
+                    // if(strlen($lineData)>0){
+                    $lineData = explode(" ", $lineData);
+                    $rfid = $lineData[0];
+                    $date = $lineData[1];
+                    $time = $lineData[2];
+                    $checktime = ((!empty($date) && !empty($time))?date("Y-m-d H:i:s", strtotime("$date $time")):null);
+                }
+                else if($unit==3  &&  !empty($lineData) && (strlen($lineData)>1)){
                     if($input['device'] == 1){
                         $sl = substr($lineData, 0, 2);
                         $date   = substr($lineData, 2, 8);
@@ -122,28 +119,28 @@ class AttendanceFileProcessController extends Controller
                     $checktime = (!empty($date)?date("Y-m-d H:i:s", strtotime($date)):null);
 
                 }else{
-                	if($value != null){
-                		$msg[] = $value." - Unit do not match, issue data ";
-                	}
+                    if($value != null){
+                        $msg[] = $value." - Unit do not match, issue data ";
+                    }
                 }
 
                 $today = Carbon::parse($checktime)->format('Y-m-d');
-            	//get Employee Information from as_basic_info table according to the RFID
+                //get Employee Information from as_basic_info table according to the RFID
                 if(strlen($rfid)>0){
-                	if($unit == 3 && $input['device'] == 2){
-                		$as_info = Employee::
-                		where('as_id', $asId)
+                    if($unit == 3 && $input['device'] == 2){
+                        $as_info = Employee::
+                        where('as_id', $asId)
                         ->where('as_status', 1)
-                		->first();
-                	}else{
-                		$as_info = Employee::
-                		where('as_rfid_code', $rfid)
+                        ->first();
+                    }else{
+                        $as_info = Employee::
+                        where('as_rfid_code', $rfid)
                         ->where('as_status', 1)
-                		->first();
-                	}
+                        ->first();
+                    }
 
                     
-                	if(!empty($as_info) && strlen($rfid)>0 && $checktime != null && $as_info->as_status == 1){
+                    if(!empty($as_info) && strlen($rfid)>0 && $checktime != null && $as_info->as_status == 1){
 
                         $month = date('m', strtotime($checktime));
                         $year = date('Y', strtotime($checktime));
@@ -182,134 +179,156 @@ class AttendanceFileProcessController extends Controller
                             }
                         }
 
-                    	//Select table Name as associates Unit ID
-                		if($as_info->as_unit_id ==1 || $as_info->as_unit_id ==4 || $as_info->as_unit_id ==5 || $as_info->as_unit_id ==9){
-                			$tableName="hr_attendance_mbm";
-                		}
-                		else if($as_info->as_unit_id ==2){
-                			$tableName="hr_attendance_ceil";
-                		}
-                		else if($as_info->as_unit_id ==3){
-                			$tableName="hr_attendance_aql";
-                		}
-                		else if($as_info->as_unit_id ==8){
-                			$tableName="hr_attendance_cew";
-                		}
-                		else{
-                			$tableName="hr_attendance_mbm";
-                		}
-                    	//get shift Code
-                		$shift_code = null;
-                		$shift_start = null;
-                		$shift_end = null;
+                        //Select table Name as associates Unit ID
+                        if($as_info->as_unit_id ==1 || $as_info->as_unit_id ==4 || $as_info->as_unit_id ==5 || $as_info->as_unit_id ==9){
+                            $tableName="hr_attendance_mbm";
+                        }
+                        else if($as_info->as_unit_id ==2){
+                            $tableName="hr_attendance_ceil";
+                        }
+                        else if($as_info->as_unit_id ==3){
+                            $tableName="hr_attendance_aql";
+                        }
+                        else if($as_info->as_unit_id ==8){
+                            $tableName="hr_attendance_cew";
+                        }
+                        else{
+                            $tableName="hr_attendance_mbm";
+                        }
+                        //get shift Code
+                        $shift_code = null;
+                        $shift_start = null;
+                        $shift_end = null;
                         $unitId = $as_info->as_unit_id;
 
-                		$day_of_date = date('j', strtotime($checktime));
-                		$day_num = "day_".$day_of_date;
+                        $day_of_date = date('j', strtotime($checktime));
+                        $day_num = "day_".$day_of_date;
 
-                		$shift= DB::table("hr_shift_roaster")
-                		->where('shift_roaster_month', $month)
-                		->where('shift_roaster_year', $year)
-                		->where("shift_roaster_user_id", $as_info->as_id)
-                		->select([
-                			$day_num,
+                        $shift= DB::table("hr_shift_roaster")
+                        ->where('shift_roaster_month', $month)
+                        ->where('shift_roaster_year', $year)
+                        ->where("shift_roaster_user_id", $as_info->as_id)
+                        ->select([
+                            $day_num,
                             'hr_shift.hr_shift_id',
-                			'hr_shift.hr_shift_start_time',
-                			'hr_shift.hr_shift_end_time',
+                            'hr_shift.hr_shift_start_time',
+                            'hr_shift.hr_shift_end_time',
                             'hr_shift.hr_shift_code',
                             'hr_shift.hr_shift_break_time'
 
-                		])
+                        ])
                         ->leftJoin('hr_shift', function($q) use($day_num, $unitId) {
                             $q->on('hr_shift.hr_shift_name', 'hr_shift_roaster.'.$day_num);
                             $q->where('hr_shift.hr_shift_unit_id', $unitId);
                         })
                         ->orderBy('hr_shift.hr_shift_id', 'desc')
-                		->first();
+                        ->first();
 
-                		if(!empty($shift) && $shift->$day_num != null){
-                			$shift_code= $shift->hr_shift_code;
-                			$shift_start= $shift->hr_shift_start_time;
-                			$shift_end= $shift->hr_shift_end_time;
+                        if(!empty($shift) && $shift->$day_num != null){
+                            $shift_code= $shift->hr_shift_code;
+                            $shift_start= $shift->hr_shift_start_time;
+                            $shift_end= $shift->hr_shift_end_time;
                             $shift_break= $shift->hr_shift_break_time;
-                		}
-                		else{
-                			$shift_code= $as_info->shift['hr_shift_code'];
-                			$shift_start= $as_info->shift['hr_shift_start_time'];
-                			$shift_end= $as_info->shift['hr_shift_end_time'];
+                        }
+                        else{
+                            $shift_code= $as_info->shift['hr_shift_code'];
+                            $shift_start= $as_info->shift['hr_shift_start_time'];
+                            $shift_end= $as_info->shift['hr_shift_end_time'];
                             $shift_break= $as_info->shift['hr_shift_break_time'];
-                		}
-                		// return $shift_code.' '.$shift_start.' '.$shift_end;
-                		if($shift_code != null && $shift_start != null && $shift_end !=null){
+                        }
+                        // return $shift_code.' '.$shift_start.' '.$shift_end;
+                        if($shift_code != null && $shift_start != null && $shift_end !=null){
 
                             $att = $this->attendanceCrud($checktime, $shift_start, $shift_end, $shift_break, $shift_code, $tableName, $as_info, $checkHolidayFlag, $unit, $day_of_date, $month, $year, $unitId);
 
-                			if($fileDate == ''){
-			                	$fileDate[] = $today;
-			                }else{
-			                	array_push($fileDate, $today);
-			                }
-			                $data['date'] = array_unique($fileDate);
-                		}else{
-                			if($value != null){
-			                	$msg[] = $value." - shift Name/shift start/shift end null ";
-			                }
-                		}
-                	}else{
-                		if($value != null){
-		                	$msg[] = $value." - Basic info/rfid/checktime null or employee not active";
-		                }
-                	}
+
+                            
+                            if($fileDate == ''){
+                                $fileDate[] = $today;
+                            }else{
+                                array_push($fileDate, $today);
+                            }
+                            $data['date'] = array_unique($fileDate);
+                        }else{
+                            if($value != null){
+                                $msg[] = $value." - shift Name/shift start/shift end null ";
+                            }
+                        }
+                    }else{
+                        if($value != null){
+                            $msg[] = $value." - Basic info/rfid/checktime null or employee not active";
+                        }
+                    }
                 }else{
-                	if($value != null){
-	                	$msg[] = $value." - rfid null";
-	                }
-                	//break;
+                    if($value != null){
+                        $msg[] = $value." - rfid null";
+                    }
+                    //break;
                 }
-			}
+            }
             $data['msg'] = $msg;
 
-    		return $data;
-    	} catch (\Exception $e) {
-    		$data['status'] = 'error';
-    		$data['result'] = $e->getMessage();
-    		return $data;
-    	}
+            return $data;
+        } catch (\Exception $e) {
+            $data['status'] = 'error';
+            $data['result'] = $e->getMessage();
+            return $data;
+        }
     }
 
     public function attendanceCrud($checktime, $shift_start, $shift_end, $shift_break, $shift_code, $tableName, $as_info, $checkHolidayFlag, $unit, $day_of_date, $month, $year, $unitId)
     {
+
         try {
+            $data = [];
             $punch_date = date('Y-m-d', strtotime($checktime));
+
             $shift_start = $punch_date." ".$shift_start;
             $shift_end = $punch_date." ".$shift_end;
-            $shift_in_time= (int)strtotime($shift_start);
-            $shift_out_time= (int)strtotime($shift_end);
-            // if shift end time is less than shift start time then add one day to shift end time
+            $shift_in_time = Carbon::createFromFormat('Y-m-d H:i:s', $shift_start);
+            $shift_out_time = Carbon::createFromFormat('Y-m-d H:i:s', $shift_end);
+
+        
             if($shift_out_time < $shift_in_time){
-                $shift_out_time= $shift_out_time+86400; // 1 day
+                $shift_out_time = $shift_out_time->copy()->addDays(1);
             }
             //shift start range
-            $shift_start_begin= $shift_in_time-7200; // 2 hour
-            $shift_start_end= $shift_in_time+14399; //3 hour 59 minute 59 second
+            $shift_start_begin = $shift_in_time->copy()->subHours(2); // 2 hour
+            $shift_start_end = $shift_in_time->copy()->addHours(4); //4 hour
             //shift end rage
-            $shift_end_begin= $shift_start_end+1; // 4 hour
+            $shift_end_begin = $shift_start_end->copy()->addSeconds(1); // after 4 hour
             // $shift_end_end= $shift_out_time+28800; // 8 hour OT calculate in previous system
             // $shift_end_end= $shift_end_begin+68399; // 18 hour 59 minute 59 second
 
             $otAllow = 46000 - ($shift_break*60);// 13- hour 00 minute 00 second
-            $shift_end_end = $shift_out_time+$otAllow;
+            $shift_end_end = $shift_out_time->copy()->addSeconds($otAllow);
+ 
             //check time
-            $check_time= (int)strtotime($checktime);
+            $check_time = Carbon::createFromFormat('Y-m-d H:i:s', $checktime);
             //get existing punch
             $last_punch= DB::table($tableName)
             ->where('as_id', $as_info->as_id)
-            ->where('in_date', '=', date("Y-m-d", strtotime($checktime)))
+            ->where('in_date', '=', $check_time->format('Y-m-d'))
             ->orderBy('id', "DESC")
             ->first();
-            // print_r($last_punch);exit;
             
-            if($shift_start_begin<= $check_time && $check_time <= $shift_start_end  && $checkHolidayFlag == 0){
+            if($last_punch){
+                if((($shift_start_begin >= $last_punch->in_time || $last_punch->in_time >= $shift_start_end)  && $last_punch->in_time != null) || $last_punch->remarks == 'DSI'){
+                    DB::table($tableName)->where('id', $last_punch->id)->update([
+                            'in_time' => null, 'ot_hour' => 0, 'late_status' => 0]);
+                    $last_punch = DB::table($tableName)->where('id', $last_punch->id)->first();
+
+
+                }
+                if(($shift_end_begin >= $last_punch->out_time || $last_punch->out_time >= $shift_end_end ) && $last_punch->out_time != null){
+                    DB::table($tableName)->where('id', $last_punch->id)->update([
+                            'out_time' => null, 'ot_hour' => 0]);
+                    $last_punch = DB::table($tableName)->where('id', $last_punch->id)->first();
+
+                }
+            }
+            
+            if($shift_start_begin <= $check_time && $check_time <= $shift_start_end  && $checkHolidayFlag == 0){
                 $checkInTimeFlag = 0;
                 if(empty($last_punch)){
                     $punchId = DB::table($tableName)
@@ -327,7 +346,7 @@ class AttendanceFileProcessController extends Controller
                 }else{
                     $lastInTime = $last_punch->in_time;
                     $newInTime = $checktime;
-                    if($newInTime <= $lastInTime || $last_punch->remarks == 'DSI'){
+                    if($newInTime <= $lastInTime || $last_punch->remarks == 'DSI' || $last_punch->in_time == null){
                         $punchId = $last_punch->id;
                         DB::table($tableName)
                         ->where('id', $last_punch->id)
@@ -337,7 +356,7 @@ class AttendanceFileProcessController extends Controller
                             'in_unit' => $unit,
                             'remarks' => ''
                         ]);
-
+                        
                         $checkInTimeFlag = 2;
                     }
 
@@ -355,7 +374,8 @@ class AttendanceFileProcessController extends Controller
                 }
 
             }
-            else if(($shift_end_begin<= $check_time) && ($check_time <= $shift_end_end)  && $checkHolidayFlag == 0){
+            else if(($shift_end_begin <= $check_time) && ($check_time <= $shift_end_end)  && $checkHolidayFlag == 0){
+
                 if(!empty($last_punch)){
                     $checkOutTimeFlag = 0;
                     if($last_punch->out_time == null){
@@ -367,11 +387,13 @@ class AttendanceFileProcessController extends Controller
                             'out_unit' => $unit
                         ]);
 
+
+
                         $checkOutTimeFlag = 1;
                     }else{
                         $lastOutTime = $last_punch->out_time;
                         $newOutTime = $checktime;
-                        if($newOutTime >= $lastOutTime){
+                        if($newOutTime >= $lastOutTime ){
                             DB::table($tableName)
                             ->where('id', $last_punch->id)
                             ->where('as_id', $as_info->as_id)
@@ -412,10 +434,11 @@ class AttendanceFileProcessController extends Controller
                 }
             }
             else{
+                
                 $shift_code_new=null;
                 if($day_of_date == 1){
-                    $day_of_date= date("Y-m-d", $check_time-86400);
-                    $day_of_date= date('j', strtotime($day_of_date));
+                    $day_of_date = $check_time->copy()->subDays(1);
+                    $day_of_date= $day_of_date->format('j');
                     $month= $month-1;
                     if($month ==1){
                         $month=12;
@@ -425,6 +448,8 @@ class AttendanceFileProcessController extends Controller
                 }else{
                     $day_num= "day_".($day_of_date-1);
                 }
+                    
+                
                 // return $day_num;
                 $shift= DB::table("hr_shift_roaster")
                 ->where('shift_roaster_month', $month)
@@ -467,48 +492,74 @@ class AttendanceFileProcessController extends Controller
                 }
                 $last_punch= DB::table($tableName)
                 ->where('as_id', $as_info->as_id)
-                ->whereDate('in_time', '=', date("Y-m-d", strtotime("-1 days $checktime")))
+                ->where('in_date', $check_time->copy()->subDays(1)->format('Y-m-d'))
                 ->orderBy('id', "DESC")
                 ->first();
-                // print_r($last_punch);exit;
+
+
+
+                
+                
                 $outPunchDate = $punch_date;
 
                 if($last_punch != null){
                     $punch_date = date('Y-m-d', strtotime($last_punch->in_time));
                 }
-                // return $punch_date;
+
                 $shift_start = $punch_date." ".$shift_start_new;
-                $shift_end = $outPunchDate." ".$shift_end_new;
+                $shift_end = $punch_date." ".$shift_end_new;
+                $shift_in_time_new = Carbon::createFromFormat('Y-m-d H:i:s', $shift_start);
+                $shift_out_time_new = Carbon::createFromFormat('Y-m-d H:i:s', $shift_end);
 
-                $shift_in_time_new= (int)strtotime($shift_start);
-                $shift_out_time_new= (int)strtotime($shift_end);
-                // if shift end time is less than shift start time then add one day to shift end time
+            
                 if($shift_out_time_new < $shift_in_time_new){
-                    $shift_out_time_new= $shift_out_time_new+86400;
+                    $shift_out_time_new = $shift_out_time_new->copy()->addDays(1);
                 }
-
                 //shift start range
-                $shift_start_begin_new= $shift_in_time_new-7200; // 2 hour
-                $shift_start_end_new= $shift_in_time_new+14399; //3 hour 59 minute 59 second
+                $shift_start_begin_new = $shift_in_time_new->copy()->subHours(2); // 2 hour
+                $shift_start_end_new = $shift_in_time_new->copy()->addHours(4); //4 hour
                 //shift end rage
-                $shift_end_begin_new= $shift_start_end_new+1; // 4 hour
-                // $shift_end_end_new= $shift_out_time_new+68399;  // 18 hour 59 minute 59 second
-                $otAllow = 46000 - ($shift_break_new*60);// 13- hour 00 minute 00 second
-                $shift_end_end_new = $shift_out_time_new+$otAllow;
+                $shift_end_begin_new = $shift_start_end_new->copy()->addSeconds(1); // after 4 hour
+                // $shift_end_end= $shift_out_time_new+28800; // 8 hour OT calculate in previous system
+                // $shift_end_end= $shift_end_begin+68399; // 18 hour 59 minute 59 second
 
-                
-                if($shift_end_begin_new<= $check_time && $check_time <= $shift_end_end_new){
+                $otAllow = 46000 - ($shift_break_new*60);// 13- hour 00 minute 00 second
+                $shift_end_end_new = $shift_out_time_new->copy()->addSeconds($otAllow);
+     
+                //check time
+                $check_time = Carbon::createFromFormat('Y-m-d H:i:s', $checktime);
+
+                if($last_punch){
+                    if((($shift_start_begin_new >= $last_punch->in_time || $last_punch->in_time >= $shift_start_end_new)  && $last_punch->in_time != null) || $last_punch->remarks == 'DSI'){
+                        DB::table($tableName)->where('id', $last_punch->id)->update([
+                                'in_time' => null, 'ot_hour' => 0, 'late_status' => 0]);
+                        $last_punch = DB::table($tableName)->where('id', $last_punch->id)->first();
+
+
+                    }
+                    if(($shift_end_begin_new >= $last_punch->out_time || $last_punch->out_time >= $shift_end_end_new ) && $last_punch->out_time != null){
+                        DB::table($tableName)->where('id', $last_punch->id)->update([
+                                'out_time' => null, 'ot_hour' => 0]);
+                        $last_punch = DB::table($tableName)->where('id', $last_punch->id)->first();
+
+                    }
+                }
+           
+
+                if($shift_end_begin_new <= $check_time && $check_time <= $shift_end_end_new){
+
+
 
                     if(!empty($last_punch)){
                         $checkOutTimeFlag = 0;
                         if($last_punch->out_time == null){
-                            DB::table($tableName)
+                            $hi = DB::table($tableName)
                             ->where('id', $last_punch->id)
-                            ->where('as_id', $as_info->as_id)
                             ->update([
                                 'out_time' => $checktime,
                                 'out_unit' => $unit
                             ]);
+
 
                             $checkOutTimeFlag = 1;
                         }else{
@@ -570,6 +621,7 @@ class AttendanceFileProcessController extends Controller
             if($bug == 1062){
                 return 'duplicate';
             }*/
+            //return $e->getMessage();
             return 'error';
         }
     }

@@ -14,20 +14,19 @@ use App\Models\Hr\Leave;
 use App\Models\Hr\Shift;
 use App\Models\Hr\Unit;
 use Carbon\Carbon;
+use Rap2hpoutre\FastExcel\FastExcel;
 use PDF, Validator, Auth, ACL, DB, DataTables;
 
 use Illuminate\Http\Request;
 
 class TestController extends Controller
 {
-    public function test()
+    public function test(Request $request)
     {
 
-
-        $att = DB::table('hr_attendance_mbm')
-                ->where('in_date', '>=', '2020-09-01')
-                ->where('in_date', '<=', '2020-09-30')
-                ->pluck('as_id');
+        
+        dd('');
+        //dd($att, $ab, $lv);
 
         $data = DB::table('hr_as_basic_info')
                 ->whereIN('as_id', $att)
@@ -41,7 +40,6 @@ class TestController extends Controller
                     ->whereNotIn('s.as_id', $data)
                     ->get();
 
-        dd($salary);
 
 
 
@@ -79,6 +77,183 @@ class TestController extends Controller
 	    }
 
 	    dd($data,$status);
+    }
+
+    public function exportReport(Request $request)
+    {
+        if(isset($request->date)){
+            $date = $request->date;
+            $units = auth()->user()->unit_permissions();
+        
+            $filename = 'Employee record -'.$date.'.xlsx';
+
+            $designation = designation_by_id();
+            $department = department_by_id();
+            $section = section_by_id();
+            $subsection = subSection_by_id();
+            $unit = unit_by_id();
+            $excel = [];
+            foreach ($units as $key => $u) {
+                $table = get_att_table($u).' AS a';
+                $att = DB::table($table)
+                        ->leftJoin('hr_as_basic_info as b','b.as_id','a.as_id')
+                        ->leftJoin('hr_benefits as c','b.associate_id','c.ben_as_id')
+                        ->where('a.in_date', $date)
+                        ->get();
+
+                foreach ($att as $key => $a) {
+                    $excel[$a->associate_id] = array(
+                        'Associate ID' => $a->associate_id,
+                        'Oracle ID' => $a->as_oracle_code,
+                        'Name' => $a->as_name,
+                        'RF ID' => $a->as_rfid_code??0,
+                        'DOJ' => $a->as_doj,
+                        'Current Salary' => $a->ben_current_salary,
+                        'Basic Salary' => $a->ben_basic,
+                        'House Rent' => $a->ben_house_rent??0,
+                        'Cash Amount' => $a->ben_cash_amount??0,
+                        'Bank/Rocket' => $a->ben_bank_amount??0,
+                        'Designation' => $designation[$a->as_designation_id]['hr_designation_name'],
+                        'Department' => $department[$a->as_department_id]['hr_department_name']??'',
+                        'Section' => $section[$a->as_section_id]['hr_section_name']??'',
+                        'Sub Section' => $subsection[$a->as_subsection_id]['hr_subsec_name']??'',
+                        'Unit' => $unit[$a->as_unit_id]['hr_unit_short_name'],
+                        'OT/NONOT' => $a->as_ot == 1?'OT':'NonOT',
+                        'Status' => 'Present',
+                        'Late' => $a->late_status,
+                        'OT Hour' => $a->ot_hour,
+                        'Date' => $date
+                    );
+                    $excel[$a->associate_id]['In Time'] = '';
+                    $excel[$a->associate_id]['Out Time'] = '';
+                    if($a->in_time != null && $a->remarks != 'DSI'){
+                        $excel[$a->associate_id]['In Time'] = date('H.i', strtotime($a->in_time));
+                    }
+                    if($a->out_time != null){
+                        if(date('H:i', strtotime($a->out_time)) != '00:00'){
+                            $excel[$a->associate_id]['Out Time'] = date('H.i', strtotime($a->out_time));
+                        }
+                    }
+                }
+            }
+
+            $ab = DB::table('hr_absent as a')
+                    ->leftJoin('hr_as_basic_info as b','b.associate_id','a.associate_id')
+                    ->leftJoin('hr_benefits as c','b.associate_id','c.ben_as_id')
+                    ->where('a.date', $date)
+                    ->whereIn('b.as_unit_id', $units)
+                    ->get();
+
+            $lv = DB::table('hr_leave as a')
+                    ->leftJoin('hr_as_basic_info as b','b.associate_id','a.leave_ass_id')
+                    ->leftJoin('hr_benefits as c','b.associate_id','c.ben_as_id')
+                    ->where('a.leave_from', "<=", $date)
+                    ->where('a.leave_to', ">=", $date)
+                    ->whereIn('b.as_unit_id', $units)
+                    ->get();
+
+            $do = DB::table('holiday_roaster as a')
+                    ->leftJoin('hr_as_basic_info as b','b.associate_id','a.as_id')
+                    ->leftJoin('hr_benefits as c','b.associate_id','c.ben_as_id')
+                    ->where('a.date', $date)
+                    ->whereIn('b.as_unit_id', $units)
+                    ->where('a.remarks', 'Holiday')
+                    ->get();
+
+            
+
+            
+
+                
+
+            foreach ($ab as $key => $a) {
+                $excel[$a->associate_id] = array(
+                    'Associate ID' => $a->associate_id,
+                    'Oracle ID' => $a->as_oracle_code,
+                    'Name' => $a->as_name,
+                    'RF ID' => $a->as_rfid_code??0,
+                    'DOJ' => $a->as_doj,
+                    'Current Salary' => $a->ben_current_salary,
+                    'Basic Salary' => $a->ben_basic,
+                    'House Rent' => $a->ben_house_rent??0,
+                    'Cash Amount' => $a->ben_cash_amount??0,
+                    'Bank/Rocket' => $a->ben_bank_amount??0,
+                    'Designation' => $designation[$a->as_designation_id]['hr_designation_name'],
+                    'Department' => $department[$a->as_department_id]['hr_department_name']??'',
+                    'Section' => $section[$a->as_section_id]['hr_section_name']??'',
+                    'Sub Section' => $subsection[$a->as_subsection_id]['hr_subsec_name']??'',
+                    'Unit' => $unit[$a->as_unit_id]['hr_unit_short_name'],
+                    'OT/NONOT' => $a->as_ot == 1?'OT':'NonOT',
+                    'Status' => 'Absent',
+                    'Late' => '',
+                    'OT Hour' => '',
+                    'Date' => $date,
+                    'In Time' =>  '',
+                    'Out Time' => ''
+
+                );
+            }
+
+            foreach ($lv as $key => $a) {
+                $excel[$a->associate_id] = array(
+                    'Associate ID' => $a->associate_id,
+                    'Oracle ID' => $a->as_oracle_code,
+                    'Name' => $a->as_name,
+                    'RF ID' => $a->as_rfid_code??0,
+                    'DOJ' => $a->as_doj,
+                    'Current Salary' => $a->ben_current_salary,
+                    'Basic Salary' => $a->ben_basic,
+                    'House Rent' => $a->ben_house_rent??0,
+                    'Cash Amount' => $a->ben_cash_amount??0,
+                    'Bank/Rocket' => $a->ben_bank_amount??0,
+                    'Designation' => $designation[$a->as_designation_id]['hr_designation_name'],
+                    'Department' => $department[$a->as_department_id]['hr_department_name']??'',
+                    'Section' => $section[$a->as_section_id]['hr_section_name']??'',
+                    'Sub Section' => $subsection[$a->as_subsection_id]['hr_subsec_name']??'',
+                    'Unit' => $unit[$a->as_unit_id]['hr_unit_short_name'],
+                    'OT/NONOT' => $a->as_ot == 1?'OT':'NonOT',
+                    'Status' => 'Leave',
+                    'Late' => '',
+                    'OT Hour' => '',
+                    'Date' => $date,
+                    'In Time' =>  '',
+                    'Out Time' => ''
+                );
+            }
+
+            foreach ($do as $key => $a) {
+                $excel[$a->associate_id] = array(
+                    'Associate ID' => $a->associate_id,
+                    'Oracle ID' => $a->as_oracle_code,
+                    'Name' => $a->as_name,
+                    'RF ID' => $a->as_rfid_code??0,
+                    'DOJ' => $a->as_doj,
+                    'Current Salary' => $a->ben_current_salary,
+                    'Basic Salary' => $a->ben_basic,
+                    'House Rent' => $a->ben_house_rent??0,
+                    'Cash Amount' => $a->ben_cash_amount??0,
+                    'Bank/Rocket' => $a->ben_bank_amount??0,
+                    'Designation' => $designation[$a->as_designation_id]['hr_designation_name'],
+                    'Department' => $department[$a->as_department_id]['hr_department_name']??'',
+                    'Section' => $section[$a->as_section_id]['hr_section_name']??'',
+                    'Sub Section' => $subsection[$a->as_subsection_id]['hr_subsec_name']??'',
+                    'Unit' => $unit[$a->as_unit_id]['hr_unit_short_name'],
+                    'OT/NONOT' => $a->as_ot == 1?'OT':'NonOT',
+                    'Status' => 'Day Off',
+                    'Late' => '',
+                    'OT Hour' => '',
+                    'Date' => $date,
+                    'In Time' =>  '',
+                    'Out Time' => ''
+                );
+            }
+
+
+
+            return (new FastExcel(collect($excel)))->download($filename);
+        }
+
+        return view('common.employee-record');
     }
 
 
