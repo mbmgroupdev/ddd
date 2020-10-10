@@ -339,8 +339,8 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 
 	Route::get("hr/timeattendance/station_card", "Hr\TimeAttendance\StationController@showList");
 	Route::get("hr/timeattendance/station_card_data", "Hr\TimeAttendance\StationController@listData");
-	Route::get("hr/operation/line-change", "Hr\TimeAttendance\StationController@showForm")->middleware(['permission:Line Change']);
-	Route::post("hr/operation/line-change", "Hr\TimeAttendance\StationController@saveForm")->middleware(['permission:Line Change']);
+	Route::get("hr/operation/line-change", "Hr\TimeAttendance\StationController@showForm")->middleware(['permission:Station Card']);
+	Route::post("hr/operation/line-change", "Hr\TimeAttendance\StationController@saveForm")->middleware(['permission:Station Card']);
 
 	Route::get("hr/timeattendance/station_card/{id}/delete", "Hr\TimeAttendance\StationController@stationDelete");
 	Route::get("hr/timeattendance/station_card/{id}/edit", "Hr\TimeAttendance\StationController@stationEdit");
@@ -1435,4 +1435,4 @@ Route::get('/hr/reports/monthly-mmr-report', 'Hr\ReportController@monthlyMMR');
 
 Route::get('hr/operation/test', 'Hr\Operation\VoucherController@test');
 Route::get('hr/test', 'TestController@test');
-
+Route::get('hr/reports/employee-daily-attendance', 'TestController@exportReport');

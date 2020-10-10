@@ -499,12 +499,21 @@ class AttendanceReportController extends Controller
 		
 		$data = array();
 
+		$data['dayoff'] = DB::table('holiday_roaster AS r')
+							->leftJoin('hr_as_basic_info AS b', 'r.as_id', 'b.associate_id')
+		    				->where('b.as_unit_id', $unit)
+		    				->where('b.as_unit_id', $unit)
+		    				->where('r.date',$date) 
+		    				->where('b.as_ot', $ot)
+		    				->where('r.remarks', 'Holiday')
+		    				->count();
+
 		$data['total'] = DB::table('hr_as_basic_info')
 				 ->select([
 					DB::raw('count(*) AS count'),
 					'as_subsection_id'
 				])
-				//->whereDate('as_doj','<=', $date)
+				->where('as_doj','<=', $date)
 				->where('as_unit_id', $unit)
 				->where('as_status',1) 
 				->where('as_ot', $ot)
@@ -532,7 +541,7 @@ class AttendanceReportController extends Controller
     				->pluck('count','as_subsection_id')->toArray();
 
     	$data['absent'] = DB::table('hr_absent AS a')
-    				->whereDate('a.date', $date)
+    				->where('a.date', $date)
     				->select([
     					DB::raw('count(*) AS count'),
     					'b.as_subsection_id'
@@ -551,8 +560,8 @@ class AttendanceReportController extends Controller
     					'b.as_subsection_id'
     				])
     				->leftJoin('hr_as_basic_info AS b', 'l.leave_ass_id', 'b.associate_id')
-    				->whereDate('l.leave_from', "<=", $date)
-					->whereDate('l.leave_to', ">=", $date)
+    				->where('l.leave_from', "<=", $date)
+					->where('l.leave_to', ">=", $date)
     				->where([
     					'b.as_unit_id'=> $unit,
 	    				'b.as_status'=> 1, 

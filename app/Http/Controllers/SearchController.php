@@ -38,12 +38,17 @@ class SearchController extends Controller
         $keyword = $request->keyword;
 
         $employees = DB::table('hr_as_basic_info')
-        ->select('as_name', 'associate_id', 'as_pic', 'as_gender')
-        ->where('associate_id', 'LIKE', '%'. $keyword .'%')
-        ->orWhere('as_name', 'LIKE', '%'. $keyword . '%')
-        ->orWhere('as_oracle_code', 'LIKE', '%'. $keyword . '%')
+        ->select('as_name', 'associate_id', 'as_pic', 'as_gender','as_status')
+        ->where(function ($q) use ($keyword) {
+            $q->where('associate_id', 'LIKE', '%'. $keyword .'%');
+            $q->orWhere('as_name', 'LIKE', '%'. $keyword . '%');
+            $q->orWhere('as_oracle_code', 'LIKE', '%'. $keyword . '%');
+        })
+        ->whereIn('as_unit_id', auth()->user()->unit_permissions())
+        ->where('as_status', 1)
         ->limit(5)
         ->get();
+
 
         return view('common.search_suggestion', compact('employees','keyword'))->render();
     }

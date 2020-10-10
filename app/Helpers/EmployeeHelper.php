@@ -34,6 +34,8 @@ class EmployeeHelper
 		}		
 	    $cOut = strtotime(date("H:i", strtotime($outtimePunch)));
 
+
+
 	    $overtimes = 0;
 	    // CALCULATE OVER TIME
 	    if(!empty($cOut))
@@ -41,6 +43,12 @@ class EmployeeHelper
 		    $today = Carbon::parse($intimePunch)->format('Y-m-d');
 		    $year = Carbon::parse($intimePunch)->format('Y');
 		    $month = Carbon::parse($intimePunch)->format('m');
+		    $dayname = Carbon::parse($intimePunch)->format('l');
+
+		    if(date('H:i:s', strtotime($shiftIntime)) < date('H:i:s', strtotime('14:00:00'))  && $dayname == 'Friday'){
+		    	$shiftBreak = 90;
+		    }
+
 		    $otCheck = HolidayRoaster::getHolidayYearMonthAsIdDateWiseRemark($year, $month, $eAsId, $today, 'OT');
 		    if($otCheck == null && $eSRStatus == 0){
 		      $otCheck = YearlyHolyDay::getCheckUnitDayWiseHolidayStatus($eUnit, $today, 2);

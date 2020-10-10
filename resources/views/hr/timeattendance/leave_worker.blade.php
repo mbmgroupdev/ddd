@@ -137,14 +137,14 @@
                                            <div class="user-img img-fluid"><a href="#" class="iq-bg-primary"><i class="las f-18 la-calendar-day"></i></a></div>
                                            <div class="media-support-info ml-3">
                                               <h6>Casual Leave</h6>
-                                              <p class="mb-0">Total:  <span class="text-danger" id="total_earn_leave">10</span class="text-danger"> Enjoyed: <span class="text-warning" id="enjoyed_earn_leave">0</span > Remained: <span class="text-success" id="remained_earn_leave">0</span></p>
+                                              <p class="mb-0">Total:  <span class="text-danger" id="total_earn_leave">10</span class="text-danger"> Enjoyed: <span class="text-danger" id="enjoyed_earn_leave">0</span > Remained: <span class="text-success" id="remained_earn_leave">0</span></p>
                                            </div>
                                         </li>
                                         <li class="d-flex mb-4 align-items-center">
                                            <div class="user-img img-fluid"><a href="#" class="iq-bg-warning"><i class="las f-18 la-stethoscope"></i></a></div>
                                            <div class="media-support-info ml-3">
                                               <h6>Sick Leave</h6>
-                                              <p class="mb-0">Total:  <span class="text-danger" id="total_earn_leave">14</span class="text-danger"> Enjoyed: <span class="text-warning" id="enjoyed_earn_leave">0</span > Remained: <span class="text-success" id="remained_earn_leave">0</span></p>
+                                              <p class="mb-0">Total:  <span class="text-danger" id="total_earn_leave">14</span class="text-danger"> Enjoyed: <span class="text-danger" id="enjoyed_earn_leave">0</span > Remained: <span class="text-success" id="remained_earn_leave">0</span></p>
                                            </div>
                                         </li>
                                         
@@ -152,7 +152,7 @@
                                            <div class="user-img img-fluid"><a href="#" class="iq-bg-info"><i class="las f-18 la-dollar-sign"></i></a></div>
                                            <div class="media-support-info ml-3">
                                               <h6>Earned Leave</h6>
-                                              <p class="mb-0">Total:  <span class="text-danger" id="total_earn_leave">0</span class="text-danger"> Enjoyed: <span class="text-warning" id="enjoyed_earn_leave">0</span > Remained: <span class="text-success" id="remained_earn_leave">0</span></p>
+                                              <p class="mb-0">Total:  <span class="text-danger" id="total_earn_leave">0</span class="text-danger"> Enjoyed: <span class="text-danger" id="enjoyed_earn_leave">0</span > Remained: <span class="text-success" id="remained_earn_leave">0</span></p>
                                            </div>
                                         </li>
                                         <li class="d-flex mb-4 align-items-center">

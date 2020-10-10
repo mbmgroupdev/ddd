@@ -600,7 +600,6 @@ if(!function_exists('get_earned_leave')){
 if(!function_exists('employee_count')){
     function employee_count()
     {
-        # Count Total, Male & Female Employee
         $employee_count = Cache::remember('employee_count', 20000, function  () {
 
             return  Employee::select(
@@ -611,17 +610,39 @@ if(!function_exists('employee_count')){
                   COUNT(CASE WHEN as_ot = '1' THEN as_id END) AS ot,
                   COUNT(CASE WHEN as_status != '1' THEN as_id END) AS inactive,
                   COUNT(CASE WHEN as_status = '1' THEN as_id END) AS active,
-                  COUNT(CASE WHEN as_status = '6' THEN as_id END) AS maternity,
                   COUNT(CASE WHEN as_doj = CURDATE() THEN as_id END) AS todays_join,
-                  COUNT(*) AS total
+                  COUNT(*) AS total,
+                  as_unit_id
                 ")
             )
             //->whereIn('as_unit_id', auth()->user()->unit_permissions())
-            ->whereIn('as_status',[1,6])
-            ->first()->toArray();
+            ->whereIn('as_status',[1])
+            ->groupBy('as_unit_id')
+            ->get()->keyBy('as_unit_id')->toArray();
         });
 
-        return $employee_count;
+        $emp['males'] = 0;
+        $emp['females'] = 0;
+        $emp['non_ot'] = 0;
+        $emp['ot'] = 0;
+        $emp['active'] = 0;
+        $emp['todays_join'] = 0;
+
+        $units = auth()->user()->unit_permissions();
+
+        foreach ($units as $key => $unit) {
+            if(isset($employee_count[$unit])){
+
+                $emp['males'] += $employee_count[$unit]['males'];
+                $emp['females'] += $employee_count[$unit]['females'];
+                $emp['non_ot'] += $employee_count[$unit]['non_ot'];
+                $emp['ot'] += $employee_count[$unit]['ot'];
+                $emp['active'] += $employee_count[$unit]['active'];
+                $emp['todays_join'] += $employee_count[$unit]['todays_join'];
+            }
+        }
+
+        return $emp;
     }
 }
 
@@ -895,6 +916,26 @@ if(!function_exists('unit_list')){
             ->pluck('hr_unit_name', 'hr_unit_id');
         });      
 
+    }
+}
+
+if(!function_exists('permitted_units')){
+    function permitted_units()
+    {
+       $units =  Cache::remember('permitted_units', Carbon::now()->addHour(12), function () {
+            return Unit::where('hr_unit_status', '1')
+            ->orderBy('hr_unit_name', 'desc')
+            ->pluck('hr_unit_short_name', 'hr_unit_id');
+        });  
+        $permit = auth()->user()->unit_permissions();
+        $uname = '';
+        foreach ($permit as $key => $u) {
+              $uname .= ' '.($units[$u]??'').',';
+              if($key == 2) 
+                $uname .= '<br>'; 
+        } 
+
+        return $uname;
     }
 }
 
