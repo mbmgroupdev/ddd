@@ -171,6 +171,7 @@
 			                <tr>
 			                    <th>Sl</th>
 			                    <th>Photo</th>
+			                    <th>Oracle ID</th>
 			                    <th>Associate ID</th>
 			                    <th>Name</th>
 			                    <th>Designation</th>
@@ -197,6 +198,7 @@
 			            	<tr>
 			            		<td>{{ ++$i }}</td>
 				            	<td><img height="30" src="{{ emp_profile_picture($employee) }}" class='small-image min-img-file'></td>
+				            	<td>{{ $employee->as_oracle_code }}</td>
 				            	<td><a href='{{ url("hr/operation/job_card?associate=$employee->associate_id&month_year=$month") }}' target="_blank">{{ $employee->associate_id }}</a></td>
 				            	<td>
 				            		<b>{{ $employee->as_name }}</b>
@@ -218,6 +220,7 @@
 			            	<tr>
 			            		<td>{{ ++$i }}</td>
 				            	<td><img height="30"  src="{{ emp_profile_picture($employee) }}" class='small-image min-img-file'></td>
+				            	<td>{{ $employee->as_oracle_code }}</td>
 				            	<td><a href='{{ url("hr/operation/job_card?associate=$employee->associate_id&month_year=$month") }}' target="_blank">{{ $employee->associate_id }}</a></td>
 				            	<td>
 				            		<b>{{ $employee->as_name }}</b>

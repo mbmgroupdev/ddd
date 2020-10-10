@@ -105,6 +105,7 @@
 								<th>Sub Section</th>
 								<th>Gender</th>
 								<th>OT Status</th>
+								<th>Default Shift</th>
 							</tr>
 						</thead>
 		
@@ -206,7 +207,8 @@ $(document).ready(function()
 		        {data:'hr_subsec_name',  name: 'hr_subsec_name', orderable: false},
 
 		        {data:'as_gender', name: 'as_gender', orderable: false,},
-		        {data:'as_ot', name: 'as_ot', orderable: false}
+		        {data:'as_ot', name: 'as_ot', orderable: false},
+		        {data:'as_shift_id', name: 'as_shift_id', orderable: false}
 
 
 

@@ -208,8 +208,8 @@ class AttendanceOperationController extends Controller
         	}elseif($request['type'] == 'Present'){
         		$attData->addSelect(DB::raw("'present' as reportType"));
         		$attData->whereNotNull('in_time');
-        		$attData->where('remarks', '!=', 'DSI');
         		$attData->whereNotNull('out_time');
+        		$attData->where('remarks', '!=', 'DSI');
         	}elseif($request['type'] == 'Present(Intime Empty)'){
                 $attData->where(function ($query) {
                    $query->whereNull('in_time')
