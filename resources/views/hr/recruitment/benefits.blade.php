@@ -1,5 +1,15 @@
 @extends('hr.layout')
 @section('title', 'Employee Benefits')
+@push('css')
+    <style>
+        .custom-control-label:after {
+            margin-top: 2px;
+        }
+        .custom-control-label::before {
+            margin-top: 2px;
+        }
+    </style>
+@endpush
 @section('main-content')
 <div class="main-content">
 	<div class="main-content-inner">
@@ -75,7 +85,7 @@
                                         
                                     </div>
                                     <div class="col-6">
-                                        <div class="form-inline mb-3">
+                                        <div class="form-inline mb-3 mt-10">
                                             <div class="custom-control custom-radio custom-control-inline">
                                                <input type="radio" id="partial_amount" name="salary_type" class="salary_type custom-control-input" value="Partial" checked>
                                                <label class="custom-control-label" for="partial_amount"> Partial </label>
@@ -93,13 +103,28 @@
 
                                         <div id="cash_input" class="form-group has-float-label has-required">
                                             <input type="number" name="ben_cash_amount" id="ben_cash_amount" placeholder="Amount Paid in Cash" class="form-control" min="0"/>
-                                            <label  for="ben_cash_amount"> CASH  </label>
+                                            <label  for="ben_cash_amount"> Cash Amount  </label>
                                         </div>
-                                        
-                                        <div id="bank_input" class="form-group has-float-label has-required ">
-                                            <input type="number" name="ben_bank_amount" id="ben_bank_amount" placeholder="Amount Paid in Bank" class="form-control" required min="0" />
-                                            <label  for="ben_bank_amount"> BANK </label>
+                                        <div id="bank_input">
+                                            
+                                            <div class="form-group has-float-label has-required ">
+                                                <input type="number" name="ben_bank_amount" id="ben_bank_amount" placeholder="Amount Paid in Bank" class="form-control" required min="0" />
+                                                <label  for="ben_bank_amount"> Bank Amount </label>
+                                            </div>
+                                            <div class="form-group has-float-label has-required  select-search-group">
+                                                <?php
+                                                $bankType = ['rocket'=>'Rocket', 'bKash'=>'bKash', 'dbbl'=>'Duch-Bangla Bank Limited.'];
+                                                ?>
+                                                {{ Form::select('bank_name', $bankType, null, ['placeholder'=>'Select Account ', 'class'=>'form-control capitalize select-search', 'id'=>'bank_name']) }}
+                                                
+                                                <label  for="bank_name"> Account Name </label>
+                                            </div>
+                                            <div class="form-group has-float-label has-required ">
+                                                <input type="text" name="bank_no" id="bank_no" placeholder="Account number (Bank / Mobile)" class="form-control" required min="0" />
+                                                <label  for="bank_no"> Account No </label>
+                                            </div>
                                         </div>
+                                       
                                         <div class="form-group">
                                             <button class="btn btn-primary" type="submit" id="ben_submit">
                                                 <i class=" fa fa-check bigger-110"></i> Submit
@@ -207,6 +232,7 @@ $(document).ready(function(){
             },
             success: function(result)
             {  
+                console.log(result);
                 draw_new_button(associate_id);
                 $('#avatar').attr('src',result.employee.as_pic);
                 $('#user-name').text(result.employee.as_name);
@@ -224,6 +250,9 @@ $(document).ready(function(){
                     $('#ben_medical').val(result.benefit['ben_medical']);
                     $('#ben_transport').val(result.benefit['ben_transport']);
                     $('#ben_food').val(result.benefit['ben_food']);
+                    $('#bank_no').val(result.benefit['bank_no']);
+                    var bankName = result.benefit['bank_name'];
+                    $("#bank_name").val(bankName).change();
 
                     if(result.benefit['ben_cash_amount'] > 0 && result.benefit['ben_bank_amount'] <=0){
                         $('#bank_input').hide();

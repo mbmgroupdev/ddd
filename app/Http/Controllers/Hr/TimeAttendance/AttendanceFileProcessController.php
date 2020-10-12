@@ -112,12 +112,14 @@ class AttendanceFileProcessController extends Controller
                     $lineData = preg_replace('/\s+/', ' ', $lineData);
                     $valueExloade = explode(',', $lineData);
                     $dateExp = explode('/', $valueExloade[1]);
-                    $dateTimeFormat = $dateExp[2].'-'.$dateExp[1].'-'.$dateExp[0].' '.$valueExloade[2];
-                    $date  =  date("Y-m-d H:i:s", strtotime(str_replace("/", "-", $dateTimeFormat)));
-                    $rfidNameExloade = explode('-', $valueExloade[4]);
-                    $rfid = $rfidNameExloade[0];
-                    $checktime = (!empty($date)?date("Y-m-d H:i:s", strtotime($date)):null);
-
+                    if(count($dateExp) > 1 && count($valueExloade) > 2){
+                        $dateTimeFormat = $dateExp[2].'-'.$dateExp[1].'-'.$dateExp[0].' '.$valueExloade[2];
+                        $date  =  date("Y-m-d H:i:s", strtotime(str_replace("/", "-", $dateTimeFormat)));
+                        $rfidNameExloade = explode('-', $valueExloade[4]);
+                        $rfid = $rfidNameExloade[0];
+                        $checktime = (!empty($date)?date("Y-m-d H:i:s", strtotime($date)):null);
+                    }
+                    
                 }else{
                     if($value != null){
                         $msg[] = $value." - Unit do not match, issue data ";

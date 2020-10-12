@@ -213,7 +213,7 @@ class AttendaceManualController extends Controller
 
     public function calculateOt(Request $request)
     {
-
+        
         $employee = Employee::where('associate_id',$request->associateId)
         ->with('shift')
         ->first();
@@ -259,8 +259,12 @@ class AttendaceManualController extends Controller
             }
             $intime = $request->att_date.' '.$request->in_time;
             $outtime = strtotime($request->in_time)>strtotime($request->out_time)?date('Y-m-d',strtotime("+1 day", strtotime($request->att_date))).' '.$request->out_time:$request->att_date.' '.$request->out_time;
+            $outTimeEx = explode(' ', $outtime);
+            $overtimes = 0;
+            if(isset($outTimeEx[1]) && $outTimeEx[1] != '00:00:00'){
+                $overtimes = EmployeeHelper::daliyOTCalculation($intime, $outtime, $cShifStart, $cShifEnd, $cBreak, $nightFlag, $employee->associate_id, $employee->shift_roaster_status, $employee->as_unit_id);
+            }
 
-            $overtimes = EmployeeHelper::daliyOTCalculation($intime, $outtime, $cShifStart, $cShifEnd, $cBreak, $nightFlag, $employee->associate_id, $employee->shift_roaster_status, $employee->as_unit_id);
             
             $overtime = numberToTimeClockFormat($overtimes);
             return json_encode(['s_ot' => ($overtimes), 'n_ot' => ($overtime)]);
