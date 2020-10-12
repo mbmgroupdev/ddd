@@ -355,7 +355,7 @@ class AttendanceController extends Controller
         // $query1->groupBy('b.associate_id');
         //dd($query1);exit;
         $employee_list = $query1->get();
-        dd($employee_list);
+        
 
         $data = [];
         foreach($employee_list as $k=>$employee) {
@@ -906,22 +906,31 @@ class AttendanceController extends Controller
 
     public function saveFromReport(Request $request)
     {
-       $current=$request->all();
-       $table = $this->getTableName($request->unit);
-       $tableNmae = explode(' ',$table);
-       $userInfo = DB::table('hr_as_basic_info')->where('associate_id',$request->associate_id)->first();
-       
-        $intime = date('Y-m-d', strtotime($request->date))." ".date('H:i:s', strtotime($request->in_punch_new));
-        if(strtotime($request->in_punch_new) > strtotime($request->out_punch_new))
-        {
-          $ndate = date('Y-m-d',strtotime("+1 day", strtotime($request->date)));
-          $outime = date('Y-m-d', strtotime($ndate))." ".date('H:i:s', strtotime($request->out_punch_new));
+        $current=$request->all();
+
+        $table = $this->getTableName($request->unit);
+        $tableNmae = explode(' ',$table);
+        $userInfo = DB::table('hr_as_basic_info')->where('associate_id',$request->associate_id)->first();
+        if($request->in_punch_new == null || $request->in_punch_new == '' || $request->in_punch_new == '00:00:00'){
+            $intime = null;
         }else{
-          $outime = date('Y-m-d', strtotime($request->date))." ".date('H:i:s', strtotime($request->out_punch_new));
+            $intime = date('Y-m-d', strtotime($request->date))." ".date('H:i:s', strtotime($request->in_punch_new));
         }
 
+        if($request->out_punch_new == null || $request->out_punch_new == '' || $request->out_punch_new == '00:00:00'){
+            $outime = null;
+        }else{
+            if(strtotime($request->in_punch_new) > strtotime($request->out_punch_new))
+            {
+              $ndate = date('Y-m-d',strtotime("+1 day", strtotime($request->date)));
+              $outime = date('Y-m-d', strtotime($ndate))." ".date('H:i:s', strtotime($request->out_punch_new));
+            }else{
+              $outime = date('Y-m-d', strtotime($request->date))." ".date('H:i:s', strtotime($request->out_punch_new));
+            }
+        }
+        
         if($request->type == 'in'){
-            if($request->out_punch_new == '00:00:00' && (Auth::user()->hasRole('super user'))){
+            if($request->out_punch_new == '00:00:00'){
                 $employee = DB::table('hr_as_basic_info')->where('associate_id',$request->associate_id)->first();
                 $attd = DB::table($tableNmae[0])
                     ->where('as_id',$userInfo->as_id)
@@ -954,8 +963,8 @@ class AttendanceController extends Controller
                 ->where('id',$attd->id)
                 ->update([
                     'in_date' => date('Y-m-d', strtotime($intime)),
-                    'in_time' => date('Y-m-d H:i:s', strtotime($intime)),
-                    'out_time'=> date('Y-m-d H:i:s', strtotime($outime)),
+                    'in_time' => $intime,
+                    'out_time'=> $outime,
                     'ot_hour' => $request->ot_new,
                     'remarks'=>'BM'
                    ]);
@@ -977,19 +986,21 @@ class AttendanceController extends Controller
                 }else{
                    $totalDay = Carbon::parse($yearMonth)->daysInMonth;
                 }
-
-                $queue = (new ProcessAttendanceOuttime($tableNmae[0], $attd->id, $userInfo->as_unit_id))
+                if($outime != null){
+                    $queue = (new ProcessAttendanceOuttime($tableNmae[0], $attd->id, $userInfo->as_unit_id))
                     ->delay(Carbon::now()->addSeconds(2));
                     dispatch($queue);
+                }
+                
             }
         }else{
 
-            if($request->in_punch_new == '00:00:00' && (Auth::user()->hasRole('super user'))){
+            if($request->in_punch_new == '00:00:00'){
                 $employee = DB::table('hr_as_basic_info')->where('associate_id',$request->associate_id)->first();
 
                 $attd = DB::table($tableNmae[0])
                      ->where('as_id',$userInfo->as_id)
-                     ->whereDate('in_time',date('Y-m-d', strtotime($request->date)))
+                     ->where('in_date',date('Y-m-d', strtotime($request->date)))
                      ->first();
                 if($attd->out_time == null){
                     $data = EmployeeHelper::employeeDateWiseMakeAbsent($employee->as_id, $request->date);
@@ -1012,15 +1023,15 @@ class AttendanceController extends Controller
 
                 $attd = DB::table($tableNmae[0])
                 ->where('as_id',$userInfo->as_id)
-                ->whereDate('in_time',date('Y-m-d', strtotime($request->date)))
+                ->where('in_date',date('Y-m-d', strtotime($request->date)))
                 ->first();
 
                 DB::table($tableNmae[0])
                 ->where('id',$attd->id)
                 ->update([
                     'in_date' => date('Y-m-d', strtotime($intime)),
-                    'in_time' => date('Y-m-d H:i:s', strtotime($intime)),
-                    'out_time'=> date('Y-m-d H:i:s', strtotime($outime)),
+                    'in_time' => $intime,
+                    'out_time'=> $outime,
                     'ot_hour' => $request->ot_new,
                     'remarks'=>'BM'
                    ]);
@@ -1042,9 +1053,11 @@ class AttendanceController extends Controller
                 }else{
                     $totalDay = Carbon::parse($yearMonth)->daysInMonth;
                 }
-                $queue = (new ProcessAttendanceOuttime($tableNmae[0], $attd->id, $userInfo->as_unit_id))
-                        ->delay(Carbon::now()->addSeconds(2));
-                        dispatch($queue);
+                if($outime != null){
+                    $queue = (new ProcessAttendanceOuttime($tableNmae[0], $attd->id, $userInfo->as_unit_id))
+                            ->delay(Carbon::now()->addSeconds(2));
+                            dispatch($queue);
+                }
             }
         }
         if($attd){

@@ -26,66 +26,68 @@ class EmployeeHelper
 	/**/
 	public static function daliyOTCalculation($intimePunch, $outtimePunch, $shiftIntime, $shiftOuttime, $shiftBreak, $shiftNight, $eAsId, $eSRStatus, $eUnit)
 	{
-		$shiftIntime = date('Y-m-d', strtotime($intimePunch)).' '.$shiftIntime;
-		if($shiftNight == 0){
-			$shiftOuttime = date('Y-m-d', strtotime($shiftIntime)).' '.$shiftOuttime;
-		}else{
-			$shiftOuttime = date('Y-m-d', strtotime($outtimePunch)).' '.$shiftOuttime;
-		}		
-	    $cOut = strtotime(date("H:i", strtotime($outtimePunch)));
-
-
-
-	    $overtimes = 0;
-	    // CALCULATE OVER TIME
-	    if(!empty($cOut))
-	    {  
-		    $today = Carbon::parse($intimePunch)->format('Y-m-d');
-		    $year = Carbon::parse($intimePunch)->format('Y');
-		    $month = Carbon::parse($intimePunch)->format('m');
-		    $dayname = Carbon::parse($intimePunch)->format('l');
-
-		    if(date('H:i:s', strtotime($shiftIntime)) < date('H:i:s', strtotime('14:00:00'))  && $dayname == 'Friday'){
-		    	$shiftBreak = 90;
-		    }
-
-		    $otCheck = HolidayRoaster::getHolidayYearMonthAsIdDateWiseRemark($year, $month, $eAsId, $today, 'OT');
-		    if($otCheck == null && $eSRStatus == 0){
-		      $otCheck = YearlyHolyDay::getCheckUnitDayWiseHolidayStatus($eUnit, $today, 2);
-		    }
-		    // return $otCheck;
-
-		    $shiftIntime = strtotime($shiftIntime);
-		    $shiftOuttime = strtotime($shiftOuttime);
-		    $intimePunch = strtotime($intimePunch);
-		    $outtimePunch = strtotime($outtimePunch);
-		    if($shiftIntime < $intimePunch){
-		    	$shiftIntime = $intimePunch;
-		    }
-		    if($otCheck != null){
-		    	$date1 = $shiftIntime;
-		    }else{
-		    	$date1 = $shiftOuttime;
-		    }
-			$date2 = $outtimePunch;
-			$diff = (($date2 - ($date1 + ($shiftBreak*60))))/3600;
-			if($diff < 0){
-				$diff = 0;
+		$overtimes = 0;
+		$outTimeEx = explode(' ', $outtimePunch);
+		if(isset($outTimeEx[1]) && $outTimeEx[1] != '00:00:00'){
+			$shiftIntime = date('Y-m-d', strtotime($intimePunch)).' '.$shiftIntime;
+			if($shiftNight == 0){
+				$shiftOuttime = date('Y-m-d', strtotime($shiftIntime)).' '.$shiftOuttime;
+			}else{
+				$shiftOuttime = date('Y-m-d', strtotime($outtimePunch)).' '.$shiftOuttime;
 			}
-			// $diff = round($diff, 2);
-			$diffExplode = explode('.', $diff);
-			// return $diff;
-			$minutes = (isset($diffExplode[1]) ? $diffExplode[1] : 0);
-			$minutes = floatval('0.'.$minutes);
-			// return $minutes;
-			if($minutes > 0.16667 && $minutes <= 0.75) $minutes = $minutes;
-		    else if($minutes >= 0.75) $minutes = 1;
-		    else $minutes = 0;
-		    
-		    $overtimes = $diffExplode[0]+$minutes;
-		    $overtimes = number_format((float)$overtimes, 2, '.', '');
-	    }
-	    return $overtimes;
+
+		    $cOut = strtotime(date("H:i", strtotime($outtimePunch)));
+		    // CALCULATE OVER TIME
+		    if(!empty($cOut))
+		    {  
+			    $today = Carbon::parse($intimePunch)->format('Y-m-d');
+			    $year = Carbon::parse($intimePunch)->format('Y');
+			    $month = Carbon::parse($intimePunch)->format('m');
+			    $dayname = Carbon::parse($intimePunch)->format('l');
+
+			    if(date('H:i:s', strtotime($shiftIntime)) < date('H:i:s', strtotime('14:00:00'))  && $dayname == 'Friday'){
+			    	$shiftBreak = 90;
+			    }
+
+			    $otCheck = HolidayRoaster::getHolidayYearMonthAsIdDateWiseRemark($year, $month, $eAsId, $today, 'OT');
+			    if($otCheck == null && $eSRStatus == 0){
+			      $otCheck = YearlyHolyDay::getCheckUnitDayWiseHolidayStatus($eUnit, $today, 2);
+			    }
+			    // return $otCheck;
+
+			    $shiftIntime = strtotime($shiftIntime);
+			    $shiftOuttime = strtotime($shiftOuttime);
+			    $intimePunch = strtotime($intimePunch);
+			    $outtimePunch = strtotime($outtimePunch);
+			    if($shiftIntime < $intimePunch){
+			    	$shiftIntime = $intimePunch;
+			    }
+			    if($otCheck != null){
+			    	$date1 = $shiftIntime;
+			    }else{
+			    	$date1 = $shiftOuttime;
+			    }
+				$date2 = $outtimePunch;
+				$diff = (($date2 - ($date1 + ($shiftBreak*60))))/3600;
+				if($diff < 0){
+					$diff = 0;
+				}
+				// $diff = round($diff, 2);
+				$diffExplode = explode('.', $diff);
+				// return $diff;
+				$minutes = (isset($diffExplode[1]) ? $diffExplode[1] : 0);
+				$minutes = floatval('0.'.$minutes);
+				// return $minutes;
+				if($minutes > 0.16667 && $minutes <= 0.75) $minutes = $minutes;
+			    else if($minutes >= 0.75) $minutes = 1;
+			    else $minutes = 0;
+			    
+			    $overtimes = $diffExplode[0]+$minutes;
+			    $overtimes = number_format((float)$overtimes, 2, '.', '');
+		    }
+		    return $overtimes;
+		}
+		
 	}
 
 	/**/

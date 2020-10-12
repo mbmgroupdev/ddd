@@ -44,13 +44,13 @@ class AttendaceBulkManualController extends Controller
 
     public function getLateStatus($unit,$shift_id,$date,$intime,$shift_start)
     {
-        //return $unit. ' '.$shift_id;
         $getLateCount = HrLateCount::getUnitShiftIdWiseCheckExists($unit, $shift_id);
+        
         if($getLateCount != null){
             if(date('Y-m-d', strtotime($date))>= $getLateCount->date_from && date('Y-m-d', strtotime($date)) <= $getLateCount->date_to){
-                $lateTime = $getLateCount->value;
+                $lateTime = $getLateCount->value*60;
             }else{
-                $lateTime = $getLateCount->default_value;
+                $lateTime = $getLateCount->default_value*60;
             }
         }else{
             $lateTime = 180;
@@ -134,7 +134,7 @@ class AttendaceBulkManualController extends Controller
         $unit=$request->unit_att;
         $info = Employee::where('as_id',$request->ass_id)->first();
         $tableName= $this->getTableName($unit);
-
+        // dd($request->all());
         DB::beginTransaction();
         try {
             //new attendance entry
@@ -149,6 +149,9 @@ class AttendaceBulkManualController extends Controller
                         $insert['updated_by'] = auth()->user()->associate_id;
 
                         $intime = $request->new_intime[$key];
+                        if($intime == '00:00:00'){
+                            $intime = null;
+                        }
                         if (strpos($intime, ':') !== false) {
                             list($one,$two,$three) = array_pad(explode(':',$intime),3,0);
                             if((int)$one+(int)$two+(int)$three == 0) {
@@ -157,6 +160,9 @@ class AttendaceBulkManualController extends Controller
                         }
 
                         $outtime = $request->new_outtime[$key];
+                        if($outtime == '00:00:00'){
+                            $outtime = null;
+                        }
                         if (strpos($outtime, ':') !== false) {
                             list($one,$two,$three) = array_pad(explode(':',$outtime),3,0);
                             if((int)$one+(int)$two+(int)$three == 0) {
@@ -248,7 +254,6 @@ class AttendaceBulkManualController extends Controller
             }
 
             //update
-            
             if(isset($request->old_date)){
                 foreach ($request->old_date as $key => $date) {
                     $checkDay = EmployeeHelper::employeeDateWiseStatus($date, $info->associate_id, $info->as_unit_id, $info->shift_roaster_status);
@@ -276,7 +281,9 @@ class AttendaceBulkManualController extends Controller
                         $update['updated_by'] = auth()->user()->associate_id;
 
                         $intime = $request->intime[$key];
-                        
+                        if($intime == '00:00:00' || $intime == null){
+                            $intime = null;
+                        }
                         if (strpos($intime, ':') !== false) {
                             list($one,$two,$three) = array_pad(explode(':',$intime),3,0);
                             if((int)$one+(int)$two+(int)$three == 0) {
@@ -285,6 +292,12 @@ class AttendaceBulkManualController extends Controller
                         }
                         
                         $outtime = $request->outtime[$key];
+                        if($outtime == '00:00:00' || $outtime == null){
+                            $outtime = null;
+                            $update['out_time'] = null;
+                        }else{
+                            $update['out_time'] = date('Y-m-d H:i:s', strtotime($date.' '.$outtime));
+                        }
                         if (strpos($outtime, ':') !== false) {
                             list($one,$two,$three) = array_pad(explode(':',$outtime),3,0);
                             if((int)$one+(int)$two+(int)$three == 0) {
@@ -336,12 +349,13 @@ class AttendaceBulkManualController extends Controller
                             if($request->intime[$key] == '00:00:00' || $request->intime[$key] == null){
                                 $empIntime = $shift_start;
                                 $update['remarks'] = 'BM';
+                                $update['in_time'] = null;
                             }else{
                                 $empIntime = $intime;
                                 $update['remarks'] = 'BM';
+                                $update['in_time'] = date('Y-m-d H:i:s', strtotime($date.' '.$empIntime));
                             }
-                            $update['in_time'] = date('Y-m-d H:i:s', strtotime($date.' '.$empIntime));
-                            $update['out_time'] = date('Y-m-d H:i:s', strtotime($date.' '.$outtime));
+                            
                             if($intime != null){
                                 
 
@@ -369,9 +383,7 @@ class AttendaceBulkManualController extends Controller
                                 if($checkDay == 'OT'){
                                     $update['late_status'] = 0;
                                 }else{
-
                                     $update['late_status'] = $this->getLateStatus($unit, $request->this_shift_id[$key],$date,$intime,$shift_start);
-                                    
                                 }
                             }else{
                                 $update['late_status'] = 1;
@@ -392,15 +404,6 @@ class AttendaceBulkManualController extends Controller
                                     $update['out_time'] = date('Y-m-d H:i:s', strtotime($dateDSI.' '.$outtime));
                                 }
                             }
-                            //check OT hour if out time exist
-                            
-
-                            /********************************************************
-                             | Previously set outime with DSI. Thats why couldnt updated
-                             |
-                             *******************************************************/
-
-
 
                             if($intime != null && $outtime != null && $info->as_ot == 1){
                                 $overtimes = EmployeeHelper::daliyOTCalculation($update['in_time'],$update['out_time'], $shift_start, $shift_end, $break, $nightFlag, $info->associate_id, $info->shift_roaster_status, $unit);
@@ -613,14 +616,14 @@ class AttendaceBulkManualController extends Controller
                               ->first();
             if($shift_code){
               $shift = Shift::getCheckUniqueUnitIdShiftName($info->as_unit_id,$shift_code);
-              $attendance[$i]['shift_id'] = $shift->hr_shift_id;
+              $attendance[$i]['shift_id'] = $shift->hr_shift_name;
               $attendance[$i]['shift_code'] = $shift->hr_shift_code;
               $attendance[$i]['shift_start'] = $shift->hr_shift_start_time;
               $attendance[$i]['shift_end'] = $shift->hr_shift_end_time;
               $attendance[$i]['shift_break'] = $shift->hr_shift_break_time;
               $attendance[$i]['shift_night'] = $shift->hr_shift_night_flag;
             } else {
-              $attendance[$i]['shift_id'] = $info->shift['hr_shift_id'];
+              $attendance[$i]['shift_id'] = $info->shift['hr_shift_name'];
               $attendance[$i]['shift_code'] = $info->shift['hr_shift_code'];
               $attendance[$i]['shift_start'] = $info->shift['hr_shift_start_time'];
               $attendance[$i]['shift_end'] = $info->shift['hr_shift_end_time'];

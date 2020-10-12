@@ -1,9 +1,20 @@
 @extends('hr.layout')
-@section('title', 'Attendance Manual Edit')
+@section('title', 'Job Card Edit')
 @section('main-content')
 @push('css')
+    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-datetimepicker.min.css') }}" />
     <style>
         .bootstarp-datetimepicker-widget{display: none !important;}
+        td input{
+            width: 110px !important;
+        }
+        table.table-head th {
+            vertical-align: middle;
+        }
+        .form-control:disabled, .form-control[readonly] {
+            background-color: #abcfd3;
+        }
+
     </style>
 @endpush
 <div class="main-content">
@@ -17,13 +28,13 @@
                 <li>
                     <a href="#"> Operation   </a>
                 </li>
-                <li class="active"> Attendance Manual Edit  </li>
+                <li class="active"> Job Card Edit  </li>
             </ul><!-- /.breadcrumb -->
         </div>
         @include('inc/message')
         <div class="panel"> 
             <div class="panel-heading">
-                <h6>Attendance Manual Edit  </h6>
+                <h6>Job Card Edit  </h6>
             </div>
             <div class="panel-body">
                 <form role="form" method="get" action="{{ url('hr/timeattendance/attendance_bulk_manual') }}" class="attendanceReport" id="attendanceReport">
@@ -69,7 +80,8 @@
             <div class="panel-body">
                 <div class="row justify-content-center">
                     <!-- Display Erro/Success Message -->
-                    <div class="col-sm-12-12" id="PrintArea">
+                    <div class="col-sm-1"></div>
+                    <div class="col-sm-10" id="PrintArea">
                         @if($info)
                         @php 
                             $lastMonth = date('m',strtotime("-1 month"));
@@ -87,19 +99,23 @@
                             }
 
                         @endphp
-                        <div id="html-2-pdfwrapper" class="col-sm-12" style="margin:20px auto;border:1px solid #ccc;">
-                            <div class="page-header" style="border-bottom:2px double #666">
-                                <h2 style="margin:4px 10px">{{ $info->unit }}</h2>
+                        <div id="html-2-pdfwrapper" class="col-sm-12" style="margin:10px auto;">
+                            {{-- <div class="page-header" style="border-bottom:2px double #666">
+                                <h4 style="margin:4px 10px">{{ $info->unit }}</h4>
                                 <h5 style="margin:4px 10px">For the month of {{ request()->month }} </h5>
-                            </div>
+                            </div> --}}
                             <form class="form-horizontal" role="form" method="post" action="{{ url('hr/timeattendance/attendance_bulk_store')  }}" enctype="multipart/form-data">
                                 {{ csrf_field() }}
                                 <table class="table" style="width:100%;border:1px solid #ccc;margin-bottom:0;font-size:14px;text-align:left"  cellpadding="5">
+                                    
                                     <tr>
-                                        <th style="width:50%">
+                                        <th style="width:33%">
                                            <p style="margin:0;padding:4px 10px"><strong>ID </strong> # {{ $info->associate_id }}</p>
                                            <p style="margin:0;padding:4px 10px"><strong>Oracle ID </strong> # {{ $info->as_oracle_code }}</p>
-                                           <p style="margin:0;padding:4px 10px"><strong>Name </strong>: {{ $info->as_name }}</p>
+                                           
+                                        </th>
+                                        <th style="width: 33%;">
+                                            <p style="margin:0;padding:4px 10px"><strong>Name </strong>: {{ $info->as_name }}</p>
                                            <p style="margin:0;padding:4px 10px"><strong>DOJ </strong>: {{ date("d-m-Y", strtotime($info->as_doj)) }}</p>
                                         </th>
                                         <th>
@@ -109,16 +125,24 @@
                                     </tr> 
                                 </table>
 
-                                <table class="table table-bordered" style="width:100%;border:1px solid #ccc;font-size:13px;  overflow-x: auto;"  cellpadding="2" cellspacing="0" border="1" align="center">
+                                <table class="table table-bordered table-head table-hover" style="width:100%;border:1px solid #ccc;font-size:13px;  overflow-x: auto;"  cellpadding="2" cellspacing="0" border="1" align="center">
                                     <thead>
                                         <tr>
-                                            <th>Date</th>
-                                            <th>Present Status</th>
-                                            <th>Floor</th>
-                                            <th>Line</th>
+                                            <th rowspan="2" width="10%">Date</th>
+                                            <th rowspan="2">Present Status</th>
+                                            <th rowspan="2">Floor</th>
+                                            <th rowspan="2">Line</th>
+                                            <th colspan="3" class="text-center">Shift</th>
+                                            <th colspan="2" class="text-center">Punch</th>
+                                            <th rowspan="2">OT Hour</th>
+                                        </tr>
+                                        <tr>
+                                            <th>In time</th>
+                                            <th>Out time</th>
+                                            <th>Break</th>
                                             <th>In Time</th>
                                             <th>Out Time</th>
-                                            <th>OT Hour</th>
+                                            
                                         </tr>
                                     </thead>
 
@@ -188,14 +212,29 @@
                                             </td>
                                             <td>{{ $data['floor'] }}</td>
                                             <td>{{ $data['line'] }}</td>
+                                            <td><b>{{ date('H:i', strtotime($data['shift_start'])) }}</b></td>
+                                            <td>
+                                               
+                                                @php
+                                                    $cBreak = strtotime(date("H:i", strtotime($data['shift_break'])));
+                                                    $cBreak = $hours = intdiv($data['shift_break'], 60).':'. ($data['shift_break'] % 60);
+                                                    $cBreak = strtotime(date("H:i", strtotime($cBreak)));
+                                                    $cShifEnd = strtotime(date("H:i", strtotime($data['shift_end'])));
+                                                    $endShift = $cShifEnd + $cBreak;
+
+                                                    $shiftEndTime = date("H:i", strtotime($data['shift_end']));
+                                                @endphp
+                                                <b>{{ $shiftEndTime }}</b>
+                                            </td>
+                                            <td><b>{{ $data['shift_break'] }}</b></td>
 
                                             @php
                                                 $disabled_input = '';
-                                                if($data['present_status']=='Holiday' || strpos($data['present_status'],'Leave')!==false) {
+                                                if($data['present_status']=='Holiday' || $data['present_status']=='Weekend' || $data['present_status']=='Day Off' || strpos($data['present_status'],'Leave')!==false) {
                                                     $disabled_input = 'readonly="readonly"';
                                                 }
                                             @endphp
-                                          @if($data['att_id'] != null)
+                                            @if($data['att_id'] != null)
                                                 <td>
                                                     <input type="hidden" name="old_status[{{$data['att_id']}}]" value="{{ $data['present_status'] }}">
                                                     <input type="hidden" name="old_date[{{$data['att_id']}}]" value="{{$data['date']}}">
@@ -205,10 +244,10 @@
                                                     <input type="hidden" name="this_shift_end[{{$data['att_id']}}]" value="{{$data['shift_end']}}">
                                                     <input type="hidden" name="this_shift_break[{{$data['att_id']}}]" value="{{$data['shift_break']}}">
                                                     <input type="hidden" name="this_shift_night[{{$data['att_id']}}]" value="{{$data['shift_night']}}">
-                                                    <input class="intime manual" type="time" name="intime[{{$data['att_id']}}]" value="{{!empty($data['in_time'])?date("H:i", strtotime($data['in_time'])):null}}"   placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}}>
+                                                    <input class="intime manual form-control" type="text" name="intime[{{$data['att_id']}}]" value="{{!empty($data['in_time'])?date("H:i", strtotime($data['in_time'])):null}}"   placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}} autocomplete="off">
                                                 </td>
                                                 <td>
-                                                    <input type="time" class="outtime manual" name="outtime[{{$data['att_id']}}]" value="{{!empty($data['out_time'])?date("H:i", strtotime($data['out_time'])):null}}"  placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}}>
+                                                    <input type="text" class="outtime manual form-control" name="outtime[{{$data['att_id']}}]" value="{{!empty($data['out_time'])?date("H:i", strtotime($data['out_time'])):null}}"  placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}} autocomplete="off">
                                                 </td>
                                             @else
                                                 <td>
@@ -220,10 +259,10 @@
                                                     <input type="hidden" name="new_shift_break[]" value="{{$data['shift_break']}}">
                                                     <input type="hidden" name="new_shift_night[]" value="{{$data['shift_night']}}">
 
-                                                    <input class="intime manual" type="time" name="new_intime[]" value=""   placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}}>
+                                                    <input class="intime manual form-control" type="text" name="new_intime[]" value=""   placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}} autocomplete="off">
                                                 </td>
                                                 <td>
-                                                    <input type="time" class="outtime manual" name="new_outtime[]" value=""  placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}}>
+                                                    <input type="text" class="outtime manual form-control" name="new_outtime[]" value="" placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}} autocomplete="off">
                                                 </td>
                                             @endif
                                             <td> 
@@ -236,10 +275,10 @@
                                     </tbody>
                                     <tfoot style="border-top:2px double #999">
                                             <tr>
-                                                <th colspan="3">Attend</th>
+                                                <th>Present</th>
                                                 <th>{{ $info->present }}</th>
-                                                <th></th>
-                                                <th style="text-align:right">Total Ot</th>
+                                                <th colspan="6"></th>
+                                                <th style="text-align:right">Total OT</th>
                                                 <th>
                                                     @if($info->as_ot==1)
                                                         <input type="hidden" id="ot" value="{{ $info->ot_hour }}">
@@ -247,7 +286,7 @@
                                                     @endif
                                                 </th>
                                             </tr>
-                                            <tr><td colspan="7">
+                                            <tr><td colspan="10">
                                                 <input type="hidden" name="month" value="{{request()->month}}">
                                                 <input type="hidden" name="year" value="{{request()->year}}">
                                                 <input type="hidden" name="ass_id" value="{{$info->as_id}}">
@@ -264,6 +303,7 @@
                         </div> 
                         @endif
                     </div>
+                    <div class="col-sm-1"></div>
                     <!-- /.col -->
                 </div> 
             </div>  
@@ -271,101 +311,127 @@
     </div>
 </div>
 @push('js')
+<script src="{{ asset('assets/js/moment.min.js') }}"></script>
+<script src="{{ asset('assets/js/bootstrap-datetimepicker.min.js') }}"></script>
 <script type="text/javascript">
-function printMe(divName)
-{
-    var myWindow=window.open('','','width=800,height=800');
-    myWindow.document.write(document.getElementById(divName).innerHTML); 
-    myWindow.document.close();
-    myWindow.focus();
-    myWindow.print();
-    myWindow.close();
-}
+    function printMe(divName)
+    {
+        var myWindow=window.open('','','width=800,height=800');
+        myWindow.document.write(document.getElementById(divName).innerHTML); 
+        myWindow.document.close();
+        myWindow.focus();
+        myWindow.print();
+        myWindow.close();
+    }
 
-$(document).ready(function(){ 
-    function formatState (state) {
-     //console.log(state.element);
-        if (!state.id) {
-            return state.text;
-        }
-        var $state = $(
-        '<span><img /> <span></span></span>'
-        );
+    $(document).ready(function(){ 
+        function formatState (state) {
+         //console.log(state.element);
+            if (!state.id) {
+                return state.text;
+            }
+            var $state = $(
+            '<span><img /> <span></span></span>'
+            );
 
-        var targetName = state.text;
-        $state.find("span").text(targetName);
-        return $state;
-    };
+            var targetName = state.text;
+            $state.find("span").text(targetName);
+            return $state;
+        };
 
-    $('select.associates').select2({
-        templateSelection:formatState,
-        placeholder: 'Select Associate\'s ID',
-        ajax: {
-            url: '{{ url("hr/associate-search") }}',
-            dataType: 'json',
-            delay: 250,
-            data: function (params) {
-                return { 
-                    keyword: params.term
-                }; 
-            },
-            processResults: function (data) { 
-                return {
-                    results:  $.map(data, function (item) {
-                        var oCode = '';
-                        if(item.as_oracle_code !== null){
-                            oCode = item.as_oracle_code + ' - ';
-                        }
-                        return {
-                            text: oCode + item.associate_name,
-                            id: item.associate_id,
-                            name: item.associate_name
-                        }
-                    }) 
-                };
-          },
-          cache: true
-        }
+        $('select.associates').select2({
+            templateSelection:formatState,
+            placeholder: 'Select Associate\'s ID',
+            ajax: {
+                url: '{{ url("hr/associate-search") }}',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return { 
+                        keyword: params.term
+                    }; 
+                },
+                processResults: function (data) { 
+                    return {
+                        results:  $.map(data, function (item) {
+                            var oCode = '';
+                            if(item.as_oracle_code !== null){
+                                oCode = item.as_oracle_code + ' - ';
+                            }
+                            return {
+                                text: oCode + item.associate_name,
+                                id: item.associate_id,
+                                name: item.associate_name
+                            }
+                        }) 
+                    };
+              },
+              cache: true
+            }
+        });
+        // Status Hidden field value change
+        $(".manual").on("keyup", function(){ 
+            // console.log($(this).val());
+            if($(this).val() == '') {
+                $(this).val('00:00:00')
+            }
+            var intime=$(this).parent().parent().find('.intime').val();
+            var outtime=$(this).parent().parent().find('.outtime').val();
+            if(intime != ''||outtime != ''){
+                $(this).parent().parent().find('.att_status').val('P');
+            } else {
+                $(this).parent().parent().find('.att_status').val('A');
+            }
+        });
+
+        // excel conversion -->
+        $('#excel').click(function(){
+            var url='data:application/vnd.ms-excel,' + encodeURIComponent($('#html-2-pdfwrapper').html()) 
+            location.href=url;
+            return false;
+        });
     });
-    // Status Hidden field value change
-    $(".manual").on("keyup", function(){ 
-        console.log($(this).val());
-        if($(this).val() == '') {
-            $(this).val('00:00:00')
+    
+    $(document).ready(function() {
+    $(".intime,.outtime").on("keydown", function(event) {
+        if (event.keyCode === 38 || event.keyCode === 40) {
+            event.preventDefault();
         }
-        var intime=$(this).parent().parent().find('.intime').val();
-        var outtime=$(this).parent().parent().find('.outtime').val();
-        if(intime != ''||outtime != ''){
-            $(this).parent().parent().find('.att_status').val('P');
-        } else {
-            $(this).parent().parent().find('.att_status').val('A');
-        }
-    });
-
-    // Time picker -->
-    /*$('.intime, .outtime').datetimepicker({
-        format: 'HH:mm:ss'
-    }); */
-
-    // excel conversion -->
-   $('#excel').click(function(){
-    var url='data:application/vnd.ms-excel,' + encodeURIComponent($('#html-2-pdfwrapper').html()) 
-    location.href=url
-    return false
-      })
+     });
 });
-        $('.intime,.outtime').datetimepicker({
-          format:'HH:mm:ss'
+    $('.intime,.outtime').datetimepicker({
+      format:'HH:mm:ss',
+      allowInputToggle: false
+    });
+    // input focus select all element
+    $(function () {
+        var focusedElement;
+        $(document).on('focus', 'input', function () {
+            if (focusedElement == this) return;
+            focusedElement = this;
+            setTimeout(function () { focusedElement.select(); }, 100);
         });
-        // input focus select all element
-        $(function () {
-            var focusedElement;
-            $(document).on('focus', 'input', function () {
-                if (focusedElement == this) return;
-                focusedElement = this;
-                setTimeout(function () { focusedElement.select(); }, 50);
-            });
-        });
-    </script>
+    });
+    /*$(document).ready(function () {
+
+      $('input').keyup(function (e) {
+        e.preventDefault();
+        if (e.which == 39) { // right arrow
+          $(this).closest('td').next().find('input').focus();
+
+        } else if (e.which == 37) { // left arrow
+          $(this).closest('td').prev().find('input').focus();
+
+        } else if (e.which == 40) { // down arrow
+          $(this).closest('tr').next().find('td:eq(' + $(this).closest('td').index() + ')').find('input').focus();
+
+        } else if (e.which == 38) { // up arrow
+          $(this).closest('tr').prev().find('td:eq(' + $(this).closest('td').index() + ')').find('input').focus();
+        }
+      });
+
+
+    });*/
+</script>
 @endpush
 @endsection

@@ -215,6 +215,16 @@ class ProcessUnitWiseSalary implements ShouldQueue
                     $getHalfDeduct = $halfCount * ($perDayBasic / 2);
 
                     $stamp = 10;
+                    $payStatus = 1;
+                    if($getBenefit->ben_bank_amount != 0 && $getBenefit->ben_cash_amount != 0){
+                        $payStatus = 3; // partial pay
+                    }elseif($getBenefit->ben_bank_amount != 0){
+                        $payStatus = 2; // bank pay
+                    }
+
+                    if($getBenefit->ben_cash_amount == 0){
+                        $stamp = 0;
+                    }
 
                     if($getEmployee->as_ot == 1){
                         $overtime_rate = number_format((($getBenefit->ben_basic/208)*2), 2, ".", "");
@@ -321,6 +331,9 @@ class ProcessUnitWiseSalary implements ShouldQueue
                             'attendance_bonus' => $attBonus,
                             'production_bonus' => $productionBonus,
                             'leave_adjust' => $leaveAdjust,
+                            'stamp' => $stamp,
+                            'pay_status' => $payStatus,
+                            'emp_status' => $getEmployee->as_status,
                             'total_payable' => $totalPayable
                         ];
                         HrMonthlySalary::insert($salary);
@@ -345,6 +358,9 @@ class ProcessUnitWiseSalary implements ShouldQueue
                             'attendance_bonus' => $attBonus,
                             'production_bonus' => $productionBonus,
                             'leave_adjust' => $leaveAdjust,
+                            'stamp' => $stamp,
+                            'pay_status' => $payStatus,
+                            'emp_status' => $getEmployee->as_status,
                             'total_payable' => $totalPayable
                         ];
                         HrMonthlySalary::where('id', $getSalary->id)->update($salary);
