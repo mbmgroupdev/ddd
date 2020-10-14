@@ -1,7 +1,14 @@
 @extends('user.layout')
 @section('title', 'User Dashboard')
 @section('main-content')
-
+@push('css')
+  <style>
+    .avatar-130 {
+      border-radius: 10% !important;
+      object-fit: contain !important;
+    }
+  </style>
+@endpush
    @php $user = auth()->user(); @endphp
    <div class="row">
       <div class="col-lg-4 row m-0 p-0">

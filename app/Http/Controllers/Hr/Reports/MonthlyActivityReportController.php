@@ -188,7 +188,7 @@ class MonthlyActivityReportController extends Controller
             $data['month'] = date('m', strtotime($input['year_month']));
             $data['year'] = date('Y', strtotime($input['year_month']));
             $salary = HrMonthlySalary::getEmployeeSalaryWithMonthWise($data);
-            // dd($salary);
+            // dd($salary->employee['as_doj']);
             return view('hr.reports.monthly_activity.salary.employee-single-salary', compact('salary'));
         } catch (\Exception $e) {
             $bug = $e->getMessage();

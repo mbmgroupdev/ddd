@@ -143,7 +143,8 @@
                                         মোট কর্মী/কর্মচারীঃ <span style="color:hotpink" >{{Custom::engToBnConvert($emp)}}</span>
                                     </p>
                                     <p style="margin:0;padding:4px 0;text-align: right;">
-                                        স্ট্যাম্প বাবদঃ <span style="color:hotpink" >{{Custom::engToBnConvert($emp*10)}}</span> | অতিরিক্ত কাজের মজুরীঃ <span style="color:hotpink" id="">{{Custom::engToBnConvert(bn_money($ot_payable))}}</span>
+                                        {{-- স্ট্যাম্প বাবদঃ <span style="color:hotpink" >{{Custom::engToBnConvert($emp*10)}}</span> |  --}}
+                                        অতিরিক্ত কাজের মজুরীঃ <span style="color:hotpink" id="">{{Custom::engToBnConvert(bn_money($ot_payable))}}</span>
                                     </p>
                                 </td>
                             </tr>
@@ -268,7 +269,7 @@
                                                     <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">স্ট্যাম্প বাবদ </span>
                                                     <span style="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=</span>
                                                     <span style="text-align: right;width: 30%; float: right;  white-space: wrap;">
-                                                        <font style="color:hotpink">{{ Custom::engToBnConvert('10.00') }}</font>
+                                                        <font style="color:hotpink">{{ Custom::engToBnConvert($list->stamp??0) }}</font>
                                                     </span>
                                                 </p>
                                                 <p style="margin:0;padding:0">

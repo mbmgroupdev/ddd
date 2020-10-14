@@ -815,10 +815,15 @@ a.permission-item.card-link {
 .no-padding{
     padding: 0 !important;
 }
-.navbar-list li > a > img {
+/*.navbar-list li > a > img {
     width: 40px;
     height: 40px;
     border-radius: 50% !important;
+}*/
+.navbar-list li > a > img {
+    width: auto;
+    height: 40px;
+    border-radius: 10% !important;
 }
 
 .iq-top-navbar {

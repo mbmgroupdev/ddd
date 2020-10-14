@@ -14,7 +14,11 @@
         .form-control:disabled, .form-control[readonly] {
             background-color: #abcfd3;
         }
-
+        .shift_link{
+            font-weight: bold;
+            color: blue;
+            cursor: pointer;
+        }
     </style>
 @endpush
 <div class="main-content">
@@ -128,18 +132,16 @@
                                 <table class="table table-bordered table-head table-hover" style="width:100%;border:1px solid #ccc;font-size:13px;  overflow-x: auto;"  cellpadding="2" cellspacing="0" border="1" align="center">
                                     <thead>
                                         <tr>
-                                            <th rowspan="2" width="10%">Date</th>
+                                            <th rowspan="2" width="12%">Date</th>
                                             <th rowspan="2">Present Status</th>
                                             <th rowspan="2">Floor</th>
                                             <th rowspan="2">Line</th>
-                                            <th colspan="3" class="text-center">Shift</th>
+                                            <th colspan="1" class="text-center">Shift</th>
                                             <th colspan="2" class="text-center">Punch</th>
                                             <th rowspan="2">OT Hour</th>
                                         </tr>
                                         <tr>
-                                            <th>In time</th>
-                                            <th>Out time</th>
-                                            <th>Break</th>
+                                            <th>In time - Out Time</th>
                                             <th>In Time</th>
                                             <th>Out Time</th>
                                             
@@ -212,21 +214,21 @@
                                             </td>
                                             <td>{{ $data['floor'] }}</td>
                                             <td>{{ $data['line'] }}</td>
-                                            <td><b>{{ date('H:i', strtotime($data['shift_start'])) }}</b></td>
                                             <td>
-                                               
+                                                <a class="shift_link" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{ $data['shift_id']}}" >{{ date('H:i', strtotime($data['shift_start'])) }}
+                                                - 
                                                 @php
-                                                    $cBreak = strtotime(date("H:i", strtotime($data['shift_break'])));
-                                                    $cBreak = $hours = intdiv($data['shift_break'], 60).':'. ($data['shift_break'] % 60);
-                                                    $cBreak = strtotime(date("H:i", strtotime($cBreak)));
-                                                    $cShifEnd = strtotime(date("H:i", strtotime($data['shift_end'])));
-                                                    $endShift = $cShifEnd + $cBreak;
+                                                    
+                                                    $time = $data['shift_end'];
+                                                    $time2 = intdiv($data['shift_break'], 60).':'. ($data['shift_break'] % 60);
 
-                                                    $shiftEndTime = date("H:i", strtotime($data['shift_end']));
+                                                    $secs = strtotime($time2)-strtotime("00:00:00");
+                                                    $result = date("H:i",strtotime($time)+$secs);
                                                 @endphp
-                                                <b>{{ $shiftEndTime }}</b>
+                                                {{ $result }}</a>
+
                                             </td>
-                                            <td><b>{{ $data['shift_break'] }}</b></td>
+                                            
 
                                             @php
                                                 $disabled_input = '';
@@ -277,7 +279,7 @@
                                             <tr>
                                                 <th>Present</th>
                                                 <th>{{ $info->present }}</th>
-                                                <th colspan="6"></th>
+                                                <th colspan="4"></th>
                                                 <th style="text-align:right">Total OT</th>
                                                 <th>
                                                     @if($info->as_ot==1)
@@ -286,7 +288,7 @@
                                                     @endif
                                                 </th>
                                             </tr>
-                                            <tr><td colspan="10">
+                                            <tr><td colspan="8">
                                                 <input type="hidden" name="month" value="{{request()->month}}">
                                                 <input type="hidden" name="year" value="{{request()->year}}">
                                                 <input type="hidden" name="ass_id" value="{{$info->as_id}}">
