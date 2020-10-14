@@ -53,7 +53,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="password">Password</label>
-                                    <a href="{{ route('password.request') }}" class="float-right">Forgot password?</a>
+                                    {{-- <a href="{{ route('password.request') }}" class="float-right">Forgot password?</a> --}}
                                     <input name="password" type="password" class="form-control mb-0 @error('password') is-invalid @enderror" id="password" placeholder="Password" value="{{ old('password') }}">
                                     @error('password')
                                       <span class="invalid-feedback" role="alert">

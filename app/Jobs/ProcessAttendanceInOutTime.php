@@ -87,7 +87,8 @@ class ProcessAttendanceInOutTime implements ShouldQueue
                 'hr_shift.hr_shift_start_time',
                 'hr_shift.hr_shift_end_time',
                 'hr_shift.hr_shift_break_time',
-                'hr_shift.hr_shift_night_flag'
+                'hr_shift.hr_shift_night_flag',
+                'hr_shift.hr_shift_name'
             ])
             ->leftJoin('hr_shift', function($q) use($day_num, $unitId) {
                 $q->on('hr_shift.hr_shift_name', 'hr_shift_roaster.'.$day_num);
@@ -102,6 +103,7 @@ class ProcessAttendanceInOutTime implements ShouldQueue
                 $cShifEnd = $shift->hr_shift_end_time;
                 $cBreak = $shift->hr_shift_break_time;
                 $nightFlag = $shift->hr_shift_night_flag;
+                $shiftName = $shift->hr_shift_name;
             }
             else{
                 $cShifStartTime = strtotime(date("H:i", strtotime($getEmployee->shift['hr_shift_start_time'])));
@@ -109,10 +111,11 @@ class ProcessAttendanceInOutTime implements ShouldQueue
                 $cShifEnd = $getEmployee->shift['hr_shift_end_time'];
                 $cBreak = $getEmployee->shift['hr_shift_break_time'];
                 $nightFlag = $getEmployee->shift['hr_shift_night_flag'];
+                $shiftName = $getEmployee->as_shift_id;
             }
 
             //late count
-            $getLateCount = HrLateCount::getUnitShiftIdWiseCheckExists($getEmployee->as_unit_id, $getEmployee->shift['hr_shift_name']);
+            $getLateCount = HrLateCount::getUnitShiftIdWiseCheckExists($getEmployee->as_unit_id, $shiftName);
             if($getLateCount != null){
                 if($today >= $getLateCount->date_from && $today <= $getLateCount->date_to){
                     $lateTime = $getLateCount->value;

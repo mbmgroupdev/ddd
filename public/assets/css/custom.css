@@ -648,6 +648,9 @@ div.dataTables_wrapper div.dataTables_paginate{
 }
 .f-18{font-size: 18px;}
 .h-35{height: 35px;}
+.mt-10{
+    margin-top:10px;
+}
 .ml-custom-5{
     margin-left: 5rem !important;
 }
