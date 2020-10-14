@@ -72,7 +72,7 @@ if(!function_exists('monthly_activity_close')){
         if($salaryStatus == null){
             $flag = 0; // unlock
         }else{
-            if($salaryStatus->initial_audit == null){
+            if($salaryStatus->hr_audit == null){
                 $flag = 0; // unlock
             }
         }
