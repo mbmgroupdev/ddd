@@ -56,7 +56,7 @@
                         <div  id="death_reason_div" class="col-sm-3" style="display: none;">
                             <div  class="form-group has-required has-float-label select-search-group" >
                                 
-                                <select  name="death_reason" class="form-control death_reason"  required="required">
+                                <select id="death_reason"  name="death_reason" class="form-control death_reason"  required="required">
                                    <option value="none">Select One</option>
                                    <option value="natural_death" >Natural Death on Duty</option>
                                    <option value="duty_accidental_death">On Duty/On Duty Accidental Death </option>
@@ -71,6 +71,12 @@
                                 
                                 <input type="text" class="form-control" name="suspension_days" id="suspension_days" value="0" required="required">
                                 <label >Suspension Days</label>
+                            </div>
+                        </div>
+                        <div id="notice_pay_div" class="col-sm-2" style="display: none;">
+                            <div class="custom-control custom-checkbox custom-checkbox-color-check custom-control-inline">
+                              <input type="checkbox" class="custom-control-input bg-primary" id="notice_pay" value="1">
+                              <label class="custom-control-label" for="notice_pay"> Primary</label>
                             </div>
                         </div>
                         <div class="col-sm-2">

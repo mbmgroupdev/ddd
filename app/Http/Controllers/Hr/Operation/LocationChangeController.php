@@ -165,8 +165,9 @@ class LocationChangeController extends Controller
 
         $employees = Employee::getSelectIdNameEmployee();
         // $units = Unit::unitListAsObject();
-        $locationList= Location::pluck('hr_location_name', 'hr_location_id');
+        $locationList= Location::pluck('hr_location_name', 'hr_location_name');
         $locationList['Outside']= "Outside";
+        $locationList['WFHOME']= "Work from Home";
         return view('hr/operation/location_change_entry', compact('employees', 'locationList'));
     }
 

@@ -241,27 +241,7 @@ class BenefitsCalculationController extends Controller
                 $benefits = $this->storeBenefit($employee, $years, $months, $earned_leave, $request);
                 $benefit_page = view('hr.common.end_of_job_final_pay', compact('employee','benefits','years','months'))->render();
 
-                if($benefits){
-                    if($request->benefit_on == 'on_resign'){
-                        $status = 2;
-                    }
-                    else if($request->benefit_on == 'on_dismiss') {
-                        $status = 4;
-                    }
-                    else if($request->benefit_on == 'on_terminate') {
-                        $status = 3;
-                    }
-                    else if($request->benefit_on == 'on_death') {
-                        $status = 7;
-                    }
-                    //updating employee status....
-                    DB::table('hr_as_basic_info')
-                    ->where('associate_id', $request->associate_id)
-                    ->update([
-                         'as_status' => $status,  
-                         'as_status_date' => $request->status_date 
-                    ]);
-                }
+                
 
                 return ['benefit' => $benefit_page, 'status' => 1];
             }
@@ -282,27 +262,32 @@ class BenefitsCalculationController extends Controller
         $subsistance_allowance = 0;
         $notice_pay = 0;
         $total_payment = 0;
+        $service_days = 0;
+        $death_days = 0;
+        $termination_benefits = 0;
 
-        $per_day_basic = $employee->ben_basic/30;
-        $per_day_gross = $employee->ben_current_salary/30;
+        $per_day_basic = round($employee->ben_basic/30,2);
+        $per_day_gross = round($employee->ben_current_salary/30,2);
 
         // calculate earn leave payment
         $earn_leave_payment = $earned_leave*$per_day_gross;
 
         // calculate service benefit
         $service_years = $years;
-        $service_months = $years;
-        if( 5 <= $years && $years < 10){
-            if($months >= 11){
-                $years++;
+        $service_months = $months;
+        if( 5 <= $service_years && $service_years < 10){
+            if($service_months >= 11){
+                $service_years++;
             }
 
-            $service_benefit =  (14*$years)*$per_day_basic;
-        }else if($years >= 10){
-            if($months >= 11){
-                $years++;
+            $service_benefit =  (14*$service_years)*$per_day_basic;
+            $service_days =  (14*$service_years);
+        }else if($service_years >= 10){
+            if($service_months >= 11){
+                $service_years++;
             }
-            $service_benefit =  (30*$years)*$per_day_basic;
+            $service_benefit =  (30*$service_years)*$per_day_basic;
+            $service_days =  (30*$service_years);
         }
 
         if($request->benefit_on == 'on_resign'){
@@ -312,13 +297,13 @@ class BenefitsCalculationController extends Controller
             $total_payment = $earn_leave_payment + $service_benefit - $notice_pay;
             $status = 2;
         }else if($request->benefit_on == 'on_dismiss') {
-            $subsistance_allowance = $request->suspension_days*$per_day_gross;
+            $subsistance_allowance = ($request->suspension_days*$per_day_basic)/2;
             $total_payment = $earn_leave_payment + $service_benefit + $subsistance_allowance;
             $status = 4;
         }
         else if($request->benefit_on == 'on_terminate') {
             if($request->notice == 1){
-                $notice_pay = 2*$employee->ben_basic;
+                $notice_pay = 4*$employee->ben_basic;
             }
             $total_payment = $earn_leave_payment + $service_benefit + $notice_pay;
             $status = 3;
@@ -326,17 +311,19 @@ class BenefitsCalculationController extends Controller
         else if($request->benefit_on == 'on_death') {
             // death_benefit
             $death_benefit = 0;
-            if($year >= 2){
-                if($month > 6 && $month < 11) {
+            if($years >= 2){
+                if($months > 6 && $months < 11) {
                     $years += 0.5;
-                }else if($month == 11){
+                }else if($months == 11){
                     $years += 1;
                 }
                 if($request->death_reason == 'natural_death'){
                     $death_benefit = (30*$years)*$per_day_basic;
+                    $death_days = (30*$years);
 
                 }else if($request->death_reason  == 'duty_accidental_death'){
                     $death_benefit = (45*$years)*$per_day_basic;
+                    $death_days = (45*$years);
                 }
             }
             $status = 7;
@@ -344,21 +331,34 @@ class BenefitsCalculationController extends Controller
             $total_payment = $earn_leave_payment + $service_benefit + $death_benefit;
         }
 
+      
+           
         $data = new HrAllGivenBenefits();
         $data->associate_id             = $request->associate_id;     
-        $data->benefit_on               = $request->benefit_on;   
+        $data->benefit_on               = $status;   
         $data->suspension_days          = $request->suspension_days??0;       
         $data->earn_leave_amount        = $earn_leave_payment;
-        $data->service_benefits         = $service_benefit??0; 
-        $data->subsistance_allowance    = $subsistence_allowance??0; 
-        $data->notice_pay               = $request->notice_pay;
-        $data->termination_benefits     = $request->termination_benefits??0;  
+        $data->service_days             = $service_days;
+        $data->service_benefits         = round($service_benefit??0,2); 
+        $data->subsistance_allowance    = round($subsistence_allowance??0,2); 
+        $data->notice_pay               = round($notice_pay??0,2);
+        $data->termination_benefits     = $termination_benefits??0;  
+        $data->death_days               = round($death_days??0,2);  
         $data->death_reason             = $request->death_reason; 
-        $data->death_benefits           = $death_benefit??0;
+        $data->death_benefits           = round($death_benefit??0,2);
         $data->status_date              = $request->status_date;
         $data->earned_leave             = $earned_leave??0;
         $data->created_by               = auth()->user()->id;
         $data->save();
+
+        if($data){
+            DB::table('hr_as_basic_info')
+            ->where('associate_id', $request->associate_id)
+            ->update([
+                 'as_status' => $status,  
+                 'as_status_date' => $request->status_date 
+            ]);
+        }
 
         return $data;
     }

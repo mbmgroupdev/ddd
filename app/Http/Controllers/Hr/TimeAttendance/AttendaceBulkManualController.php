@@ -728,15 +728,24 @@ class AttendaceBulkManualController extends Controller
                           ->where('as_id',$associate)
                           ->first();
             if($outsideCheck){
-              $attendance[$i]['outside'] = 'Outside';
-              if($outsideCheck->type==1){
-                $attendance[$i]['outside_msg'] = 'Full Day';
-              }else if($outsideCheck->type==2){
-                $attendance[$i]['outside_msg'] = 'First Half' ;
-              }else if($outsideCheck->type==3){
-                $attendance[$i]['outside_msg'] = 'Second Half' ;
-              }
-            }
+                  $loc = $outsideCheck->requested_location;
+                  if($outsideCheck->requested_location == 'WFHOME'){
+                    $attendance[$i]['outside'] = 'Work from Home';
+                    $loc = 'Home';
+                  }else if ($outsideCheck->requested_location == 'Outside'){
+                    $attendance[$i]['outside'] = 'Outside';
+                    $loc = $outsideCheck->requested_place;
+                  }else{
+                     $attendance[$i]['outside'] = $outsideCheck->requested_location;
+                  }
+                  if($outsideCheck->type==1){
+                    $attendance[$i]['outside_msg'] = 'Full Day at '.$loc;
+                  }else if($outsideCheck->type==2){
+                    $attendance[$i]['outside_msg'] = 'First Half at '.$loc;
+                  }else if($outsideCheck->type==3){
+                    $attendance[$i]['outside_msg'] = 'Second Half at '.$loc;
+                  }
+                }
             if($attendance[$i]['present_status'] == 'A'){
               $absent++;
             }

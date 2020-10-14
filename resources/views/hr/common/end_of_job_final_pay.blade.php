@@ -39,8 +39,15 @@
                 margin: 0 10px;
             }
             .center{text-align: center;}
+            .right{text-align: right;}
         </style>
         <table border="0" style="width: 100%;">
+            @php
+                $perbasic = eng_to_bn(bn_money(round($employee->ben_basic/30,2)));
+                $pergross = eng_to_bn(bn_money(round($employee->ben_current_salary/30,2)));
+
+                $total_s1 = eng_to_bn(bn_money(round(($benefits->earn_leave_amount + $benefits->service_benefits + $benefits->death_benefits),2)));
+            @endphp
             <tr>
                 <td colspan="2">প্রতিষ্ঠানের চাকুরী হইতে পদত্যাগ এর পরিপ্রেক্ষিতে জনাব/জনাবা</td>
                 <td colspan="2">তারিখঃ {{$date}} ইং</td>
@@ -51,7 +58,7 @@
                 <td colspan="2" style="width: 45%;"><div class="d-flex">পদবীঃ <span class="uline">{{$employee->hr_designation_name_bn??''}}</span></div></td>
             </tr>
             <tr>
-                <td><div class="d-flex">সেকশনঃ <span class="uline">{{$employee->hr_bn_associate_name??''}}</span></div></td>
+                <td><div class="d-flex">সেকশনঃ <span class="uline">{{$employee->hr_section_name_bn??''}}</span></div></td>
                 <td><div class="d-flex">বিভাগঃ <span class="uline">{{str_replace($en, $bn, $employee->hr_department_name_bn)}}</span> </div></td>
                 <td colspan="2">এর চূড়ান্ত নিস্পত্তিকরন নিম্নলিখিতভাবে সম্পন্ন করা হইলঃ</td>
             </tr>
@@ -79,35 +86,37 @@
             </tr>
             <tr>
                 <td></td>
-                <td><span class="d-uline">দিন</span></td>
+                <td><span class="d-uline" style="margin-left: 0">দিন</span></td>
                 <td><span class="d-uline">হার</span></td>
-                <td><span class="d-uline">টাকা</span></td>
+                <td><span class="d-uline" style="margin-right: 0">টাকা</span></td>
             </tr>
             <tr>
                 <td>মঞ্জুরীকৃত বাৎসরিক/প্রাপ্ত ছুটি</td>
                 <td class="center">{{eng_to_bn($benefits->earned_leave)}}</td>
-                <td class="center">{{eng_to_bn($benefits->earned_leave)}}</td>
-                <td class="center">{{eng_to_bn(bn_money($benefits->earn_leave_amount))}}</td>
+                <td class="center">{{$pergross}}</td>
+                <td class="right">{{eng_to_bn(bn_money($benefits->earn_leave_amount))}}</td>
             </tr>
             <tr>
                 <td>প্রাপ্ত/মঞ্জুরীকৃত সার্ভিস বেনিফিট</td>
-                <td class="center"></td>
-                <td class="center"></td>
-                <td class="center"></td>
+                <td class="center">{{eng_to_bn($benefits->service_days)}}</td>
+                <td class="center">{{$perbasic}}</td>
+                <td class="right">{{eng_to_bn(bn_money($benefits->service_benefits))}}</td>
             </tr>
             <tr>
                 <td colspan="4"></td>
             </tr>
+            @if($benefits->benefit_on == 7)
             <tr>
-                <td>অন্যান্য বেনিফিট</td>
-                <td class="center"></td>
-                <td class="center"></td>
-                <td class="center"></td>
+                <td>মৃত্যুজনিত বেনিফিট</td>
+                <td class="center">{{eng_to_bn($benefits->death_days)}}</td>
+                <td class="center">{{$perbasic}}</td>
+                <td class="right">{{eng_to_bn(bn_money($benefits->death_benefits))}}</td>
             </tr>
+            @endif
             <tr>
-                <td>সর্বমোট টাকা</td>
-                <td colspan="2"></td>
                 <td></td>
+                <td style="border-top:1px solid #000 !important;">সর্বমোট টাকা</td>
+                <td colspan="2" class="right" style="border-top:1px solid #000 !important;">{{$total_s1}}</td>
             </tr>
             <tr>
                 <td>৬। প্রদেয় সুবিধা</td>
@@ -115,15 +124,15 @@
             </tr>
             <tr>
                 <td></td>
-                <td><span class="d-uline">মাস</span></td>
+                <td><span class="d-uline" style="margin-left: 0">মাস</span></td>
                 <td><span class="d-uline">হার</span></td>
-                <td><span class="d-uline">টাকা</span></td>
+                <td><span class="d-uline" style="margin-right: 0">টাকা</span></td>
             </tr>
             <tr>
                 <td>নোটিশ পে</td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td class="center"> </td>
+                <td class="center"> </td>
+                <td class="right"></td>
             </tr>
             <tr>
                 <td>অন্যান্য সমন্বয় (যদি থাকে)</td>
@@ -132,9 +141,9 @@
                 <td></td>
             </tr>
             <tr>
-                <td>সর্বমোট টাকা</td>
-                <td colspan="2"></td>
                 <td></td>
+                <td style="border-top:1px solid #000 !important;">সর্বমোট টাকা</td>
+                <td colspan="2" style="border-top:1px solid #000 !important;"></td>
             </tr>
             <tr>
                 <td colspan="4"></td>
