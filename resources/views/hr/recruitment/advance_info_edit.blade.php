@@ -22,7 +22,7 @@
         @include('inc/message')
         <div class="panel">
             <div class="panel-heading">
-                <h6>Advance : {{$advance->emp_adv_info_as_id}}
+                <h6>{{$employee->as_name}}
                     <div class="btn-group pull-right"> 
                         <a href='{{ url("hr/recruitment/employee/show/$advance->emp_adv_info_as_id") }}' target="_blank" class="btn  btn-success" title="Profile"><i class="las la-user-tie"></i></a>
 
@@ -38,12 +38,23 @@
             </div>
             <div class="panel-body">
                 <div class="row">
-                      <div class="col-sm-3">
-                         <div class="nav flex-column nav-pills text-center" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                    <div class="col-sm-3">
+                        <div class="user-details-block" >
+                            <div class="user-profile text-center mt-0" >
+                                <img id="avatar" class="avatar-130 img-fluid" src="{{$employee->profile_picture}}">
+                              </div>
+                              <div class="text-center mt-3">
+                                 <h4><b id="user-name">{{$employee->as_name}}</b></h4>
+                                 <p>Oracle ID: {{$employee->as_oracle_code}}</p>
+                                 
+                              </div>
+                        </div>
+
+                        <div class="nav flex-column nav-pills text-center" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                             <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#advance-info" role="tab" aria-controls="v-pills-home" aria-selected="true">Advance Information</a>
                             <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#education" role="tab" aria-controls="v-pills-profile" aria-selected="false">Education</a>
                             <a class="nav-link" id="v-pills-messages-tab" data-toggle="pill" href="#bangla" role="tab" aria-controls="v-pills-messages" aria-selected="false">বাংলা</a>
-                         </div>
+                        </div>
                       </div>
                       <div class="col-sm-9" style="border-left: 1px solid #d1d1d1;">
                          <div class="tab-content mt-0" id="v-pills-tabContent">
@@ -98,12 +109,12 @@
                                                 <input type="text" name="emp_adv_info_passport" placeholder="NID/Passport No" class="form-control" value="{{ $advance->emp_adv_info_passport }}" />
                                                 <label  for="emp_adv_info_passport"> NID/Passport No </label>
                                             </div>
-                                             <div class="form-group has-float-label">
+                                             <div class="form-group has-float-label hide">
                                                 <input name="emp_adv_info_bank_name" type="text" id="bank_acc_name" placeholder="Mobile Banking/Bank Name " class="form-control" value="{{$advance->emp_adv_info_bank_name}}"  />
                                                 <label  for="emp_adv_info_bank_name">Mobile Banking/Bank Name </label>
                                             </div>
 
-                                            <div class="form-group has-float-label">
+                                            <div class="form-group has-float-label hide">
                                                 <input name="emp_adv_info_bank_num" type="text" id="bank_acc_number" placeholder="Account Number" value="{{$advance->emp_adv_info_bank_num}}" class="form-control"  />
                                                 <label  for="emp_adv_info_bank_num">Account Number</label>
                                             </div>

@@ -128,8 +128,8 @@
                             </div> 
 
 
-                            <div class="form-group has-required has-float-label">
-                                <input name="as_rfid_code" type="text" id="as_rfid_code" placeholder="RFID Code" class="form-control" required="required"   value="{{ $employee->as_rfid_code }}" required-optional="true" />
+                            <div class="form-group  has-float-label">
+                                <input name="as_rfid_code" type="text" id="as_rfid_code" placeholder="RFID Code" class="form-control"   value="{{ $employee->as_rfid_code }}"  />
                                 <label  for="as_rfid_code"> RFID Code </label>
                             </div>
 

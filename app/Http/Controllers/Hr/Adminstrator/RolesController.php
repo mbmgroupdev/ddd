@@ -51,7 +51,6 @@ class RolesController extends Controller
         { 
             return redirect()->back()->withErrors($validator)->withInput();
         }
-        dd($request->all());
 
         $role = new Role();
         $role->name = $request->name;
@@ -63,7 +62,7 @@ class RolesController extends Controller
             log_file_write($role->name ." - role created: ", $role->id);
 
         }
-        return redirect('hr/adminstrator/edit/role/'.$role->id)
+        return redirect('hr/adminstrator/role/edit/'.$role->id)
                 ->with("success", "Save Successful!");
              
     }

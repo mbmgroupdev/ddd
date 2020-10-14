@@ -364,7 +364,10 @@ class EmployeeController extends Controller
                 'b.as_ot',
                 'b.as_status',
                 'b.as_oracle_code',
-                'b.as_rfid_code'
+                'b.as_rfid_code',
+                'bn.hr_bn_associate_name',
+                'bn.hr_bn_father_name',
+                'ben.ben_current_salary'
             ])
             ->leftJoin('hr_area AS a', 'a.hr_area_id', '=', 'b.as_area_id')
             ->leftJoin('hr_emp_type AS e', 'e.emp_type_id', '=', 'b.as_emp_type_id')
@@ -374,6 +377,7 @@ class EmployeeController extends Controller
             ->leftJoin('hr_department AS dp', 'dp.hr_department_id', '=', 'b.as_department_id')
             ->leftJoin('hr_designation AS dg', 'dg.hr_designation_id', '=', 'b.as_designation_id')
             ->leftJoin('hr_benefits AS ben', 'ben.ben_as_id', '=', 'b.associate_id')
+            ->leftJoin('hr_employee_bengali AS bn', 'bn.hr_bn_associate_id', '=', 'b.associate_id')
             ->whereIn('b.as_status',[1])
             ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
             ->where(function ($query) use ($request) {
@@ -391,6 +395,8 @@ class EmployeeController extends Controller
                $query->orWhereNull('ben.ben_joining_salary');
                 $query->orWhereNull('ben.ben_current_salary');
                 $query->orWhereNull('b.as_designation_id');
+                $query->orWhereNull('bn.hr_bn_associate_name');
+                $query->orWhereNull('bn.hr_bn_father_name');
             })
             ->whereNotIn('b.as_id', auth()->user()->management_permissions())
             ->orderBy('dg.hr_designation_position','ASC')
@@ -410,16 +416,28 @@ class EmployeeController extends Controller
             })
             ->editColumn('action', function ($user) {
 
-                $return = "<a href=".url('hr/recruitment/employee/show/'.$user->associate_id)." class=\"btn btn-sm btn-success\" data-toggle='tooltip' data-placement='top' title='' data-original-title='View Employee Profile'>
-                        <i class=\"ace-icon fa fa-eye bigger-120\"></i>
-                    </a>
+                $return = "
                     <a href=".url('hr/recruitment/employee/edit/'.$user->associate_id)." class=\"btn btn-sm btn-primary\" data-toggle=\"tooltip\" title=\"Edit\" style=\"margin-top:1px;\">
                         <i class=\"ace-icon fa fa-pencil bigger-120\"></i>
+                    </a>";
+                    $return .= " <a href=".url('hr/recruitment/operation/advance_info_edit/'.$user->associate_id)." class=\"btn btn-sm btn-success\" data-toggle=\"tooltip\" title=\"Advance info edit\" style=\"margin-top:1px;\">
+                        A
                     </a>
-                    <a href=".url('hr/employee/benefits?associate_id='.$user->associate_id)." class=\"btn btn-sm btn-primary\" data-toggle=\"tooltip\" title=\"Add Benefit\" style=\"margin-top:1px;\">
+                    ";
+                if($user->hr_bn_associate_name == null || $user->hr_bn_father_name == null){
+                    $return .= "<a href=".url('hr/recruitment/operation/advance_info_edit/'.$user->associate_id.'#bangla')." class=\"btn btn-sm btn-danger\" data-toggle=\"tooltip\" title=\"Edit Bangla Info\" style=\"margin-top:1px;\">
+                        অ
+                    </a>
+                    ";
+                }
+
+                if($user->ben_current_salary == null){
+                    $return .= "<a href=".url('hr/employee/benefits?associate_id='.$user->associate_id)." class=\"btn btn-sm btn-primary\" data-toggle=\"tooltip\" title=\"Add Benefit\" style=\"margin-top:1px;\">
                         <i class=\"las la-file-invoice-dollar bigger-120\"></i>
                     </a>
                     ";
+                }
+
                 $return .= "</div>";
                 return $return;
             })

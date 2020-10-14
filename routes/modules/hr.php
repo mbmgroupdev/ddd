@@ -1040,7 +1040,7 @@ Route::get('hr/setup/retirement/get_employee_details', 'Hr\Setup\RetirementPolic
 
 
 	//File Tag Print
-	Route::get('hr/employee/file_tag', 'Hr\Reports\FileTagController@showForm');
+	Route::get('hr/recruitment/file_tag', 'Hr\Reports\FileTagController@showForm');
 	Route::post('hr/reports/filetag/search', 'Hr\Reports\FileTagController@fileTagSearch');
 
 	// JOB CARD

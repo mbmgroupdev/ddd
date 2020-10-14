@@ -123,6 +123,9 @@
 									}elseif($format == 'as_department_id'){
 										$head = 'Department';
 										$body = $department[$group]['hr_department_name']??'N/A';
+									}elseif($format == 'as_section_id'){
+										$head = 'Section';
+										$body = $section[$group]['hr_section_name']??'N/A';
 									}elseif($format == 'as_designation_id'){
 										$head = 'Designation';
 										$body = $designation[$group]['hr_designation_name']??'N/A';
@@ -252,6 +255,8 @@
 							$head = 'Department';
 						}elseif($format == 'as_designation_id'){
 							$head = 'Designation';
+						}elseif($format == 'as_section_id'){
+							$head = 'Section';
 						}elseif($format == 'ot_hour'){
 							$head = 'Hour';
 						}else{
@@ -264,6 +269,7 @@
 								<th>Sl</th>
 								<th> {{ $head }} {{ $format != 'ot_hour'?'Name':'' }}</th>
 								<th>Employee</th>
+								<th>Total OT</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -284,6 +290,8 @@
 											$body = $floor[$group]['hr_floor_name']??'';
 										}elseif($format == 'as_department_id'){
 											$body = $department[$group]['hr_department_name']??'';
+										}elseif($format == 'as_section_id'){
+											$body = $section[$group]['hr_section_name']??'N/A';
 										}elseif($format == 'as_designation_id'){
 											$body = $designation[$group]['hr_designation_name']??'';
 										}elseif($format == 'ot_hour'){
@@ -299,6 +307,13 @@
 								<td>
 									{{ $employee->total }}
 									@php $totalEmployee += $employee->total; @endphp
+								</td>
+								<td>
+									@php 
+									$sumOT = numberToTimeClockFormat(round($employee->groupOt,2)); 
+									@endphp
+
+									{{$sumOT}}
 								</td>
 							</tr>
 							@endforeach
