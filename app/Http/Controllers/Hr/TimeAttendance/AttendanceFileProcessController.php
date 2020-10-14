@@ -127,6 +127,9 @@ class AttendanceFileProcessController extends Controller
                 }
 
                 $today = Carbon::parse($checktime)->format('Y-m-d');
+                $month = date('m', strtotime($checktime));
+                $year = date('Y', strtotime($checktime));
+
                 //get Employee Information from as_basic_info table according to the RFID
                 if(strlen($rfid)>0){
                     if($unit == 3 && $input['device'] == 2){
@@ -143,9 +146,15 @@ class AttendanceFileProcessController extends Controller
 
                     
                     if(!empty($as_info) && strlen($rfid)>0 && $checktime != null && $as_info->as_status == 1){
-
-                        $month = date('m', strtotime($checktime));
-                        $year = date('Y', strtotime($checktime));
+                        // check lock month
+                        $checkL['month'] = $month;
+                        $checkL['year'] = $year;
+                        $checkL['unit_id'] = $as_info->as_unit_id;
+                        $checkLock = monthly_activity_close($checkL);
+                        if($checkLock == 1){
+                            $msg[] = $value." - ".$today." Month Activity Lock";
+                            continue;
+                        }
                         $today = date("Y-m-d", strtotime($checktime));
 
                          //dd($today);exit;

@@ -744,9 +744,9 @@
      }
 
 
-   })
+  });
    //Load Section List By department ID
-   $('#department').on("change", function(){
+  $('#department').on("change", function(){
      $.ajax({
        url : "{{ url('hr/setup/getSectionListByDepartmentID') }}",
        type: 'get',
@@ -760,8 +760,8 @@
          console.log('failed...');
        }
      });
-   });
-   $('#dataTables').on('click', '.make-absent', function (e) {
+  });
+  $('#dataTables').on('click', '.make-absent', function (e) {
 
      var associate_id = $(this).parent().parent().find('td').eq(2).html();
      var date = $(this).parent().parent().find('td').eq(7).html();
@@ -811,9 +811,9 @@
      }else{
        swal("Sorry!", "You can only change previous month's data on or before "+lock+" day of current month!","info")
      }
-   });
+  });
 
-   $('#dataTables').on('click', '.make-halfday', function () {
+  $('#dataTables').on('click', '.make-halfday', function () {
 
      var associate_id = $(this).parent().parent().find('td').eq(2).html();
      var date = $(this).parent().parent().find('td').eq(7).html();
@@ -862,10 +862,10 @@
      }else{
        swal("Sorry!", "You can only change previous month's data on or before 5th day of current month!","info")
      }
-   });
+  });
 
-   //Load Sub Section List by Section
-   $('#section').on("change", function(){
+  //Load Sub Section List by Section
+  $('#section').on("change", function(){
      $.ajax({
        url : "{{ url('hr/setup/getSubSectionListBySectionID') }}",
        type: 'get',
@@ -883,8 +883,8 @@
          console.log('failed...');
        }
      });
-   });
-   });
+  });
+});
 </script>
 @endpush
 @endsection

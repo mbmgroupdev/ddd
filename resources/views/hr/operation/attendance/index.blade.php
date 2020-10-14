@@ -4,6 +4,7 @@
   
   <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-datetimepicker.min.css') }}" />
   <link rel="stylesheet" href="{{ asset('assets/css/editor.dataTables.min.css') }}" />
+  <link rel="stylesheet" href="{{ asset('assets/css/sweetalert2.min.css') }}" />
   <style>
     #dataTables th:nth-child(2) input{
       width: 80px !important;
@@ -120,10 +121,20 @@
                                             </select>
                                             <label for="otnonot">OT/Non-OT</label>
                                         </div>
-                                        <div class="form-group has-float-label">
-                                            <input type="number" class="form-control" id="ot_hour" name="ot_range" placeholder="OT hour" value="" min="0" autocomplete="off" />
-                                            <label for="ot_hour">OT Hour</label>
+                                        <div class="row">
+                                          <div class="col">
+                                            <div class="form-group has-float-label">
+                                              <input type="number" class="form-control" id="ot_hour" name="ot_range" placeholder="OT hour" value="" min="0" autocomplete="off" />
+                                              <label for="ot_hour">OT Hour</label>
+                                            </div>
+                                          </div>
+                                          <div class="col">
+                                            <div id="ot-diff">
+                                              
+                                            </div>
+                                          </div>
                                         </div>
+                                        
                                     </div>
                                     <div class="col-3">
                                         <div class="form-group has-float-label select-search-group has-required">
@@ -178,8 +189,8 @@
                                    <th>Designation</th>
                                    <th>Shift</th>
                                    <th>Date</th>
-                                   <th>In Time</th>
-                                   <th>Out Time</th>
+                                   <th width="10%">In Time</th>
+                                   <th width="10%">Out Time</th>
                                    <th>OT</th>
                                    <th width="10%">Status</th>
                                 </tr>
@@ -200,6 +211,7 @@
 <script src="{{ asset('assets/js/moment.min.js') }}"></script>
 <script src="{{ asset('assets/js/bootstrap-datetimepicker.min.js') }}"></script>
 <script src="{{ asset('assets/js/datatableedit.js') }}"></script>
+<script src="{{ asset('assets/js/sweetalert2.min.js') }}"></script>
 <script type="text/javascript">
     $(document).ready(function(){  
         var loader = '<div class="panel"><div class="panel-body"><p style="text-align:center;margin:100px;"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>';
@@ -375,7 +387,7 @@
              },
              error: function()
              {
-               toastr.error('Please Try Again Later.','Something Went Wrong!!');
+               $.notify('Please Try Again Later, Something Went Wrong!!', 'error');
              }
            });
          }else{
@@ -400,7 +412,7 @@
              },
              error: function()
              {
-               toastr.error('Please Try Again Later.','Something Went Wrong!!');
+                $.notify('Please Try Again Later, Something Went Wrong!!', 'error');
              }
            });
          }
@@ -697,7 +709,7 @@
 
           if(to == "" || from == "" || unit == "")
           {
-            console.log("Please Select Following Field");
+            $.notify("Please Select Following Field", 'error');
           }
           else{
             // check activity lock
@@ -705,7 +717,8 @@
               type: "get",
               url: '{{ url("hr/operation/unit-wise-activity-lock")}}',
               data: {
-                unit: unit
+                unit: unit,
+                date: from
               },
               success: function(response)
               {
@@ -729,6 +742,128 @@
     // Retrieve the text property of the element (cross-browser support)
     return temporalDivElement.textContent || temporalDivElement.innerText || "";
   }
+  $('#dataTables').on('click', '.make-absent', function (e) {
+
+     var associate_id = $(this).data('asid');
+     var date = $(this).parent().parent().find('td').eq(6).html();
+     var ths =$(this);
+     var attdate = new Date(date);
+     var currentdate = new Date();
+
+     var lock = $("#lock_status").val();
+      if(lock == 0){
+
+       swal({
+         title: "Are you sure?",
+         icon: "warning",
+         buttons: true,
+         dangerMode: false,
+       })
+       .then((willDelete) => {
+         if (willDelete) {
+           $.ajax({
+             url : "{{ url('hr/timeattendance/make_absent') }}",
+             type: 'get',
+             data: {
+               associate_id: associate_id,
+               date: date
+             },
+             success: function(data)
+             {
+                // console.log(data);
+                if(data === 'success'){
+                  $.notify('Attendance Updated Successfully.', 'success');
+                   var row = ths.closest('tr');
+                   row.fadeOut(400, function () {
+                     $('#dataTables').DataTable().row(row).remove()
+                   });
+                 }else{
+                    $.notify('Please Try Again Later, Something Went Wrong!!', 'error');
+                 }
+             },
+             error: function()
+             {
+               $.notify('Please Try Again Later, Something Went Wrong!!', 'error');
+             }
+           });
+         } else {
+
+         }
+       });
+     }else{
+       $.notify("Attendance Modification Time Over","error");
+     }
+  });
+
+  $('#dataTables').on('click', '.make-halfday', function () {
+
+     var associate_id = $(this).data('asid');
+     var date = $(this).parent().parent().find('td').eq(6).html();
+     var ths =$(this);
+     var attdate = new Date(date);
+     var currentdate = new Date();
+
+     var lock = $("#lock_status").val();
+      if(lock == 0){
+       swal({
+         title: "Are you sure?",
+         icon: "warning",
+         buttons: true,
+         dangerMode: false,
+       })
+       .then((willDelete) => {
+         if (willDelete) {
+           $.ajax({
+             url : "{{ url('hr/timeattendance/make_halfday') }}",
+             type: 'get',
+             data: {
+               associate_id: associate_id,
+               date: date
+             },
+             success: function(data)
+             {
+                if(data === 'success'){
+                  $.notify('Attendance Updated Successfully.', 'success');
+                  var row = ths.closest('tr');
+
+                  row.fadeOut(400, function () {
+                    $('#dataTables').DataTable().row(row).remove()
+                  });
+                }else{
+                  $.notify('Please Try Again Later, Something Went Wrong!!', 'error');
+                }
+             },
+             error: function()
+             {
+               $.notify('Please Try Again Later, Something Went Wrong!!', 'error');
+             }
+           });
+         } else {
+
+         }
+       });
+     }else{
+       $.notify("Attendance Modification Time Over","error");
+     }
+  });
+
+  $("#ot_hour").bind("keyup change", function(e) {
+    console.log("hi");
+     var data =
+     '<div class="form-group has-float-label">'+
+     '<?php
+      $conditions = ['Equal'=>'Equal','Less Than'=>'Less Than','Greater Than'=>'Greater Than'];
+      ?>'+
+     '{{ Form::select('condition', $conditions,null, ['placeholder'=>'Select Condition', 'id'=>'condition', 'class'=>'form-control select-search']) }}'+
+     '<label for="condition">Condition</label>'+
+     '</div>';
+     if($('#ot_hour').val() > 0 && $('#type').val() != 'Absent'){
+       $('#ot-diff').empty();
+       $('#ot-diff').append(data);
+     }else{
+       $('#ot-diff').empty();
+     }
+  });
   
 </script>
 @endpush

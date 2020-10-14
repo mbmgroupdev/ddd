@@ -155,7 +155,7 @@ class AttendanceController extends Controller
 
             $attendanceData = DB::table($table[0])
               ->where('as_id',$employee->as_id)
-              ->whereDate('in_time',date('Y-m-d',strtotime($request->date)))
+              ->where('in_date',date('Y-m-d',strtotime($request->date)))
               ->first();
                DB::table($table[0])
                 ->where('id',$attendanceData->id)

@@ -23,10 +23,10 @@
                 <tr>
                     
                     <td>
-                        <p style="margin:0;padding:0;">{{ $salary['employee_bengali']['hr_bn_associate_name'] }}</p>
-                        <p style="margin:0;padding:0;">{{ Custom::engToBnConvert($salary['employee']['as_doj']) }}</p>
+                        <p style="margin:0;padding:0;">{{ $salary->employee_bengali['hr_bn_associate_name']??'' }}</p>
+                        <p style="margin:0;padding:0;">{{ Custom::engToBnConvert($salary->employee['as_doj'])??'' }}</p>
                         @php
-                        	$designationId = $salary['employee']['as_designation_id'];
+                        	$designationId = $salary->employee['as_designation_id'];
                         @endphp
                         <p style="margin:0;padding:0;">{{ isset($designation[$designationId]['hr_designation_name_bn'])? Custom::engToBnConvert($designation[$designationId]['hr_designation_name_bn']):'' }} </p>
                         <p style="margin:0;padding:0;color:hotpink">মূল+বাড়ি ভাড়া+চিকিৎসা+যাতায়াত+খাদ্য </p>
@@ -41,7 +41,7 @@
                         <p style="margin:0;padding:0;color:hotpink">
                             বিলম্ব উপস্থিতিঃ {{ Custom::engToBnConvert($salary['late_count']) }}
                         </p>
-                        <p style="margin:0;padding:0">গ্রেডঃ {{ isset($salary['designation']['hr_designation_grade'])? Custom::engToBnConvert($salary['designation']['hr_designation_grade']):'' }}</p>
+                        <p style="margin:0;padding:0">গ্রেডঃ {{ isset($salary->designation['hr_designation_grade'])? Custom::engToBnConvert($salary->designation['hr_designation_grade']):'' }}</p>
                     </td>
                     <td>
                         <p style="margin:0;padding:0">
@@ -109,7 +109,7 @@
                             <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">অগ্রিম গ্রহণ বাবদ </span>
                             <span style ="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=
                             </span>
-                            <span style="text-align: right;width: 30%; float: right;  white-space: wrap;"><font style="color:hotpink">{{ ($salary['salary_add_deduct'] == null) ? Custom::engToBnConvert('0.00') : Custom::engToBnConvert($salary['salary_add_deduct']['advp_deduct']) }} </font>
+                            <span style="text-align: right;width: 30%; float: right;  white-space: wrap;"><font style="color:hotpink">{{ ($salary['salary_add_deduct'] == null) ? Custom::engToBnConvert('0.00') : Custom::engToBnConvert($salary->salary_add_deduct['advp_deduct']) }} </font>
                             </span>
 
                         </p>
@@ -118,7 +118,7 @@
                             <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">স্ট্যাম্প বাবদ </span>
                             <span style="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=</span>
                             <span style="text-align: right;width: 30%; float: right;  white-space: wrap;">
-                                <font style="color:hotpink">{{ Custom::engToBnConvert('10.00') }}</font>
+                                <font style="color:hotpink">{{ Custom::engToBnConvert($salary->stamp??0) }}</font>
                             </span>
                         </p>
                         <p style="margin:0;padding:0">
@@ -130,7 +130,7 @@
                                 @if($salary['salary_add_deduct'] == null)
                                     {{ Custom::engToBnConvert('0.00') }}
                                 @else
-                                    {{ isset($salary['salary_add_deduct']['cg_product']) ? Custom::engToBnConvert($salary['salary_add_deduct']['cg_product']):Custom::engToBnConvert('0.00') }}
+                                    {{ isset($salary->salary_add_deduct['cg_product']) ? Custom::engToBnConvert($salary->salary_add_deduct['cg_product']):Custom::engToBnConvert('0.00') }}
                                 @endif
                             </font>
                             </span>
@@ -140,14 +140,14 @@
                             <span style ="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=
                             </span>
                             <span style="text-align: right;width: 30%; float: right;  white-space: wrap;"><font style="color:hotpink">
-                              {{ ($salary['salary_add_deduct'] == null) ? Custom::engToBnConvert('0.00') : Custom::engToBnConvert($salary['salary_add_deduct']['food_deduct']) }} </font>
+                              {{ ($salary['salary_add_deduct'] == null) ? Custom::engToBnConvert('0.00') : Custom::engToBnConvert($salary->salary_add_deduct['food_deduct']) }} </font>
                             </span>
                         </p>
                         <p style="margin:0;padding:0">
                             <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">অন্যান্য </span>
                             <span style ="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=
                             </span>
-                            <span style="text-align: right;width: 30%; float: right;  white-space: wrap;"><font style="color:hotpink">{{ ($salary['salary_add_deduct'] == null) ? Custom::engToBnConvert('0.00') : Custom::engToBnConvert($salary['salary_add_deduct']['others_deduct']) }} </font>
+                            <span style="text-align: right;width: 30%; float: right;  white-space: wrap;"><font style="color:hotpink">{{ ($salary['salary_add_deduct'] == null) ? Custom::engToBnConvert('0.00') : Custom::engToBnConvert($salary->salary_add_deduct['others_deduct']) }} </font>
                             </span>
 
                         </p>
@@ -158,7 +158,7 @@
 
                         // $otHour = $salary['ot_hour'];
                         $ot = round((float)($salary['ot_rate']) * $salary['ot_hour']);
-                        $salaryAdd = ($salary['salary_add_deduct'] == null) ? '0.00' : $salary['salary_add_deduct']['salary_add'];
+                        $salaryAdd = ($salary['salary_add_deduct'] == null) ? '0.00' : $salary->salary_add_deduct['salary_add'];
                         // $total = ($list->salary_payable + $ot + $list->attendance_bonus + $salaryAdd);
                     @endphp
                     <td>
@@ -183,7 +183,7 @@
                             <span style="text-align: left; width: 57%; float: left;  white-space: wrap;">অতিরিক্ত কাজের মজুরী হার </span>
                             <span style="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=</span>
                             <span style="text-align: right;width: 28%; float: right;  white-space: wrap;">
-                            	<font style="color:hotpink"> ({{ $salary['employee']['as_ot']==1?Custom::engToBnConvert($otHour):Custom::engToBnConvert('00') }}  ঘন্টা)</font>
+                            	<font style="color:hotpink"> ({{ $salary->employee['as_ot']==1?Custom::engToBnConvert($otHour):Custom::engToBnConvert('00') }}  ঘন্টা)</font>
                                 <font style="color:hotpink">{{ Custom::engToBnConvert($salary['ot_rate']) }} </font>
                             </span>
                             {{-- <span style="text-align: right;width: 28%; float: right;  white-space: wrap;">

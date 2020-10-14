@@ -37,7 +37,7 @@
 		            		<td>
 
 		                	</div>
-		            			Leave Date <b>: {{ $input['date']}} </b> <br>
+		            			Date <b>: {{ $input['date']}} </b> <br>
 		            			@if($input['otnonot'] != null)
 		                			<b> OT </b> 
 		                			<b>: @if($input['otnonot'] == 0) No @else Yes @endif </b> <br>
