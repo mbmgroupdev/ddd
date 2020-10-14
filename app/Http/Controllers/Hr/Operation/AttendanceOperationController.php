@@ -198,10 +198,10 @@ class AttendanceOperationController extends Controller
     	$getEmployee = DB::table('hr_as_basic_info')->where('as_unit_id', $request['unit']);
         $employeeToSql = $getEmployee->toSql();
 
-    	if(in_array($request['unit'], [1,4,5,9])){
+    	//if(in_array($request['unit'], [1,4,5,9])){
     		$tableName = get_att_table($request['unit']);
             $attData = DB::table($tableName)
-            ->select('hr_attendance_mbm.*', 'b.as_ot', 'b.as_oracle_code', 'b.as_id', 'b.associate_id', 'b.as_name', 'b.as_designation_id')
+            ->select($tableName.'.*', 'b.as_ot', 'b.as_oracle_code', 'b.as_id', 'b.associate_id', 'b.as_name', 'b.as_designation_id')
             ->whereBetween('in_date', [$request['report_from'], $request['report_to']]);
         	if($request['type'] == 'All'){
         		$attData->addSelect(DB::raw("'all' as reportType"));
@@ -235,9 +235,9 @@ class AttendanceOperationController extends Controller
         		$attData->whereNull('out_time');
         		$attData->addSelect(DB::raw("'present' as reportType"));
         	}
-    	}
-    	$attData->leftjoin(DB::raw('(' . $employeeToSql. ') AS b'), function($join) use ($getEmployee) {
-            $join->on('hr_attendance_mbm.as_id', '=', 'b.as_id')->addBinding($getEmployee->getBindings());
+    	//}
+    	$attData->leftJoin(DB::raw('(' . $employeeToSql. ') AS b'), function($join) use ($getEmployee,$tableName) {
+            $join->on($tableName.'.as_id', '=', 'b.as_id')->addBinding($getEmployee->getBindings());
         });
         $attData->where('b.as_status', 1);
         if($request['area'] != null){
@@ -270,7 +270,7 @@ class AttendanceOperationController extends Controller
             }else{
                 $sign = '=';
             }
-            $attData->where('hr_attendance_mbm.ot_hour', $sign, $request['ot_hour']);
+            $attData->where($tableName.'.ot_hour', $sign, $request['ot_hour']);
         }
         
     	$getAttData = $attData->get();

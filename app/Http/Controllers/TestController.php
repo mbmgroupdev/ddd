@@ -81,8 +81,16 @@ class TestController extends Controller
 
     public function exportReport(Request $request)
     {
+
         if(isset($request->date)){
             $date = $request->date;
+            $data = DB::table('hr_as_basic_info AS b')
+                     ->leftJoin('hr_benefits as c','b.associate_id','c.ben_as_id')
+                    ->where('b.as_status',1)
+                    ->where('b.as_doj' , '<=', $date)
+                    ->get();
+
+            $data = collect($data)->keyBy('associate_id');
             $units = auth()->user()->unit_permissions();
         
             $filename = 'Employee record -'.$date.'.xlsx';
@@ -107,7 +115,7 @@ class TestController extends Controller
                         'Oracle ID' => $a->as_oracle_code,
                         'Name' => $a->as_name,
                         'RF ID' => $a->as_rfid_code??0,
-                        'DOJ' => $a->as_doj,
+                        'DOJ' => date('d-M-Y', strtotime($a->as_doj)),
                         'Current Salary' => $a->ben_current_salary,
                         'Basic Salary' => $a->ben_basic,
                         'House Rent' => $a->ben_house_rent??0,
@@ -121,7 +129,7 @@ class TestController extends Controller
                         'OT/NONOT' => $a->as_ot == 1?'OT':'NonOT',
                         'Status' => 'Present',
                         'Late' => $a->late_status,
-                        'OT Hour' => $a->ot_hour,
+                        'OT Hour' => numberToTimeClockFormat($a->ot_hour),
                         'Date' => $date
                     );
                     $excel[$a->associate_id]['In Time'] = '';
@@ -172,7 +180,7 @@ class TestController extends Controller
                     'Oracle ID' => $a->as_oracle_code,
                     'Name' => $a->as_name,
                     'RF ID' => $a->as_rfid_code??0,
-                    'DOJ' => $a->as_doj,
+                    'DOJ' => date('d-M-Y', strtotime($a->as_doj)),
                     'Current Salary' => $a->ben_current_salary,
                     'Basic Salary' => $a->ben_basic,
                     'House Rent' => $a->ben_house_rent??0,
@@ -200,7 +208,7 @@ class TestController extends Controller
                     'Oracle ID' => $a->as_oracle_code,
                     'Name' => $a->as_name,
                     'RF ID' => $a->as_rfid_code??0,
-                    'DOJ' => $a->as_doj,
+                    'DOJ' => date('d-M-Y', strtotime($a->as_doj)),
                     'Current Salary' => $a->ben_current_salary,
                     'Basic Salary' => $a->ben_basic,
                     'House Rent' => $a->ben_house_rent??0,
@@ -227,7 +235,7 @@ class TestController extends Controller
                     'Oracle ID' => $a->as_oracle_code,
                     'Name' => $a->as_name,
                     'RF ID' => $a->as_rfid_code??0,
-                    'DOJ' => $a->as_doj,
+                    'DOJ' => date('d-M-Y', strtotime($a->as_doj)),
                     'Current Salary' => $a->ben_current_salary,
                     'Basic Salary' => $a->ben_basic,
                     'House Rent' => $a->ben_house_rent??0,
@@ -248,6 +256,36 @@ class TestController extends Controller
                 );
             }
 
+            foreach ($data as $key => $a) {
+                if(!isset($excel[$a->associate_id])){
+
+                    $excel[$a->associate_id] = array(
+                        'Associate ID' => $a->associate_id,
+                        'Oracle ID' => $a->as_oracle_code,
+                        'Name' => $a->as_name,
+                        'RF ID' => $a->as_rfid_code??0,
+                        'DOJ' => date('d-M-Y', strtotime($a->as_doj)),
+                        'Current Salary' => $a->ben_current_salary,
+                        'Basic Salary' => $a->ben_basic,
+                        'House Rent' => $a->ben_house_rent??0,
+                        'Cash Amount' => $a->ben_cash_amount??0,
+                        'Bank/Rocket' => $a->ben_bank_amount??0,
+                        'Designation' => $designation[$a->as_designation_id]['hr_designation_name'],
+                        'Department' => $department[$a->as_department_id]['hr_department_name']??'',
+                        'Section' => $section[$a->as_section_id]['hr_section_name']??'',
+                        'Sub Section' => $subsection[$a->as_subsection_id]['hr_subsec_name']??'',
+                        'Unit' => $unit[$a->as_unit_id]['hr_unit_short_name'],
+                        'OT/NONOT' => $a->as_ot == 1?'OT':'NonOT',
+                        'Status' => '',
+                        'Late' => '',
+                        'OT Hour' => '',
+                        'Date' => $date,
+                        'In Time' =>  '',
+                        'Out Time' => ''
+                    );
+                }
+            }
+
 
 
             return (new FastExcel(collect($excel)))->download($filename);
@@ -256,6 +294,7 @@ class TestController extends Controller
         return view('common.employee-record');
     }
 
+    
 
     public function bulkManualStore($request)
     {

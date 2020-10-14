@@ -52,24 +52,39 @@
                     @if(!empty(Request::get('associate_id')))
                     <div class="panel p-30">
                         <div class="form-group">
-                            
+                            <div class="clearfix form-actions">
+                                <button class="btn btn-danger" type="submit" onclick="printMe('letter')">
+                                    <i class="fa fa-print bigger-110"></i> Print
+                                </button> 
+                            </div>
                             <div id="printable">
                                 <div class="tinyMceLetter" id="letter" style="font-size: 12px;">
                                     <?php
                                     date_default_timezone_set('Asia/Dhaka');
                                     $en = array('0','1','2','3','4','5','6','7','8','9');
                                     $bn = array('০', '১', '২', '৩',  '৪', '৫', '৬', '৭', '৮', '৯');
-                                    $date = str_replace($en, $bn, date('Y-m-d H:i:s'));
+                                    $date = str_replace($en, $bn, $info->as_doj);
                                     ?>
+                                    <style type="text/css" media="print">
+                                        
+                                        *{
+                                            font-size: 12px !important;
+                                        }
+                                        table td{
+                                            font-size: 12px;
+                                        }
+                                        table{margin: 0}
+                                        p { margin-top: -9px; }
+                                    </style>
                                     <p>
-                                    <center><b>{{ (!empty($info->hr_unit_name_bn)?$info->hr_unit_name_bn:null) }} </b></center>
+                                    <center><b style="font-size: 14px;">{{ (!empty($info->hr_unit_name_bn)?$info->hr_unit_name_bn:null) }} </b></center>
                                     <center><u> {{ (!empty($info->hr_unit_address_bn)?$info->hr_unit_address_bn:null) }} </u> </center>
                                     <p>তারিখঃ&nbsp; {{ $date }} ইং</p>
                                     <p>জনাব/জনাবাঃ   {{ (!empty($info->hr_bn_associate_name)?$info->hr_bn_associate_name:null) }}</p>
                                     <p>পিতা/স্বামীর নামঃ   {{ (!empty($info->hr_bn_father_name)?$info->hr_bn_father_name:null) }}/{{ (!empty($info->hr_bn_spouse_name)?$info->hr_bn_spouse_name:null) }}</p>
                                     <p>মাতার নামঃ {{ (!empty($info->hr_bn_mother_name)?$info->hr_bn_mother_name:null) }}</p>
-                                    <p><b>ঠিকানাঃ স্থায়ী ঠিকানাঃ</b></p>
-                                    <table width="500" style="margin-left:50px;">
+                                    <p style="margin-top:0 !important"><b>ঠিকানাঃ স্থায়ী ঠিকানাঃ</b></p>
+                                    <table width="500" style="margin-left:50px;font-size: 12px;">
                                         <tr>
                                             <td>গ্রামঃ {{ (!empty($info->hr_bn_permanent_village)?$info->hr_bn_permanent_village:null) }}</td>
                                             <td>ডাকঘরঃ {{ (!empty($info->hr_bn_permanent_po)?$info->hr_bn_permanent_po:null) }}</td>
@@ -80,8 +95,8 @@
                                             
                                         </tr>
                                     </table>
-                                    <p><b>অস্থায়ী/বর্তমান ঠিকানাঃ</b></p>
-                                    <table width="500" style="margin-left:50px;">
+                                    <p style="margin-top:0 !important"><b>অস্থায়ী/বর্তমান ঠিকানাঃ</b></p>
+                                    <table width="500" style="margin-left:50px;font-size: 12px;">
                                         <tr>
                                             <td>গ্রামঃ {{ (!empty($info->hr_bn_present_road)?$info->hr_bn_present_road:null) }}</td>
                                             <td>ডাকঘরঃ {{ (!empty($info->hr_bn_present_po)?$info->hr_bn_present_po:null) }}</td>
@@ -92,21 +107,25 @@
                                             
                                         </tr>
                                     </table>
+                                    <br>
                                     <p><span style="text-decoration: underline;"><strong>বিষয়ঃ- নিয়োগপত্র</strong></span></p>
-                                    <p>কর্তৃপক্ষ অত্যন্ত আনন্দের সহিত জানাচ্ছে যে, আপনাকে নিম্নলিখিত শর্তসাপেক্ষে অত্র কারখানার <b>{{ (!empty($info->hr_designation_name_bn)?$info->hr_designation_name_bn:null) }}</b> পদে প্রতি মাসে সর্বসাকুল্যে মোট {{ (!empty($info->ben_joining_salary)?str_replace($en, $bn, $info->ben_joining_salary):null) }} টাকা বেতনে  গ্রেডঃ {{$info->hr_designation_grade?$info->hr_designation_grade:''}} নিয়োগ দেওয়ার সিদ্ধান্ত গ্রহণ করিয়াছেন, আপনার পরিচয় পত্র নং(আই.ডি. নং)-<b>{{$info->associate_id}}</b>  যাহা <b>{{ (!empty($info->as_doj)?str_replace($en, $bn, $info->as_doj):null) }}</b> তারিখ হইতে কার্যকরী।</p>
-                                    <p>১। আপনি চাকুরীতে প্রথম ০৩ (তিন) মাস প্রবেশনারী অবস্থায় থাকিবেন এবং উক্ত সময়ের মধ্যে আপনার কর্মদক্ষতা সন্তোষজনক না হইলে আপনার প্রবেশনকাল আরও তিন মাস বর্ধিত করা যেতে পারে। প্রবেশনকাল অতিবাহিত হওয়ার পর আপনি সরাসরি স্থায়ী কর্মকর্তা/কর্মচারী হিসাবে গণ্য হবেন।</p><br>
+                                    <p>কর্তৃপক্ষ অত্যন্ত আনন্দের সহিত জানাচ্ছে যে, আপনাকে নিম্নলিখিত শর্তসাপেক্ষে অত্র কারখানার <b>{{ (!empty($info->hr_designation_name_bn)?$info->hr_designation_name_bn:null) }}</b> পদে প্রতি মাসে সর্বসাকুল্যে মোট {{ (!empty($info->ben_joining_salary)?str_replace($en, $bn, $info->ben_joining_salary):null) }} টাকা বেতনে  গ্রেডঃ <span style="display: inline-block;width: 60px;">{{$info->hr_designation_grade?$info->hr_designation_grade:''}} </span> নিয়োগ দেওয়ার সিদ্ধান্ত গ্রহণ করিয়াছেন, আপনার পরিচয় পত্র নং(আই.ডি. নং)-<b>{{$info->associate_id}}</b>  যাহা <b>{{ (!empty($info->as_doj)?str_replace($en, $bn, $info->as_doj):null) }}</b> তারিখ হইতে কার্যকরী।</p>
+                                    <p>১। আপনি চাকুরীতে প্রথম ০৩ (তিন) মাস প্রবেশনারী অবস্থায় থাকিবেন এবং উক্ত সময়ের মধ্যে আপনার কর্মদক্ষতা সন্তোষজনক না হইলে আপনার প্রবেশনকাল আরও তিন মাস বর্ধিত করা যেতে পারে। প্রবেশনকাল অতিবাহিত হওয়ার পর আপনি সরাসরি স্থায়ী শ্রমিক হিসাবে গণ্য হবেন।</p><br>
                                     <p>২। <b> বেতনঃ</b></p>
                                     <table width="600">
                                         <tr>
                                             <td>ক) মূল বেতন( Monthly Basic Pay )</td>
-                                            <td>: টাকা {{ (!empty($info->ben_basic)?str_replace($en, $bn, $info->ben_basic):null) }}/= অতিরিক্ত কর্ম ঘন্টার হার: 
-                                                @php $ot_pay= ($info->ben_basic/208)*2; $ot_pay = sprintf('%0.2f', $ot_pay);
-                                                @endphp 
-                                            {{str_replace($en, $bn, $ot_pay)}}
-                                     টাকা</td>
+                                            <td>: টাকা {{ (!empty($info->ben_basic)?str_replace($en, $bn, $info->ben_basic):null) }}/= 
+                                                @if($info->as_ot == 1)
+                                                    অতিরিক্ত কর্ম ঘন্টার হার: 
+                                                    @php $ot_pay= ($info->ben_basic/208)*2; $ot_pay = sprintf('%0.2f', $ot_pay);
+                                                    @endphp 
+                                                {{str_replace($en, $bn, $ot_pay)}} টাকা
+                                                @endif
+                                             </td>
                                         </tr>
                                         <tr>
-                                            <td>খ) বাড়ী ভাড়া(House Rent-40% of Basic Pay)</td>
+                                            <td>খ) বাড়ী ভাড়া(House Rent-50% of Basic Pay)</td>
                                             <td>: টাকা {{ (!empty($info->ben_house_rent)?str_replace($en, $bn, $info->ben_house_rent):null) }}/=</td>
                                         </tr>
                                         <tr>
@@ -115,7 +134,7 @@
                                         </tr>
                                         <tr>
                                             <td>ঘ) খাদ্য ভাতা(Food Allowance)</td>
-                                            <td>: টাকা {{ (!empty($info->ben_transport)?str_replace($en, $bn, $info->ben_transport):null) }}/=</td>
+                                            <td>: টাকা {{ (!empty($info->food)?str_replace($en, $bn, $info->food):null) }}/=</td>
                                         </tr>
                                         <tr>
                                             <td>ঙ) যাতায়াত ভাতা(Conveyance Allowance)</td>
@@ -127,27 +146,31 @@
                                         </tr>
                                     </table>
                                     
-                                    <p style="text-align: center"> বেতন প্রদানঃ প্রতি মাসের বেতন পরবর্তী মাসের সাত কর্ম দিবসের মধ্যে বেতন এবং ওভার টাইম এক সঙ্গে প্রদান করা হয়। </p><br>
+                                    <p style="text-align: center;margin-top: 0 !important;"> বেতন প্রদানঃ প্রতি মাসের বেতন পরবর্তী মাসের সাত কর্ম দিবসের মধ্যে বেতন এবং ওভার টাইম এক সঙ্গে প্রদান করা হয়। </p><br>
 
                                     <p>৩। কর্ম ঘন্টাঃ ফ্যাক্টরি সকাল ৮.০০ থেকে শুরু এবং বিকাল ৫.০০ টায় সাধারণ কর্মদিবসের সমাপ্তি এবং মধ্যবর্তী সময়ে ০১(এক) ঘণ্টা বিরতি।</p>
-                                    <p>৪। অতিরিক্ত কর্মঘন্টা (ওভার টাইম) ঃ  ইহা মূল বেতনের দ্বিগুন হারে প্রদেয়। ( মূল বেতন/২০৮x২xমোট অতিরিক্ত ঘন্টা)।</p><br>
+                                    <p style="margin-top: 0">৪। অতিরিক্ত কর্মঘন্টা (ওভার টাইম) ঃ  ইহা মূল বেতনের দ্বিগুন হারে প্রদেয়। ( মূল বেতন/২০৮x২xমোট অতিরিক্ত ঘন্টা)।</p><br>
                                     <p>৫।<b> ছুটিঃ</b></p>
                                     <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;১। শুক্রবার সাপ্তাহিক ছুটি।</p>
                                     <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;২। অন্যান্য ছুটি, (যাহা পূর্ণ বেতনে ভোগ করিতে পারিবেন।&nbsp;</p>
                                     <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ক) নৈমিত্তিক ছুটিঃ বছরে ১০(দশ) দিন।</p>
                                     <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;খ) অসুস্থতা জনিত ছুটিঃ বছরে ১৪(চৌদ্দ) দিন।</p>
-                                    <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;গ) উৎসব ছুটিঃ বছরে ১১(এগার) দিন।</p>
+                                    <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;গ) উৎসব ছুটিঃ বছরে সর্বনিম্ন ১১(এগার) দিন।</p>
                                     <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ঘ) অর্জিত ছুটিঃ- ০১(এক) বৎসর অতিবাহিত হওয়ার পর প্রতি ১৮ কর্মদিবসের জন্য একদিন করে বার্ষিক ছুটি ভোগ করিতে পারিবেন।</p>
-                                    <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ঙ) মাতৃকল্যাণ ছুটিঃ- কোন মহিলা কর্মকর্তা/কর্মচারী যদি অত্র প্রতিষ্ঠানে একাধিক্রমে ০৬(ছয়) মাস চাকুরী করেন তাহলে তিনি উক্ত ছুটি ভোগ করিতে পারিবেন। ২০০৬ সালের মাতৃকল্যাণ আইনের ধারা অনুযায়ী মোট ১৬ সপ্তাহ বা (৫৬+৫৬)=১১২ দিন মাতৃত্বকালীন ছুটি (আইনানুগ ও নগদে) ভোগ করিতে পারিবেন।</p><br>
+                                    <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ঙ) মাতৃকল্যাণ ছুটিঃ- কোন মহিলা কর্মকর্তা/কর্মচারী যদি অত্র প্রতিষ্ঠানে একাধিক্রমে ০৬(ছয়) মাস চাকুরী করেন তাহলে তিনি উক্ত ছুটি ভোগ করিতে পারিবেন। ২০০৬ সালের মাতৃকল্যাণ আইনের ধারা অনুযায়ী মোট ১৬ সপ্তাহ বা (৫৬+৫৬)=১১২ দিন মাতৃত্বকালীন ছুটি (আইনানুগ ও নগদে) ভোগ করিতে পারিবেন।</p>
 
                                     <p>৬। <b> সুবিধা</b></p>
                                     <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ক) মূল মজুরীর ৫% হারে বাৎসরিক ভিত্তিতে মজুরী বৃদ্ধি পাইবে।</p>
-                                    <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;খ) যারা নিরবিচ্ছিন্নভাবে ১(এক) বৎসর চাকরি পূর্ণ করিয়াছেন তাহাদেরকে বৎসরে দুইটি উৎসব ভাতা প্রদান করা হইবে(প্রতিটি উৎসব ভাতা মূল বেতনের সমান।</p>
-                                    <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;গ) মাসের প্রতিটি কর্মদিনের সঠিক সময়ে ফ্যাক্টরিতে উপস্থিত হলে প্রথম মাস ৪০০/= টাকা এবং একইভাবে পরবর্তী মাসে উপস্থিত থাকলে ৫০০/= হারে হাজিরা বোনাস প্রদান করা হয়। (ইহা আইনানুনাগ কোন পাওনা নয়। ইহা বেতনের বাহিরের একটি অংশ। )</p>
+                                    <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;খ) যারা নিরবিচ্ছিন্নভাবে ১(এক) বৎসর চাকরি পূর্ণ করিয়াছেন তাহাদেরকে বৎসরে দুইটি উৎসব ভাতা প্রদান করা হইবে(প্রতিটি উৎসব ভাতা মূল বেতনের সমান)।</p>
+                                    <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;গ) মাসের প্রতিটি কর্মদিনের সঠিক সময়ে ফ্যাক্টরিতে উপস্থিত হলে
+                                    @if($info->as_unit_id == 2)
+                                     প্রথম মাস ৪০০/= টাকা এবং একইভাবে পরবর্তী মাসে উপস্থিত থাকলে ৫০০/=
+                                    @else  ৫০০/= @endif
+                                 টাকা হাজিরা বোনাস প্রদান করা হয়। (ইহা আইনানুনাগ কোন পাওনা নয়। ইহা বেতনের বাহিরের একটি অংশ)</p>
                                     <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ঘ) বিনা খরচে ডাক্তার এবং নার্সের মাধ্যমে চিকিৎসা প্রদান করা হয়। </p>
                                     <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ঙ) কর্মকর্তা/কর্মচারীর জন্য গ্রুপ ইন্স্যুরেন্স এর ব্যবস্থা আছে। </p><br>
                                     <p>৭। <b> চাকুরি ছাড়ার নিয়মঃ</b></p>
-                                    <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ক) চাকুরী ছাড়তে হলে বাংলাদেশ শ্রম আইন, ২০০৬ অনুসারে ২৭(১) ধারা মোতাবেক চাকুরী ছাড়ার ২ মাস(৬০ দিন) আগে কর্তৃপক্ষকে লিখিত নোটিশ প্রদান করতে হবে, অন্যথায় প্রদেয় নোটিশের পরিবর্তে নোটিশ মেয়াদের জন্য মজুরীর সমপরিমাণ অর্থ মালিককে প্রদান করিয়া ইহা করিতে পারিবেন।</p>
+                                    <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ক) চাকুরী ছাড়তে হলে বাংলাদেশ শ্রম আইন, ২০০৬ অনুসারে ২৭(১) ধারা মোতাবেক চাকুরী ছাড়ার ২ মাস(৬০ দিন) আগে কর্তৃপক্ষকে লিখিত নোটিশ প্রদান করতে হবে, অন্যথায় প্রদেয় নোটিশের পরিবর্তে নোটিশ মেয়াদের জন্য মূল মজুরীর সমপরিমাণ অর্থ মালিককে প্রদান করিয়া ইহা করিতে পারিবেন।</p>
                                     <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;খ) অসুস্থতার কারণে চাকুরী ছেড়ে দিতে হলে মেডিকেল সার্টিফিকেট দাখিল করতে হবে।</p>
                                     <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;গ) চাকুরী ছাড়ার পর কোম্পানীর প্রদত্ত মালামাল অর্থাৎ পরিচয় পত্র, লকারের চাবি, ড্রেস, কাটার, টেপ ইত্যাদি মানব সম্পদ বিভাগে জমা প্রদান করতে হবে।</p>
                                     <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ঘ) চাকুরী স্থায়ী হইবার পর কর্তৃপক্ষ আপনার চাকুরী অবসান করিতে চাহিলে ১২০(একশত বিশ) দিনের লিখিত নোটিশ অথবা ১২০(একশত বিশ) দিনের বেতন প্রদান করিবেন।</p>
@@ -170,25 +193,22 @@
                                     <p>আপনি যদি কখনো কোনরুপ অসদাচরণের অপরাধে দোষী প্রমাণিত হন তবে কর্তৃপক্ষ আপনার বিরুদ্ধে আইনগত শাস্তিমূলক ব্যবস্থা গ্রহণ করিতে পারবে। </p> <br>
                                     <p>১০।  আপনার চাকুরী কোম্পানী কর্তৃক জারিকৃত বিধি ও বাংলাদেশের প্রচলিত শ্রম আইন দ্বারা পরিচালিত হইবে।</p>
                                     <p>১১।  কর্তৃপক্ষ আপনাকে প্রয়োজনবোধে এই প্রতিষ্ঠানের যে কোন বিভাগে অথবা বাংলাদেশে অবস্থিত যে কোন কারখানায়/অফিসে বদলি করিতে পারিবেন।</p>
-                                    <p>১২।  কোম্পানীর যাবতীয় নিয়ম-কানুন পরিবর্তনযোগ্য ( যাহা দেশের প্রচলিত আইনের পরিপন্থি নহে) এবং আপনি পরিবর্তীত নিয়ম কানুন সর্বদা মানিয়া চলিতে বাধ্য থাকিবেন। </p><br>
+                                    <p>১২। গোপনীয়তা রক্ষার নীতি (Non-Disclosure Policy)ঃ প্রতিষ্ঠানের স্বার্থে সকল প্রকার তথ্য গোপন রাখিতে হইবে।</p>
+                                    <p>১৩।  কোম্পানীর যাবতীয় নিয়ম-কানুন পরিবর্তনযোগ্য ( যাহা দেশের প্রচলিত আইনের পরিপন্থি নহে) এবং আপনি পরিবর্তীত নিয়ম কানুন সর্বদা মানিয়া চলিতে বাধ্য থাকিবেন। </p><br><br><br>
                                     <p>ধন্যবাদান্তে</p>
                                     <p>সংশ্লিষ্ট ব্যবস্থাপক</p>
-                                    <p style="text-align: right;">কর্তৃপক্ষ&nbsp; &nbsp; &nbsp;&nbsp;</p>
+                                    <br><br>
                                     <p>&nbsp; &nbsp;অনুলিপিঃ</p>
                                     <p>&nbsp; &nbsp;১। হিসাব বিভাগ।</p>
                                     <p>&nbsp; &nbsp;২। ব্যক্তিগত নথি।</p>
                                     <p>আমি অত্র নিয়োগপত্র পাঠ করিয়া এবং ইহাতে বর্ণিত শর্তাদি সম্পূর্ণরুপে অবগত হইয়া এই নিয়োগপত্র গ্রহণ করিয়া স্বাক্ষর করিলাম।</p>
-                                    <p>&nbsp;</p>
+                                    <p>&nbsp;</p><br>
                                     <p style="text-align: right;">&nbsp;কর্মকর্তা/কর্মচারীর স্বক্ষর&nbsp; &nbsp; &nbsp; &nbsp;</p>
                                     </p>
                                 </div>
                             </div>
                         </div>
-                        <div class="clearfix form-actions">
-                            <button class="btn btn-danger" type="submit" onclick="printMe('letter')">
-                                <i class="fa fa-print bigger-110"></i> Print
-                            </button> 
-                        </div>
+                        
                     </div>
                     @endif
                     <!-- PAGE CONTENT ENDS -->
@@ -212,6 +232,7 @@ function printMe(el)
     myWindow.print();
     myWindow.close();
 }
+
 $(document).ready(function()
 {
 

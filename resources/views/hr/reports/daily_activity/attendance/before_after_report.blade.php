@@ -125,6 +125,9 @@
 									}elseif($format == 'as_designation_id'){
 										$head = 'Designation';
 										$body = $designation[$group]['hr_designation_name']??'';
+									}elseif($format == 'as_section_id'){
+										$head = 'Section';
+										$body = $section[$group]['hr_section_name']??'';
 									}else{
 										$head = '';
 									}
@@ -221,6 +224,8 @@
 							$head = 'Department';
 						}elseif($format == 'as_designation_id'){
 							$head = 'Designation';
+						}elseif($format == 'as_section_id'){
+							$head = 'Section';
 						}else{
 							$head = '';
 						}
@@ -253,6 +258,8 @@
 											$body = $department[$group]['hr_department_name']??'';
 										}elseif($format == 'as_designation_id'){
 											$body = $designation[$group]['hr_designation_name']??'';
+										}elseif($format == 'as_section_id'){
+											$body = $section[$group]['hr_section_name']??'';
 										}else{
 											$body = 'N/A';
 										}
