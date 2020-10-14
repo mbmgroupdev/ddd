@@ -6,35 +6,24 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Employee;
 use App\Models\Hr\HrAllGivenBenefits;
-use DB, Response, Auth, Exception, DataTables;
+use DB, Response, Auth, Exception, DataTables, Validator;
 
 class BenefitsCalculationController extends Controller
 {
     public function index(){
     	return view('hr.payroll.benefits');
     }
-    # Search Associate ID returns NAME & ID
+    
     public function associtaeSearch(Request $request)
     {
 
-     //dd(auth()->user()->management_permissions());
-     if(auth()->user()->hasRole('power user 3')){
-       $cantacces = ['power user 2','advance user 2'];
-     }elseif (auth()->user()->hasRole('power user 2')) {
-       $cantacces = ['power user 3','advance user 2'];
-     }elseif (auth()->user()->hasRole('advance user 2')) {
-       $cantacces = ['power user 3','power user 2'];
-     }else{
-       $cantacces = [];
-     }
-     $userIdNotAccessible = DB::table('roles')
+ 
+        $cantacces = [];
+     
+        $userIdNotAccessible = DB::table('roles')
                ->whereIn('name',$cantacces)
                ->leftJoin('model_has_roles','roles.id','model_has_roles.role_id')
                ->pluck('model_has_roles.model_id');
-
-         $asIds = DB::table('users')
-                  ->whereIn('id',$userIdNotAccessible)
-                  ->pluck('associate_id');
 
 
         $data = [];
@@ -48,8 +37,6 @@ class BenefitsCalculationController extends Controller
                 })
                 ->whereIn('as_unit_id', auth()->user()->unit_permissions())
                 ->whereNotIn('as_id', auth()->user()->management_permissions())
-                ->whereNotIn('associate_id',$asIds)
-                // ->where('as_status', 1)
                 ->take(20)
                 ->get();
         }
@@ -57,46 +44,16 @@ class BenefitsCalculationController extends Controller
         return response()->json($data);
     }
 
-    public function getEmployeeDetails(Request $request){
+    public function getEmployeeDetails(Request $request)
+    {
     	try{
-    		// dd($request->all());
-             //check if already given
+            
             $given_benefit_data = DB::table('hr_all_given_benefits')->where('associate_id', $request->emp_id)->first();
-            // dd($given_benefit_data);exit;
 
-	    	$details = DB::table('hr_as_basic_info as b')
-	    							->select([
-												
-												'b.*',
-												'c.hr_unit_name',
-												'd.hr_location_name',
-												'e.hr_department_name',
-												'f.hr_designation_name',
-												'g.ben_current_salary',
-												'g.ben_basic',
-
-												'dd.hr_unit_name_bn',
-												'dd.hr_unit_short_name',
-												'dd.hr_unit_address_bn',
-												'ee.hr_bn_associate_name',
-												'ff.hr_department_name',
-												'ff.hr_department_name_bn',
-												'kk.hr_designation_name_bn'
-											])
-											->leftJoin('hr_unit as c','c.hr_unit_id','=','b.as_unit_id')
-											->leftJoin('hr_location as d','d.hr_location_id','=','b.as_location')
-											->leftJoin('hr_department as e','e.hr_department_id','=','b.as_department_id')
-											->leftJoin('hr_designation as f','f.hr_designation_id','=','b.as_designation_id')
-											->leftJoin('hr_benefits as g','g.ben_as_id','=','b.associate_id')
-
-											->leftJoin('hr_unit as dd', 'dd.hr_unit_id', 'b.as_unit_id')
-											->leftJoin('hr_employee_bengali as ee', 'ee.hr_bn_associate_id', 'b.associate_id')
-											->leftJoin('hr_department as ff', 'ff.hr_department_id', 'b.as_department_id')
-											->leftJoin('hr_designation as kk', 'kk.hr_designation_id', 'b.as_designation_id')
-											
-											->where('b.associate_id','=',$request->emp_id)
-											->first();
+	    	$details = get_employee_by_id($request->emp_id);
 	        $date1 = strtotime($details->as_doj);
+            $details->as_pic = emp_profile_picture($details);
+            $details->date_join = $details->as_doj->format('Y-m-d');
             if(!empty($given_benefit_data)){
                 // dd($given_benefit_data, 'sdsddsf');exit;
                $date2 = strtotime(date('Y-m-d', strtotime($given_benefit_data->created_at) ) );
@@ -121,35 +78,20 @@ class BenefitsCalculationController extends Controller
 	        // divide the resultant date into 
 	        // total seconds in a month (30*60*60*24) 
 	        $months = floor(($diff - $years * 365*60*60*24) / (30*60*60*24));  
-	        // To get the day, subtract it with years and  
-	        // months and divide the resultant date into 
-	        // total seconds in a days (60*60*24) 
 	        $days = floor(($diff - $years * 365*60*60*24 - $months*30*60*60*24)/ (60*60*24));
 	        $details->service_years  = $years; 
 	        $details->service_months = $months;
 	        $details->service_days   = $days;
-	    	// dd($details);
-	        // dd("Difference: ". $years.' Years '.$months.' Months '.$days.' Days');
 
-
-	        //Earned Leave Section.......
-	        $leaves = DB::table('hr_leave')
-                ->select(
-                    DB::raw("
-                        YEAR(leave_from) AS year,
-                        SUM(CASE WHEN leave_type = 'Earned' THEN DATEDIFF(leave_to, leave_from)+1 END) AS earned
-	                    ")
-	                )
-	                ->where('leave_status', '1')
-	                ->where("leave_ass_id", $details->associate_id)
-	                ->groupBy('year')
-	                ->orderBy('year', 'DESC')
-	                ->get();
-            $total_earnedLeaves = $this->earnedLeave($leaves,$details->as_id,$details->associate_id,$details->as_unit_id);
-            // dd($total_earnedLeaves);exit;
-	        //Earned Leave Section End...
-	        $details->total_earnedLeaves_details = $total_earnedLeaves;
-	        // dd($details);
+	        $earned = DB::table('hr_earned_leave')
+                        ->select(DB::raw('sum(earned - enjoyed) as l'),'earned','enjoyed')
+                        ->where('associate_id', $request->emp_id)
+                        ->where('associate_id', $request->emp_id)
+                        ->first();
+            
+            $details->remain = $earned->l??0;
+            $details->earned = $earned->earned??0;
+	        $details->enjoyed = $earned->lenjoyed??0;
 
 
 	    	return Response::json($details);
@@ -268,34 +210,157 @@ class BenefitsCalculationController extends Controller
 
     public function saveBenefits(Request $request)
     {
-    	try{
-            $ck = HrAllGivenBenefits::storeBenefits($request->all());
-            
-            if($ck == 'success'){
-                if($request->benefit_on == 'on_resign'){
-                    $status = 2;
-                }
-                else if($request->benefit_on == 'on_dismiss') {
-                    $status = 4;
-                }
-                else if($request->benefit_on == 'on_terminate') {
-                    $status = 3;
-                }
-                else if($request->benefit_on == 'on_death') {
-                    $status = 7;
-                }
-                //updating employee status....
-                DB::table('hr_as_basic_info')
-                ->where('associate_id', $request->associate_id)
-                ->update([
-                     'as_status' => $status  
-                ]);
+        try{
 
-                return 1;
+        	$validator= Validator::make($request->all(),[
+                'associate_id'            => 'required',
+                'benefit_on'              => 'required',
+                'status_date'             => 'required|date'
+            ]);
+            if ($validator->fails())
+            {
+                return 'Please fillup all required fields!';
+
+            }else{
+                $employee = get_employee_by_id($request->associate_id);
+                $diff = abs(strtotime($request->status_date) - strtotime($employee->as_doj));            
+                // To get the year divide the resultant date into 
+                $years = floor($diff / (365*60*60*24));  
+                // To get the month, subtract it with years and 
+                $months = floor(($diff - $years * 365*60*60*24) / (30*60*60*24));  
+
+                $earned = DB::table('hr_earned_leave')
+                        ->select(DB::raw('sum(earned - enjoyed) as l'))
+                        ->where('associate_id', $request->associate_id)
+                        ->where('associate_id', $request->associate_id)
+                        ->first();
+
+                $earned_leave = $earned->l??0;
+
+
+                $benefits = $this->storeBenefit($employee, $years, $months, $earned_leave, $request);
+                $benefit_page = view('hr.common.end_of_job_final_pay', compact('employee','benefits','years','months'))->render();
+
+                if($benefits){
+                    if($request->benefit_on == 'on_resign'){
+                        $status = 2;
+                    }
+                    else if($request->benefit_on == 'on_dismiss') {
+                        $status = 4;
+                    }
+                    else if($request->benefit_on == 'on_terminate') {
+                        $status = 3;
+                    }
+                    else if($request->benefit_on == 'on_death') {
+                        $status = 7;
+                    }
+                    //updating employee status....
+                    DB::table('hr_as_basic_info')
+                    ->where('associate_id', $request->associate_id)
+                    ->update([
+                         'as_status' => $status,  
+                         'as_status_date' => $request->status_date 
+                    ]);
+                }
+
+                return ['benefit' => $benefit_page, 'status' => 1];
             }
+
+
+            
         }catch(\Exception $e){
-            return 'failed';
+            return $e;
         }
+    }
+
+
+    public function storeBenefit($employee, $years, $months, $earned_leave, $request)
+    {
+
+        $service_benefit = 0;
+        $earn_leave_payment = 0;
+        $subsistance_allowance = 0;
+        $notice_pay = 0;
+        $total_payment = 0;
+
+        $per_day_basic = $employee->ben_basic/30;
+        $per_day_gross = $employee->ben_current_salary/30;
+
+        // calculate earn leave payment
+        $earn_leave_payment = $earned_leave*$per_day_gross;
+
+        // calculate service benefit
+        $service_years = $years;
+        $service_months = $years;
+        if( 5 <= $years && $years < 10){
+            if($months >= 11){
+                $years++;
+            }
+
+            $service_benefit =  (14*$years)*$per_day_basic;
+        }else if($years >= 10){
+            if($months >= 11){
+                $years++;
+            }
+            $service_benefit =  (30*$years)*$per_day_basic;
+        }
+
+        if($request->benefit_on == 'on_resign'){
+            if($request->notice == 1){
+                $notice_pay = 2*$employee->ben_basic;
+            }
+            $total_payment = $earn_leave_payment + $service_benefit - $notice_pay;
+            $status = 2;
+        }else if($request->benefit_on == 'on_dismiss') {
+            $subsistance_allowance = $request->suspension_days*$per_day_gross;
+            $total_payment = $earn_leave_payment + $service_benefit + $subsistance_allowance;
+            $status = 4;
+        }
+        else if($request->benefit_on == 'on_terminate') {
+            if($request->notice == 1){
+                $notice_pay = 2*$employee->ben_basic;
+            }
+            $total_payment = $earn_leave_payment + $service_benefit + $notice_pay;
+            $status = 3;
+        }
+        else if($request->benefit_on == 'on_death') {
+            // death_benefit
+            $death_benefit = 0;
+            if($year >= 2){
+                if($month > 6 && $month < 11) {
+                    $years += 0.5;
+                }else if($month == 11){
+                    $years += 1;
+                }
+                if($request->death_reason == 'natural_death'){
+                    $death_benefit = (30*$years)*$per_day_basic;
+
+                }else if($request->death_reason  == 'duty_accidental_death'){
+                    $death_benefit = (45*$years)*$per_day_basic;
+                }
+            }
+            $status = 7;
+
+            $total_payment = $earn_leave_payment + $service_benefit + $death_benefit;
+        }
+
+        $data = new HrAllGivenBenefits();
+        $data->associate_id             = $request->associate_id;     
+        $data->benefit_on               = $request->benefit_on;   
+        $data->suspension_days          = $request->suspension_days??0;       
+        $data->earn_leave_amount        = $earn_leave_payment;
+        $data->service_benefits         = $service_benefit??0; 
+        $data->subsistance_allowance    = $subsistence_allowance??0; 
+        $data->notice_pay               = $request->notice_pay;
+        $data->termination_benefits     = $request->termination_benefits??0;  
+        $data->death_reason             = $request->death_reason; 
+        $data->death_benefits           = $death_benefit??0;
+        $data->status_date              = $request->status_date;
+        $data->earned_leave             = $earned_leave??0;
+        $data->created_by               = auth()->user()->id;
+        $data->save();
+
+        return $data;
     }
 
     public function givenBenefitList(){

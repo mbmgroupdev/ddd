@@ -5,7 +5,7 @@
 <style type="text/css">
   tr td:nth-child(2){
     display: block;
-      width: 100px !important;
+      width: 130px !important;
   }
   tr th:nth-child(3) input{
     width: 80px !important;

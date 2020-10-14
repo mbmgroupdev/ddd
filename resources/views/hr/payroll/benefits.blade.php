@@ -33,20 +33,27 @@
                 {{Form::open(['url'=>'hr/payroll/benefits_save', 'class'=>'form-horizontal'])}}
                     <div class="row">
                         <div class="col-sm-3">
+                            <div class="form-group has-required has-float-label emp select-search-group">
+                                
+                                {{ Form::select('associate',  [Request::get('associate') => Request::get('associate')], Request::get('associate'), ['placeholder'=>'Select Associate\'s ID', 'id'=>'associate', 'class'=> 'associates form-control', 'data-validation'=>'required']) }}
+                                <label >Employee</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
                             
                             <div class="form-group has-required has-float-label select-search-group">
                                 <select id="benefit_on" name="benefit_on" class="form-control" required="required">
                                    <option value="">Select Type</option>
-                                   <option value="on_resign">Resign Benefits</option>
-                                   <option value="on_dismiss">Dismiss Benefits</option>
-                                   <option value="on_terminate">Termination Benefits</option>
-                                   <option value="on_death">Death Benefits</option>
-                                   <option value="on_retirement">Retirement Benefits</option>
+                                   <option value="on_resign">Resign/Left</option>
+                                   <option value="on_dismiss">Dismiss</option>
+                                   <option value="on_terminate">Termination</option>
+                                   <option value="on_death">Death</option>
+                                   <option value="on_retirement">Retirement</option>
                                </select>  
                                 <label for="benefit_on">Benefit Type</label>
                             </div>
                         </div>
-                        <div  id="death_reason_div" class="col-sm-3">
+                        <div  id="death_reason_div" class="col-sm-3" style="display: none;">
                             <div  class="form-group has-required has-float-label select-search-group" >
                                 
                                 <select  name="death_reason" class="form-control death_reason"  required="required">
@@ -57,22 +64,22 @@
                                 <label >Death Reason</label>
                             </div>
                         </div>
-                        <div id="suspension_days_div" class="col-sm-3">
+                        
+                        
+                        <div id="suspension_days_div" class="col-sm-2" style="display: none;">
                             <div class="form-group has-required has-float-label" >
                                 
                                 <input type="text" class="form-control" name="suspension_days" id="suspension_days" value="0" required="required">
                                 <label >Suspension Days</label>
                             </div>
                         </div>
-                        <div class="col-sm-3">
-                            <div class="form-group has-required has-float-label emp select-search-group" style="pointer-events: none;">
-                                
-                                {{ Form::select('associate',  [Request::get('associate') => Request::get('associate')], Request::get('associate'), ['placeholder'=>'Select Associate\'s ID', 'id'=>'associate', 'class'=> 'associates form-control', 'data-validation'=>'required']) }}
-                                <label >Employee</label>
-                                
+                        <div class="col-sm-2">
+                            <div class="form-group has-float-label has-required">
+                                <input id="status_date" type="date" name="status_date" value="{{date('Y-m-d')}}" class="form-control" required >
+                                <label for="status_date">Status Date</label>
                             </div>
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-sm-2">
                             <button type="button" class="btn btn-primary" id="pay_button"  disabled="disabled">Pay Benefits</button>
                         </div>
                     </div>
@@ -86,29 +93,23 @@
                 <div class="row">
                     <div class="col-sm-4">
                         
-                        <div class="user-details-block" style="border-right: 1px solid #d1d1d1;padding-top: 3.5rem;">
+                        <div class="user-details-block" style="border-right: 1px solid #d1d1d1;padding-top: 1.5rem;">
                             <div class="user-profile text-center mt-0">
                                 <img id="avatar" class="avatar-130 img-fluid" src="{{ asset('assets/images/user/09.jpg') }} " onerror="this.onerror=null;this.src='{{ asset("assets/images/user/09.jpg") }}';">
                             </div>
                             <div class="text-center mt-3">
                                 <h4><b id="name">-------------</b></h4>
+                                <p><span id="designation">-------------</span>, <b id="department">----------</b></p>
+                            </div>
+                            <div class="text-center">
+                                <p class="mb-0"  id="unit">-----------------</b></p>
+                            </div>
+                            <div class="text-center">
+                                <p class="mb-0">DOJ: <b id="doj">-------------</b></p>
                             </div>
                         </div>
+                        <br>
                         <ul class="speciality-list m-0 p-0">
-                            <li class="d-flex mb-4 align-items-center">
-                               <div class="user-img img-fluid"><a href="#" class="iq-bg-primary"><i class="las f-18 la-city"></i></a></div>
-                               <div class="media-support-info ml-3">
-                                  <h6 id="designation"></h6>
-                                  <p id="department"  class="mb-0">------------------------</p>
-                               </div>
-                            </li>
-                            <li class="d-flex mb-4 align-items-center">
-                               <div class="user-img img-fluid"><a href="#" class="iq-bg-info"><i class="las f-18 la-calendar-day"></i></a></div>
-                               <div class="media-support-info ml-3">
-                                  <h6>Date of Joining</h6>
-                                  <p id="doj" class="mb-0">------------------------</p>
-                               </div>
-                            </li>
                             <li class="d-flex mb-4 align-items-center">
                                <div class="user-img img-fluid"><a href="#" class="iq-bg-warning"><i class="las f-18 la-dollar-sign"></i></a></div>
                                <div class="media-support-info ml-3">
@@ -120,7 +121,7 @@
                                <div class="user-img img-fluid"><a href="#" class="iq-bg-info"><i class="las f-18 la-database"></i></a></div>
                                <div class="media-support-info ml-3">
                                   <h6>Earned Leave</h6>
-                                  <p class="mb-0">Total:  <span class="text-danger" id="total_earn_leave">0</span class="text-danger"> Enjoyed: <span class="text-warning" id="enjoyed_earn_leave">0</span > <br>Remained: <span class="text-success" id="remained_earn_leave">0</span></p>
+                                  <p class="mb-0">Total:  <span class="text-danger" id="total_earn_leave">0</span class="text-danger"> Enjoyed: <span class="text-warning" id="enjoyed_earn_leave">0</span > Remained: <span class="text-success" id="remained_earn_leave">0</span></p>
                                </div>
                             </li>
                             <li class="d-flex mb-4 align-items-center">
@@ -138,6 +139,7 @@
                         </ul>
                     </div>
                     <div class="col-sm-8">
+                        <div id="benefit-voucher"></div>
                     </div>
                 </div>
             </div>
@@ -149,73 +151,38 @@
 @push('js')
 <script type="text/javascript">
     $(document).ready(function(){
-        makeAllCalculatedDivFieldsHidden();
 
-        $('#benefit_on').on('change', function(){
-            makeAllCalculatedDivFieldsHidden();
-            clearReadonlyFields();
-            $('#associate').val('').change();      
+        $('#benefit_on').on('change', function(){     
 
             var category = $(this).val();
             if(category == ''){
-                $('.emp').attr('style', 'pointer-events:none;');
-                $('#voucher').attr('hidden', 'hidden');
                 $('#save_button').attr('disabled', 'disabled');
                 $('#pay_button').prop('disabled', 'disabled');
-                categoryWisePrintSectionHide(category);
             }
             else{
-                //Show Relative Fields according on benefits category
-                showCategoryWiseBenefitFelids(category);
-                categoryWisePrintSectionHide(category);
-
-                $('.emp').removeAttr('style');
                 $('#save_button').removeAttr('disabled');
                 $('#pay_button').removeAttr('disabled');
 
                 if(category == 'on_death'){
-                    $('.emp').attr('style', 'pointer-events:none;');
-                    $('.death_reason').val("none").change();
+                    $('#death_reason_div').show();
+                }else{
+                    $('#death_reason_div').hide();
+                }
+
+                if(category == 'on_dismiss'){
+                    $('#suspension_days_div').show();
+                }else{
+                    $('#suspension_days_div').hide();
                 }
             }
         });
 
-        $('#suspension_days').on('keyup', function(){
-            clearReadonlyFields();
-            $('#associate').val('').change();
-        });
-
-        $('#death_reason').on('change', function(){
-            clearReadonlyFields();
-            $('#associate').val('').change();
-
-            var death_reason = $(this).val();
-            
-            if(death_reason == 'none'){
-                $('.emp').attr('style', 'pointer-events:none;');
-                $('#on_duty_and_accidental_death_on_duty_div').attr('hidden', 'hidden');
-                $('#natural_death_benefit_div').attr('hidden', 'hidden');
-            }
-            else if(death_reason == 'natural_death'){
-                $('.emp').removeAttr('style');
-                $('#natural_death_benefit_div').removeAttr('hidden');
-                $('#on_duty_and_accidental_death_on_duty_div').attr('hidden', 'hidden');
-            }else if(death_reason == 'duty_accidental_death'){
-                $('.emp').removeAttr('style');
-                $('#on_duty_and_accidental_death_on_duty_div').removeAttr('hidden');
-                $('#natural_death_benefit_div').attr('hidden', 'hidden');
-            }
-        }).change();
 
         $('#associate').on('change', function(){
             var emp_id = $(this).val();
-
-            $('#voucher').attr('hidden', 'hidden');
-            clearReadonlyFields();
             if(emp_id != ""){
                 $('.app-loader').show();
                 var url = '{{url('')}}';
-                // console.log(url);
                 $.ajax({
                     url : "{{ url('hr/payroll/benefits/get_employee_details') }}",
                     type: 'get',
@@ -225,102 +192,23 @@
                     },
                     success: function(data)
                     {
-                        // console.log(data);
                         $('#associate_id').text(data['associate_id']);
                         $('#oracle_id').text(data['as_oracle_code']);
                         $('#name').text(data['as_name']);
                         $('#unit').text(data['hr_unit_name']);
-                        // $('#location').text(data['hr_location_name']);
                         $('#department').text(data['hr_department_name']);
                         $('#designation').text(data['hr_designation_name']);
-                        $('#doj').text(data['as_doj']);
-                        if(data['as_pic'] == null){
-                            if(data['as_gender'] == 'Male'){
-                                $('#avatar').attr('src',url+'/assets/images/user/09.jpg');   
-                            }
-                            else{
-                                $('#avatar').attr('src',url+'/assets/images/user/1.jpg');   
-                            }
-                        }
-                        else{
-                            $('#avatar').attr('src', url+data['as_pic']);   
-                        }
+                        $('#doj').text(data['date_join']);
+                        $('#avatar').attr('src', url+data['as_pic']); 
                         $('#service_Y').html(data['service_years']);
                         $('#service_m').html(data['service_months']);
                         $('#service_d').html(data['service_days']);
 
                         $('#gross_salary').text(data['ben_current_salary'] + " ৳");
                         $('#basic_salary').text(data['ben_basic'] + " ৳");
-                        $('#total_earn_leave').text(data['total_earnedLeaves_details']['total_earned'] + ' Day/s');
-                        $('#enjoyed_earn_leave').text(data['total_earnedLeaves_details']['total_enjoy'] + ' Day/s');
-                        $('#remained_earn_leave').text(data['total_earnedLeaves_details']['total_remain'] + ' Day/s');
-
-
-                        //printing values assign..
-                        $('#unit_print').text(data['hr_unit_name_bn']);
-                        $('#unit_addr_print').text(data['hr_unit_address_bn']);
-                        $('#emp_name_print').text(data['hr_bn_associate_name']);
-                        $('#emp_deg_print').text(data['hr_designation_name_bn']);
-                        $('#emp_dep_print').text(data['hr_department_name_bn']);
-                        $('#emp_ass_id_print').text(data['associate_id']);
-                        $('#emp_basic_sal_print').text(banglaDigit(data['ben_basic'])+ " ৳");
-                        $('#emp_current_sal_print').text(banglaDigit(data['ben_current_salary'])+ " ৳");
-                        $('#total_service_days_print').text(banglaDigit(data['service_years'])+" বছর - "+banglaDigit(data['service_months'])+" মাস - "+banglaDigit(data['service_days'])+" দিন" );
-                        $('#reason_print').text(banglaReason($('#benefit_on').val()) );
-
-                        //----------------------------------------------------------------------
-
-                        //showing the calculated benefits
-                        if(data['service_years'] == 0){
-                            makeAllCalculatedDivFieldsHidden();
-                            $('#not_eligible_show').removeAttr('hidden');
-                            $('#pay_button').attr('disabled', 'disabled');
-                        }
-                        else{
-                            makeAllCalculatedDivFieldsHidden();
-                            $('#not_eligible_show').attr('hidden', 'hidden');
-
-                            var category = $('#benefit_on').val();
-                            var Sv_year  = data['service_years'];
-                            var Sv_month = data['service_months'];
-
-                            showCategoryWiseBenefitFelids(category);
-                            calculateAllBenefits(category, data);
-
-                            $('#pay_button').removeAttr('disabled');
-                        }
-
-                        //If data already saved in database......    
-                        if(data['already_given'] == "yes"){
-                            makeAllCalculatedDivFieldsHidden();
-                            clearReadonlyFields();
-                            $('#already_saved_data').removeAttr('hidden');
-                            $('#pay_button').attr('disabled', 'disabled');
-                            $('#voucher').removeAttr('hidden');
-
-                            $('#reason_print').text(banglaReason(data['given_benefit_data'].benefit_on) );
-                            $('#earn_leave_print_value').text(banglaDigit(data['given_benefit_data'].earn_leave_amount) + " ৳");       
-                            $('#service_benefit_print_value').text(banglaDigit(data['given_benefit_data'].service_benefits) + " ৳");
-                            $('#subsistence_allowance_print_value').text(banglaDigit(data['given_benefit_data'].subsistance_allowance) + " ৳");     
-                            $('#notice_pay_print_value').text(banglaDigit(data['given_benefit_data'].notice_pay) + " ৳");
-                            $('#termination_benefit_print_value').text(banglaDigit(data['given_benefit_data'].termination_benefits) + " ৳");
-                            $('#natural_death_print_value').text(banglaDigit(data['given_benefit_data'].natural_death_benefits) + " ৳");
-                            $('#on_duty_and_acci_death_print_value').text(banglaDigit(data['given_benefit_data'].on_duty_accidental_death_benefits) + " ৳");
-
-                            var grand_total =   data['given_benefit_data'].earn_leave_amount+
-                                                data['given_benefit_data'].service_benefits+
-                                                data['given_benefit_data'].subsistance_allowance+
-                                                data['given_benefit_data'].notice_pay+
-                                                data['given_benefit_data'].termination_benefits+
-                                                data['given_benefit_data'].natural_death_benefits+
-                                                data['given_benefit_data'].on_duty_accidental_death_benefits;
-                            $('#grand_toal_print_value').text(banglaDigit(grand_total) + " ৳");
-
-                            //Scrolling to portion
-                            $('html,body').animate({
-                                scrollTop: $("#voucher").offset().top},
-                                'slow');
-                        } 
+                        $('#total_earn_leave').text(data['earned']);
+                        $('#enjoyed_earn_leave').text(data['enjoyed']);
+                        $('#remained_earn_leave').text(data['remain']);
                         $('.app-loader').hide();
                     },
                     error: function(data)
@@ -334,10 +222,10 @@
                 $('#associate_id').text('-------------');
                 $('#oracle_id').text('-------------');
                 $('#name').text('-------------');
-                $('#unit').text('------------------------');
-                $('#department').text('------------------------');
-                $('#designation').text('------------------------');
-                $('#doj').text('------------------------');
+                $('#unit').text('-----------------');
+                $('#department').text('----------');
+                $('#designation').text('-------------');
+                $('#doj').text('-------------');
                 $('#avatar').attr('src','/assets/images/user/09.jpg'); 
                 $('#service_Y').html('0');
                 $('#service_m').html('0');
@@ -352,36 +240,25 @@
 
         });
 
-        $(document).on('click','#pay_button', function(){
-            $('#loader').removeAttr('hidden');
+        $(document).on('click','#pay_button', function()
+        {
+            $('.app-loader').show();
             $.ajax({
                 url: '{{url('hr/payroll/save_benefit_data')}}',
                 type: 'get',
                 dataType: 'json',
                 data:{
                     benefit_on      : $('#benefit_on').val(),
+                    associate_id    : $('#associate').val(),
+                    status_date     : $('#status_date').val(),
                     death_reason    : $('#death_reason').val(),
                     suspension_days : $('#suspension_days').val(),
-                    associate_id    : $('#associate').val(),
-                    earn_amount     : $('#earn_leave_due').val(),
-                    service_benefits : $('#service_benefit').val(),
-                    subsistence_allowance : $('#subsistence_allowance').val(),
-                    notice_pay      : $('#notice_pay').val(),
-                    termination_benefits: $('#termination_benefit').val(),
-                    natural_death_benefits: $('#natural_death_benefit').val(),
-                    on_duty_accidental_death_benefits : $('#on_duty_and_accidental_death_on_duty').val()
+                    notice_pay      : $('#notice_pay').val()
 
                 },
                 success: function(data){
-                    if(data == 1){
-                        swal("Data Saved. Please Print Out the Voucher", "", "success");
-                        $('#loader').attr('hidden', 'hidden');
-                        $('#voucher').removeAttr('hidden');
-                        //Scrolling to portion
-                        $('html,body').animate({
-                            scrollTop: $("#voucher").offset().top},
-                            'slow');
-                    }
+                    $('#benefit-voucher').html(data.benefit);
+                    $('.app-loader').hide();
                 },
                 error: function(data){
                 }
@@ -391,7 +268,6 @@
         });
     });
 
-    //function that will return a number in bengali
     function banglaDigit(digit){
         var bn_digit = "";
         str_digit = new String(digit);
@@ -411,6 +287,7 @@
         }
         return bn_digit;
     }
+
     function banglaReason(reason){
         if(reason == 'on_resign'){
             return "ইস্তফা";
@@ -728,44 +605,7 @@
         return on_duty_accidental_death_benefit;
     }
 
-    function categoryWisePrintSectionHide(benefit_on){
-        // allPrintHidden();
-
-        // if(benefit_on == ''){
-        //     allPrintHidden();
-        // }
-        // else{
-        //     if(benefit_on == 'on_resign'){
-        //         $('#earn_leave_row_print').removeAttr('hidden');
-        //         $('#service_benefit_row_print').removeAttr('hidden');       
-        //     }
-        //     else if(benefit_on == 'on_dismiss'){
-        //         $('#earn_leave_row_print').removeAttr('hidden');
-        //         $('#service_benefit_row_print').removeAttr('hidden');
-        //         $('#subsistence_allowance_row_print').removeAttr('hidden');
-        //     }
-        //     else if(benefit_on == 'on_terminate'){
-        //         $('#earn_leave_row_print').removeAttr('hidden');
-        //         $('#notice_pay_row_print').removeAttr('hidden');
-        //         $('#termination_benefit_row_print').removeAttr('hidden');
-        //     }
-        //     else if(benefit_on == 'on_death'){
-        //         $('#earn_leave_row_print').removeAttr('hidden');
-        //         $('#service_benefit_row_print').removeAttr('hidden');
-        //         $('#natural_death_row_print').removeAttr('hidden');
-        //         $('#on_duty_and_accidental_death_row_print').removeAttr('hidden');
-        //     }
-        // }
-    }
-    // function allPrintHidden(){
-    //     $('#earn_leave_row_print').attr('hidden', 'hidden');
-    //     $('#service_benefit_row_print').attr('hidden', 'hidden');
-    //     $('#subsistence_allowance_row_print').attr('hidden', 'hidden');
-    //     $('#notice_pay_row_print').attr('hidden', 'hidden');
-    //     $('#termination_benefit_row_print').attr('hidden', 'hidden');
-    //     $('#natural_death_row_print').attr('hidden', 'hidden');
-    //     $('#on_duty_and_accidental_death_row_print').attr('hidden', 'hidden');
-    // }   
+   
 
 
     $(function(){

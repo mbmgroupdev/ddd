@@ -107,9 +107,9 @@
                                             <tr>
                                                 <tr>
                                                     <td width="290px" style="border: none;" rowspan="2">স্থায়ী ঠিকানাঃ (Permanent Address)</td>
-                                                    <td style="border: none;">গ্রাম(Village): {{ (!empty($info->emp_adv_info_per_vill )?$info->emp_adv_info_per_vill:null) }}
+                                                    <td style="border: none;">গ্রাম(Village): {{ (!empty($info->hr_bn_permanent_village )?$info->hr_bn_permanent_village:null) }}
                                                     </td>
-                                                    <td style="border: none;">পোস্ট(P.O): {{ (!empty($info->emp_adv_info_per_po )?$info->emp_adv_info_per_po:null) }}
+                                                    <td style="border: none;">পোস্ট(P.O): {{ (!empty($info->hr_bn_permanent_po )?$info->hr_bn_permanent_po:null) }}
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -122,9 +122,9 @@
                                             <tr >
                                                 <tr>
                                                     <td width="290px" style="border: none;" rowspan="2">বর্তমান ঠিকানাঃ (Permanent Address)</td>
-                                                    <td style="border: none;">গ্রাম(Village): {{ (!empty($info->emp_adv_info_pres_house_no )?$info->emp_adv_info_pres_house_no:null) }} {{ (!empty($info->emp_adv_info_pres_road )?$info->emp_adv_info_pres_road:null) }}
+                                                    <td style="border: none;">গ্রাম(Village): {{ (!empty($info->hr_bn_present_house )?$info->hr_bn_present_house:null) }} {{ (!empty($info->emp_adv_info_pres_road )?$info->emp_adv_info_pres_road:null) }}
                                                     </td>
-                                                    <td style="border: none;">পোস্ট(P.O): {{ (!empty($info->emp_adv_info_pres_po )?$info->emp_adv_info_pres_po:null) }}
+                                                    <td style="border: none;">পোস্ট(P.O): {{ (!empty($info->hr_bn_present_po )?$info->hr_bn_present_po:null) }}
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -188,7 +188,7 @@
                                                 </td>
                                             </tr>
                                         </table>
-                                        <table style="border: 1px solid; font-size: 12px;" width="100%" cellpadding="3" width="100%">
+                                        <table style="border: 1px solid; font-size: 12px;border-collapse: collapse;" width="100%" cellpadding="3" width="100%">
                                             <tr style="width: 100%">
                                                 <td style="border: none; text-align: right;" colspan= "2">
                                                     (অফিস কর্তৃক পূরণীয় For office use only)
@@ -221,20 +221,20 @@
                                             </tr>
                                             
                                         </table>
-                                        <table style="border: 1px solid; font-size: 12px;" width="100%" cellpadding="3" width="100%">
+                                        <table style="border: 1px solid; font-size: 12px;border-collapse: collapse;" width="100%" cellpadding="3" width="100%">
                                             
                                             <tr style="width: 100%">
-                                                <td style="border: 1px solid; text-align: center;">
+                                                <td style="border: 1px solid; text-align: center;border-collapse: none;">
                                                     <br><br><br>
                                                     উৎপাদন ব্যবস্থাপক<br>
                                                     Production Manager 
                                                 </td>
-                                                <td style="border: 1px solid; text-align: center;">
+                                                <td style="border: 1px solid; text-align: center;border-collapse: none;">
                                                     <br><br><br>
                                                     প্রশাসনিক কর্মকর্তা<br>
                                                     Manager HR/ Asst. Manager HR
                                                 </td>
-                                                <td style="border: 1px solid; text-align: center;">
+                                                <td style="border: 1px solid; text-align: center;border-collapse: none;">
                                                     <br><br><br>
                                                     জি.এম/ম্যানেজার/এ.জি.এম<br>
                                                     G.M/Manager/A.G.M 

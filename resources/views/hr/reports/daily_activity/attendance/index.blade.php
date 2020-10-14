@@ -206,9 +206,9 @@
                                   <div class="format">
                                     <div class="form-group has-float-label select-search-group mb-0">
                                         <?php
-                                            $type = ['as_unit_id'=>'N/A','as_line_id'=>'Line','as_floor_id'=>'Floor','as_department_id'=>'Department','as_designation_id'=>'Designation'];
+                                            $type = ['as_unit_id'=>'N/A','as_line_id'=>'Line','as_floor_id'=>'Floor','as_department_id'=>'Department','as_section_id'=>'Section','as_designation_id'=>'Designation'];
                                         ?>
-                                        {{ Form::select('report_group_select', $type, 'as_line_id', ['class'=>'form-control capitalize', 'id'=>'reportGroupHead']) }}
+                                        {{ Form::select('report_group_select', $type, 'as_section_id', ['class'=>'form-control capitalize', 'id'=>'reportGroupHead']) }}
                                         <label for="reportGroupHead">Report Format</label>
                                     </div>
                                   </div>
@@ -268,6 +268,15 @@
 @push('js')
 <script src="{{ asset('assets/js/moment.min.js')}}"></script>
 <script type="text/javascript">
+    function printDiv(divName)
+    { 
+        var myWindow=window.open('','','width=800,height=800');
+        myWindow.document.write(document.getElementById(divName).innerHTML); 
+        myWindow.document.close();
+        myWindow.focus();
+        myWindow.print();
+        myWindow.close();
+    }
     $(document).ready(function(){   
         var loader = '<div class="panel"><div class="panel-body"><p style="text-align:center;margin:100px;"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>';
         $('#activityReport').on('submit', function(e) {
@@ -303,7 +312,6 @@
           
         $("#reportGroupHead").on("change", function(){
           var group = $(this).val();
-          $("#reportGroup").val(group);
           activityProcess();
         });
 
@@ -317,6 +325,7 @@
           var date = $('input[name="date"]').val();
           var format = $('input[name="report_format"]').val();
           var type = $('select[name="report_type"]').val();
+          console.log(type);
           if(type === 'before_absent_after_present'){
             $("#head-arrow").hide();
           }else{
@@ -486,8 +495,13 @@
           $('input[name="employee"]').val('');
           if(type == 'ot'){
             $('#reportGroupHead').append('<option value="ot_hour">OT Hour</option>');
+            $('#reportGroupHead').val('ot_hour');
+            $('#reportGroup').val('ot_hour');
           }else{
             $("#reportGroupHead option[value='ot_hour']").remove();
+            $('#reportGroupHead').val('as_section_id');
+            $('#reportGroup').val('as_section_id');
+
           }
           var date = "{{ date('Y-m-d') }}";
           if(type == 'ot' || type == 'working_hour'){
@@ -506,8 +520,12 @@
         $('#reportFormat').on("change", function(){
           $('input[name="employee"]').val('');
         });
+
+
+
        
     });
+    
 
     
 </script>

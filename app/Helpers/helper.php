@@ -533,7 +533,7 @@ if(!function_exists('get_complete_user_info')){
 }
 
 if(!function_exists('get_earned_leave')){
-    function get_earned_leave($leaves, $as_id, $associate_id, $unit_id)
+    function get_earned_leave($leaves = [], $as_id, $associate_id, $unit_id)
     {
         $table = get_att_table($unit_id).' AS a';
         $leavesForEarned = collect($leaves)->sortBy('year');

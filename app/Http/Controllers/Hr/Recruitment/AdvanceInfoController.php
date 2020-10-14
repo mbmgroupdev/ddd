@@ -296,7 +296,8 @@ class AdvanceInfoController extends Controller
         $degreeList = EducationDegree::pluck('education_degree_title', 'id');
         $advance = DB::table('hr_as_adv_info')->where('emp_adv_info_as_id', $emp_adv_info_as_id)->first();
         $nomineeList = Nominee::where('nom_as_id',$emp_adv_info_as_id)->get();
-        $all_employee_list  = Employee::select('as_id', 'associate_id', 'as_name')->get();
+        $employee = Employee::where('associate_id', $emp_adv_info_as_id)->first();
+        $employee->profile_picture = emp_profile_picture($employee);
         $bangla = [];
         if (Session::has('associate_id'))
         {
@@ -322,7 +323,7 @@ class AdvanceInfoController extends Controller
         
 
 
-        return view('hr/recruitment/advance_info_edit',compact('advance', 'districtList','resultList','levelList','degreeList', 'bangla', 'upazillaList', 'all_employee_list', 'nomineeList', 'education'));
+        return view('hr/recruitment/advance_info_edit',compact('advance', 'districtList','resultList','levelList','degreeList', 'bangla', 'upazillaList', 'nomineeList', 'education','employee'));
    }
 
 
