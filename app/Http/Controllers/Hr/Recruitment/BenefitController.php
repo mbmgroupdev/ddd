@@ -67,14 +67,15 @@ class BenefitController extends Controller
             $benefits = Benefits::where('ben_as_id', $request->ben_as_id)->first();
             if(!$benefits){
                 $benefits= new Benefits();
-                $benefits->ben_as_id               = $request->ben_as_id ;
-                $benefits->ben_joining_salary      = $request->ben_joining_salary ;
+                $benefits->ben_as_id           = $request->ben_as_id ;
+                $benefits->ben_joining_salary  = $request->ben_joining_salary ;
             }
             $benefits->ben_current_salary      = $request->ben_joining_salary ;
             $benefits->ben_cash_amount         = $request->ben_cash_amount??0 ;
             $benefits->bank_name               = $request->bank_name??null ;
             $benefits->bank_no                 = $request->bank_no??null ;
             $benefits->ben_bank_amount         = $request->ben_bank_amount??0 ;
+            $benefits->ben_tds_amount          = $request->ben_tds_amount??0 ;
             $benefits->ben_basic               = $request->ben_basic ;
             $benefits->ben_house_rent          = $request->ben_house_rent ;
             $benefits->ben_medical             = $request->ben_medical ;

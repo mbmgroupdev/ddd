@@ -293,7 +293,9 @@ class ProcessUnitWiseSalary implements ShouldQueue
                     $totalPayable = round((float)($salaryPayable + $ot + $deductSalaryAdd + $attBonus + $productionBonus + $leaveAdjust));
 
                     // cash & bank part
+                    $tds = $getBenefit->ben_tds_amount??0;
                     if($payStatus == 1){
+                        $tds = 0;
                         $cashPayable = $totalPayable;
                         $bankPayable = 0; 
                     }elseif($payStatus == 2){
@@ -307,7 +309,12 @@ class ProcessUnitWiseSalary implements ShouldQueue
                             $cashPayable = 0;
                             $bankPayable = $totalPayable;
                         }
-                        
+                    }
+
+                    if($bankPayable > 0 && $tds > 0 && $bankPayable > $tds){
+                        $bankPayable = $bankPayable - $tds;
+                    }else{
+                        $tds = 0;
                     }
 
                     if($getSalary == null){
@@ -340,7 +347,8 @@ class ProcessUnitWiseSalary implements ShouldQueue
                             'emp_status' => $getEmployee->as_status,
                             'total_payable' => $totalPayable,
                             'cash_payable' => $cashPayable,
-                            'bank_payable' => $bankPayable
+                            'bank_payable' => $bankPayable,
+                            'tds' => $tds
                         ];
                         HrMonthlySalary::insert($salary);
                     }else{
@@ -369,7 +377,8 @@ class ProcessUnitWiseSalary implements ShouldQueue
                             'emp_status' => $getEmployee->as_status,
                             'total_payable' => $totalPayable,
                             'cash_payable' => $cashPayable,
-                            'bank_payable' => $bankPayable
+                            'bank_payable' => $bankPayable,
+                            'tds' => $tds
                         ];
                         HrMonthlySalary::where('id', $getSalary->id)->update($salary);
                     }

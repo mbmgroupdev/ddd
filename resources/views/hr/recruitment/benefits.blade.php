@@ -107,9 +107,19 @@
                                         </div>
                                         <div id="bank_input">
                                             
-                                            <div class="form-group has-float-label has-required ">
-                                                <input type="number" name="ben_bank_amount" id="ben_bank_amount" placeholder="Amount Paid in Bank" class="form-control" required min="0" />
-                                                <label  for="ben_bank_amount"> Bank Amount </label>
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div class="form-group has-float-label has-required ">
+                                                        <input type="number" name="ben_bank_amount" id="ben_bank_amount" placeholder="Amount Paid in Bank" class="form-control" required min="0" />
+                                                        <label  for="ben_bank_amount"> Bank Amount </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="form-group has-float-label has-required ">
+                                                        <input type="number" name="ben_tds_amount" id="ben_tds_amount" placeholder="TDS Amount" class="form-control" value="0" min="0" />
+                                                        <label  for="ben_tds_amount"> TDS Amount </label>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div class="form-group has-float-label has-required  select-search-group">
                                                 <?php
@@ -245,6 +255,7 @@ $(document).ready(function(){
                     $('#ben_joining_salary').val(result.benefit['ben_current_salary']);
                     $('#ben_cash_amount').val(result.benefit['ben_cash_amount']);
                     $('#ben_bank_amount').val(result.benefit['ben_bank_amount']);
+                    $('#ben_tds_amount').val(result.benefit['ben_tds_amount']);
                     $('#ben_basic').val(result.benefit['ben_basic']);
                     $('#ben_house_rent').val(result.benefit['ben_house_rent']);
                     $('#ben_medical').val(result.benefit['ben_medical']);
