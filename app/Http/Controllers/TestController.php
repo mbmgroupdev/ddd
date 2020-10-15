@@ -500,7 +500,43 @@ class TestController extends Controller
         return $late;
     }
 
-    
+    public function bankPart($value='')
+    {
+        $getData = array();
+
+        $getEmployee = DB::table('hr_as_basic_info')
+        ->join('hr_benefits', 'hr_as_basic_info.associate_id', 'hr_benefits.ben_as_id')
+        ->select('hr_as_basic_info.associate_id', 'hr_as_basic_info.as_oracle_code', 'hr_benefits.*')
+        ->get();
+        // dd($getEmployee);
+        $count = 0;
+        $macth = [];
+        $noMacth = [];
+        foreach ($getEmployee as $emp) {
+            $amount = $emp->ben_cash_amount + $emp->ben_bank_amount;
+            foreach ($getData as $key => $value) {
+                if($value['Pid'] == $emp->as_oracle_code && $value['Ot'] == 'Y' && $value['Rocket'] != '' && $amount == $value['Tot Pay']){
+                    // ++$count;
+                }elseif($value['Pid'] == $emp->as_oracle_code && $value['Ot'] == 'Y' && $value['Rocket'] != '' && $amount != $value['Tot Pay']){
+                    $basic = number_format((float)(($value['Tot Pay'] - 1850)/1.5), 2, '.', '');
+                    $house = number_format((float)($value['Tot Pay'] - 1850 - $basic), 2, '.', '');
+                    // $noMacth[] = $value['Tot Pay'].' - '.$basic.' - '.$house;
+                    $noMacth[$emp->ben_id] = DB::table("hr_benefits")
+                    ->where('ben_id', $emp->ben_id)
+                    ->update([
+                        'ben_current_salary' => $value['Tot Pay'],
+                        'ben_basic' => $basic,
+                        'ben_house_rent' => $house,
+                        'ben_cash_amount' => 0,
+                        'ben_bank_amount' => $value['Tot Pay'],
+                        'bank_name' => 'rocket',
+                        'bank_no' => '0'.$value['Rocket'],
+                    ]);
+                }
+            }
+        }
+        return $noMacth;
+    }
 
 
 
