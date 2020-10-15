@@ -76,7 +76,7 @@
                             <input type="hidden" name="as_id" value="{{ $employee->as_id }}">
 
 
-                            <div class="form-group text-center mt-5">
+                            <div class="form-group text-center">
                                 <label class="slide_upload" for="file_image" title="Click to change picture"> 
                                 <img id="image_load_id" src='{{ url(emp_profile_picture($employee)) }}' >
                                 </label>
@@ -120,13 +120,9 @@
                             </div>
                             @endif
 
+                             
                             
                             
-                            <div class="form-group has-required has-float-label">
-                                <input name="as_oracle_code" type="text" id="as_oracle_code" placeholder="Oracle Code" class="form-control" required="required" value="{{ $employee->as_oracle_code }}" required-optional="true" />
-                                <label  for="as_oracle_code"> Oracle Code </label>
-                            </div> 
-
 
                             <div class="form-group  has-float-label">
                                 <input name="as_rfid_code" type="text" id="as_rfid_code" placeholder="RFID Code" class="form-control"   value="{{ $employee->as_rfid_code }}"  />
@@ -137,41 +133,9 @@
 
                         </div>
                         <div class="col-sm-4">
-                             @if($cost_mapping_unit_status==false)
-                            <div class="form-group">
-                                <label  for="unit_map_checkbox"></label>
-                                <div class="checkbox">
-                                    <label style="padding-left: 10px;">
-                                        <input name="unit_map_checkbox" id="unit_map_checkbox" type="checkbox" class="ace"/>
-                                        <span class="lbl">&nbsp;&nbsp;&nbsp;Assign for Cost Mapping(Unit)</span>
-                                    </label>
-                                </div>
-                            </div>
-                            @endif
                             <div class="form-group has-required has-float-label">
-
-                                <input name="as_dob" type="date" id="date" placeholder="Date of Birth" class="age-validate form-control" required="required"  value="{{ $employee->as_dob->format('Y-m-d') }}" />
-
-                                <label  for="as_dob"> Date of Birth </label>
-                            </div>
-                            <div class="form-group">
-                                <label  for="gender"> Gender </label>
-                                <div class="radio">
-                                    <label>
-                                        {{ Form::radio('as_gender', 'Male', (($employee->as_gender=="Male")?true:false), ['class'=>'ace' ,'required'=>'required']) }}
-                                        <span class="lbl" value="Male"> Male</span>
-                                    </label>
-                                </div>
-                                <div class="radio">
-                                    <label>
-                                        {{ Form::radio('as_gender', 'Female', (($employee->as_gender=="Female")?true:false), ['class'=>'ace']) }}
-                                        <span class="lbl" value="Female"> Female</span>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="form-group has-required has-float-label">
-                                <input name="as_contact" type="text" id="as_contact" placeholder="Contact Number" class="form-control" required="required" value="{{ $employee->as_contact }}" />
-                                <label  for="as_contact"> Contact No. </label>
+                                <input name="as_oracle_code" type="text" id="as_oracle_code" placeholder="Oracle Code" class="form-control" required="required" value="{{ $employee->as_oracle_code }}" required-optional="true" />
+                                <label  for="as_oracle_code"> Oracle Code </label>
                             </div>
                             <div class="form-group has-required has-float-label">
 
@@ -185,57 +149,27 @@
                                 {{ Form::select('as_ot', [0=>'Non OT',1=>'OT'], $employee->as_ot, ['id'=>'as_ot',  'required'=>'required']) }}  
                                 <label  for="as_ot"> OT Status </label>
                             </div> 
+                            <div class="form-group has-required has-float-label">
+
+                                <input name="as_dob" type="date" id="date" placeholder="Date of Birth" class="age-validate form-control" required="required"  value="{{ $employee->as_dob->format('Y-m-d') }}" />
+
+                                <label  for="as_dob"> Date of Birth </label>
+                            </div>
+                            
+
+                            
+                            
+                            @if($cost_mapping_unit_status==false)
                             <div class="form-group">
-                                <label  for="status"> Status </label>
-                                <div class="radio">
-                                    <label>
-                                        {{ Form::radio('as_status', '1', (($employee->as_status=="1")?true:false), [ 'id'=>'active_status','class'=>'ace' ,'required'=>'required']) }}
-                                        <span class="lbl"> Active</span>
-                                    </label>
-                                    <label>
-                                        {{ Form::radio('as_status', '2', (($employee->as_status=="2")?true:false), ['class'=>'ace']) }}
-                                        <span class="lbl"> Resign</span>
-                                    </label>
-                                    <label>
-                                        {{ Form::radio('as_status', '3', (($employee->as_status=="3")?true:false), ['class'=>'ace']) }}
-                                        <span class="lbl"> Terminate</span>
-                                    </label>
-                                    <label>
-                                        {{ Form::radio('as_status', '4', (($employee->as_status=="4")?true:false), ['class'=>'ace']) }}
-                                        <span class="lbl"> Suspend</span>
-                                    </label>
-                                     <label>
-                                        {{ Form::radio('as_status', '5', (($employee->as_status=="5")?true:false), ['class'=>'ace']) }}
-                                        <span class="lbl"> Left</span>
-                                    </label>
-                                    <label>
-                                        {{ Form::radio('as_status', '6', (($employee->as_status=="6")?true:false), ['class'=>'ace']) }}
-                                        <span class="lbl"> Maternity</span>
+                                <label  for="unit_map_checkbox"></label>
+                                <div class="checkbox">
+                                    <label style="padding-left: 10px;">
+                                        <input name="unit_map_checkbox" id="unit_map_checkbox" type="checkbox" class="ace"/>
+                                        <span class="lbl">&nbsp;&nbsp;&nbsp;Assign for Cost Mapping(Unit)</span>
                                     </label>
                                 </div>
                             </div>
-                                    
-                            <div class="form-group has-required has-float-label">
-                                <input type="date" name="as_status_date" id="as_status_date" placeholder=" Date of Status" class="form-control datepicker" required="required" autocomplete="off" 
-                                @if($employee->as_status_date)
-                                    value="{{ $employee->as_status_date }}" 
-                                @else
-                                    value="{{date('Y-m-d')}}" 
-                                @endif   
-                                />
-                                <label  for="as_status_date"> Date of Status </label>
-                            </div>
-
-                            <div class="form-group has-float-label">
-                                <textarea name="as_remarks" id="as_remarks" class="form-control">{{ $employee->as_remarks }}</textarea>
-                                <label  for="as_remarks"> Remarks </label>           
-                            </div>
-                            
-                        </div>
-
-                        <div class="col-sm-4">
-                            <input type="hidden" name="temp_id" value="{{ $employee->temp_id }}">
-                           
+                            @endif
                             
                             
                             <div class="form-group has-required has-float-label select-search-group">
@@ -266,7 +200,52 @@
                                 </div> 
                             </div>
                            
+                            
+                        </div>
+
+                        <div class="col-sm-4">
+                           <input type="hidden" name="temp_id" value="{{ $employee->temp_id }}">
+                           <div class="form-group has-required has-float-label">
+                                <input name="as_contact" type="text" id="as_contact" placeholder="Contact Number" class="form-control" required="required" value="{{ $employee->as_contact }}" />
+                                <label  for="as_contact"> Contact No. </label>
+                            </div>
+                           
                             <!-- ENDS OF WORKER INFORMATION -->
+                            <label>Gender</label> <br>
+                            <div class="form-inline mb-3">
+                                <div class="custom-control custom-radio custom-control-inline">
+                                  <input type="radio" id="male" name="as_gender" class="custom-control-input" value="Male" @if($employee->as_gender=="Male") checked @endif>
+                                  <label class="custom-control-label" for="male"> Male </label>
+                               </div>
+
+                               <div class="custom-control custom-radio custom-control-inline">
+                                  <input type="radio" id="female" name="as_gender" class="custom-control-input" value="female" @if($employee->as_gender=="Female") checked @endif>
+                                  <label class="custom-control-label" for="female"> Female </label>
+                               </div>
+                            </div>
+
+                            {{-- <div class="form-group">
+                                <label  for="gender"> Gender </label>
+                                <div class="radio">
+                                    <label>
+                                        {{ Form::radio('as_gender', 'Male', (($employee->as_gender=="Male")?true:false), ['class'=>'ace' ,'required'=>'required']) }}
+                                        <span class="lbl" value="Male"> Male</span>
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label>
+                                        {{ Form::radio('as_gender', 'Female', (($employee->as_gender=="Female")?true:false), ['class'=>'ace']) }}
+                                        <span class="lbl" value="Female"> Female</span>
+                                    </label>
+                                </div>
+                            </div> --}}
+                            
+                            
+
+                            <div class="form-group has-float-label">
+                                <textarea name="as_remarks" id="as_remarks" class="form-control" style="height: 68px;">{{ $employee->as_remarks }}</textarea>
+                                <label  for="as_remarks"> Remarks </label>           
+                            </div>
                             
 
                             @if($cost_mapping_area_status == false)

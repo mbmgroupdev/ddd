@@ -6,10 +6,32 @@
             <h4 style="text-align: center;">Unit: {{$unit->hr_unit_name}}</h4>
             <p style="text-align: center;">Date: {{$date}}</p>
             <br>
+            <style type="text/css" media="print">
+                table{
+                    border-collapse: collapse;
+                }
+                table td{
+                    font-size: 11px;
+                    padding: 1px 0 !important;
+                    border-color:#777;
+                }
+                .table{
+                    width:100%;
+                }
+                .px-1{
+                    margin: 0 !important;
+                }
+                .pxx-2{
+                    padding: 2px !important;
+                    text-align: center;
+                }
+                .pagebreak { page-break-before: always; }
+            </style>
+
             <div style="display:flex;width: 100%;">
                 <div style="width:25%;display: inline-block;float:left;">
                         @php
-                            $tsw = (int) ((int) ($nonot['total'][138]??0)+(int) ($ot['total'][138]??0)+(int) ($nonot['total'][48]??0)+(int) ($ot['total'][48]??0));
+                            $tsw = (int) ((int) ($nonot['present'][138]??0)+(int) ($ot['present'][138]??0)+(int) ($nonot['present'][48]??0)+(int) ($ot['present'][48]??0));
 
                             if($tsw > 0){
 
@@ -17,6 +39,7 @@
                                 $tsw = 1;
                             }
                             $mmr = round((array_sum($nonot['present'])+array_sum($ot['present']))/$tsw,2);
+                            //dd(array_sum($nonot['present']), array_sum($ot['present']), $tsw);
                         @endphp
                         {{-- <tr>
                            <td></td>
@@ -26,50 +49,49 @@
                             </td>
                         </tr>
                     </table> --}}
-                    <h3 class="mb-1 " style="margin: 20px 0;font-size: 12px;font-weight: bold;border-left: 3px solid #099dae;line-height: 12px;padding-left: 10px;">MMR</h3>
+                    <h3 class="mb-1 px-1" style="margin: 20px 0;font-size: 12px;font-weight: bold;border-left: 3px solid #099dae;line-height: 12px;padding-left: 10px;">MMR</h3>
                     <div style="padding: 20px 13px;font-size: 40px;font-weight: bold;line-height: 40px;color: #099faf;">{{$mmr}}</div>
                 </div>
-                <div style="width:75%; display: inline-block;float:right;">
-                
-
+                <div style="flex-grow: 1;">
+                    
                     <table class="table table-bordered table-hover table-head" cellpadding="0" cellspacing="0" border='1'>
                         <tr>
-                            <th width="25%" style="text-align: left; padding: 5px;"> Summary : </th>
-                            <td width="15%" style="border: 1px; text-align: center; padding: 5px;">Employee</td>
-                            <td width="15%" style="border: 1px; text-align: center; padding: 5px;">Present</td>
-                            <td width="15%" style="border: 1px; text-align: center; padding: 5px;">Absent</td>
-                            <td width="15%" style="border: 1px; text-align: center; padding: 5px;">Leave</td>
-                            <td width="15%" style="border: 1px; text-align: center; padding: 5px;">Day Off</td>
+                            <th width="25%" style="text-align: left; padding: " class="pxx-2"> Summary : </th>
+                            <td width="15%" style="border: 1px; text-align: center; padding: " class="pxx-2">Employee</td>
+                            <td width="15%" style="border: 1px; text-align: center; padding: " class="pxx-2">Present</td>
+                            <td width="15%" style="border: 1px; text-align: center; padding: " class="pxx-2">Absent</td>
+                            <td width="15%" style="border: 1px; text-align: center; padding: " class="pxx-2">Leave</td>
+                            <td width="15%" style="border: 1px; text-align: center; padding: " class="pxx-2">Day Off</td>
 
                         </tr>
                     
 
                         <tr>
                             
-                            <th width="25%" style="text-align: left; padding: 5px;">OT Employee : </th>
-                            <td width="15%" style="text-align: center; padding: 5px;" >{{array_sum($ot['total'])}}</td>
-                            <td width="15%" style="text-align: center; padding: 5px;" >{{array_sum($ot['present'])}}</td>
-                            <td width="15%" style="text-align: center; padding: 5px;" >{{array_sum($ot['absent'])}}</td>
-                            <td width="15%" style="text-align: center; padding: 5px;" >{{array_sum($ot['leave'])}}</td>
-                            <td width="15%" style="text-align: center; padding: 5px;" >{{$ot['dayoff']??0}}</td>
+                            <th width="25%" style="text-align: left;">OT : </th>
+                            <td width="15%" style="text-align: center;" >{{array_sum($ot['total'])}}</td>
+                            <td width="15%" style="text-align: center;" >{{array_sum($ot['present'])}}</td>
+                            <td width="15%" style="text-align: center;" >{{array_sum($ot['absent'])}}</td>
+                            <td width="15%" style="text-align: center;" >{{array_sum($ot['leave'])}}</td>
+                            <td width="15%" style="text-align: center;" >{{$ot['dayoff']??0}}</td>
 
                         </tr>
                         <tr>
-                            <th width="25%" style="text-align: left; padding: 5px;">Non OT Employee : </th>
-                            <td width="15%" style="text-align: center; padding: 5px;" >{{array_sum($nonot['total'])}}</td>
-                            <td width="15%" style="text-align: center; padding: 5px;" >{{array_sum($nonot['present'])}}</td>
-                            <td width="15%" style="text-align: center; padding: 5px;" >{{array_sum($nonot['absent'])}}</td>
-                            <td width="15%" style="text-align: center; padding: 5px;" >{{array_sum($nonot['leave'])}}</td>
-                            <td width="15%" style="text-align: center; padding: 5px;" >{{$nonot['dayoff']??0}}</td>
+                            <th width="25%" style="text-align: left;">Non OT: </th>
+                            <td width="15%" style="text-align: center;" >{{array_sum($nonot['total'])}}</td>
+                            <td width="15%" style="text-align: center;" >{{array_sum($nonot['present'])}}</td>
+                            <td width="15%" style="text-align: center;" >{{array_sum($nonot['absent'])}}</td>
+                            <td width="15%" style="text-align: center;" >{{array_sum($nonot['leave'])}}</td>
+                            <td width="15%" style="text-align: center;" >{{$nonot['dayoff']??0}}</td>
 
                         </tr>
                         <tr>
-                            <th bgcolor="#C2C2C2" width="25%" style="text-align: left; padding: 5px;">Total:</th>
-                            <td bgcolor="#C2C2C2" width="15%" style="text-align: center; padding: 5px;"  >{{array_sum($ot['total'])+array_sum($nonot['total'])}}</td>
-                            <td bgcolor="#C2C2C2" width="15%" style="text-align: center; padding: 5px;"  >{{array_sum($ot['present'])+array_sum($nonot['present'])}}</td>
-                            <td bgcolor="#C2C2C2" width="15%" style="text-align: center; padding: 5px;"  >{{array_sum($ot['absent'])+array_sum($nonot['absent'])}}</td>
-                            <td bgcolor="#C2C2C2" width="15%" style="text-align: center; padding: 5px;"  >{{array_sum($ot['leave'])+array_sum($nonot['leave'])}}</td>
-                            <td bgcolor="#C2C2C2" width="15%" style="text-align: center; padding: 5px;"  >{{($ot['dayoff']??0)+($nonot['dayoff'])}}</td>
+                            <th bgcolor="#C2C2C2" width="25%" style="text-align: left;">Total:</th>
+                            <td bgcolor="#C2C2C2" width="15%" style="text-align: center;"  >{{array_sum($ot['total'])+array_sum($nonot['total'])}}</td>
+                            <td bgcolor="#C2C2C2" width="15%" style="text-align: center;"  >{{array_sum($ot['present'])+array_sum($nonot['present'])}}</td>
+                            <td bgcolor="#C2C2C2" width="15%" style="text-align: center;"  >{{array_sum($ot['absent'])+array_sum($nonot['absent'])}}</td>
+                            <td bgcolor="#C2C2C2" width="15%" style="text-align: center;"  >{{array_sum($ot['leave'])+array_sum($nonot['leave'])}}</td>
+                            <td bgcolor="#C2C2C2" width="15%" style="text-align: center;"  >{{($ot['dayoff']??0)+($nonot['dayoff'])}}</td>
 
                         </tr>
                     </table>
@@ -77,8 +99,7 @@
             </div>
             <br>
             <div style="margin: 10px 0;">
-                <h3 style="margin: 10px 0;font-size: 12px;
-    font-weight: bold;border-left: 3px solid #099dae;line-height: 12px;padding-left: 10px;">OT Holder List:</h3>
+                <h3 style="margin: 10px 0;font-size: 12px;font-weight: bold;border-left: 3px solid #099dae;line-height: 12px;padding-left: 10px;">OT Holder List:</h3>
             </div>
             <div class=" non_ot_holder_list">
                 <table class="table table-bordered table-head" cellpadding="0" cellspacing="0" border="1" width="100%">
@@ -182,16 +203,18 @@
                                 <tr class="grand-total" style="    background: #dadada;">
                                     <td  colspan="2" style="background: #fff;"></td>
                                     <td  style="padding:5px;"></td>
-                                    <td style=" text-align: center; padding: 5px;" id="grand_e"> {{$s_total}} </td>
-                                    <td style="text-align: center; padding: 5px;" id="grand_p"> {{$s_present}}</td>
-                                    <td style="text-align: center; padding: 5px;" id="grand_a"> {{$s_absent}}</td>
-                                    <td style="text-align: center; padding: 5px;" id="grand_l"> {{$s_leave}}</td>
-                                    <td style=" padding: 5px;"></td>
+                                    <td style=" text-align: center;" id="grand_e"> {{$s_total}} </td>
+                                    <td style="text-align: center;" id="grand_p"> {{$s_present}}</td>
+                                    <td style="text-align: center;" id="grand_a"> {{$s_absent}}</td>
+                                    <td style="text-align: center;" id="grand_l"> {{$s_leave}}</td>
+                                    <td style=""></td>
                                     
                                 </tr>
                                 @endif
                             @endforeach
                         @endforeach
+                        @php $nullsec = $ot['total']['']??0; @endphp
+                        @if($nullsec >0)
                         <tr>
                             <td style="text-align: center; padding: 10px;">{{($count+1)}}</td>
                             <td  style="text-align: center; padding: 10px; border:none!important; ">
@@ -218,20 +241,21 @@
                             </td>
                             
                         </tr>
+                        @endif
                         <tr class="label-info grand-total">
                             <td colspan="3" style="padding:5px;">Grand Total: </td>
-                            <td style="text-align: center; padding: 5px;" id="grand_e"> {{$t_total}} </td>
-                            <td style="text-align: center; padding: 5px;" id="grand_p"> {{$t_present}}</td>
-                            <td style="text-align: center; padding: 5px;" id="grand_a"> {{$t_absent}}</td>
-                            <td style="text-align: center; padding: 5px;" id="grand_l"> {{$t_leave}}</td>
-                            <td style="text-align: center; padding: 5px;"></td>
+                            <td style="text-align: center;" id="grand_e"> {{$t_total}} </td>
+                            <td style="text-align: center;" id="grand_p"> {{$t_present}}</td>
+                            <td style="text-align: center;" id="grand_a"> {{$t_absent}}</td>
+                            <td style="text-align: center;" id="grand_l"> {{$t_leave}}</td>
+                            <td style="text-align: center;"></td>
                             
                         </tr>
                      
                     </tbody>
                 </table>
             </div>
-            <div style="margin: 10px;"></div>
+            <div class="pagebreak" style="margin: 10px;"></div>
             <h3 style="margin: 10px 0;font-size: 12px;font-weight: bold;border-left: 3px solid #099dae;line-height: 12px;padding-left: 10px;">Non-OT Holder List:</h3>
             <div class="non_ot_holder_list" >
                 <table class="table table-bordered table-head" cellpadding="0" cellspacing="0" border="1" width="100%">
@@ -331,26 +355,28 @@
                                 <tr class="grand-total" style="    background: #dadada;">
                                     <td  colspan="2" style="background: #fff;"></td>
                                     <td  style="text-align: center;padding:5px;"></td>
-                                    <td style="text-align: center; padding: 5px;" id="grand_e"> {{$s_total}} </td>
-                                    <td style="text-align: center; padding: 5px;" id="grand_p"> {{$s_present}}</td>
-                                    <td style=" text-align: center;padding: 5px;" id="grand_a"> {{$s_absent}}</td>
-                                    <td style="text-align: center; padding: 5px;" id="grand_l"> {{$s_leave}}</td>
-                                    <td style=" padding: 5px;"></td>
+                                    <td style="text-align: center;" id="grand_e"> {{$s_total}} </td>
+                                    <td style="text-align: center;" id="grand_p"> {{$s_present}}</td>
+                                    <td style=" text-align: center" id="grand_a"> {{$s_absent}}</td>
+                                    <td style="text-align: center;" id="grand_l"> {{$s_leave}}</td>
+                                    <td style=""></td>
                                     
                                 </tr>
                                 @endif
                             @endforeach
                         @endforeach
+                        @php $nullsec = $nonot['total']['']??0; @endphp
+                        @if($nullsec >0)
                         <tr>
                             <td style="text-align: center; padding: 10px;">{{($count+1)}}</td>
                             <td  style="text-align: center; padding: 10px; border:none!important; ">
                                 N/A
                             </td>
                             <td style="text-align: center; padding: 10px;">N/A</td>
-                            <td width="7%" style="text-align: center; padding: 10px;">{{$ot['total']['']??0}}</td>
-                            <td width="7%" style="text-align: center; padding: 10px;">{{$ot['present']['']??0}}</td>
-                            <td width="7%" style="text-align: center; padding: 10px;">{{$ot['absent']['']??0}}</td>
-                            <td width="7%" style="text-align: center; padding: 10px;">{{$ot['leave']['']??0}}</td>
+                            <td width="7%" style="text-align: center; padding: 10px;">{{$nonot['total']['']??0}}</td>
+                            <td width="7%" style="text-align: center; padding: 10px;">{{$nonot['present']['']??0}}</td>
+                            <td width="7%" style="text-align: center; padding: 10px;">{{$nonot['absent']['']??0}}</td>
+                            <td width="7%" style="text-align: center; padding: 10px;">{{$nonot['leave']['']??0}}</td>
                             
                             
                             @php 
@@ -367,13 +393,14 @@
                             </td>
                             
                         </tr>
+                        @endif
                         <tr class="label-info grand-total">
                             <td colspan="3" style="padding:5px;">Grand Total: </td>
-                            <td style="text-align: center; padding: 5px;" id="grand_e"> {{$t_total}} </td>
-                            <td style="text-align: center; padding: 5px;" id="grand_p"> {{$t_present}}</td>
-                            <td style="text-align: center; padding: 5px;" id="grand_a"> {{$t_absent}}</td>
-                            <td style="text-align: center; padding: 5px;" id="grand_l"> {{$t_leave}}</td>
-                            <td style=" padding: 5px;"></td>
+                            <td style="text-align: center;" id="grand_e"> {{$t_total}} </td>
+                            <td style="text-align: center;" id="grand_p"> {{$t_present}}</td>
+                            <td style="text-align: center;" id="grand_a"> {{$t_absent}}</td>
+                            <td style="text-align: center;" id="grand_l"> {{$t_leave}}</td>
+                            <td style=""></td>
                             
                         </tr>
                      

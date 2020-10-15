@@ -6,6 +6,12 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Employee;
 use App\Models\Hr\HrAllGivenBenefits;
+use App\Models\Hr\SalaryAddDeduct;
+use App\Models\Hr\AttendanceBonus;
+use App\Models\Hr\HrMonthlySalary;
+use App\Models\Hr\HolidayRoaster;
+use App\Models\Hr\YearlyHolyDay;
+use Carbon\Carbon;
 use DB, Response, Auth, Exception, DataTables, Validator;
 
 class BenefitsCalculationController extends Controller
@@ -48,37 +54,37 @@ class BenefitsCalculationController extends Controller
     {
     	try{
             
-            $given_benefit_data = DB::table('hr_all_given_benefits')->where('associate_id', $request->emp_id)->first();
+            $benefits = DB::table('hr_all_given_benefits')->where('associate_id', $request->emp_id)->first();
+
+
 
 	    	$details = get_employee_by_id($request->emp_id);
+            $employee = $details;
 	        $date1 = strtotime($details->as_doj);
             $details->as_pic = emp_profile_picture($details);
             $details->date_join = $details->as_doj->format('Y-m-d');
-            if(!empty($given_benefit_data)){
-                // dd($given_benefit_data, 'sdsddsf');exit;
-               $date2 = strtotime(date('Y-m-d', strtotime($given_benefit_data->created_at) ) );
-               // dd($date2, date('Y-m-d', strtotime($given_benefit_data->created_at)) );exit; 
+            if(!empty($benefits)){
+
+               $date2 = strtotime(date('Y-m-d', strtotime($benefits->status_date) ) );
 
                $details->already_given = 'yes';   
-               $details->given_benefit_data = $given_benefit_data;   
+               $details->benefits = $benefits;   
             }
             else{
 	           $date2 = strtotime(date('Y-m-d'));
 
                $details->already_given = 'no';  
             }
-	        // dd($date1,$date2,$details->as_doj );
 
-	        // Formulate the Difference between two dates 
 	        $diff = abs($date2 - $date1);            
 	        // To get the year divide the resultant date into 
-	        // total seconds in a year (365*60*60*24) 
 	        $years = floor($diff / (365*60*60*24));  
 	        // To get the month, subtract it with years and 
-	        // divide the resultant date into 
-	        // total seconds in a month (30*60*60*24) 
 	        $months = floor(($diff - $years * 365*60*60*24) / (30*60*60*24));  
 	        $days = floor(($diff - $years * 365*60*60*24 - $months*30*60*60*24)/ (60*60*24));
+            if(!empty($benefits)){
+                $details->benefit = view('hr.common.end_of_job_final_pay', compact('employee','benefits','years','months'))->render();
+            }
 	        $details->service_years  = $years; 
 	        $details->service_months = $months;
 	        $details->service_days   = $days;
@@ -238,12 +244,19 @@ class BenefitsCalculationController extends Controller
                 $earned_leave = $earned->l??0;
 
 
-                $benefits = $this->storeBenefit($employee, $years, $months, $earned_leave, $request);
+                $data = $this->storeBenefit($employee, $years, $months, $earned_leave, $request);
+                $benefits = $data['benefit'];
+                $status = $data['status'];
+
                 $benefit_page = view('hr.common.end_of_job_final_pay', compact('employee','benefits','years','months'))->render();
+
+                $salary = $this->processPartialSalary($employee, $request->status_date, $status);
+
+                $salary_page = view('hr.common.partial_salary_sheet', compact('salary','employee' ))->render();
 
                 
 
-                return ['benefit' => $benefit_page, 'status' => 1];
+                return ['benefit' => $benefit_page, 'salary' => $salary_page, 'status' => 1];
             }
 
 
@@ -265,6 +278,7 @@ class BenefitsCalculationController extends Controller
         $service_days = 0;
         $death_days = 0;
         $termination_benefits = 0;
+        $notice_pay_month = 0;
 
         $per_day_basic = round($employee->ben_basic/30,2);
         $per_day_gross = round($employee->ben_current_salary/30,2);
@@ -291,19 +305,21 @@ class BenefitsCalculationController extends Controller
         }
 
         if($request->benefit_on == 'on_resign'){
-            if($request->notice == 1){
+            if($request->notice_pay == 1){
+                $notice_pay_month = 2;
                 $notice_pay = 2*$employee->ben_basic;
             }
             $total_payment = $earn_leave_payment + $service_benefit - $notice_pay;
             $status = 2;
         }else if($request->benefit_on == 'on_dismiss') {
-            $subsistance_allowance = ($request->suspension_days*$per_day_basic)/2;
-            $total_payment = $earn_leave_payment + $service_benefit + $subsistance_allowance;
+            $subsistance_allowance = ($request->suspension_days*$per_day_basic)+1850;
+            $total_payment = $earn_leave_payment + $subsistance_allowance;
             $status = 4;
         }
         else if($request->benefit_on == 'on_terminate') {
-            if($request->notice == 1){
+            if($request->notice_pay == 1){
                 $notice_pay = 4*$employee->ben_basic;
+                $notice_pay_month = 4;
             }
             $total_payment = $earn_leave_payment + $service_benefit + $notice_pay;
             $status = 3;
@@ -329,6 +345,8 @@ class BenefitsCalculationController extends Controller
             $status = 7;
 
             $total_payment = $earn_leave_payment + $service_benefit + $death_benefit;
+        }else if($request->benefit_on == 'on_retirement') {
+            $status = 8;
         }
 
       
@@ -341,6 +359,7 @@ class BenefitsCalculationController extends Controller
         $data->service_days             = $service_days;
         $data->service_benefits         = round($service_benefit??0,2); 
         $data->subsistance_allowance    = round($subsistence_allowance??0,2); 
+        $data->notice_pay_month         = $notice_pay_month; 
         $data->notice_pay               = round($notice_pay??0,2);
         $data->termination_benefits     = $termination_benefits??0;  
         $data->death_days               = round($death_days??0,2);  
@@ -360,7 +379,213 @@ class BenefitsCalculationController extends Controller
             ]);
         }
 
-        return $data;
+        return ['benefit' => $data, 'status' => $status];
+    }
+
+    public function processPartialSalary($employee, $salary_date, $status)
+    {
+        $month = date('m', strtotime($salary_date));
+        $year = date('Y', strtotime($salary_date));
+        $first_day = Carbon::create($salary_date)->firstOfMonth()->format('Y-m-d');
+
+        $table = get_att_table($employee->as_unit_id);
+        $att = DB::table($table)
+                ->select(
+                    DB::raw('COUNT(*) as present'),
+                    DB::raw('SUM(ot_hour) as ot_hour'),
+                    DB::raw('COUNT(CASE WHEN late_status =1 THEN 1 END) AS late')
+                )
+                ->where('as_id',$employee->as_id)
+                ->where('in_date','>=',$first_day)
+                ->where('in_date','<=', $salary_date)
+                ->first();
+
+        $late = $att->late??0;
+        $overtimes = $att->ot_hour??0; 
+        $present = $att->present??0;
+
+        $getSalary = DB::table('hr_monthly_salary')
+                    ->where([
+                        'as_id' => $employee->associate_id,
+                        'month' => $month,
+                        'year' => $year
+                    ])
+                    ->first();
+
+        // get holiday employee wise
+        $getHoliday = DB::table("hr_yearly_holiday_planner")
+                ->where('hr_yhp_unit', $employee->as_unit_id)
+                ->where('hr_yhp_dates_of_holidays','>=', $first_day)
+                ->where('hr_yhp_dates_of_holidays','<=', $salary_date)
+                ->where('hr_yhp_open_status', 0)
+                ->count();
+        $yearMonth = $year.'-'.$month;
+        $empdoj = $employee->as_doj;
+        $empdojMonth = date('Y-m', strtotime($employee->as_doj));
+        $empdojDay = date('d', strtotime($employee->as_doj));
+
+        if($employee->shift_roaster_status == 1){
+            // check holiday roaster employee
+            $holidayCount = HolidayRoaster::where('year', $year)
+            ->where('month', $month)
+            ->where('date','<=', $salary_date)
+            ->where('as_id', $employee->associate_id)
+            ->where('remarks', 'Holiday')
+            ->count();
+        }else{
+            // check holiday roaster employee
+            $RosterHolidayCount = HolidayRoaster::where('year', $year)
+            ->where('month', $month)
+            ->where('date','<=', $salary_date)
+            ->where('as_id', $employee->associate_id)
+            ->where('remarks', 'Holiday')
+            ->count();
+            // check General roaster employee
+            $RosterGeneralCount = HolidayRoaster::where('year', $year)
+            ->where('month', $month)
+            ->where('date','<=', $salary_date)
+            ->where('as_id', $employee->associate_id)
+            ->where('remarks', 'General')
+            ->count();
+             // check holiday shift employee
+            
+            if($empdojMonth == $yearMonth){
+                $shiftHolidayCount = YearlyHolyDay::
+                    where('hr_yhp_unit', $employee->as_unit_id)
+                    ->where('hr_yhp_dates_of_holidays','>=', $first_day)
+                    ->where('hr_yhp_dates_of_holidays','<=', $salary_date)
+                    ->where('hr_yhp_dates_of_holidays','>=', $empdoj)
+                    ->where('hr_yhp_open_status', 0)
+                    ->count();
+            }else{
+                $shiftHolidayCount = YearlyHolyDay::
+                    where('hr_yhp_unit', $employee->as_unit_id)
+                    ->where('hr_yhp_dates_of_holidays','>=', $first_day)
+                    ->where('hr_yhp_dates_of_holidays','<=', $salary_date)
+                    ->where('hr_yhp_open_status', 0)
+                    ->count();
+            }
+            
+            if($RosterHolidayCount > 0){
+                $getHoliday = ($RosterHolidayCount + $shiftHolidayCount) - $RosterGeneralCount;
+            }else{
+                $getHoliday = $shiftHolidayCount;
+            }
+        }
+
+
+        // get absent employee wise
+        $getAbsent = DB::table('hr_absent')
+            ->where('associate_id', $employee->associate_id)
+            ->where('date','>=', $first_day)
+            ->where('date','<=', $salary_date)
+            ->count();
+
+        // get leave employee wise
+
+        $leaveCount = DB::table('hr_leave')
+        ->select(
+            DB::raw("SUM(DATEDIFF(leave_to, leave_from)+1) AS total")
+        )
+        ->where('leave_ass_id', $employee->associate_id)
+        ->where('leave_from', '>=', $first_day)
+        ->where('leave_to', '<=', $salary_date)
+        ->first()->total??0;
+
+
+
+        // get salary add deduct id form salary add deduct table
+        $getAddDeduct = SalaryAddDeduct::
+        where('associate_id', $employee->associate_id)
+        ->where('month',  $month)
+        ->where('year',  $year)
+        ->first();
+
+        if($getAddDeduct != null){
+            $deductCost = ($getAddDeduct->advp_deduct + $getAddDeduct->cg_deduct + $getAddDeduct->food_deduct + $getAddDeduct->others_deduct);
+            $deductSalaryAdd = $getAddDeduct->salary_add;
+            $deductId = $getAddDeduct->id;
+        }else{
+            $deductCost = 0;
+            $deductSalaryAdd = 0;
+            $deductId = null;
+        }
+
+        //get add absent deduct calculation
+        $perDayBasic = round(($employee->ben_basic / 30),2);
+        $perDayGross = round(($employee->ben_current_salary / 30),2);
+        $getAbsentDeduct = $getAbsent * $perDayBasic;
+
+        //stamp = 10 by default all employee;
+        
+
+        if($employee->as_ot == 1){
+            $overtime_rate = number_format((($employee->ben_basic/208)*2), 2, ".", "");
+        } else {
+            $overtime_rate = 0;
+        }
+        $overtime_salary = 0;
+        
+
+        $attBonus = 0;
+        $totalLate = $late;
+        $salary_date = $present + $getHoliday + $leaveCount;
+        
+        $salary = [
+            'as_id' => $employee->associate_id,
+            'month' => $month,
+            'year'  => $year,
+            'gross' => $employee->ben_current_salary??0,
+            'basic' => $employee->ben_basic??0,
+            'house' => $employee->ben_house_rent??0,
+            'medical' => $employee->ben_medical??0,
+            'transport' => $employee->ben_transport??0,
+            'food' => $employee->ben_food??0,
+            'late_count' => $late,
+            'present' => $present,
+            'holiday' => $getHoliday,
+            'absent' => $getAbsent,
+            'leave' => $leaveCount,
+            'absent_deduct' => $getAbsentDeduct,
+            'salary_add_deduct_id' => $deductId,
+            'ot_rate' => $overtime_rate,
+            'ot_hour' => $overtimes,
+            'attendance_bonus' => $attBonus,
+            'emp_status' => $status,
+            'stamp' => 0,
+            'pay_status' => 2
+        ];
+        
+        
+
+        $stamp = 0;
+        
+        // get salary payable calculation
+        $salaryPayable = round((($perDayGross*$salary_date) - ($getAbsentDeduct + ($deductCost))),2);
+        $totalPayable = round(($salaryPayable + ($overtime_rate*$overtimes)),2);
+        
+        $salary['total_payable'] = $totalPayable;
+        $salary['salary_payable'] = $salaryPayable;
+
+
+        $getSalary = HrMonthlySalary::
+                    where('as_id', $employee->associate_id)
+                    ->where('month', $month)
+                    ->where('year', $year)
+                    ->first();
+
+        if($getSalary == null){
+            DB::table('hr_monthly_salary')->insert($salary);
+        }else{
+            DB::table('hr_monthly_salary')->where('id', $getSalary->id)->update($salary);  
+        }
+        $salary['deduct'] = $deductCost;
+        $salary['per_day_basic'] = $perDayBasic;
+        $salary['per_day_gross'] = $perDayGross;
+        $salary['salary_date'] = $salary_date;
+        
+
+        return $salary;
     }
 
     public function givenBenefitList(){
@@ -383,17 +608,19 @@ class BenefitsCalculationController extends Controller
         // dd($data);exit;
         return DataTables::of($data)->addIndexColumn()
                 ->editColumn('benefit_on', function($data){
-                    if($data->benefit_on == 'on_resign'){
+                    if($data->benefit_on == '2'){
                         return 'Resign Benefits';
                     }
-                    else if($data->benefit_on == 'on_dismiss'){
+                    else if($data->benefit_on == '4'){
                         return 'Dismiss Benefits';
                     }
-                    else if($data->benefit_on == 'on_terminate'){
+                    else if($data->benefit_on == '3'){
                         return 'Termination Benefits';
                     }
-                    else if($data->benefit_on == 'on_death'){
+                    else if($data->benefit_on == '7'){
                         return 'Death Benefits';
+                    }else if($data->benefit_on == '8'){
+                        return 'Retirement Benefits';
                     }
                 })
                 ->addColumn('total_amount', function($data){
@@ -402,8 +629,7 @@ class BenefitsCalculationController extends Controller
                             $data->subsistance_allowance+
                             $data->notice_pay+
                             $data->termination_benefits+
-                            $data->natural_death_benefits+
-                            $data->on_duty_accidental_death_benefits;
+                            $data->death_benefits;
                 })
                 ->rawColumns(['benefit_on','total_amount'])
                 ->toJson();
