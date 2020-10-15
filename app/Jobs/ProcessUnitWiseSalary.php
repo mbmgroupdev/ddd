@@ -55,8 +55,8 @@ class ProcessUnitWiseSalary implements ShouldQueue
         $year = $this->year;
         $month = $this->month;
         $yearMonth = $year.'-'.$month;
+        $monthDayCount  = Carbon::parse($yearMonth)->daysInMonth;
         try {
-            //&& date('Y-m', $getEmployee->as_doj) =< date('')
             if($getEmployee != null && date('Y-m', strtotime($getEmployee->as_doj)) <= $yearMonth){
 
                 //  get benefit employee associate id wise
@@ -64,7 +64,13 @@ class ProcessUnitWiseSalary implements ShouldQueue
                 where('ben_as_id', $getEmployee->associate_id)
                 ->first();
                 if($getBenefit != null){
-                    
+                    $today = $yearMonth.'-01';
+                    $firstDateMonth = Carbon::parse($today)->startOfMonth()->toDateString();
+                    if($monthDayCount > $this->totalDay){
+                        $lastDateMonth = $yearMonth.'-'.$this->totalDay;
+                    }else{
+                        $lastDateMonth = Carbon::parse($today)->endOfMonth()->toDateString();
+                    }
                     // get exists check this month data employee wise
                     $getSalary = HrMonthlySalary::
                     where('as_id', $getEmployee->associate_id)
@@ -75,12 +81,15 @@ class ProcessUnitWiseSalary implements ShouldQueue
                     // get absent employee wise
                     $getPresentOT = DB::table($this->tableName)
                         ->select([
-                            \DB::raw('count(as_id) as present'),
-                            \DB::raw('SUM(ot_hour) as ot')
+                            DB::raw('count(as_id) as present'),
+                            DB::raw('SUM(ot_hour) as ot'),
+                            DB::raw('COUNT(CASE WHEN late_status =1 THEN 1 END) AS late'),
+                            DB::raw('COUNT(CASE WHEN remarks ="HD" THEN 1 END) AS halfday')
 
                         ])
                         ->where('as_id', $this->asId)
-                        ->where('in_time', 'LIKE', $yearMonth.'%')
+                        ->where('in_date','>=',$firstDateMonth)
+                        ->where('in_date','<=', $lastDateMonth)
                         ->first();
 
                     if(!isset($getPresentOT->present)){
@@ -91,17 +100,8 @@ class ProcessUnitWiseSalary implements ShouldQueue
                         $getPresentOT->ot = 0;
                     }
                     
-                    $lateCount = DB::table($this->tableName)
-                        ->where('as_id', $this->asId)
-                        ->where('in_time', 'LIKE', $yearMonth.'%')
-                        ->where('late_status', 1)
-                        ->count();
-
-                    $halfCount = DB::table($this->tableName)
-                        ->where('as_id', $this->asId)
-                        ->where('in_time', 'LIKE', $yearMonth.'%')
-                        ->where('remarks', 'HD')
-                        ->count();
+                    $lateCount = $getPresentOT->late??0;
+                    $halfCount = $getPresentOT->halfday??0;
 
                     $empdoj = $getEmployee->as_doj;
                     $empdojMonth = date('Y-m', strtotime($getEmployee->as_doj));
@@ -109,7 +109,7 @@ class ProcessUnitWiseSalary implements ShouldQueue
 
                     if($getEmployee->shift_roaster_status == 1){
                         // check holiday roaster employee
-                        $holidayCount = HolidayRoaster::where('year', $year)
+                        $getHoliday = HolidayRoaster::where('year', $year)
                         ->where('month', $month)
                         ->where('as_id', $getEmployee->associate_id)
                         ->where('remarks', 'Holiday')
@@ -132,64 +132,52 @@ class ProcessUnitWiseSalary implements ShouldQueue
                         if($empdojMonth == $yearMonth){
                             $shiftHolidayCount = YearlyHolyDay::
                                 where('hr_yhp_unit', $getEmployee->as_unit_id)
-                                ->whereYear('hr_yhp_dates_of_holidays', $year)
-                                ->whereMonth('hr_yhp_dates_of_holidays', $month)
+                                ->where('hr_yhp_dates_of_holidays','>=', $firstDateMonth)
+                                ->where('hr_yhp_dates_of_holidays','<=', $lastDateMonth)
                                 ->where('hr_yhp_dates_of_holidays','>=', $empdoj)
                                 ->where('hr_yhp_open_status', 0)
                                 ->count();
                         }else{
                             $shiftHolidayCount = YearlyHolyDay::
                                 where('hr_yhp_unit', $getEmployee->as_unit_id)
-                                ->whereYear('hr_yhp_dates_of_holidays', $year)
-                                ->whereMonth('hr_yhp_dates_of_holidays', $month)
+                                ->where('hr_yhp_dates_of_holidays','>=', $firstDateMonth)
+                                ->where('hr_yhp_dates_of_holidays','<=', $lastDateMonth)
                                 ->where('hr_yhp_open_status', 0)
                                 ->count();
                         }
                         
-                        if($RosterHolidayCount > 0){
-                            $holidayCount = ($RosterHolidayCount + $shiftHolidayCount) - $RosterGeneralCount;
+                        if($RosterHolidayCount > 0 || $RosterGeneralCount > 0){
+                            $getHoliday = ($RosterHolidayCount + $shiftHolidayCount) - $RosterGeneralCount;
                         }else{
-                            $holidayCount = $shiftHolidayCount;
+                            $getHoliday = $shiftHolidayCount;
                         }
                     }
-
-
 
                     // get absent employee wise
-                    $getAbsent = Absent::
-                    where('associate_id', $getEmployee->associate_id)
-                    ->whereMonth('date', '=', $month)
-                    ->whereYear('date', '=', $year)
-                    ->count();
+                    // $getAbsent = DB::table('hr_absent')
+                    //     ->where('associate_id', $getEmployee->associate_id)
+                    //     ->where('date','>=', $firstDateMonth)
+                    //     ->where('date','<=', $lastDateMonth)
+                    //     ->count();
 
                     // get leave employee wise
-                    $getLeave = Leave::
-                    where('leave_ass_id', $getEmployee->associate_id)
-                    ->where('leave_from', 'LIKE', $yearMonth.'%')
-                    ->where('leave_to', 'LIKE', $yearMonth.'%')
-                    ->where('leave_status', 1)
-                    ->get();
 
-                    $leaveCount = 0;
-                    if(count($getLeave) > 0){
-                        foreach ($getLeave as $leave) {
-                            $day = 1;
-                            $date = Carbon::parse($leave->leave_from);
-                            $now = Carbon::parse($leave->leave_to);
-                            $diff = $date->diffInDays($now);
-                            $leaveCount += $diff + $day;
-                        }
-                    }
+                    $leaveCount = DB::table('hr_leave')
+                    ->select(
+                        DB::raw("SUM(DATEDIFF(leave_to, leave_from)+1) AS total")
+                    )
+                    ->where('leave_ass_id', $getEmployee->associate_id)
+                    ->where('leave_status', 1)
+                    ->where('leave_from', '>=', $firstDateMonth)
+                    ->where('leave_to', '<=', $lastDateMonth)
+                    ->first()->total??0;
 
                     if($empdojMonth == $yearMonth){
                         $totalDay = $this->totalDay - ((int) $empdojDay-1);
                     }else{
                         $totalDay = $this->totalDay;
                     }
-                    $getHoliday = $totalDay - ($getPresentOT->present + $getAbsent + $leaveCount);
-                    if($getHoliday > $holidayCount){
-                        $getHoliday = $holidayCount;
-                    }
+                    $getAbsent = $totalDay - ($getPresentOT->present + $getHoliday + $leaveCount);
 
                     // get salary add deduct id form salary add deduct table
                     $getAddDeduct = SalaryAddDeduct::
@@ -215,7 +203,7 @@ class ProcessUnitWiseSalary implements ShouldQueue
                     $getHalfDeduct = $halfCount * ($perDayBasic / 2);
 
                     $stamp = 10;
-                    $payStatus = 1;
+                    $payStatus = 1; // cash pay
                     if($getBenefit->ben_bank_amount != 0 && $getBenefit->ben_cash_amount != 0){
                         $payStatus = 3; // partial pay
                     }elseif($getBenefit->ben_bank_amount != 0){
@@ -256,7 +244,7 @@ class ProcessUnitWiseSalary implements ShouldQueue
                             $leaveAllow = 1;
                             $absentAllow = 1;
                         }
-                        $today = $yearMonth.'-01';
+                        
                         if ($lateCount <= $lateAllow && $leaveCount <= $leaveAllow && $getAbsent <= $absentAllow && $getEmployee->as_emp_type_id == 3) {
                             $lastMonth = Carbon::parse($today);
                             $lastMonth = $lastMonth->startOfMonth()->subMonth()->format('n');
@@ -291,9 +279,7 @@ class ProcessUnitWiseSalary implements ShouldQueue
                         }
                     }
                     
-                    $monthDayCount  = Carbon::parse($yearMonth)->daysInMonth;
-
-                    if($empdojMonth == $yearMonth && date('d', strtotime($getEmployee->as_doj)) > 1){
+                    if(($empdojMonth == $yearMonth && date('d', strtotime($getEmployee->as_doj)) > 1) || $monthDayCount > $this->totalDay){
                         $perDayGross   = $getBenefit->ben_current_salary/$monthDayCount;
                         $totalGrossPay = ($perDayGross * $totalDay);
                         $salaryPayable = $totalGrossPay - ($getAbsentDeduct + $getHalfDeduct + $deductCost + $stamp);
@@ -304,7 +290,25 @@ class ProcessUnitWiseSalary implements ShouldQueue
 
                     $ot = round((float)($overtime_rate) * ($getPresentOT->ot));
                     
-                    $totalPayable = $salaryPayable + $ot + $deductSalaryAdd + $attBonus + $productionBonus + $leaveAdjust;
+                    $totalPayable = round((float)($salaryPayable + $ot + $deductSalaryAdd + $attBonus + $productionBonus + $leaveAdjust));
+
+                    // cash & bank part
+                    if($payStatus == 1){
+                        $cashPayable = $totalPayable;
+                        $bankPayable = 0; 
+                    }elseif($payStatus == 2){
+                        $cashPayable = 0;
+                        $bankPayable = $totalPayable;
+                    }else{
+                        if($getBenefit->ben_bank_amount <= $totalPayable){
+                            $cashPayable = $totalPayable - $getBenefit->ben_bank_amount;
+                            $bankPayable = $getBenefit->ben_bank_amount;
+                        }else{
+                            $cashPayable = 0;
+                            $bankPayable = $totalPayable;
+                        }
+                        
+                    }
 
                     if($getSalary == null){
                         $salary = [
@@ -334,7 +338,9 @@ class ProcessUnitWiseSalary implements ShouldQueue
                             'stamp' => $stamp,
                             'pay_status' => $payStatus,
                             'emp_status' => $getEmployee->as_status,
-                            'total_payable' => $totalPayable
+                            'total_payable' => $totalPayable,
+                            'cash_payable' => $cashPayable,
+                            'bank_payable' => $bankPayable
                         ];
                         HrMonthlySalary::insert($salary);
                     }else{
@@ -361,7 +367,9 @@ class ProcessUnitWiseSalary implements ShouldQueue
                             'stamp' => $stamp,
                             'pay_status' => $payStatus,
                             'emp_status' => $getEmployee->as_status,
-                            'total_payable' => $totalPayable
+                            'total_payable' => $totalPayable,
+                            'cash_payable' => $cashPayable,
+                            'bank_payable' => $bankPayable
                         ];
                         HrMonthlySalary::where('id', $getSalary->id)->update($salary);
                     }

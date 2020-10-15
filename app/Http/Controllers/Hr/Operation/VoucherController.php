@@ -193,7 +193,8 @@ class VoucherController extends Controller
                 ->select(
                     DB::raw('COUNT(*) as present'),
                     DB::raw('SUM(ot_hour) as ot_hour'),
-                    DB::raw('COUNT(CASE WHEN late_status =1 THEN 1 END) AS late')
+                    DB::raw('COUNT(CASE WHEN late_status =1 THEN 1 END) AS late'),
+                    DB::raw('COUNT(CASE WHEN remarks ="HD" THEN 1 END) AS halfday')
                 )
                 ->where('as_id',$employee->as_id)
                 ->where('in_date','>=',$first_day)
@@ -203,7 +204,7 @@ class VoucherController extends Controller
         $late = $att->late??0;
         $overtimes = $att->ot_hour??0; 
         $present = $att->present??0;
-
+        $halfCount = $att->halfday??0;
         $getSalary = DB::table('hr_monthly_salary')
                     ->where([
                         'as_id' => $employee->associate_id,
@@ -213,12 +214,7 @@ class VoucherController extends Controller
                     ->first();
 
         // get holiday employee wise
-        $getHoliday = DB::table("hr_yearly_holiday_planner")
-                ->where('hr_yhp_unit', $employee->as_unit_id)
-                ->where('hr_yhp_dates_of_holidays','>=', $first_day)
-                ->where('hr_yhp_dates_of_holidays','<=', $salary_date)
-                ->where('hr_yhp_open_status', 0)
-                ->count();
+        
         $yearMonth = $month[0].'-'.$month[1];
         $empdoj = $employee->as_doj;
         $empdojMonth = date('Y-m', strtotime($employee->as_doj));
@@ -266,7 +262,7 @@ class VoucherController extends Controller
                     ->count();
             }
             
-            if($RosterHolidayCount > 0){
+            if($RosterHolidayCount > 0 || $RosterGeneralCount > 0){
                 $getHoliday = ($RosterHolidayCount + $shiftHolidayCount) - $RosterGeneralCount;
             }else{
                 $getHoliday = $shiftHolidayCount;
@@ -288,11 +284,10 @@ class VoucherController extends Controller
             DB::raw("SUM(DATEDIFF(leave_to, leave_from)+1) AS total")
         )
         ->where('leave_ass_id', $employee->associate_id)
+        ->where('leave_status', 1)
         ->where('leave_from', '>=', $first_day)
         ->where('leave_to', '<=', $salary_date)
         ->first()->total??0;
-
-
 
         // get salary add deduct id form salary add deduct table
         $getAddDeduct = SalaryAddDeduct::
@@ -315,10 +310,9 @@ class VoucherController extends Controller
         $perDayBasic = round(($employee->ben_basic / 30),2);
         $perDayGross = round(($employee->ben_current_salary / 30),2);
         $getAbsentDeduct = $getAbsent * $perDayBasic;
-
+        $getHalfDeduct = $halfCount * ($perDayBasic / 2);
         //stamp = 10 by default all employee;
         
-
         if($employee->as_ot == 1){
             $overtime_rate = number_format((($employee->ben_basic/208)*2), 2, ".", "");
         } else {
@@ -347,6 +341,7 @@ class VoucherController extends Controller
             'absent' => $getAbsent,
             'leave' => $leaveCount,
             'absent_deduct' => $getAbsentDeduct,
+            'half_day_deduct' => $getHalfDeduct,
             'salary_add_deduct_id' => $deductId,
             'ot_rate' => $overtime_rate,
             'ot_hour' => $overtimes,
@@ -356,7 +351,6 @@ class VoucherController extends Controller
         $salary['per_day_gross'] = $perDayGross;
         $salary['salary_date'] = $salary_date;
         
-
         $stamp = 10;
 
         if($employee->as_emp_type_id == 3){
@@ -364,18 +358,16 @@ class VoucherController extends Controller
         }
         
         // get salary payable calculation
-        $salaryPayable = round((($perDayGross*$salary_date) - ($getAbsentDeduct + ($deductCost))),2);
+        $salaryPayable = round((($perDayGross*$salary_date) - ($getAbsentDeduct + $getHalfDeduct + ($deductCost))),2);
         $totalPayable = round(($salaryPayable + ($overtime_rate*$overtimes)),2);
         $salary['deduct'] = $deductCost;
-        if($totalPayable > 1010){
+        if($totalPayable > 1000){
             $salaryPayable = $salaryPayable - $stamp;
             $totalPayable = $totalPayable - $stamp;
             $salary['deduct'] = (($deductCost) + $stamp);
         }
         $salary['total_payable'] = $totalPayable;
         $salary['salary_payable'] = $salaryPayable;
-
-        
 
         return $salary;
     }
