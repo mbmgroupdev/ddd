@@ -22,6 +22,19 @@ class AttendaceBulkManualController extends Controller
     public function bulkManual(Request $request)
     {
         try {
+            if($request->associate != null && $request->month != null){
+                $check['month'] = date('m', strtotime($request->month));
+                $check['year'] = date('Y', strtotime($request->month));
+                $check['unit_id'] = Employee::where('associate_id', $request->associate)->select('as_unit_id')->pluck('as_unit_id');
+                $checkL = monthly_activity_close($check);
+                if($checkL == 1){
+                    toastr()->error('Attendace Modification Lock');
+                    return back();
+                }
+            }else{
+                toastr()->error('Something went wrong, please try again!');
+                return back();
+            }
             $attendance = array();
             $info = array();
             $joinExist = array();
