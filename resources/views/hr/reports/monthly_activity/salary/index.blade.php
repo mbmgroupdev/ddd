@@ -55,14 +55,15 @@
                 <div class="col-12">
                     <form class="" role="form" id="activityReport" method="get" action="#"> 
                         <div class="panel">
+                          
                             {{-- <div class="panel-heading">
                                 <h6>Monthly Salary Report</h6>
                             </div> --}}
                             <div class="panel-body pb-0">
                                 <div class="row">
                                     <div class="col-3">
-                                        <div class="form-group has-float-label has-required select-search-group">
-                                            <select name="unit" class="form-control capitalize select-search" id="unit" required="">
+                                        <div class="form-group has-float-label select-search-group">
+                                            <select name="unit" class="form-control capitalize select-search" id="unit">
                                                 <option selected="" value="">Choose...</option>
                                                 @foreach($unitList as $key => $value)
                                                 <option value="{{ $key }}">{{ $value }}</option>
@@ -71,8 +72,17 @@
                                           <label for="unit">Unit</label>
                                         </div>
                                         <div class="form-group has-float-label select-search-group">
+                                            <select name="location" class="form-control capitalize select-search" id="location">
+                                                <option selected="" value="">Choose Location...</option>
+                                                @foreach($locationList as $key => $value)
+                                                <option value="{{ $key }}">{{ $value }}</option>
+                                                @endforeach
+                                            </select>
+                                          <label for="location">Location</label>
+                                        </div>
+                                        <div class="form-group has-float-label select-search-group">
                                             <select name="area" class="form-control capitalize select-search" id="area">
-                                                <option selected="" value="">Choose...</option>
+                                                <option selected="" value="">Choose Area...</option>
                                                 @foreach($areaList as $key => $value)
                                                 <option value="{{ $key }}">{{ $value }}</option>
                                                 @endforeach
@@ -81,7 +91,7 @@
                                         </div>
                                         <div class="form-group has-float-label select-search-group">
                                             <select name="department" class="form-control capitalize select-search" id="department" disabled>
-                                                <option selected="" value="">Choose...</option>
+                                                <option selected="" value="">Choose Department...</option>
                                             </select>
                                             <label for="department">Department</label>
                                         </div>
@@ -90,19 +100,19 @@
                                        
                                         <div class="form-group has-float-label select-search-group">
                                             <select name="section" class="form-control capitalize select-search " id="section" disabled>
-                                                <option selected="" value="">Choose...</option>
+                                                <option selected="" value="">Choose Section...</option>
                                             </select>
                                             <label for="section">Section</label>
                                         </div>
                                         <div class="form-group has-float-label select-search-group">
                                             <select name="subSection" class="form-control capitalize select-search" id="subSection" disabled>
-                                                <option selected="" value="">Choose...</option> 
+                                                <option selected="" value="">Choose Sub Section...</option> 
                                             </select>
                                             <label for="subSection">Sub Section</label>
                                         </div>
                                         <div class="form-group has-float-label select-search-group">
                                             <select name="floor_id" class="form-control capitalize select-search" id="floor_id" disabled >
-                                                <option selected="" value="">Choose...</option>
+                                                <option selected="" value="">Choose Floor...</option>
                                             </select>
                                             <label for="floor_id">Floor</label>
                                         </div>
@@ -111,7 +121,7 @@
 
                                         <div class="form-group has-float-label select-search-group">
                                             <select name="line_id" class="form-control capitalize select-search" id="line_id" disabled >
-                                                <option selected="" value="">Choose...</option>
+                                                <option selected="" value="">Choose Line...</option>
                                             </select>
                                             <label for="line_id">Line</label>
                                         </div>
@@ -150,12 +160,19 @@
                                           <input type="month" class="report_date form-control" id="report-date" name="month" placeholder=" Month-Year"required="required" value="{{ date('Y-m', strtotime('-1 month')) }}"autocomplete="off" />
                                           <label for="report-date">Month</label>
                                         </div>
-                                        <div class="form-group has-float-label select-search-group">
+                                        <div class="form-group has-float-label has-required select-search-group">
                                             <?php
                                               $status = ['1'=>'Active','2'=>'Resign','3'=>'Terminate','4'=>'Suspend','5'=>'Left', '6'=>'Maternity'];
                                             ?>
-                                            {{ Form::select('employee_status', $status, 1, ['placeholder'=>'Select Employee Status ', 'class'=>'form-control capitalize select-search', 'id'=>'estatus']) }}
+                                            {{ Form::select('employee_status', $status, 1, ['placeholder'=>'Select Employee Status ', 'class'=>'form-control capitalize select-search', 'id'=>'estatus', 'required']) }}
                                             <label for="estatus">Status</label>
+                                        </div>
+                                        <div class="form-group has-float-label select-search-group">
+                                            <?php
+                                              $payType = ['cash'=>'Cash', 'rocket'=>'Rocket', 'bKash'=>'bKash', 'dbbl'=>'Duch-Bangla Bank Limited.'];
+                                            ?>
+                                            {{ Form::select('pay_status', $payType, 1, ['placeholder'=>'Select Payment Type', 'class'=>'form-control capitalize select-search', 'id'=>'paymentType']) }}
+                                            <label for="paymentType">Payment Type</label>
                                         </div>
                                         <div class="form-group">
                                           <button class="btn btn-primary nextBtn btn-lg pull-right" type="submit" ><i class="fa fa-save"></i> Generate</button>
@@ -183,7 +200,7 @@
                        <div class="iq-header-title w-100">
                           <div class="row">
                             <div class="col-3">
-                              
+                              <button class="btn btn-sm btn-primary hidden-print" onclick="printDiv('report_section')" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report"><i class="las la-print"></i> </button>
                             </div>
                             <div class="col-6 text-center">
                               <h4 class="card-title capitalize inline">
@@ -215,7 +232,6 @@
                                   </div>
                                 </div>
                               </div>
-                              
                               
                             </div>
                           </div>
@@ -261,14 +277,19 @@
           $("#result-data").html(loader);
           $("#single-employee-search").hide();
           var unit = $('select[name="unit"]').val();
+          var location = $('select[name="location"]').val();
           var area = $('select[name="area"]').val();
           var month = $('input[name="month"]').val();
           var stauts = $('input[name="employee_status"]').val();
           var format = $('input[name="report_format"]').val();
           var form = $("#activityReport");
           var flag = 0;
-          if(unit === '' || month === '' || stauts === ''){
+          if(month === '' || stauts === ''){
             flag = 1;
+          }
+          if(unit === '' && location === ''){
+            flag = 1;
+            $.notify('Select One Unit Or Location', 'error');
           }
           if(flag === 0){
             $('html, body').animate({
@@ -280,22 +301,22 @@
                 data: form.serialize(), // serializes the form's elements.
                 success: function(response)
                 {
-                  // console.log(response);
-                  if(response !== 'error'){
-                    $("#result-data").html(response);
-                  }else{
-                    // console.log(response);
-                    $("#result-data").html('');
-                  }
-                  if(format == 0 && response !== 'error'){
-                    $("#single-employee-search").show();
-                    $('.list_view').addClass('active').attr('disabled', true);
-                    $('.grid_view').removeClass('active').attr('disabled', false);
-                  }else{
-                    $("#single-employee-search").hide();
-                    $('.grid_view').addClass('active').attr('disabled', true);
-                    $('.list_view').removeClass('active').attr('disabled', false);
-                  }
+                  console.log(response);
+                  // if(response !== 'error'){
+                  //   $("#result-data").html(response);
+                  // }else{
+                  //   // console.log(response);
+                  //   $("#result-data").html('');
+                  // }
+                  // if(format == 0 && response !== 'error'){
+                  //   $("#single-employee-search").show();
+                  //   $('.list_view').addClass('active').attr('disabled', true);
+                  //   $('.grid_view').removeClass('active').attr('disabled', false);
+                  // }else{
+                  //   $("#single-employee-search").hide();
+                  //   $('.grid_view').addClass('active').attr('disabled', true);
+                  //   $('.list_view').removeClass('active').attr('disabled', false);
+                  // }
                 },
                 error: function (reject) {
                     console.log(reject);
@@ -309,6 +330,8 @@
         
         // change unit
         $('#unit').on("change", function(){
+            $('#floor_id').attr('disabled', true);
+            $('#line_id').attr('disabled', true);
             $.ajax({
                 url : "{{ url('hr/attendance/floor_by_unit') }}",
                 type: 'get',
@@ -340,6 +363,7 @@
                  console.log(reject);
                }
             });
+
         });
         //Load Department List By Area ID
         $('#area').on("change", function(){
