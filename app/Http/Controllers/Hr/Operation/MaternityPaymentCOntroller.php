@@ -9,6 +9,7 @@ use Collective\Html\HtmlFacade;
 use App\Models\Hr\Absent;
 use App\Models\District;
 use App\Models\Hr\MaternityLeave;
+use App\Models\Hr\Leave;
 use App\Models\Hr\MaternityMedical;
 use App\Models\Hr\MaternityMedicalRecord;
 use App\Models\Hr\MaternityNominee;
@@ -560,6 +561,25 @@ class MaternityPaymentController extends Controller
 			
 
 			if($leave->save()){
+				# update employee status
+				DB::table('hr_as_basic_info')
+	            ->where('associate_id', $leave->associate_id)
+	            ->update([
+	                 'as_status' => 6,  
+	                 'as_status_date' => $request->leave_from 
+	            ]);
+
+	            # store leave record
+	            Leave::create([
+	            	'leave_ass_id' => $leave->associate_id,
+	            	'leave_type' => 'Maternity',
+	            	'leave_from' => $request->leave_from,
+	            	'leave_to' => $request->leave_to,
+	            	'leave_applied_date' => $leave->applied_date,
+	            	'leave_status' => 1,
+	            	'leave_updated_by' => auth()->user()->associate_id
+	            ]);
+
 				# store nominee information
 
 				$nominee = new MaternityNominee();

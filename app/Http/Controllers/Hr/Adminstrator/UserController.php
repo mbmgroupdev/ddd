@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Hr\Adminstrator;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Hr\Unit;
+use App\Models\Hr\Location;
 use App\Models\Employee;
 use App\Models\Merch\Buyer;
 use Spatie\Permission\Models\Role;
@@ -33,9 +34,10 @@ class UserController extends Controller
     {
         $roles = Role::get()->pluck('name', 'name');
         $units = Unit::get();
+        $locations = Location::where('hr_location_status', 1)->get();
         /*$buyers= Buyer::get();
         $templates = DB::table('hr_buyer_template')->get();*/
-        return view('hr.adminstrator.add-user', compact('roles', 'units'));
+        return view('hr.adminstrator.add-user', compact('roles', 'units', 'locations'));
     }
 
     /**
@@ -58,6 +60,7 @@ class UserController extends Controller
         }else{
 
             $unit_permissions = implode(",", $request->input("unit_permissions"));
+            $location_permission = implode(",", $request->input("location_permission"));
 
             $user = new User();
             $user->name = $request->name;
@@ -65,6 +68,8 @@ class UserController extends Controller
             $user->email = $request->email;
             $user->password = Hash::make('123456');
             $user->unit_permissions = $unit_permissions;
+            $user->location_permission = $location_permission;
+            $user->created_by = auth()->user()->id??'';
 
             $user->save();
 
@@ -338,9 +343,10 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         $roles = Role::get()->pluck('name', 'name');
         $units = Unit::get();
+        $locations = Location::where('hr_location_status', 1)->get();
         $role = $user->roles()->first()->name??'';
 
-        return view('hr.adminstrator.edit-user', compact('user','roles', 'units','role'));
+        return view('hr.adminstrator.edit-user', compact('user','roles', 'units','role','locations'));
     }
 
     /**
@@ -368,6 +374,7 @@ class UserController extends Controller
                 $user->associate_id = $request->associate_id;
             }
             $user->unit_permissions = implode(",", $request->input("unit_permissions"));
+            $user->location_permission = implode(",", $request->input("location_permission"));
 
             $user->save();
 
@@ -583,6 +590,8 @@ class UserController extends Controller
             $search = $request->keyword;
             $data = Employee::select("associate_id", DB::raw('CONCAT_WS(" - ", associate_id, as_name) AS user_name'))
                 ->whereIn('as_unit_id', auth()->user()->unit_permissions())
+                ->whereIn('as_location', auth()->user()->location_permissions())
+                ->whereIn('as_status', [1,6])
                 ->where(function($q) use($search) {
                     $q->where("associate_id", "LIKE" , "%{$search}%");
                     $q->orWhere("as_name", "LIKE" , "%{$search}%");
@@ -602,7 +611,9 @@ class UserController extends Controller
             $search = $request->keyword;
             $data = Employee::select("associate_id", DB::raw('CONCAT_WS(" - ", associate_id, as_name) AS user_name'))
                 ->where('as_gender', 'Female')
+                ->whereIn('as_status', [1,6])
                 ->whereIn('as_unit_id', auth()->user()->unit_permissions())
+                ->whereIn('as_location', auth()->user()->location_permissions())
                 ->where(function($q) use($search) {
                     $q->where("associate_id", "LIKE" , "%{$search}%");
                     $q->orWhere("as_name", "LIKE" , "%{$search}%");

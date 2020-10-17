@@ -412,13 +412,7 @@ class BenefitsCalculationController extends Controller
                     ])
                     ->first();
 
-        // get holiday employee wise
-        $getHoliday = DB::table("hr_yearly_holiday_planner")
-                ->where('hr_yhp_unit', $employee->as_unit_id)
-                ->where('hr_yhp_dates_of_holidays','>=', $first_day)
-                ->where('hr_yhp_dates_of_holidays','<=', $salary_date)
-                ->where('hr_yhp_open_status', 0)
-                ->count();
+        
         $yearMonth = $year.'-'.$month;
         $empdoj = $employee->as_doj;
         $empdojMonth = date('Y-m', strtotime($employee->as_doj));
@@ -466,7 +460,7 @@ class BenefitsCalculationController extends Controller
                     ->count();
             }
             
-            if($RosterHolidayCount > 0){
+            if($RosterHolidayCount > 0 || $RosterGeneralCount > 0){
                 $getHoliday = ($RosterHolidayCount + $shiftHolidayCount) - $RosterGeneralCount;
             }else{
                 $getHoliday = $shiftHolidayCount;
@@ -553,7 +547,7 @@ class BenefitsCalculationController extends Controller
             'attendance_bonus' => $attBonus,
             'emp_status' => $status,
             'stamp' => 0,
-            'pay_status' => 2
+            'pay_status' => 1,
         ];
         
         

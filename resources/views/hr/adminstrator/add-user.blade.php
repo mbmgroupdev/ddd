@@ -66,11 +66,11 @@
                   
                   
                </div>
-               <div class="col-sm-3">
+               <div class="col-sm-2">
                   
                   
                   <div class="form-group ">
-                     <label  for="roles" >Unit Permission </label>
+                     <label  for="roles" ><b>Unit Permission </b></label>
                      <br>
                      @foreach($units as $key => $unit)
                      <div class="custom-control custom-checkbox custom-checkbox-color-check custom-control-inline">
@@ -82,25 +82,28 @@
                      @endforeach
                   </div>
                   
-                  {{-- <div class="form-group has-float-label">
-                     <label  for="associate_id"> Password<span class="text-danger">*</span></label>
-                     <input type="password" id="password" name="password" placeholder="Password"  value="{{ old('password') }}" class="form-control" required />
-                     <div class="invalid-feedback">
-                        Please enter password!
-                     </div>
-                  </div>
-                  <div class="form-group has-float-label">
-                     <label  for="associate_id"> Confirm Password<span class="text-danger">*</span></label>
-                     <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Confirm Password"  value="{{ old('password_confirmation') }}" class="form-control" required />
-                     <div class="invalid-feedback">
-                        Please enter password!
-                     </div>
-                  </div> --}}
                   
                   
                   
                </div>
-              <div class="col-sm-5">
+               <div class="col-sm-2">
+                  
+                  
+                  <div class="form-group ">
+                     <label  for="roles" ><b>Location </b></label>
+                     <br>
+                     @foreach($locations as $key => $location)
+                     <div class="custom-control custom-checkbox custom-checkbox-color-check custom-control-inline">
+                        <input class="custom-control-input bg-success" type="checkbox" value="{{ $location->hr_location_id }}" id="location{{ $location->hr_location_id }}" name="location_permission[]" >
+                        <label class="custom-control-label" for="location{{ $location->hr_location_id }}">
+                        {{ $location->hr_location_name }}
+                        </label>
+                     </div>
+                     @endforeach
+                  </div>
+                  
+               </div>
+              <div class="col-sm-4">
                   <div class="user-details-block" >
                       <div class="user-profile text-center mt-0">
                           <img id="avatar" class="avatar-130 img-fluid" src="{{ asset('assets/images/user/09.jpg') }} " onerror="this.onerror=null;this.src='{{ asset("assets/images/user/09.jpg") }}';">

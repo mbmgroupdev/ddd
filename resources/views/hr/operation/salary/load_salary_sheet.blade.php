@@ -172,7 +172,7 @@
                                 @foreach($lists as $k=>$list)
                                     @if($list->as_location == $location && $list != null)
                                         <tr>
-                                            <td>{{ $j }}</td>
+                                            <td style="text-align: center;">{{ $j }}</td>
                                             <td>
                                                 <p style="margin:0;padding:0;">{{ $list->hr_bn_associate_name }}</p>
                                                 <p style="margin:0;padding:0;">{{ Custom::engToBnConvert($list->as_doj) }}</p>
@@ -189,13 +189,17 @@
                                                 <p style="font-size:14px;margin:0;padding:0;color:blueviolet">
                                                     {{ $list->as_id }}
                                                 </p>
+                                                ওরাকলঃ 
+                                                <p style="font-size:11px;margin:0;padding:0;color:blueviolet">
+                                                    {{ $list->as_oracle_code }}
+                                                </p>
                                                 <p style="margin:0;padding:0;color:hotpink">
                                                     বিলম্ব উপস্থিতিঃ {{ Custom::engToBnConvert($list->late_count) }}
                                                 </p>
                                                 <p style="margin:0;padding:0">গ্রেডঃ {{ $designation[$list->as_designation_id]['hr_designation_position']}}</p>
                                             </td>
                                             <td>
-                                                <p style="margin:0;padding:0">
+                                                <p style="margin:0;padding:0;text-align: center;">
                                                     {{ Custom::engToBnConvert($list->gross) }}
                                                 </p>
                                             </td>
@@ -247,6 +251,7 @@
                                                     <span style="text-align: right;width: 30%; float: right;  white-space: wrap;"><font style="color:hotpink">{{  Custom::engToBnConvert(round($list->absent_deduct)) }}</font>
                                                     </span>
                                                 </p>
+                                                @if($list->half_day_deduct > 0)
                                                 <p style="margin:0;padding:0">
 
                                                     <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">অর্ধ দিবসের জন্য কর্তন </span>
@@ -255,6 +260,7 @@
                                                         <font style="color:hotpink">{{ Custom::engToBnConvert(round($list->half_day_deduct)) }}</font>
                                                     </span>
                                                 </p>
+                                                @endif
                                                 <p style="margin:0;padding:0">
 
                                                     <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">অগ্রিম গ্রহণ বাবদ </span>
@@ -286,14 +292,18 @@
                                                     </font>
                                                     </span>
                                                 </p>
-                                                <p style="margin:0;padding:0">
-                                                    <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">খাবার বাবদ কর্তন </span>
-                                                    <span style ="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=
-                                                    </span>
-                                                    <span style="text-align: right;width: 30%; float: right;  white-space: wrap;"><font style="color:hotpink">
-                                                      {{ ($list->salary_add_deduct_id == null) ? Custom::engToBnConvert('0.00') : Custom::engToBnConvert($salaryAddDeduct[$list->as_id]['food_deduct']) }} </font>
-                                                    </span>
-                                                </p>
+                                                @if($list->salary_add_deduct_id)
+                                                    @if($salaryAddDeduct[$list->as_id]['food_deduct'] > 0)
+                                                    <p style="margin:0;padding:0">
+                                                        <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">খাবার বাবদ কর্তন </span>
+                                                        <span style ="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=
+                                                        </span>
+                                                        <span style="text-align: right;width: 30%; float: right;  white-space: wrap;"><font style="color:hotpink">
+                                                          {{   Custom::engToBnConvert($salaryAddDeduct[$list->as_id]['food_deduct']) }} </font>
+                                                        </span>
+                                                    </p>
+                                                    @endif
+                                                @endif
                                                 <p style="margin:0;padding:0">
                                                     <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">অন্যান্য </span>
                                                     <span style ="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=
@@ -382,7 +392,7 @@
 
                                                 </p>
                                             </td>
-                                            <td>
+                                            <td style="text-align: center;">
                                                 @php
                                                     $loc_emp++;
                                                     $totalSalary = ($list->total_payable);
@@ -409,7 +419,7 @@
 
                             </tbody>
                         </table>
-                        <input type="hidden" class="hidden_loc" data-target="{{$loc_count}}" value="{{ Custom::engToBnConvert(number_format($loc_sal,2)) }}" data-emp="{{ Custom::engToBnConvert($loc_emp)}}">
+                        <input type="hidden" class="hidden_loc" data-target="{{$loc_count}}" value="{{ Custom::engToBnConvert(bn_money($loc_sal)) }}" data-emp="{{ Custom::engToBnConvert($loc_emp)}}">
                         @php
                             $total_sal = $total_sal+$loc_sal;
                             $total_emp += $loc_emp;
@@ -417,6 +427,7 @@
 
                     </div>
                 </div>
+
                 <div class="pagebreak"> </div>
             @endif
         @endforeach
@@ -458,7 +469,7 @@
       </div>
     </div>
 </div>
-<input type="hidden" id="hidden_data"  value="{{ Custom::engToBnConvert(number_format($total_sal,2)) }}" data-emp="{{ Custom::engToBnConvert($total_emp)}}">
+<input type="hidden" id="hidden_data"  value="{{ Custom::engToBnConvert(bn_money($total_sal)) }}" data-emp="{{ Custom::engToBnConvert($total_emp)}}">
 <script type="text/javascript">
     $(document).ready(function(){
         $('.hidden_loc').each(function(){

@@ -43,7 +43,7 @@
                       </div>
                   </div>
                </div>
-               <div class="col-sm-4">
+               <div class="col-sm-3">
                      <div class="form-group has-float-label select-search-group">
                         @if($user->associate_id)
                            <input type="text" class="form-control"  value="{{ $user->associate_id }}" disabled>
@@ -76,18 +76,14 @@
                         Please select a role!
                      </div>
                   </div>
-                  {{-- <div class="form-group">
-                     <span class="text-muted">Default password for user is </span><strong class="text-success">123456</strong >
-                     
-                  </div> --}}
                   
                   
                </div>
-               <div class="col-sm-3">
+               <div class="col-sm-2">
                   
                   
                   <div class="form-group ">
-                     <label  for="roles" >Unit Permission </label>
+                     <label  for="roles" ><b>Unit Permission</b> </label>
                      <br>
                      @php 
                         $unit_permission = [];
@@ -105,20 +101,28 @@
                      @endforeach
                   </div>
                   
-                  {{-- <div class="form-group has-float-label">
-                     <label  for="associate_id"> Password<span class="text-danger">*</span></label>
-                     <input type="password" id="password" name="password" placeholder="Password"  value="{{ old('password') }}" class="form-control" required />
-                     <div class="invalid-feedback">
-                        Please enter password!
+               </div>
+               <div class="col-sm-2">
+                  
+                  
+                  <div class="form-group ">
+                     <label  for="roles" ><b>Location Permission</b> </label>
+                     <br>
+                     @php 
+                        $location_permission = [];
+                        if($user->location_permission){
+                           $location_permission =  explode(",",$user->location_permission);
+                        }
+                     @endphp
+                     @foreach($locations as $key => $location)
+                     <div class="custom-control custom-checkbox custom-checkbox-color-check custom-control-inline">
+                        <input class="custom-control-input bg-success" type="checkbox" value="{{ $location->hr_location_id }}" id="location{{ $location->hr_location_id }}" name="location_permission[]"  @if(in_array($location->hr_location_id, $location_permission)) checked  @endif>
+                        <label class="custom-control-label" for="location{{ $location->hr_location_id }}">
+                        {{ $location->hr_location_name }}
+                        </label>
                      </div>
+                     @endforeach
                   </div>
-                  <div class="form-group has-float-label">
-                     <label  for="associate_id"> Confirm Password<span class="text-danger">*</span></label>
-                     <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Confirm Password"  value="{{ old('password_confirmation') }}" class="form-control" required />
-                     <div class="invalid-feedback">
-                        Please enter password!
-                     </div>
-                  </div> --}}
                   
                   
                   <div class="form-group">
