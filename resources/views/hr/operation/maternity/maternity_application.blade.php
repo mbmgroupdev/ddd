@@ -202,7 +202,8 @@
           loader = '<p class="display-1 m-5 p-5 text-center text-warning">'+
                         '<i class="fas fa-circle-notch fa-spin "></i>'+
                     '</p>';
-         $('#femaleassociates').select2({
+/*
+         $('.female').select2({
             placeholder: 'Select Employee',
             ajax: {
                 url: baseurl+'hr/adminstrator/employee/female-associates',
@@ -225,8 +226,8 @@
                 },
                 cache: true
             }
-        });
-        $('#femaleassociates').on('change', function(){
+        });*/
+        $('.female-associates').on('change', function(){
             var emp_id = $(this).val();
             if(emp_id != ""){
                 $('.app-loader').show();

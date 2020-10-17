@@ -268,6 +268,7 @@ class EmployeeController extends Controller
             })
             ->whereNotIn('as_id', auth()->user()->management_permissions())
             ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
+            ->whereIn('b.as_location', auth()->user()->location_permissions())
             ->whereMonth('b.created_at',date('m'))
             ->orWhereMonth('b.as_doj',date('m'))
             ->orderBy('dg.hr_designation_position','ASC')
@@ -380,6 +381,7 @@ class EmployeeController extends Controller
             ->leftJoin('hr_employee_bengali AS bn', 'bn.hr_bn_associate_id', '=', 'b.associate_id')
             ->whereIn('b.as_status',[1])
             ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
+            ->whereIn('b.as_location', auth()->user()->location_permissions())
             ->where(function ($query) use ($request) {
                 if($request->otnonot != null){
                     $query->where('b.as_ot', '=', $request->otnonot);
@@ -527,6 +529,7 @@ class EmployeeController extends Controller
             ->leftJoin('hr_section AS sec', 'sec.hr_section_id', '=', 'b.as_section_id')
             ->leftJoin('hr_subsection AS subsec', 'subsec.hr_subsec_id', '=', 'b.as_subsection_id')
             ->where('b.as_status',1)
+            ->whereIn('b.as_location', auth()->user()->location_permissions())
             ->where(function ($query) use ($request) {
                 if($request->otnonot != null){
                     $query->where('b.as_ot', '=', $request->otnonot);

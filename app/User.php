@@ -77,6 +77,12 @@ class User extends Authenticatable
         return (!empty($units[0])?$units:[]);
     }
 
+    public function location_permissions()
+    {
+        $locations = explode(",", $this->location_permission);
+        return (!empty($locations[0])?$locations:[]);
+    }
+
     public function buyer_permissions()
     {
         $buyers = explode(",", $this->buyer_permissions);

@@ -177,13 +177,14 @@
                                        <div class="modal-content">
                                         <form class="form-horizontal" role="form" action="#" id="auditSalary">
                                           <div class="modal-header">
-                                             <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">{{ $input['month'] }} Salary Audit Process</h5>
+                                             <h5 class="modal-title" id="exampleModalCenteredScrollableTitle"><strong>{{ date('F, Y', strtotime($input['month'])) }} </strong> Salary Audit Process</h5>
                                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                              <span aria-hidden="true">×</span>
                                              </button>
                                           </div>
                                           <div class="modal-body">
-                                            <h4>Salary to process On {{ $input['audit'] }} Department By {{ Auth::user()->name }}</h4>
+                                            <h4>Salary process {{ $input['audit'] }}   </h4>
+                                              <p class="text-muted">-by {{ Auth::user()->name }}</p>
                                             <div class="custom-control custom-switch text-center mb-3">
                                               <input name="status" type="checkbox" class="custom-control-input " id="status" value="">
                                               <label class="custom-control-label" for="status">Confirm</label>

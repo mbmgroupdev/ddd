@@ -5,7 +5,7 @@
   <form class="form">
     @if($salaryStatus == null)
       @php 
-        $msg = 'Monthly Salary Of <b>'.date('M Y', strtotime($input['month_year'])).'</b> Not Generate Yet!';
+        $msg = 'Monthly Salary Of <b>'.date('M Y', strtotime($input['month_year'])).'</b> has Not Generate Yet!';
         
       @endphp
     @else
