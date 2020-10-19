@@ -189,14 +189,18 @@
                                                 <p style="font-size:14px;margin:0;padding:0;color:blueviolet">
                                                     {{ $list->as_id }}
                                                 </p>
-                                                ওরাকলঃ 
+                                                পূর্বের আইডিঃ 
                                                 <p style="font-size:11px;margin:0;padding:0;color:blueviolet">
                                                     {{ $list->as_oracle_code }}
                                                 </p>
                                                 <p style="margin:0;padding:0;color:hotpink">
                                                     বিলম্ব উপস্থিতিঃ {{ Custom::engToBnConvert($list->late_count) }}
                                                 </p>
-                                                <p style="margin:0;padding:0">গ্রেডঃ {{ $designation[$list->as_designation_id]['hr_designation_position']}}</p>
+                                                @if(isset($designation[$list->as_designation_id]))
+                                                    @if($designation[$list->as_designation_id]['hr_designation_grade'] > 0 || $designation[$list->as_designation_id]['hr_designation_grade'] != null)
+                                                    <p style="margin:0;padding:0">গ্রেডঃ {{ eng_to_bn($designation[$list->as_designation_id]['hr_designation_grade'])}}</p>
+                                                    @endif
+                                                @endif
                                             </td>
                                             <td>
                                                 <p style="margin:0;padding:0;text-align: center;">

@@ -12,7 +12,7 @@ class NomineeController extends Controller
     {
         
         $info = array();
-        if($request->has('associate_id')){
+        if($request->has('associate')){
     	   $info = DB::table('hr_as_basic_info AS b')
             ->where("b.associate_id", $request->associate)
             ->select(
@@ -21,7 +21,7 @@ class NomineeController extends Controller
                 'dp.hr_department_name_bn',
                 'dg.hr_designation_name_bn',
                 'bn.*',  
-                # permanent district & upazilla
+                'b.*',
                 "per_dist.dis_name AS permanent_district",
                 "per_dist.dis_name_bn AS permanent_district_bn",
                 "per_upz.upa_name AS permanent_upazilla",
@@ -44,6 +44,7 @@ class NomineeController extends Controller
             ->leftJoin('hr_upazilla AS pres_upz', 'pres_upz.upa_id', '=', 'a.emp_adv_info_pres_upz') 
             ->leftJoin('hr_employee_bengali AS bn', 'bn.hr_bn_associate_id', '=', 'b.associate_id')  
             ->first(); 
+
 
         }
         if ($request->get('pdf') == true) { 

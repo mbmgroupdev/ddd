@@ -65,6 +65,38 @@ if(!function_exists('salary_lock_date')){
     }
 }
 
+if(!function_exists('maritial_bangla')){
+    function maritial_bangla($info)
+    {
+        if($info == 'Married'){
+            $status = 'বিবাহিত';
+        }else if($info == 'Unmarried'){
+            $status = 'অবিবাহিত';
+        }else{
+            $status = '';
+        }
+        return $status;
+    }
+}
+
+if(!function_exists('religion_bangla')){
+    function religion_bangla($info)
+    {
+        if($info == 'Islam'){
+            $status = 'ইসলাম';
+        }else if($info == 'Hinduism'){
+            $status = 'হিন্দু';
+        }else if($info == 'Christians'){
+            $status = 'খ্রিস্টান';
+        }else if($info == 'Buddhists'){
+            $status = 'বৌদ্ধ';
+        }else{
+            $status = '';
+        }
+        return $status;
+    }
+}
+
 if(!function_exists('monthly_activity_close')){
     function monthly_activity_close($data){
         $flag = 1; // lock
@@ -693,15 +725,13 @@ if(!function_exists('cache_att_mbm')){
     function cache_att_mbm()
     {
         return DB::table('hr_attendance_mbm as m')
-        ->selectRaw('count(*) as present, m.in_date')
+        ->select('b.as_id', 'm.in_date')
         ->whereMonth('m.in_date',date('m'))
         ->whereYear('m.in_date',date('Y'))
         ->leftJoin('hr_as_basic_info as b','b.as_id','m.as_id')
-        /*->whereMonth('m.in_date','12')
-        ->whereYear('m.in_date','2019')*/
         ->where('b.as_unit_id', 1)
-        ->groupBy('m.in_date')
-        ->pluck('present','m.in_date');        
+        ->get()
+        ->groupBy('in_date')->toArray();       
     }
 }
 
@@ -709,15 +739,13 @@ if(!function_exists('cache_att_mbm2')){
     function cache_att_mbm2()
     {
         return DB::table('hr_attendance_mbm as m')
-        ->selectRaw('count(*) as present, m.in_date')
+        ->select('b.as_id', 'm.in_date')
         ->whereMonth('m.in_date',date('m'))
         ->whereYear('m.in_date',date('Y'))
         ->leftJoin('hr_as_basic_info as b','b.as_id','m.as_id')
-        /*->whereMonth('m.in_date','12')
-        ->whereYear('m.in_date','2019')*/
         ->where('b.as_unit_id', 5)
-        ->groupBy('m.in_date')
-        ->pluck('present','m.in_date');        
+        ->get()
+        ->groupBy('in_date')->toArray();          
     }
 }
 
@@ -725,15 +753,13 @@ if(!function_exists('cache_att_mfw')){
     function cache_att_mfw()
     {
         return DB::table('hr_attendance_mbm as m')
-        ->selectRaw('count(*) as present, m.in_date')
+        ->select('b.as_id', 'm.in_date')
         ->whereMonth('m.in_date',date('m'))
         ->whereYear('m.in_date',date('Y'))
         ->leftJoin('hr_as_basic_info as b','b.as_id','m.as_id')
-        /*->whereMonth('m.in_date','12')
-        ->whereYear('m.in_date','2019')*/
         ->where('b.as_unit_id', 4)
-        ->groupBy('m.in_date')
-        ->pluck('present','m.in_date');        
+        ->get()
+        ->groupBy('in_date')->toArray();          
     }
 }
 
@@ -741,13 +767,11 @@ if(!function_exists('cache_att_aql')){
     function cache_att_aql()
     {
         return DB::table('hr_attendance_aql')
-            ->selectRaw('count(*) as present,in_date')
+            ->select('as_id', 'in_date')
             ->whereMonth('in_date',date('m'))
             ->whereYear('in_date',date('Y'))
-            /*->whereMonth('in_date','12')
-            ->whereYear('in_date','2019')*/
-            ->groupBy('in_date')
-            ->pluck('present','in_date');
+            ->get()
+            ->groupBy('in_date')->toArray();  
     }
 }
 
@@ -755,13 +779,11 @@ if(!function_exists('cache_att_ceil')){
     function cache_att_ceil()
     {
         return DB::table('hr_attendance_ceil')
-            ->selectRaw('count(*) as present,in_date')
+            ->select('as_id', 'in_date')
             ->whereMonth('in_date',date('m'))
             ->whereYear('in_date',date('Y'))
-            /*->whereMonth('in_date','12')
-            ->whereYear('in_date','2019')*/
-            ->groupBy('in_date')
-            ->pluck('present','in_date');
+            ->get()
+            ->groupBy('in_date')->toArray(); 
     }
 }
 
