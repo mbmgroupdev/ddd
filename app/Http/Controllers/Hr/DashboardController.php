@@ -53,13 +53,50 @@ class DashboardController extends Controller
         $now = Carbon::now();
         //$now = Carbon::parse('2019-12-31');
         // retrive last 5 month salary from cache
+        $per_id = auth()->user()->permitted_asid()->toArray();
         for ($i= date('d'); $i > 0; $i--) {
             $thisday = $now->format('Y-m-d');
-            $att_data['mbm'][$thisday] = $att_mbm[$thisday]??0;
-            $att_data['ceil'][$thisday] = $att_ceil[$thisday]??0;
-            $att_data['aql'][$thisday] = $att_aql[$thisday]??0;
-            $att_data['mfw'][$thisday] = $att_mfw[$thisday]??0;
-            $att_data['mbm2'][$thisday] = $att_mbm2[$thisday]??0;
+
+            if(isset($att_mbm[$thisday])){
+                $mbm = collect($att_mbm[$thisday])->keyBy('as_id')->keys()->toArray();
+                $res = array_intersect($mbm, $per_id);  
+                $att_data['mbm'][$thisday] = count($res);
+            }else{
+                $att_data['mbm'][$thisday] = 0;
+            }
+
+            if(isset($att_ceil[$thisday])){
+                $ceil = collect($att_ceil[$thisday])->keyBy('as_id')->keys()->toArray();
+                $res = array_intersect($ceil, $per_id);  
+                $att_data['ceil'][$thisday] = count($res);
+            }else{
+                $att_data['ceil'][$thisday] = 0;
+            }
+
+            if(isset($att_aql[$thisday])){
+                $aql = collect($att_aql[$thisday])->keyBy('as_id')->keys()->toArray();
+                $res = array_intersect($aql, $per_id);  
+                $att_data['aql'][$thisday] = count($res);
+            }else{
+                $att_data['aql'][$thisday] = 0;
+            }
+
+            if(isset($att_mfw[$thisday])){
+                $mfw = collect($att_mfw[$thisday])->keyBy('as_id')->keys()->toArray();
+                $res = array_intersect($mfw, $per_id);  
+                $att_data['mfw'][$thisday] = count($res);
+            }else{
+                $att_data['mfw'][$thisday] = 0;
+            }
+
+            if(isset($att_mbm2[$thisday])){
+                $mbm2 = collect($att_mbm2[$thisday])->keyBy('as_id')->keys()->toArray();
+                $res = array_intersect($mbm2, $per_id);  
+                $att_data['mbm2'][$thisday] = count($res);
+            }else{
+                $att_data['mbm2'][$thisday] = 0;
+            }
+
             $now = $now->subDay();
         }
         $att_data['mbm'] = array_reverse($att_data['mbm']);

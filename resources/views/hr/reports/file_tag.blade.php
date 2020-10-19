@@ -67,13 +67,13 @@
 						<div class="col-6 file_tag_field">
 							<div class="form-group has-float-label">
 								<input type="date"  name="doj_from" id="doj_from" class=" form-control" placeholder="Date of Join From" >
-								<label>From</label>
+								<label>DOJ From</label>
 							</div>  
 						</div>
 						<div class="col-6 file_tag_field">
 							<div class="form-group has-float-label">
 								<input type="date" name="doj_to" id="doj_to" class="datepicker form-control filter" placeholder="Date of Join To" >
-								<label>To</label>
+								<label>DOJ To</label>
 							</div> 
 						</div>  
 					</div>
@@ -93,9 +93,10 @@
 	                        <thead>
 	                           
 	                            <tr>
-		                            <th class="sticky-th"><input type="checkbox" id="checkAll"/></th>
-		                            <th class="sticky-th">Associate ID</th>
-		                            <th class="sticky-th">Name</th>
+		                            <th class="sticky-th" style="width:5%;"><input type="checkbox" id="checkAll"/></th>
+		                            <th class="sticky-th" style="width: 30%">Associate ID</th>
+		                            <th class="sticky-th" style="width: 25%">Oracle ID</th>
+		                            <th class="sticky-th" style="width: 40%">Name</th>
 	                            </tr>
 	                             <tr>
 	                                <th class="sticky-th" colspan="5" id="user_filter" style="top: 40px;"></th>

@@ -24,8 +24,8 @@ class TestController extends Controller
     public function test(Request $request)
     {
 
-        
-        dd('');
+
+        dd('done');
         //dd($att, $ab, $lv);
 
         $data = DB::table('hr_as_basic_info')

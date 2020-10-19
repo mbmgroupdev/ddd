@@ -16,7 +16,7 @@
         
          <ul id="top-tab-list" class="p-0">
              <li class="" id="account">
-                <a class="tab-link-inline {{ $salaryStatus == null?'iq-bg-primary':'iq-bg-primary' }}">
+                <a class="tab-link-inline {{ $salaryStatus == null?'iq-bg-primary':'iq-bg-danger' }}">
                 <i class="las la-fingerprint"></i><span class="f-16">HR</span>
                 </a>
              </li>
