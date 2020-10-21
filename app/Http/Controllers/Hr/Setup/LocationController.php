@@ -138,4 +138,20 @@ class LocationController extends Controller
 
     }
 
+    public function locationListUnit(Request $request)
+    {
+        $unitId = $request->unit;
+        try {
+            $getLocation = Location::where('hr_location_unit_id', $unitId)->orderBy('hr_location_name', 'desc')->get();
+            $data= '<option value="">Select Location</option>';
+            foreach ($getLocation as $location) {
+                $data.='<option value="'.$location->hr_location_id.'">'.$location->hr_location_name.'</option>';
+            }
+            return $data;
+        } catch (\Exception $e) {
+            $data= '<option value="">Select Location</option>';
+            return $data;
+        }
+    }
+
 }

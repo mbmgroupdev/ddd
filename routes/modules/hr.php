@@ -721,6 +721,9 @@ Route::get('hr/payroll/salary', 'Hr\Payroll\SalaryController@view');
 		Route::get('hr/setup/location_update/{hr_unit_id}','Hr\Setup\LocationController@locationUpdate');
 		Route::post('hr/setup/location_update','Hr\Setup\LocationController@locationUpdateStore');
 
+		// Unit wise location
+		Route::get('hr/reports/location_by_unit', 'Hr\Setup\LocationController@locationListUnit');
+
 		//floor
 		Route::get('hr/setup/floor','Hr\Setup\FloorController@floor');
 		Route::get('hr/setup/getFloorListByUnitID','Hr\Setup\FloorController@getFloorListByUnitID');

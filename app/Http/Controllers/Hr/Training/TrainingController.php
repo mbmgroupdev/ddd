@@ -15,13 +15,12 @@ use Illuminate\Http\Request;
 
 class TrainingController extends Controller
 {
-	// Show Add Training Form
+    // Show Add Training Form
     public function showForm()
-    {
-    	$trainingNames = TrainingNames::where('hr_tr_status', '1')
-    					->pluck('hr_tr_name', 'hr_tr_name_id');
-
-    	return view('hr/training/add_training', compact('trainingNames'));
+    {   
+        $trainingNames = TrainingNames::where('hr_tr_status', '1')
+                        ->pluck('hr_tr_name', 'hr_tr_name_id');
+        return view('hr/training/add_training', compact('trainingNames'));
     }
 
     # Store Training
@@ -30,7 +29,7 @@ class TrainingController extends Controller
         //ACL::check(["permission" => "hr_training_add"]);
         #-----------------------------------------------------------#
 
-    	$validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'tr_as_tr_id'     => 'required|max:11',
             'tr_trainer_name' => 'required|max:128',
             'tr_description'  => 'required|max:1024',
@@ -51,27 +50,27 @@ class TrainingController extends Controller
         else
         {
             //-----------Store Data---------------------
-        	$store = new Training;
-			$store->tr_as_tr_id  = $request->tr_as_tr_id;
-			$store->tr_trainer_name = $request->tr_trainer_name;
-			$store->tr_description = $request->tr_description;
-			$store->tr_start_date = (!empty($request->tr_start_date)?date('Y-m-d',strtotime($request->tr_start_date)):null);
-			$store->tr_end_date = (!empty($request->tr_end_date)?date('Y-m-d',strtotime($request->tr_end_date)):null);
-			$store->tr_start_time = (!empty($request->tr_start_time)?date('H:i',strtotime($request->tr_start_time)):null);
-			$store->tr_end_time = (!empty($request->tr_end_time)?date('H:i',strtotime($request->tr_end_time)):null);
+            $store = new Training;
+            $store->tr_as_tr_id  = $request->tr_as_tr_id;
+            $store->tr_trainer_name = $request->tr_trainer_name;
+            $store->tr_description = $request->tr_description;
+            $store->tr_start_date = (!empty($request->tr_start_date)?date('Y-m-d',strtotime($request->tr_start_date)):null);
+            $store->tr_end_date = (!empty($request->tr_end_date)?date('Y-m-d',strtotime($request->tr_end_date)):null);
+            $store->tr_start_time = (!empty($request->tr_start_time)?date('H:i',strtotime($request->tr_start_time)):null);
+            $store->tr_end_time = (!empty($request->tr_end_time)?date('H:i',strtotime($request->tr_end_time)):null);
 
-			if ($store->save())
-			{
+            if ($store->save())
+            {
                 $this->logFileWrite("Training Entry Saved", $store->tr_id);
-        		return back()
+                return back()
                     ->withInput()
                     ->with('success', 'Save Successful.');
-			}
-			else
-			{
-        		return back()
-        			->withInput()->with('error', 'Please try again.');
-			}
+            }
+            else
+            {
+                return back()
+                    ->withInput()->with('error', 'Please try again.');
+            }
         }
     }
 

@@ -112,6 +112,8 @@ class ProcessUnitWiseSalary implements ShouldQueue
                         $getHoliday = HolidayRoaster::where('year', $year)
                         ->where('month', $month)
                         ->where('as_id', $getEmployee->associate_id)
+                        ->where('date','>=', $firstDateMonth)
+                        ->where('date','<=', $lastDateMonth)
                         ->where('remarks', 'Holiday')
                         ->count();
                     }else{
@@ -119,12 +121,16 @@ class ProcessUnitWiseSalary implements ShouldQueue
                         $RosterHolidayCount = HolidayRoaster::where('year', $year)
                         ->where('month', $month)
                         ->where('as_id', $getEmployee->associate_id)
+                        ->where('date','>=', $firstDateMonth)
+                        ->where('date','<=', $lastDateMonth)
                         ->where('remarks', 'Holiday')
                         ->count();
                         // check General roaster employee
                         $RosterGeneralCount = HolidayRoaster::where('year', $year)
                         ->where('month', $month)
                         ->where('as_id', $getEmployee->associate_id)
+                        ->where('date','>=', $firstDateMonth)
+                        ->where('date','<=', $lastDateMonth)
                         ->where('remarks', 'General')
                         ->count();
                          // check holiday shift employee
@@ -178,7 +184,9 @@ class ProcessUnitWiseSalary implements ShouldQueue
                         $totalDay = $this->totalDay;
                     }
                     $getAbsent = $totalDay - ($getPresentOT->present + $getHoliday + $leaveCount);
-
+                    if($getAbsent < 0){
+                        $getAbsent = 0;
+                    }
                     // get salary add deduct id form salary add deduct table
                     $getAddDeduct = SalaryAddDeduct::
                     where('associate_id', $getEmployee->associate_id)

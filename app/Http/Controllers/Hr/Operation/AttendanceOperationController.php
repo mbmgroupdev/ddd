@@ -32,13 +32,18 @@ class AttendanceOperationController extends Controller
         ->addColumn('associate_id', function($data) {
             // return $data->associate_id;
             $date = '';
+            if(!isset($data->status)){
+                $data->status = "Present";
+            }
             if ($data->in_time != null) {
                 $date = date('Y-F-d', strtotime($data->in_time));
             } elseif($data->in_time == null && $data->out_time == null && $data->status == 'Absent' ){
                 $date = date('Y-F-d', strtotime($data->date));
-            } elseif($data->in_time == null && $data->out_time == null && $data->status != 'Absent' && $data->status != 'Holiday' ){
-                $date = date('Y-F-d', strtotime($data->leave_from));
-            } elseif($data->in_time == null && $data->out_time == null && $data->status == 'Holiday' ){
+            } 
+            // elseif($data->in_time == null && $data->out_time == null && $data->status != 'Absent' && $data->status != 'Holiday' ){
+            //     $date = date('Y-F-d', strtotime($data->leave_from));
+            // } 
+            elseif($data->in_time == null && $data->out_time == null && $data->status == 'Holiday' ){
 
                 $date = date('Y-F-d', strtotime($data->dates));
             }
@@ -59,9 +64,9 @@ class AttendanceOperationController extends Controller
             } elseif($data->in_time == null && $data->out_time == null && $data->status == 'Absent' ){
                 return date('Y-m-d', strtotime($data->date));
             }
-            elseif($data->in_time == null && $data->out_time == null && $data->status != 'Absent' && $data->status != 'Holiday' ){
-                return '<strong>'.date('Y-m-d', strtotime($data->leave_from)).'</strong>'.' To '.'<strong>'.date('Y-m-d', strtotime($data->leave_to)).'</strong>';
-            }
+            // elseif($data->in_time == null && $data->out_time == null && $data->status != 'Absent' && $data->status != 'Holiday' ){
+            //     return '<strong>'.date('Y-m-d', strtotime($data->leave_from)).'</strong>'.' To '.'<strong>'.date('Y-m-d', strtotime($data->leave_to)).'</strong>';
+            // }
             elseif($data->in_time == null && $data->out_time == null && $data->status == 'Holiday' ){
                 return $data->date;
             }

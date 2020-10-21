@@ -130,7 +130,7 @@
                                                 <label  for="bank_name"> Account Name </label>
                                             </div>
                                             <div class="form-group has-float-label has-required ">
-                                                <input type="text" name="bank_no" id="bank_no" placeholder="Account number (Bank / Mobile)" class="form-control" required min="0" />
+                                                <input type="text" name="bank_no" id="bank_no" placeholder="Account number (Bank / Mobile)" class="form-control" min="0" />
                                                 <label  for="bank_no"> Account No </label>
                                             </div>
                                         </div>

@@ -1,6 +1,6 @@
 <div class="panel">
 	<div class="panel-body">
-		<button class="btn btn-sm btn-primary hidden-print" onclick="printDiv('report_section')" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report"><i class="las la-print"></i> </button>
+		
 		<div id="report_section" class="report_section">
 			<style type="text/css">
               .table{
@@ -19,8 +19,8 @@
                 border:0 !important;
                 vertical-align: top;
               }
-              .f-16 th, .f-16 td, .f-16 td b{
-                font-size: 16px !important;
+              .f-14 th, .f-14 td, .f-14 td b{
+                font-size: 14px !important;
               }
                       </style>
 			@php
@@ -32,19 +32,25 @@
 				$section = section_by_id();
 				$subSection = subSection_by_id();
 				$area = area_by_id();
+				$location = location_by_id();
 				$formatHead = explode('_',$format);
-
 			@endphp
 			
 			<div class="top_summery_section">
 				@if($input['report_format'] == 0 || ($input['report_format'] == 1 && $format != null))
 				<div class="page-header">
 		            <h2 style="margin:4px 10px; font-weight: bold; text-align: center;">Salary @if($input['report_format'] == 0) Details @else Summary @endif Report </h2>
-		            <table class="table no-border f-16" border="0">
+		            <h4  style="text-align: center;">Month : {{ date('M Y', strtotime($input['month'])) }} </h4>
+		            <table class="table no-border f-14" border="0">
 		            	<tr>
-		            		<td>
+		            		<td width="25%">
+		            			@if($input['unit'] != null)
 		            			Unit <b>: {{ $unit[$input['unit']]['hr_unit_name'] }}</b> <br>
-		            		@if($input['area'] != null)
+		            			@endif
+		            			@if($input['location'] != null)
+		            			Location <b>: {{ $location[$input['location']]['hr_location_name'] }}</b> <br>
+		            			@endif
+		            			@if($input['area'] != null)
 		            			Area 
 		                			<b>: {{ $area[$input['area']]['hr_area_name'] }}</b> <br>
 		                		@endif
@@ -58,9 +64,7 @@
 		                		@endif
 		            		</td>
 		            		<td>
-
-		                	</div>
-		            			Month <b>: {{ date('M Y', strtotime($input['month'])) }} </b> <br>
+			            			
 		            			@if($input['otnonot'] != null)
 		                			<b> OT </b> 
 		                			<b>: @if($input['otnonot'] == 0) No @else Yes @endif </b> <br>
@@ -68,10 +72,15 @@
 		                			Total Employee
 		                			<b>: {{ $totalEmployees }}</b> <br>
 		                			Total Salary
-		                			<b>: {{ bn_money(round($totalSalary,2)) }} (BDT)</b>
+		                			<b>: {{ bn_money(round($totalSalary,2)) }} (BDT)</b><br>
+			                		
 		                		
-		                		
-		                	</div>
+		            		</td>
+		            		<td>
+	                			Total OT Hour
+	                			<b>: {{ numberToTimeClockFormat(round($totalOtHour,2)) }} </b><br>
+	                			Total OT Amount
+	                			<b>: {{ bn_money(round($totalOTAmount,2)) }} (BDT)</b>
 		                		
 		            		</td>
 		            		<td>
@@ -87,7 +96,11 @@
 		                			<b>: {{ $line[$input['line_id']]['hr_line_name'] }}</b> <br>
 		                		@endif
 		                		Format 
-		                			<b class="capitalize">: {{ isset($formatHead[1])?$formatHead[1]:'N/A' }}</b>
+		                			<b class="capitalize">: {{ isset($formatHead[1])?$formatHead[1]:'N/A' }}</b> <br>
+		                		@if($input['pay_status'] != null)
+		                		Payment Type 
+		                			<b class="capitalize">: {{ $input['pay_status'] }}</b> <br>
+		                		@endif
 		            		</td>
 		            	</tr>
 		            	
@@ -126,6 +139,8 @@
         			@endif
         			<h4>Total Employee: <b>{{ $totalEmployees }}</b></h4>
         			<h4>Total Salary: <b>{{ bn_money(round($totalSalary,2)) }}</b></h4>
+        			<h4>Total OT Hour: <b>{{ numberToTimeClockFormat(round($totalOtHour,2)) }}</b></h4>
+        			<h4>Total OT Amount: <b>{{ bn_money(round($totalOTAmount,2)) }}</b></h4>
 		            		
 		        </div>
 		        @endif
@@ -140,7 +155,10 @@
 							@if(count($getEmployee) > 0)
 			                <tr>
 			                	@php
-									if($format == 'as_line_id'){
+									if($format == 'as_unit_id'){
+										$head = 'Unit';
+										$body = $unit[$group]['hr_unit_name']??'';
+									}elseif($format == 'as_line_id'){
 										$head = 'Line';
 										$body = $line[$group]['hr_line_name']??'';
 									}elseif($format == 'as_floor_id'){
@@ -164,7 +182,7 @@
 								@endphp
 			                	@if($head != '')
 			                    <th colspan="2">{{ $head }}</th>
-			                    <th colspan="11">{{ $body }}</th>
+			                    <th colspan="12">{{ $body }}</th>
 			                    @endif
 			                </tr>
 			                @endif
@@ -174,10 +192,15 @@
 			                    <th>Oracle ID</th>
 			                    <th>Associate ID</th>
 			                    <th>Name</th>
+			                    @if($input['pay_status'] == 'cash' || $input['pay_status'] == '')
 			                    <th>Designation</th>
 			                    <th>Department</th>
 			                    <th>Floor</th>
 			                    <th>Line</th>
+			                    @else
+			                    <th>Account No.</th>
+			                    <th>TDS</th>
+			                    @endif
 			                    <th>Present</th>
 			                    <th>Absent</th>
 			                    <th>OT Hour</th>
@@ -186,78 +209,90 @@
 			                </tr>
 			            </thead>
 			            <tbody>
-			            @php $i = 0; $month = $input['month']; @endphp
+			            @php $i = 0; $otHourSum=0; $salarySum=0; $month = $input['month']; @endphp
 			            @if(count($getEmployee) > 0)
-			            @foreach($getEmployee as $employee)
-			            	@php
-			            		$designationName = $employee->hr_designation_name??'';
-			            		
-		                        $otHour = numberToTimeClockFormat($employee->ot_hour);
-			            	@endphp
-			            	@if($head == '')
-			            	<tr>
-			            		<td>{{ ++$i }}</td>
-				            	<td><img height="30" src="{{ emp_profile_picture($employee) }}" class='small-image min-img-file'></td>
-				            	<td>{{ $employee->as_oracle_code }}</td>
-				            	<td><a href='{{ url("hr/operation/job_card?associate=$employee->associate_id&month_year=$month") }}' target="_blank">{{ $employee->associate_id }}</a></td>
-				            	<td>
-				            		<b>{{ $employee->as_name }}</b>
-				            	</td>
-				            	<td>{{ $designationName }}</td>
-				            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
-				            	<td>{{ $floor[$employee->as_floor_id]['hr_floor_name']??'' }}</td>
-				            	<td>{{ $line[$employee->as_line_id]['hr_line_name']??'' }}</td>
-				            	<td>{{ $employee->present }}</td>
-				            	<td>{{ $employee->absent }}</td>
-				            	<td><b>{{ $otHour }}</b></td>
-				            	<td>{{ bn_money($employee->total_payable) }}</td>
-				            	<td>
-				            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-yearmonth="{{ $input['month'] }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Yearly Activity Report' ><i class="fa fa-eye"></i></button>
-				            	</td>
-			            	</tr>
-			            	@else
-			            	@if($group == $employee->$format)
-			            	<tr>
-			            		<td>{{ ++$i }}</td>
-				            	<td><img height="30"  src="{{ emp_profile_picture($employee) }}" class='small-image min-img-file'></td>
-				            	<td>{{ $employee->as_oracle_code }}</td>
-				            	<td><a href='{{ url("hr/operation/job_card?associate=$employee->associate_id&month_year=$month") }}' target="_blank">{{ $employee->associate_id }}</a></td>
-				            	<td>
-				            		<b>{{ $employee->as_name }}</b>
-				            	</td>
-				            	<td>{{ $designation[$employee->as_designation_id]['hr_designation_name']??'' }}</td>
-				            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
-				            	<td>{{ $floor[$employee->as_floor_id]['hr_floor_name']??'' }}</td>
-				            	<td>{{ $line[$employee->as_line_id]['hr_line_name']??'' }}</td>
-				            	<td>{{ $employee->present }}</td>
-				            	<td>{{ $employee->absent }}</td>
-				            	<td><b>{{ $otHour }}</b></td>
-				            	<td>{{ bn_money($employee->total_payable) }}</td>
-				            	<td>
-				            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-yearmonth="{{ $input['month'] }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Yearly Activity Report' ><i class="fa fa-eye"></i></button>
-				            	</td>
-			            	</tr>
-			            	@endif
-			            	@endif
-			            @endforeach
+				            @foreach($getEmployee as $employee)
+				            	@php
+				            		$designationName = $employee->hr_designation_name??'';
+			                        $otHour = numberToTimeClockFormat($employee->ot_hour);
+				            	@endphp
+				            	@if($head == '')
+				            	<tr>
+				            		<td>{{ ++$i }}</td>
+					            	<td><img height="30" src="{{ emp_profile_picture($employee) }}" class='small-image min-img-file'></td>
+					            	<td>{{ $employee->as_oracle_code }}</td>
+					            	<td><a href='{{ url("hr/operation/job_card?associate=$employee->associate_id&month_year=$month") }}' target="_blank">{{ $employee->associate_id }}</a></td>
+					            	<td>
+					            		<b>{{ $employee->as_name }}</b>
+					            	</td>
+					            	@if($input['pay_status'] == 'cash' || $input['pay_status'] == '')
+					            	<td>{{ $designationName }}</td>
+					            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
+					            	<td>{{ $floor[$employee->as_floor_id]['hr_floor_name']??'' }}</td>
+					            	<td>{{ $line[$employee->as_line_id]['hr_line_name']??'' }}</td>
+					            	@else
+					            	<td>{{ $employee->bank_no }}</td>
+					            	<td>{{ $employee->ben_tds_amount }}</td>
+					            	@endif
+					            	<td>{{ $employee->present }}</td>
+					            	<td>{{ $employee->absent }}</td>
+					            	<td><b>{{ $otHour }}</b></td>
+					            	<td>{{ bn_money($employee->total_payable) }}</td>
+					            	<td>
+					            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-yearmonth="{{ $input['month'] }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Yearly Activity Report' ><i class="fa fa-eye"></i></button>
+					            	</td>
+				            	</tr>
+				            	@else
+				            	@if($group == $employee->$format)
+				            	<tr>
+				            		<td>{{ ++$i }}</td>
+					            	<td><img height="30"  src="{{ emp_profile_picture($employee) }}" class='small-image min-img-file'></td>
+					            	<td>{{ $employee->as_oracle_code }}</td>
+					            	<td><a href='{{ url("hr/operation/job_card?associate=$employee->associate_id&month_year=$month") }}' target="_blank">{{ $employee->associate_id }}</a></td>
+					            	<td>
+					            		<b>{{ $employee->as_name }}</b>
+					            	</td>
+					            	@if($input['pay_status'] == 'cash' || $input['pay_status'] == '')
+					            	<td>{{ $designationName }}</td>
+					            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
+					            	<td>{{ $floor[$employee->as_floor_id]['hr_floor_name']??'' }}</td>
+					            	<td>{{ $line[$employee->as_line_id]['hr_line_name']??'' }}</td>
+					            	@else
+					            	<td>{{ $employee->bank_no }}</td>
+					            	<td>{{ $employee->ben_tds_amount }}</td>
+					            	@endif
+					            	<td>{{ $employee->present }}</td>
+					            	<td>{{ $employee->absent }}</td>
+					            	<td><b>{{ $otHour }}</b></td>
+					            	<td>{{ bn_money($employee->total_payable) }}</td>
+					            	<td>
+					            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-yearmonth="{{ $input['month'] }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Yearly Activity Report' ><i class="fa fa-eye"></i></button>
+					            	</td>
+				            	</tr>
+				            	@endif
+				            	@endif
+				            @endforeach
 			            @else
 				            <tr>
-				            	<td colspan="13" class="text-center">No Data Found!</td>
+				            	<td colspan="14" class="text-center">No Employee Found!</td>
 				            </tr>
 			            @endif
 			            </tbody>
-			            <tfoot>
+			            {{-- <tfoot>
 			            	<tr>
-			            		<td colspan="11" class="text-right"><b>Total Employee</b></td>
+			            		<td colspan="11" class="text-right"><b>Sub Total</b></td>
 			            		
-			            		<td colspan="2"><b>{{ $i }}</b></td>
+			            		<td><b>{{ $otHourSum }}</b></td>
+			            		<td><b>{{ bn_money($salarySum) }}</b></td>
 			            	</tr>
-			            </tfoot>
+			            </tfoot> --}}
 					</table>
 					@endforeach
 				@elseif(($input['report_format'] == 1 && $format != null))
 					@php
-						if($format == 'as_line_id'){
+						if($format == 'as_unit_id'){
+							$head = 'Unit';
+						}elseif($format == 'as_line_id'){
 							$head = 'Line';
 						}elseif($format == 'as_floor_id'){
 							$head = 'Floor';
@@ -275,11 +310,13 @@
 					@endphp
 					<table class="table table-bordered table-hover table-head">
 						<thead>
-							<tr>
+							<tr class="text-center">
 								<th>Sl</th>
 								<th> {{ $head }} Name</th>
 								<th>No. Of Employee</th>
 								<th>Salary (BDT)</th>
+								<th>OT Hour</th>
+								<th>OT Amount (BDT)</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -315,18 +352,24 @@
 									@endphp
 									{{ ($body == null)?'N/A':$body }}
 								</td>
-								<td>
+								<td class="text-right">
 									{{ $employee->total }}
 									@php $totalEmployee += $employee->total; @endphp
 								</td>
-								<td>
+								<td class="text-right">
 									{{ bn_money(round($employee->groupSalary,2)) }}
+								</td>
+								<td class="text-right">
+									{{ numberToTimeClockFormat($employee->groupOt) }}
+								</td>
+								<td class="text-right">
+									{{ bn_money(round($employee->groupOtAmount,2)) }}
 								</td>
 							</tr>
 							@endforeach
 							@else
 							<tr>
-				            	<td colspan="3" class="text-center">No Data Found!</td>
+				            	<td colspan="6" class="text-center">No Data Found!</td>
 				            </tr>
 							@endif
 						</tbody>
@@ -343,7 +386,7 @@
 		        <div class="fade-box-details fade-box">
 		          <div class="inner_gray clearfix">
 		            <div class="inner_gray_text text-center" id="heading">
-		             <h5 class="no_margin text-white">Employee Yearly Activity Report - {{ date('Y')}}</h5>   
+		             <h5 class="no_margin text-white">{{ date('M Y', strtotime($input['month'])) }} Salary</h5>   
 		            </div>
 		            <div class="inner_gray_close_button">
 		              <a class="cancel_details item_modal_close" role="button" rel='tooltip' data-tooltip-location='left' data-tooltip="Close Modal">Close</a>
