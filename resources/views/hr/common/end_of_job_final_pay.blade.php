@@ -45,8 +45,20 @@
             @php
                 $perbasic = eng_to_bn(bn_money(round($employee->ben_basic/30,2)));
                 $pergross = eng_to_bn(bn_money(round($employee->ben_current_salary/30,2)));
+                $total_1 = round(($benefits->earn_leave_amount + $benefits->service_benefits + $benefits->death_benefits),2);
+                $total_s1 = eng_to_bn(bn_money($total_1));
+                $total_s2 = $total_1;
+                $total_s = 0;
+                if($benefits->benefit_on == 2 && $benefits->notice_pay_month > 0){
+                    $total_s2 = $total_1 - $benefits->notice_pay;
+                    $total_s = $benefits->notice_pay;
+                }
 
-                $total_s1 = eng_to_bn(bn_money(round(($benefits->earn_leave_amount + $benefits->service_benefits + $benefits->death_benefits),2)));
+                if($benefits->benefit_on == 3 && $benefits->notice_pay_month > 0){
+                    $total_s = $benefits->notice_pay;
+                    $total_s2 = $total_1 + $benefits->notice_pay;
+                }
+
             @endphp
             <tr>
                 <td colspan="2">প্রতিষ্ঠানের চাকুরী হইতে পদত্যাগ এর পরিপ্রেক্ষিতে জনাব/জনাবা</td>
@@ -128,12 +140,14 @@
                 <td><span class="d-uline">হার</span></td>
                 <td><span class="d-uline" style="margin-right: 0">টাকা</span></td>
             </tr>
+            @if($benefits->benefit_on == 2 || $benefits->benefit_on == 3)
             <tr>
                 <td>নোটিশ পে</td>
-                <td class="center"> </td>
-                <td class="center"> </td>
-                <td class="right"></td>
+                <td class="center"> {{eng_to_bn($benefits->notice_pay_month)}} </td>
+                <td class="center"> {{eng_to_bn(bn_money($employee->ben_basic))}} </td>
+                <td class="right">{{eng_to_bn(bn_money($benefits->notice_pay))}}</td>
             </tr>
+            @endif 
             <tr>
                 <td>অন্যান্য সমন্বয় (যদি থাকে)</td>
                 <td></td>
@@ -143,14 +157,14 @@
             <tr>
                 <td></td>
                 <td style="border-top:1px solid #000 !important;">সর্বমোট টাকা</td>
-                <td colspan="2" style="border-top:1px solid #000 !important;"></td>
+                <td colspan="2" style="border-top:1px solid #000 !important;text-align: right;">{{eng_to_bn(bn_money($total_s))}}</td>
             </tr>
             <tr>
                 <td colspan="4"></td>
             </tr>
             <tr>
                 <td colspan="2">৭। চূড়ান্ত প্র্যাপ্য/পরিশোধিত মোট টাকা</td>
-                <td colspan="2"></td>
+                <td colspan="2"><b>{{eng_to_bn(bn_money($total_s2))}}  টাকা </b></td>
             </tr>
             <tr>
                 <td colspan="4"></td>

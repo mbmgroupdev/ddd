@@ -19,8 +19,8 @@
                 border:0 !important;
                 vertical-align: top;
               }
-              .f-16 th, .f-16 td, .f-16 td b{
-                font-size: 16px !important;
+              .f-14 th, .f-14 td, .f-14 td b{
+                font-size: 14px !important;
               }
                       </style>
 			@php
@@ -32,19 +32,25 @@
 				$section = section_by_id();
 				$subSection = subSection_by_id();
 				$area = area_by_id();
+				$location = location_by_id();
 				$formatHead = explode('_',$format);
-
 			@endphp
 			
 			<div class="top_summery_section">
 				@if($input['report_format'] == 0 || ($input['report_format'] == 1 && $format != null))
 				<div class="page-header">
 		            <h2 style="margin:4px 10px; font-weight: bold; text-align: center;">Salary @if($input['report_format'] == 0) Details @else Summary @endif Report </h2>
-		            <table class="table no-border f-16" border="0">
+		            <h4  style="text-align: center;">Month : {{ date('M Y', strtotime($input['month'])) }} </h4>
+		            <table class="table no-border f-14" border="0">
 		            	<tr>
-		            		<td>
+		            		<td width="25%">
+		            			@if($input['unit'] != null)
 		            			Unit <b>: {{ $unit[$input['unit']]['hr_unit_name'] }}</b> <br>
-		            		@if($input['area'] != null)
+		            			@endif
+		            			@if($input['location'] != null)
+		            			Location <b>: {{ $location[$input['location']]['hr_location_name'] }}</b> <br>
+		            			@endif
+		            			@if($input['area'] != null)
 		            			Area 
 		                			<b>: {{ $area[$input['area']]['hr_area_name'] }}</b> <br>
 		                		@endif
@@ -58,9 +64,7 @@
 		                		@endif
 		            		</td>
 		            		<td>
-
-		                	</div>
-		            			Month <b>: {{ date('M Y', strtotime($input['month'])) }} </b> <br>
+			            			
 		            			@if($input['otnonot'] != null)
 		                			<b> OT </b> 
 		                			<b>: @if($input['otnonot'] == 0) No @else Yes @endif </b> <br>
@@ -69,13 +73,14 @@
 		                			<b>: {{ $totalEmployees }}</b> <br>
 		                			Total Salary
 		                			<b>: {{ bn_money(round($totalSalary,2)) }} (BDT)</b><br>
-		                			@if($totalOtHour > 0)
-		                			Total OT Hour
-		                			<b>: {{ numberToTimeClockFormat(round($totalOtHour,2)) }} </b><br>
-		                			Total OT Amount
-		                			<b>: {{ bn_money(round($totalOTAmount,2)) }} (BDT)</b>
-		                			@endif
-		                	</div>
+			                		
+		                		
+		            		</td>
+		            		<td>
+	                			Total OT Hour
+	                			<b>: {{ numberToTimeClockFormat(round($totalOtHour,2)) }} </b><br>
+	                			Total OT Amount
+	                			<b>: {{ bn_money(round($totalOTAmount,2)) }} (BDT)</b>
 		                		
 		            		</td>
 		            		<td>
@@ -91,7 +96,11 @@
 		                			<b>: {{ $line[$input['line_id']]['hr_line_name'] }}</b> <br>
 		                		@endif
 		                		Format 
-		                			<b class="capitalize">: {{ isset($formatHead[1])?$formatHead[1]:'N/A' }}</b>
+		                			<b class="capitalize">: {{ isset($formatHead[1])?$formatHead[1]:'N/A' }}</b> <br>
+		                		@if($input['pay_status'] != null)
+		                		Payment Type 
+		                			<b class="capitalize">: {{ $input['pay_status'] }}</b> <br>
+		                		@endif
 		            		</td>
 		            	</tr>
 		            	
@@ -146,7 +155,10 @@
 							@if(count($getEmployee) > 0)
 			                <tr>
 			                	@php
-									if($format == 'as_line_id'){
+									if($format == 'as_unit_id'){
+										$head = 'Unit';
+										$body = $unit[$group]['hr_unit_name']??'';
+									}elseif($format == 'as_line_id'){
 										$head = 'Line';
 										$body = $line[$group]['hr_line_name']??'';
 									}elseif($format == 'as_floor_id'){
@@ -180,10 +192,15 @@
 			                    <th>Oracle ID</th>
 			                    <th>Associate ID</th>
 			                    <th>Name</th>
+			                    @if($input['pay_status'] == 'cash' || $input['pay_status'] == '')
 			                    <th>Designation</th>
 			                    <th>Department</th>
 			                    <th>Floor</th>
 			                    <th>Line</th>
+			                    @else
+			                    <th>Account No.</th>
+			                    <th>TDS</th>
+			                    @endif
 			                    <th>Present</th>
 			                    <th>Absent</th>
 			                    <th>OT Hour</th>
@@ -208,10 +225,15 @@
 					            	<td>
 					            		<b>{{ $employee->as_name }}</b>
 					            	</td>
+					            	@if($input['pay_status'] == 'cash' || $input['pay_status'] == '')
 					            	<td>{{ $designationName }}</td>
 					            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
 					            	<td>{{ $floor[$employee->as_floor_id]['hr_floor_name']??'' }}</td>
 					            	<td>{{ $line[$employee->as_line_id]['hr_line_name']??'' }}</td>
+					            	@else
+					            	<td>{{ $employee->bank_no }}</td>
+					            	<td>{{ $employee->ben_tds_amount }}</td>
+					            	@endif
 					            	<td>{{ $employee->present }}</td>
 					            	<td>{{ $employee->absent }}</td>
 					            	<td><b>{{ $otHour }}</b></td>
@@ -230,10 +252,15 @@
 					            	<td>
 					            		<b>{{ $employee->as_name }}</b>
 					            	</td>
-					            	<td>{{ $designation[$employee->as_designation_id]['hr_designation_name']??'' }}</td>
+					            	@if($input['pay_status'] == 'cash' || $input['pay_status'] == '')
+					            	<td>{{ $designationName }}</td>
 					            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
 					            	<td>{{ $floor[$employee->as_floor_id]['hr_floor_name']??'' }}</td>
 					            	<td>{{ $line[$employee->as_line_id]['hr_line_name']??'' }}</td>
+					            	@else
+					            	<td>{{ $employee->bank_no }}</td>
+					            	<td>{{ $employee->ben_tds_amount }}</td>
+					            	@endif
 					            	<td>{{ $employee->present }}</td>
 					            	<td>{{ $employee->absent }}</td>
 					            	<td><b>{{ $otHour }}</b></td>
@@ -263,7 +290,9 @@
 					@endforeach
 				@elseif(($input['report_format'] == 1 && $format != null))
 					@php
-						if($format == 'as_line_id'){
+						if($format == 'as_unit_id'){
+							$head = 'Unit';
+						}elseif($format == 'as_line_id'){
 							$head = 'Line';
 						}elseif($format == 'as_floor_id'){
 							$head = 'Floor';
@@ -357,7 +386,7 @@
 		        <div class="fade-box-details fade-box">
 		          <div class="inner_gray clearfix">
 		            <div class="inner_gray_text text-center" id="heading">
-		             <h5 class="no_margin text-white">Employee Yearly Activity Report - {{ date('Y')}}</h5>   
+		             <h5 class="no_margin text-white">{{ date('M Y', strtotime($input['month'])) }} Salary</h5>   
 		            </div>
 		            <div class="inner_gray_close_button">
 		              <a class="cancel_details item_modal_close" role="button" rel='tooltip' data-tooltip-location='left' data-tooltip="Close Modal">Close</a>

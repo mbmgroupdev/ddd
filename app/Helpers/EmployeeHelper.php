@@ -44,8 +44,9 @@ class EmployeeHelper
 			    $year = Carbon::parse($intimePunch)->format('Y');
 			    $month = Carbon::parse($intimePunch)->format('m');
 			    $dayname = Carbon::parse($intimePunch)->format('l');
+			    $employee = Employee::where('associate_id', $eAsId)->first();
 
-			    if(date('H:i:s', strtotime($shiftIntime)) < date('H:i:s', strtotime('14:00:00'))  && $dayname == 'Friday'){
+			    if(date('H:i:s', strtotime($shiftIntime)) < date('H:i:s', strtotime('14:00:00'))  && $dayname == 'Friday' && ($employee->as_designation_id != 224 || $employee->as_designation_id != 350)){
 			    	$shiftBreak = 90;
 			    }
 

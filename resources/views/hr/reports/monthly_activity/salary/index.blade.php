@@ -150,7 +150,7 @@
                                             </div>
                                           </div>
                                         </div>
-                                        <input type="hidden" id="reportformat" name="report_format" value="0">
+                                        <input type="hidden" id="reportformat" name="report_format" value="1">
                                         <input type="hidden" id="reportGroup" name="report_group" value="as_department_id">
                                         
                                     </div>
@@ -213,7 +213,7 @@
                                   <div class="format">
                                     <div class="form-group has-float-label select-search-group mb-0">
                                         <?php
-                                            $type = ['as_unit_id'=>'N/A','as_line_id'=>'Line','as_floor_id'=>'Floor','as_department_id'=>'Department','as_designation_id'=>'Designation','as_section_id'=>'Section'];
+                                            $type = ['as_unit_id'=>'Unit','as_line_id'=>'Line','as_floor_id'=>'Floor','as_department_id'=>'Department','as_designation_id'=>'Designation','as_section_id'=>'Section'];
                                         ?>
                                         {{ Form::select('report_group_select', $type, 'as_department_id', ['class'=>'form-control capitalize', 'id'=>'reportGroupHead']) }}
                                         <label for="reportGroupHead">Report Format</label>
@@ -301,22 +301,22 @@
                 data: form.serialize(), // serializes the form's elements.
                 success: function(response)
                 {
-                  console.log(response);
-                  // if(response !== 'error'){
-                  //   $("#result-data").html(response);
-                  // }else{
-                  //   // console.log(response);
-                  //   $("#result-data").html('');
-                  // }
-                  // if(format == 0 && response !== 'error'){
-                  //   $("#single-employee-search").show();
-                  //   $('.list_view').addClass('active').attr('disabled', true);
-                  //   $('.grid_view').removeClass('active').attr('disabled', false);
-                  // }else{
-                  //   $("#single-employee-search").hide();
-                  //   $('.grid_view').addClass('active').attr('disabled', true);
-                  //   $('.list_view').removeClass('active').attr('disabled', false);
-                  // }
+                  // console.log(response);
+                  if(response !== 'error'){
+                    $("#result-data").html(response);
+                  }else{
+                    // console.log(response);
+                    $("#result-data").html('');
+                  }
+                  if(format == 0 && response !== 'error'){
+                    $("#single-employee-search").show();
+                    $('.list_view').addClass('active').attr('disabled', true);
+                    $('.grid_view').removeClass('active').attr('disabled', false);
+                  }else{
+                    $("#single-employee-search").hide();
+                    $('.grid_view').addClass('active').attr('disabled', true);
+                    $('.list_view').removeClass('active').attr('disabled', false);
+                  }
                 },
                 error: function (reject) {
                     console.log(reject);

@@ -18,8 +18,8 @@
  
         </div>
 
+        @include('inc/message')
         <div class="page-content"> 
-            @include('inc/message')
             <div class="panel panel-info">
                 <div class="panel-heading">
                     <h6>
@@ -40,10 +40,9 @@
                                 <th>Earn Amount</th>
                                 <th>Service Benefits</th>
                                 <th>Subsistence Allowance</th>
-                                <th>Notice Pay</th>                                            
-                                <th>Termination Benefits</th>                                            
-                                <th>Natural Death Benefits</th>                                            
-                                <th>Accidental Death Benefits</th>
+                                <th>Notice Pay</th>                        
+                                <th>Termination Benefits</th>   
+                                <th>Death Benefits</th>
                                 <th>Total Amount</th>
                             </tr>
                         </thead>
@@ -65,8 +64,8 @@ $(document).ready(function(){
          '3' :[@foreach($unitList as $e) <?php echo "'$e'," ?> @endforeach]
     };
 
-    var exportColName = ['Sl.','Associate ID','Name','Unit','','Earn Amount','Service Benefits', 'Subsistence Allowance', 'Notice Pay','Termination Benefits','Natural Death Benefits','Accidental Death Benefits','Total Amount'];
-    var exportCol = [0,1,2,3,5,6,7,8,9,10,11,12];
+    var exportColName = ['Sl.','Associate ID','Name','Unit','Description','Earn Amount','Service Benefits', 'Subsistence Allowance', 'Notice Pay','Termination Benefits','Death Benefits','Total Amount'];
+    var exportCol = [0,1,2,3,5,6,7,8,9,10,11];
 
     var dt = $('#dataTables').DataTable({
         order: [], //reset auto order
@@ -195,8 +194,7 @@ $(document).ready(function(){
             { data: 'subsistance_allowance', name: 'subsistance_allowance' },
             { data: 'notice_pay', name: 'notice_pay' },
             { data: 'termination_benefits', name: 'termination_benefits' },
-            { data: 'natural_death_benefits', name: 'natural_death_benefits' },
-            { data: 'on_duty_accidental_death_benefits', name: 'on_duty_accidental_death_benefits' },
+            { data: 'death_benefits', name: 'death_benefits' },
             { data: 'total_amount', name: 'total_amount' }
         ], 
         initComplete: function () {   

@@ -50,7 +50,18 @@
                 <li class="active"> Monthly Salary</li>
             </ul>
         </div>
-
+        @php
+          $reFor = 1;
+          $reGro = 'as_department_id';
+          /*if(isset(request()->audit) && (request()->audit == 'Audit' || request()->audit == 'Accounts' || request()->audit == 'Management')){
+            $reFor = 1;
+            $reGro = 'as_department_id';
+          }else{
+            $reFor = 1;
+            $reGro = 'as_department_id';
+          }*/
+          
+        @endphp
         <div class="page-content"> 
             <div class="row">
                 <div class="col-12">
@@ -62,14 +73,23 @@
                             <div class="panel-body">
                                 <div class="row">
                                     <div class="col-3">
-                                        <div class="form-group has-float-label has-required select-search-group">
-                                            <select name="unit" class="form-control capitalize select-search" id="unit" required="">
+                                        <div class="form-group has-float-label select-search-group">
+                                            <select name="unit" class="form-control capitalize select-search" id="unit">
                                                 <option selected="" value="">Choose...</option>
                                                 @foreach($unitList as $key => $value)
                                                 <option value="{{ $key }}" @if($input['unit'] == $key) selected @endif>{{ $value }}</option>
                                                 @endforeach
                                             </select>
                                           <label for="unit">Unit</label>
+                                        </div>
+                                        <div class="form-group has-float-label select-search-group">
+                                            <select name="location" class="form-control capitalize select-search" id="location">
+                                                <option selected="" value="">Choose Location...</option>
+                                                @foreach($locationList as $key => $value)
+                                                <option value="{{ $key }}">{{ $value }}</option>
+                                                @endforeach
+                                            </select>
+                                          <label for="location">Location</label>
                                         </div>
                                         <div class="form-group has-float-label select-search-group">
                                             <select name="area" class="form-control capitalize select-search" id="area">
@@ -122,16 +142,7 @@
                                             </select>
                                             <label for="otnonot">OT/Non-OT</label>
                                         </div>
-                                        @php
-                                          if(isset(request()->audit) && (request()->audit == 'Audit' || request()->audit == 'Accounts' || request()->audit == 'Management')){
-                                            $reFor = 1;
-                                            $reGro = 'as_unit_id';
-                                          }else{
-                                            $reFor = 0;
-                                            $reGro = 'as_line_id';
-                                          }
-                                          
-                                        @endphp
+                                        
                                         <input type="hidden" id="reportformat" name="report_format" value="{{ $reFor }}">
                                         <input type="hidden" id="reportGroup" name="report_group" value="{{ $reGro }}">
                                         <div class="row">
@@ -165,8 +176,15 @@
                                             {{ Form::select('employee_status', $status, null, ['placeholder'=>'Select Employee Status ', 'class'=>'form-control capitalize select-search', 'id'=>'estatus']) }}
                                             <label for="estatus">Status</label>
                                         </div>
+                                        <div class="form-group has-float-label select-search-group">
+                                            <?php
+                                              $payType = ['cash'=>'Cash', 'rocket'=>'Rocket', 'bKash'=>'bKash', 'dbbl'=>'Duch-Bangla Bank Limited.'];
+                                            ?>
+                                            {{ Form::select('pay_status', $payType, 1, ['placeholder'=>'Select Payment Type', 'class'=>'form-control capitalize select-search', 'id'=>'paymentType']) }}
+                                            <label for="paymentType">Payment Type</label>
+                                        </div>
                                         <div class="form-group">
-                                          <button class="btn btn-primary nextBtn btn-lg pull-right" type="submit" ><i class="fa fa-filter"></i> Filter</button>
+                                          <button class="btn btn-primary nextBtn btn-lg pull-right" type="submit" ><i class="fa fa-save"></i> Generate</button>
                                         </div>
                                     </div>   
                                 </div>
@@ -177,13 +195,14 @@
                                        <div class="modal-content">
                                         <form class="form-horizontal" role="form" action="#" id="auditSalary">
                                           <div class="modal-header">
-                                             <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">{{ $input['month'] }} Salary Audit Process</h5>
+                                             <h5 class="modal-title" id="exampleModalCenteredScrollableTitle"><strong>{{ date('F, Y', strtotime($input['month'])) }} </strong> Salary Audit Process</h5>
                                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                              <span aria-hidden="true">×</span>
                                              </button>
                                           </div>
                                           <div class="modal-body">
-                                            <h4>Salary to process On {{ $input['audit'] }} Department By {{ Auth::user()->name }}</h4>
+                                            <h4>Salary process {{ $input['audit'] }}   </h4>
+                                              <p class="text-muted">-by {{ Auth::user()->name }}</p>
                                             <div class="custom-control custom-switch text-center mb-3">
                                               <input name="status" type="checkbox" class="custom-control-input " id="status" value="">
                                               <label class="custom-control-label" for="status">Confirm</label>
@@ -242,9 +261,9 @@
                                   <div class="format">
                                     <div class="form-group has-float-label select-search-group mb-0">
                                         <?php
-                                            $type = ['as_unit_id'=>'N/A','as_line_id'=>'Line','as_floor_id'=>'Floor','as_department_id'=>'Department','as_designation_id'=>'Designation'];
+                                            $type = ['as_unit_id'=>'Unit','as_line_id'=>'Line','as_floor_id'=>'Floor','as_department_id'=>'Department','as_designation_id'=>'Designation'];
                                         ?>
-                                        {{ Form::select('report_group_select', $type, 'as_line_id', ['class'=>'form-control capitalize', 'id'=>'reportGroupHead']) }}
+                                        {{ Form::select('report_group_select', $type, $reGro, ['class'=>'form-control capitalize', 'id'=>'reportGroupHead']) }}
                                         <label for="reportGroupHead">Report Format</label>
                                     </div>
                                   </div>
@@ -317,8 +336,12 @@
         var format = $('input[name="report_format"]').val();
         var form = $("#activityReport");
         var flag = 0;
-        if(unit === '' || month === '' || stauts === ''){
+        if(month === '' || stauts === ''){
           flag = 1;
+        }
+        if(unit === '' && location === ''){
+          flag = 1;
+          $.notify('Select One Unit Or Location', 'error');
         }
         if(flag === 0){
           $('html, body').animate({

@@ -119,7 +119,7 @@ class SalaryProcessController extends Controller
                 $join->on('bemp.hr_bn_associate_id','emp.associate_id')->addBinding($employeeBanData->getBindings());
             });
 	            
-	        $getSalaryList = $queryData->select('s.*', 'emp.as_doj', 'emp.as_ot', 'emp.as_designation_id', 'emp.as_location', 'bemp.hr_bn_associate_name')->get();
+	        $getSalaryList = $queryData->select('s.*', 'emp.as_doj', 'emp.as_ot', 'emp.as_designation_id', 'emp.as_location', 'bemp.hr_bn_associate_name', 'emp.as_oracle_code', 'emp.as_unit_id')->get();
             // return $getSalaryList;
             $employeeAssociates = $queryData->select('emp.associate_id')->pluck('emp.associate_id')->toArray();
             // salary adjust

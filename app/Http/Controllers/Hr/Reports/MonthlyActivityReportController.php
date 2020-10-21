@@ -24,7 +24,7 @@ class MonthlyActivityReportController extends Controller
         ->whereIn('hr_location_id', auth()->user()->location_permissions())
         ->orderBy('hr_location_name', 'desc')
         ->pluck('hr_location_name', 'hr_location_id');
-        dd($locationList);
+
         $areaList  = DB::table('hr_area')->where('hr_area_status', '1')->pluck('hr_area_name', 'hr_area_id');
         $salaryMin = Benefits::getSalaryRangeMin();
         $salaryMax = Benefits::getSalaryRangeMax();
@@ -34,7 +34,7 @@ class MonthlyActivityReportController extends Controller
     public function salaryReport(Request $request)
     {
         $input = $request->all();
-        return $input;
+        // return $input;
         try {
             $yearMonth = explode('-', $input['month']);
             $month = $yearMonth[1];
@@ -85,20 +85,25 @@ class MonthlyActivityReportController extends Controller
             $queryData = DB::table('hr_monthly_salary AS s')
             ->whereNotIn('s.as_id', config('base.ignore_salary'))
             ->whereIn('emp.as_unit_id', auth()->user()->unit_permissions())
-            ->whereIn('emp.as_location', auth()->user()->location_permissions())
-            ->where('emp.as_unit_id',$input['unit']);
+            ->whereIn('emp.as_location', auth()->user()->location_permissions());
             if($input['report_format'] == 0 && !empty($input['employee'])){
                 $queryData->where('emp.associate_id', 'LIKE', '%'.$input['employee'] .'%');
             }
             $queryData->where('s.year', $year)
             ->where('s.month', $month)
             ->whereBetween('s.gross', [$input['min_sal'], $input['max_sal']])
+            ->when(!empty($input['unit']), function ($query) use($input){
+               return $query->where('emp.as_unit_id',$input['unit']);
+            })
+            ->when(!empty($input['location']), function ($query) use($input){
+               return $query->where('emp.as_location',$input['location']);
+            })
             ->when(!empty($input['employee_status']), function ($query) use($input){
                return $query->where('s.emp_status',$input['employee_status']);
             })
             ->when(!empty($input['pay_status']), function ($query) use($input){
                 if($input['pay_status'] == "cash"){
-                    return $query->whereNull('ben.bank_name');
+                    return $query->where('s.cash_payable', '>', 0);
                 }else{
                     return $query->where('ben.bank_name',$input['pay_status']);
                 }
@@ -137,10 +142,10 @@ class MonthlyActivityReportController extends Controller
                 $join->on('deg.hr_designation_id','emp.as_designation_id')->addBinding($designationData->getBindings());
             });
             if($input['report_format'] == 1 && $input['report_group'] != null){
-                $queryData->select('deg.hr_designation_position','deg.hr_designation_name', 'ben.bank_name', 'ben.ben_tds_amount','emp.'.$input['report_group'], DB::raw('count(*) as total'), DB::raw('sum(total_payable) as groupSalary'), DB::raw('sum(ot_hour) as groupOt'), DB::raw('sum(ot_hour * ot_rate) as groupOtAmount'))->groupBy('emp.'.$input['report_group']);
+                $queryData->select('deg.hr_designation_position','deg.hr_designation_name', 'ben.bank_name', 'ben.bank_no', 'ben.ben_tds_amount','emp.'.$input['report_group'], DB::raw('count(*) as total'), DB::raw('sum(total_payable) as groupSalary'), DB::raw('sum(ot_hour) as groupOt'), DB::raw('sum(ot_hour * ot_rate) as groupOtAmount'))->groupBy('emp.'.$input['report_group']);
 
             }else{
-                $queryData->select('deg.hr_designation_position','deg.hr_designation_name', 'ben.bank_name', 'ben.ben_tds_amount','emp.as_id','emp.as_gender', 'emp.as_oracle_code', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_section_id', 's.present', 's.absent', 's.ot_hour', 's.ot_rate', 's.total_payable');
+                $queryData->select('deg.hr_designation_position','deg.hr_designation_name', 'ben.bank_name','ben.bank_no', 'ben.ben_tds_amount','emp.as_id','emp.as_gender', 'emp.as_oracle_code', 'emp.associate_id', 'emp.as_unit_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_section_id', 's.present', 's.absent', 's.ot_hour', 's.ot_rate', 's.total_payable');
                 $totalSalary = round($queryData->sum("s.total_payable"));
                 $totalOtHour = ($queryData->sum("s.ot_hour"));
                 $totalOTAmount = round($queryData->sum(DB::raw('s.ot_hour * s.ot_rate')));
@@ -155,7 +160,7 @@ class MonthlyActivityReportController extends Controller
             }else{
                 $totalEmployees = count($getEmployee);
             }
-            // dd($getEmployee);
+            // dd($input);
             if($format != null && count($getEmployee) > 0 && $input['report_format'] == 0){
                 $getEmployeeArray = $getEmployee->toArray();
                 $formatBy = array_column($getEmployeeArray, $request['report_group']);
@@ -232,14 +237,22 @@ class MonthlyActivityReportController extends Controller
     {
         $input = $request->all();
         if($input['month'] != null && $input['unit'] != null){
+
             $unitList  = Unit::where('hr_unit_status', '1')
             ->whereIn('hr_unit_id', auth()->user()->unit_permissions())
+            ->orderBy('hr_unit_name', 'desc')
             ->pluck('hr_unit_name', 'hr_unit_id');
+
+            $locationList  = Location::where('hr_location_status', '1')
+            ->whereIn('hr_location_id', auth()->user()->location_permissions())
+            ->orderBy('hr_location_name', 'desc')
+            ->pluck('hr_location_name', 'hr_location_id');
+
             $areaList  = DB::table('hr_area')->where('hr_area_status', '1')->pluck('hr_area_name', 'hr_area_id');
             $salaryMin = Benefits::getSalaryRangeMin();
             $salaryMax = Benefits::getSalaryRangeMax();
 
-            return view('hr/reports/monthly_activity/salary/audit', compact('unitList','areaList', 'salaryMin', 'salaryMax', 'input'));
+            return view('hr/reports/monthly_activity/salary/audit', compact('unitList','areaList', 'salaryMin', 'salaryMax', 'input','locationList'));
         }else{
             toastr()->error('Something Wrong!');
             return back();
