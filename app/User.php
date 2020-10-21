@@ -71,6 +71,22 @@ class User extends Authenticatable
         return UserActivity::where('user_id',$this->id)->orderBy('id','DESC')->first();
     }
 
+    public function permitted_associate()
+    {
+        return Employee::whereIn('as_unit_id', $this->unit_permissions())
+            ->whereIn('as_location', $this->location_permissions())
+            ->where('as_status', 1)
+            ->pluck('associate_id');
+    }
+
+    public function permitted_asid()
+    {
+        return Employee::whereIn('as_unit_id', $this->unit_permissions())
+            ->whereIn('as_location', $this->location_permissions())
+            ->where('as_status', 1)
+            ->pluck('as_id');
+    }
+
     public function unit_permissions()
     {
         $units = explode(",", $this->unit_permissions);

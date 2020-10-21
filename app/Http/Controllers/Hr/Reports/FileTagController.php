@@ -33,6 +33,7 @@ class FileTagController extends Controller
             ->select(
                 'b.as_id',
                 'b.associate_id',
+                'b.as_oracle_code',
                 'b.as_emp_type_id',
                 'b.temp_id',
                 'b.as_pic',
@@ -68,7 +69,7 @@ class FileTagController extends Controller
                     <p style=\"text-align:center; font-weight:600; font-size:48px; margin:0px; padding:0px;\">".
                                 (!empty($associate->associate_id)?
                                 (substr_replace($associate->associate_id, "<big style='font-size:72px; font-weight:700'>$associate->temp_id</big>", 3, 6)):
-                                null) ."</p>
+                                null) ." <span style='font-size:40px'>(".$associate->as_oracle_code.")</span></p>
                     <p style=\"text-align:center; font-size:36px; font-weight:700; margin:0px; padding:0px;\">".strtoupper($associate->hr_designation_name)."</p>
                     <p style=\"text-align:center; font-size:60px; font-weight:700; margin:0px; padding:0px;\">".date('d-M-Y',strtotime($associate->as_doj))."</p>
                     </div>";

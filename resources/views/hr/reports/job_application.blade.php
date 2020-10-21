@@ -32,9 +32,9 @@
             </ul><!-- /.breadcrumb -->
         </div>
 
+        @include('inc/message')
         <div class="page-content"> 
             <div class="row">
-                 @include('inc/message')
                 <div class="col-12">
                     <form class="" role="form" method="post" action="{{ url('hr/recruitment/job-application') }}" enctype="multipart/form-data">   
                         @csrf
@@ -83,22 +83,26 @@
                                         $date = str_replace($en, $bn, date('Y-m-d H:i:s'));
                                         ?>
                                         <p>
-                                        <center><b style="font-size: 9px;">চাকুরীর আবেদনপত্র </b></center>
-                                        <center><u>JOB APPLICATION </u> </center>
+                                        <center><b style="font-size: 14px;">চাকুরীর আবেদনপত্র </b></center>
+                                        <center><u style="font-size: 13px">JOB APPLICATION </u> </center>
                                         <p style="font-size: 12px;">বরাবর,</p>
                                         <p style="font-size: 12px;">ব্যবস্থাপনা পরিচালক</p>
                                         <p style="font-size: 12px;">{{ (!empty($info->hr_unit_name_bn )?$info->hr_unit_name_bn:null) }}</p>
                                         <p style="font-size: 12px;">{{ (!empty($info->hr_unit_address_bn)?$info->hr_unit_address_bn:null) }}</p>
                                         <p style="font-size: 12px;"><u> <b>বিষয়ঃ {{ $info->hr_designation_name_bn }} পদে চাকুরীর জন্য আবেদন</b></u></p>
-                                        <p style="font-size: 12px;"><u> <b> Sub: Application for the post of {{ (!empty($info->hr_designation_name_bn )?$info->hr_designation_name_bn:null) }}</b></u></p>
+                                        <p style="font-size: 12px;"><u> <b> Sub: Application for the post of {{ (!empty($info->hr_designation_name )?$info->hr_designation_name:null) }}</b></u></p>
                                         <table style="border: none; font-size: 12px;" width="100%" cellpadding="3">
                                             <tr>
                                                 <td width="290px" style="border: none;">নামঃ (Name)</td>
                                                 <td style="border: none; border-bottom: 1px dotted">: {{ (!empty($info->hr_bn_associate_name )?$info->hr_bn_associate_name:null) }}</td>
                                             </tr>
                                             <tr>
-                                                <td width="290px" style="border: none;">পিতা/মাতার নামঃ (Name of Father/Mother)</td>
-                                                <td style="border: none; border-bottom: 1px dotted">: {{ (!empty($info->hr_bn_father_name )?$info->hr_bn_father_name:null) }} / {{ (!empty($info->hr_bn_mother_name )?$info->hr_bn_mother_name:null) }}</td>
+                                                <td width="290px" style="border: none;">পিতার নামঃ (Name of Father)</td>
+                                                <td style="border: none; border-bottom: 1px dotted">: {{ (!empty($info->hr_bn_father_name )?$info->hr_bn_father_name:null) }} </td>
+                                            </tr>
+                                            <tr>
+                                                <td width="290px" style="border: none;">মাতার নামঃ (Name of Mother)</td>
+                                                <td style="border: none; border-bottom: 1px dotted">: {{ (!empty($info->hr_bn_mother_name )?$info->hr_bn_mother_name:null) }}</td>
                                             </tr>
                                             <tr>
                                                 <td width="290px" style="border: none;">স্বামী/স্ত্রীর নামঃ (Name of Husband/Wife)</td>
@@ -119,6 +123,7 @@
                                                     </td>
                                                 </tr>
                                             </tr>
+                                           
                                             <tr >
                                                 <tr>
                                                     <td width="290px" style="border: none;" rowspan="2">বর্তমান ঠিকানাঃ (Permanent Address)</td>
@@ -134,25 +139,41 @@
                                                     </td>
                                                 </tr>
                                             </tr>
+                                             <tr>
+                                                <td width="290px" style="border: none;">মোবাইল নংঃ (Mobile No.)</td>
+                                                <td style="border: none; border-bottom: 1px dotted">: {{ (!empty($info->as_contact )?eng_to_bn($info->as_contact):null) }}</td>
+                                            </tr>
                                             <tr>
                                                 <td width="290px" style="border: none;">শিক্ষাগত যোগ্যতাঃ (Edu. Qualification)</td>
                                                 <td style="border: none; border-bottom: 1px dotted">: {{$info->education_degree_title}}</td>
                                             </tr>
                                             <tr>
                                                 <td width="290px" style="border: none;">জন্ম তারিখ/বয়সঃ (Date of Birth/ Age)</td>
-                                                <td style="border: none; border-bottom: 1px dotted">: {{ (!empty($info->as_dob )?$info->as_dob:null) }}</td>
+                                                <td style="border: none; border-bottom: 1px dotted">: {{ (!empty($info->as_dob )?eng_to_bn($info->as_dob):null) }}</td>
                                             </tr>
                                             <tr>
                                                 <td width="290px" style="border: none;">ধর্মঃ (Religion)</td>
-                                                <td style="border: none; border-bottom: 1px dotted">: {{ (!empty($info->emp_adv_info_religion )?$info->emp_adv_info_religion:null) }}</td>
+                                                <td style="border: none; border-bottom: 1px dotted">: {{ religion_bangla($info->emp_adv_info_religion) }}</td>
                                             </tr>
                                             <tr>
                                                 <td width="290px" style="border: none;">জাতীয়তাঃ (Nationality)</td>
-                                                <td style="border: none; border-bottom: 1px dotted">: {{ (!empty($info->emp_adv_info_nationality )?$info->emp_adv_info_nationality:null) }}</td>
+                                                <td style="border: none; border-bottom: 1px dotted">: {{ (!empty($info->emp_adv_info_nationality )?$info->emp_adv_info_nationality:'বাংলাদেশী') }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td width="290px" style="border: none;">বৈবাহিক অবস্থাঃ (Maritial Status)</td>
+                                                <td style="border: none; border-bottom: 1px dotted">:
+
+
+                                                 {{ maritial_bangla($info->emp_adv_info_marital_stat) }}</td>
+                                                        
+                                            </tr>
+                                            <tr>
+                                                <td width="290px" style="border: none;">সন্তানঃ (Children)</td>
+                                                <td style="border: none; border-bottom: 1px dotted">: {{ (!empty($info->emp_adv_info_children )?eng_to_bn($info->emp_adv_info_children):null) }}</td>
                                             </tr>
                                             <tr>
                                                 <td width="290px" style="border: none;">অভিজ্ঞতাঃ (Experience)</td>
-                                                <td style="border: none; border-bottom: 1px dotted">: {{ (!empty($info->emp_adv_info_work_exp )?$info->emp_adv_info_work_exp:"0") }} Year(s)</td>
+                                                <td style="border: none; border-bottom: 1px dotted">: {{ (!empty($info->emp_adv_info_work_exp )?eng_to_bn($info->emp_adv_info_work_exp):"০") }} বছর</td>
                                             </tr>
                                             <tr>
                                                 <td width="290px" style="border: none;">সুপারিশকারীর নাম ও পরিচিতি/ঠিকানাঃ (Name and Address of recommender)</td>
@@ -160,7 +181,7 @@
                                             </tr>
                                             <tr>
                                                 <td style="border: none;" colspan="2">
-                                                    <br>    
+                                                    
                                                     <p>
                                                         অতএব, অনুগ্রহ করে আমাকে উক্ত পদে নিয়োগ দান করিয়া বাধিত করিবেন।
                                                     </p>
@@ -199,7 +220,7 @@
                                                     ১. লাইন নং (Dept) :
                                                 </td>
                                                 <td style="border: none;">
-                                                    ৪. নিয়োগের তারিখ (Date of App) : {{$info->as_doj}}
+                                                    ৪. নিয়োগের তারিখ (Date of App) : {{eng_to_bn($info->as_doj)}}
                                                 </td>
                                             </tr>
                                             <tr style="width: 100%">
@@ -224,20 +245,15 @@
                                         <table style="border: 1px solid; font-size: 12px;border-collapse: collapse;" width="100%" cellpadding="3" width="100%">
                                             
                                             <tr style="width: 100%">
-                                                <td style="border: 1px solid; text-align: center;border-collapse: none;">
-                                                    <br><br><br>
-                                                    উৎপাদন ব্যবস্থাপক<br>
-                                                    Production Manager 
+                                                <td style="width: 33%">
                                                 </td>
-                                                <td style="border: 1px solid; text-align: center;border-collapse: none;">
+                                                <td style="border:0;width: 33%">
+                                                    
+                                                </td>
+                                                <td style="border: 0; text-align: center;border-collapse: none;">
                                                     <br><br><br>
                                                     প্রশাসনিক কর্মকর্তা<br>
                                                     Manager HR/ Asst. Manager HR
-                                                </td>
-                                                <td style="border: 1px solid; text-align: center;border-collapse: none;">
-                                                    <br><br><br>
-                                                    জি.এম/ম্যানেজার/এ.জি.এম<br>
-                                                    G.M/Manager/A.G.M 
                                                 </td>
                                             </tr>
                                         </table>

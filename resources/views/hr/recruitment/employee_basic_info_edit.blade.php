@@ -219,7 +219,7 @@
                                </div>
 
                                <div class="custom-control custom-radio custom-control-inline">
-                                  <input type="radio" id="female" name="as_gender" class="custom-control-input" value="female" @if($employee->as_gender=="Female") checked @endif>
+                                  <input type="radio" id="female" name="as_gender" class="custom-control-input" value="Female" @if($employee->as_gender=="Female") checked @endif>
                                   <label class="custom-control-label" for="female"> Female </label>
                                </div>
                             </div>

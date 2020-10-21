@@ -1376,13 +1376,6 @@ class EmployeeController extends Controller
         #-----------------------------------------------------------#
         $validator = Validator::make($request->all(), [
             'as_emp_type_id'    => 'required',
-            // 'as_unit_id'        => '',
-            // 'as_location_id'    => '',
-
-            // 'as_floor_id'       => '',
-            // 'as_line_id'        => '',
-            // 'as_shift_id'       => '',
-
             'as_area_id'        => 'required',
             'as_department_id'  => 'required',
             'as_section_id'     => 'required',
@@ -1396,7 +1389,6 @@ class EmployeeController extends Controller
             'as_contact'        => 'required',
             'as_ot'             => 'required|max:1',
             'as_pic'            => 'image|mimes:jpeg,png,jpg|max:200',
-            'as_status'         => 'required|max:1',
             'as_oracle_code'    => 'max:20',
             'as_rfid_code'      => 'max:20',
         ]);
@@ -1466,39 +1458,13 @@ class EmployeeController extends Controller
                 'as_contact'       => $request->as_contact,
                 'as_ot'            => $request->as_ot,
                 'as_pic'           => $as_pic,
-                'as_status'        => $request->as_status,
-                'as_status_date'   => $request->as_status_date,
                 'as_remarks'       => $request->as_remarks,
                 'as_oracle_code'   => $request->as_oracle_code,
                 'as_rfid_code'     => $request->as_rfid_code,
                 'as_location'      => $request->as_location_id
             ]);
 
-            // status change absent remove
-            if($employeeOldStatus == 1 && $input['as_status'] > 1){
-                $today = date('Y-m-d');
-                $month = date('m');
-                $year = date('Y');
-                $yearMonth = $year.'-'.$month;
-                $getStatus = EmployeeHelper::employeeStatusDateWiseAbsentDelete($request->associate_id, $today);
-                $modifyFlag = 0;
-                if($getStatus == 'success'){
-                    $modifyFlag = 1;
-                }
-                if($modifyFlag == 1){
-                  
-                    $tableName = Custom::unitWiseAttendanceTableName($request->as_unit_id);
-                    if($month == date('m')){
-                        $totalDay = date('d');
-                    }else{
-                          $totalDay = Carbon::parse($yearMonth)->daysInMonth;
-                    }
-                    $queue = (new ProcessUnitWiseSalary($tableName, $month, $year, $request->as_id, $totalDay))
-                          ->onQueue('salarygenerate')
-                          ->delay(Carbon::now()->addSeconds(2));
-                          dispatch($queue); 
-                }
-            }
+            
             $this->logFileWrite("Employee Data Updated", $request->as_id);
             Cache::forget('employee_count');
             DB::commit();
@@ -1678,6 +1644,7 @@ class EmployeeController extends Controller
             $data['result'] .= "<tr>
                 <td><input name=\"associate_id[]\" type=\"checkbox\" class=\"associate-select\" value=\"$employee->associate_id\"></td>
                 <td>$employee->associate_id</td>
+                <td>$employee->as_oracle_code</td>
                 <td>$employee->as_name</td>
             </tr>";
         }

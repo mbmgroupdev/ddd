@@ -89,7 +89,7 @@
                <a href="{{ url('hr/employee/incomplete-list') }}"><i class="las la-list-ul"></i>Missing Info</a>
             </li>
             @endif
-            @if($user->canany(['Assign Benefit']) || $user->hasRole('Super Admin'))
+            @if($user->canany(['Assign Benefit','Benefit List']) || $user->hasRole('Super Admin'))
             <li class="@if($segment2 == 'employee' && $segment3=='benefits') active @endif">
                <a href="{{ url('hr/employee/benefits') }}"><i class="las la-gifts"></i> Benefits</a>
             </li>
@@ -353,11 +353,15 @@
                   <a href="{{ url('hr/reports/holiday-roster') }}"><i class="las la-fingerprint"></i>Holiday Roster</a>
                </li>
             @endif
+            @if($user->can('Maternity Leave') || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'maternity') active @endif"><a href="{{ url('hr/reports/maternity') }}"><i class="las la-chart-area"></i>Maternity Leave</a></li>
-
+            @endif
+            @if($user->can('Shift Assign') || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'unit-wise-shift') active @endif"><a href="{{ url('hr/reports/unit-wise-shift') }}"><i class="las la-fingerprint"></i>Unit Wise Shift</a></li>
+            @endif
+            @if($user->can('Manage Employee') || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'employee-yearly-activity') active @endif"><a href="{{ url('hr/reports/employee-yearly-activity') }}"><i class="las la-fingerprint"></i>Employee Yearly Activity</a></li>
-            
+            @endif
             @if($user->can('Increment Report') || $user->hasRole('Super Admin'))
             {{-- <li><a href="{{ url('') }}"><i class="las la-chart-area"></i>Promotion Report</a></li> --}}
             @endif
