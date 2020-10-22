@@ -39,6 +39,11 @@ class Area extends Model
         return Employee::where($where)->get();
     }
 
+    public function department()
+    {
+        return $this->hasMany('App\Models\Hr\Department', 'hr_department_area_id', 'hr_area_id')->orderBy('sequence', 'ASC');
+    }
+
     public function section()
     {
         return $this->hasMany('App\Models\Hr\Section', 'hr_section_area_id', 'hr_area_id');

@@ -116,33 +116,33 @@ class AttendanceOperationController extends Controller
             }
 
             if(($data->status == 'Casual Leave' || $data->status == 'Maternity Leave' || $data->status == 'Sick Leave')){
-               return '<span class="inline badge badge-warning">'.$data->leave_type.' Leave</span>';
+               return '<span class="inline badge badge-warning">'.$data->leave_type.' Leave</span> ';
             }
             if($data->status == 'Absent') {
 
-               return '<span class="inline badge badge-danger">Absent</span>';
+               return '<span class="inline badge badge-danger">Absent</span> ';
             }
             if($data->status == 'Holiday') {
-               return '<span class="inline badge badge-danger">Holiday</span>';
+               return '<span class="inline badge badge-danger">Holiday</span> ';
             }
             if($data->status == 'Present (Late)' || $data->status == 'Present (Halfday)'){
 
                if($data->in_time == null){
-                 return '<span class="inline badge badge-warning">Late</span><span class="inline badge badge-primary">Present</span> <button class="inline btn btn-sm btn-round btn-danger make-absent" data-asid="'.$data->associate_id.'">Make Absent</button>';
+                 return '<span class="inline badge badge-warning">Late</span> <span class="inline badge badge-primary">Present</span> <button class="inline btn btn-sm btn-round btn-danger make-absent" data-asid="'.$data->associate_id.'">Make Absent</button> ';
                }elseif ($data->out_time == null && $data->remarks != 'HD') {
-                 return '<span class="inline badge badge-warning">Late</span><span class="inline badge badge-primary">Present</span> <button class="inline btn btn-sm btn-round btn-danger make-halfday" data-asid="'.$data->associate_id.'">Make Halfday</button>';
+                 return '<span class="inline badge badge-warning">Late</span> <span class="inline badge badge-primary">Present</span> <button class="inline btn btn-sm btn-round btn-danger make-halfday" data-asid="'.$data->associate_id.'">Make Halfday</button> ';
                }elseif ($data->out_time == null && $data->remarks == 'HD') {
                  $time = explode(' ',$data->in_time);
                  if($data->late_status == 1){
-                   return '<span class="inline badge badge-warning">Late</span><span class="badge badge-primary">Present</span> <span class="inline badge badge-danger">Halfday</span>';
+                   return '<span class="inline badge badge-warning">Late</span> <span class="badge badge-primary">Present</span> <span class="inline badge badge-danger">Halfday</span> ';
 
                  } else {
-                   return '<span class="inline badge badge-primary">Present</span> <span class="inline badge badge-danger">Halfday</span>';
+                   return '<span class="inline badge badge-primary">Present</span> <span class="inline badge badge-danger">Halfday</span> ';
 
                  }
                }
                else{
-                 return '<span class="inline badge badge-warning">Late</span><span class="inline badge badge-primary">Present</span>';
+                 return '<span class="inline badge badge-warning">Late</span span class="inline badge badge-primary">Present</span>';
                }
             }
             if($data->status == 'Present' || $data->status == 'Present (Halfday)') {
@@ -153,7 +153,7 @@ class AttendanceOperationController extends Controller
                }elseif ($data->out_time == null && $data->remarks == 'HD') {
                  $time = explode(' ',$data->in_time);
                  if($data->late_status == 1){
-                   return '<span class="inline badge badge-warning">Late</span><span class=" inline badge badge-primary">Present</span> <span class="inline badge badge-danger">Halfday</span>';
+                   return '<span class="inline badge badge-warning">Late</span> <span class=" inline badge badge-primary">Present</span> <span class="inline badge badge-danger">Halfday</span>';
                  } else {
                    return '<span class="inline badge badge-primary">Present</span> <span class="inline badge badge-danger">Halfday</span>';
                  }
@@ -207,6 +207,8 @@ class AttendanceOperationController extends Controller
     		$tableName = get_att_table($request['unit']);
             $attData = DB::table($tableName)
             ->select($tableName.'.*', 'b.as_ot', 'b.as_oracle_code', 'b.as_id', 'b.associate_id', 'b.as_name', 'b.as_designation_id')
+            ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
+            ->whereIn('b.as_location', auth()->user()->location_permissions())
             ->whereBetween('in_date', [$request['report_from'], $request['report_to']]);
         	if($request['type'] == 'All'){
         		$attData->addSelect(DB::raw("'all' as reportType"));
@@ -297,6 +299,8 @@ class AttendanceOperationController extends Controller
 
         $queryData = DB::table('hr_absent')
             ->where('hr_unit',$request['unit'])
+            ->whereIn('emp.as_unit_id', auth()->user()->unit_permissions())
+            ->whereIn('emp.as_location', auth()->user()->location_permissions())
             ->whereBetween('date',array($request['report_from'],$request['report_to']))
             ->when(!empty($areaid), function ($query) use($areaid){
                return $query->where('emp.as_area_id',$areaid);

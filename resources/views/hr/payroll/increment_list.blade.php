@@ -24,16 +24,14 @@
 					<a href="#"> Payroll </a>
 				</li>
 				<li class="active"> Increment </li>
+                <li class="top-nav-btn">
+                    <a href="{{url('hr/payroll/increment')}}" class="btn btn-sm btn-primary">Add Increment</a>
+                </li>
 			</ul><!-- /.breadcrumb --> 
 		</div>
 
 		<div class="page-content"> 
             <div class="panel panel-success">
-                <div class="panel-heading">
-                    <h6>Increment List
-                        <a href="{{url('hr/payroll/increment')}}" class="btn btn-primary pull-right">Add Increment</a>
-                    </h6>
-                </div>
                 <div class="panel-body">
                     
                     <table id="dataTables" class="table table-striped table-bordered" style="width: 100% !important;">
@@ -44,6 +42,7 @@
                                 <th>Name</th>
                                 <th>Inc. Type</th>
                                 <th>Inc. Amount</th>
+                                <th>Effective Date</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -137,6 +136,7 @@ $(document).ready(function(){
                 { data: 'as_name', name: 'as_name'},
                 { data: 'increment_type', name: 'increment_type'},
                 { data: 'increment_amount',  name: 'increment_amount' },
+                { data: 'effective_date',  name: 'effective_date' },
                 { data: 'action',  name: 'action' }
             ],
             initComplete: function () {

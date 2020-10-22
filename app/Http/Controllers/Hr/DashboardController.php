@@ -17,18 +17,23 @@ use Cache, DB;
 
 class DashboardController extends Controller
 {
+
+    
+
     public function index()
     {
-        $att_chart = $this->att_data();
-        $ot_chart = $this->ot_data();
-        $salary_chart = $this->salary_data();
-        $today_att_chart = $this->today_att();
-        $count = employee_count();
+
+        $permitted_associate = auth()->user()->permitted_associate()->toArray();
+        $permitted_asid      = auth()->user()->permitted_asid()->toArray();
+        $att_chart = $this->att_data($permitted_asid );
+        $ot_chart = $this->ot_data($permitted_associate);
+        $salary_chart = $this->salary_data($permitted_associate);
+        $today_att_chart = $this->today_att($permitted_associate);
 
         return view('hr.dashboard.index', compact('ot_chart','salary_chart','att_chart','today_att_chart'));
     }
 
-    public function att_data()
+    public function att_data($per_id)
     {
         $att_mbm =  Cache::remember('att_mbm', 10000, function () {
             return cache_att_mbm();
@@ -53,7 +58,6 @@ class DashboardController extends Controller
         $now = Carbon::now();
         //$now = Carbon::parse('2019-12-31');
         // retrive last 5 month salary from cache
-        $per_id = auth()->user()->permitted_asid()->toArray();
         for ($i= date('d'); $i > 0; $i--) {
             $thisday = $now->format('Y-m-d');
 
@@ -109,21 +113,26 @@ class DashboardController extends Controller
         
     }
 
-    public function ot_data()
+    public function ot_data($per_id)
     {
 
-        $data =  Cache::remember('monthly_ot', 10000, function () {
-            return cache_monthly_ot();
-        });
+        $data = cache_monthly_ot();
 
         $ot_data = [];
 
         $now = Carbon::now();
-        // retrive last 5 month ot from cache
+        // retrive last 5 month salary from cache
         for ($i=0; $i < 5 ; $i++) {
-            $thismonth = $now->format('Y-m');
-            $format = $now->format('M');
-            $ot_data[$format] = $data[$thismonth]??0;
+            $key = $now->format('Y-m');
+            if(isset($data[$key])){
+                $emp = $data[$key];
+                $ot = collect($emp)->keyBy('as_id')->toArray();
+                $ot = array_intersect_key($ot,array_flip($per_id));
+                $collection = collect($ot);
+                $format = $now->format('M');
+                $ot_data[$format] = round($collection->sum('ot_hour'));
+            }
+        
             $now = $now->subMonth();
         }
 
@@ -132,74 +141,63 @@ class DashboardController extends Controller
         
     }
 
-    public function salary_data()
+    public function salary_data($per_id)
     {
-        $data =  Cache::remember('monthly_salary', 10000, function () {
-            return cache_monthly_salary();
-        });
-
+        $data = cache_monthly_salary();
         $salary_data = [];
 
         $now = Carbon::now();
         // retrive last 5 month salary from cache
         for ($i=0; $i < 5 ; $i++) {
-            $thismonth = $now->format('Y-m');
-            $salary_data['salary'][$thismonth] = $data[$thismonth]['salary']??0;
-            $salary_data['ot'][$thismonth] = $data[$thismonth]['ot']??0;
-            $salary_data['category'][$thismonth] = $now->format('M');
+            $key = $now->format('Y-m');
+            if(isset($data[$key])){
+                $emp = $data[$key];
+                $salary = collect($emp)->keyBy('as_id')->toArray();
+                $salary = array_intersect_key($salary,array_flip($per_id));
+                $collection = collect($salary);
+                $salary_data['salary'][$key] = round($collection->sum('salary_payable')/100000);
+                $salary_data['ot'][$key] = round($collection->sum('ot')/100000);
+                $salary_data['category'][$key] = date('M',strtotime($key));
+            }
+        
             $now = $now->subMonth();
         }
-        
+
         $salary_data['salary'] = array_reverse($salary_data['salary']);
         $salary_data['ot'] = array_reverse($salary_data['ot']);
         $salary_data['category'] = array_reverse($salary_data['category']);
 
-        return $salary_data; 
+        return $salary_data;
     }
 
 
-    public function today_att()
+    public function today_att($per_id)
     {
 
-        $unit_att = Cache::remember('today_att', 1000000, function  (){
+        $today_att = Cache::remember('today_att', 10000, function  (){
             return cache_today_att();
         });
                 
-        if(isset($unit_att[1]['date']) && $unit_att[1]['date'] != date('Y-m-d')){
+        if(isset($today_att['date']) && $today_att['date'] != date('Y-m-d')){
             
             Cache::put('today_att', cache_today_att(), 10000);
-            $unit_att = cache('today_att');
+            $today_att = cache('today_att');
         }
 
-        $units = auth()->user()->unit_permissions();
+        $p = array_intersect($today_att['data']['present'], $per_id);
+        $a = array_intersect($today_att['data']['absent'], $per_id);
+        $l = array_intersect($today_att['data']['leave'], $per_id);
+        $h = array_intersect($today_att['data']['holiday'], $per_id);
 
-        $present = 0;
-        $late = 0;
-        $leave   = 0;
-        $absent  = 0;
-        $employee = 0;
 
-        foreach ($units as $key => $unit) {
-            if(isset($unit_att[$unit])){
-
-                $present    += $unit_att[$unit]['present'];
-                $late       += $unit_att[$unit]['late'];
-                $leave      += $unit_att[$unit]['leave'];
-                $absent     += $unit_att[$unit]['absent'];
-                $employee   += $unit_att[$unit]['employee'];
-            }
-        }
-
-        $today_att = [
-          'employee'=> $employee,
-          'present' => $present,
-          'late'    => $late,
-          'absent'  => $absent,
-          'leave'   => $leave,
+        return array(
+          'present' => count($p),
+          'absent'  => count($a),
+          'leave'   => count($l),
+          'holiday' => count($h),
           'date'    => date('Y-m-d')
-        ];
+        );
 
-        return $today_att;
     }
 
 

@@ -22,6 +22,20 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
+
+if(!function_exists('check_permission')){
+    
+    function check_permission($permission)
+    {
+        $perm = false;
+        if(auth()->user()->can($permission) || auth()->user()->hasRole('Super Admin')){
+            $perm = true;
+        }
+
+        return $perm;
+    }
+}
+
 if(!function_exists('get_att_table')){
 	
 	function get_att_table($unit = null)
@@ -632,9 +646,8 @@ if(!function_exists('get_earned_leave')){
 if(!function_exists('employee_count')){
     function employee_count()
     {
-        $employee_count = Cache::remember('employee_count', 20000, function  () {
 
-            return  Employee::select(
+        return Employee::select(
                 DB::raw("
                   COUNT(CASE WHEN as_gender = 'Male' THEN as_id END) AS males,
                   COUNT(CASE WHEN as_gender = 'Female' THEN as_id END) AS females,
@@ -643,38 +656,13 @@ if(!function_exists('employee_count')){
                   COUNT(CASE WHEN as_status != '1' THEN as_id END) AS inactive,
                   COUNT(CASE WHEN as_status = '1' THEN as_id END) AS active,
                   COUNT(CASE WHEN as_doj = CURDATE() THEN as_id END) AS todays_join,
-                  COUNT(*) AS total,
-                  as_unit_id
+                  COUNT(*) AS total
                 ")
             )
-            //->whereIn('as_unit_id', auth()->user()->unit_permissions())
-            ->whereIn('as_status',[1])
-            ->groupBy('as_unit_id')
-            ->get()->keyBy('as_unit_id')->toArray();
-        });
-
-        $emp['males'] = 0;
-        $emp['females'] = 0;
-        $emp['non_ot'] = 0;
-        $emp['ot'] = 0;
-        $emp['active'] = 0;
-        $emp['todays_join'] = 0;
-
-        $units = auth()->user()->unit_permissions();
-
-        foreach ($units as $key => $unit) {
-            if(isset($employee_count[$unit])){
-
-                $emp['males'] += $employee_count[$unit]['males'];
-                $emp['females'] += $employee_count[$unit]['females'];
-                $emp['non_ot'] += $employee_count[$unit]['non_ot'];
-                $emp['ot'] += $employee_count[$unit]['ot'];
-                $emp['active'] += $employee_count[$unit]['active'];
-                $emp['todays_join'] += $employee_count[$unit]['todays_join'];
-            }
-        }
-
-        return $emp;
+            ->where('as_status',1)
+            ->whereIn('as_unit_id', auth()->user()->unit_permissions())
+            ->whereIn('as_location', auth()->user()->location_permissions())
+            ->first();
     }
 }
 
@@ -691,21 +679,55 @@ if(!function_exists('cache_att_all')){
 
 
 if(!function_exists('cache_today_att')){
-    function cache_today_att($unit = null)
+    function cache_today_att()
     {
-        $today = cache('today_att');
-        if($unit == null){
-            $units =  Unit::where('hr_unit_status',1)->get();
-            $today = [];
-            foreach ($units as $key => $u) {
-                $today[$u->hr_unit_id] = unit_wise_today_att($u->hr_unit_id);
-            }
-            
-        }else{
-            $today[$unit] = unit_wise_today_att($unit);
-        }
 
-        return $today;
+        $today = date("Y-m-d");
+        $data = [];
+        
+        $mbm = DB::table('hr_attendance_mbm AS a')
+                ->where('a.in_date', $today)
+                ->leftJoin('hr_as_basic_info AS b', 'b.as_id', 'a.as_id')
+                ->pluck('b.associate_id','b.associate_id')->toArray();
+
+        $ceil =  DB::table('hr_attendance_ceil AS a')
+                ->where('a.in_date', $today)
+                ->leftJoin('hr_as_basic_info AS b', 'b.as_id', 'a.as_id')
+                ->pluck('b.associate_id','b.associate_id')->toArray();
+
+        $aql = DB::table('hr_attendance_aql AS a')
+                ->where('a.in_date', $today)
+                ->leftJoin('hr_as_basic_info AS b', 'b.as_id', 'a.as_id')
+                ->pluck('b.associate_id','b.associate_id')->toArray();
+
+        $cew = DB::table('hr_attendance_cew AS a')
+                ->where('a.in_date', $today)
+                ->leftJoin('hr_as_basic_info AS b', 'b.as_id', 'a.as_id')
+                ->pluck('b.associate_id','b.associate_id')->toArray();
+
+        $data['present']  = array_merge($mbm,$ceil,$aql,$cew);
+
+
+
+        $data['leave'] = DB::table('hr_leave')
+                 ->where('leave_from', '<=', $today)
+                 ->where('leave_to',   '>=', $today)
+                 ->where('leave_status', '=', 1)
+                 ->pluck('leave_ass_id','leave_ass_id')->toArray();
+
+        $data['absent'] = DB::table('hr_absent')
+                       ->where('date',$today)
+                       ->pluck('associate_id','associate_id')->toArray();
+
+        $data['holiday'] = DB::table('holiday_roaster')
+                           ->where('date',$today)
+                           ->where('remarks','Holiday')
+                           ->pluck('as_id','as_id')->toArray();
+        return [
+            'date' => $today,
+            'data' => $data
+        ];
+
     }
 }
 
@@ -790,101 +812,38 @@ if(!function_exists('cache_att_ceil')){
 if(!function_exists('cache_monthly_ot')){
     function cache_monthly_ot()
     {
-        return HrMonthlySalary::selectRaw('round(sum(ot_hour),2) as ot, CONCAT(year,"-",month) as ym')
-            ->groupBy('month','year')
-            ->orderBy('id','DESC')
-            ->pluck('ot','ym');      
+        return Cache::remember('monthly_ot', 10000, function  (){
+            
+            return HrMonthlySalary::selectRaw(
+                'as_id, ot_hour, CONCAT(year,"-",month) as ym'
+            )
+            ->get()
+            ->groupBy('ym')
+            ->toArray();
+        });      
     }
 }
 
 if(!function_exists('cache_monthly_salary')){
     function cache_monthly_salary()
     {
-        return HrMonthlySalary::selectRaw(
-            'round(sum(salary_payable)/100000,0) as salary, round(sum(ot_hour*ot_rate)/100000,0) as ot, CONCAT(year,"-",month) as ym')
-        ->groupBy('month','year')
-        ->orderBy('id','DESC')
-        ->get()
-        ->keyBy('ym')
-        ->toArray();
+        return Cache::remember('monthly_salary', 10000, function  (){
+            
+            return HrMonthlySalary::selectRaw(
+                'as_id, salary_payable, (ot_hour*ot_rate) as ot, CONCAT(year,"-",month) as ym'
+            )
+            ->get()
+            ->groupBy('ym')
+            ->toArray();
+        });
     }
 }
 
 
 if(!function_exists('unit_wise_today_att')){
-    function unit_wise_today_att($unit)
+    function unit_wise_today_att()
     {
-        //$today = date("2019-12-31");
-        $today = date("Y-m-d");
-        $table = get_att_table($unit);
-
-        $present = 0;
-        $late = 0;
-        $leave   = 0;
-        $totalUser    = 0;
-        $absent  = 0;
-
-    
-        $present  = DB::table($table.' AS a')
-                        ->select(
-                                DB::raw("DISTINCT(a.as_id)"),
-                                "a.hr_shift_code"
-                              )
-                        ->where('a.in_date', $today)
-                        ->leftJoin('hr_as_basic_info AS b', 'b.as_id', 'a.as_id')
-                        ->where('b.as_unit_id', $unit)
-                        ->get()
-                        ->count();
-
-        $late  = DB::table($table.' AS a')
-                        ->select('late_status')
-                        ->where('a.in_date', $today)
-                        ->where('a.late_status', 1)
-                        ->leftJoin('hr_as_basic_info AS b', 'b.as_id', 'a.as_id')
-                        ->where('b.as_unit_id', $unit)
-                        ->get()
-                        ->count();
-      
-        /*----------------Leave------------------*/
-        $leave = DB::table('hr_leave AS l')
-                 ->where('l.leave_from', '<=', $today)
-                 ->where('l.leave_to',   '>=', $today)
-                 ->where('l.leave_status', '=', 1)
-                 ->leftJoin('hr_as_basic_info AS b', 'b.associate_id', 'l.leave_ass_id')
-                 ->where('b.as_unit_id', $unit)
-                 ->count();
-
-        $query1 = DB::table('hr_as_basic_info AS b')
-                  ->where('as_status', 1);
-        $query1->where('hdr.date','LIKE',$today);
-        $query1->where('hdr.remarks', 'Holiday');
-        $query1->Join('holiday_roaster AS hdr', 'hdr.as_id', 'b.associate_id');
-
-        $holiday = $query1->get()->count();
-
-        $employee = Employee::where("as_status", 1)->where('as_unit_id', $unit)->count();
-
-        $absent = DB::table('hr_absent')
-                   ->where('date',$today)
-                   ->where('hr_unit', $unit)
-                   ->get()
-                   ->count();
-
-        $unit_info= Unit::where('hr_unit_id', $unit)->first();
-
-        $today_att = [
-          'employee'=> $employee,
-          'present' => $present,
-          'late'    => $late,
-          'absent'  => $absent,
-          'leave'   => $leave,
-          'holiday' => $holiday,
-          'unit'    => $unit_info->hr_unit_short_name??'',
-          'unit_id' => $unit,
-          'date'    => $today
-        ];
-
-        return $today_att;
+        Cache::put('today_att', cache_today_att(), 10000);
     }
 
 }

@@ -16,22 +16,38 @@
         
          <ul id="top-tab-list" class="p-0">
              <li class="" id="account">
-                <a class="tab-link-inline {{ $salaryStatus == null?'iq-bg-primary':'iq-bg-danger' }}">
-                <i class="las la-fingerprint"></i><span class="f-16">HR</span>
+                @php
+                    $hr = '';
+                    $accounts = '';
+                    $audit = '';
+                    $management = '';
+                    if($salaryStatus){
+                        $hr = $salaryStatus->hr();
+                        $audit = $salaryStatus->audit();
+                        $accounts = $salaryStatus->accounts();
+                        $management = $salaryStatus->management();
+                    }
+                @endphp
+                <a class="tab-link-inline {{ $salaryStatus == null?'iq-bg-danger':'iq-bg-primary' }}" data-toggle="tooltip" title="@if($hr) - by {{$hr->name}} @endif">
+                <i class="las la-fingerprint"></i>
+                <span class="f-16">HR
+                    
+                </span>
+
                 </a>
              </li>
              <li id="audit" class="">
-                <a class="tab-link-inline {{ (isset($salaryStatus) && $salaryStatus->initial_audit != null)?'iq-bg-primary':'iq-bg-danger' }}">
+                <a class="tab-link-inline {{ (isset($salaryStatus) && $salaryStatus->initial_audit != null)?'iq-bg-primary':'iq-bg-danger' }}" data-toggle="tooltip" title="@if($audit) - by {{$audit->name}} @endif">
                 <i class="las la-clipboard-check"></i><span class="f-16">Audit</span>
                 </a>
              </li>
              <li id="accounts" class="">
-                <a class="tab-link-inline {{ (isset($salaryStatus) && $salaryStatus->accounts_audit != null)?'iq-bg-primary':'iq-bg-danger' }}">
+                <a class="tab-link-inline {{ (isset($salaryStatus) && $salaryStatus->accounts_audit != null)?'iq-bg-primary':'iq-bg-danger' }}" data-toggle="tooltip" title="@if($accounts) - by {{$accounts->name}} @endif">
                 <i class="las la-coins"></i><span class="f-16">Accounts</span>
                 </a>
              </li>
              <li id="management" class="">
-                <a class="tab-link-inline {{ (isset($salaryStatus) && $salaryStatus->management_audit != null)?'iq-bg-primary':'iq-bg-danger' }}">
+                <a class="tab-link-inline {{ (isset($salaryStatus) && $salaryStatus->management_audit != null)?'iq-bg-primary':'iq-bg-danger' }}" data-toggle="tooltip" title="@if($management) - by {{$management->name}} @endif">
                 <i class="las la-user-check"></i><span class="f-16">Management</span>
                 </a>
              </li>

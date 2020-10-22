@@ -269,8 +269,7 @@ class EmployeeController extends Controller
             ->whereNotIn('as_id', auth()->user()->management_permissions())
             ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
             ->whereIn('b.as_location', auth()->user()->location_permissions())
-            ->whereMonth('b.created_at',date('m'))
-            ->orWhereMonth('b.as_doj',date('m'))
+            ->whereMonth('b.as_doj',date('m'))
             ->orderBy('dg.hr_designation_position','ASC')
             ->get();
 
@@ -510,6 +509,7 @@ class EmployeeController extends Controller
                 'dp.hr_department_name',
                 'dg.hr_designation_name',
                 'dg.hr_designation_position',
+                'dg.hr_designation_grade',
                 'b.as_gender',
                 'b.as_ot',
                 'b.as_status',
@@ -537,6 +537,12 @@ class EmployeeController extends Controller
                 if($request->emp_type != ""){
                     $query->where('b.as_emp_type_id', '=', $request->emp_type);
                 }
+                if($request->doj_from != ""){
+                    $query->where('b.as_doj', '>=', $request->doj_from);
+                }
+                if($request->doj_to != ""){
+                    $query->where('b.as_doj', '<=', $request->doj_to);
+                }
                 if($request->unit != ""){
                     $query->where('b.as_unit_id', '=', $request->unit);
                 }
@@ -545,6 +551,11 @@ class EmployeeController extends Controller
             ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
             ->orderBy('dg.hr_designation_position','ASC')
             ->get();
+
+        $perm = false;
+        if(auth()->user()->can('Manage Employee') || auth()->user()->hasRole('Super Admin')){
+            $perm = true; 
+        }
 
         
         return Datatables::of($data)
@@ -558,15 +569,26 @@ class EmployeeController extends Controller
                 }
                 return ($ot_id2);
             })
-            ->editColumn('action', function ($user) {
+            ->editColumn('hr_designation_grade', function($user){
+                if($user->hr_designation_grade > 0 ){
+                    return $user->hr_designation_grade;
+                }
+                else{
+                    return '';
+                }
+                
+            })
+            ->editColumn('action', function ($user) use($perm) {
 
                 $return = "<a href=".url('hr/recruitment/employee/show/'.$user->associate_id)." class=\"btn btn-sm btn-success\" data-toggle='tooltip' data-placement='top' title='' data-original-title='View Employee Profile'>
                         <i class=\"ace-icon fa fa-eye bigger-120\"></i>
-                    </a>
-                    <a href=".url('hr/recruitment/employee/edit/'.$user->associate_id)." class=\"btn btn-sm btn-primary\" data-toggle=\"tooltip\" title=\"Edit\" style=\"margin-top:1px;\">
-                        <i class=\"ace-icon fa fa-pencil bigger-120\"></i>
-                    </a>";
-                $return .= "</div>";
+                    </a> ";
+                    if($perm){
+
+                        $return .= "<a href=".url('hr/recruitment/employee/edit/'.$user->associate_id)." class=\"btn btn-sm btn-primary\" data-toggle=\"tooltip\" title=\"Edit\" style=\"margin-top:1px;\">
+                            <i class=\"ace-icon fa fa-pencil bigger-120\"></i>
+                        </a>";
+                    }
                 return $return;
             })
             ->rawColumns([
@@ -649,7 +671,8 @@ class EmployeeController extends Controller
                 $query->on( 'edu.education_as_id', '=', 'b.associate_id');
             })
             ->leftJoin('hr_education_level AS el', 'el.id', '=', 'edu.education_level_id')
-            // ->where('b.as_unit_id', auth()->user()->unit_permissions())
+            ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
+            ->whereIn('b.as_location', auth()->user()->location_permissions())
             ->where('b.as_unit_id', $request->unit)
             ->where(function ($query) use ($request) {
                 if($request->emp_type != ""){
@@ -788,6 +811,7 @@ class EmployeeController extends Controller
             ->leftJoin('hr_employee_bengali AS bn', 'bn.hr_bn_associate_id', '=', 'hr_as_basic_info.associate_id')
             ->where("hr_as_basic_info.associate_id", $associate_id)
             ->whereIn('hr_as_basic_info.as_unit_id', auth()->user()->unit_permissions())
+            ->whereIn('hr_as_basic_info.as_location', auth()->user()->location_permissions())
             ->first();
     }
 
@@ -810,6 +834,7 @@ class EmployeeController extends Controller
             ->leftJoin('hr_employee_bengali AS bn', 'bn.hr_bn_associate_id', '=', 'b.associate_id')
             ->where("b.associate_id", $associate_id)
             ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
+            ->whereIn('b.as_location', auth()->user()->location_permissions())
             ->first();
 
             $infocount=0; $totalinfo=0;
@@ -1492,6 +1517,7 @@ class EmployeeController extends Controller
                     $q->orWhere("as_oracle_code", "LIKE" , "%{$search}%");
                 })
                 ->whereIn('as_unit_id', auth()->user()->unit_permissions())
+                ->whereIn('as_location', auth()->user()->location_permissions())
                 ->whereNotIn('as_id', auth()->user()->management_permissions())
                 ->take(20)
                 ->get();
@@ -1513,6 +1539,7 @@ class EmployeeController extends Controller
                     $q->orWhere("as_oracle_code", "LIKE" , "%{$search}%");
                 })
                 ->whereIn('as_unit_id', auth()->user()->unit_permissions())
+                ->whereIn('as_location', auth()->user()->location_permissions())
                 ->whereNotIn('as_id', auth()->user()->management_permissions())
                 ->where('as_gender','Female')
                 ->take(20)
@@ -1539,6 +1566,8 @@ class EmployeeController extends Controller
         if($request->has('keyword'))
         {
             return Employee::select(DB::raw('associate_id AS associate_info'))
+                ->whereIn('as_unit_id', auth()->user()->unit_permissions())
+                ->whereIn('as_location', auth()->user()->location_permissions())
                 ->where("associate_id", "LIKE" , "%{$request->keyword}%" )
                 ->orWhere('as_name', "LIKE" , "%{$request->keyword}%" )
                 ->pluck('associate_info');
@@ -1634,7 +1663,10 @@ class EmployeeController extends Controller
                 }
             })
             ->whereIn('as_unit_id', auth()->user()->unit_permissions())
+            ->whereIn('as_location', auth()->user()->location_permissions())
+            ->where('as_status', 1)
             ->get();
+
 
         // show user id
         $data['result'] = null;
@@ -1689,6 +1721,7 @@ class EmployeeController extends Controller
             ->leftJoin('hr_designation AS dg','dg.hr_designation_id', 'b.as_designation_id')
             ->leftJoin('hr_med_info AS m','m.med_as_id', 'b.associate_id')
             ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
+            ->whereIn('b.as_location', auth()->user()->location_permissions())
             ->whereIn('b.associate_id', $request->associate_id)
             ->get();
 

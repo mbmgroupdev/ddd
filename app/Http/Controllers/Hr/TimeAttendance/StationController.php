@@ -22,7 +22,7 @@ class StationController extends Controller
                 ->orderBy('hr_unit_name', 'desc')
                 ->pluck('hr_unit_name', 'hr_unit_id');
 
-		return view('hr/timeattendance/station_card',$data);
+		return view('hr/timeattendance/station_card', $data);
 
 	}
 

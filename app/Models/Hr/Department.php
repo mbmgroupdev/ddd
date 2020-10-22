@@ -53,6 +53,11 @@ class Department extends Model
         return Department::select('hr_department_name', 'hr_department_id')->get();
     }
 
+    public function section()
+    {
+        return $this->hasMany('App\Models\Hr\Section', 'hr_section_department_id', 'hr_department_id');
+    }
+
 
     public static function getSelctedDepartmentIdName($area_id)
     {
