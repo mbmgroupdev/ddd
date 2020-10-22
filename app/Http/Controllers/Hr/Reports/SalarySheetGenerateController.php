@@ -59,6 +59,7 @@ class SalarySheetGenerateController extends Controller
         } else{
             $tableName="hr_attendance_mbm";
         }
+        $input['employee_status'] = 1;
         $getEmployees = Employee::getEmployeeFilterWise($input)->toArray();
         $getData = array_column($getEmployees, 'as_id');
         $chunkValues = array_chunk($getData, 50);

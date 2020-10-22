@@ -36,7 +36,7 @@ class SalaryProcessController extends Controller
     	$input['year'] = date('Y', strtotime($input['month_year']));
     	// return $input;
     	try {
-            $audit = 1;
+            /*$audit = 1;
             $input['unit_id'] = $input['unit'];
             $salaryStatus = SalaryAudit::checkSalaryAuditStatus($input);
             
@@ -50,7 +50,7 @@ class SalaryProcessController extends Controller
             
             if($audit == 0){
                 return view('hr.operation.salary.salary_status', compact('salaryStatus', 'input'));
-            }
+            }*/
 
             $getUnit = Unit::getUnitNameBangla($input['unit']);
     		$info = [];

@@ -848,7 +848,6 @@
   });
 
   $("#ot_hour").bind("keyup change", function(e) {
-    console.log("hi");
      var data =
      '<div class="form-group has-float-label">'+
      '<?php
