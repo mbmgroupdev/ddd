@@ -53,7 +53,7 @@
             </tr>
             <tr>
                 <td>যোগদানের তারিখ</td>
-                <td>{{str_replace($en, $bn, $employee->as_doj->format('d-m-Y'))}}</td>
+                <td>{{str_replace($en, $bn, $employee->as_doj->format('Y-m-d'))}}</td>
                 <td></td>
             </tr>
             <tr>
@@ -63,7 +63,11 @@
             </tr>
             <tr>
                 <td>সন্তান প্রসবের সম্ভাব্য তারিখ</td>
-                <td colspan="2">{{str_replace($en, $bn, $leave->leave_from->format('d-m-Y'))}} তারিখ থেকে {{str_replace($en, $bn, $leave->leave_to->format('d-m-Y'))}} পর্যন্ত</td>
+                <td colspan="2">{{str_replace($en, $bn, $leave->edd)}} </td>
+            </tr>
+            <tr>
+                <td>ছুটির তারিখ</td>
+                <td colspan="2">{{str_replace($en, $bn, $leave->leave_from->format('Y-m-d'))}} তারিখ থেকে {{str_replace($en, $bn, $leave->leave_to->format('Y-m-d'))}} পর্যন্ত</td>
             </tr>
             
         </table>
@@ -89,7 +93,7 @@
             @foreach($salary as $key => $sal)
                 @if($sal)
                 <tr>
-                    <td>{{$key}}</td>
+                    <td>{{num_to_bn_month(date('n', strtotime($key)))}}</td>
                     <td>{{str_replace($en, $bn, $sal->present)}}</td>
                     <td>{{str_replace($en, $bn, $sal->absent)}}</td>
                     <td>{{str_replace($en, $bn, $sal->leave)}}</td>
@@ -102,7 +106,7 @@
                 </tr>
                 @else
                     <tr>
-                        <td>{{$key}}</td>
+                        <td>{{num_to_bn_month(date('n', strtotime($key)))}}</td>
                         <td>-</td>
                         <td>-</td>
                         <td>-</td>

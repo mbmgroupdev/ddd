@@ -56,6 +56,7 @@ class FileTagController extends Controller
             ->leftJoin('hr_med_info AS m','m.med_as_id', 'b.associate_id')
             ->whereIn('b.associate_id', $request->associate_id)
             ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
+            ->whereIn('b.as_location', auth()->user()->location_permissions())
             ->get();
 
         $data['filetag'] = "";

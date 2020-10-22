@@ -32,18 +32,10 @@
                 <div class="row no-gutters pl-5">
                     <div class="col-md-6 text-center ">
                         <div class="sign-in-detail text-white">
-                            <div class="owl-carousel" data-autoplay="true" data-loop="true" data-nav="false" data-dots="true" data-items="1" data-items-laptop="1" data-items-tab="1" data-items-mobile="1" data-items-mobile-sm="1" data-margin="0">
+                            <div >
                                 <div class="item login-slider">
                                     <img src="{{ asset('images/login/1.jpg') }}" class="img-fluid mb-4 radius-10" alt="logo">
                                     <h4 class="mb-1 text-white">Manage Time & Attendance</h4>
-                                </div>
-                                <div class="item login-slider">
-                                    <img src="{{ asset('images/login/2.jpg') }}" class="img-fluid mb-4 radius-10" alt="logo">
-                                    <h4 class="mb-1 text-white">Process Salary</h4>
-                                </div>
-                                <div class="item login-slider">
-                                    <img src="{{ asset('images/login/3.jpg') }}" class="img-fluid mb-4 radius-10" alt="logo">
-                                    <h4 class="mb-1 text-white">Manage your orders</h4>
                                 </div>
                             </div>
                         </div>

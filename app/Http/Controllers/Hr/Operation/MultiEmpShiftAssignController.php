@@ -129,6 +129,7 @@ class MultiEmpShiftAssignController extends Controller
         })
         //->where('shift_roaster_status', 0)
         ->whereIn('as_unit_id', auth()->user()->unit_permissions())
+        ->whereIn('as_location', auth()->user()->location_permissions())
         ->get();
 
         // show user id
