@@ -457,7 +457,16 @@ class AttendanceReportController extends Controller
 
         $unitList  = Unit::where('hr_unit_status', '1')
 			        ->whereIn('hr_unit_id', auth()->user()->unit_permissions())
-			        ->pluck('hr_unit_name', 'hr_unit_id');
+			        ->pluck('hr_unit_name', 'hr_unit_id')->toArray();
+
+		if(in_array(1,auth()->user()->unit_permissions())){
+			$unitList[100] = 'Combined (MBM + MFW)';
+			$unitList[101] = 'Combined (MBM + MFW + MBM-2)';
+			$unitList[102] = 'Headoffice';
+			$unitList[103] = 'Washing';
+		}
+
+
 
         if ($request->get('pdf') == true)
         {
@@ -473,7 +482,18 @@ class AttendanceReportController extends Controller
 
     public function attSummaryReport(Request $request)
     {
-    	$unit  = Unit::where('hr_unit_id',$request->unit)->first();
+    	$input = $request->all();
+    	if($request->unit == 100 ){
+    		$unit = 'Combined (MBM + MFW)';
+    	}else if($request->unit == 101 ){
+    		$unit = 'Combined (MBM + MFW + MBM-2)';
+    	}else if($request->unit == 102){
+    		$unit = 'Headoffice';
+    	}else if($request->unit == 103){
+    		$unit = 'Washing (MBM+MFW+MBM-2)';
+    	}else{
+	    	$unit  = Unit::where('hr_unit_id',$request->unit)->first();
+    	}
     	$date = $request->date;
     	$ot = $this->otEmpAttendance($request->unit,$date,1);
     	$nonot = $this->otEmpAttendance($request->unit,$date,0);
@@ -488,7 +508,7 @@ class AttendanceReportController extends Controller
 				->where('hr_area_status',1)
 				->get();
 
-    	return view('hr.reports.att_summary_report_render', compact('area','ot','nonot','unit','date'))->render();
+    	return view('hr.reports.att_summary_report_render', compact('area','ot','nonot','unit','date', 'input'))->render();
     }
 
 
@@ -766,27 +786,75 @@ class AttendanceReportController extends Controller
 
     public function otEmpAttendance($unit = null, $date = null, $ot)
     {
-		$tablename = get_att_table($unit).' AS a';
+
+    	if($unit == 100 || $unit == 103 ||$unit == 101 || $unit == 102){
+    		$tablename = 'hr_attendance_mbm AS a';
+    	}else{
+			$tablename = get_att_table($unit).' AS a';
+    	}
 		
 		$data = array();
 
-		$data['dayoff'] = DB::table('holiday_roaster AS r')
-							->leftJoin('hr_as_basic_info AS b', 'r.as_id', 'b.associate_id')
-		    				->where('b.as_unit_id', $unit)
-		    				->where('b.as_unit_id', $unit)
-		    				->whereIn('b.associate_id', auth()->user()->permitted_associate())
+		$query = DB::table('holiday_roaster AS r')
+					->leftJoin('hr_as_basic_info AS b', 'r.as_id', 'b.associate_id');
+
+		if ($unit  == 101 || $unit == 102 || $unit == 103) {
+		    $query->whereIn('b.as_unit_id',[1,4,5] );
+		}else if($unit  == 100 ){
+			$query->whereIn('b.as_unit_id',[1,4] );
+		}else{
+			$query->where('b.as_unit_id',$unit );
+		}
+		
+		if($unit == 103){
+			// department washing 67
+			$query->where('b.as_department_id', 67);
+		}else{
+			$query->where('b.as_department_id', '!=', 67);
+		}
+
+		if($unit == 102){
+			// head office 12
+			$query->where('b.as_location', 12);
+		}else{
+			$query->where('b.as_location', '!=', 12);
+		}
+
+		$data['dayoff'] = $query->whereIn('b.associate_id', auth()->user()->permitted_associate())
+
 		    				->where('r.date',$date) 
 		    				->where('b.as_ot', $ot)
 		    				->where('r.remarks', 'Holiday')
 		    				->count();
 
-		$data['total'] = DB::table('hr_as_basic_info')
+		$query = DB::table('hr_as_basic_info')
 				 ->select([
 					DB::raw('count(*) AS count'),
 					'as_subsection_id'
-				])
-				->where('as_doj','<=', $date)
-				->where('as_unit_id', $unit)
+				]);
+
+		if ($unit  == 101 || $unit == 102 || $unit == 103) {
+		    $query->whereIn('as_unit_id',[1,4,5] );
+		}else if($unit  == 100 ){
+			$query->whereIn('as_unit_id',[1,4] );
+		}else{
+			$query->where('as_unit_id',$unit );
+		}
+		
+		if($unit == 103){
+			// department washing 67
+			$query->where('as_department_id', 67);
+		}else{
+			$query->where('as_department_id', '!=', 67);
+		}
+
+		if($unit == 102){
+			// head office 12
+			$query->where('as_location', 12);
+		}else{
+			$query->where('as_location', '!=', 12);
+		}
+		$data['total'] = $query->where('as_doj','<=', $date)
 				->whereIn('associate_id', auth()->user()->permitted_associate())
 				->where('as_status',1) 
 				->where('as_ot', $ot)
@@ -799,47 +867,109 @@ class AttendanceReportController extends Controller
 				->pluck('count','as_subsection_id')->toArray();
 
 
-    	$data['present'] = DB::table($tablename)
+    	$query = DB::table($tablename)
     				->where('a.in_date', $date)
     				->select([
     					DB::raw('count(*) AS count'),
     					'b.as_subsection_id'
     				])
-    				->leftJoin('hr_as_basic_info AS b', 'a.as_id', 'b.as_id')
-    				->where('b.as_unit_id', $unit)
-    				->where('b.as_status',1) 
+    				->leftJoin('hr_as_basic_info AS b', 'a.as_id', 'b.as_id');
+    	if ($unit  == 101 || $unit == 102 || $unit == 103) {
+		    $query->whereIn('b.as_unit_id',[1,4,5] );
+		}else if($unit  == 100 ){
+			$query->whereIn('b.as_unit_id',[1,4] );
+		}else{
+			$query->where('b.as_unit_id',$unit );
+		}
+		
+		if($unit == 103){
+			// department washing 67
+			$query->where('b.as_department_id', 67);
+		}else{
+			$query->where('b.as_department_id', '!=', 67);
+		}
+
+		if($unit == 102){
+			// head office 12
+			$query->where('b.as_location', 12);
+		}else{
+			$query->where('b.as_location', '!=', 12);
+		}
+    	$data['present']  =	$query->where('b.as_status',1) 
     				->whereIn('b.associate_id', auth()->user()->permitted_associate())
     				->where('b.as_ot', $ot)
     				->groupBy('b.as_subsection_id')
     				->get()
     				->pluck('count','as_subsection_id')->toArray();
 
-    	$data['absent'] = DB::table('hr_absent AS a')
+
+
+    	$query = DB::table('hr_absent AS a')
     				->where('a.date', $date)
     				->select([
     					DB::raw('count(*) AS count'),
     					'b.as_subsection_id'
     				])
-    				->leftJoin('hr_as_basic_info AS b', 'a.associate_id', 'b.associate_id')
-    				->where('b.as_unit_id', $unit)
-    				->where('b.as_status',1) 
+    				->leftJoin('hr_as_basic_info AS b', 'a.associate_id', 'b.associate_id');
+    	if ($unit  == 101 || $unit == 102 || $unit == 103) {
+		    $query->whereIn('b.as_unit_id',[1,4,5] );
+		}else if($unit  == 100 ){
+			$query->whereIn('b.as_unit_id',[1,4] );
+		}else{
+			$query->where('b.as_unit_id',$unit );
+		}
+		
+		if($unit == 103){
+			// department washing 67
+			$query->where('b.as_department_id', 67);
+		}else{
+			$query->where('b.as_department_id', '!=', 67);
+		}
+
+		if($unit == 102){
+			// head office 12
+			$query->where('b.as_location', 12);
+		}else{
+			$query->where('b.as_location', '!=', 12);
+		}
+    	$data['absent'] = $query->where('b.as_status',1) 
     				->whereIn('b.associate_id', auth()->user()->permitted_associate())
     				->where('b.as_ot', $ot)
     				->groupBy('b.as_subsection_id')
     				->get()
     				->pluck('count','as_subsection_id')->toArray();
 
-    	$data['leave'] = DB::table('hr_leave AS l')
+    	$query = DB::table('hr_leave AS l')
     				->select([
     					DB::raw('count(*) AS count'),
     					'b.as_subsection_id'
     				])
-    				->leftJoin('hr_as_basic_info AS b', 'l.leave_ass_id', 'b.associate_id')
-    				->where('l.leave_from', "<=", $date)
+    				->leftJoin('hr_as_basic_info AS b', 'l.leave_ass_id', 'b.associate_id');
+    	if ($unit  == 101 || $unit == 102 || $unit == 103) {
+		    $query->whereIn('b.as_unit_id',[1,4,5] );
+		}else if($unit  == 100 ){
+			$query->whereIn('b.as_unit_id',[1,4] );
+		}else{
+			$query->where('b.as_unit_id',$unit );
+		}
+		
+		if($unit == 103){
+			// department washing 67
+			$query->where('b.as_department_id', 67);
+		}else{
+			$query->where('b.as_department_id', '!=', 67);
+		}
+
+		if($unit == 102){
+			// head office 12
+			$query->where('b.as_location', 12);
+		}else{
+			$query->where('b.as_location', '!=', 12);
+		}
+    	$data['leave'] = $query->where('l.leave_from', "<=", $date)
     				->whereIn('b.associate_id', auth()->user()->permitted_associate())
 					->where('l.leave_to', ">=", $date)
     				->where([
-    					'b.as_unit_id'=> $unit,
 	    				'b.as_status'=> 1, 
 	    				'b.as_ot'=> $ot,
 	    				'l.leave_status' => 1

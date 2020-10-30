@@ -329,7 +329,7 @@
 
                  chart.data = [ {
                      title: "Present",
-                     employee: {{($today_att_chart['present']??0)-($today_att_chart['holiday']??0)}}
+                     employee: {{($today_att_chart['present']??0)}}
                  }, {
                      title: "Leave",
                      employee: {{$today_att_chart['leave']??0}}

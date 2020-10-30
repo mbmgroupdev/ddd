@@ -468,11 +468,7 @@ class RecruitController extends Controller
                         ->where('hr_shift_default', 1)
                         ->pluck('hr_shift_name')
                         ->first();
-                /*
-                * @function - IDGenerator
-                * @parameter - department and join_date
-                * @return   - ID and Temporary_ID
-                */
+                
                 $IDGenerator = (new IDGenerator)->generator2(array(
                     'department' => $worker->worker_department_id,
                     'date' => $worker->worker_doj

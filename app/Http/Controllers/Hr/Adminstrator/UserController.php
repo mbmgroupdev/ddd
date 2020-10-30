@@ -50,7 +50,7 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(),[
             'name'     => 'required|string|max:255',
-            'associate_id' => 'sometimes|string|unique:users,associate_id',
+            'associate_id' => 'sometimes|unique:users,associate_id',
             'email'    => 'required|string|email|max:255|unique:users,email',
             'role'    => 'required'
         ]);
