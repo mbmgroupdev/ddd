@@ -1,75 +1,66 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Helpers\EmployeeHelper;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Hr\IDGenerator as IDGenerator;
 use App\Jobs\ProcessUnitWiseSalary;
+use App\Jobs\ProcessAttendanceOuttime;
+use App\Helpers\EmployeeHelper;
+use App\Models\Employee;
+use App\Models\Hr\AdvanceInfo;
+use App\Models\Hr\MedicalInfo;
 use App\Models\Hr\Absent;
 use App\Models\Hr\Attendace;
 use App\Models\Hr\AttendaceManual;
-use App\Models\Employee;
 use App\Models\Hr\HolidayRoaster;
 use App\Models\Hr\HrLateCount;
 use App\Models\Hr\Leave;
 use App\Models\Hr\Shift;
 use App\Models\Hr\Unit;
 use Rap2hpoutre\FastExcel\FastExcel;
-use App\Jobs\ProcessAttendanceOuttime;
 use Carbon\Carbon;
 use PDF, Validator, Auth, ACL, DB, DataTables;
 
-use Illuminate\Http\Request;
 
 class TestController extends Controller
 {
     public function test()
     {
         
-        $data = array(
-                '12M0756D' => array('Tot Pay' => '42000'),
-                '20K0824D' => array('Tot Pay' => '25000'),
-                '20K3354F' => array('Tot Pay' => '8420'),
-                '20K3309F' => array('Tot Pay' => '9000'),
-                '20K3311F' => array('Tot Pay' => '8420'),
-                '20K3316F' => array('Tot Pay' => '8420'),
-                '20K3422F' => array('Tot Pay' => '8420'),
-                '20K3321F' => array('Tot Pay' => '8420'),
-                '20K3351F' => array('Tot Pay' => '8420'),
-                '20K3322F' => array('Tot Pay' => '9000'),
-                '20K3367F' => array('Tot Pay' => '8100'),
-                '20K7914E' => array('Tot Pay' => '9850'),
-                '20K7912E' => array('Tot Pay' => '9700'),
-                '20K7908E' => array('Tot Pay' => '9750'),
-                '20K7909E' => array('Tot Pay' => '9900'),
-                '20K7910E' => array('Tot Pay' => '9750'),
-                '20K7913E' => array('Tot Pay' => '9800'),
-                '20K1127E' => array('Tot Pay' => '9450'),
-                '20K3415F' => array('Tot Pay' => '8420'),
-                '20K3376F' => array('Tot Pay' => '8420'),
-                '20K3429F' => array('Tot Pay' => '8420'),
-                '20K3393F' => array('Tot Pay' => '8420'),
-                '20K3401F' => array('Tot Pay' => '8420'),
-                '20K5012P' => array('Tot Pay' => '8000'),
-                '20K5019P' => array('Tot Pay' => '8000'),
-                '20K5010P' => array('Tot Pay' => '8000'),
-                '20J5366V' => array('Tot Pay' => '12000'),
-                '09L5390V' => array('Tot Pay' => '16600'),
-                '20K5315L' => array('Tot Pay' => '18000'),
-                '20K3289F' => array('Tot Pay' => '8200'),
-                '20K8133F' => array('Tot Pay' => '8550'),
-                '20K3256F' => array('Tot Pay' => '8450'),
-                '20K3263F' => array('Tot Pay' => '8450'),
-                '20K3432F' => array('Tot Pay' => '8450'),
-                '20K3474F' => array('Tot Pay' => '8450'),
-                '20K2536F' => array('Tot Pay' => '8350'),
-                '20K3395F' => array('Tot Pay' => '8450'),
-                '20K3398F' => array('Tot Pay' => '8450'),
-                '20K3277F' => array('Tot Pay' => '8450'),
-            );
+        $data = DB::table('hr_as_basic_info')
+                ->whereIn('associate_id', auth()->user()->permitted_associate())
+                ->where(function($query)  {
+                    $query->where('as_doj','>', '2020-08-08')
+                          ->orWhere('as_location', 12);
+                })
+                ->pluck('associate_id');
 
+
+        foreach ($data as $key => $id) {
+            $ex = DB::table('holiday_roaster')->where('date', '2020-10-30')->where('as_id', $id)->first();
+            if(!$ex){
+                HolidayRoaster::create([
+                    'year' => '2020',
+                    'month' => 10,
+                    'as_id' => $id,
+                    'date' => '2020-10-30',
+                    'remarks' => 'Holiday',
+                    'status' => 1
+                ]);
+            }
+        }
+
+        dd($data);
        
     }
-    
+
+
+    public function migrateemployee()
+    {
+
+
+    }
      public function exportReport(Request $request)
     {
 

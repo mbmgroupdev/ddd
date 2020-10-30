@@ -1,0 +1,9 @@
+2020-10-28 16:00:28 "20F025016D" Materny leave medical routine checkup for  24
+2020-10-28 16:00:15 "20F025016D" Materny leave medical routine checkup for  23
+2020-10-28 16:00:02 "20F025016D" Materny leave medical routine checkup for  22
+2020-10-28 15:59:11 "20F025016D" Materny leave medical for  7
+2020-10-28 15:58:15 "20F025016D" Materny leave application for  7
+2020-10-27 15:53:57 "20F025016D" User information updated 42
+2020-10-27 15:18:11 "20F025016D" User information updated 42
+2020-10-27 15:17:35 "20F025016D" User information updated 42
+2020-10-27 15:16:53 "20F025016D" User information updated 42

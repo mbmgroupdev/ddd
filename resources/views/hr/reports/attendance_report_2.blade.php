@@ -73,6 +73,7 @@
                             <div class="row">
                                 <div class="col-4">
                                     <div class="form-group has-float-label has-required select-search-group">
+                                        
                                         {{ Form::select('unit', $unitList, request()->unit, ['placeholder'=>'Select Unit', 'id'=>'unit', 'class'=> ' no-select col-xs-12','style', 'required'=>'required']) }}
                                         <label  for="unit"> Unit </label>
                                     </div>

@@ -46,9 +46,14 @@ class EmployeeHelper
 			    $dayname = Carbon::parse($intimePunch)->format('l');
 			    $employee = Employee::where('associate_id', $eAsId)->first();
 
-			    if(date('H:i:s', strtotime($shiftIntime)) < date('H:i:s', strtotime('14:00:00'))  && $dayname == 'Friday' && ($employee->as_designation_id != 224 || $employee->as_designation_id != 350)){
+			    if(date('H:i:s', strtotime($shiftIntime)) < date('H:i:s', strtotime('14:00:00'))  && $dayname == 'Friday' ){
 			    	$shiftBreak = 90;
+			    	/*224 = security, 350/428 = cook*/
+			    	if($employee->as_designation_id == 224 || $employee->as_designation_id == 350 || $employee->as_designation_id == 428){
+			    		$shiftBreak = 30;
+			    	}
 			    }
+
 
 			    $otCheck = HolidayRoaster::getHolidayYearMonthAsIdDateWiseRemark($year, $month, $eAsId, $today, 'OT');
 			    if($otCheck == null && $eSRStatus == 0){
