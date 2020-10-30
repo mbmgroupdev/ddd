@@ -3,7 +3,9 @@
 <div id="salary-print">
     <style>
         @media print {
-            
+            #unit-info{
+                display:none;
+            }
             .pagebreak {
                 page-break-before: always !important;
             }
@@ -12,15 +14,55 @@
             }
         }
     </style>
+    <div id="unit-info">
+    <h2 style="margin:4px 10px;text-align:center;">
+        {{$pageHead->unit_name}}
+    </h2>
+    @if(isset($info) && count($info)>1)
+        <h5 style="margin:4px 10px;text-align:center;">
+            @if(!empty($info['floor']))
+                <span style="color:lightseagreen;">ফ্লোর:</span> {{$info['floor']}}
+            @endif
+            @if(!empty($info['area']))
+                <span style="color:lightseagreen;" class="f17">এরিয়া:</span> {{$info['area']}}
+            @endif
+            @if(!empty($info['department']))
+                <span style="color:lightseagreen;" class="f17">ডিপার্টমেন্ট:</span> {{$info['department']}}
+            @endif
+            @if(!empty($info['section']))
+                <span style="color:lightseagreen;">সেকশন:</span> {{$info['section']}}
+            @endif
+            @if(!empty($info['sub_sec']))
+                <span style="color:lightseagreen;">সাব-সেকশন:</span> {{$info['sub_sec']}}
+            @endif
+        </h5>
+    @endif
     @php
         $loc_count = 0;
         $total_emp = 0;
         $total_sal = 0;
         $locations = location_by_id();
         $salmonth = date_to_bn_month($pageHead->for_date);
-        $totalPayable = 0;
-        $attendanceBonus = 0;
+
     @endphp
+    @if($pageHead->unit_name != '')
+        <h3 style="margin:4px 10px;text-align:center;">
+            বেতন/মজুরি এবং অতিরিক্ত সময়ের মজুরী<br/>
+            মাসঃ {{  $salmonth }}
+        </h3>
+        
+
+        <h6 style="margin:4px 10px;text-align:center;font-weight:600;font-size:13px;">
+            সর্বমোট টাকার পরিমানঃ
+            <span style="color:hotpink;font-size:15px;" id="total-salary"></span><br/>
+            মোট কর্মী/কর্মচারীঃ
+            <span style="color:hotpink;font-size:15px;" id="emp-count"></span>
+        </h6>
+    @endif
+    @if(count($getSalaryList) == 0)
+        <b><h5 class="text-center"> No data found !</h5></b>
+    @endif
+    </div>
     @foreach($uniqueLocation as $locKey=>$location)
         @php
             $pageKey = 0;
@@ -51,92 +93,73 @@
             @endphp
             @if(in_array($location, $asLocationList) && $emp > 0)
                 <div class="panel panel-info">
-                    
+                    <div class="panel-heading">ইউনিট :<b> {{ $pageHead->unit_name }}</b> - লোকেশন :<b> {{ $getLocation }}</b></div>
                     <div class="panel-body">
 
                         <table class="table" style="width:100%;border-bottom:1px solid #ccc;margin-bottom:0;font-size:12px;color:lightseagreen;text-align:left" cellpadding="5">
                             <tr>
                                 <td style="width:14%">
-                                    <p style="margin:0;padding: 0"><strong>লোকেশনঃ </strong>
-                                        {{ $getLocation }}
-                                    </p>
-                                    <p style="margin:0;padding: 0">
-                                        @if(!empty($info['sub_sec']))
-                                            <strong>সাব-সেকশন:</strong> {{$info['sub_sec']}}
-                                        @elseif(!empty($info['section']))
-                                            <strong>সেকশন: </strong> {{$info['section']}}
-                                        @elseif(!empty($info['department']))
-                                            <strong>ডিপার্টমেন্ট: </strong> {{$info['department']}}
-                                        @elseif(!empty($info['area']))
-                                            <strong>এরিয়া: </strong> {{$info['area']}}
-                                        @endif
-                                    </p>
-                                    {{-- <p style="margin:0;padding: 0"><strong>তারিখঃ </strong>
+                                    <p style="margin:0;padding:4px 0"><strong>তারিখঃ </strong>
                                         {{Custom::engToBnConvert($pageHead->current_date)}}
                                     </p>
-                                    <p style="margin:0;padding: 0"><strong>&nbsp;সময়ঃ </strong>
+                                    <p style="margin:0;padding:4px 0"><strong>&nbsp;সময়ঃ </strong>
                                         {{ Custom::engToBnConvert($pageHead->current_time) }}
-                                    </p> --}}
-                                    @if($input['perpage'] > 1)
-                                    <p style="margin:0;padding: 0"><strong>&nbsp;পৃষ্ঠা নংঃ </strong>
+                                    </p>
+                                    <p style="margin:0;padding:4px 0"><strong>&nbsp;পৃষ্ঠা নংঃ </strong>
                                         {{ Custom::engToBnConvert($pageKey) }}
                                     </p>
-                                    @endif
                                 </td>
                                 <td style="width:15%;font-size:10px">
                                     @if(isset($pageHead->pay_date) && $pageHead->pay_date != null)
-                                    <p style="margin:0;padding: 0"><strong>&nbsp;প্রদান তারিখঃ </strong>
+                                    <p style="margin:0;padding:4px 0"><strong>&nbsp;প্রদান তারিখঃ </strong>
                                         {{ Custom::engToBnConvert($pageHead->pay_date) }} ইং
                                     </p>
                                     @endif
                                 </td>
                                 <td>
-                                    <h3 style="margin:4px 10px;text-align:center;font-weight:600;font-size:14px;">
+                                    <h3 style="margin:4px 10px;text-align:center;font-weight:600;font-size:18px;">
                                         {{ $pageHead->unit_name }}
                                     </h3>
-                                    <h5 style="margin:4px 10px;text-align:center;font-weight:600;font-size:11px;">বেতন/মজুরী এবং অতিরিক্ত সময়ের মজুরী
-                                    
+                                    <h5 style="margin:4px 10px;text-align:center;font-weight:600;font-size:14px;">বেতন/মজুরি এবং অতিরিক্ত সময়ের মজুরী
                                     <br/>
                                     মাসঃ {{ $salmonth }}</h5>
                                 </td>
                                 <td width="0%"> &nbsp;</td>
                                 <td style="width:30%" style="text-align: right;">
                                     @if($pageHead->floor_name != null)
-                                    <p style="margin:0;padding: 0;">
+                                    <p style="margin:0;padding:4px 0;">
                                         <strong>ফ্লোর নংঃ
                                             {{ Custom::engToBnConvert($pageHead->floor_name) }}
                                         </strong>
                                     </p>
                                     @endif
-                                    @if($input['perpage'] > 1)
-                                    <p style="margin:0;padding: 0;text-align: right;">
+                                    <p style="margin:0;padding:4px 0;text-align: right;">
                                         সর্বমোট টাকার পরিমানঃ <span style="color:hotpink" >{{Custom::engToBnConvert(bn_money($totalSalary_s))}}</span>
                                     </p>
                                     @php
                                         $list_total_ot = array_column(array_column($lists, 'salary'),'ot_rate');
                                     @endphp
-                                    <p style="margin:0;padding: 0;text-align: right;">
+                                    <p style="margin:0;padding:4px 0;text-align: right;">
                                         মোট কর্মী/কর্মচারীঃ <span style="color:hotpink" >{{Custom::engToBnConvert($emp)}}</span>
                                     </p>
-                                    <p style="margin:0;padding: 0;text-align: right;">
+                                    <p style="margin:0;padding:4px 0;text-align: right;">
                                         {{-- স্ট্যাম্প বাবদঃ <span style="color:hotpink" >{{Custom::engToBnConvert($emp*10)}}</span> |  --}}
                                         অতিরিক্ত কাজের মজুরীঃ <span style="color:hotpink" id="">{{Custom::engToBnConvert(bn_money($ot_payable))}}</span>
                                     </p>
-                                    @endif
                                 </td>
                             </tr>
                         </table>
 
-                        <table class="table table-head" style="width:100%;border:1px solid #ccc;font-size:9px;color:lightseagreen" cellpadding="2" cellspacing="0" border="1" align="center">
+                        <table class="table" style="width:100%;border:1px solid #ccc;font-size:9px;color:lightseagreen" cellpadding="2" cellspacing="0" border="1" align="center">
                             <thead>
                                 <tr style="color:hotpink">
                                     <th style="color:lightseagreen">ক্রমিক নং</th>
-                                    <th width="180" style="width: 225px;">কর্মী/কর্মচারীদের নাম
+                                    <th width="180">কর্মী/কর্মচারীদের নাম
                                         <br/> ও যোগদানের তারিখ</th>
                                     <th>আই ডি নং</th>
                                     <th>মাসিক বেতন/মজুরী</th>
                                     <th width="140">হাজিরা দিবস</th>
-                                    <th width="180">বেতন হইতে কর্তন </th>
+                                    <th width="220">বেতন হইতে কর্তন </th>
                                     <th width="250">মোট দেয় টাকার পরিমান</th>
                                     <th>সর্বমোট টাকার পরিমান</th>
                                     <th width="80">দস্তখত</th>
@@ -149,12 +172,12 @@
                                 @foreach($lists as $k=>$list)
                                     @if($list->as_location == $location && $list != null)
                                         <tr>
-                                            <td style="text-align: center;">{{ Custom::engToBnConvert($j) }}</td>
+                                            <td style="text-align: center;">{{ $j }}</td>
                                             <td>
                                                 <p style="margin:0;padding:0;">{{ $list->hr_bn_associate_name }}</p>
                                                 <p style="margin:0;padding:0;">{{ Custom::engToBnConvert($list->as_doj) }}</p>
                                                 <p style="margin:0;padding:0;">{{ $designation[$list->as_designation_id]['hr_designation_name_bn']}} </p>
-                                                <p style="margin:0;padding:0;color:hotpink">মূল বেতন+বাড়ি ভাড়া+চিকিৎসা+যাতায়াত+খাদ্য </p>
+                                                <p style="margin:0;padding:0;color:hotpink">মূল+বাড়ি ভাড়া+চিকিৎসা+যাতায়াত+খাদ্য </p>
                                                 <p style="margin:0;padding:0;">
                                                     {{ Custom::engToBnConvert($list->basic.'+'.$list->house.'+'.$list->medical.'+'.$list->transport.'+'.$list->food) }}
                                                 </p>
@@ -206,7 +229,7 @@
                                                     <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">অনুপস্থিত দিবস </span>
                                                     <span style="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=</span>
                                                     <span style="text-align: right;width: 30%; float: right;  white-space: wrap;">
-                                                          <font style="color:hotpink"> {{ Custom::engToBnConvert($list->absent + $list->leave) }}</font>
+                                                          <font style="color:hotpink"> {{ Custom::engToBnConvert($list->absent) }}</font>
                                                     </span>
                                                 </p>
                                                 <p style="margin:0;padding:0">
@@ -298,12 +321,9 @@
                                             @php
                                                 
                                                 $otHour = numberToTimeClockFormat($list->ot_hour);
-                                                $ot = ((float)($list->ot_rate) * $list->ot_hour);
-                                                $ot = number_format((float)$ot, 2, '.', '');
+                                                $ot = round((float)($list->ot_rate) * $list->ot_hour);
                                                 $salaryAdd = ($list->salary_add_deduct_id == null) ? '0.00' : ($salaryAddDeduct[$list->as_id]['salary_add']);
                                                 // $total = ($list->salary_payable + $ot + $list->attendance_bonus + $salaryAdd);
-                                                $totalPayable = $totalPayable + $list->salary_payable;
-                                                $attendanceBonus = $attendanceBonus + $list->attendance_bonus;
                                             @endphp
                                             <td>
                                                 <p style="margin:0;padding:0">
@@ -329,19 +349,15 @@
                                                         <span style="text-align: right;width: 30%; float: right;  white-space: wrap;">
                                                             <font style="color:hotpink">{{ Custom::engToBnConvert($list->ot_rate) }} </font>
                                                         </span>
-                                                        @if($list->as_ot>0)
                                                         <span style="text-align: right;width: 30%; float: right;  white-space: wrap;">
                                                             <font style="color:hotpink"> ({{ $list->as_ot==1?Custom::engToBnConvert($otHour):Custom::engToBnConvert('00') }}  ঘন্টা)</font>
                                                         </span>
-                                                        @endif
                                                 </p>
-                                                @if($list->as_ot>0)
                                                 <p style="margin:0;padding:0">
 
                                                         <span style="text-align: right;width: 65%; float: right;  white-space: wrap;">&nbsp;
                                                         </span>
                                                 </p>
-                                                @endif
                                                 <p style="margin:0;padding:0">
 
                                                     <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">উপস্থিত বোনাস </span>
@@ -352,7 +368,7 @@
                                                 </p>
                                                 <p style="margin:0;padding:0">
 
-                                                    <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">প্রোডাকশন বোনাস </span>
+                                                    <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">প্রোডাকশন বোনস </span>
                                                         <span style="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=</span>
                                                         <span style="text-align: right;width: 30%; float: right;  white-space: wrap;">
                                                             <font style="color:hotpink">{{ Custom::engToBnConvert($list->production_bonus) }}</font>
@@ -406,11 +422,6 @@
                                 {{-- @endforeach --}}
 
                             </tbody>
-                            <tfoot>
-                                <tr>
-                                    
-                                </tr>
-                            </tfoot>
                         </table>
                         <input type="hidden" class="hidden_loc" data-target="{{$loc_count}}" value="{{ Custom::engToBnConvert(bn_money($loc_sal)) }}" data-emp="{{ Custom::engToBnConvert($loc_emp)}}">
                         @php
@@ -420,48 +431,11 @@
 
                     </div>
                 </div>
-                @if(count($locationDataSet) != $pageKey || count($locationDataSet) != 1)
+
                 <div class="pagebreak"> </div>
-                @endif
             @endif
         @endforeach
     @endforeach
-    @if(isset($pageHead->totalStamp) && $input['perpage'] > 1)
-        <div id="unit-info">
-            <table class="table" style="width:100%;border-bottom:1px solid #ccc;margin-bottom:0;font-size:12px;color:lightseagreen;text-align:left" cellpadding="5">
-                <tr>
-                    <td style="width:25%">
-                        <p style="margin:0;padding: 0"><strong>মোট কর্মী/কর্মচারীঃ </strong>
-                            {{ Custom::engToBnConvert($pageHead->totalEmployees) }}
-                        </p>
-                        <p style="margin:0;padding: 0"><strong>স্ট্যাম্প বাবদঃ </strong>
-                            {{ Custom::engToBnConvert(bn_money($pageHead->totalStamp)) }}
-                        </p>
-                        <p style="margin:0;padding: 0"><strong>অতিরিক্ত কাজের সময়: </strong>
-                            {{ Custom::engToBnConvert(numberToTimeClockFormat($pageHead->totalOtHour)) }}
-                        </p>
-                    </td>
-                    <td style="width:25%;">
-                        <p style="margin:0;padding: 0"><strong>সর্বমোট বেতন/মজুরী: </strong>
-                            {{ Custom::engToBnConvert(bn_money($totalPayable)) }}
-                        </p>
-                        <p style="margin:0;padding: 0"><strong>অতিরিক্ত কাজের মজুরী: </strong>
-                            {{ Custom::engToBnConvert(bn_money($pageHead->totalOTAmount)) }}
-                        </p>
-                        <p style="margin:0;padding: 0"><strong> উপস্থিত বোনাস: </strong>
-                            {{ Custom::engToBnConvert($attendanceBonus) }}
-                        </p>
-                    </td>
-                    <td style="width:25%; text-align:right;">
-                        <p style="margin:0;padding: 0"><strong>সর্বমোট টাকার পরিমানঃ </strong>
-                            {{ Custom::engToBnConvert(bn_money($pageHead->totalSalary)) }}
-                        </p>
-                    </td>
-                    
-                </tr>
-            </table>
-        </div>
-    @endif
 </div>
 {{-- modal --}}
 <div class="item_details_section">

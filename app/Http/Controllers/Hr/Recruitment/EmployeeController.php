@@ -1460,6 +1460,7 @@ class EmployeeController extends Controller
                 'as_pic'           => $as_pic,
                 'as_remarks'       => $request->as_remarks,
                 'as_oracle_code'   => $request->as_oracle_code,
+                'as_oracle_sl'     => ($request->as_oracle_code != ''?substr($request->as_oracle_code,3, -1):''),
                 'as_rfid_code'     => $request->as_rfid_code,
                 'as_location'      => $request->as_location_id
             ]);

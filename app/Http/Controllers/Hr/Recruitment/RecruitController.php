@@ -458,10 +458,11 @@ class RecruitController extends Controller
             $data = WorkerRecruitment::where("worker_id", $request->worker_id)
             ->where("worker_doctor_acceptance", "1")
             ->where("worker_is_migrated", "0");
-            $location= Location::first(['hr_location_id']); 
+            
             $worker = $data->first();
             if ($data->exists() && ($worker->worker_unit_id != null || $worker->worker_unit_id != ''))
             {
+                $location= Location::where('hr_location_unit_id', $worker->worker_unit_id)->orderBy('hr_location_id', 'asc')->first(['hr_location_id']); 
                 $shift_exist= DB::table('hr_shift')
                         ->where('hr_shift_unit_id', $worker->worker_unit_id)
                         ->where('hr_shift_default', 1)
@@ -519,12 +520,13 @@ class RecruitController extends Controller
                         'as_contact'     => $worker->worker_contact,
                         'as_ot'          => $worker->worker_ot,
                         'as_oracle_code' => $worker->as_oracle_code,
+                        'as_oracle_sl'   => ($worker->as_oracle_code != ''?substr($worker->as_oracle_code,3, -1):''),
                         'as_rfid_code'   => $worker->as_rfid,
                         'as_pic'         => null,
                         'created_at'     => date("Y-m-d H:i:s"),
                         'created_by'     => Auth::user()->id,
                         'as_status'      => 1 ,
-                        'as_location'    => $location->hr_location_id
+                        'as_location'    => $location->hr_location_id??''
                     ));
 
                     MedicalInfo::insert(array(

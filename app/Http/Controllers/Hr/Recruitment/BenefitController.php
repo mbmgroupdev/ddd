@@ -129,6 +129,11 @@ class BenefitController extends Controller
                     'b.ben_current_salary',
                     'b.ben_basic',
                     'b.ben_house_rent',
+                    'b.ben_cash_amount',
+                    'b.ben_bank_amount',
+                    'b.ben_tds_amount',
+                    'b.bank_name',
+                    'b.bank_no',
                     'a.as_name',
                     'a.as_oracle_code',
                     'a.as_unit_id',
@@ -143,12 +148,22 @@ class BenefitController extends Controller
                 ->get();
 
             return DataTables::of($data)
+            ->addColumn('payment_method', function($data){
+                if($data->ben_bank_amount == 0 && $data->ben_cash_amount > 0){
+                    $method = "Cash";
+                }elseif($data->ben_bank_amount > 0 && $data->ben_cash_amount == 0){
+                    $method = $data->bank_name.' '.$data->bank_no;
+                }else{
+                    $method = $data->bank_name." & Cash ".$data->bank_no;
+                }
+                return $method;
+            })
             ->addColumn('action', function ($data) {
                 return "<div class=\"btn-group\">
                     <a href=".url('hr/payroll/benefit/'.$data->ben_as_id)." class=\"btn btn-xs btn-success\" data-toggle=\"tooltip\" title=\"View\">
                         <i class=\"ace-icon fa fa-eye bigger-120\"></i>
                     </a>
-                    <a href=".url('hr/payroll/benefit_edit/'.$data->ben_as_id)." class=\"btn btn-xs btn-primary\" data-toggle=\"tooltip\" title=\"Edit\">
+                    <a href=".url('hr/employee/benefits?associate_id='.$data->ben_as_id)." class=\"btn btn-xs btn-primary\" data-toggle=\"tooltip\" title=\"Edit\">
                         <i class=\"ace-icon fa fa-pencil bigger-120\"></i>
                     </a>
                 </div>";

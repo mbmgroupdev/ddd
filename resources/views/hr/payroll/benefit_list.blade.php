@@ -22,7 +22,7 @@
             <div class="panel panel-success">
                 <div class="panel-body">
                     <div class="worker-list">
-                        <table id="dataTables" class="table table-striped table-bordered" style="display:table;overflow-x: auto;width: 100%;">
+                        <table id="dataTables" class="table table-striped table-bordered" style="display: block;overflow-x: auto;width: 100%;" border="1">
                             <thead>
                                 <tr>
                                     <!-- <th>Sl. No</th> -->
@@ -34,6 +34,10 @@
                                     <th>Current Salary</th>
                                     <th>Basic Salary</th>
                                     <th>House Rent</th>
+                                    <th>Payment Method</th>
+                                    <th>Cash Amount</th>
+                                    <th>Bank Amount</th>
+                                    <th>Tax Amount</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -49,14 +53,14 @@
 <script type="text/javascript">
 $(document).ready(function(){ 
 
-    var searchable = [0,1,2];
+    var searchable = [0,1,2,8];
     var selectable = [3]; 
 
     var dropdownList = {
         '3' :[@foreach($unitList as $e) <?php echo "'$e'," ?> @endforeach]
     };
 
-    var exportColName = ['Associate ID','Name','Oracle ID','Unit','Joining Salary', 'Current Salary', 'Basic Salary'];
+    var exportColName = ['Associate ID','Name','Oracle ID','Unit','Joining Salary', 'Current Salary', 'Basic Salary', 'Payment Method', 'Cash Amount', 'Bank Amount', 'Tax Amount'];
     var exportCol = [0,1,2,3,4,5,6];
     
     var dt = $('#dataTables').DataTable({
@@ -157,6 +161,10 @@ $(document).ready(function(){
             { data: 'ben_current_salary', name: 'ben_current_salary' }, 
             { data: 'ben_basic', name: 'ben_basic' }, 
             { data: 'ben_house_rent', name: 'ben_house_rent' }, 
+            { data: 'payment_method', name: 'payment_method' }, 
+            { data: 'ben_cash_amount', name: 'ben_cash_amount' }, 
+            { data: 'ben_bank_amount', name: 'ben_bank_amount' }, 
+            { data: 'ben_tds_amount', name: 'ben_tds_amount' }, 
             { data: 'action', name: 'action', orderable: false, searchable: false }
         ], 
         initComplete: function () {   
@@ -169,9 +177,11 @@ $(document).ready(function(){
                 input.setAttribute('style', 'width: 110px; height:25px; border:1px solid whitesmoke;');
 
                 $(input).appendTo($(column.header()).empty())
-                .on('keyup', function () {
+                .on('keyup', function (e) {
+                  if(e.keyCode == 13){
                     column.search($(this).val(), false, false, true).draw();
-                });
+                  }
+                 });
 
                 $('input', this.column(column).header()).on('click', function(e) {
                     e.stopPropagation();

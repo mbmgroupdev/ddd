@@ -4,12 +4,13 @@ namespace App\Http\Controllers\Hr\Reports;
 
 use App\Helpers\Custom;
 use App\Http\Controllers\Controller;
+use App\Models\Employee;
 use App\Models\Hr\Area;
 use App\Models\Hr\Benefits;
 use App\Models\Hr\Department;
-use App\Models\Employee;
 use App\Models\Hr\Floor;
 use App\Models\Hr\HrMonthlySalary;
+use App\Models\Hr\Location;
 use App\Models\Hr\SalaryAdjustMaster;
 use App\Models\Hr\Section;
 use App\Models\Hr\Subsection;
@@ -42,6 +43,11 @@ class SalarySheetCustomController extends Controller
                 ->whereIn('hr_unit_id', auth()->user()->unit_permissions())
                 ->orderBy('hr_unit_name', 'desc')
                 ->pluck('hr_unit_name', 'hr_unit_id');
+            $data['locationList']  = Location::where('hr_location_status', '1')
+            ->whereIn('hr_location_id', auth()->user()->location_permissions())
+            ->orderBy('hr_location_name', 'desc')
+            ->pluck('hr_location_name', 'hr_location_id');
+
             $data['areaList']      = Area::where('hr_area_status', '1')->pluck('hr_area_name', 'hr_area_id');
             $data['floorList']     = Floor::getFloorList();
             $data['deptList']      = Department::getDeptList();

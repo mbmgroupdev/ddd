@@ -255,12 +255,19 @@ class AttendaceBulkManualController extends Controller
                             
                         }
                     }else{
+
                         $absentWhere = [
                             'associate_id' => $info->associate_id,
                             'date' => $date,
                             'hr_unit' => $info->as_unit_id
                         ];
+                        
                         Absent::where($absentWhere)->delete();
+                        // attendance delete
+                        DB::table($tableName)
+                        ->where('in_date', $date)
+                        ->where('as_id',$info->as_id)
+                        ->delete();
                     }
 
                 }
