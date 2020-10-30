@@ -596,6 +596,8 @@ class BenefitsCalculationController extends Controller
                         ])
                         ->leftJoin('hr_as_basic_info as c', 'c.associate_id', 'b.associate_id')
                         ->leftJoin('hr_unit as d', 'd.hr_unit_id', 'c.as_unit_id')
+                        ->whereIn('c.as_unit_id', auth()->user()->unit_permissions())
+                        ->whereIn('c.as_location', auth()->user()->location_permissions())
                         ->orderBy('b.id', 'DESC')
                         ->get();
 

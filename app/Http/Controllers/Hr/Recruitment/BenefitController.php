@@ -142,12 +142,19 @@ class BenefitController extends Controller
                 ->leftJoin('hr_as_basic_info as a', 'a.associate_id', '=', 'b.ben_as_id')
                 ->leftJoin('hr_unit AS u', 'u.hr_unit_id', 'a.as_unit_id')
                 ->whereIn('a.as_unit_id', auth()->user()->unit_permissions())
+                ->whereIn('a.as_location', auth()->user()->location_permissions())
                 ->whereNotIn('a.as_id', auth()->user()->management_permissions())
                 ->where('a.as_status',1)
                 ->orderBy('b.ben_id', 'desc')
                 ->get();
 
+            $perm = false;
+            if(auth()->user()->canany(['Assign Benifit']) || auth()->user()->hasRole('Super Admin') ){
+                $perm = true;
+            }
+
             return DataTables::of($data)
+
             ->addColumn('payment_method', function($data){
                 if($data->ben_bank_amount == 0 && $data->ben_cash_amount > 0){
                     $method = "Cash";
@@ -158,15 +165,21 @@ class BenefitController extends Controller
                 }
                 return $method;
             })
-            ->addColumn('action', function ($data) {
-                return "<div class=\"btn-group\">
-                    <a href=".url('hr/payroll/benefit/'.$data->ben_as_id)." class=\"btn btn-xs btn-success\" data-toggle=\"tooltip\" title=\"View\">
-                        <i class=\"ace-icon fa fa-eye bigger-120\"></i>
-                    </a>
-                    <a href=".url('hr/employee/benefits?associate_id='.$data->ben_as_id)." class=\"btn btn-xs btn-primary\" data-toggle=\"tooltip\" title=\"Edit\">
-                        <i class=\"ace-icon fa fa-pencil bigger-120\"></i>
-                    </a>
-                </div>";
+            
+            ->addColumn('action', function ($data) use ($perm) {
+                if($perm){
+
+                    return "<div class=\"btn-group\">
+                        <a href=".url('hr/payroll/benefit/'.$data->ben_as_id)." class=\"btn btn-xs btn-success\" data-toggle=\"tooltip\" title=\"View\">
+                            <i class=\"ace-icon fa fa-eye bigger-120\"></i>
+                        </a> 
+                        <a href=".url('hr/employee/benefits?associate_id='.$data->ben_as_id)." class=\"btn btn-xs btn-primary\" data-toggle=\"tooltip\" title=\"Edit\">
+                            <i class=\"ace-icon fa fa-pencil bigger-120\"></i>
+                        </a>
+                    </div>";
+                }else{
+                    return '';
+                }
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -177,7 +190,7 @@ class BenefitController extends Controller
     {
 
         $get_as_id = Employee::where('associate_id', $id)->first(['as_id']);
-        $m_restriction=  auth()->user()->management_permissions(); //dd($m_restriction);
+        $m_restriction =  auth()->user()->permitted_associate()->toArray(); //dd($m_restriction);
         $as_id=$get_as_id->as_id;
 
         // check if  id is restricted
@@ -433,16 +446,28 @@ class BenefitController extends Controller
                         'c.increment_type AS inc_type_name',
                     ])
                     ->leftJoin('hr_as_basic_info AS b', 'b.associate_id', 'inc.associate_id')
+                    ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
+                    ->whereIn('b.as_location', auth()->user()->location_permissions())
                     ->leftJoin('hr_increment_type AS c', 'c.id', 'inc.increment_type' )
-                    ->orderBy('inc.id','desc')
+                    ->orderBy('inc.effective_date','desc')
                     ->get();
+
+        $perm = check_permission('Manage Increment');
 
         return DataTables::of($data)
             ->addIndexColumn()
-            ->addColumn('action', function ($data) {
-                return "<div class=\"btn-group\">
-                    <a type=\"button\" href=".url('hr/payroll/increment_edit/'.$data->id)." class=\"btn btn-xs btn-primary\"><i class=\"fa fa-pencil\"></i></a>
-                </div>";
+            ->addColumn('action', function ($data) use ($perm) {
+                if($perm){
+
+                    return "<div class=\"btn-group\">
+                        <a type=\"button\" href=".url('hr/payroll/increment_edit/'.$data->id)." class=\"btn btn-xs btn-primary\"><i class=\"fa fa-pencil\"></i></a>
+                    </div>";
+                }else{
+                    return '';
+                }
+            })
+            ->editColumn('effective_date', function($data){
+                return date('Y-m-d', strtotime($data->effective_date));
             })
             ->rawColumns(['action'])
             ->make(true);  
@@ -464,8 +489,12 @@ class BenefitController extends Controller
                         'b.as_name',
                     ])
                     ->leftJoin('hr_as_basic_info AS b', 'b.associate_id', 'inc.associate_id')
-                    ->orderBy('inc.id','desc')
+                    ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
+                    ->whereIn('b.as_location', auth()->user()->location_permissions())
+                    ->orderBy('inc.effective_date','desc')
                     ->get();
+
+        $perm = check_permission('Manage Promotion');
 
         return DataTables::of($data)
             ->addIndexColumn()
@@ -475,10 +504,15 @@ class BenefitController extends Controller
             ->editColumn('current_designation_id', function ($data) use ($designation) {
                 return $designation[$data->current_designation_id]['hr_designation_name']??'';
             })
-            ->addColumn('action', function ($data) {
-                return "<div class=\"btn-group\">
-                    <a type=\"button\" href=".url('hr/payroll/promotion_edit/'.$data->id)." class=\"btn btn-xs btn-primary\"><i class=\"fa fa-pencil\"></i></a>
-                </div>";
+            ->addColumn('action', function ($data) use ($perm) {
+                if($perm){
+
+                    return "<div class=\"btn-group\">
+                        <a type=\"button\" href=".url('hr/payroll/promotion_edit/'.$data->id)." class=\"btn btn-xs btn-primary\"><i class=\"fa fa-pencil\"></i></a>
+                    </div>";
+                }else{
+                    return '';
+                }
             })
             ->rawColumns(['action'])
             ->make(true);  

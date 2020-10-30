@@ -230,7 +230,8 @@ class ReportController extends Controller
 					'as_subsection_id'
 				])
 				//->whereDate('as_doj','<=', $date)
-				->where('as_unit_id', $unit)
+                ->where('as_unit_id', $unit)
+				->whereIn('associate_id', auth()->user()->permitted_associate())
 				->where('as_status',1) 
 				->where('as_ot', $ot)
 				->groupBy('as_subsection_id')
@@ -250,6 +251,7 @@ class ReportController extends Controller
     				])
     				->leftJoin('hr_as_basic_info AS b', 'a.as_id', 'b.as_id')
     				->where('b.as_unit_id', $unit)
+                    ->whereIn('b.associate_id', auth()->user()->permitted_associate())
     				->where('b.as_status',1) 
     				->where('b.as_ot', $ot)
     				->groupBy('b.as_subsection_id')

@@ -1,85 +1,67 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Helpers\EmployeeHelper;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Hr\IDGenerator as IDGenerator;
 use App\Jobs\ProcessUnitWiseSalary;
+use App\Jobs\ProcessAttendanceOuttime;
+use App\Helpers\EmployeeHelper;
+use App\Models\Employee;
+use App\Models\Hr\AdvanceInfo;
+use App\Models\Hr\MedicalInfo;
 use App\Models\Hr\Absent;
 use App\Models\Hr\Attendace;
 use App\Models\Hr\AttendaceManual;
-use App\Models\Employee;
 use App\Models\Hr\HolidayRoaster;
 use App\Models\Hr\HrLateCount;
 use App\Models\Hr\Leave;
 use App\Models\Hr\Shift;
 use App\Models\Hr\Unit;
-use Carbon\Carbon;
 use Rap2hpoutre\FastExcel\FastExcel;
+use Carbon\Carbon;
 use PDF, Validator, Auth, ACL, DB, DataTables;
 
-use Illuminate\Http\Request;
 
 class TestController extends Controller
 {
-    public function test(Request $request)
+    public function test()
+    {
+        
+        $data = DB::table('hr_as_basic_info')
+                ->whereIn('associate_id', auth()->user()->permitted_associate())
+                ->where(function($query)  {
+                    $query->where('as_doj','>', '2020-08-08')
+                          ->orWhere('as_location', 12);
+                })
+                ->pluck('associate_id');
+
+
+        foreach ($data as $key => $id) {
+            $ex = DB::table('holiday_roaster')->where('date', '2020-10-30')->where('as_id', $id)->first();
+            if(!$ex){
+                HolidayRoaster::create([
+                    'year' => '2020',
+                    'month' => 10,
+                    'as_id' => $id,
+                    'date' => '2020-10-30',
+                    'remarks' => 'Holiday',
+                    'status' => 1
+                ]);
+            }
+        }
+
+        dd($data);
+       
+    }
+
+
+    public function migrateemployee()
     {
 
 
-        dd('done');
-        //dd($att, $ab, $lv);
-
-        $data = DB::table('hr_as_basic_info')
-                ->whereIN('as_id', $att)
-                ->pluck('associate_id');
-
-        $salary = DB::table('hr_monthly_salary as s')
-                    ->leftJoin('hr_as_basic_info as b','b.associate_id','s.as_id')
-                    ->whereIn('b.as_unit_id', [1,4,5])
-                    ->where('month','09')
-                    ->where('year','2020')
-                    ->whereNotIn('s.as_id', $data)
-                    ->get();
-
-
-
-
-
-    	$getData = [];
-    
-	    $data = [];
-	    $absent = DB::table('hr_absent')
-	        ->leftJoin('hr_as_basic_info AS b', 'b.associate_id', 'hr_absent.associate_id')
-	        ->whereBetween('hr_absent.date',['2020-09-16','2020-09-30'])
-	        ->get();
-
-	    foreach ($absent as $key => $ab) {
-
-	        foreach ($getData as $key1=> $value) {
-	            if($ab->as_oracle_code == $value['PID'] && $ab->date == date('Y-m-d', strtotime($value['WD']))){
-	                $data[$key]['as_id'] = $ab->as_id;
-	                $data[$key]['associate_id'] = $ab->associate_id;
-	                $data[$key]['in_date'] = $ab->date;
-	                $data[$key]['in_time'] = $value['IN_TIME'];
-	                $data[$key]['out_time'] = $value['OUT_TIME'];
-	                $data[$key]['as_unit_id'] = $ab->as_unit_id;
-	                $data[$key]['shift_roaster_status'] = $ab->shift_roaster_status;
-
-	                break;
-	            }
-	        }
-	        
-	    }
-	    $status = [];
-
-	    foreach ($data as $key => $att) {
-	        
-	        $status[$key] = $this->bulkManualStore($att);
-	    }
-
-	    dd($data,$status);
     }
-
-    public function exportReport(Request $request)
+     public function exportReport(Request $request)
     {
 
         if(isset($request->date)){
@@ -96,7 +78,7 @@ class TestController extends Controller
             $units = auth()->user()->unit_permissions();
         
             $filename = 'Employee record -'.$date.'.xlsx';
-
+            
             $designation = designation_by_id();
             $department = department_by_id();
             $section = section_by_id();
@@ -104,6 +86,7 @@ class TestController extends Controller
             $unit = unit_by_id();
             $excel = [];
             foreach ($units as $key => $u) {
+                
                 $table = get_att_table($u).' AS a';
                 $att = DB::table($table)
                         ->leftJoin('hr_as_basic_info as b','b.as_id','a.as_id')
@@ -112,7 +95,7 @@ class TestController extends Controller
                         ->leftJoin('hr_benefits as c','b.associate_id','c.ben_as_id')
                         ->where('a.in_date', $date)
                         ->get();
-
+                
                 foreach ($att as $key => $a) {
                     $excel[$a->associate_id] = array(
                         'Associate ID' => $a->associate_id,
@@ -125,11 +108,11 @@ class TestController extends Controller
                         'House Rent' => $a->ben_house_rent??0,
                         'Cash Amount' => $a->ben_cash_amount??0,
                         'Bank/Rocket' => $a->ben_bank_amount??0,
-                        'Designation' => $designation[$a->as_designation_id]['hr_designation_name'],
+                        'Designation' => $designation[$a->as_designation_id]['hr_designation_name']??'',
                         'Department' => $department[$a->as_department_id]['hr_department_name']??'',
                         'Section' => $section[$a->as_section_id]['hr_section_name']??'',
                         'Sub Section' => $subsection[$a->as_subsection_id]['hr_subsec_name']??'',
-                        'Unit' => $unit[$a->as_unit_id]['hr_unit_short_name'],
+                        'Unit' => $unit[$a->as_unit_id]['hr_unit_short_name']??'',
                         'OT/NONOT' => $a->as_ot == 1?'OT':'NonOT',
                         'Status' => 'Present',
                         'Late' => $a->late_status,
@@ -147,8 +130,10 @@ class TestController extends Controller
                         }
                     }
                 }
+                
+                
             }
-
+            
             $ab = DB::table('hr_absent as a')
                     ->leftJoin('hr_as_basic_info as b','b.associate_id','a.associate_id')
                     ->leftJoin('hr_benefits as c','b.associate_id','c.ben_as_id')
@@ -196,11 +181,11 @@ class TestController extends Controller
                     'House Rent' => $a->ben_house_rent??0,
                     'Cash Amount' => $a->ben_cash_amount??0,
                     'Bank/Rocket' => $a->ben_bank_amount??0,
-                    'Designation' => $designation[$a->as_designation_id]['hr_designation_name'],
+                    'Designation' => $designation[$a->as_designation_id]['hr_designation_name']??'',
                     'Department' => $department[$a->as_department_id]['hr_department_name']??'',
                     'Section' => $section[$a->as_section_id]['hr_section_name']??'',
                     'Sub Section' => $subsection[$a->as_subsection_id]['hr_subsec_name']??'',
-                    'Unit' => $unit[$a->as_unit_id]['hr_unit_short_name'],
+                    'Unit' => $unit[$a->as_unit_id]['hr_unit_short_name']??'',
                     'OT/NONOT' => $a->as_ot == 1?'OT':'NonOT',
                     'Status' => 'Absent',
                     'Late' => '',
@@ -224,11 +209,11 @@ class TestController extends Controller
                     'House Rent' => $a->ben_house_rent??0,
                     'Cash Amount' => $a->ben_cash_amount??0,
                     'Bank/Rocket' => $a->ben_bank_amount??0,
-                    'Designation' => $designation[$a->as_designation_id]['hr_designation_name'],
+                    'Designation' => $designation[$a->as_designation_id]['hr_designation_name']??'',
                     'Department' => $department[$a->as_department_id]['hr_department_name']??'',
                     'Section' => $section[$a->as_section_id]['hr_section_name']??'',
                     'Sub Section' => $subsection[$a->as_subsection_id]['hr_subsec_name']??'',
-                    'Unit' => $unit[$a->as_unit_id]['hr_unit_short_name'],
+                    'Unit' => $unit[$a->as_unit_id]['hr_unit_short_name']??'',
                     'OT/NONOT' => $a->as_ot == 1?'OT':'NonOT',
                     'Status' => 'Leave',
                     'Late' => '',
@@ -251,11 +236,11 @@ class TestController extends Controller
                     'House Rent' => $a->ben_house_rent??0,
                     'Cash Amount' => $a->ben_cash_amount??0,
                     'Bank/Rocket' => $a->ben_bank_amount??0,
-                    'Designation' => $designation[$a->as_designation_id]['hr_designation_name'],
+                    'Designation' => $designation[$a->as_designation_id]['hr_designation_name']??'',
                     'Department' => $department[$a->as_department_id]['hr_department_name']??'',
                     'Section' => $section[$a->as_section_id]['hr_section_name']??'',
                     'Sub Section' => $subsection[$a->as_subsection_id]['hr_subsec_name']??'',
-                    'Unit' => $unit[$a->as_unit_id]['hr_unit_short_name'],
+                    'Unit' => $unit[$a->as_unit_id]['hr_unit_short_name']??'',
                     'OT/NONOT' => $a->as_ot == 1?'OT':'NonOT',
                     'Status' => 'Day Off',
                     'Late' => '',
@@ -280,11 +265,11 @@ class TestController extends Controller
                         'House Rent' => $a->ben_house_rent??0,
                         'Cash Amount' => $a->ben_cash_amount??0,
                         'Bank/Rocket' => $a->ben_bank_amount??0,
-                        'Designation' => $designation[$a->as_designation_id]['hr_designation_name'],
+                        'Designation' => $designation[$a->as_designation_id]['hr_designation_name']??'',
                         'Department' => $department[$a->as_department_id]['hr_department_name']??'',
                         'Section' => $section[$a->as_section_id]['hr_section_name']??'',
                         'Sub Section' => $subsection[$a->as_subsection_id]['hr_subsec_name']??'',
-                        'Unit' => $unit[$a->as_unit_id]['hr_unit_short_name'],
+                        'Unit' => $unit[$a->as_unit_id]['hr_unit_short_name']??'',
                         'OT/NONOT' => $a->as_ot == 1?'OT':'NonOT',
                         'Status' => '',
                         'Late' => '',
@@ -296,7 +281,7 @@ class TestController extends Controller
                 }
             }
 
-
+            
 
             return (new FastExcel(collect($excel)))->download($filename);
         }
@@ -304,7 +289,9 @@ class TestController extends Controller
         return view('common.employee-record');
     }
 
-    
+
+
+
 
     public function bulkManualStore($request)
     {
@@ -317,57 +304,57 @@ class TestController extends Controller
         $year = '2020';
 
         if(strlen($request['in_time']) > 2){
-        	$intime = date('H:i:s', strtotime($request['in_time']));
+            $intime = date('H:i:s', strtotime($request['in_time']));
         }else{
-        	$intime = date('H:i:s', strtotime($request['in_time'].'.0'));
+            $intime = date('H:i:s', strtotime($request['in_time'].'.0'));
         }
 
         if(strlen($request['out_time']) > 2){
-        	$outtime = date('H:i:s', strtotime($request['out_time']));
+            $outtime = date('H:i:s', strtotime($request['out_time']));
         }else{
-        	$outtime = date('H:i:s', strtotime($request['out_time'].'.0'));
+            $outtime = date('H:i:s', strtotime($request['out_time'].'.0'));
         }
 
-
+        
         
 
         $day_of_date = date('j', strtotime($date));
-    	$day_num = "day_".$day_of_date;
-		$shift= DB::table("hr_shift_roaster")
-		->where('shift_roaster_month', $month)
-		->where('shift_roaster_year', $year)
-		->where("shift_roaster_user_id", $info->as_id)
-		->select([
-			$day_num,
+        $day_num = "day_".$day_of_date;
+        $shift= DB::table("hr_shift_roaster")
+        ->where('shift_roaster_month', $month)
+        ->where('shift_roaster_year', $year)
+        ->where("shift_roaster_user_id", $info->as_id)
+        ->select([
+            $day_num,
             'hr_shift.hr_shift_id',
-			'hr_shift.hr_shift_start_time',
-			'hr_shift.hr_shift_end_time',
+            'hr_shift.hr_shift_start_time',
+            'hr_shift.hr_shift_end_time',
             'hr_shift.hr_shift_code',
             'hr_shift.hr_shift_break_time',
             'hr_shift.hr_shift_night_flag'
-		])
+        ])
         ->leftJoin('hr_shift', function($q) use($day_num, $unit) {
             $q->on('hr_shift.hr_shift_name', 'hr_shift_roaster.'.$day_num);
             $q->where('hr_shift.hr_shift_unit_id', $unit);
         })
         ->orderBy('hr_shift.hr_shift_id', 'desc')
-		->first();
+        ->first();
         
-		if(!empty($shift) && $shift->$day_num != null){
-			$shift_start= $shift->hr_shift_start_time;
-			$shift_end= $shift->hr_shift_end_time;
-			$break= $shift->hr_shift_break_time;
-			$nightFlag= $shift->hr_shift_night_flag;
-			$shiftCode= $shift->hr_shift_code;
-			$new_shift_id = $shift->hr_shift_id;
-		}else{
-			$shift_start= $info->shift['hr_shift_start_time'];
-			$shift_end= $info->shift['hr_shift_end_time'];
-			$break= $info->shift['hr_shift_break_time'];
-			$nightFlag= $info->shift['hr_shift_night_flag'];
-			$shiftCode= $info->shift['hr_shift_code'];
-			$new_shift_id= $info->shift['hr_shift_id'];
-		}
+        if(!empty($shift) && $shift->$day_num != null){
+            $shift_start= $shift->hr_shift_start_time;
+            $shift_end= $shift->hr_shift_end_time;
+            $break= $shift->hr_shift_break_time;
+            $nightFlag= $shift->hr_shift_night_flag;
+            $shiftCode= $shift->hr_shift_code;
+            $new_shift_id = $shift->hr_shift_id;
+        }else{
+            $shift_start= $info->shift['hr_shift_start_time'];
+            $shift_end= $info->shift['hr_shift_end_time'];
+            $break= $info->shift['hr_shift_break_time'];
+            $nightFlag= $info->shift['hr_shift_night_flag'];
+            $shiftCode= $info->shift['hr_shift_code'];
+            $new_shift_id= $info->shift['hr_shift_id'];
+        }
 
         DB::beginTransaction();
         try {
@@ -510,43 +497,7 @@ class TestController extends Controller
         return $late;
     }
 
-    public function bankPart($value='')
-    {
-        $getData = array();
-
-        $getEmployee = DB::table('hr_as_basic_info')
-        ->join('hr_benefits', 'hr_as_basic_info.associate_id', 'hr_benefits.ben_as_id')
-        ->select('hr_as_basic_info.associate_id', 'hr_as_basic_info.as_oracle_code', 'hr_benefits.*')
-        ->get();
-        // dd($getEmployee);
-        $count = 0;
-        $macth = [];
-        $noMacth = [];
-        foreach ($getEmployee as $emp) {
-            $amount = $emp->ben_cash_amount + $emp->ben_bank_amount;
-            foreach ($getData as $key => $value) {
-                if($value['Pid'] == $emp->as_oracle_code && $value['Ot'] == 'Y' && $value['Rocket'] != '' && $amount == $value['Tot Pay']){
-                    // ++$count;
-                }elseif($value['Pid'] == $emp->as_oracle_code && $value['Ot'] == 'Y' && $value['Rocket'] != '' && $amount != $value['Tot Pay']){
-                    $basic = number_format((float)(($value['Tot Pay'] - 1850)/1.5), 2, '.', '');
-                    $house = number_format((float)($value['Tot Pay'] - 1850 - $basic), 2, '.', '');
-                    // $noMacth[] = $value['Tot Pay'].' - '.$basic.' - '.$house;
-                    $noMacth[$emp->ben_id] = DB::table("hr_benefits")
-                    ->where('ben_id', $emp->ben_id)
-                    ->update([
-                        'ben_current_salary' => $value['Tot Pay'],
-                        'ben_basic' => $basic,
-                        'ben_house_rent' => $house,
-                        'ben_cash_amount' => 0,
-                        'ben_bank_amount' => $value['Tot Pay'],
-                        'bank_name' => 'rocket',
-                        'bank_no' => '0'.$value['Rocket'],
-                    ]);
-                }
-            }
-        }
-        return $noMacth;
-    }
+    
 
     public function noMacth()
     {

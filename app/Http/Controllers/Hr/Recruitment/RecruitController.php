@@ -48,6 +48,7 @@ class RecruitController extends Controller
         DB::statement(DB::raw('set @rownum=0'));
         $data = WorkerRecruitment::with(['employee_type:emp_type_id,hr_emp_type_name', 'designation:hr_designation_id,hr_designation_name','unit:hr_unit_id,hr_unit_short_name', 'area:hr_area_id,hr_area_name'])
         ->where('worker_is_migrated','!=' ,1)
+        ->whereIn('worker_unit_id', auth()->user()->unit_permissions())
         ->orderBy('worker_id','DESC')->get();
         return DataTables::of($data)
         ->addIndexColumn()
@@ -468,11 +469,7 @@ class RecruitController extends Controller
                         ->where('hr_shift_default', 1)
                         ->pluck('hr_shift_name')
                         ->first();
-                /*
-                * @function - IDGenerator
-                * @parameter - department and join_date
-                * @return   - ID and Temporary_ID
-                */
+                
                 $IDGenerator = (new IDGenerator)->generator2(array(
                     'department' => $worker->worker_department_id,
                     'date' => $worker->worker_doj

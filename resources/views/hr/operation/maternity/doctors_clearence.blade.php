@@ -80,7 +80,7 @@
                                 <div class="row">
                                     <div class="col-sm-3">
                                         <div class="form-group has-required has-float-label">
-                                            <input id="edd" type="date" name="edd" class="form-control" required min="{{date('Y-m-d')}}" value="{{$leave->medical->edd}}">
+                                            <input id="edd" type="date" name="edd" class="form-control" required  value="{{$leave->medical->edd}}">
                                             <label for="edd" >Confirm EDD</label>
                                         </div>
                                         

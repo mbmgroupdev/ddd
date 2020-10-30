@@ -143,7 +143,7 @@
                                                 <label for="lmp">LMP</label>
                                             </div>
                                             <div class="form-group has-required  has-float-label ">
-                                                <input id="edd" type="date" name="edd" class="form-control" placeholder="Enter Anemia Problem"   min="{{date('Y-m-d')}}" required value="{{$leave->medical->edd??$leave->edd}}">
+                                                <input id="edd" type="date" name="edd" class="form-control" placeholder="Enter Anemia Problem"    required value="{{$leave->medical->edd??$leave->edd}}">
                                                 <label for="edd">EDD</label>
                                             </div>
 

@@ -30,7 +30,7 @@
                   <h6>Today's Attendance</h6>
             </div>
             <div class="iq-card-body text-center">
-               @if($today_att_chart['present'] > 0 || $today_att_chart['late'] > 0)
+               @if($today_att_chart['present'] > 0 )
                    <div id="today-att" style="width: 100%; height: 400px;"></div>
                 @else
                     <p class=" text-danger p-5">Today's Attendance has not been uploaded! Please make sure this step's should done before attendance file upload.</p>
@@ -328,8 +328,8 @@
                  chart.legend = new am4charts.Legend();
 
                  chart.data = [ {
-                     title: "Present (intime)",
-                     employee: {{($today_att_chart['present']??0)-($today_att_chart['late']??0)}}
+                     title: "Present",
+                     employee: {{($today_att_chart['present']??0)}}
                  }, {
                      title: "Leave",
                      employee: {{$today_att_chart['leave']??0}}
@@ -337,8 +337,8 @@
                      title: "Absent",
                      employee: {{$today_att_chart['absent']??0}}
                  },{
-                     title: "Late",
-                     employee: {{$today_att_chart['late']??0}}
+                     title: "Holiday",
+                     employee: {{$today_att_chart['holiday']??0}}
                  }];
 
                  var series = chart.series.push(new am4charts.PieSeries3D());

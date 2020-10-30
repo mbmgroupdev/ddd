@@ -20,7 +20,16 @@
 		width: 80px !important;
 	}
 	tr th:nth-child(9) select{
-		width: 100px !important;
+		width: 80px !important;
+	}
+	tr th:nth-child(10) select{
+		width: 60px !important;
+	}
+	tr th:nth-child(15) select{
+		width: 60px !important;
+	}
+	tr th:nth-child(16) input{
+		width: 50px !important;
 	}
 </style>
 @endpush
@@ -46,14 +55,14 @@
                 <div class="panel-body pb-0">
 			 <!-- Display Erro/Success Message -->
 					<form class="row" role="form" id="empFilter" method="get" action="#">
-                        <div class="col-3">
+                        <div class="col-2">
                             <div class="form-group has-float-label has-required select-search-group">
                                 {{ Form::select('unit', $allUnit, null, ['placeholder'=>'Select Unit', 'id'=>'unit',  'class'=>'form-control']) }}
                                 <label  for="unit"> Unit </label>
                             </div>
                         </div>
 
-                        <div class="col-3">
+                        <div class="col-2">
                             <div class="form-group has-float-label select-search-group">
                                 <select name="otnonot" id="otnonot" class="form-control filter">
                                     <option value="">Select OT/Non-OT</option>
@@ -64,10 +73,22 @@
                             </div>
                         </div>
 
-                        <div class="col-3">
+                        <div class="col-2">
                             <div class="form-group has-float-label select-search-group">
                                 {{ Form::select('emp_type', $empTypes, null, ['placeholder'=>'Select Employee Type', 'id'=>'emp_type',  'class'=>'form-control']) }}
                                 <label  for="emp_type"> Employee Type </label>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <div class="form-group has-float-label">
+                                <input type="date" name="doj_from" class="form-control" id="doj_from">
+                                <label  for="doj_from"> DOJ From</label>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <div class="form-group has-float-label">
+                                <input type="date" name="doj_to" class="form-control" id="doj_to">
+                                <label  for="doj_to"> DOJ To</label>
                             </div>
                         </div>
 
@@ -105,6 +126,7 @@
 								<th>Sub Section</th>
 								<th>Gender</th>
 								<th>OT Status</th>
+								<th>Grade</th>
 								<th>Default Shift</th>
 							</tr>
 						</thead>
@@ -121,7 +143,7 @@
 $(document).ready(function()
 {
 	
-		var searchable = [2,3,4,5,6];
+		var searchable = [2,3,4,5,6,15];
 		var selectable = [7,8,9,10,11,12,13,14]; 
 
 		var dropdownList = {
@@ -157,8 +179,8 @@ $(document).ready(function()
 		
 
 		
-		var exportColName = ['Sl.','','Associate ID','Name','Designation','Oracle ID','RFID', 'Employee Type', 'Floor','Line','Department','Section','Subsection','Gender','OT Status'];
-      	var exportCol = [2,3,4,5,10,11,12,13];
+		var exportColName = ['Sl.','','Associate ID','Name','Designation','Oracle ID','RFID', 'Employee Type', 'Floor','Line','Department','Section','Subsection','Gender','OT Status','Grade'];
+      	var exportCol = [2,3,4,5,10,11,12,13,14,15];
 
 	    var dt = $('#dataTables').DataTable({
 
@@ -183,7 +205,9 @@ $(document).ready(function()
 	            data: function (d) {
 	                d.unit  = $('#unit').val(),
 	                d.emp_type = $('#emp_type').val(),
-	                d.otnonot = $('#otnonot').val()
+	                d.otnonot = $('#otnonot').val(),
+	                d.doj_from = $('#doj_from').val(),
+	                d.doj_to = $('#doj_to').val()
 	            },
 	            headers: {
 	                  'X-CSRF-TOKEN': '{{ csrf_token() }}'
@@ -208,6 +232,7 @@ $(document).ready(function()
 
 		        {data:'as_gender', name: 'as_gender', orderable: false,},
 		        {data:'as_ot', name: 'as_ot', orderable: false},
+		        {data:'hr_designation_grade', name: 'hr_designation_grade'},
 		        {data:'as_shift_id', name: 'as_shift_id', orderable: false}
 
 
@@ -238,7 +263,7 @@ $(document).ready(function()
                   header: true,
                   footer: false,
                   exportOptions: {
-                      columns: exportCol,
+                      columns: [2,3,4,5,6,7,8,9,10,11,12,13,14,15],
                       format: {
                           header: function ( data, columnIdx ) {
                               return exportColName[columnIdx];
@@ -309,8 +334,6 @@ $(document).ready(function()
 				    });
 	            });
 
-		    	// each column select list
-		    	//console.log(dropdownList);
 				api.columns(selectable).every( function (i, x) {
 				    var column = this;
 
@@ -324,11 +347,6 @@ $(document).ready(function()
 				            e.stopPropagation();
 				        });
 
-					// column.data().unique().sort().each( function ( d, j ) {
-					// if(d) select.append('<option value="'+d+'">'+d+'</option>' )
-				 	// });
-				 	// setTimeout(function(){ 
-
 					$.each(dropdownList[i], function(j, v) {
 						select.append('<option value="'+v+'">'+v+'</option>')
 					});
@@ -339,9 +357,15 @@ $(document).ready(function()
 	//});
 
 
-	//re draw
+	$(document).on("change", '#doj_from', function(e) {
+		var val = $(this).val();
+		$('#doj_to').val('');
+		if(val){
+			$('#doj_to').attr('min',val);
+		}
+	});
 
-	$(document).on("click",'#empFilter', function(e){
+	$(document).on("change",'#unit,#emp_type,#otnonot,#doj_from,#doj_to', function(e){
 		e.preventDefault();
 		dt.draw();
 	});

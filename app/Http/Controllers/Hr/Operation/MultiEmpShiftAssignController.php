@@ -40,6 +40,8 @@ class MultiEmpShiftAssignController extends Controller
    	public function getCurrentShiftsUnitWise(Request $request){
    		$c_shifts=Employee::where('as_unit_id', $request->unit_id)
    							->where('as_shift_id', '!=', null)
+                ->whereIn('as_unit_id', auth()->user()->unit_permissions())
+                ->whereIn('as_location', auth()->user()->location_permissions())
    							//->where('shift_roaster_status', 0)
    							->where('as_status', 1)
    							->distinct('as_shift_id')
@@ -129,6 +131,7 @@ class MultiEmpShiftAssignController extends Controller
         })
         //->where('shift_roaster_status', 0)
         ->whereIn('as_unit_id', auth()->user()->unit_permissions())
+        ->whereIn('as_location', auth()->user()->location_permissions())
         ->get();
 
         // show user id
