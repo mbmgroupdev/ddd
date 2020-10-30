@@ -42,7 +42,7 @@
 		                			<b> OT </b> 
 		                			<b>: @if($input['otnonot'] == 0) No @else Yes @endif </b> <br>
 		                		@endif
-	                			<b>Total OT Employee</b>
+	                			<b>Total Employee</b>
 	                			<b>: {{ $totalEmployees }}</b><br>
 	                			<b>Total OT Hour</b>
 	                			<b>: {{ $totalValue }}</b>
@@ -268,8 +268,8 @@
 							<tr>
 								<th>Sl</th>
 								<th> {{ $head }} {{ $format != 'ot_hour'?'Name':'' }}</th>
-								<th>Employee</th>
-								<th>Total OT</th>
+								<th>No. Of Employee</th>
+								<th>Total OT Hour</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -319,7 +319,7 @@
 							@endforeach
 							@else
 							<tr>
-				            	<td colspan="3" class="text-center">No OT Employee Found!</td>
+				            	<td colspan="4" class="text-center">No OT Employee Found!</td>
 				            </tr>
 							@endif
 						</tbody>

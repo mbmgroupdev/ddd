@@ -169,9 +169,9 @@
                                         </div>
                                         <div class="form-group has-float-label select-search-group">
                                             <?php
-                                              $payType = ['cash'=>'Cash', 'rocket'=>'Rocket', 'bKash'=>'bKash', 'dbbl'=>'Duch-Bangla Bank Limited.'];
+                                              $payType = ['all'=>'All', 'cash'=>'Cash', 'rocket'=>'Rocket', 'bKash'=>'bKash', 'dbbl'=>'Duch-Bangla Bank Limited.'];
                                             ?>
-                                            {{ Form::select('pay_status', $payType, 1, ['placeholder'=>'Select Payment Type', 'class'=>'form-control capitalize select-search', 'id'=>'paymentType']) }}
+                                            {{ Form::select('pay_status', $payType, 'all', ['placeholder'=>'Select Payment Type', 'class'=>'form-control capitalize select-search', 'id'=>'paymentType']) }}
                                             <label for="paymentType">Payment Type</label>
                                         </div>
                                         <div class="form-group">
@@ -195,12 +195,18 @@
             </div>
             <div class="row">
                 <div class="col">
-                  <div class="iq-card" id="result-section" style="display: none">
+                  <div class="iq-card" id="result-section">
                     <div class="iq-card-header d-flex mb-0">
                        <div class="iq-header-title w-100">
                           <div class="row">
                             <div class="col-3">
-                              <button class="btn btn-sm btn-primary hidden-print" onclick="printDiv('report_section')" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report"><i class="las la-print"></i> </button>
+                              <div id="result-section-btn" style="display: none;">
+                                <button class="btn btn-sm btn-primary hidden-print" onclick="printDiv('report_section')" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report"><i class="las la-print"></i> </button>
+                                <button class="btn btn-sm btn-info hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download">
+                                  <i class="fa fa-file-excel-o"></i>
+                                </button>
+                              </div>
+                              
                             </div>
                             <div class="col-6 text-center">
                               <h4 class="card-title capitalize inline">
@@ -274,6 +280,7 @@
         function salaryProcess(){
           // console.log(loader)
           $("#result-section").show();
+          $("#result-section-btn").show();
           $("#result-data").html(loader);
           $("#single-employee-search").hide();
           var unit = $('select[name="unit"]').val();
@@ -428,7 +435,12 @@
         $('#reportFormat').on("change", function(){
           $('input[name="employee"]').val('');
         });
-       
+
+        $('#excel').click(function(){
+          var url='data:application/vnd.ms-excel,' + encodeURIComponent($('#report_section').html())
+          location.href=url;
+          return false;
+        });
     });
 
 </script>

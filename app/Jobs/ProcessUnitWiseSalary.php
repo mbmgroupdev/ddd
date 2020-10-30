@@ -218,7 +218,7 @@ class ProcessUnitWiseSalary implements ShouldQueue
                         $payStatus = 2; // bank pay
                     }
 
-                    if($getBenefit->ben_cash_amount == 0){
+                    if($getBenefit->ben_cash_amount == 0 && $getEmployee->as_emp_type_id == 3){
                         $stamp = 0;
                     }
 
@@ -296,9 +296,9 @@ class ProcessUnitWiseSalary implements ShouldQueue
                         $salaryPayable = $getBenefit->ben_current_salary - ($getAbsentDeduct + $getHalfDeduct + $deductCost + $stamp);
                     }
 
-                    $ot = round((float)($overtime_rate) * ($getPresentOT->ot));
+                    $ot = ((float)($overtime_rate) * ($getPresentOT->ot));
                     
-                    $totalPayable = round((float)($salaryPayable + $ot + $deductSalaryAdd + $attBonus + $productionBonus + $leaveAdjust));
+                    $totalPayable = ceil((float)($salaryPayable + $ot + $deductSalaryAdd + $attBonus + $productionBonus + $leaveAdjust));
 
                     // cash & bank part
                     $tds = $getBenefit->ben_tds_amount??0;

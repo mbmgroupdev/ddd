@@ -316,6 +316,7 @@ $(document).ready(function(){
         var sub =parseFloat(medical)+parseFloat(trans)+parseFloat(food);
         if(salary>sub){
             var basic= parseFloat((salary-sub)/basic_percent).toFixed(2);
+            basic = Math.ceil(basic);
             $('#ben_basic').val(basic);
             var house= parseFloat(salary-sub-basic).toFixed(2);
             $('#ben_house_rent').val(house);           

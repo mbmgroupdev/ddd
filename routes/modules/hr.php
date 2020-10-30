@@ -482,7 +482,12 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 
 	//Salary add deduct bulk upload
 	Route::group(['middleware' => 'permission:Salary Adjustment'], function(){
-		Route::get('hr/payroll/salary-adjustment', 'Hr\Payroll\SalaryController@uploadFile');
+		Route::get('hr/payroll/monthly-salary-adjustment-employee', 'Hr\Payroll\SalaryAdjustmentController@adjustEmployee');
+		Route::get('hr/payroll/monthly-salary-adjustment', 'Hr\Payroll\SalaryAdjustmentController@include');
+		Route::post('hr/payroll/monthly-salary-adjustment-store', 'Hr\Payroll\SalaryAdjustmentController@adjustStore');
+		Route::get('hr/payroll/monthly-salary-adjustment-list', 'Hr\Payroll\SalaryAdjustmentController@index');
+		Route::get('hr/payroll/monthly-salary-adjustment-data', 'Hr\Payroll\SalaryAdjustmentController@data');
+		// Route::get('hr/payroll/salary-adjustment', 'Hr\Payroll\SalaryController@uploadFile');
 		Route::get('hr/payroll/sample_file', 'Hr\Payroll\SalaryController@getDownload');
 
 		Route::post('hr/payroll/add_deduct', 'Hr\Payroll\SalaryController@storeFile');
@@ -1108,6 +1113,8 @@ Route::get('hr/setup/retirement/get_employee_details', 'Hr\Setup\RetirementPolic
 	Route::get('hr/reports/daily-present-absent-activity-report', 'Hr\Reports\DailyActivityReportController@presentAbsentReport');
 
 	// monthly report
+	Route::get('hr/reports/monthly-attendance-activity', 'Hr\Reports\MonthlyActivityReportController@attendance');
+	Route::get('hr/reports/monthly-attendance-activity-data', 'Hr\Reports\MonthlyActivityReportController@attendanceData');
 	Route::get('hr/reports/monthly-reports', 'Hr\Reports\MonthlyReportController@index');
 	Route::get('hr/reports/monthly-maternity-report', 'Hr\Reports\MonthlyReportController@maternity');
 

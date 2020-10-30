@@ -152,8 +152,8 @@
             </li>
             @endif
             @if($user->can('Salary Adjustment') || $user->hasRole('Super Admin'))
-            <li class="@if($segment3 == 'salary-adjustment') active @endif">
-               <a href="{{ url('hr/payroll/salary-adjustment') }}"><i class="las la-funnel-dollar"></i>Salary Adjustment</a>
+            <li class="@if($segment3 == 'monthly-salary-adjustment-list') active @endif">
+               <a href="{{ url('hr/payroll/monthly-salary-adjustment-list') }}"><i class="las la-funnel-dollar"></i>Salary Adjustment</a>
             </li>
             @endif
             @if($user->can('End of Job Benefits') || $user->hasRole('Super Admin'))
@@ -333,7 +333,9 @@
             <li class="@if($segment3 == 'attendance-consecutive') active @endif"><a href="{{ url('hr/reports/attendance-consecutive') }}"><i class="las la-fingerprint"></i>Attendance Consecutive</a></li>
             <li class="@if($segment3 == 'warning-notices') active @endif"><a href="{{ url('hr/reports/warning-notices') }}"><i class="las la-fingerprint"></i>Warning Notices</a></li>
             @endif
-
+            @if($user->can('Attendance Summary Report'))
+            <li class="@if($segment3 == 'monthly-attendance-activity') active @endif"><a href="{{ url('hr/reports/monthly-attendance-activity') }}"><i class="las la-fingerprint"></i>Monthly Attendance</a></li>
+            @endif
             {{-- <li class="@if($segment3 == 'monthly-reports') active @endif"><a href="{{ url('hr/reports/monthly-reports') }}"><i class="las la-chart-area"></i>Monthly Report</a></li> --}}
             {{-- <li><a href="{{ url('hr/reports/group_attendance') }}"><i class="las la-fingerprint"></i>Group Attendance</a></li> --}}
             @if($user->can('Monthly Increment') || $user->hasRole('Super Admin'))

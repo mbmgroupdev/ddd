@@ -22,7 +22,7 @@
               .f-14 th, .f-14 td, .f-14 td b{
                 font-size: 14px !important;
               }
-                      </style>
+            </style>
 			@php
 				$unit = unit_by_id();
 				$line = line_by_id();
@@ -41,9 +41,13 @@
 				<div class="page-header">
 		            <h2 style="margin:4px 10px; font-weight: bold; text-align: center;">Salary @if($input['report_format'] == 0) Details @else Summary @endif Report </h2>
 		            <h4  style="text-align: center;">Month : {{ date('M Y', strtotime($input['month'])) }} </h4>
-		            <table class="table no-border f-14" border="0">
+		            <h4  style="text-align: center;">Total Employee : {{ $totalEmployees }} </h4>
+		            @if($input['pay_status'] == 'all')
+		            <h4  style="text-align: center;">Total Payable : {{ bn_money(round($totalSalary,2)) }} </h4>
+		            @endif
+		            <table class="table no-border f-14" border="0" style="width:100%;margin-bottom:0;font-size:14px;text-align:left"  cellpadding="5">
 		            	<tr>
-		            		<td width="25%">
+		            		<td width="32%">
 		            			@if($input['unit'] != null)
 		            			Unit <b>: {{ $unit[$input['unit']]['hr_unit_name'] }}</b> <br>
 		            			@endif
@@ -64,16 +68,25 @@
 		                		@endif
 		            		</td>
 		            		<td>
-	                			Total Employee
-	                			<b>: {{ $totalEmployees }}</b> <br>
-	                			Total Payable Amount
-	                			<b>: {{ bn_money(round($totalSalary,2)) }} (BDT)</b><br>	
+		            			@if($input['pay_status'] == 'all' || $input['pay_status'] == 'cash')
+	                			Total Cash
+	                			<b>: {{ bn_money(round($totalCashSalary,2)) }} </b><br>
+	                			@endif	
+	                			
+	                			@if($input['pay_status'] == 'all' || ($input['pay_status'] != 'cash' && $input['pay_status'] != null))
+	                			Total Bank
+	                			<b>: {{ bn_money(round($totalBankSalary,2)) }} </b><br>
+	                			Tax Amount
+	                			<b>: {{ bn_money(round($totalTax,2)) }} </b>
+	                			@endif
+	                			
 		            		</td>
+		            		
 		            		<td>
 	                			Total OT Hour
 	                			<b>: {{ numberToTimeClockFormat(round($totalOtHour,2)) }} </b><br>
 	                			Total OT Amount
-	                			<b>: {{ bn_money(round($totalOTAmount,2)) }} (BDT)</b>
+	                			<b>: {{ bn_money(round($totalOTAmount,2)) }} </b>
 		                		
 		            		</td>
 		            		<td>
@@ -147,7 +160,7 @@
 				@if($input['report_format'] == 0)
 					@foreach($uniqueGroups as $group)
 					
-					<table class="table table-bordered table-hover table-head">
+					<table class="table table-bordered table-hover table-head" style="width:100%;border:1px solid #ccc;margin-bottom:0;font-size:14px;text-align:left" border="1" cellpadding="5">
 						<thead>
 							@if(count($getEmployee) > 0)
 			                <tr>
@@ -185,24 +198,25 @@
 			                @endif
 			                <tr>
 			                    <th>Sl</th>
-			                    <th>Photo</th>
-			                    <th>Oracle ID</th>
 			                    <th>Associate ID</th>
 			                    <th>Name</th>
-			                    @if($input['pay_status'] == 'cash' || $input['pay_status'] == '')
 			                    <th>Designation</th>
 			                    <th>Department</th>
-			                    <th>Floor</th>
-			                    <th>Line</th>
-			                    @else
-			                    <th>Account No.</th>
-			                    <th>TDS</th>
-			                    @endif
 			                    <th>Present</th>
 			                    <th>Absent</th>
 			                    <th>OT Hour</th>
-			                    <th>Total</th>
-			                    <th>Action</th>
+			                    <th>Payment Method</th>
+			                    <th>Payable Salary</th>
+			                    @if($input['pay_status'] == 'all' || ($input['pay_status'] != 'cash' && $input['pay_status'] != null))
+			                    <th>Bank Amount</th>
+			                    <th>Tax Amount</th>
+			                    @endif
+			                    @if($input['pay_status'] == 'all' || $input['pay_status'] == 'cash')
+			                    <th>Cash Amount</th>
+			                    @endif
+			                    <th>Stamp Amount</th>
+			                    <th>Net Pay</th>
+			                    <th>&nbsp;</th>
 			                </tr>
 			            </thead>
 			            <tbody>
@@ -216,25 +230,51 @@
 				            	@if($head == '')
 				            	<tr>
 				            		<td>{{ ++$i }}</td>
-					            	<td><img height="30" src="{{ emp_profile_picture($employee) }}" class='small-image min-img-file'></td>
-					            	<td>{{ $employee->as_oracle_code }}</td>
+					            	
 					            	<td><a href='{{ url("hr/operation/job_card?associate=$employee->associate_id&month_year=$month") }}' target="_blank">{{ $employee->associate_id }}</a></td>
 					            	<td>
 					            		<b>{{ $employee->as_name }}</b>
 					            	</td>
-					            	@if($input['pay_status'] == 'cash' || $input['pay_status'] == '')
 					            	<td>{{ $designationName }}</td>
+
 					            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
-					            	<td>{{ $floor[$employee->as_floor_id]['hr_floor_name']??'' }}</td>
-					            	<td>{{ $line[$employee->as_line_id]['hr_line_name']??'' }}</td>
-					            	@else
-					            	<td>{{ $employee->bank_no }}</td>
-					            	<td>{{ $employee->ben_tds_amount }}</td>
-					            	@endif
 					            	<td>{{ $employee->present }}</td>
 					            	<td>{{ $employee->absent }}</td>
 					            	<td><b>{{ $otHour }}</b></td>
-					            	<td>{{ bn_money($employee->total_payable) }}</td>
+					            	<td>
+					            		@if($employee->pay_status == 1)
+					            			Cash
+					            		@elseif($employee->pay_status == 2)
+					            		<b>{{ $employee->bank_name }}</b>
+					            		<b>{{ $employee->bank_no }}</b>
+					            		@else
+					            		Bank & Cash
+					            		<b>{{ $employee->bank_no }}</b>
+					            		@endif
+					            	</td>
+					            	<td>
+					            		@php $totalPay = $employee->total_payable + $employee->stamp; @endphp
+					            		{{ bn_money($totalPay) }}
+					            	</td>	
+					            	@if($input['pay_status'] == 'all' || ($input['pay_status'] != 'cash' && $input['pay_status'] != null))
+					            	<td>{{ bn_money($employee->bank_payable) }}</td>
+					            	<td>{{ bn_money($employee->tds) }}</td>
+					            	@endif
+					            	@if($input['pay_status'] == 'all' || $input['pay_status'] == 'cash')
+					            	<td>{{ bn_money($employee->cash_payable + $employee->stamp) }}</td>
+					            	@endif
+					            	<td>{{ bn_money($employee->stamp) }}</td>
+					            	
+					            	<td>
+					            		@php
+					            			if($input['pay_status'] == 'cash'){
+					            				$totalNet = $employee->cash_payable;
+					            			}else{
+					            				$totalNet = $employee->total_payable - $employee->tds;
+					            			}
+					            		@endphp
+					            		{{ bn_money($totalNet) }}
+					            	</td>
 					            	<td>
 					            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-yearmonth="{{ $input['month'] }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Yearly Activity Report' ><i class="fa fa-eye"></i></button>
 					            	</td>
@@ -243,25 +283,51 @@
 				            	@if($group == $employee->$format)
 				            	<tr>
 				            		<td>{{ ++$i }}</td>
-					            	<td><img height="30"  src="{{ emp_profile_picture($employee) }}" class='small-image min-img-file'></td>
-					            	<td>{{ $employee->as_oracle_code }}</td>
+					            	
 					            	<td><a href='{{ url("hr/operation/job_card?associate=$employee->associate_id&month_year=$month") }}' target="_blank">{{ $employee->associate_id }}</a></td>
 					            	<td>
 					            		<b>{{ $employee->as_name }}</b>
 					            	</td>
-					            	@if($input['pay_status'] == 'cash' || $input['pay_status'] == '')
 					            	<td>{{ $designationName }}</td>
 					            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
-					            	<td>{{ $floor[$employee->as_floor_id]['hr_floor_name']??'' }}</td>
-					            	<td>{{ $line[$employee->as_line_id]['hr_line_name']??'' }}</td>
-					            	@else
-					            	<td>{{ $employee->bank_no }}</td>
-					            	<td>{{ $employee->ben_tds_amount }}</td>
-					            	@endif
 					            	<td>{{ $employee->present }}</td>
 					            	<td>{{ $employee->absent }}</td>
 					            	<td><b>{{ $otHour }}</b></td>
-					            	<td>{{ bn_money($employee->total_payable) }}</td>
+					            	<td>
+					            		@if($employee->pay_status == 1)
+					            			Cash
+					            		@elseif($employee->pay_status == 2)
+					            		<b class="uppercase">{{ $employee->bank_name }}</b>
+					            		<br>
+					            		<b>{{ $employee->bank_no }}</b>
+					            		@else
+					            		<b class="uppercase">{{ $employee->bank_name }}</b> & Cash
+					            		<br>
+					            		<b>{{ $employee->bank_no }}</b>
+					            		@endif
+					            	</td>
+					            	<td>
+					            		@php $totalPay = $employee->total_payable + $employee->stamp; @endphp
+					            		{{ bn_money($totalPay) }}
+					            	</td>	
+					            	@if($input['pay_status'] == 'all' || ($input['pay_status'] != 'cash' && $input['pay_status'] != null))
+					            	<td>{{ bn_money($employee->bank_payable) }}</td>
+					            	<td>{{ bn_money($employee->tds) }}</td>
+					            	@endif
+					            	@if($input['pay_status'] == 'all' || $input['pay_status'] == 'cash')
+					            	<td>{{ bn_money($employee->cash_payable) }}</td>
+					            	@endif
+					            	<td>{{ bn_money($employee->stamp) }}</td>
+					            	<td>
+					            		@php
+					            			if($input['pay_status'] == 'cash'){
+					            				$totalNet = $employee->cash_payable;
+					            			}else{
+					            				$totalNet = $employee->total_payable - $employee->tds;
+					            			}
+					            		@endphp
+					            		{{ bn_money($totalNet) }}
+					            	</td>
 					            	<td>
 					            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-yearmonth="{{ $input['month'] }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Yearly Activity Report' ><i class="fa fa-eye"></i></button>
 					            	</td>
@@ -271,7 +337,13 @@
 				            @endforeach
 			            @else
 				            <tr>
-				            	<td colspan="14" class="text-center">No Employee Found!</td>
+				            	@if($input['pay_status'] == 'cash')
+				            	<td colspan="15" class="text-center">No Employee Found!</td>
+				            	@elseif($input['pay_status'] != 'cash' && $input['pay_status'] != 'all')
+				            	<td colspan="15" class="text-center">No Employee Found!</td>
+				            	@else
+				            	<td colspan="15" class="text-center">No Employee Found!</td>
+				            	@endif
 				            </tr>
 			            @endif
 			            </tbody>
@@ -305,13 +377,22 @@
 							$head = '';
 						}
 					@endphp
-					<table class="table table-bordered table-hover table-head">
+					<table class="table table-bordered table-hover table-head" border="1" style="width:100%;border:1px solid #ccc;margin-bottom:0;font-size:14px;text-align:left" cellpadding="5">
 						<thead>
 							<tr class="text-center">
 								<th>Sl</th>
 								<th> {{ $head }} Name</th>
 								<th>No. Of Employee</th>
-								<th>Salary (BDT)</th>
+								@if($input['pay_status'] == 'all')
+								<th>Salary Amount (BDT)</th>
+								@endif
+								@if($input['pay_status'] == 'all' || $input['pay_status'] == 'cash')
+								<th>Cash Amount (BDT)</th>
+								@endif
+								@if($input['pay_status'] == 'all' || ($input['pay_status'] != 'cash' && $input['pay_status'] != null))
+								<th>Bank Amount (BDT)</th>
+								<th>Tax Amount (BDT)</th>
+								@endif
 								<th>OT Hour</th>
 								<th>OT Amount (BDT)</th>
 							</tr>
@@ -353,9 +434,24 @@
 									{{ $employee->total }}
 									@php $totalEmployee += $employee->total; @endphp
 								</td>
+								@if($input['pay_status'] == 'all')
 								<td class="text-right">
 									{{ bn_money(round($employee->groupSalary,2)) }}
 								</td>
+								@endif
+								@if($input['pay_status'] == 'all' || $input['pay_status'] == 'cash')
+								<td class="text-right">
+									{{ bn_money(round($employee->groupCashSalary,2)) }}
+								</td>
+								@endif
+								@if($input['pay_status'] == 'all' || ($input['pay_status'] != 'cash' && $input['pay_status'] != null))
+								<td class="text-right">
+									{{ bn_money(round($employee->groupBankSalary,2)) }}
+								</td>
+								<td class="text-right">
+									{{ bn_money(round($employee->groupTds,2)) }}
+								</td>
+								@endif
 								<td class="text-right">
 									{{ numberToTimeClockFormat($employee->groupOt) }}
 								</td>
@@ -366,7 +462,7 @@
 							@endforeach
 							@else
 							<tr>
-				            	<td colspan="6" class="text-center">No Data Found!</td>
+				            	<td colspan="9" class="text-center">No Data Found!</td>
 				            </tr>
 							@endif
 						</tbody>

@@ -206,7 +206,7 @@
                                   <div class="format">
                                     <div class="form-group has-float-label select-search-group mb-0">
                                         <?php
-                                            $type = ['as_unit_id'=>'N/A','as_line_id'=>'Line','as_floor_id'=>'Floor','as_department_id'=>'Department','as_section_id'=>'Section','as_designation_id'=>'Designation'];
+                                            $type = ['as_unit_id'=>'Unit','as_line_id'=>'Line','as_floor_id'=>'Floor','as_department_id'=>'Department','as_section_id'=>'Section','as_designation_id'=>'Designation'];
                                         ?>
                                         {{ Form::select('report_group_select', $type, 'as_section_id', ['class'=>'form-control capitalize', 'id'=>'reportGroupHead']) }}
                                         <label for="reportGroupHead">Report Format</label>
@@ -312,6 +312,7 @@
           
         $("#reportGroupHead").on("change", function(){
           var group = $(this).val();
+          $("#reportGroup").val(group);
           activityProcess();
         });
 
@@ -325,7 +326,7 @@
           var date = $('input[name="date"]').val();
           var format = $('input[name="report_format"]').val();
           var type = $('select[name="report_type"]').val();
-          console.log(type);
+          // console.log(type);
           if(type === 'before_absent_after_present'){
             $("#head-arrow").hide();
           }else{
@@ -492,6 +493,7 @@
         //Report type
         $('#reportType').on("change", function(){
           var type = $(this).val();
+          // console.log(type);
           $('input[name="employee"]').val('');
           if(type == 'ot'){
             $('#reportGroupHead').append('<option value="ot_hour">OT Hour</option>');

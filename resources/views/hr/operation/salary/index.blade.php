@@ -74,14 +74,23 @@
                                     <div class="panel-body">
                                         <div class="row">
                                             <div class="col-3">
-                                                <div class="form-group has-float-label has-required select-search-group">
-                                                    <select name="unit" class="form-control capitalize select-search" id="unit" required="">
+                                                <div class="form-group has-float-label select-search-group">
+                                                    <select name="unit" class="form-control capitalize select-search" id="unit" >
                                                         <option selected="" value="">Choose...</option>
                                                         @foreach($unitList as $key => $value)
                                                         <option value="{{ $key }}">{{ $value }}</option>
                                                         @endforeach
                                                     </select>
                                                   <label for="unit">Unit</label>
+                                                </div>
+                                                <div class="form-group has-float-label select-search-group">
+                                                    <select name="location" class="form-control capitalize select-search" id="location">
+                                                        <option selected="" value="">Choose Location...</option>
+                                                        @foreach($locationList as $key => $value)
+                                                        <option value="{{ $key }}">{{ $value }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                  <label for="location">Location</label>
                                                 </div>
                                                 <div class="form-group has-float-label select-search-group">
                                                     <select name="area" class="form-control capitalize select-search" id="area">
@@ -119,6 +128,7 @@
                                                     </select>
                                                     <label for="floor">Floor</label>
                                                 </div>
+                                                
                                             </div> 
                                             <div class="col-3">
                                                 <div class="form-group has-float-label select-search-group">
@@ -151,6 +161,10 @@
                                                       <label for="max_sal">Range To</label>
                                                     </div>
                                                   </div>
+                                                </div>
+                                                <div class="form-group has-float-label has-required">
+                                                  <input type="number" class="perpage form-control" id="perpage" name="perpage" placeholder="Per Page" required="required" value="6" min="0" autocomplete="off" />
+                                                  <label for="perpage">Per Page</label>
                                                 </div>
                                             </div>
                                             <div class="col-3">
@@ -254,23 +268,7 @@
 </div>
 @push('js')
 <script type="text/javascript">
-    function printDiv(divName)
-    {   
-        
-
-        var mywindow=window.open('','','width=800,height=800');
-        
-        mywindow.document.write('<html><head><title>Print Contents</title>');
-        mywindow.document.write('<style>@page {size: landscape; color: color;} </style>');
-        mywindow.document.write('</head><body>');
-        mywindow.document.write(document.getElementById(divName).innerHTML);
-        mywindow.document.write('</body></html>');
-
-        mywindow.document.close();  
-        mywindow.focus();           
-        mywindow.print();
-        mywindow.close();
-    }
+    
     var loader = '<div class="progress"><div class="progress-bar progress-bar-info progress-bar-striped active" id="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">0%</div></div>';
     $(document).ready(function(){
         //salary range validation------------------
@@ -495,8 +493,9 @@
     function multiple() {
         var form = $("#unitWiseSalary");
         var unit = $("#unit").val();
+        var location = $('select[name="location"]').val();
         var month = $("#month").val();
-        if(unit !== '' && month !== ''){
+        if((unit !== '' || location !== '') && month !== ''){
             $("#result-process-bar").show();
             $("#result-show").html(loader);
             $('#setFlug').val(0);
@@ -528,8 +527,8 @@
             });
         }else{
             $("#result-process-bar").hide();
-            if(unit === ''){
-                $.notify("Please Select Unit", 'error');
+            if((unit === '' || location === '')){
+                $.notify("Select Unit Or Location", 'error');
             }
             if(month === ''){
                 $.notify("Please Select Month", 'error');

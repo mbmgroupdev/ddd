@@ -87,7 +87,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="att_status_section" id="progressbar-box">
+                        <div class="att_status_section row" id="progressbar-box">
                             <div class="col-sm-1">
                                 <img class="img-responsive" src="{{ asset('assets/img/loader-box.gif')}}" style="max-width: 64px;" alt="Synchronizing..." />
                             </div>
