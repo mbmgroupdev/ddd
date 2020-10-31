@@ -8,7 +8,7 @@ use App\Models\Hr\HrMonthlySalary;
 use App\Models\Hr\Location;
 use App\Models\Hr\SalaryAudit;
 use App\Models\Hr\Unit;
-use DB;
+use DB, DataTables;
 use Illuminate\Http\Request;
 
 class MonthlyActivityReportController extends Controller
@@ -104,12 +104,9 @@ class MonthlyActivityReportController extends Controller
             ->when(!empty($input['pay_status']), function ($query) use($input){
                 if($input['pay_status'] == "cash"){
                     return $query->where('s.cash_payable', '>', 0);
-                }else{
+                }elseif($input['pay_status'] != 'cash' && $input['pay_status'] != 'all'){
                     return $query->where('ben.bank_name',$input['pay_status']);
                 }
-            })
-            ->when(!empty($input['location']), function ($query) use($input){
-               return $query->where('emp.as_location',$input['location']);
             })
             ->when(!empty($input['area']), function ($query) use($input){
                return $query->where('emp.as_area_id',$input['area']);
@@ -141,19 +138,28 @@ class MonthlyActivityReportController extends Controller
             $queryData->leftjoin(DB::raw('(' . $designationData_sql. ') AS deg'), function($join) use ($designationData) {
                 $join->on('deg.hr_designation_id','emp.as_designation_id')->addBinding($designationData->getBindings());
             });
-            if($input['report_format'] == 1 && $input['report_group'] != null){
-                $queryData->select('deg.hr_designation_position','deg.hr_designation_name', 'ben.bank_name', 'ben.bank_no', 'ben.ben_tds_amount','emp.'.$input['report_group'], DB::raw('count(*) as total'), DB::raw('sum(total_payable) as groupSalary'), DB::raw('sum(ot_hour) as groupOt'), DB::raw('sum(ot_hour * ot_rate) as groupOtAmount'))->groupBy('emp.'.$input['report_group']);
 
+            if($input['report_format'] == 1 && $input['report_group'] != null){
+                $queryData->select('emp.'.$input['report_group'], DB::raw('count(*) as total'), DB::raw('sum(total_payable) as groupSalary'), DB::raw('sum(cash_payable) as groupCashSalary'),DB::raw('sum(stamp) as groupStamp'),DB::raw('sum(tds) as groupTds'), DB::raw('sum(bank_payable) as groupBankSalary'), DB::raw('sum(ot_hour) as groupOt'), DB::raw('sum(ot_hour * ot_rate) as groupOtAmount'))->groupBy('emp.'.$input['report_group']);
             }else{
-                $queryData->select('deg.hr_designation_position','deg.hr_designation_name', 'ben.bank_name','ben.bank_no', 'ben.ben_tds_amount','emp.as_id','emp.as_gender', 'emp.as_oracle_code', 'emp.associate_id', 'emp.as_unit_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_section_id', 's.present', 's.absent', 's.ot_hour', 's.ot_rate', 's.total_payable');
+                $queryData->select('deg.hr_designation_position','deg.hr_designation_name', 'ben.bank_name','ben.bank_no', 'ben.ben_tds_amount','emp.as_id','emp.as_gender', 'emp.as_oracle_code', 'emp.associate_id', 'emp.as_unit_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_section_id', 's.present', 's.absent', 's.ot_hour', 's.ot_rate', 's.total_payable', 's.bank_payable', 's.cash_payable', 's.tds', 's.stamp', 's.pay_status');
                 $totalSalary = round($queryData->sum("s.total_payable"));
+                $totalCashSalary = round($queryData->sum("s.cash_payable"));
+                $totalBankSalary = round($queryData->sum("s.bank_payable"));
+                // $totalStamp = round($queryData->sum("s.stamp"));
+                $totalTax = round($queryData->sum("s.tds"));
                 $totalOtHour = ($queryData->sum("s.ot_hour"));
                 $totalOTAmount = round($queryData->sum(DB::raw('s.ot_hour * s.ot_rate')));
             }
+
             $getEmployee = $queryData->orderBy('deg.hr_designation_position', 'asc')->get();
             // dd($getEmployee);
             if($input['report_format'] == 1 && $input['report_group'] != null){
                 $totalSalary = round(array_sum(array_column($getEmployee->toArray(),'groupSalary')));
+                $totalCashSalary = round(array_sum(array_column($getEmployee->toArray(),'groupCashSalary')));
+                $totalBankSalary = round(array_sum(array_column($getEmployee->toArray(),'groupBankSalary')));
+                // $totalStamp = round(array_sum(array_column($getEmployee->toArray(),'groupStamp')));
+                $totalTax = round(array_sum(array_column($getEmployee->toArray(),'groupTds')));
                 $totalEmployees = array_sum(array_column($getEmployee->toArray(),'total'));
                 $totalOtHour = array_sum(array_column($getEmployee->toArray(),'groupOt'));
                 $totalOTAmount = round(array_sum(array_column($getEmployee->toArray(),'groupOtAmount')));
@@ -170,8 +176,12 @@ class MonthlyActivityReportController extends Controller
                     $format = '';
                 }
             }
+            if($input['pay_status'] == null){
 
-            return view('hr.reports.monthly_activity.salary.report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalSalary', 'totalEmployees', 'totalOtHour','totalOTAmount'));
+                return view('hr.reports.monthly_activity.salary.report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalSalary', 'totalEmployees', 'totalOtHour','totalOTAmount', 'totalCashSalary', 'totalBankSalary', 'totalTax'));
+            }else{
+                return view('hr.reports.monthly_activity.salary.report_payment_wise', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalSalary', 'totalEmployees', 'totalOtHour','totalOTAmount', 'totalCashSalary', 'totalBankSalary', 'totalTax'));
+            }
         } catch (\Exception $e) {
             return $e->getMessage();
             return 'error';
@@ -258,5 +268,120 @@ class MonthlyActivityReportController extends Controller
             return back();
         }
         
+    }
+
+    public function attendance()
+    {
+        $unitList  = Unit::where('hr_unit_status', '1')
+        ->whereIn('hr_unit_id', auth()->user()->unit_permissions())
+        ->orderBy('hr_unit_name', 'desc')
+        ->pluck('hr_unit_name', 'hr_unit_id');
+
+        $locationList  = Location::where('hr_location_status', '1')
+        ->whereIn('hr_location_id', auth()->user()->location_permissions())
+        ->orderBy('hr_location_name', 'desc')
+        ->pluck('hr_location_name', 'hr_location_id');
+
+        $areaList  = DB::table('hr_area')->where('hr_area_status', '1')->pluck('hr_area_name', 'hr_area_id');
+        $salaryMin = Benefits::getSalaryRangeMin();
+        $salaryMax = Benefits::getSalaryRangeMax();
+        return view('hr/reports/monthly_activity/attendance.index', compact('unitList','areaList', 'salaryMin', 'salaryMax', 'locationList'));
+    }
+
+    public function attendanceData(Request $request)
+    {
+        $input = $request->all();
+        $yearMonth = explode('-', $input['month']);
+        $month = $yearMonth[1];
+        $year = $yearMonth[0];
+
+        $input['area']       = isset($request['area'])?$request['area']:'';
+        $input['otnonot']    = isset($request['otnonot'])?$request['otnonot']:'';
+        $input['department'] = isset($request['department'])?$request['department']:'';
+        $input['line_id']    = isset($request['line_id'])?$request['line_id']:'';
+        $input['floor_id']   = isset($request['floor_id'])?$request['floor_id']:'';
+        $input['section']    = isset($request['section'])?$request['section']:'';
+        $input['subSection'] = isset($request['subSection'])?$request['subSection']:'';
+        $getDesignation = designation_by_id();
+        // employee basic sql binding
+        $employeeData = DB::table('hr_as_basic_info');
+        $employeeData_sql = $employeeData->toSql();
+
+        // employee basic sql binding
+        $designationData = DB::table('hr_designation');
+        $designationData_sql = $designationData->toSql();
+
+        $queryData = DB::table('hr_monthly_salary AS s')
+        ->whereIn('emp.as_unit_id', auth()->user()->unit_permissions())
+        ->whereIn('emp.as_location', auth()->user()->location_permissions());
+        $queryData->where('s.year', $year)
+        ->where('s.month', $month)
+        ->whereBetween('s.gross', [$input['min_sal'], $input['max_sal']])
+        ->when(!empty($input['unit']), function ($query) use($input){
+           return $query->where('emp.as_unit_id',$input['unit']);
+        })
+        ->when(!empty($input['location']), function ($query) use($input){
+           return $query->where('emp.as_location',$input['location']);
+        })
+        ->when(!empty($input['employee_status']), function ($query) use($input){
+           return $query->where('s.emp_status',$input['employee_status']);
+        })
+        ->when(!empty($input['area']), function ($query) use($input){
+           return $query->where('emp.as_area_id',$input['area']);
+        })
+        ->when(!empty($input['department']), function ($query) use($input){
+           return $query->where('emp.as_department_id',$input['department']);
+        })
+        ->when(!empty($input['line_id']), function ($query) use($input){
+           return $query->where('emp.as_line_id', $input['line_id']);
+        })
+        ->when(!empty($input['floor_id']), function ($query) use($input){
+           return $query->where('emp.as_floor_id',$input['floor_id']);
+        })
+        ->when($request['otnonot']!=null, function ($query) use($input){
+           return $query->where('emp.as_ot',$input['otnonot']);
+        })
+        ->when(!empty($input['section']), function ($query) use($input){
+           return $query->where('emp.as_section_id', $input['section']);
+        })
+        ->when(!empty($input['subSection']), function ($query) use($input){
+           return $query->where('emp.as_subsection_id', $input['subSection']);
+        });
+        $queryData->leftjoin(DB::raw('(' . $employeeData_sql. ') AS emp'), function($join) use ($employeeData) {
+            $join->on('emp.associate_id','s.as_id')->addBinding($employeeData->getBindings());
+        });
+        $queryData->leftjoin(DB::raw('(' . $designationData_sql. ') AS deg'), function($join) use ($designationData) {
+            $join->on('deg.hr_designation_id','emp.as_designation_id')->addBinding($designationData->getBindings());
+        });
+        $data = $queryData->orderBy('deg.hr_designation_position', 'asc')->get();
+
+        return Datatables::of($data)
+            ->addIndexColumn()
+            ->addColumn('pic', function($data){
+                return '<img src="'.emp_profile_picture($data).'" class="small-image min-img-file">';
+            })
+            ->addColumn('oracle_id', function($data){
+                return $data->as_oracle_code;
+            })
+            ->addColumn('associate_id', function($data) use ($input){
+                $month = $input['month'];
+                $jobCard = url("hr/operation/job_card?associate=$data->associate_id&month=$month");
+                return '<a href="'.$jobCard.'" target="_blank">'.$data->associate_id.'</a>';
+            })
+            
+            ->addColumn('as_name', function($data){
+                return $data->as_name;
+            })
+            ->addColumn('hr_designation_name', function($data) use ($getDesignation){
+                return $getDesignation[$data->as_designation_id]['hr_designation_name']??'';
+            })
+            ->addColumn('ot_hour', function($data){
+                return numberToTimeClockFormat($data->ot_hour);
+            })
+            ->addColumn('total_day', function($data){
+                return ($data->present + $data->holiday + $data->leave);
+            })
+            ->rawColumns(['DT_RowIndex', 'pic', 'oracle_id', 'associate_id', 'as_name', 'hr_designation_name', 'present', 'absent', 'leave', 'holiday', 'ot_hour', 'total_day'])
+            ->make(true);
     }
 }

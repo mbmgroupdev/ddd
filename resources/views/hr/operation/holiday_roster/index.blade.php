@@ -505,7 +505,6 @@ $(document).ready(function(){
                     setTimeout(function(){
                         $(".app-loader").hide();
                     }, 2000);
-
                     $.notify(response.message, response.type);
                 },
                 error: function (reject) {

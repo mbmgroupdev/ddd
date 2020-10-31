@@ -68,6 +68,8 @@ class TestController extends Controller
             $date = $request->date;
             $data = DB::table('hr_as_basic_info AS b')
                      ->leftJoin('hr_benefits as c','b.associate_id','c.ben_as_id')
+                     ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
+                    ->whereIn('b.as_location', auth()->user()->location_permissions())
                     ->where('b.as_status',1)
                     ->where('b.as_doj' , '<=', $date)
                     ->get();
@@ -88,6 +90,8 @@ class TestController extends Controller
                 $table = get_att_table($u).' AS a';
                 $att = DB::table($table)
                         ->leftJoin('hr_as_basic_info as b','b.as_id','a.as_id')
+                        ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
+                        ->whereIn('b.as_location', auth()->user()->location_permissions())
                         ->leftJoin('hr_benefits as c','b.associate_id','c.ben_as_id')
                         ->where('a.in_date', $date)
                         ->get();
@@ -133,6 +137,8 @@ class TestController extends Controller
             $ab = DB::table('hr_absent as a')
                     ->leftJoin('hr_as_basic_info as b','b.associate_id','a.associate_id')
                     ->leftJoin('hr_benefits as c','b.associate_id','c.ben_as_id')
+                    ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
+                    ->whereIn('b.as_location', auth()->user()->location_permissions())
                     ->where('a.date', $date)
                     ->whereIn('b.as_unit_id', $units)
                     ->get();
@@ -140,6 +146,8 @@ class TestController extends Controller
             $lv = DB::table('hr_leave as a')
                     ->leftJoin('hr_as_basic_info as b','b.associate_id','a.leave_ass_id')
                     ->leftJoin('hr_benefits as c','b.associate_id','c.ben_as_id')
+                    ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
+                    ->whereIn('b.as_location', auth()->user()->location_permissions())
                     ->where('a.leave_from', "<=", $date)
                     ->where('a.leave_to', ">=", $date)
                     ->whereIn('b.as_unit_id', $units)
@@ -148,6 +156,8 @@ class TestController extends Controller
             $do = DB::table('holiday_roaster as a')
                     ->leftJoin('hr_as_basic_info as b','b.associate_id','a.as_id')
                     ->leftJoin('hr_benefits as c','b.associate_id','c.ben_as_id')
+                    ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
+                    ->whereIn('b.as_location', auth()->user()->location_permissions())
                     ->where('a.date', $date)
                     ->whereIn('b.as_unit_id', $units)
                     ->where('a.remarks', 'Holiday')
@@ -488,6 +498,32 @@ class TestController extends Controller
     }
 
     
+
+    public function noMacth()
+    {
+        $nomatch = [];
+        foreach ($getData as $key => $value) {
+            $flag=0;
+            $counter=0;
+            foreach ($getEmployee as $emp) {
+                ++$counter;
+                if($emp->as_oracle_code == $value['PID']){
+                    $flag=0;
+                    break;
+                }else{
+                    $flag++;
+                    continue;
+                }
+            }
+
+            if($flag>0 || $counter==0 ){
+                $nomatch[] = $value['PID'];
+            }
+        }
+
+
+        return ($nomatch);
+    }
 
 
 

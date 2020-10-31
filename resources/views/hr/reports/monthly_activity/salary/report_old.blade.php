@@ -64,10 +64,17 @@
 		                		@endif
 		            		</td>
 		            		<td>
-	                			Total Employee
-	                			<b>: {{ $totalEmployees }}</b> <br>
-	                			Total Payable Amount
-	                			<b>: {{ bn_money(round($totalSalary,2)) }} (BDT)</b><br>	
+			            			
+		            			@if($input['otnonot'] != null)
+		                			<b> OT </b> 
+		                			<b>: @if($input['otnonot'] == 0) No @else Yes @endif </b> <br>
+		                		@endif
+		                			Total Employee
+		                			<b>: {{ $totalEmployees }}</b> <br>
+		                			Total Salary
+		                			<b>: {{ bn_money(round($totalSalary,2)) }} (BDT)</b><br>
+			                		
+		                		
 		            		</td>
 		            		<td>
 	                			Total OT Hour
@@ -90,10 +97,6 @@
 		                		@endif
 		                		Format 
 		                			<b class="capitalize">: {{ isset($formatHead[1])?$formatHead[1]:'N/A' }}</b> <br>
-	                			@if($input['otnonot'] != null)
-		                			<b> OT </b> 
-		                			<b>: @if($input['otnonot'] == 0) No @else Yes @endif </b> <br>
-		                		@endif
 		                		@if($input['pay_status'] != null)
 		                		Payment Type 
 		                			<b class="capitalize">: {{ $input['pay_status'] }}</b> <br>

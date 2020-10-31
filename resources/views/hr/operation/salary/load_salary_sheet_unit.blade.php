@@ -17,9 +17,13 @@
         $total_emp = 0;
         $total_sal = 0;
         $locations = location_by_id();
+        $locationId = $input['location'];
+        $getLocation = $locations[$locationId]['hr_location_name']??'';
+        $getUnit = unit_by_id();
         $salmonth = date_to_bn_month($pageHead->for_date);
         $totalPayable = 0;
         $attendanceBonus = 0;
+        // dd($locationDataSet);
     @endphp
     @foreach($uniqueLocation as $locKey=>$location)
         @php
@@ -29,16 +33,16 @@
         @foreach($locationDataSet as $key=>$lists)
             @php
                 $pageKey += 1;
-                $asLocationList = array_column($lists,'as_location');
+                $asLocationList = array_column($lists,'as_unit_id');
                 $loc_emp = 0;
                 $loc_sal = 0;
-                $getLocation = $locations[$location]['hr_location_name']??'';
+                $getUnitHead = $getUnit[$location]['hr_unit_name_bn']??'';
                 $loc_count++;
                 $totalSalary_s = 0;
                 $emp = 0;
                 $ot_payable = 0; 
                 foreach($lists as $tSalary) {
-                    if($tSalary->as_location == $location && $tSalary != null){
+                    if($tSalary->as_unit_id == $location && $tSalary != null){
 
                         // $salaryAdd_s = (($tSalary->salary_add_deduct_id == null) ? '0.00' : $tSalary->salary_add_deduct_id);
                         $ot_s = round((float)($tSalary->ot_rate) * $tSalary->ot_hour);
@@ -71,12 +75,7 @@
                                             <strong>এরিয়া: </strong> {{$info['area']}}
                                         @endif
                                     </p>
-                                    {{-- <p style="margin:0;padding: 0"><strong>তারিখঃ </strong>
-                                        {{Custom::engToBnConvert($pageHead->current_date)}}
-                                    </p>
-                                    <p style="margin:0;padding: 0"><strong>&nbsp;সময়ঃ </strong>
-                                        {{ Custom::engToBnConvert($pageHead->current_time) }}
-                                    </p> --}}
+                                    
                                     @if($input['perpage'] > 1)
                                     <p style="margin:0;padding: 0"><strong>&nbsp;পৃষ্ঠা নংঃ </strong>
                                         {{ Custom::engToBnConvert($pageKey) }}
@@ -92,7 +91,7 @@
                                 </td>
                                 <td>
                                     <h3 style="margin:4px 10px;text-align:center;font-weight:600;font-size:14px;">
-                                        {{ $pageHead->unit_name }}
+                                        {{ $getUnitHead }}
                                     </h3>
                                     <h5 style="margin:4px 10px;text-align:center;font-weight:600;font-size:11px;">বেতন/মজুরী এবং অতিরিক্ত সময়ের মজুরী
                                     
@@ -147,7 +146,7 @@
                                 {{-- @foreach($locationDataSet as $pageKey=>$lists) --}}
                                 <?php $j=1;?>
                                 @foreach($lists as $k=>$list)
-                                    @if($list->as_location == $location && $list != null)
+                                    @if($list->as_unit_id == $location && $list != null)
                                         <tr>
                                             <td style="text-align: center;">{{ Custom::engToBnConvert($j) }}</td>
                                             <td>
