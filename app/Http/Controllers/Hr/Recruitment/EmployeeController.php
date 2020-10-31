@@ -433,7 +433,7 @@ class EmployeeController extends Controller
                 }
 
                 if($user->ben_current_salary == null){
-                    $return .= "<a href=".url('hr/employee/benefits?associate_id='.$user->associate_id)." class=\"btn btn-sm btn-primary\" data-toggle=\"tooltip\" title=\"Add Benefit\" style=\"margin-top:1px;\">
+                    $return .= "<a href=".url('hr/payroll/employee-benefit?associate_id='.$user->associate_id)." class=\"btn btn-sm btn-primary\" data-toggle=\"tooltip\" title=\"Add Benefit\" style=\"margin-top:1px;\">
                         <i class=\"las la-file-invoice-dollar bigger-120\"></i>
                     </a>
                     ";

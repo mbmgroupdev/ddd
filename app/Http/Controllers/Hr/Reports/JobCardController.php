@@ -90,22 +90,30 @@ class JobCardController extends Controller
           $x = $dateE;
         }
       }
-      // left,terminate,resign, suspend, delete exist
+
+
       $leftExist = false;
       if($info->as_status_date != null) {
-        if(in_array($info->as_status,[0,2,3,4,5])!=false) {
-          list($yearL,$monthL,$dateL) = explode('-',$info->as_status_date);
-          if($year == $yearL && $month == $monthL) {
-            if($joinExist == false) {
-              $iEx = 1;
-            } else {
-              $iEx = $iEx+1;
-            }
-            $leftExist = true;
-            $totalDays = $dateL;
+        list($yearL,$monthL,$dateL) = explode('-',$info->as_status_date);
+        if($year == $yearL && $month == $monthL) {
+
+          // if rejoin
+          $x = $dateL;
+          $totalDays = ($totalDays+1) - $x ;
+
+          // left,terminate,resign, suspend, delete
+          if(in_array($info->as_status,[0,2,3,4,5])!=false) {
+              if($joinExist == false) {
+                $iEx = 1;
+              } else {
+                $iEx = $iEx+1;
+              }
+              $leftExist = true;
+              $totalDays = $dateL;
           }
         }
       }
+
 
       $floor = $getFloor[$info->as_floor_id]['hr_floor_name']??'';
       $line = $getLine[$info->as_line_id]['hr_line_name']??'';

@@ -1,5 +1,5 @@
 
-@php $department = ''; @endphp
+@php $department = ''; $designation = designation_by_id();  @endphp
 <style type="text/css">
     .iq-bg-danger.tab-link-inline i {
         background: #ec8886 !important;
@@ -28,7 +28,7 @@
                         $management = $salaryStatus->management();
                     }
                 @endphp
-                <a class="tab-link-inline {{ $salaryStatus == null?'iq-bg-danger':'iq-bg-primary' }}" data-toggle="tooltip" title="@if($hr) - by {{$hr->name}} @endif">
+                <a class="tab-link-inline {{ $salaryStatus == null?'iq-bg-danger':'iq-bg-primary' }}" data-toggle="tooltip" title="@if($hr) - Authorised by {{$hr->name}} <br> {{$designation[$hr->employee->as_designation_id]['hr_designation_name']??''}} @endif">
                 <i class="las la-fingerprint"></i>
                 <span class="f-16">HR
                     
@@ -37,17 +37,17 @@
                 </a>
              </li>
              <li id="audit" class="">
-                <a class="tab-link-inline {{ (isset($salaryStatus) && $salaryStatus->initial_audit != null)?'iq-bg-primary':'iq-bg-danger' }}" data-toggle="tooltip" title="@if($audit) - by {{$audit->name}} @endif">
+                <a class="tab-link-inline {{ (isset($salaryStatus) && $salaryStatus->initial_audit != null)?'iq-bg-primary':'iq-bg-danger' }}" data-toggle="tooltip" title="@if($audit) - Authorised by {{$audit->name}} <br> {{$designation[$audit->employee->as_designation_id]['hr_designation_name']??''}} @endif">
                 <i class="las la-clipboard-check"></i><span class="f-16">Audit</span>
                 </a>
              </li>
              <li id="accounts" class="">
-                <a class="tab-link-inline {{ (isset($salaryStatus) && $salaryStatus->accounts_audit != null)?'iq-bg-primary':'iq-bg-danger' }}" data-toggle="tooltip" title="@if($accounts) - by {{$accounts->name}} @endif">
+                <a class="tab-link-inline {{ (isset($salaryStatus) && $salaryStatus->accounts_audit != null)?'iq-bg-primary':'iq-bg-danger' }}" data-toggle="tooltip" title="@if($accounts) - Authorised by {{$accounts->name}} <br> {{$designation[$accounts->employee->as_designation_id]['hr_designation_name']??''}} @endif">
                 <i class="las la-coins"></i><span class="f-16">Accounts</span>
                 </a>
              </li>
              <li id="management" class="">
-                <a class="tab-link-inline {{ (isset($salaryStatus) && $salaryStatus->management_audit != null)?'iq-bg-primary':'iq-bg-danger' }}" data-toggle="tooltip" title="@if($management) - by {{$management->name}} @endif">
+                <a class="tab-link-inline {{ (isset($salaryStatus) && $salaryStatus->management_audit != null)?'iq-bg-primary':'iq-bg-danger' }}" data-toggle="tooltip" title="@if($management) - Authorised by {{$management->name}} <br> {{$designation[$management->employee->as_designation_id]['hr_designation_name']??''}} @endif">
                 <i class="las la-user-check"></i><span class="f-16">Management</span>
                 </a>
              </li>

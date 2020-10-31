@@ -66,7 +66,7 @@
       </li>
       @endif
       
-      @if(auth()->user()->canany(['Employee List','Advance Info List','Assign Benefit','Medical Entry','Cost Distribution','Cost Distribution List','Manage Employee']) || $user->hasRole('Super Admin'))
+      @if(auth()->user()->canany(['Employee List','Advance Info List','Medical Entry','Cost Distribution','Cost Distribution List','Manage Employee']) || $user->hasRole('Super Admin'))
 
       <li class="@if($segment2 == 'employee') active @endif">
          <a href="#employee" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="las la-user-tie"></i><span>Employee</span><i class="las la-angle-right iq-arrow-right"></i></a>
@@ -87,11 +87,6 @@
             Manage Employee']) || $user->hasRole('Super Admin'))
             <li class="@if($segment2 == 'employee' && $segment3=='incomplete-list') active @endif">
                <a href="{{ url('hr/employee/incomplete-list') }}"><i class="las la-list-ul"></i>Missing Info</a>
-            </li>
-            @endif
-            @if($user->canany(['Assign Benefit','Benefit List']) || $user->hasRole('Super Admin'))
-            <li class="@if($segment2 == 'employee' && $segment3=='benefits') active @endif">
-               <a href="{{ url('hr/employee/benefits') }}"><i class="las la-gifts"></i> Benefits</a>
             </li>
             @endif
             @if($user->can('Medical Incident') || $user->hasRole('Super Admin'))
@@ -137,10 +132,15 @@
       </li>
       @endif
 
-      @if(auth()->user()->canany(['Manage Promotion','Manage Increment','Salary Adjustment','End of Job Benefits','Loan List']) || $user->hasRole('Super Admin'))
+      @if(auth()->user()->canany(['Manage Promotion','Manage Increment','Salary Adjustment','End of Job Benefits','Loan List','Assign Benefit']) || $user->hasRole('Super Admin'))
       <li class="@if($segment2 == 'payroll') active @endif">
          <a href="#payroll" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="las la-money-check-alt"></i><span>Payroll</span><i class="las la-angle-right iq-arrow-right"></i></a>
          <ul id="payroll" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+            @if($user->canany(['Assign Benefit','Benefit List']) || $user->hasRole('Super Admin'))
+            <li class="@if($segment2 == 'payroll' && $segment3=='employee-benefit') active @endif">
+               <a href="{{ url('hr/payroll/employee-benefit') }}"><i class="las la-gifts"></i> Benefits</a>
+            </li>
+            @endif
             @if($user->can('Manage Promotion') || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'promotion') active @endif">
                <a href="{{ url('hr/payroll/promotion') }}"><i class="las la-chart-line"></i>Promotion</a>
@@ -152,8 +152,8 @@
             </li>
             @endif
             @if($user->can('Salary Adjustment') || $user->hasRole('Super Admin'))
-            <li class="@if($segment3 == 'salary-adjustment') active @endif">
-               <a href="{{ url('hr/payroll/salary-adjustment') }}"><i class="las la-funnel-dollar"></i>Salary Adjustment</a>
+            <li class="@if($segment3 == 'monthly-salary-adjustment-list') active @endif">
+               <a href="{{ url('hr/payroll/monthly-salary-adjustment-list') }}"><i class="las la-funnel-dollar"></i>Salary Adjustment</a>
             </li>
             @endif
             @if($user->can('End of Job Benefits') || $user->hasRole('Super Admin'))
@@ -261,7 +261,7 @@
                <a href="{{ url('hr/operation/salary-generate') }}"><i class="las la-file-invoice-dollar"></i>Salary Process</a>
             </li>
             @endif
-            @if($user->canany(['Salary Generate - HR','Salary Audit - Audit','Salary Verify - Accounts','Salary Confirmation - Management','Salary Sheet']) || $user->hasRole('Super Admin'))
+            @if($user->canany(['Salary Generate - HR','Salary Sheet']) || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'salary-sheet') active @endif">
                <a href="{{ url('hr/operation/salary-sheet') }}"><i class="las la-file-invoice-dollar"></i>Salary Disburse</a>
             </li>
@@ -328,12 +328,16 @@
                   <li class="@if($segment3 == 'attendance_summary_report') active @endif"><a href="{{ url('hr/reports/attendance_summary_report') }}"><i class="las la-fingerprint"></i>Attendance Summary</a></li>
             @endif
             
+            @if($user->can('Attendance Report'))
             <li class="@if($segment3 == 'daily-attendance-activity') active @endif"><a href="{{ url('hr/reports/daily-attendance-activity') }}"><i class="las la-fingerprint"></i>Daily Attendance</a></li>
+            @endif
             @if($user->can('Attendance Consecutive Report') || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'attendance-consecutive') active @endif"><a href="{{ url('hr/reports/attendance-consecutive') }}"><i class="las la-fingerprint"></i>Attendance Consecutive</a></li>
             <li class="@if($segment3 == 'warning-notices') active @endif"><a href="{{ url('hr/reports/warning-notices') }}"><i class="las la-fingerprint"></i>Warning Notices</a></li>
             @endif
-
+            @if($user->can('Attendance Summary Report'))
+            <li class="@if($segment3 == 'monthly-attendance-activity') active @endif"><a href="{{ url('hr/reports/monthly-attendance-activity') }}"><i class="las la-fingerprint"></i>Monthly Attendance</a></li>
+            @endif
             {{-- <li class="@if($segment3 == 'monthly-reports') active @endif"><a href="{{ url('hr/reports/monthly-reports') }}"><i class="las la-chart-area"></i>Monthly Report</a></li> --}}
             {{-- <li><a href="{{ url('hr/reports/group_attendance') }}"><i class="las la-fingerprint"></i>Group Attendance</a></li> --}}
             @if($user->can('Monthly Increment') || $user->hasRole('Super Admin'))

@@ -571,21 +571,25 @@ class AttendaceBulkManualController extends Controller
               $x = $dateE;
             }
           }
-          // left,terminate,resign, suspend, delete exist
+          
           $leftExist = false;
           if($info->as_status_date != null) {
-            if(in_array($info->as_status,[0,2,3,4,5])!==false) {
-                $yearL = date('Y', strtotime($info->as_status_date ));
-                $monthL = date('m', strtotime($info->as_status_date ));
-                $dateL = date('d', strtotime($info->as_status_date ));
-              if($year == $yearL && $month == $monthL) {
-                if($joinExist == false) {
-                  $iEx = 1;
-                } else {
-                  $iEx = $iEx+1;
-                }
-                $leftExist = true;
-                $totalDays = $dateL;
+            list($yearL,$monthL,$dateL) = explode('-',$info->as_status_date);
+            if($year == $yearL && $month == $monthL) {
+
+              // if rejoin
+              $x = $dateL;
+              $totalDays = ($totalDays+1) - $x ;
+
+              // left,terminate,resign, suspend, delete
+              if(in_array($info->as_status,[0,2,3,4,5])!=false) {
+                  if($joinExist == false) {
+                    $iEx = 1;
+                  } else {
+                    $iEx = $iEx+1;
+                  }
+                  $leftExist = true;
+                  $totalDays = $dateL;
               }
             }
           }

@@ -626,7 +626,7 @@ Route::get('hr/payroll/salary', 'Hr\Payroll\SalaryController@view');
 
 	//Benefitfs
 	Route::group(['middleware' => 'permission:Manage Employee|Assign Benifit'], function(){
-		Route::get('hr/employee/benefits','Hr\Recruitment\BenefitController@benefits');
+		Route::get('hr/payroll/employee-benefit','Hr\Recruitment\BenefitController@benefits');
 		Route::post('hr/recruitment/operation/benefits','Hr\Recruitment\BenefitController@benefitStore');
 		Route::get('hr/recruitment/get_benefit_by_id','Hr\Recruitment\BenefitController@getBenefitByID');
 	});

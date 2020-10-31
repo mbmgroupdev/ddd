@@ -89,7 +89,7 @@ class BenefitController extends Controller
             {
                 log_file_write("Employee benefits updated successfully", $benefits->ben_id);
 
-                return redirect('hr/employee/benefits?associate_id='.$request->ben_as_id)
+                return redirect('hr/payroll/employee-benefit?associate_id='.$request->ben_as_id)
                         ->withInput()
                         ->with('success', 'Employee benefits updated successfully.');
 
@@ -156,7 +156,7 @@ class BenefitController extends Controller
                         <a href=".url('hr/payroll/benefit/'.$data->ben_as_id)." class=\"btn btn-xs btn-success\" data-toggle=\"tooltip\" title=\"View\">
                             <i class=\"ace-icon fa fa-eye bigger-120\"></i>
                         </a> 
-                        <a href=".url('hr/employee/benefits?associate_id='.$data->ben_as_id)." class=\"btn btn-xs btn-primary\" data-toggle=\"tooltip\" title=\"Edit\">
+                        <a href=".url('hr/payroll/employee-benefit?associate_id='.$data->ben_as_id)." class=\"btn btn-xs btn-primary\" data-toggle=\"tooltip\" title=\"Edit\">
                             <i class=\"ace-icon fa fa-pencil bigger-120\"></i>
                         </a>
                     </div>";
