@@ -327,8 +327,9 @@
             @if($user->can('Attendance Summary Report') || $user->hasRole('Super Admin'))
                   <li class="@if($segment3 == 'attendance_summary_report') active @endif"><a href="{{ url('hr/reports/attendance_summary_report') }}"><i class="las la-fingerprint"></i>Attendance Summary</a></li>
             @endif
-            
+            @if($user->can('Attendance Report'))
             <li class="@if($segment3 == 'daily-attendance-activity') active @endif"><a href="{{ url('hr/reports/daily-attendance-activity') }}"><i class="las la-fingerprint"></i>Daily Attendance</a></li>
+            @endif
             @if($user->can('Attendance Consecutive Report') || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'attendance-consecutive') active @endif"><a href="{{ url('hr/reports/attendance-consecutive') }}"><i class="las la-fingerprint"></i>Attendance Consecutive</a></li>
             <li class="@if($segment3 == 'warning-notices') active @endif"><a href="{{ url('hr/reports/warning-notices') }}"><i class="las la-fingerprint"></i>Warning Notices</a></li>

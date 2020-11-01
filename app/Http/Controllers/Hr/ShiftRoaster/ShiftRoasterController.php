@@ -11,6 +11,7 @@ use App\Models\Hr\Area;
 use App\Models\Hr\Department;
 use App\Models\Hr\EmpType;
 use App\Models\Hr\HolidayRoaster;
+use App\Models\Hr\Location;
 use App\Models\Hr\Section;
 use App\Models\Hr\Shift;
 use App\Models\Hr\Subsection;
@@ -26,9 +27,14 @@ class ShiftRoasterController extends Controller
     {
       $employeeTypes  = EmpType::where('hr_emp_type_status', '1')->pluck('hr_emp_type_name', 'emp_type_id');
       $unitList  = Unit::where('hr_unit_status', '1')
-          ->whereIn('hr_unit_id', auth()->user()->unit_permissions())
-          ->orderBy('hr_unit_name', 'desc')
-          ->pluck('hr_unit_short_name', 'hr_unit_id');
+        ->whereIn('hr_unit_id', auth()->user()->unit_permissions())
+        ->orderBy('hr_unit_name', 'desc')
+        ->pluck('hr_unit_name', 'hr_unit_id');
+
+      $locationList  = Location::where('hr_location_status', '1')
+        ->whereIn('hr_location_id', auth()->user()->location_permissions())
+        ->orderBy('hr_location_name', 'desc')
+        ->pluck('hr_location_name', 'hr_location_id');
 
       $shiftList = Shift::where('hr_shift_status', 1)->pluck("hr_shift_name", "hr_shift_id");
 
@@ -36,7 +42,7 @@ class ShiftRoasterController extends Controller
       // $subsectionList = Subsection::where('hr_subsec_status',1)->pluck('hr_subsec_name','hr_subsec_id');
       $areaList = Area::where('hr_area_status',1)->pluck('hr_area_name','hr_area_id');
       // dd($sectionList, $subsectionList);
-      return view('hr/operation/holiday_roster/index', compact('shiftList', 'employeeTypes', 'unitList','areaList'));
+      return view('hr/operation/holiday_roster/index', compact('shiftList', 'employeeTypes', 'unitList', 'locationList','areaList'));
 
     }
 

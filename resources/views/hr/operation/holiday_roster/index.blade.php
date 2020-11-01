@@ -45,28 +45,31 @@
 
         <div class="panel panel-info">
 
-            <div class="panel-body pb-0">
+            <div class="panel-body ">
                 @include('inc/message')
                 <div class="row">
                     <div class="col-12">
                         <div class="row">
                             <div class="col-sm-3"> 
-                                <div class="form-group has-required has-float-label select-search-group">
+                                <div class="form-group has-float-label select-search-group">
                                     {{ Form::select('unit', $unitList, null, ['placeholder'=>'Select Unit','id'=>'unit_shift', 'class'=> 'form-control', 'required'=> 'required']) }} 
                                     <label  for="unit">Unit </label>
+                                </div>
+                                <div class="form-group has-float-label select-search-group">
+                                    {{ Form::select('location', $locationList, null, ['placeholder'=>'Select location','id'=>'location_shift', 'class'=> 'form-control', 'required'=> 'required']) }} 
+                                    <label  for="location">Location </label>
                                 </div>
                                 <div class="form-group has-float-label select-search-group">
                                     {{ Form::select('area', $areaList, null, ['placeholder'=>'Select Area','id'=>'area_shift', 'class'=> 'form-control ', 'disabled']) }} 
                                     <label  for="area">Area </label>
                                 </div>
+                                
+                            </div>
+                            <div class="col-sm-3">
                                 <div class="form-group has-float-label select-search-group">
                                     <select name="department" id="department_shift" class= "form-control" disabled ><option value="">Select Department</option></select>
                                     <label  for="department">Department </label>
                                 </div>
-                            </div>
-                            <div class="col-sm-3">
-                                
-                                
                                 <div class="form-group has-float-label select-search-group">
                                     {{ Form::select('section', [], null, ['placeholder'=>'Select Section','id'=>'section_shift', 'class'=> 'form-control','disabled']) }} 
                                     <label  for="section">Section </label>
@@ -75,14 +78,7 @@
                                     {{ Form::select('subsection', [], null, ['placeholder'=>'Select Sub Section','id'=>'subsection_shift', 'class'=> 'form-control', 'disabled']) }}
                                     <label  for="subsection">Sub Section </label>
                                 </div>
-                                <div class="form-group has-float-label select-search-group">
-                                    <select class="form-control" id="emp_status" name="emp_status">
-                                        <option value="">Select Status</option>
-                                        <option value="0" >Shift</option>
-                                        <option value="1">Roster</option>
-                                    </select> 
-                                    <label  for="emp_status" style="color: maroon;">Employee Status </label>
-                                </div>
+                                
                             </div>
                             <div class="col-sm-3"> 
                                 <div class="form-group has-float-label select-search-group">
@@ -97,7 +93,16 @@
                                     </select>
                                     <label  for="otnonot">OT/Non-OT </label>
                                 </div>
-                                
+                                <div class="form-group has-float-label select-search-group">
+                                    <select class="form-control" id="emp_status" name="emp_status">
+                                        <option value="">Select Status</option>
+                                        <option value="0" >Shift</option>
+                                        <option value="1">Roster</option>
+                                    </select> 
+                                    <label  for="emp_status" style="color: maroon;">Employee Status </label>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
                                 <div class="form-group has-float-label select-search-group">
                                     <select class="form-control" id="dayType" name="searchtype">
                                         <option value="">Select Type</option>
@@ -107,9 +112,6 @@
                                     </select> 
                                     <label  for="dayType" style="color: maroon;">Day Type </label>
                                 </div>
-
-                            </div>
-                            <div class="col-sm-3">
                                 <div class="form-group has-float-label has-required">
                                     <input type="date" class="report_date datepicker form-control" id="dates" name="dates" placeholder="Y-m-d" multiple autocomplete="off" />
                                     <label for="dates">Dates</label>
@@ -330,6 +332,7 @@ $(document).ready(function(){
     var userFilter = $("#user_filter");
     var emp_type = $("select[name=emp_type]");
     var unit     = $("select[name=unit]");
+    var location     = $("select[name=location]");
     var otnonot     = $("select[name=otnonot]");
     var shift    = $("select[name=shift_id]");
     var section  = $("select[name=section]");
@@ -344,50 +347,56 @@ $(document).ready(function(){
         loadEmployeeSearchWise();
     });
     function loadEmployeeSearchWise(){
-        userInfo.html('<th colspan="6" style=\"text-align: center; font-size: 14px; color: green;\">Searching Please Wait...</th>');
+        
+        if(unit.val() !== '' || location.val() !== ''){
+            userInfo.html('<th colspan="6" style=\"text-align: center; font-size: 14px; color: green;\">Searching Please Wait...</th>');
+            $.ajax({
+                url: '{{ url("hr/operation/holiday_roster_assign_employee") }}',
+                data: {
+                    emp_type: emp_type.val(),
+                    otnonot: otnonot.val(),
+                    unit    : unit.val(),
+                    location : location.val(),
+                    shift   : shift.val(),
+                    section : section.val(),
+                    subsection : subsection.val(),
+                    area : area.val(),
+                    department : department.val(),
+                    dates:$('#dates').val(),
+                    type:type.val(),
+                    shift_roster_status:emp_status.val(),
+                    status:$("select[name=status]").val(),
+                    doj:doj.val(),
+                    condition: condition.val()
 
-        $.ajax({
-            url: '{{ url("hr/operation/holiday_roster_assign_employee") }}',
-            data: {
-                emp_type: emp_type.val(),
-                otnonot: otnonot.val(),
-                unit    : unit.val(),
-                shift   : shift.val(),
-                section : section.val(),
-                subsection : subsection.val(),
-                area : area.val(),
-                department : department.val(),
-                dates:$('#dates').val(),
-                type:type.val(),
-                shift_roster_status:emp_status.val(),
-                status:$("select[name=status]").val(),
-                doj:doj.val(),
-                condition: condition.val()
-
-            },
-            success: function(data)
-            {
-                userFilter.html(data.filter);
-                totalempcount = 0;
-                totalemp = 0;
-                if(data.result == ""){
-                    $('#totalEmp').text('0');
-                    $('#selectEmp').text('0');
-                    userInfo.html('<th colspan="6" style=\"text-align: center; font-size: 14px; color:red;\">No Data Found</th>');
+                },
+                success: function(data)
+                {
+                    // console.log(data);
+                    userFilter.html(data.filter);
+                    totalempcount = 0;
+                    totalemp = 0;
+                    if(data.result == ""){
+                        $('#totalEmp').text('0');
+                        $('#selectEmp').text('0');
+                        userInfo.html('<th colspan="6" style=\"text-align: center; font-size: 14px; color:red;\">No Data Found</th>');
+                    }
+                    else{
+                      //console.log(data.total);
+                        userInfo.html(data.result);
+                        totalemp = data.total;
+                        $('#selectEmp').text(totalempcount);
+                        $('#totalEmp').text(data.total);
+                    }
+                },
+                error:function(xhr)
+                {
+                    console.log(xhr);
                 }
-                else{
-                  //console.log(data.total);
-                    userInfo.html(data.result);
-                    totalemp = data.total;
-                    $('#selectEmp').text(totalempcount);
-                    $('#totalEmp').text(data.total);
-                }
-            },
-            error:function(xhr)
-            {
-                console.log(xhr);
-            }
-        });
+            });
+        }else{
+            $.notify("Select Unit Or Location", 'error');
+        }
     }
 
     
