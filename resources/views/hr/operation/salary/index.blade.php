@@ -322,6 +322,7 @@
 
 <script>
     var _token = $('input[name="_token"]').val();
+    
     // show error message
     function errorMsgRepeter(id, check, text){
         var flug1 = false;

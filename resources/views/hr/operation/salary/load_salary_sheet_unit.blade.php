@@ -425,7 +425,7 @@
             @endif
         @endforeach
     @endforeach
-    @if(isset($pageHead->totalStamp) && $input['perpage'] > 1)
+    @if(isset($pageHead->totalStamp))
         <div id="unit-info">
             <table class="table" style="width:100%;border-bottom:1px solid #ccc;margin-bottom:0;font-size:12px;color:lightseagreen;text-align:left" cellpadding="5">
                 <tr>

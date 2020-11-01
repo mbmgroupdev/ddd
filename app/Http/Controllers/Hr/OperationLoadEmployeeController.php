@@ -99,10 +99,21 @@ class OperationLoadEmployeeController extends Controller
             $month = date('n');
             $day   = date('j');
 
+            // holiday roster sql binding
+            $holidayData = DB::table('holiday_roaster');
+            $holidayData_sql = $holidayData->toSql();
+
             $queryData = DB::table('hr_as_basic_info AS emp')
             ->where('emp.as_status', 1)
-            ->where('emp.as_unit_id', $input['unit'])
             ->whereNotNull('emp.as_shift_id')
+            ->whereIn('emp.as_unit_id', auth()->user()->unit_permissions())
+            ->whereIn('emp.as_location', auth()->user()->location_permissions())
+            ->when(!empty($input['unit']), function ($query) use($input){
+               return $query->where('emp.as_unit_id',$input['unit']);
+            })
+            ->when(!empty($input['location']), function ($query) use($input){
+               return $query->where('emp.as_location',$input['location']);
+            })
             ->when(!empty($input['area']), function ($query) use($input){
                return $query->where('emp.as_area_id',$input['area']);
             })
@@ -124,7 +135,22 @@ class OperationLoadEmployeeController extends Controller
             ->when(!empty($input['subsection']), function ($query) use($input){
                return $query->where('emp.as_subsection_id', $input['subsection']);
             });
-            
+            if($input['dates'] != null && $input['type'] != null){
+                $queryData->where('ho.date', $input['dates'])->where('ho.remarks', $input['type']);
+                $queryData->leftjoin(DB::raw('(' . $holidayData_sql. ') AS ho'), function($join) use ($holidayData) {
+                    $join->on('ho.as_id','emp.associate_id')->addBinding($holidayData->getBindings());
+                });
+            }
+            if($input['doj'] != null && $input['condition'] != null){
+                if($input['condition'] == 'Equal'){
+                    $dojCon = '=';
+                }elseif($input['condition'] == 'Less Than'){
+                    $dojCon = '<';
+                }else{
+                    $dojCon = '>';
+                }
+                $queryData->where('emp.as_doj', $dojCon, $input['doj']);
+            }
             $getEmployee = $queryData->select('emp.as_id', 'emp.associate_id', 'emp.as_oracle_code', 'emp.as_name', 'emp.as_shift_id', 'emp.as_gender', 'emp.as_pic')->get();
 
             // today shift roster

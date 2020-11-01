@@ -76,7 +76,7 @@ class ProcessEmployeeAbsent implements ShouldQueue
                     // if($date == date('Y-m-d') && date('H:i') < '12:00'){
                     //     $flag = 1;
                     // }
-                    if($flag == 0){
+                    if($flag == 1){
                         $unitId = $getEmployee->as_unit_id;
                             
                         $day_of_date = date('j');
