@@ -26,7 +26,9 @@ class SalaryAudit extends Model
         if($this->hr_audit){
             $info =  User::find($this->hr_audit);
         }
+        
         return $info;
+
     }
 
     public function audit()

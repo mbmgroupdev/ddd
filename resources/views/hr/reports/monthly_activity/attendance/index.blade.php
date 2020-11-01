@@ -59,7 +59,7 @@
                 <div class="col-12">
                     <form class="" role="form" id="attendanceReport" method="get" action="#"> 
                         <div class="panel">
-                            <div class="panel-body pb-0">
+                            <div class="panel-body">
                                 <div class="row">
                                     <div class="col-3">
                                         <div class="form-group has-float-label select-search-group">
@@ -157,6 +157,13 @@
                                         <div class="form-group has-float-label has-required">
                                           <input type="month" class="report_date form-control" id="month" name="month" placeholder=" Month-Year"required="required" value="{{ date('Y-m') }}"autocomplete="off" />
                                           <label for="month">Month</label>
+                                        </div>
+                                        <div class="form-group has-float-label has-required select-search-group">
+                                            <?php
+                                              $status = ['1'=>'Active','2'=>'Resign','3'=>'Terminate','4'=>'Suspend','5'=>'Left', '6'=>'Maternity'];
+                                            ?>
+                                            {{ Form::select('employee_status', $status, 1, ['placeholder'=>'Select Employee Status ', 'class'=>'form-control capitalize select-search', 'id'=>'employee_status', 'required']) }}
+                                            <label for="employee_status">Status</label>
                                         </div>
                                         <div class="form-group">
                                           <button class="btn btn-primary nextBtn btn-lg pull-right" id="attendanceReport" type="submit" ><i class="fa fa-save"></i> Generate</button>
@@ -322,6 +329,7 @@
              d.month         = $("#month").val();
              d.min_sal       = $("#min_sal").val();
              d.max_sal       = $("#max_sal").val();
+             d.employee_status = $("#employee_status").val();
 
            },
            type: "get",

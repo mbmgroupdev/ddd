@@ -74,6 +74,7 @@ class ProcessEmployeeAbsent implements ShouldQueue
                     $flag = 0;
                     $eligible = 1;
                     $shiftFlag = 0;
+
                     
                     // check rejoin date for maternity/left employee
                     if($getEmployee->as_status_date != null){
@@ -88,10 +89,9 @@ class ProcessEmployeeAbsent implements ShouldQueue
                             }
                         }
                     }
-
                     if($eligible  == 1){
                         
-                        if($flag == 0){
+                        if($flag == 1){
                             $unitId = $getEmployee->as_unit_id;
                                 
                             $day_of_date = Carbon::parse($date)->format('j');

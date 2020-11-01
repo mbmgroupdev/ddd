@@ -83,7 +83,7 @@ class ProcessUnitWiseSalary implements ShouldQueue
                         $sDay = Carbon::parse($sDate)->format('d');
 
 
-                        if($yearMonth && $sYearMonth){
+                        if($yearMonth == $sYearMonth){
                             $firstDateMonth = $getEmployee->as_status_date;
                             $totalDay = $this->totalDay - ((int) $sDay-1);
 
@@ -174,9 +174,7 @@ class ProcessUnitWiseSalary implements ShouldQueue
                                 where('hr_yhp_unit', $getEmployee->as_unit_id)
                                 ->where('hr_yhp_dates_of_holidays','>=', $firstDateMonth)
                                 ->where('hr_yhp_dates_of_holidays','<=', $lastDateMonth)
-                                ->when($partial == 0 , function ($q) {
-                                    return $q->where('hr_yhp_open_status', 0);
-                                })
+                                ->where('hr_yhp_open_status', 0)
                                 ->count();
                         }
                         
@@ -186,6 +184,7 @@ class ProcessUnitWiseSalary implements ShouldQueue
                             $getHoliday = $shiftHolidayCount;
                         }
                     }
+
 
                     // get absent employee wise
                     // $getAbsent = DB::table('hr_absent')
