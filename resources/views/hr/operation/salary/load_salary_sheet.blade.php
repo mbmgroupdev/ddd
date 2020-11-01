@@ -77,10 +77,12 @@
                                     <p style="margin:0;padding: 0"><strong>&nbsp;সময়ঃ </strong>
                                         {{ Custom::engToBnConvert($pageHead->current_time) }}
                                     </p> --}}
+                                    @if(isset($input['perpage'] ))
                                     @if($input['perpage'] > 1)
                                     <p style="margin:0;padding: 0"><strong>&nbsp;পৃষ্ঠা নংঃ </strong>
                                         {{ Custom::engToBnConvert($pageKey) }}
                                     </p>
+                                    @endif
                                     @endif
                                 </td>
                                 <td style="width:15%;font-size:10px">
@@ -108,6 +110,7 @@
                                         </strong>
                                     </p>
                                     @endif
+                                    @if(isset($input['perpage'] ))
                                     @if($input['perpage'] > 1)
                                     <p style="margin:0;padding: 0;text-align: right;">
                                         সর্বমোট টাকার পরিমানঃ <span style="color:hotpink" >{{Custom::engToBnConvert(bn_money($totalSalary_s))}}</span>
@@ -122,6 +125,7 @@
                                         {{-- স্ট্যাম্প বাবদঃ <span style="color:hotpink" >{{Custom::engToBnConvert($emp*10)}}</span> |  --}}
                                         অতিরিক্ত কাজের মজুরীঃ <span style="color:hotpink" id="">{{Custom::engToBnConvert(bn_money($ot_payable))}}</span>
                                     </p>
+                                    @endif
                                     @endif
                                 </td>
                             </tr>

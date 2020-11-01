@@ -289,8 +289,8 @@
         var selectable = []; //use 4,5,6,7,8,9,10,11,....and * for all
         var dropdownList = {};
 
-        var exportColName = ['Sl.','Oracle ID','Associate ID','Name','Designation', 'Present', 'Absent', 'Leave', 'Holiday', 'OT Hour', 'Total Day'];
-        var exportCol = [0,1,2,3,4,5,6,7,8,9, 10];
+        var exportColName = ['Sl.','','Oracle ID','Associate ID','Name','Designation', 'Present', 'Absent', 'Leave', 'Holiday', 'OT Hour', 'Total Day'];
+        var exportCol = [2,3,4,5,6,7,8,9, 10];
 
         var dTable =  $('#dataTables').DataTable({
 
@@ -373,28 +373,7 @@
                   },
                   "action": allExport,
                   messageTop: ''
-              }, 
-              {
-                  extend: 'pdf', 
-                  className: 'btn btn-sm btn-primary', 
-                  title: function () {
-                      var type = 'Attendance Report';
-                      
-                      return type;
-                  },
-                  header: true,
-                  footer: false,
-                  exportOptions: {
-                      columns: exportCol,
-                      format: {
-                          header: function ( data, columnIdx ) {
-                              return exportColName[columnIdx];
-                          }
-                      }
-                  },
-                  "action": allExport,
-                  messageTop: ''
-              }, 
+              },  
               {
                   extend: 'print', 
                   className: 'btn btn-sm btn-default',

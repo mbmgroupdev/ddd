@@ -72,78 +72,95 @@ class ProcessEmployeeAbsent implements ShouldQueue
                 $getEmployee = Employee::where('as_id', $value)->first();
                 if($getEmployee != null){
                     $flag = 0;
+                    $eligible = 1;
                     $shiftFlag = 0;
-                    // if($date == date('Y-m-d') && date('H:i') < '12:00'){
-                    //     $flag = 1;
-                    // }
-                    if($flag == 0){
-                        $unitId = $getEmployee->as_unit_id;
-                            
-                        $day_of_date = date('j');
-                        $day_num = "day_".$day_of_date;
-                        $shift= DB::table("hr_shift_roaster")
-                        ->where('shift_roaster_month', $month)
-                        ->where('shift_roaster_year', $year)
-                        ->where("shift_roaster_user_id", $getEmployee->as_id)
-                        ->select([
-                            $day_num,
-                            'hr_shift.hr_shift_start_time'
-                        ])
-                        ->leftJoin('hr_shift', function($q) use($day_num, $unitId) {
-                            $q->on('hr_shift.hr_shift_name', 'hr_shift_roaster.'.$day_num);
-                            $q->where('hr_shift.hr_shift_unit_id', $unitId);
-                        })
-                        ->orderBy('hr_shift.hr_shift_id', 'desc')
-                        ->first();
-                        
-                        if(!empty($shift) && $shift->$day_num != null){
-                            $cShifStartTime = strtotime(date("H:i", strtotime($shift->hr_shift_start_time)));
-                        }
-                        else{
-                            $cShifStartTime = strtotime(date("H:i", strtotime($getEmployee->shift['hr_shift_start_time'])));
-                        }
-                        if($cShifStartTime > '16:00'){
-                            $shiftFlag = 1;
+                    
+                    // check rejoin date for maternity/left employee
+                    if($getEmployee->as_status_date != null){
+                        $sDate = $getEmployee->as_status_date;
+                        $sYear = Carbon::parse($sDate)->format('Y');
+                        $sMonth = Carbon::parse($sDate)->format('m');
+
+
+                        if($sYear == $year && $month == $sMonth){
+                            if($date < $sDate){
+                                $eligible = 0;
+                            }
                         }
                     }
 
-                    if($date >= $getEmployee->as_doj && $shiftFlag == 0){
-                        $getHoliday = HolidayRoaster::getHolidayYearMonthAsIdDateWiseRemarkMulti($year, $month, $getEmployee->associate_id, $date, ['Holiday', 'OT']);
-                        if($getHoliday == null && $getEmployee->shift_roaster_status == 0){
-                            $getHoliday = YearlyHolyDay::getCheckUnitDayWiseHolidayStatusMulti($getEmployee->as_unit_id, $date, [0, 2]);
-                        }
+                    if($eligible  == 1){
                         
-                        if($getHoliday == null){
-                            $getLeave = DB::table('hr_leave')
-                            ->where('leave_ass_id', $getEmployee->associate_id)
-                            ->where('leave_from', '<=', $date)
-                            ->where('leave_to', '>=', $date)
-                            ->where('leave_status',1)
+                        if($flag == 0){
+                            $unitId = $getEmployee->as_unit_id;
+                                
+                            $day_of_date = Carbon::parse($date)->format('j');
+                            $day_num = "day_".$day_of_date;
+                            $shift= DB::table("hr_shift_roaster")
+                            ->where('shift_roaster_month', $month)
+                            ->where('shift_roaster_year', $year)
+                            ->where("shift_roaster_user_id", $getEmployee->as_id)
+                            ->select([
+                                $day_num,
+                                'hr_shift.hr_shift_start_time'
+                            ])
+                            ->leftJoin('hr_shift', function($q) use($day_num, $unitId) {
+                                $q->on('hr_shift.hr_shift_name', 'hr_shift_roaster.'.$day_num);
+                                $q->where('hr_shift.hr_shift_unit_id', $unitId);
+                            })
+                            ->orderBy('hr_shift.hr_shift_id', 'desc')
                             ->first();
-                            //
-                            $getAbsent = DB::table('hr_absent')
-                            ->where('associate_id', $getEmployee->associate_id)
-                            ->where('hr_unit', $getEmployee->as_unit_id)
-                            ->where('date', $date)
-                            ->first();
-
-                            if($getLeave == '' && $getAbsent == ''){
-                                $status = $this->absentCreate($getEmployee->associate_id, $getEmployee->as_unit_id, $date);
-                                if($status == 'success'){ 
-                                    $yearMonth = $year.'-'.$month; 
-                                    if($month == date('m')){
-                                        $totalDay = date('d');
-                                    }else{
-                                        $totalDay = Carbon::parse($yearMonth)->daysInMonth;
-                                    }
-                                    $queue = (new ProcessUnitWiseSalary($this->tableName, $month, $year, $getEmployee->as_id, $totalDay))
-                                            ->onQueue('salarygenerate')
-                                            ->delay(Carbon::now()->addSeconds(2));
-                                            dispatch($queue);
-                                }
+                            
+                            if(!empty($shift) && $shift->$day_num != null){
+                                $cShifStartTime = strtotime(date("H:i", strtotime($shift->hr_shift_start_time)));
+                            }
+                            else{
+                                $cShifStartTime = strtotime(date("H:i", strtotime($getEmployee->shift['hr_shift_start_time'])));
+                            }
+                            if($cShifStartTime > '16:00'){
+                                $shiftFlag = 1;
                             }
                         }
-                    } 
+
+                        if($date >= $getEmployee->as_doj && $shiftFlag == 0){
+                            $getHoliday = HolidayRoaster::getHolidayYearMonthAsIdDateWiseRemarkMulti($year, $month, $getEmployee->associate_id, $date, ['Holiday', 'OT']);
+                            if($getHoliday == null && $getEmployee->shift_roaster_status == 0){
+                                $getHoliday = YearlyHolyDay::getCheckUnitDayWiseHolidayStatusMulti($getEmployee->as_unit_id, $date, [0, 2]);
+                            }
+                            
+                            if($getHoliday == null){
+                                $getLeave = DB::table('hr_leave')
+                                ->where('leave_ass_id', $getEmployee->associate_id)
+                                ->where('leave_from', '<=', $date)
+                                ->where('leave_to', '>=', $date)
+                                ->where('leave_status',1)
+                                ->first();
+                                //
+                                $getAbsent = DB::table('hr_absent')
+                                ->where('associate_id', $getEmployee->associate_id)
+                                ->where('hr_unit', $getEmployee->as_unit_id)
+                                ->where('date', $date)
+                                ->first();
+
+                                if($getLeave == '' && $getAbsent == ''){
+                                    $status = $this->absentCreate($getEmployee->associate_id, $getEmployee->as_unit_id, $date);
+                                    if($status == 'success'){ 
+                                        $yearMonth = $year.'-'.$month; 
+                                        if($month == date('m')){
+                                            $totalDay = date('d');
+                                        }else{
+                                            $totalDay = Carbon::parse($yearMonth)->daysInMonth;
+                                        }
+                                        $queue = (new ProcessUnitWiseSalary($this->tableName, $month, $year, $getEmployee->as_id, $totalDay))
+                                                ->onQueue('salarygenerate')
+                                                ->delay(Carbon::now()->addSeconds(2));
+                                                dispatch($queue);
+                                    }
+                                }
+                            }
+                        } 
+                    }
+
                 }
             }
         }

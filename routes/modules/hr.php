@@ -453,6 +453,7 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 	Route::get('hr/operation/unit-wise-salary-sheet', 'Hr\Operation\SalaryProcessController@unitWise');
 	Route::get('hr/operation/salary-generate', 'Hr\Operation\SalaryProcessController@generate');
 
+	Route::get('hr/operation/unit-wise-pay-slip', 'Hr\Reports\PayslipController@unitWise');
 	//Raw Punch Data
 	Route::get('hr/timeattendance/raw_punch', 'Hr\TimeAttendance\RawPunchController@rawPunch');
 
