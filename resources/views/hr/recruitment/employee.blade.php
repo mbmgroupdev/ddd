@@ -157,9 +157,7 @@ table th {
 											<span>
 												@if($info->as_status == 1) 
 													Active 
-												@elseif($info->as_status == 6) 
-													Maternity
-												@else Inactive @endif 
+												@else {{emp_status_name($info->as_status)}}@endif 
 											</span>
 										</div>
 									</div>
@@ -1382,8 +1380,7 @@ table th {
 							                <div class="panel-heading salary_report_panel" id="salary-sheet-result-inner"><button title='Salary sheet result print' type="button" onClick="printMe('result-show')" class="btn btn-primary btn-xs text-right"><i class="fa fa-print"></i> Print</button></div>
 							                <div class="panel-body" id="result-show">
 							                	
-                                                @include('hr.common.view_salary_sheet_list')
-
+                                                
 							                </div>
 							            </div>
 										                            

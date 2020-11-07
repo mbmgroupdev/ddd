@@ -185,6 +185,8 @@ class ProcessUnitWiseSalary implements ShouldQueue
                         }
                     }
 
+                    $getHoliday = $getHoliday < 0 ? 0:$getHoliday;
+
 
                     // get absent employee wise
                     // $getAbsent = DB::table('hr_absent')
@@ -260,7 +262,7 @@ class ProcessUnitWiseSalary implements ShouldQueue
                      *if employee joined this month, employee will get bonus 
                       only he/she joined at 1
                     */ 
-                      if($empdojMonth == $yearMonth && date('d', strtotime($getEmployee->as_doj)) > 1){
+                      if(($empdojMonth == $yearMonth && date('d', strtotime($getEmployee->as_doj)) > 1) || $partial == 1 ){
                         $attBonus = 0;
                       }else{
                         

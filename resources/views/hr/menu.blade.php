@@ -83,8 +83,7 @@
                <a href="{{ url('hr/employee/new-employee') }}"><i class="las la-list-ul"></i>New Employee</a>
             </li>
             @endif
-            @if($user->canany(['Employee Hierarchy','
-            Manage Employee']) || $user->hasRole('Super Admin'))
+            @if($user->can('Manage Employee') || $user->hasRole('Super Admin'))
             <li class="@if($segment2 == 'employee' && $segment3=='incomplete-list') active @endif">
                <a href="{{ url('hr/employee/incomplete-list') }}"><i class="las la-list-ul"></i>Missing Info</a>
             </li>

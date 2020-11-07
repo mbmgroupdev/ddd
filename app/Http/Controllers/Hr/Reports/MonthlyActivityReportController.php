@@ -128,7 +128,8 @@ class MonthlyActivityReportController extends Controller
             })
             ->when(!empty($input['subSection']), function ($query) use($input){
                return $query->where('emp.as_subsection_id', $input['subSection']);
-            });
+            })
+            ->orderBy('emp.as_department_id', 'ASC');
             $queryData->leftjoin(DB::raw('(' . $employeeData_sql. ') AS emp'), function($join) use ($employeeData) {
                 $join->on('emp.associate_id','s.as_id')->addBinding($employeeData->getBindings());
             });

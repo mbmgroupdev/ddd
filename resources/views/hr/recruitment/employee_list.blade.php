@@ -16,20 +16,47 @@
 	tr th:nth-child(7) input{
 		width: 80px !important;
 	}
-	tr th:nth-child(8) select{
+	tr th:nth-child(8) input{
 		width: 80px !important;
 	}
 	tr th:nth-child(9) select{
+		width: 70px !important;
+	}
+	tr th:nth-child(10) input{
 		width: 80px !important;
 	}
-	tr th:nth-child(10) select{
+	tr th:nth-child(11) select{
+		width: 70px !important;
+	}
+	tr th:nth-child(12) select{
 		width: 60px !important;
+	}
+	tr th:nth-child(13) select{
+		width: 80px !important;
+	}
+	tr th:nth-child(14) select{
+		width: 120px !important;
 	}
 	tr th:nth-child(15) select{
+		width: 180px !important;
+	}
+	tr th:nth-child(16) select{
+		width: 80px !important;
+	}
+	tr th:nth-child(17) select{
 		width: 60px !important;
 	}
-	tr th:nth-child(16) input{
+	tr th:nth-child(19) select{
+		width: 60px !important;
+	}
+	tr th:nth-child(18) input{
 		width: 50px !important;
+	}
+	tr th:nth-child(20) input{
+		width: 50px !important;
+	}
+	tr th:nth-child(21) input{
+		width: 150px !important;
 	}
 </style>
 @endpush
@@ -118,13 +145,17 @@
 								<th>Designation</th>
 								<th>Oracle ID</th>
 								<th>RFID</th>
-								<th>Employee Type</th>
+								<th>Date of Join</th>
+								<th>Unit</th>
+								<th>Location</th>
 								<th id="floor">Floor</th>
 								<th id="line">Line</th>
 								<th>Department</th>
 								<th>Section</th>
 								<th>Sub Section</th>
+								<th>Employee Type</th>
 								<th>Gender</th>
+								<th>Age</th>
 								<th>OT Status</th>
 								<th>Grade</th>
 								<th>Default Shift</th>
@@ -143,18 +174,19 @@
 $(document).ready(function()
 {
 	
-		var searchable = [2,3,4,5,6,15];
-		var selectable = [7,8,9,10,11,12,13,14]; 
+		var searchable = [2,3,4,5,6,7,9,15,17,19,20];
+		var selectable = [8,10,11,12,13,14,15,16,18]; 
 
 		var dropdownList = {
-			'7' :[@foreach($employeeTypes as $emp) <?php echo "'$emp'," ?> @endforeach],
-			'8' :[@foreach($floorList as $floor) <?php echo "'$floor'," ?> @endforeach],
-			'9' :[@foreach($lineList as $e) <?php echo "'$e'," ?> @endforeach],
-			'10' :[@foreach($departmentList as $e) <?php echo "'$e'," ?> @endforeach],
-			'11' :[@foreach($sectionList as $e) <?php echo "'$e'," ?> @endforeach],
-			'12' :[@foreach($subSectionList as $e) <?php echo "'$e'," ?> @endforeach],
-			'13':['Female','Male'],
-			'14':['OT','Non OT']
+			'15' :[@foreach($employeeTypes as $emp) <?php echo "'$emp'," ?> @endforeach],
+			'10' :[@foreach($floorList as $floor) <?php echo "'$floor'," ?> @endforeach],
+			'11' :[@foreach($lineList as $e) <?php echo "'$e'," ?> @endforeach],
+			'12' :[@foreach($departmentList as $e) <?php echo "'$e'," ?> @endforeach],
+			'13' :[@foreach($sectionList as $e) <?php echo "'$e'," ?> @endforeach],
+			'14' :[@foreach($subSectionList as $e) <?php echo "'$e'," ?> @endforeach],
+			'8' :[@foreach($unitList as $e) <?php echo "'$e'," ?> @endforeach],
+			'16':['Female','Male'],
+			'18':['OT','Non OT']
 		};
 
 		$("#unit").change(function(){
@@ -179,7 +211,7 @@ $(document).ready(function()
 		
 
 		
-		var exportColName = ['Sl.','','Associate ID','Name','Designation','Oracle ID','RFID', 'Employee Type', 'Floor','Line','Department','Section','Subsection','Gender','OT Status','Grade'];
+		var exportColName = ['Sl.','','Associate ID','Name','Designation','Oracle ID','RFID','Date of Join','Unit','Location',  'Floor','Line','Department','Section','Subsection','Employee Type','Gender','Age','OT Status','Grade'];
       	var exportCol = [2,3,4,5,10,11,12,13,14,15];
 
 	    var dt = $('#dataTables').DataTable({
@@ -221,16 +253,17 @@ $(document).ready(function()
 		        {data:'hr_designation_name', name: 'hr_designation_name', orderable: false},
 		        {data:'as_oracle_code', name: 'as_oracle_code'},
 		        {data:'as_rfid_code', name: 'as_rfid_code'},
-		        {data:'hr_emp_type_name', name: 'hr_emp_type_name', orderable: false},
+		        {data:'as_doj', name: 'as_doj'},
+		        {data:'hr_unit_short_name', name: 'hr_unit_short_name', orderable: false},
+		        {data:'hr_location_name', name: 'hr_location_name', orderable: false},
 		        {data:'hr_floor_name', name: 'hr_floor_name', orderable: false},
 		        {data:'hr_line_name',  name: 'hr_line_name', orderable: false},
-
-
 		        {data:'hr_department_name',  name: 'hr_department_name', orderable: false},
 		        {data:'hr_section_name',  name: 'hr_section_name', orderable: false},
 		        {data:'hr_subsec_name',  name: 'hr_subsec_name', orderable: false},
-
+		        {data:'hr_emp_type_name', name: 'hr_emp_type_name', orderable: false},
 		        {data:'as_gender', name: 'as_gender', orderable: false,},
+		        {data:'age', name: 'age', orderable: false,},
 		        {data:'as_ot', name: 'as_ot', orderable: false},
 		        {data:'hr_designation_grade', name: 'hr_designation_grade'},
 		        {data:'as_shift_id', name: 'as_shift_id', orderable: false}
@@ -263,7 +296,7 @@ $(document).ready(function()
                   header: true,
                   footer: false,
                   exportOptions: {
-                      columns: [2,3,4,5,6,7,8,9,10,11,12,13,14,15],
+                      columns: [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19],
                       format: {
                           header: function ( data, columnIdx ) {
                               return exportColName[columnIdx];

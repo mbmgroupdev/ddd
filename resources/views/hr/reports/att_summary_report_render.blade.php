@@ -98,6 +98,7 @@
                             <td width="15%" style="border: 1px; text-align: center; padding: " class="pxx-2">Absent</td>
                             <td width="15%" style="border: 1px; text-align: center; padding: " class="pxx-2">Leave</td>
                             <td width="15%" style="border: 1px; text-align: center; padding: " class="pxx-2">Day Off</td>
+                            <td width="15%" style="border: 1px; text-align: center; padding: " class="pxx-2">Absent (%)</td>
 
                         </tr>
                     
@@ -110,6 +111,9 @@
                             <td width="15%" style="text-align: center;" >{{array_sum($ot['absent'])}}</td>
                             <td width="15%" style="text-align: center;" >{{array_sum($ot['leave'])}}</td>
                             <td width="15%" style="text-align: center;" ><a href="{{url('hr/reports/get-att-emp?unit='.$unitid.'&date='.$date.'&type=holiday&ot=1')}}">{{$ot['dayoff']??0}} </a></td>
+                            <td>
+                                {{round((array_sum($ot['absent'])/array_sum($ot['total'])*100),2)}}%
+                            </td>
 
                         </tr>
                         <tr>
@@ -119,6 +123,8 @@
                             <td width="15%" style="text-align: center;" >{{array_sum($nonot['absent'])}}</td>
                             <td width="15%" style="text-align: center;" >{{array_sum($nonot['leave'])}}</td>
                             <td width="15%" style="text-align: center;" ><a href="{{url('hr/reports/get-att-emp?unit='.$unitid.'&date='.$date.'&type=holiday&ot=0')}}">{{$nonot['dayoff']??0}}</a></td>
+                            
+                            <td>{{round((array_sum($nonot['absent'])/array_sum($nonot['total'])*100),2)}}%</td>
 
                         </tr>
                         <tr>
@@ -128,6 +134,9 @@
                             <td bgcolor="#C2C2C2" width="15%" style="text-align: center;"  >{{array_sum($ot['absent'])+array_sum($nonot['absent'])}}</td>
                             <td bgcolor="#C2C2C2" width="15%" style="text-align: center;"  >{{array_sum($ot['leave'])+array_sum($nonot['leave'])}}</td>
                             <td bgcolor="#C2C2C2" width="15%" style="text-align: center;"  ><a href="{{url('hr/reports/get-att-emp?unit='.$unitid.'&date='.$date.'&type=holiday')}}">{{($ot['dayoff']??0)+($nonot['dayoff'])}}</a></td>
+                            <td>
+                                {{round(((array_sum($ot['absent'])+array_sum($nonot['absent']))/(array_sum($ot['total'])+array_sum($nonot['total']))*100),2)}}%
+                            </td>
 
                         </tr>
                     </table>
@@ -368,7 +377,7 @@
                             <td style="text-align: center;" id="grand_a"> {{$t_absent}}</td>
                             <td style="text-align: center;" id="grand_l"> {{$t_leave}}</td>
                             @php
-                                $tpercent = round(($t_absent/$t_total)*100);
+                                $tpercent = round((($t_absent/$t_total)*100),2);
                                     
                                 if($tpercent > 50){
                                     $tstyle = 'color:#dc3545';
@@ -464,11 +473,11 @@
                                             <td  style="text-align: center; padding: 10px;">{{$count}}</td>
                                             <td  style="text-align: center; padding: 10px; @if($sec != 1) border:none!important; @else border-bottom:none!important; @endif">
                                                 @if($sec == 1)
-                                                <a href="{{url('hr/reports/get-att-emp?unit='.$unitid.'&date='.$date.'&section='.$section->hr_section_id.'&ot=1')}}">{{$section->hr_section_name}}</a>
+                                                <a href="{{url('hr/reports/get-att-emp?unit='.$unitid.'&date='.$date.'&section='.$section->hr_section_id.'&ot=0')}}">{{$section->hr_section_name}}</a>
                                                 @endif
                                             </td>
                                             <td style="text-align: center; padding: 10px;">
-                                                <a href="{{url('hr/reports/get-att-emp?unit='.$unitid.'&date='.$date.'&subsection='.$subsec->hr_subsec_id.'&ot=1')}}">{{$subsec->hr_subsec_name}} </a></td>
+                                                <a href="{{url('hr/reports/get-att-emp?unit='.$unitid.'&date='.$date.'&subsection='.$subsec->hr_subsec_id.'&ot=0')}}">{{$subsec->hr_subsec_name}} </a></td>
                                             <td width="7%" style="text-align: center; padding: 10px;">{{$nonot['total'][$subsec->hr_subsec_id]??0}}</td>
                                             <td width="7%" style="text-align: center; padding: 10px;">{{$nonot['present'][$subsec->hr_subsec_id]??0}}</td>
                                             <td width="7%" style="text-align: center; padding: 10px;">{{$nonot['absent'][$subsec->hr_subsec_id]??0}}</td>
@@ -623,7 +632,7 @@
                             <td style="text-align: center;" id="grand_a"> {{$t_absent}}</td>
                             <td style="text-align: center;" id="grand_l"> {{$t_leave}}</td>
                             @php
-                                $tpercent = round(($t_absent/$t_total)*100);
+                                $tpercent = round((($t_absent/$t_total)*100),2);
                                     
                                 if($tpercent > 50){
                                     $tstyle = 'color:#dc3545';
