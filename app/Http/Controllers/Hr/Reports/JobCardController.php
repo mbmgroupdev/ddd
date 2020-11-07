@@ -98,8 +98,11 @@ class JobCardController extends Controller
         if($year == $yearL && $month == $monthL) {
 
           // if rejoin
-          $x = $dateL;
-          $totalDays = ($totalDays+1) - $x ;
+          if($info->as_status == 1){
+            $x = $dateL;
+            $totalDays = ($totalDays+1) - $x ;
+            
+          }
 
           // left,terminate,resign, suspend, delete
           if(in_array($info->as_status,[0,2,3,4,5])!=false) {

@@ -418,27 +418,31 @@ class BenefitsCalculationController extends Controller
         $empdojMonth = date('Y-m', strtotime($employee->as_doj));
         $empdojDay = date('d', strtotime($employee->as_doj));
 
+
         if($employee->shift_roaster_status == 1){
             // check holiday roaster employee
-            $holidayCount = HolidayRoaster::where('year', $year)
+            $getHoliday = HolidayRoaster::where('year', $year)
             ->where('month', $month)
-            ->where('date','<=', $salary_date)
             ->where('as_id', $employee->associate_id)
+            ->where('date','>=', $first_day)
+            ->where('date','<=', $salary_date)
             ->where('remarks', 'Holiday')
             ->count();
         }else{
             // check holiday roaster employee
             $RosterHolidayCount = HolidayRoaster::where('year', $year)
             ->where('month', $month)
-            ->where('date','<=', $salary_date)
             ->where('as_id', $employee->associate_id)
+            ->where('date','>=', $first_day)
+            ->where('date','<=', $salary_date)
             ->where('remarks', 'Holiday')
             ->count();
             // check General roaster employee
             $RosterGeneralCount = HolidayRoaster::where('year', $year)
             ->where('month', $month)
-            ->where('date','<=', $salary_date)
             ->where('as_id', $employee->associate_id)
+            ->where('date','>=', $first_day)
+            ->where('date','<=', $salary_date)
             ->where('remarks', 'General')
             ->count();
              // check holiday shift employee
@@ -467,6 +471,7 @@ class BenefitsCalculationController extends Controller
             }
         }
 
+        $getHoliday = $getHoliday < 0 ? 0:$getHoliday;
 
         // get absent employee wise
         $getAbsent = DB::table('hr_absent')
@@ -548,6 +553,8 @@ class BenefitsCalculationController extends Controller
             'emp_status' => $status,
             'stamp' => 0,
             'pay_status' => 1,
+            'bank_payable' => 0,
+            'tds' => 0
         ];
         
         
@@ -555,10 +562,11 @@ class BenefitsCalculationController extends Controller
         $stamp = 0;
         
         // get salary payable calculation
-        $salaryPayable = round((($perDayGross*$salary_date) - ($getAbsentDeduct + ($deductCost))),2);
-        $totalPayable = round(($salaryPayable + ($overtime_rate*$overtimes)),2);
+        $salaryPayable = ceil(((($perDayGross*$salary_date) - ($getAbsentDeduct + ($deductCost)))));
+        $totalPayable = ceil((($salaryPayable + ($overtime_rate*$overtimes))));
         
         $salary['total_payable'] = $totalPayable;
+        $salary['cash_payable'] = $totalPayable;
         $salary['salary_payable'] = $salaryPayable;
 
 
@@ -581,7 +589,6 @@ class BenefitsCalculationController extends Controller
 
         return $salary;
     }
-
     public function givenBenefitList(){
         $unitList = DB::table('hr_unit')->pluck('hr_unit_short_name')->toArray();
         return view('hr.payroll.given_benefits_list', compact('unitList'));

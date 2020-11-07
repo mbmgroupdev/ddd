@@ -497,6 +497,7 @@ class AttendanceReportController extends Controller
     	$date = $request->date;
     	$ot = $this->otEmpAttendance($request->unit,$date,1);
     	$nonot = $this->otEmpAttendance($request->unit,$date,0);
+
     	$area = Area::with('department','department.section','section.subsection')
     			->whereHas('section', function($q){
 				    $q->where('hr_section_status', 1);
@@ -795,69 +796,49 @@ class AttendanceReportController extends Controller
 		
 		$data = array();
 
-		$query = DB::table('holiday_roaster AS r')
-					->leftJoin('hr_as_basic_info AS b', 'r.as_id', 'b.associate_id');
-
-		if ($unit  == 101 || $unit == 102 || $unit == 103) {
-		    $query->whereIn('b.as_unit_id',[1,4,5] );
-		}else if($unit  == 100 ){
-			$query->whereIn('b.as_unit_id',[1,4] );
-		}else{
-			$query->where('b.as_unit_id',$unit );
-		}
-		
-		if($unit == 103){
-			// department washing 67
-			$query->where('b.as_department_id', 67);
-		}else{
-			$query->where('b.as_department_id', '!=', 67);
-		}
-
-		if($unit == 102){
-			// head office 12
-			$query->where('b.as_location', 12);
-		}else{
-			$query->where('b.as_location', '!=', 12);
-		}
-
-		$data['dayoff'] = $query->whereIn('b.associate_id', auth()->user()->permitted_associate())
-
-		    				->where('r.date',$date) 
-		    				->where('b.as_ot', $ot)
-		    				->where('r.remarks', 'Holiday')
-		    				->count();
-
 		$query = DB::table('hr_as_basic_info')
-				 ->select([
-					DB::raw('count(*) AS count'),
-					'as_subsection_id'
-				]);
+				 ->whereIn('associate_id', auth()->user()->permitted_associate());
 
 		if ($unit  == 101 || $unit == 102 || $unit == 103) {
 		    $query->whereIn('as_unit_id',[1,4,5] );
 		}else if($unit  == 100 ){
 			$query->whereIn('as_unit_id',[1,4] );
-		}else{
+		}else {
 			$query->where('as_unit_id',$unit );
 		}
 		
 		if($unit == 103){
 			// department washing 67
 			$query->where('as_department_id', 67);
-		}else{
+		}else if($unit == 1|| $unit == 4 || $unit == 5){
 			$query->where('as_department_id', '!=', 67);
 		}
 
 		if($unit == 102){
 			// head office 12
 			$query->where('as_location', 12);
-		}else{
+		}else if($unit == 1|| $unit == 4 || $unit == 5){
 			$query->where('as_location', '!=', 12);
 		}
-		$data['total'] = $query->where('as_doj','<=', $date)
-				->whereIn('associate_id', auth()->user()->permitted_associate())
-				->where('as_status',1) 
-				->where('as_ot', $ot)
+		$employees = $query->where('as_doj','<=', $date)
+					->where('as_status',1) 
+					->where('as_ot', $ot)
+					->pluck('associate_id')->toArray();
+
+
+		$data['dayoff'] = DB::table('holiday_roaster AS r')
+							->leftJoin('hr_as_basic_info AS b', 'r.as_id', 'b.associate_id')
+		 					->whereIn('b.associate_id', $employees)
+		    				->where('r.date', $date) 
+		    				->where('r.remarks', 'Holiday')
+		    				->count();
+
+		$data['total'] = DB::table('hr_as_basic_info')
+				 ->select([
+					DB::raw('count(*) AS count'),
+					'as_subsection_id'
+				])
+				->whereIn('associate_id', $employees)
 				->groupBy('as_subsection_id')
 				->get()
 				->filter(function ($item)
@@ -867,118 +848,68 @@ class AttendanceReportController extends Controller
 				->pluck('count','as_subsection_id')->toArray();
 
 
-    	$query = DB::table($tablename)
+    	$data['present'] = DB::table($tablename)
     				->where('a.in_date', $date)
     				->select([
     					DB::raw('count(*) AS count'),
     					'b.as_subsection_id'
     				])
-    				->leftJoin('hr_as_basic_info AS b', 'a.as_id', 'b.as_id');
-    	if ($unit  == 101 || $unit == 102 || $unit == 103) {
-		    $query->whereIn('b.as_unit_id',[1,4,5] );
-		}else if($unit  == 100 ){
-			$query->whereIn('b.as_unit_id',[1,4] );
-		}else{
-			$query->where('b.as_unit_id',$unit );
-		}
-		
-		if($unit == 103){
-			// department washing 67
-			$query->where('b.as_department_id', 67);
-		}else{
-			$query->where('b.as_department_id', '!=', 67);
-		}
-
-		if($unit == 102){
-			// head office 12
-			$query->where('b.as_location', 12);
-		}else{
-			$query->where('b.as_location', '!=', 12);
-		}
-    	$data['present']  =	$query->where('b.as_status',1) 
-    				->whereIn('b.associate_id', auth()->user()->permitted_associate())
-    				->where('b.as_ot', $ot)
+    				->leftJoin('hr_as_basic_info AS b', 'a.as_id', 'b.as_id')
+    				->whereIn('b.associate_id', $employees)
     				->groupBy('b.as_subsection_id')
     				->get()
     				->pluck('count','as_subsection_id')->toArray();
 
+    	$present = DB::table($tablename)
+    				->where('a.in_date', $date)
+    				->leftJoin('hr_as_basic_info AS b', 'a.as_id', 'b.as_id')
+    				->whereIn('b.associate_id', $employees)
+    				->pluck('associate_id')->toArray();
 
+    	$employees = array_diff($employees, $present);
 
-    	$query = DB::table('hr_absent AS a')
-    				->where('a.date', $date)
+    	$data['leave']  = DB::table('hr_leave AS l')
     				->select([
     					DB::raw('count(*) AS count'),
     					'b.as_subsection_id'
     				])
-    				->leftJoin('hr_as_basic_info AS b', 'a.associate_id', 'b.associate_id');
-    	if ($unit  == 101 || $unit == 102 || $unit == 103) {
-		    $query->whereIn('b.as_unit_id',[1,4,5] );
-		}else if($unit  == 100 ){
-			$query->whereIn('b.as_unit_id',[1,4] );
-		}else{
-			$query->where('b.as_unit_id',$unit );
-		}
-		
-		if($unit == 103){
-			// department washing 67
-			$query->where('b.as_department_id', 67);
-		}else{
-			$query->where('b.as_department_id', '!=', 67);
-		}
-
-		if($unit == 102){
-			// head office 12
-			$query->where('b.as_location', 12);
-		}else{
-			$query->where('b.as_location', '!=', 12);
-		}
-    	$data['absent'] = $query->where('b.as_status',1) 
-    				->whereIn('b.associate_id', auth()->user()->permitted_associate())
-    				->where('b.as_ot', $ot)
-    				->groupBy('b.as_subsection_id')
-    				->get()
-    				->pluck('count','as_subsection_id')->toArray();
-
-    	$query = DB::table('hr_leave AS l')
-    				->select([
-    					DB::raw('count(*) AS count'),
-    					'b.as_subsection_id'
-    				])
-    				->leftJoin('hr_as_basic_info AS b', 'l.leave_ass_id', 'b.associate_id');
-    	if ($unit  == 101 || $unit == 102 || $unit == 103) {
-		    $query->whereIn('b.as_unit_id',[1,4,5] );
-		}else if($unit  == 100 ){
-			$query->whereIn('b.as_unit_id',[1,4] );
-		}else{
-			$query->where('b.as_unit_id',$unit );
-		}
-		
-		if($unit == 103){
-			// department washing 67
-			$query->where('b.as_department_id', 67);
-		}else{
-			$query->where('b.as_department_id', '!=', 67);
-		}
-
-		if($unit == 102){
-			// head office 12
-			$query->where('b.as_location', 12);
-		}else{
-			$query->where('b.as_location', '!=', 12);
-		}
-    	$data['leave'] = $query->where('l.leave_from', "<=", $date)
-    				->whereIn('b.associate_id', auth()->user()->permitted_associate())
+    				->leftJoin('hr_as_basic_info AS b', 'l.leave_ass_id', 'b.associate_id')
+    				->where('l.leave_from', "<=", $date)
+    				->whereIn('b.associate_id', $employees)
 					->where('l.leave_to', ">=", $date)
     				->where([
-	    				'b.as_status'=> 1, 
-	    				'b.as_ot'=> $ot,
 	    				'l.leave_status' => 1
 	    			])
     				->groupBy('b.as_subsection_id')
     				->get()
     				->pluck('count','as_subsection_id')->toArray();
+
+    	$leaves = DB::table('hr_leave AS l')
+    				->leftJoin('hr_as_basic_info AS b', 'l.leave_ass_id', 'b.associate_id')
+    				->where('l.leave_from', "<=", $date)
+    				->whereIn('b.associate_id', $employees)
+					->where('l.leave_to', ">=", $date)
+    				->pluck('associate_id')->toArray();
+
+    	$employees = array_diff($employees, $leaves);
+
+    	$data['absent'] = DB::table('hr_absent AS a')
+    				->where('a.date', $date)
+    				->select([
+    					DB::raw('count(*) AS count'),
+    					'b.as_subsection_id'
+    				])
+    				->leftJoin('hr_as_basic_info AS b', 'a.associate_id', 'b.associate_id')
+    				->whereIn('b.associate_id', $employees)
+    				->groupBy('b.as_subsection_id')
+    				->get()
+    				->pluck('count','as_subsection_id')->toArray();
+
+    	
         
 		return $data;
+
+
     }
 
     

@@ -2,6 +2,9 @@
 	<div class="panel-body">
 		
 		<div id="report_section" class="report_section">
+			<style type="text/css" media="print">
+				h4, h2, p{margin: 0;}
+			</style>
 			<style type="text/css">
               .table{
                 width: 100%;
@@ -349,7 +352,7 @@
 									@endphp
 									{{ ($body == null)?'N/A':$body }}
 								</td>
-								<td class="text-right">
+								<td style="text-align: center;">
 									{{ $employee->total }}
 									@php $totalEmployee += $employee->total; @endphp
 								</td>

@@ -216,7 +216,7 @@
                                                             @endif
                                                         @endif
                                                     </td>
-                                                    <td>
+                                                    <td @if($value['present_status'] == 'A') style="background: #ea9d99;color:#000;" @endif>
                                                     {{ $value['present_status'] }}
 
                                                     @if($value['late_status']==1)
