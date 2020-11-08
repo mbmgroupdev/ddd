@@ -56,6 +56,7 @@ class ProcessUnitWiseSalary implements ShouldQueue
         $month = $this->month;
         $yearMonth = $year.'-'.$month;
         $monthDayCount  = Carbon::parse($yearMonth)->daysInMonth;
+        $partial = 0;
         try {
             if($getEmployee != null && date('Y-m', strtotime($getEmployee->as_doj)) <= $yearMonth){
 
@@ -63,9 +64,36 @@ class ProcessUnitWiseSalary implements ShouldQueue
                 $getBenefit = Benefits::
                 where('ben_as_id', $getEmployee->associate_id)
                 ->first();
+
+                $empdoj = $getEmployee->as_doj;
+                $empdojMonth = date('Y-m', strtotime($getEmployee->as_doj));
+                $empdojDay = date('d', strtotime($getEmployee->as_doj));
+
+                $totalDay = $this->totalDay;
+                if($empdojMonth == $yearMonth){
+                    $totalDay = $this->totalDay - ((int) $empdojDay-1);
+                }
+
                 if($getBenefit != null){
                     $today = $yearMonth.'-01';
                     $firstDateMonth = Carbon::parse($today)->startOfMonth()->toDateString();
+                    if($getEmployee->as_status_date != null){
+                        $sDate = $getEmployee->as_status_date;
+                        $sYearMonth = Carbon::parse($sDate)->format('Y-m');
+                        $sDay = Carbon::parse($sDate)->format('d');
+
+
+                        if($yearMonth == $sYearMonth){
+                            $firstDateMonth = $getEmployee->as_status_date;
+                            $totalDay = $this->totalDay - ((int) $sDay-1);
+
+                            if($sDay > 1){
+                                $partial = 1;
+                            }
+                        }
+                    }
+
+                    
                     if($monthDayCount > $this->totalDay){
                         $lastDateMonth = $yearMonth.'-'.$this->totalDay;
                     }else{
@@ -103,9 +131,7 @@ class ProcessUnitWiseSalary implements ShouldQueue
                     $lateCount = $getPresentOT->late??0;
                     $halfCount = $getPresentOT->halfday??0;
 
-                    $empdoj = $getEmployee->as_doj;
-                    $empdojMonth = date('Y-m', strtotime($getEmployee->as_doj));
-                    $empdojDay = date('d', strtotime($getEmployee->as_doj));
+                    
 
                     if($getEmployee->shift_roaster_status == 1){
                         // check holiday roaster employee
@@ -158,6 +184,9 @@ class ProcessUnitWiseSalary implements ShouldQueue
                             $getHoliday = $shiftHolidayCount;
                         }
                     }
+                    
+                    $getHoliday = $getHoliday < 0 ? 0:$getHoliday;
+
 
                     // get absent employee wise
                     // $getAbsent = DB::table('hr_absent')
@@ -178,11 +207,8 @@ class ProcessUnitWiseSalary implements ShouldQueue
                     ->where('leave_to', '<=', $lastDateMonth)
                     ->first()->total??0;
 
-                    if($empdojMonth == $yearMonth){
-                        $totalDay = $this->totalDay - ((int) $empdojDay-1);
-                    }else{
-                        $totalDay = $this->totalDay;
-                    }
+                    
+
                     $getAbsent = $totalDay - ($getPresentOT->present + $getHoliday + $leaveCount);
                     if($getAbsent < 0){
                         $getAbsent = 0;
@@ -207,8 +233,8 @@ class ProcessUnitWiseSalary implements ShouldQueue
                     
                     //get add absent deduct calculation
                     $perDayBasic = $getBenefit->ben_basic / 30;
-                    $getAbsentDeduct = $getAbsent * $perDayBasic;
-                    $getHalfDeduct = $halfCount * ($perDayBasic / 2);
+                    $getAbsentDeduct = (int)($getAbsent * $perDayBasic);
+                    $getHalfDeduct = (int)($halfCount * ($perDayBasic / 2));
 
                     $stamp = 10;
                     $payStatus = 1; // cash pay
@@ -236,7 +262,7 @@ class ProcessUnitWiseSalary implements ShouldQueue
                      *if employee joined this month, employee will get bonus 
                       only he/she joined at 1
                     */ 
-                      if($empdojMonth == $yearMonth && date('d', strtotime($getEmployee->as_doj)) > 1){
+                      if(($empdojMonth == $yearMonth && date('d', strtotime($getEmployee->as_doj)) > 1) || $partial == 1 ){
                         $attBonus = 0;
                       }else{
                         
@@ -286,8 +312,8 @@ class ProcessUnitWiseSalary implements ShouldQueue
                             }
                         }
                     }
-                    
-                    if(($empdojMonth == $yearMonth && date('d', strtotime($getEmployee->as_doj)) > 1) || $monthDayCount > $this->totalDay){
+                    $leaveAdjust = ceil((float)$leaveAdjust);
+                    if(($empdojMonth == $yearMonth && date('d', strtotime($getEmployee->as_doj)) > 1) || $monthDayCount > $this->totalDay || $partial == 1){
                         $perDayGross   = $getBenefit->ben_current_salary/$monthDayCount;
                         $totalGrossPay = ($perDayGross * $totalDay);
                         $salaryPayable = $totalGrossPay - ($getAbsentDeduct + $getHalfDeduct + $deductCost + $stamp);

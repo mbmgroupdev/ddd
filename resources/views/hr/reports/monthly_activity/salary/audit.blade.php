@@ -93,7 +93,7 @@
                                         </div>
                                         <div class="form-group has-float-label select-search-group">
                                             <select name="area" class="form-control capitalize select-search" id="area">
-                                                <option selected="" value="">Choose...</option>
+                                                <option selected="" value="">Choose Area...</option>
                                                 @foreach($areaList as $key => $value)
                                                 <option value="{{ $key }}">{{ $value }}</option>
                                                 @endforeach
@@ -102,35 +102,35 @@
                                         </div>
                                         <div class="form-group has-float-label select-search-group">
                                             <select name="department" class="form-control capitalize select-search" id="department" disabled>
-                                                <option selected="" value="">Choose...</option>
+                                                <option selected="" value="">Choose Department...</option>
                                             </select>
                                             <label for="department">Department</label>
                                         </div>
                                     </div>
                                     <div class="col-3">
                                         <div class="form-group has-float-label select-search-group">
-                                            <select name="floor_id" class="form-control capitalize select-search" id="floor_id" disabled >
-                                                <option selected="" value="">Choose...</option>
-                                            </select>
-                                            <label for="floor_id">Floor</label>
-                                        </div>
-                                        <div class="form-group has-float-label select-search-group">
                                             <select name="section" class="form-control capitalize select-search " id="section" disabled>
-                                                <option selected="" value="">Choose...</option>
+                                                <option selected="" value="">Choose Section...</option>
                                             </select>
                                             <label for="section">Section</label>
                                         </div>
                                         <div class="form-group has-float-label select-search-group">
                                             <select name="subSection" class="form-control capitalize select-search" id="subSection" disabled>
-                                                <option selected="" value="">Choose...</option> 
+                                                <option selected="" value="">Choose Sub Section...</option> 
                                             </select>
                                             <label for="subSection">Sub Section</label>
+                                        </div>
+                                        <div class="form-group has-float-label select-search-group">
+                                            <select name="floor_id" class="form-control capitalize select-search" id="floor_id" disabled >
+                                                <option selected="" value="">Choose Floor...</option>
+                                            </select>
+                                            <label for="floor_id">Floor</label>
                                         </div>
                                     </div> 
                                     <div class="col-3">
                                         <div class="form-group has-float-label select-search-group">
                                             <select name="line_id" class="form-control capitalize select-search" id="line_id" disabled >
-                                                <option selected="" value="">Choose...</option>
+                                                <option selected="" value="">Choose Line...</option>
                                             </select>
                                             <label for="line_id">Line</label>
                                         </div>
@@ -142,9 +142,6 @@
                                             </select>
                                             <label for="otnonot">OT/Non-OT</label>
                                         </div>
-                                        
-                                        <input type="hidden" id="reportformat" name="report_format" value="{{ $reFor }}">
-                                        <input type="hidden" id="reportGroup" name="report_group" value="{{ $reGro }}">
                                         <div class="row">
                                           <div class="col-5 pr-0">
                                             <div class="form-group has-float-label has-required">
@@ -162,25 +159,29 @@
                                             </div>
                                           </div>
                                         </div>
+                                        
+                                        <input type="hidden" id="reportformat" name="report_format" value="{{ $reFor }}">
+                                        <input type="hidden" id="reportGroup" name="report_group" value="{{ $reGro }}">
+                                        
                                     </div>
                                     <div class="col-3">
                                         
                                         <div class="form-group has-float-label has-required">
-                                          <input type="month" class="report_date form-control" id="report-date" name="month" placeholder=" Month-Year"required="required" value="{{ $input['month']??date('Y-m')}}"autocomplete="off" readonly />
+                                          <input type="month" class="report_date form-control" id="report-date" name="month" placeholder=" Month-Year"required="required" value="{{ date('Y-m', strtotime('-1 month')) }}"autocomplete="off" readonly>
                                           <label for="report-date">Month</label>
                                         </div>
-                                        <div class="form-group has-float-label select-search-group">
+                                        <div class="form-group has-float-label has-required select-search-group">
                                             <?php
-                                              $status = ['1'=>'Active','2'=>'Resign','3'=>'Terminate','4'=>'Suspend','5'=>'Left'];
+                                              $status = ['1'=>'Active','2'=>'Resign','3'=>'Terminate','4'=>'Suspend','5'=>'Left', '6'=>'Maternity'];
                                             ?>
-                                            {{ Form::select('employee_status', $status, null, ['placeholder'=>'Select Employee Status ', 'class'=>'form-control capitalize select-search', 'id'=>'estatus']) }}
+                                            {{ Form::select('employee_status', $status, 1, ['placeholder'=>'Select Employee Status ', 'class'=>'form-control capitalize select-search', 'id'=>'estatus', 'required']) }}
                                             <label for="estatus">Status</label>
                                         </div>
                                         <div class="form-group has-float-label select-search-group">
                                             <?php
-                                              $payType = ['cash'=>'Cash', 'rocket'=>'Rocket', 'bKash'=>'bKash', 'dbbl'=>'Duch-Bangla Bank Limited.'];
+                                              $payType = ['all'=>'All', 'cash'=>'Cash', 'rocket'=>'Rocket', 'bKash'=>'bKash', 'dbbl'=>'Duch-Bangla Bank Limited.'];
                                             ?>
-                                            {{ Form::select('pay_status', $payType, 1, ['placeholder'=>'Select Payment Type', 'class'=>'form-control capitalize select-search', 'id'=>'paymentType']) }}
+                                            {{ Form::select('pay_status', $payType, 'all', ['placeholder'=>'Select Payment Type', 'class'=>'form-control capitalize select-search', 'id'=>'paymentType']) }}
                                             <label for="paymentType">Payment Type</label>
                                         </div>
                                         <div class="form-group">
@@ -240,7 +241,13 @@
                     <div class="iq-card-header d-flex mb-0">
                        <div class="iq-header-title w-100">
                           <div class="row">
-                            <div class="col-3">
+                            <div class="col-6">
+                              <span id="result-section-btn" style="display: none; ">
+                                <button class="btn btn-sm btn-primary hidden-print" onclick="printDiv('report_section')" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report"><i class="las la-print"></i> </button>
+                                <button class="btn btn-sm btn-info hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download">
+                                  <i class="fa fa-file-excel-o"></i>
+                                </button>
+                              </span>
                               @php
                                 $month = date('Y-m', strtotime($input['month']));
                                 $unit = $input['unit'];
@@ -250,7 +257,7 @@
                                 
                               </div>
                             </div>
-                            <div class="col-6 text-center">
+                            <div class="col-3 text-center">
                               <h4 class="card-title capitalize inline">
                                 
                               </h4>
@@ -344,6 +351,7 @@
           $.notify('Select One Unit Or Location', 'error');
         }
         if(flag === 0){
+          $("#result-section-btn").show();
           $('html, body').animate({
               scrollTop: $("#result-data").offset().top
           }, 2000);
@@ -519,6 +527,12 @@
            });
           }
          
+      });
+
+      $('#excel').click(function(){
+        var url='data:application/vnd.ms-excel,' + encodeURIComponent($('#report_section').html())
+        location.href=url;
+        return false;
       });
      
   });

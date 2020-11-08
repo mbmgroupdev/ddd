@@ -78,7 +78,11 @@
         <!-- Sign in END -->
       </div>
       <script src="{{ asset('js/app.js') }}"></script>
-     
+      <script>
+        $(document).ready(function() {
+          $("#email").focus();  
+        });
+      </script>
    </body>
 
 </html>

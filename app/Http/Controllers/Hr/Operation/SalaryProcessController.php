@@ -72,6 +72,7 @@ class SalaryProcessController extends Controller
             // employee info
     		$employeeData = DB::table('hr_as_basic_info');
 	        $employeeDataSql = $employeeData->toSql();
+            
             // employee bangla info
             $employeeBanData = DB::table('hr_employee_bengali');
             $employeeBanDataSql = $employeeBanData->toSql();
@@ -89,7 +90,7 @@ class SalaryProcessController extends Controller
             ->when(!empty($input['location']), function ($query) use($input){
                return $query->where('emp.as_location',$input['location']);
             })
-            ->where('emp.as_status', $input['employee_status'])
+            ->where('s.emp_status', $input['employee_status'])
             ->when(!empty($input['area']), function ($query) use($input){
                return $query->where('emp.as_area_id',$input['area']);
             })
@@ -102,9 +103,6 @@ class SalaryProcessController extends Controller
             ->when(!empty($input['floor']), function ($query) use($input){
                return $query->where('emp.as_floor_id',$input['floor']);
             })
-            // ->when(!empty($input['otnonot']), function ($query) use($input){
-            //    return $query->where('emp.as_ot',$input['otnonot']);
-            // })
             ->when(!empty($input['section']), function ($query) use($input){
                return $query->where('emp.as_section_id', $input['section']);
             })
@@ -124,12 +122,27 @@ class SalaryProcessController extends Controller
             $queryData->leftjoin(DB::raw('(' . $employeeDataSql. ') AS emp'), function($join) use ($employeeData) {
                 $join->on('emp.associate_id','s.as_id')->addBinding($employeeData->getBindings());
             });
+            
+            if(!empty($input['pay_status'])){
+                // employee benefit sql binding
+                $benefitData = DB::table('hr_benefits');
+                $benefitData_sql = $benefitData->toSql();
+                $queryData->leftjoin(DB::raw('(' . $benefitData_sql. ') AS ben'), function($join) use ($benefitData) {
+                    $join->on('ben.ben_as_id','emp.associate_id')->addBinding($benefitData->getBindings());
+                });
+                if($input['pay_status'] == "cash"){
+                    $queryData->where('ben.ben_cash_amount', '>', 0);
+                }elseif($input['pay_status'] != 'cash'){
+                    $queryData->where('ben.bank_name',$input['pay_status']);
+                }
+            }
+            
 
             $queryData->leftjoin(DB::raw('(' . $employeeBanDataSql. ') AS bemp'), function($join) use ($employeeBanData) {
                 $join->on('bemp.hr_bn_associate_id','emp.associate_id')->addBinding($employeeBanData->getBindings());
             });
 	            
-	        $queryData->select('s.*', 'emp.as_doj', 'emp.as_ot', 'emp.as_designation_id', 'emp.as_location', 'bemp.hr_bn_associate_name', 'emp.as_oracle_code', 'emp.as_unit_id', 's.ot_hour', 's.ot_rate', 's.total_payable', 's.bank_payable', 's.cash_payable', 's.tds', 's.stamp', 's.pay_status');
+	        $queryData->select('s.*', 'emp.as_doj', 'emp.as_ot', 'emp.as_designation_id', 'emp.as_section_id', 'emp.as_location', 'bemp.hr_bn_associate_name', 'emp.as_oracle_code', 'emp.as_unit_id', 's.ot_hour', 's.ot_rate', 's.total_payable', 's.bank_payable', 's.cash_payable', 's.tds', 's.stamp', 's.pay_status');
             $totalSalary = round($queryData->sum("s.total_payable"));
             $totalCashSalary = round($queryData->sum("s.cash_payable"));
             $totalBankSalary = round($queryData->sum("s.bank_payable"));
@@ -139,7 +152,7 @@ class SalaryProcessController extends Controller
             $totalOTAmount = round($queryData->sum(DB::raw('s.ot_hour * s.ot_rate')));
             $getSalaryList = $queryData->orderBy('emp.as_oracle_sl', 'asc')->get();
             $totalEmployees = count($getSalaryList);
-            // return $getSalaryList;
+            // return $totalEmployees;
             $employeeAssociates = $queryData->select('emp.associate_id')->pluck('emp.associate_id')->toArray();
             // salary adjust
             $salaryAddDeduct = DB::table('hr_salary_add_deduct')
@@ -149,6 +162,7 @@ class SalaryProcessController extends Controller
                 ->get()->keyBy('associate_id')->toArray();
             // employee designation
             $designation = designation_by_id();
+            $getSection = section_by_id();
             // return $designation;
 
             $locationDataSet = $getSalaryList->toArray();
@@ -180,9 +194,9 @@ class SalaryProcessController extends Controller
             $pageHead = (object)$pageHead;
             if($input['unit'] == null){
                 
-                return view('hr.operation.salary.load_salary_sheet_unit', compact('uniqueLocation', 'getSalaryList', 'pageHead','locationDataSet', 'info', 'salaryAddDeduct', 'designation', 'input'));
+                return view('hr.operation.salary.load_salary_sheet_unit', compact('uniqueLocation', 'getSalaryList', 'pageHead','locationDataSet', 'info', 'salaryAddDeduct', 'designation', 'getSection', 'input'));
             }else{
-                return view('hr.operation.salary.load_salary_sheet', compact('uniqueLocation', 'getSalaryList', 'pageHead','locationDataSet', 'info', 'salaryAddDeduct', 'designation', 'input'));
+                return view('hr.operation.salary.load_salary_sheet', compact('uniqueLocation', 'getSalaryList', 'pageHead','locationDataSet', 'info', 'salaryAddDeduct', 'designation', 'getSection', 'input'));
             }
     	} catch (\Exception $e) {
     		$bug = $e->getMessage();
@@ -237,7 +251,7 @@ class SalaryProcessController extends Controller
                 $join->on('bemp.hr_bn_associate_id','emp.associate_id')->addBinding($employeeBanData->getBindings());
             });
                 
-            $getSalaryList = $queryData->select('s.*', 'emp.as_doj', 'emp.as_ot','emp.as_oracle_code', 'emp.as_designation_id', 'emp.as_location', 'bemp.hr_bn_associate_name')->get();
+            $getSalaryList = $queryData->select('s.*', 'emp.as_doj', 'emp.as_ot','emp.as_oracle_code', 'emp.as_designation_id', 'emp.as_section_id', 'emp.as_location','emp.as_unit_id', 'bemp.hr_bn_associate_name')->get();
             // dd($getSalaryList);
             $employeeAssociates = $queryData->select('emp.associate_id')->pluck('emp.associate_id')->toArray();
             // salary adjust
@@ -248,6 +262,7 @@ class SalaryProcessController extends Controller
                 ->get()->keyBy('associate_id')->toArray();
             // employee designation
             $designation = designation_by_id();
+            $getSection = section_by_id();
             // return $designation;
 
             $locationDataSet = $getSalaryList->toArray();
@@ -264,7 +279,7 @@ class SalaryProcessController extends Controller
             $pageHead['month']     = $input['month'];
             $pageHead['year']     = $input['year'];
             $pageHead = (object)$pageHead;
-            return view('hr.operation.salary.load_salary_sheet', compact('uniqueLocation', 'getSalaryList', 'pageHead','locationDataSet', 'info', 'salaryAddDeduct', 'designation', 'input'));
+            return view('hr.operation.salary.load_salary_sheet_employee', compact('uniqueLocation', 'getSalaryList', 'pageHead','locationDataSet', 'info', 'salaryAddDeduct', 'designation', 'getSection', 'input'));
         } catch (\Exception $e) {
             $bug = $e->getMessage();
             return $bug;
