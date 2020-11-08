@@ -184,6 +184,9 @@ class ProcessUnitWiseSalary implements ShouldQueue
                             $getHoliday = $shiftHolidayCount;
                         }
                     }
+                    
+                    $getHoliday = $getHoliday < 0 ? 0:$getHoliday;
+
 
                     $getHoliday = $getHoliday < 0 ? 0:$getHoliday;
 
@@ -233,8 +236,8 @@ class ProcessUnitWiseSalary implements ShouldQueue
                     
                     //get add absent deduct calculation
                     $perDayBasic = $getBenefit->ben_basic / 30;
-                    $getAbsentDeduct = $getAbsent * $perDayBasic;
-                    $getHalfDeduct = $halfCount * ($perDayBasic / 2);
+                    $getAbsentDeduct = (int)($getAbsent * $perDayBasic);
+                    $getHalfDeduct = (int)($halfCount * ($perDayBasic / 2));
 
                     $stamp = 10;
                     $payStatus = 1; // cash pay
@@ -312,7 +315,9 @@ class ProcessUnitWiseSalary implements ShouldQueue
                             }
                         }
                     }
-                    
+
+                    $leaveAdjust = ceil((float)$leaveAdjust);
+
                     if(($empdojMonth == $yearMonth && date('d', strtotime($getEmployee->as_doj)) > 1) || $monthDayCount > $this->totalDay || $partial == 1){
                         $perDayGross   = $getBenefit->ben_current_salary/$monthDayCount;
                         $totalGrossPay = ($perDayGross * $totalDay);

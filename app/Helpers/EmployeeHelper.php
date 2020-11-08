@@ -56,6 +56,10 @@ class EmployeeHelper
 
 
 			    $otCheck = HolidayRoaster::getHolidayYearMonthAsIdDateWiseRemark($year, $month, $eAsId, $today, 'OT');
+			    if($otCheck != null && (date('H:i:s', strtotime($shiftIntime)) < date('H:i:s', strtotime('09:00:00')) && date('H:i:s', strtotime($outTimeEx[1])) < date('H:i:s', strtotime('13:30:00')))){
+			    	$shiftBreak = 0;
+			    }
+
 			    if($otCheck == null && $eSRStatus == 0){
 			      $otCheck = YearlyHolyDay::getCheckUnitDayWiseHolidayStatus($eUnit, $today, 2);
 			    }

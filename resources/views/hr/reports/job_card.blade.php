@@ -111,15 +111,20 @@
 
                                             $prevUrl = url("hr/operation/job_card?associate=$associate&month_year=$prevMonth");
                                             $nextUrl = url("hr/operation/job_card?associate=$associate&month_year=$nextMonth");
+                                            $user  = auth()->user();
                                         @endphp
+                                        @if($user->can('Attendance Operation') || $user->hasRole('Super Admin'))
                                         <a href="{{ $prevUrl }}" class="btn view prev_btn" data-toggle="tooltip" data-placement="top" title="" data-original-title="Previous Month Job Card" >
                                           <i class="las la-chevron-left"></i>
                                         </a>
+                                        @endif
                                         <b class="f-16" id="result-head">{{ request()->month_year }} </b>
+                                        @if($user->can('Attendance Operation') || $user->hasRole('Super Admin'))
                                         @if($month < $thisMonth)
                                         <a href="{{ $nextUrl }}" class="btn view next_btn" data-toggle="tooltip" data-placement="top" title="" data-original-title="Next Month Job Card" >
                                           <i class="las la-chevron-right"></i>
                                         </a>
+                                        @endif
                                         @endif
                                       </h4>
                                     </div>
@@ -127,6 +132,7 @@
                                         $yearMonth = request()->month_year; 
                                     @endphp
                                     <div class="col-3">
+                                    @if($user->can('Attendance Operation') || $user->hasRole('Super Admin'))
                                       @if(($lastMonth == $month && $lockActivity == 0)|| $month == date('m'))
                                       <div class="text-right">
                                         <h4 class="card-title capitalize inline">
@@ -136,6 +142,7 @@
                                         </h4>
                                       </div>
                                       @endif
+                                    @endif
                                     </div>
                                   </div>
                                </div>

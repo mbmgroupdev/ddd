@@ -458,7 +458,8 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 	Route::get('hr/timeattendance/raw_punch', 'Hr\TimeAttendance\RawPunchController@rawPunch');
 
 	//---------Hr/ Payroll-----------//
-
+	Route::get('hr/payroll/bank-sheet', 'Hr\Payroll\BankSheetController@index');
+	Route::get('hr/reports/monthly-salary-bank-report', 'Hr\Payroll\BankSheetController@report');
 	Route::get('hr/payroll/ot', 'Hr\Payroll\OtController@OT');
 	Route::post('hr/payroll/ot', 'Hr\Payroll\OtController@OtStore');
 	Route::get('hr/payroll/ot_list', 'Hr\Payroll\OtController@otList');
@@ -1448,3 +1449,6 @@ Route::get('/hr/reports/monthly-mmr-report', 'Hr\ReportController@monthlyMMR');
 Route::get('hr/operation/test', 'Hr\Operation\VoucherController@test');
 Route::get('hr/test', 'TestController@test');
 Route::get('hr/reports/employee-daily-attendance', 'TestController@exportReport');
+
+// test route
+Route::get('hr/check-report', 'TestController@check');

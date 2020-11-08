@@ -77,6 +77,7 @@
                                     <p style="margin:0;padding: 0"><strong>&nbsp;সময়ঃ </strong>
                                         {{ Custom::engToBnConvert($pageHead->current_time) }}
                                     </p> --}}
+
                                     @if(isset($input['perpage'] ))
                                     @if($input['perpage'] > 1)
                                     <p style="margin:0;padding: 0"><strong>&nbsp;পৃষ্ঠা নংঃ </strong>
@@ -96,10 +97,19 @@
                                     <h3 style="margin:4px 10px;text-align:center;font-weight:600;font-size:14px;">
                                         {{ $pageHead->unit_name }}
                                     </h3>
-                                    <h5 style="margin:4px 10px;text-align:center;font-weight:600;font-size:11px;">বেতন/মজুরী এবং অতিরিক্ত সময়ের মজুরী
-                                    
-                                    <br/>
-                                    মাসঃ {{ $salmonth }}</h5>
+                                    <h5 style="margin:4px 10px;text-align:center;font-weight:600;font-size:11px;">
+                                        বেতন/মজুরী এবং অতিরিক্ত সময়ের মজুরী
+                                        
+                                        <br/>
+                                        মাসঃ {{ $salmonth }}
+                                        @if(isset($input['pay_status']) && $input['pay_status'] != null)
+                                            @if($input['pay_status'] == 'cash')
+                                            - ক্যাশ পে
+                                            @else
+                                            - ব্যাংক পে
+                                            @endif
+                                        @endif
+                                    </h5>
                                 </td>
                                 <td width="0%"> &nbsp;</td>
                                 <td style="width:30%" style="text-align: right;">
@@ -110,6 +120,7 @@
                                         </strong>
                                     </p>
                                     @endif
+
                                     @if(isset($input['perpage'] ))
                                     @if($input['perpage'] > 1)
                                     <p style="margin:0;padding: 0;text-align: right;">
@@ -142,8 +153,8 @@
                                     <th width="140">হাজিরা দিবস</th>
                                     <th width="180">বেতন হইতে কর্তন </th>
                                     <th width="250">মোট দেয় টাকার পরিমান</th>
-                                    <th>সর্বমোট টাকার পরিমান</th>
-                                    <th width="80">দস্তখত</th>
+                                    <th width="120">সর্বমোট টাকার পরিমান</th>
+                                    <th width="70">দস্তখত</th>
                                     <th class="disburse-button" width="80">বিতরণ</th>
                                 </tr>
                             </thead>
@@ -157,7 +168,12 @@
                                             <td>
                                                 <p style="margin:0;padding:0;">{{ $list->hr_bn_associate_name }}</p>
                                                 <p style="margin:0;padding:0;">{{ Custom::engToBnConvert($list->as_doj) }}</p>
-                                                <p style="margin:0;padding:0;">{{ $designation[$list->as_designation_id]['hr_designation_name_bn']}} </p>
+                                                <p style="margin:0;padding:0;">
+                                                    {{ $designation[$list->as_designation_id]['hr_designation_name_bn']}}
+                                                    @if($list->as_ot == 0)
+                                                    - {{ $getSection[$list->as_section_id]['hr_section_name_bn']?? ''}}
+                                                    @endif
+                                                </p>
                                                 <p style="margin:0;padding:0;color:hotpink">মূল বেতন+বাড়ি ভাড়া+চিকিৎসা+যাতায়াত+খাদ্য </p>
                                                 <p style="margin:0;padding:0;">
                                                     {{ Custom::engToBnConvert($list->basic.'+'.$list->house.'+'.$list->medical.'+'.$list->transport.'+'.$list->food) }}
@@ -392,6 +408,30 @@
 
                                                 @endphp
                                                 {{ Custom::engToBnConvert(bn_money($totalSalary)) }}
+                                                @if(isset($input['pay_status']) && ($input['pay_status'] == 'dbbl' || $input['pay_status'] == 'cash'))
+                                                    @if(isset($list->pay_status) && $list->pay_status == 3)
+                                                    <p style="margin:0;padding:0">
+
+                                                        <span style="text-align: left; width: 45%; float: left;  white-space: wrap;">ব্যাংক পে</span>
+                                                        <span style="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=
+                                                        </span>
+                                                        <span style="text-align: right;width: 50%; float: right;  white-space: wrap;">
+                                                            <font style="color:hotpink">{{ Custom::engToBnConvert(bn_money($list->bank_payable)) }}</font>
+                                                        </span>
+
+                                                    </p>
+                                                    <p style="margin:0;padding:0">
+
+                                                        <span style="text-align: left; width: 45%; float: left;  white-space: wrap;">ক্যাশ পে</span>
+                                                        <span style="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=
+                                                        </span>
+                                                        <span style="text-align: right;width: 50%; float: right;  white-space: wrap;">
+                                                            <font style="color:hotpink">{{ Custom::engToBnConvert(bn_money($list->cash_payable)) }}</font>
+                                                        </span>
+
+                                                    </p>
+                                                    @endif
+                                                @endif
                                             </td>
                                             <td></td>
                                             <td class="disburse-button" id="{{ $j }}-{{ $list->as_id }}">
@@ -456,6 +496,18 @@
                             {{ Custom::engToBnConvert($attendanceBonus) }}
                         </p>
                     </td>
+                    @php
+                        $fraction = $pageHead->totalSalary - ($totalPayable + $pageHead->totalOTAmount +$attendanceBonus);
+                        $fraction = $fraction<0?0:$fraction;
+                        $fraction = number_format((float)$fraction, 2, '.', '');
+                    @endphp
+                    @if($fraction > 0)
+                    <td style="width:10%; text-align:right;">
+                        <p style="margin:0;padding: 0"><strong>ভগ্নাংশ সমন্বয়: </strong>
+                            {{ Custom::engToBnConvert(bn_money($fraction)) }}
+                        </p>
+                    </td>
+                    @endif
                     <td style="width:25%; text-align:right;">
                         <p style="margin:0;padding: 0"><strong>সর্বমোট টাকার পরিমানঃ </strong>
                             {{ Custom::engToBnConvert(bn_money($pageHead->totalSalary)) }}

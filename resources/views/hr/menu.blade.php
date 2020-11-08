@@ -135,9 +135,16 @@
       <li class="@if($segment2 == 'payroll') active @endif">
          <a href="#payroll" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="las la-money-check-alt"></i><span>Payroll</span><i class="las la-angle-right iq-arrow-right"></i></a>
          <ul id="payroll" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+
+            @if($user->can('Bank Sheet') || $user->hasRole('Super Admin'))
+            <li class="@if($segment3 == 'bank-sheet') active @endif">
+               <a href="{{ url('hr/payroll/bank-sheet') }}"><i class="las la-chart-line"></i>Bank Sheet</a>
+            </li>
+            @endif
             @if($user->canany(['Assign Benefit','Benefit List']) || $user->hasRole('Super Admin'))
             <li class="@if($segment2 == 'payroll' && $segment3=='employee-benefit') active @endif">
                <a href="{{ url('hr/payroll/employee-benefit') }}"><i class="las la-gifts"></i> Benefits</a>
+
             </li>
             @endif
             @if($user->can('Manage Promotion') || $user->hasRole('Super Admin'))
