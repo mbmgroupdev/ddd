@@ -188,6 +188,9 @@ class ProcessUnitWiseSalary implements ShouldQueue
                     $getHoliday = $getHoliday < 0 ? 0:$getHoliday;
 
 
+                    $getHoliday = $getHoliday < 0 ? 0:$getHoliday;
+
+
                     // get absent employee wise
                     // $getAbsent = DB::table('hr_absent')
                     //     ->where('associate_id', $getEmployee->associate_id)
@@ -312,7 +315,9 @@ class ProcessUnitWiseSalary implements ShouldQueue
                             }
                         }
                     }
+
                     $leaveAdjust = ceil((float)$leaveAdjust);
+
                     if(($empdojMonth == $yearMonth && date('d', strtotime($getEmployee->as_doj)) > 1) || $monthDayCount > $this->totalDay || $partial == 1){
                         $perDayGross   = $getBenefit->ben_current_salary/$monthDayCount;
                         $totalGrossPay = ($perDayGross * $totalDay);

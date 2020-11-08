@@ -87,7 +87,7 @@
                     <td>{{ ++$i }} </td>
                     <td>
                         <p style="margin:0;padding:0;">{{ $list->employee_bengali['hr_bn_associate_name'] }}</p>
-                        <p style="margin:0;padding:0;">{{ $list->employee['as_doj'] }}</p>
+                        <p style="margin:0;padding:0;"></p>
                         <p style="margin:0;padding:0;">{{ isset($designation->hr_designation_grade)?$designation->hr_designation_grade:'' }}</p>
                         <p style="margin:0;padding:0;color:hotpink">মূল+বাড়ি ভাড়া+চিকিৎসা+যাতায়াত+খাদ্য </p>
                         <p style="margin:0;padding:0;">

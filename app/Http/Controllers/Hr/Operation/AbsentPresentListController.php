@@ -618,6 +618,8 @@ class AbsentPresentListController extends Controller
 
       }
 
+      $perm = check_permission('Attendance Operation');
+
       $date = isset($request->report_from)?$request->report_from:date('Y-m-d');
       $actionMonth = isset($request->report_to)?date('Y-m', strtotime($request->report_to)):date('Y-m');
       
@@ -631,8 +633,8 @@ class AbsentPresentListController extends Controller
       ->editColumn('absent_count', function($data){
         return $data->absent_count;
       })
-      ->addColumn('action', function($data) use ($actionMonth, $type){
-        if($type == 'Absent'){
+      ->addColumn('action', function($data) use ($actionMonth, $type, $perm){
+        if($type == 'Absent' && $perm == true){
           $url = url("hr/operation/warning-notice?associate=$data->associate_id&month_year=$actionMonth&start_date=$data->first_date&days=$data->absent_count");
           return '<a href="'.$url.'" class="btn btn-sm btn-outline-success" target="blank" data-toggle="tooltip" data-placement="top" title="Take action for '.$data->as_name.'" data-original-title="Take action for '.$data->as_name.'"><i class="las la-random"></i></a>';
         }else{  

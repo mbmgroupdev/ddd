@@ -277,8 +277,8 @@ if(!function_exists('emp_remain_leave_check')){
             $hello = 'This employee has';
         }
         if($request->leave_type== "Earned"){
-
-            $earned = DB::table('hr_earned_leave')
+            $statement['stat'] = "true";
+            /*$earned = DB::table('hr_earned_leave')
                         ->select(DB::raw('sum(earned - enjoyed) as l'))
                         ->where('associate_id', $associate_id)
                         ->groupBy('associate_id')->first()->l??0;
@@ -293,7 +293,7 @@ if(!function_exists('emp_remain_leave_check')){
                 }else{
                     $statement['msg'] = $hello.' no earned leave';
                 }
-            }
+            }*/
         }
 
         if($request->leave_type== "Casual"){

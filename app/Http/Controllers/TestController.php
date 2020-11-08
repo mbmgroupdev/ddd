@@ -15,9 +15,12 @@ use App\Models\Hr\Attendace;
 use App\Models\Hr\AttendaceManual;
 use App\Models\Hr\HolidayRoaster;
 use App\Models\Hr\HrLateCount;
+use App\Models\Hr\YearlyHolyDay;
 use App\Models\Hr\Leave;
 use App\Models\Hr\Shift;
 use App\Models\Hr\Unit;
+use App\Models\Hr\SalaryAddDeduct;
+use App\Models\Hr\HrMonthlySalary;
 use Rap2hpoutre\FastExcel\FastExcel;
 use Carbon\Carbon;
 use PDF, Validator, Auth, ACL, DB, DataTables;
@@ -27,32 +30,382 @@ class TestController extends Controller
 {
     public function test()
     {
+       /* $excel = Employee::select('as_oracle_code', 'as_name')->whereNull('as_ot')->where('as_status', 1)->where('as_unit_id', 2)->get()->toArray();
         
-        $data = DB::table('hr_as_basic_info')
-                ->whereIn('associate_id', auth()->user()->permitted_associate())
-                ->where(function($query)  {
-                    $query->where('as_doj','>', '2020-08-08')
-                          ->orWhere('as_location', 12);
-                })
-                ->pluck('associate_id');
+        return (new FastExcel(collect($excel)))->download('OT Status Missing CEIL.xlsx');
+        $data = DB::table('hr_absent')->select('associate_id', DB::raw('count(*) as count') )->where('date','>=', '2020-10-01')->where('date','<=', '2020-10-31')->groupBy('associate_id')->pluck('count','associate_id');
+
+        $miss = [];
+        foreach ($data as $key => $value) {
+            $d = DB::table('hr_monthly_salary')->where('month', 10)->where('year', 2020)->where('as_id', $key)->first();
+            if($d){
+
+                if($d->absent != $value){
+                    $miss[$d->as_id] = $d;
+                }
+            }
+        }
+        dd($miss);*/
 
 
-        foreach ($data as $key => $id) {
-            $ex = DB::table('holiday_roaster')->where('date', '2020-10-30')->where('as_id', $id)->first();
-            if(!$ex){
-                HolidayRoaster::create([
-                    'year' => '2020',
-                    'month' => 10,
-                    'as_id' => $id,
-                    'date' => '2020-10-30',
-                    'remarks' => 'Holiday',
-                    'status' => 1
-                ]);
+        $data = DB::table('hr_as_basic_info as b')
+                    ->leftJoin('hr_benefits as ben', 'ben.ben_as_id', 'b.associate_id')
+                    ->whereIn('b.as_unit_id', auth()->user()
+                    ->unit_permissions())->whereIn('b.as_status', [2,3,4,5,6])
+                    ->whereIn('b.as_location', auth()->user()->location_permissions())
+                    ->where('b.as_status_date', '>=', '2020-10-01')->where('b.as_status_date', '<=', '2020-10-31')->get();
+
+        $emps = []; 
+        foreach ($data as $key => $emp) {
+            $emps[$emp->associate_id] = $this->processPartialSalary($emp,$emp->as_status_date, $emp->as_status); 
+        }
+
+
+        dd($emps);
+
+        $getEmployee = Employee::where('associate_id', '19D700071P')->first();
+        $year = 2020;
+        $month = 10;
+        $yearMonth = $year.'-'.$month;
+        $monthDayCount  = Carbon::parse($yearMonth)->daysInMonth;
+        $partial = 0;
+        $firstDateMonth = '2020-10-01';
+        $lastDateMonth = '2020-10-07';
+        $empdojMonth = '2019-01-01';
+
+        if($getEmployee->as_status_date != null){
+                        $sDate = $getEmployee->as_status_date;
+                        $sYearMonth = Carbon::parse($sDate)->format('Y-m');
+                        $sDay = Carbon::parse($sDate)->format('d');
+
+
+                        if($yearMonth == $sYearMonth){
+                            $firstDateMonth = $getEmployee->as_status_date;
+                            $totalDay = 31 - ((int) $sDay-1);
+
+                            if($sDay > 1){
+                                $partial = 1;
+                            }
+                        }
+                    }
+
+        if($getEmployee->shift_roaster_status == 1){
+            // check holiday roaster employee
+            $getHoliday = HolidayRoaster::where('year', $year)
+            ->where('month', $month)
+            ->where('as_id', $getEmployee->associate_id)
+            ->where('date','>=', $firstDateMonth)
+            ->where('date','<=', $lastDateMonth)
+            ->where('remarks', 'Holiday')
+            ->count();
+        }else{
+            // check holiday roaster employee
+            $RosterHolidayCount = HolidayRoaster::where('year', $year)
+            ->where('month', $month)
+            ->where('as_id', $getEmployee->associate_id)
+            ->where('date','>=', $firstDateMonth)
+            ->where('date','<=', $lastDateMonth)
+            ->where('remarks', 'Holiday')
+            ->count();
+            // check General roaster employee
+            $RosterGeneralCount = HolidayRoaster::where('year', $year)
+            ->where('month', $month)
+            ->where('as_id', $getEmployee->associate_id)
+            ->where('date','>=', $firstDateMonth)
+            ->where('date','<=', $lastDateMonth)
+            ->where('remarks', 'General')
+            ->count();
+
+
+             // check holiday shift employee
+            
+            if($empdojMonth == $yearMonth){
+                $shiftHolidayCount = YearlyHolyDay::
+                    where('hr_yhp_unit', $getEmployee->as_unit_id)
+                    ->where('hr_yhp_dates_of_holidays','>=', $firstDateMonth)
+                    ->where('hr_yhp_dates_of_holidays','<=', $lastDateMonth)
+                    ->where('hr_yhp_dates_of_holidays','>=', $empdoj)
+                    ->where('hr_yhp_open_status', 0)
+                    ->count();
+            }else{
+                $shiftHolidayCount = YearlyHolyDay::
+                    where('hr_yhp_unit', $getEmployee->as_unit_id)
+                    ->where('hr_yhp_dates_of_holidays','>=', $firstDateMonth)
+                    ->where('hr_yhp_dates_of_holidays','<=', $lastDateMonth)
+                    ->where('hr_yhp_open_status', 0)
+                    ->count();
+
+                    //dd($shiftHolidayCount);
+            }
+            
+            if($RosterHolidayCount > 0 || $RosterGeneralCount > 0){
+                $getHoliday = ($RosterHolidayCount + $shiftHolidayCount) - $RosterGeneralCount;
+            }else{
+                $getHoliday = $shiftHolidayCount;
             }
         }
 
+
+
+        dd($getHoliday, $RosterHolidayCount);
+        $designation = designation_by_id();
+        $department = department_by_id();
+        $section = section_by_id();
+        $subsection = subSection_by_id();
+        $unit = unit_by_id();
+        $data = DB::table('hr_monthly_salary as s')
+        ->leftJoin('hr_as_basic_info as b','s.as_id','b.associate_id')
+        ->whereIn('b.as_location', auth()->user()->location_permissions())
+        ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
+        ->where(['b.as_status' => 1,'s.month'=> 10, 's.year' => 2020])->get();
+        
         dd($data);
+        $excel = [];
+
+        foreach ($data as $key => $a) {
+            $excel[$a->associate_id] = array(
+                'Name' => $a->as_name,
+                'Associate ID' => $a->associate_id,
+                'Oracle ID' => $a->as_oracle_code,
+                'Name' => $a->as_name,
+                'RF ID' => $a->as_rfid_code??0,
+                'DOJ' => date('d-M-Y', strtotime($a->as_doj)),
+                'Total Salary' => $a->total_payable,
+                'Cash Amount' => $a->cash_payable,
+                'Bank Amount' => $a->bank_payable,
+                'Gross' => $a->gross,
+                'Basic' => $a->basic,
+                'House Rent' => $a->house??0,
+                'OT' => numberToTimeClockFormat($a->ot_hour),
+                'OT Amount' => ceil($a->ot_hour*$a->ot_rate),
+                'Present' => $a->present,
+                'Leave' => $a->leave,
+                'Absent' => $a->absent,
+                'Holiday' => $a->holiday,
+                'Leave' => $a->leave,
+                'Total Day' => $a->leave+$a->holiday+$a->present,
+                'Designation' => $designation[$a->as_designation_id]['hr_designation_name']??'',
+                'Department' => $department[$a->as_department_id]['hr_department_name']??'',
+                'Section' => $section[$a->as_section_id]['hr_section_name']??'',
+                'Sub Section' => $subsection[$a->as_subsection_id]['hr_subsec_name']??'',
+                'Unit' => $unit[$a->as_unit_id]['hr_unit_short_name']??'',
+                'OT/NONOT' => $a->as_ot == 1?'OT':'NonOT'
+            );
+        }
+
+        return (new FastExcel(collect($excel)))->download('Monthly Salary.xlsx');
        
+    }
+
+
+    public function processPartialSalary($employee, $salary_date, $status)
+    {
+        $month = date('m', strtotime($salary_date));
+        $year = date('Y', strtotime($salary_date));
+        $first_day = Carbon::create($salary_date)->firstOfMonth()->format('Y-m-d');
+        $dayCount = 31;
+
+        $table = get_att_table($employee->as_unit_id);
+        $att = DB::table($table)
+                ->select(
+                    DB::raw('COUNT(*) as present'),
+                    DB::raw('SUM(ot_hour) as ot_hour'),
+                    DB::raw('COUNT(CASE WHEN late_status =1 THEN 1 END) AS late')
+                )
+                ->where('as_id',$employee->as_id)
+                ->where('in_date','>=',$first_day)
+                ->where('in_date','<=', $salary_date)
+                ->first();
+
+        $late = $att->late??0;
+        $overtimes = $att->ot_hour??0; 
+        $present = $att->present??0;
+
+        $getSalary = DB::table('hr_monthly_salary')
+                    ->where([
+                        'as_id' => $employee->associate_id,
+                        'month' => $month,
+                        'year' => $year
+                    ])
+                    ->first();
+
+        
+        $yearMonth = $year.'-'.$month;
+        $empdoj = $employee->as_doj;
+        $empdojMonth = date('Y-m', strtotime($employee->as_doj));
+        $empdojDay = date('d', strtotime($employee->as_doj));
+
+
+        if($employee->shift_roaster_status == 1){
+            // check holiday roaster employee
+            $getHoliday = HolidayRoaster::where('year', $year)
+            ->where('month', $month)
+            ->where('as_id', $employee->associate_id)
+            ->where('date','>=', $first_day)
+            ->where('date','<=', $salary_date)
+            ->where('remarks', 'Holiday')
+            ->count();
+        }else{
+            // check holiday roaster employee
+            $RosterHolidayCount = HolidayRoaster::where('year', $year)
+            ->where('month', $month)
+            ->where('as_id', $employee->associate_id)
+            ->where('date','>=', $first_day)
+            ->where('date','<=', $salary_date)
+            ->where('remarks', 'Holiday')
+            ->count();
+            // check General roaster employee
+            $RosterGeneralCount = HolidayRoaster::where('year', $year)
+            ->where('month', $month)
+            ->where('as_id', $employee->associate_id)
+            ->where('date','>=', $first_day)
+            ->where('date','<=', $salary_date)
+            ->where('remarks', 'General')
+            ->count();
+             // check holiday shift employee
+            
+            if($empdojMonth == $yearMonth){
+                $shiftHolidayCount = YearlyHolyDay::
+                    where('hr_yhp_unit', $employee->as_unit_id)
+                    ->where('hr_yhp_dates_of_holidays','>=', $first_day)
+                    ->where('hr_yhp_dates_of_holidays','<=', $salary_date)
+                    ->where('hr_yhp_dates_of_holidays','>=', $empdoj)
+                    ->where('hr_yhp_open_status', 0)
+                    ->count();
+            }else{
+                $shiftHolidayCount = YearlyHolyDay::
+                    where('hr_yhp_unit', $employee->as_unit_id)
+                    ->where('hr_yhp_dates_of_holidays','>=', $first_day)
+                    ->where('hr_yhp_dates_of_holidays','<=', $salary_date)
+                    ->where('hr_yhp_open_status', 0)
+                    ->count();
+            }
+            
+            if($RosterHolidayCount > 0 || $RosterGeneralCount > 0){
+                $getHoliday = ($RosterHolidayCount + $shiftHolidayCount) - $RosterGeneralCount;
+            }else{
+                $getHoliday = $shiftHolidayCount;
+            }
+        }
+
+        $getHoliday = $getHoliday < 0 ? 0:$getHoliday;
+
+        // get absent employee wise
+        $getAbsent = DB::table('hr_absent')
+            ->where('associate_id', $employee->associate_id)
+            ->where('date','>=', $first_day)
+            ->where('date','<=', $salary_date)
+            ->count();
+
+        // get leave employee wise
+
+        $leaveCount = DB::table('hr_leave')
+        ->select(
+            DB::raw("SUM(DATEDIFF(leave_to, leave_from)+1) AS total")
+        )
+        ->where('leave_ass_id', $employee->associate_id)
+        ->where('leave_from', '>=', $first_day)
+        ->where('leave_to', '<=', $salary_date)
+        ->first()->total??0;
+
+        $totalDays = date('j', strtotime($salary_date));
+        $totalAbsent = $totalDays - ($present + $getHoliday);
+        $absentPayable = $totalAbsent - $leaveCount;
+
+        // get salary add deduct id form salary add deduct table
+        $getAddDeduct = SalaryAddDeduct::
+        where('associate_id', $employee->associate_id)
+        ->where('month',  $month)
+        ->where('year',  $year)
+        ->first();
+
+        if($getAddDeduct != null){
+            $deductCost = ($getAddDeduct->advp_deduct + $getAddDeduct->cg_deduct + $getAddDeduct->food_deduct + $getAddDeduct->others_deduct);
+            $deductSalaryAdd = $getAddDeduct->salary_add;
+            $deductId = $getAddDeduct->id;
+        }else{
+            $deductCost = 0;
+            $deductSalaryAdd = 0;
+            $deductId = null;
+        }
+
+        //get add absent deduct calculation
+        $perDayBasic = round(($employee->ben_basic / 30),2);
+        $perDayGross = round(($employee->ben_current_salary / $dayCount),2);
+        $getAbsentDeduct = $absentPayable * $perDayBasic;
+
+        //stamp = 10 by default all employee;
+        
+
+        if($employee->as_ot == 1){
+            $overtime_rate = number_format((($employee->ben_basic/208)*2), 2, ".", "");
+        } else {
+            $overtime_rate = 0;
+        }
+        $overtime_salary = 0;
+        
+
+        $attBonus = 0;
+        $totalLate = $late;
+        
+        $salary = [
+            'as_id' => $employee->associate_id,
+            'month' => $month,
+            'year'  => $year,
+            'gross' => $employee->ben_current_salary??0,
+            'basic' => $employee->ben_basic??0,
+            'house' => $employee->ben_house_rent??0,
+            'medical' => $employee->ben_medical??0,
+            'transport' => $employee->ben_transport??0,
+            'food' => $employee->ben_food??0,
+            'late_count' => $late,
+            'present' => $present,
+            'holiday' => $getHoliday,
+            'absent' => $totalAbsent,
+            'leave' => $leaveCount,
+            'absent_deduct' => $getAbsentDeduct,
+            'salary_add_deduct_id' => $deductId,
+            'ot_rate' => $overtime_rate,
+            'ot_hour' => $overtimes,
+            'attendance_bonus' => $attBonus,
+            'emp_status' => $status,
+            'stamp' => 0,
+            'pay_status' => 1,
+            'bank_payable' => 0,
+            'tds' => 0
+        ];
+        
+        
+
+        $stamp = 0;
+        
+        // get salary payable calculation
+        $salaryPayable = ceil(((($perDayGross*$totalDays) - ($getAbsentDeduct + ($deductCost)))));
+        $totalPayable = ceil((($salaryPayable + ($overtime_rate*$overtimes))));
+        
+        $salary['total_payable'] = $totalPayable;
+        $salary['cash_payable'] = $totalPayable;
+        $salary['salary_payable'] = $salaryPayable;
+
+
+        $getSalary = HrMonthlySalary::
+                    where('as_id', $employee->associate_id)
+                    ->where('month', $month)
+                    ->where('year', $year)
+                    ->first();
+
+        if($getSalary == null){
+            DB::table('hr_monthly_salary')->insert($salary);
+        }else{
+            DB::table('hr_monthly_salary')->where('id', $getSalary->id)->update($salary);  
+        }
+        $salary['deduct'] = $deductCost;
+        $salary['per_day_basic'] = $perDayBasic;
+        $salary['per_day_gross'] = $perDayGross;
+        $salary['salary_date'] = $totalDays;
+        
+
+        return $salary;
     }
 
 

@@ -433,7 +433,7 @@ class EmployeeController extends Controller
                 }
 
                 if($user->ben_current_salary == null){
-                    $return .= "<a href=".url('hr/employee/benefits?associate_id='.$user->associate_id)." class=\"btn btn-sm btn-primary\" data-toggle=\"tooltip\" title=\"Add Benefit\" style=\"margin-top:1px;\">
+                    $return .= "<a href=".url('hr/payroll/employee-benefit?associate_id='.$user->associate_id)." class=\"btn btn-sm btn-primary\" data-toggle=\"tooltip\" title=\"Add Benefit\" style=\"margin-top:1px;\">
                         <i class=\"las la-file-invoice-dollar bigger-120\"></i>
                     </a>
                     ";
@@ -506,12 +506,15 @@ class EmployeeController extends Controller
                 'u.hr_unit_short_name',
                 'f.hr_floor_name',
                 'l.hr_line_name',
+                'lc.hr_location_name',
                 'dp.hr_department_name',
                 'dg.hr_designation_name',
                 'dg.hr_designation_position',
                 'dg.hr_designation_grade',
                 'b.as_gender',
                 'b.as_ot',
+                'b.as_doj',
+                'b.as_dob',
                 'b.as_status',
                 'b.as_oracle_code',
                 'b.as_rfid_code',
@@ -524,6 +527,7 @@ class EmployeeController extends Controller
             ->leftJoin('hr_unit AS u', 'u.hr_unit_id', '=', 'b.as_unit_id')
             ->leftJoin('hr_floor AS f', 'f.hr_floor_id', '=', 'b.as_floor_id')
             ->leftJoin('hr_line AS l', 'l.hr_line_id', '=', 'b.as_line_id')
+            ->leftJoin('hr_location AS lc', 'lc.hr_location_id', '=', 'b.as_location')
             ->leftJoin('hr_department AS dp', 'dp.hr_department_id', '=', 'b.as_department_id')
             ->leftJoin('hr_designation AS dg', 'dg.hr_designation_id', '=', 'b.as_designation_id')
             ->leftJoin('hr_section AS sec', 'sec.hr_section_id', '=', 'b.as_section_id')
@@ -578,6 +582,15 @@ class EmployeeController extends Controller
                 }
                 
             })
+            ->addColumn('age', function($user){
+                if($user->as_dob){
+                    return Carbon::parse($user->as_dob)->age;
+                }
+                else{
+                    return '';
+                }
+                
+            })
             ->editColumn('action', function ($user) use($perm) {
 
                 $return = "<a href=".url('hr/recruitment/employee/show/'.$user->associate_id)." class=\"btn btn-sm btn-success\" data-toggle='tooltip' data-placement='top' title='' data-original-title='View Employee Profile'>
@@ -594,6 +607,7 @@ class EmployeeController extends Controller
             ->rawColumns([
                 
                 'as_status',
+                'age',
                 'action',
                 'as_ot'
             ])

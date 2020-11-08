@@ -453,6 +453,7 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 	Route::get('hr/operation/unit-wise-salary-sheet', 'Hr\Operation\SalaryProcessController@unitWise');
 	Route::get('hr/operation/salary-generate', 'Hr\Operation\SalaryProcessController@generate');
 
+	Route::get('hr/operation/unit-wise-pay-slip', 'Hr\Reports\PayslipController@unitWise');
 	//Raw Punch Data
 	Route::get('hr/timeattendance/raw_punch', 'Hr\TimeAttendance\RawPunchController@rawPunch');
 
@@ -632,7 +633,7 @@ Route::get('hr/payroll/salary', 'Hr\Payroll\SalaryController@view');
 
 	//Benefitfs
 	Route::group(['middleware' => 'permission:Manage Employee|Assign Benifit'], function(){
-		Route::get('hr/employee/benefits','Hr\Recruitment\BenefitController@benefits');
+		Route::get('hr/payroll/employee-benefit','Hr\Recruitment\BenefitController@benefits');
 		Route::post('hr/recruitment/operation/benefits','Hr\Recruitment\BenefitController@benefitStore');
 		Route::get('hr/recruitment/get_benefit_by_id','Hr\Recruitment\BenefitController@getBenefitByID');
 	});
