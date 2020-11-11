@@ -1113,7 +1113,7 @@ Route::get('hr/setup/retirement/get_employee_details', 'Hr\Setup\RetirementPolic
 	Route::get('hr/reports/daily-attendance-activity', 'Hr\Reports\DailyActivityReportController@attendance');
 	Route::get('hr/reports/daily-attendance-activity-report', 'Hr\Reports\DailyActivityReportController@attendanceReport');
 	Route::get('hr/reports/daily-present-absent-activity-report', 'Hr\Reports\DailyActivityReportController@presentAbsentReport');
-
+	Route::get('hr/reports/activity-report-excle', 'Hr\Reports\DailyActivityReportController@activityExcle');
 	// monthly report
 	Route::get('hr/reports/monthly-attendance-activity', 'Hr\Reports\MonthlyActivityReportController@attendance');
 	Route::get('hr/reports/monthly-attendance-activity-data', 'Hr\Reports\MonthlyActivityReportController@attendanceData');
