@@ -41,8 +41,8 @@ if(!function_exists('get_att_table')){
 	function get_att_table($unit = null)
 	{
 		$tableName = "";
-
-        if($unit== 1 || $unit == 4 || $unit ==5 || $unit ==9){
+        // all mbm unit 145
+        if($unit== 1 || $unit == 4 || $unit ==5 || $unit ==9 || $unit ==145){
             $tableName= "hr_attendance_mbm";
         }
         else if($unit==2){

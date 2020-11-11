@@ -1,15 +1,13 @@
 <div class="panel">
 	<div class="panel-body">
-		<div class="report_section">
+		@if($input['report_format'] == 0)
 			@php
-				$unit = unit_by_id();
-				$line = line_by_id();
-				$floor = floor_by_id();
-				$department = department_by_id();
-				$designation = designation_by_id();
-				$section = section_by_id();
-				$subSection = subSection_by_id();
-				$area = area_by_id();
+				$urldata = http_build_query($input) . "\n";
+			@endphp
+			<a href='{{ url("hr/reports/activity-report-excle?$urldata")}}' target="_blank" class="btn btn-sm btn-info hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download" style="position: absolute; top: 15px; left: 65px;"><i class="fa fa-file-excel-o"></i></a>
+		@endif
+		<div class="report_section" id="report_section">
+			@php
 				$formatHead = explode('_',$format);
 			@endphp
 			
@@ -17,10 +15,15 @@
 				@if($input['report_format'] == 0 || ($input['report_format'] == 1 && $format != null))
 				<div class="page-header">
 		            <h2 style="margin:4px 10px; font-weight: bold; text-align: center;">OT @if($input['report_format'] == 0) Details @else Summary @endif Report </h2>
-		            <table class="table no-border f-16" border="0">
+		            <table class="table no-border f-16">
 		            	<tr>
 		            		<td>
-		            			Unit <b>: {{ $unit[$input['unit']]['hr_unit_name'] }}</b> <br>
+	            			@if($input['unit'] != null)
+	            				Unit <b>: {{ $input['unit'] == 145?'MBM + MBF + MBM 2':$unit[$input['unit']]['hr_unit_name'] }}</b> <br>
+		        			@endif
+		        			@if($input['location'] != null)
+		        				Location <b>: {{ $location[$input['location']]['hr_location_name'] }}</b> <br>
+		        			@endif
 		            		@if($input['area'] != null)
 		            			Area 
 		                			<b>: {{ $area[$input['area']]['hr_area_name'] }}</b> <br>
@@ -109,7 +112,7 @@
 				@if($input['report_format'] == 0)
 					@foreach($uniqueGroups as $group)
 					
-					<table class="table table-bordered table-hover table-head">
+					<table class="table table-bordered table-hover table-head" border="1">
 						<thead>
 							@if(count($getEmployee) > 0)
 			                <tr>
@@ -126,6 +129,9 @@
 									}elseif($format == 'as_section_id'){
 										$head = 'Section';
 										$body = $section[$group]['hr_section_name']??'N/A';
+									}elseif($format == 'as_subsection_id'){
+										$head = 'Sub Section';
+										$body = $subSection[$group]['hr_subsec_name']??'N/A';
 									}elseif($format == 'as_designation_id'){
 										$head = 'Designation';
 										$body = $designation[$group]['hr_designation_name']??'N/A';
@@ -140,7 +146,7 @@
 								@endphp
 			                	@if($head != '')
 			                    <th colspan="2">{{ $head }}</th>
-			                    <th colspan="10">{{ $body }}</th>
+			                    <th colspan="12">{{ $body }}</th>
 			                    @endif
 			                </tr>
 			                @endif
@@ -149,8 +155,11 @@
 			                    {{-- <th>Photo</th> --}}
 			                    <th>Associate ID</th>
 			                    <th>Name & Phone</th>
+			                    <th>Oracle ID</th>
 			                    <th>Designation</th>
 			                    <th>Department</th>
+			                    <th>Section</th>
+			                    <th>Sub Section</th>
 			                    <th>Floor</th>
 			                    <th>Line</th>
 			                    <th>In-Time</th>
@@ -180,8 +189,11 @@
 				            		<b>{{ $employee->as_name }}</b>
 				            		<p>{{ $employee->as_contact }}</p>
 				            	</td>
+				            	<td>{{ $employee->as_oracle_code }}</td>
 				            	<td>{{ $designation[$employee->as_designation_id]['hr_designation_name']??'' }}</td>
 				            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
+				            	<td>{{ $section[$employee->as_section_id]['hr_section_name']??'' }}</td>
+				            	<td>{{ $subSection[$employee->as_subsection_id]['hr_subsec_name']??'' }}</td>
 				            	<td>{{ $floor[$employee->as_floor_id]['hr_floor_name']??'' }}</td>
 				            	<td>{{ $line[$employee->as_line_id]['hr_line_name']??'' }}</td>
 				            	<td>{{ date('H:i:s', strtotime($employee->in_time)) }}</td>
@@ -202,8 +214,11 @@
 					            		<b>{{ $employee->as_name }}</b>
 					            		<p>{{ $employee->as_contact }}</p>
 					            	</td>
+					            	<td>{{ $employee->as_oracle_code }}</td>
 					            	<td>{{ $designation[$employee->as_designation_id]['hr_designation_name']??'' }}</td>
 					            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
+					            	<td>{{ $section[$employee->as_section_id]['hr_section_name']??'' }}</td>
+					            	<td>{{ $subSection[$employee->as_subsection_id]['hr_subsec_name']??'' }}</td>
 					            	<td>{{ $floor[$employee->as_floor_id]['hr_floor_name']??'' }}</td>
 					            	<td>{{ $line[$employee->as_line_id]['hr_line_name']??'' }}</td>
 					            	<td>{{ date('H:i:s', strtotime($employee->in_time)) }}</td>
@@ -217,21 +232,14 @@
 				            	@endif
 			            	@endif
 			            @endforeach
-			            @else
-				            <tr>
-				            	<td colspan="12" class="text-center">No OT Employee Found!</td>
-				            </tr>
-			            @endif
-			            </tbody>
-			            <tfoot>
-			            	<tr>
-			            		<td colspan="9"></td>
-			            		<td><b>Total Employee</b></td>
+			            	{{-- <tr>
+			            		<td colspan="10"></td>
+			            		<td colspan="2"><b>Total Employee</b></td>
 			            		<td colspan="2"><b>{{ $i }}</b></td>
-			            	</tr>
+			            	</tr> --}}
 			            	<tr>
-			            		<td colspan="9"></td>
-			            		<td><b>Total OT Hour</b></td>
+			            		<td colspan="10"></td>
+			            		<td colspan="2"><b>Total OT Hour</b></td>
 			            		<td colspan="2"><b>
 			            			@php
 			            			
@@ -240,7 +248,12 @@
 			            			@endphp
 			            		</b></td>
 			            	</tr>
-			            </tfoot>
+			            @else
+				            <tr>
+				            	<td colspan="14" class="text-center">No OT Employee Found!</td>
+				            </tr>
+			            @endif
+			            </tbody>
 					</table>
 					@endforeach
 				@elseif(($input['report_format'] == 1 && $format != null))
@@ -257,33 +270,64 @@
 							$head = 'Designation';
 						}elseif($format == 'as_section_id'){
 							$head = 'Section';
+						}elseif($format == 'as_subsection_id'){
+							$head = 'Sub Section';
 						}elseif($format == 'ot_hour'){
 							$head = 'Hour';
 						}else{
 							$head = '';
 						}
 					@endphp
-					<table class="table table-bordered table-hover table-head">
+					<table class="table table-bordered table-hover table-head" border="1">
 						<thead>
 							<tr>
 								<th>Sl</th>
+								@if($format == 'as_section_id' || $format == 'as_subsection_id')
+								<th>Department Name</th>
+								@endif
+								@if($format == 'as_subsection_id')
+								<th>Section Name</th>
+								@endif
 								<th> {{ $head }} {{ $format != 'ot_hour'?'Name':'' }}</th>
 								<th>No. Of Employee</th>
 								<th>Total OT Hour</th>
 							</tr>
 						</thead>
 						<tbody>
-							@php $i=0; $totalEmployee = 0; @endphp
+							@php $i=0; @endphp
 							@if(count($getEmployee) > 0)
 							@foreach($getEmployee as $employee)
-
+							@php $group = $employee->$format; @endphp
 							<tr>
 								<td>{{ ++$i }}</td>
+								@if($format == 'as_section_id' || $format == 'as_subsection_id')
 								<td>
 									@php
-										$group = $employee->$format;
+										if($format == 'as_subsection_id'){
+											$getDepar = $subSection[$group]['hr_subsec_department_id']??'';
+										}else{
+											$getDepar = $section[$group]['hr_section_department_id']??'';
+										}
+										echo $department[$getDepar]['hr_department_name']??'';
+									@endphp
+								</td>
+								@endif
+								@if($format == 'as_subsection_id')
+								<td>
+									@php
+										$getSec = $subSection[$group]['hr_subsec_section_id']??'';
+										echo $section[$getSec]['hr_section_name']??'';
+									@endphp
+								</td>
+								@endif
+								<td>
+									@php
 										if($format == 'as_unit_id'){
-											$body = $unit[$group]['hr_unit_name']??'';
+											if($group == 145){
+												$body = 'MBM + MBF + MBM 2';
+											}else{
+												$body = $unit[$group]['hr_unit_name']??'';
+											}
 										}elseif($format == 'as_line_id'){
 											$body = $line[$group]['hr_line_name']??'';
 										}elseif($format == 'as_floor_id'){
@@ -292,6 +336,8 @@
 											$body = $department[$group]['hr_department_name']??'';
 										}elseif($format == 'as_section_id'){
 											$body = $section[$group]['hr_section_name']??'N/A';
+										}elseif($format == 'as_subsection_id'){
+											$body = $subSection[$group]['hr_subsec_name']??'';
 										}elseif($format == 'as_designation_id'){
 											$body = $designation[$group]['hr_designation_name']??'';
 										}elseif($format == 'ot_hour'){
@@ -306,7 +352,6 @@
 								</td>
 								<td>
 									{{ $employee->total }}
-									@php $totalEmployee += $employee->total; @endphp
 								</td>
 								<td>
 									@php 
@@ -319,7 +364,7 @@
 							@endforeach
 							@else
 							<tr>
-				            	<td colspan="4" class="text-center">No OT Employee Found!</td>
+				            	<td colspan="{{ ($format == 'as_subsection_id' || $format == 'as_subsection_id')?'6':'4'}}" class="text-center">No OT Employee Found!</td>
 				            </tr>
 							@endif
 						</tbody>
