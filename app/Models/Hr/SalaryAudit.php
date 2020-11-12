@@ -2,8 +2,9 @@
 
 namespace App\Models\Hr;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Hr\SalaryAudit;
 use App\User;
+use Illuminate\Database\Eloquent\Model;
 
 class SalaryAudit extends Model
 {

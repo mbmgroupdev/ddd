@@ -9,7 +9,24 @@
             cursor: default;
         }
         div.text-center b{
-            font-size: 22px;
+            font-size: 20px;
+        }
+        .mh-410{
+            max-height: 410px;
+            overflow: auto;
+        }
+        .min-h-415{
+            min-height: 415px;
+        }
+        .font-italic{
+            font-style: italic;
+        }
+        #top-tab-list {
+          margin: 0 -10px 20px !important;
+        }
+        #top-tab-list li a {
+            border-radius: 10px !important;
+            -webkit-border-radius: 10px !important;
         }
     </style>
 @endpush
@@ -69,16 +86,9 @@
                 <!-- /.col -->
             </div>
             <div class="row">
-                <div class="col h-min-400">
+                <div class="col ">
                     <div id="result-process-bar" style="display: none;">
-                        <div class="iq-card">
-                            <div class="iq-card-body">
-                                <div class="" id="result-data">
-                                    <div class="panel"><div class="panel-body"><p style="text-align:center;margin:100px;"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>
-                                    
-                                </div>
-                            </div>
-                        </div>
+                        <div class="" id="result-data"></div>
                     </div>
                     
                 </div>
@@ -94,12 +104,13 @@
     @endif 
     // generate salary sheet
     function generate() {
-        
+        $("#result-process-bar").show();
+        $('#result-data').html('<div class="panel"><div class="panel-body"><p style="text-align:center;margin:100px;"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>');
         var form = $("#unitWiseSalary");
         var unit = $("#unit").val();
         var month = $("#month").val();
         if(unit !== '' && month !== ''){
-            $("#result-process-bar").show();
+            
             $.ajax({
                 type: "get",
                 url: '{{ url("hr/operation/salary-generate")}}',

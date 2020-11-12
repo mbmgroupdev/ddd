@@ -299,7 +299,8 @@ class SalaryProcessController extends Controller
                 $input['month'] = date('m', strtotime($input['month_year']));
                 $input['year'] = date('Y', strtotime($input['month_year']));
                 $salaryStatus = SalaryAudit::checkSalaryAuditStatus($input);
-                return view('hr.operation.salary.aduit_status', compact('salaryStatus', 'input'));
+                $auditHistory = SalaryAuditHistory::checkSalaryAduitHistory($input);
+                return view('hr.operation.salary.aduit_status', compact('salaryStatus', 'input', 'auditHistory'));
             }
 
             return view('hr.operation.salary.generate', compact('units'));
@@ -313,6 +314,7 @@ class SalaryProcessController extends Controller
     public function salaryAuditStatus(Request $request)
     {
         $input = $request->all();
+        // return $input
         $data['type'] = 'error';
         if($input['month_year'] == ''){
             $data['message'] = 'Something Wrong, please Reload The Page';
@@ -324,36 +326,39 @@ class SalaryProcessController extends Controller
             $aduit['year'] = date('Y', strtotime($input['month_year'])); 
             $aduit['unit_id'] = $input['unit']; 
             $salaryAuditStatus = SalaryAudit::checkSalaryAuditStatus($aduit);
-            if($input['status'] == 1){
-                if($salaryAuditStatus != null){
-                    if($salaryAuditStatus->initial_audit == null){
-                        $aduit['initial_audit'] = Auth::user()->id;
-                        $aduit['initial_comment'] = $input['comment'];
-                        $aduitHistory['stage'] = 2;
-                    }elseif($salaryAuditStatus->accounts_audit == null){
-                        $aduit['accounts_audit'] = Auth::user()->id;
-                        $aduit['accounts_comment'] = $input['comment'];
-                        $aduitHistory['stage'] = 3;
-                    }elseif($salaryAuditStatus->management_audit == null){
-                        $aduit['management_audit'] = Auth::user()->id;
-                        $aduit['management_comment'] = $input['comment'];
-                        $aduitHistory['stage'] = 4;
-                    }
+            if($salaryAuditStatus != null){
+                if($salaryAuditStatus->initial_audit == null){
+                    $aduit['initial_audit'] = Auth::user()->id;
+                    $aduit['initial_comment'] = $input['comment'];
+                    $aduitHistory['stage'] = 2;
+                }elseif($salaryAuditStatus->accounts_audit == null){
+                    $aduit['accounts_audit'] = Auth::user()->id;
+                    $aduit['accounts_comment'] = $input['comment'];
+                    $aduitHistory['stage'] = 3;
+                }elseif($salaryAuditStatus->management_audit == null){
+                    $aduit['management_audit'] = Auth::user()->id;
+                    $aduit['management_comment'] = $input['comment'];
+                    $aduitHistory['stage'] = 4;
+                }
+                if($input['status'] == 1){
                     $salaryAuditStatus->update($aduit);
                 }else{
+                    $audit = SalaryAudit::findOrFail($salaryAuditStatus->id);
+                    $audit->delete();
+                }
+            }else{
+                if($input['status'] == 1){
                     $aduit['hr_audit'] = Auth::user()->id;
                     $aduit['hr_comment'] = $input['comment'];
                     $aduitHistory['stage'] = 1;
                     SalaryAudit::create($aduit);
                 }
-            }else{
-                $audit = SalaryAudit::findOrFail($salaryAuditStatus->id);
-                $audit->delete();
             }
             
             // audit history
             $aduitHistory['month'] = $aduit['month']; 
             $aduitHistory['year'] = $aduit['year']; 
+            $aduitHistory['unit_id'] = $input['unit']; 
             $aduitHistory['audit_id'] = Auth::user()->id; 
             $aduitHistory['status'] = $input['status']; 
             $aduitHistory['comment'] = $input['comment'];

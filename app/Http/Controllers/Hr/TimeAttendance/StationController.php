@@ -508,7 +508,7 @@ class StationController extends Controller
         })
         ->orderBy('end_date', 'asc')
         ->get();
-    //  return $data;
+     // return $data;
         $getLine = line_by_id();
         $getFloor = floor_by_id();
         $getUnit = unit_by_id();
@@ -529,7 +529,9 @@ class StationController extends Controller
                 return $data->as_name. ' - '.$data->as_contact;
             })
             ->addColumn('current_line', function($data) use ($getFloor, $getLine){
-                return $getFloor[$data->as_floor_id]['hr_floor_name']??''.' - '.$getLine[$data->as_line_id]['hr_line_name']??'';
+                $cFloor = $getFloor[$data->as_floor_id]['hr_floor_name']??'';
+                $cLine = $getLine[$data->as_line_id]['hr_line_name']??'';
+                return $cFloor.' - '.$cLine;
             })
             ->addColumn('changed_floor', function($data) use ($getFloor){
                 return $getFloor[$data->changed_floor]['hr_floor_name']??'';
