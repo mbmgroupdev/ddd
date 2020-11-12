@@ -881,6 +881,17 @@ class TestController extends Controller
 
     public function check()
     {
+
+        // $getData = DB::table('hr_monthly_salary AS s')
+        // ->join('hr_as_basic_info AS b', 's.as_id', 'b.associate_id')
+        // ->where('b.as_unit_id', 2)
+        // ->where('b.as_location', 7)
+        // ->where('s.month', '10')
+        // ->where('s.present', '>', 1)
+        // ->get();
+        // dd($getData);
+
+        
         // $user = DB::table('hr_as_basic_info')->where('as_doj', 'like','2020-11%')->get();
         // $data = [];
         // foreach ($user as $key => $e) {
@@ -891,21 +902,21 @@ class TestController extends Controller
             
         // }
         // dd($query);
-        $user = DB::table('hr_as_basic_info')->where('as_doj', '>=','2020-02-01')->get();
-            $data = [];
-        foreach ($user as $key => $e) {
-            $query = DB::table('holiday_roaster')
-                                      ->where('as_id', $e->associate_id)
-                                      ->whereDate('date','<',$e->as_doj)
-                                      ->delete();
+        // $user = DB::table('hr_as_basic_info')->where('as_doj', '>=','2020-11-01')->get();
+        //     $data = [];
+        // foreach ($user as $key => $e) {
+        //     $query = DB::table('holiday_roaster')
+        //                               ->where('as_id', $e->associate_id)
+        //                               ->whereDate('date','<',$e->as_doj)
+        //                               ->get()->toArray();
             
-        }
-        dd($query);
-        // $user = DB::table('hr_as_basic_info')->where('as_doj', '>=','2020-02-01')->get();
+        // }
+        // dd($query);
+        // $user = DB::table('hr_as_basic_info')->where('as_doj', '>=','2020-11-01')->get();
         //     $data = [];
         // foreach ($user as $key => $e) {
         //     $query = DB::table('hr_absent')
-        //                               ->where('date', 'like', '2020-02%')
+        //                               ->where('date', 'like', '2020-11%')
         //                               ->where('associate_id', $e->associate_id)
         //                               ->whereDate('date','<',$e->as_doj)
         //                               ->pluck('id','date');
@@ -914,87 +925,88 @@ class TestController extends Controller
         //     }
         // }
         // dd($data);
-        /*$leave_array = [];
-                $absent_array = [];
-                for($i=1; $i<=29; $i++) {
-                $date = date('Y-m-d', strtotime('2020-02-'.$i));
-                $leave = DB::table('hr_attendance_mbm AS a')
-                        ->where('a.in_time', 'like', $date.'%')
-                        // ->where('a.as_id', 8958)
-                        ->leftJoin('hr_as_basic_info AS b', function($q){
-                            $q->on('b.as_id', 'a.as_id');
-                        })
-                        ->pluck('b.associate_id');
-                $leave_array[] = $leave;
-                $absent_array[] = DB::table('hr_absent')
-                        ->whereDate('date', $date)
-                        ->whereIn('associate_id', $leave)
-                        ->get()->toArray();
-                }
-                dump($leave_array,$absent_array);
-                dd('end');*/
+        // $leave_array = [];
+        //         $absent_array = [];
+        //         for($i=1; $i<=12; $i++) {
+        //         $date = date('Y-m-d', strtotime('2020-11-'.$i));
+        //         $leave = DB::table('hr_attendance_mbm AS a')
+        //                 ->where('a.in_time', 'like', $date.'%')
+        //                 // ->where('a.as_id', 8958)
+        //                 ->leftJoin('hr_as_basic_info AS b', function($q){
+        //                     $q->on('b.as_id', 'a.as_id');
+        //                 })
+        //                 ->pluck('b.associate_id');
+        //         $leave_array[] = $leave;
+        //         $absent_array[] = DB::table('hr_absent')
+        //                 ->whereDate('date', $date)
+        //                 ->whereIn('associate_id', $leave)
+        //                 ->get()->toArray();
+        //         }
+        //         dump($leave_array,$absent_array);
+        //         dd('end');
 
-                /*$leave_array = [];
-                $absent_array = [];
-                for($i=1; $i<=29; $i++) {
-                $date = date('Y-m-d', strtotime('2020-02-'.$i));
-                $leave = DB::table('hr_absent AS a')
-                        ->where('a.date', '=', $date)
-                        ->whereIn('b.as_unit_id', [1, 4, 5])
-                        ->leftJoin('hr_as_basic_info AS b', function($q){
-                            $q->on('b.associate_id', 'a.associate_id');
-                        })
-                        ->pluck('b.as_id', 'b.associate_id');
-                $leave_array[] = $leave;
-                $absent_array[] = DB::table('hr_attendance_mbm')
-                        ->whereDate('in_time', $date)
-                        ->whereIn('as_id', $leave)
-                        ->delete();
-                }
-                dump($leave_array,$absent_array);
-                dd('end');*/
-            /*$leave_array = [];
-            $absent_array = [];
-            for($i=1; $i<=29; $i++) {
-            $date = date('Y-m-d', strtotime('2020-02-'.$i));
-            $leave = DB::table('hr_leave AS l')
-                    ->where('l.leave_from', '<=', $date)
-                    ->where('l.leave_to',   '>=', $date)
-                    ->where('l.leave_status', '=', 1)
-                    ->whereIn('b.as_unit_id', [1, 4, 5])
-                    ->leftJoin('hr_as_basic_info AS b', function($q){
-                        $q->on('b.associate_id', 'l.leave_ass_id');
-                    })
-                    ->pluck('b.as_id', 'b.associate_id');
-            $leave_array[] = $leave;
-            $absent_array[] = DB::table('hr_attendance_mbm')
-                    ->whereDate('in_time', $date)
-                    ->whereIn('as_id', $leave)
-                    ->get()->toArray();
-            }
-            dump($leave_array,$absent_array);
-            dd('end');
+                // $leave_array = [];
+                // $absent_array = [];
+                // for($i=1; $i<=13; $i++) {
+                // $date = date('Y-m-d', strtotime('2020-11-'.$i));
+                // $leave = DB::table('hr_absent AS a')
+                //         ->where('a.date', '=', $date)
+                //         ->whereIn('b.as_unit_id', [1, 4, 5])
+                //         ->leftJoin('hr_as_basic_info AS b', function($q){
+                //             $q->on('b.associate_id', 'a.associate_id');
+                //         })
+                //         ->pluck('b.as_id', 'b.associate_id');
+                // $leave_array[] = $leave;
+                // $absent_array[] = DB::table('hr_attendance_mbm')
+                //         ->whereDate('in_time', $date)
+                //         ->whereIn('as_id', $leave)
+                //         ->get()->toArray();
+                // }
+                // dump($leave_array,$absent_array);
+                // dd('end');
+            // $leave_array = [];
+            // $absent_array = [];
+            // for($i=1; $i<=13; $i++) {
+            // $date = date('Y-m-d', strtotime('2020-11-'.$i));
+            // $leave = DB::table('hr_leave AS l')
+            //         ->where('l.leave_from', '<=', $date)
+            //         ->where('l.leave_to',   '>=', $date)
+            //         ->where('l.leave_status', '=', 1)
+            //         ->whereIn('b.as_unit_id', [1, 4, 5])
+            //         ->leftJoin('hr_as_basic_info AS b', function($q){
+            //             $q->on('b.associate_id', 'l.leave_ass_id');
+            //         })
+            //         ->pluck('b.as_id', 'b.associate_id');
+            // $leave_array[] = $leave;
+            // $absent_array[] = DB::table('hr_attendance_mbm')
+            //         ->whereDate('in_time', $date)
+            //         ->whereIn('as_id', $leave)
+            //         ->get()->toArray();
+            // }
+            // return "done";
+            // dump($leave_array,$absent_array);
+            // dd('end');
 
-            $leave_array = [];
-            $absent_array = [];
-            for($i=1; $i<=29; $i++) {
-            $date = date('Y-m-d', strtotime('2020-02-'.$i));
-            $leave = DB::table('hr_leave AS l')
-                    ->where('l.leave_from', '<=', $date)
-                    ->where('l.leave_to',   '>=', $date)
-                    ->where('l.leave_status', '=', 1)
-                    ->leftJoin('hr_as_basic_info AS b', function($q){
-                        $q->on('b.associate_id', 'l.leave_ass_id');
-                    })
-                    ->pluck('b.associate_id','b.as_id');
-            $leave_array[] = $leave;
-            $absent_array[] = DB::table('hr_absent')
-                    ->whereDate('date', $date)
-                    ->whereIn('associate_id', $leave)
-                    ->delete();
-            }
-            dump($leave_array,$absent_array);
-            dd('end');*/
+            // $leave_array = [];
+            // $absent_array = [];
+            // for($i=1; $i<=14; $i++) {
+            // $date = date('Y-m-d', strtotime('2020-11-'.$i));
+            // $leave = DB::table('hr_leave AS l')
+            //         ->where('l.leave_from', '<=', $date)
+            //         ->where('l.leave_to',   '>=', $date)
+            //         ->where('l.leave_status', '=', 1)
+            //         ->leftJoin('hr_as_basic_info AS b', function($q){
+            //             $q->on('b.associate_id', 'l.leave_ass_id');
+            //         })
+            //         ->pluck('b.associate_id','b.as_id');
+            // $leave_array[] = $leave;
+            // $absent_array[] = DB::table('hr_absent')
+            //         ->whereDate('date', $date)
+            //         ->whereIn('associate_id', $leave)
+            //         ->get()->toArray();
+            // }
+            // dump($leave_array,$absent_array);
+            // dd('end');
     }
     
 

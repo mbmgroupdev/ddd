@@ -34,6 +34,7 @@
       line-height: 15px !important;
     }
     
+    
   </style>
 @endpush
 <div class="main-content">
@@ -167,7 +168,7 @@
                                     <div class="col-3">
                                         
                                         <div class="form-group has-float-label has-required">
-                                          <input type="month" class="report_date form-control" id="report-date" name="month" placeholder=" Month-Year"required="required" value="{{ date('Y-m', strtotime('-1 month')) }}"autocomplete="off" readonly>
+                                          <input type="month" class="report_date form-control" id="report-date" name="month" placeholder=" Month-Year"required="required" value="{{ date('Y-m', strtotime($input['month'])) }}"autocomplete="off" readonly>
                                           <label for="report-date">Month</label>
                                         </div>
                                         <div class="form-group has-float-label has-required select-search-group">
@@ -216,7 +217,7 @@
                                           </div>
                                           <div class="modal-footer">
                                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                             <button type="button" id="auditSalary" class="btn btn-primary">Save & Submit</button>
+                                             <button type="button" id="auditSalary" class="btn btn-primary auditbtn">Save & Submit</button>
                                           </div>
                                         </form>
                                        </div>
@@ -487,6 +488,7 @@
       // });
 
       $('#auditSalary').on("click", function(){
+
         var status = 0;
           if ($("#status").is(":checked")) { 
               status = 1;
@@ -494,12 +496,13 @@
           var comment = $('input[name="comment"]').val();
           var month = $('input[name="month"]').val();
           var unitId = $('input[name="unitId"]').val();
-          console.log(unitId);
+          // console.log(month);
           if(status == 0 && comment == ''){
             $.notify('If Audit Reject then Type Comment', 'error');
           }else if(month == ''){
             $.notify('Something Wrong, please Reload The Page', 'error');
           }else{
+            $('.auditbtn').attr('disabled','disabled');
             $.ajax({
              url : "{{ url('hr/operation/salary-audit') }}",
              type: 'post',

@@ -90,78 +90,78 @@ class LeaveWorkerController extends Controller
                     $leaveMonth = date("m", strtotime($endDate));
                     $currentDate = Carbon::now();
                     $lastMonth = $currentDate->startOfMonth()->subMonth()->format('m');
-                    if($endDate <= $today){
-                        $checkAbsent = Absent::checkDateRangeEmployeeAbsent($startDate, $endDate, $request->leave_ass_id);
-                        $absentCount = count($checkAbsent);
-                        if($absentCount > 0){
-                            foreach ($checkAbsent as $absent) {
-                                $getAbsent = Absent::findOrFail($absent->id);
-                                $getAbsent->delete();
-                            }
-                        }
-
-                        $getEmployee = Employee::getEmployeeAssociateIdWise($request->leave_ass_id);
-                        $tableName = Custom::unitWiseAttendanceTableName($getEmployee->as_unit_id);
-                        // attendance remove 
-                        $attendance = DB::table($tableName)
-                                    ->where('as_id', $getEmployee->as_id)
-                                    ->whereDate('in_time','>=', $startDate)
-                                    ->whereDate('in_time','<=', $endDate)
-                                    ->delete();
-
-                        
-                        // check previous month leave
-                        if($leaveMonth == $lastMonth){
-                            // check activity lock/unlock
-                            $yearMonth = date('Y-m', strtotime('-1 month'));
-                            $lock['month'] = date('m', strtotime($yearMonth));
-                            $lock['year'] = date('Y', strtotime($yearMonth));
-                            $lock['unit_id'] = $getEmployee->as_unit_id;
-                            $lockActivity = monthly_activity_close($lock);
-                            if($lockActivity == 0){
-                                if($getEmployee != null){
-                                    $yearLeave = Carbon::parse($request->leave_from)->format('Y');
-                                    $monthLeave = Carbon::parse($request->leave_from)->format('m');
-                                    $yearMonth = $yearLeave.'-'.$monthLeave; 
-                                    if($monthLeave == date('m')){
-                                        $totalDay = date('d');
-                                    }else{
-                                        $totalDay = Carbon::parse($yearMonth)->daysInMonth;
-                                    }
-                                    $queue = (new ProcessUnitWiseSalary($tableName, $monthLeave, $yearLeave, $getEmployee->as_id, $totalDay))
-                                            ->onQueue('salarygenerate')
-                                            ->delay(Carbon::now()->addSeconds(2));
-                                            dispatch($queue);
-                                }
-                                
-                            }else{
-                                if($absentCount > 0){
-                                    $getBenefit = Benefits::getEmployeeAssIdwise($request->leave_ass_id);
-                                    $perDayBasic = $getBenefit->ben_basic / 30;
-                                    $getSalaryAdjust = SalaryAdjustMaster::getCheckEmployeeIdMonthYearWise($request->leave_ass_id, $month, $year);
-                                    
-                                    if($getSalaryAdjust == null){
-                                        $mId = SalaryAdjustMaster::insertEmployeeIdMonthYearWise($request->leave_ass_id, $month, $year); 
-                                    }else{
-                                        $mId = $getSalaryAdjust->id;
-                                    }
-                                    foreach ($checkAbsent as $absent) {
-                                        $getData['master_id'] = $mId;
-                                        $getData['date'] = $absent->date;
-                                        $getData['amount'] = $perDayBasic;
-                                        $getData['type'] = 1;
-                                        $getData['status'] = 1;
-                                        $getMasterDetails = SalaryAdjustDetails::getCheckEmployeeWiseMasterDetails($getData);
-                                        if($getMasterDetails == null){
-                                            SalaryAdjustDetails::insertMasterDetails($getData);
-                                        }
-                                        
-                                    }
-                                }
-                            }
-                            
+                    
+                    $checkAbsent = Absent::checkDateRangeEmployeeAbsent($startDate, $endDate, $request->leave_ass_id);
+                    $absentCount = count($checkAbsent);
+                    if($absentCount > 0){
+                        foreach ($checkAbsent as $absent) {
+                            $getAbsent = Absent::findOrFail($absent->id);
+                            $getAbsent->delete();
                         }
                     }
+
+                    $getEmployee = Employee::getEmployeeAssociateIdWise($request->leave_ass_id);
+                    $tableName = Custom::unitWiseAttendanceTableName($getEmployee->as_unit_id);
+                    // attendance remove 
+                    $attendance = DB::table($tableName)
+                                ->where('as_id', $getEmployee->as_id)
+                                ->where('in_date','>=', $startDate)
+                                ->where('in_date','<=', $endDate)
+                                ->delete();
+
+                    
+                    // check previous month leave
+                    if($leaveMonth == $lastMonth){
+                        // check activity lock/unlock
+                        $yearMonth = date('Y-m', strtotime('-1 month'));
+                        $lock['month'] = date('m', strtotime($yearMonth));
+                        $lock['year'] = date('Y', strtotime($yearMonth));
+                        $lock['unit_id'] = $getEmployee->as_unit_id;
+                        $lockActivity = monthly_activity_close($lock);
+                        if($lockActivity == 0){
+                            if($getEmployee != null){
+                                $yearLeave = Carbon::parse($request->leave_from)->format('Y');
+                                $monthLeave = Carbon::parse($request->leave_from)->format('m');
+                                $yearMonth = $yearLeave.'-'.$monthLeave; 
+                                if($monthLeave == date('m')){
+                                    $totalDay = date('d');
+                                }else{
+                                    $totalDay = Carbon::parse($yearMonth)->daysInMonth;
+                                }
+                                $queue = (new ProcessUnitWiseSalary($tableName, $monthLeave, $yearLeave, $getEmployee->as_id, $totalDay))
+                                        ->onQueue('salarygenerate')
+                                        ->delay(Carbon::now()->addSeconds(2));
+                                        dispatch($queue);
+                            }
+                            
+                        }else{
+                            if($absentCount > 0){
+                                $getBenefit = Benefits::getEmployeeAssIdwise($request->leave_ass_id);
+                                $perDayBasic = $getBenefit->ben_basic / 30;
+                                $getSalaryAdjust = SalaryAdjustMaster::getCheckEmployeeIdMonthYearWise($request->leave_ass_id, $month, $year);
+                                
+                                if($getSalaryAdjust == null){
+                                    $mId = SalaryAdjustMaster::insertEmployeeIdMonthYearWise($request->leave_ass_id, $month, $year); 
+                                }else{
+                                    $mId = $getSalaryAdjust->id;
+                                }
+                                foreach ($checkAbsent as $absent) {
+                                    $getData['master_id'] = $mId;
+                                    $getData['date'] = $absent->date;
+                                    $getData['amount'] = $perDayBasic;
+                                    $getData['type'] = 1;
+                                    $getData['status'] = 1;
+                                    $getMasterDetails = SalaryAdjustDetails::getCheckEmployeeWiseMasterDetails($getData);
+                                    if($getMasterDetails == null){
+                                        SalaryAdjustDetails::insertMasterDetails($getData);
+                                    }
+                                    
+                                }
+                            }
+                        }
+                        
+                    }
+                    
                     $msg = 'Leave Entry Saved';
                     DB::commit();
                     $this->logFileWrite($msg, $store->id );

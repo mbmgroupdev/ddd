@@ -84,7 +84,7 @@ class NotifLeaveController extends Controller
                   $leaveMonth = date("m", strtotime($getLeave->leave_to));
                   $currentDate = Carbon::now();
                   $lastMonth = $currentDate->startOfMonth()->subMonth()->format('m');
-                  if($getLeave->leave_to <= $today){
+                  
                     $checkAbsent = Absent::checkDateRangeEmployeeAbsent($getLeave->leave_from, $getLeave->leave_to, $getLeave->leave_ass_id);
                     if(count($checkAbsent) > 0){
                       foreach ($checkAbsent as $absent) {
@@ -152,7 +152,7 @@ class NotifLeaveController extends Controller
                         }
 
                     }
-                  }
+                  
                 }
                 $this->logFileWrite("Leave Status Updated", $request->id );
                 return redirect()->intended('hr/notification/leave/leave_app_list')

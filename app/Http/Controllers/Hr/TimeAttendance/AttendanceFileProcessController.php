@@ -37,6 +37,7 @@ class AttendanceFileProcessController extends Controller
             $data['device'] = $input['device'];
             $fileData = file_get_contents($request->file('file'));
             $dataResult = explode(PHP_EOL, $fileData);
+            $dataResult = mb_convert_encoding($dataResult, 'UTF-8', 'UTF-8');
             $checkData = json_encode($dataResult);
             if(empty($checkData)){
                 toastr()->error('There is error in your file');
