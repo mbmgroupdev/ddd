@@ -70,7 +70,7 @@
                               $yearMonth = $input['month_year']; 
                           @endphp
                           <div class="col-3">
-                            
+                            <a href="{{ url('hr/operation/line-change')}}" class="btn btn-sm btn-success view next_btn pull-right" data-toggle="tooltip" data-placement="top" title="" data-original-title="Employee Line Change" ><i class="fa fa-plus"></i> Line Change</a>
                           </div>
                         </div>
                      </div>

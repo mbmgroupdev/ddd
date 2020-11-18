@@ -71,11 +71,20 @@
                                   <div class="panel">
                                         <div class="panel-body">
                                             <div class="row">
-                                                <div class="col-sm-8">
+                                                <div class="col-sm-6">
                                                     <div class="form-group has-float-label has-required select-search-group">
-                                                        {{ Form::select('as_id[]', [],'', ['id'=>'as_id', 'class'=> 'associates form-control select-search no-select', 'multiple'=>"multiple",'style', 'data-validation'=>'required']) }}
+                                                        {{ Form::select('as_id[]', [],'', ['id'=>'as_id', 'class'=> 'allassociates form-control select-search no-select', 'multiple'=>"multiple",'style', 'data-validation'=>'required']) }}
                                                         <label for="as_id">Employees</label>
                                                     </div>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                  <div class="form-group has-float-label select-search-group">
+                                                    <select name="formattype" class="form-control capitalize select-search" id="formattype" >
+                                                        <option value="0" selected>Single</option>
+                                                        <option value="1">Combine</option>
+                                                    </select>
+                                                    <label for="formattype">Format</label>
+                                                  </div>
                                                 </div>
                                                 <div class="col-sm-2">
                                                     <div class="form-group has-float-label has-required">

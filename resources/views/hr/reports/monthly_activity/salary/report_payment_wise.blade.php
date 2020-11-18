@@ -404,7 +404,7 @@
 							@php $i=0; $totalEmployee = 0; @endphp
 							@if(count($getEmployee) > 0)
 							@foreach($getEmployee as $employee)
-
+							
 							<tr>
 								<td>{{ ++$i }}</td>
 								<td>

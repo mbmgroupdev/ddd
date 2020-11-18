@@ -23,7 +23,7 @@ class JobCardController extends Controller
       return $pdf->download('Job_Card_Report_'.date('d_F_Y').'.pdf');
     } elseif($request->associate != null && $request->month_year != null){
       $result = $this->empAttendanceByMonth($request);
-      // return $result;
+      // dd($result);
       $attendance = $result['attendance'];
       $info = $result['info'];
       $joinExist = $result['joinExist'];
@@ -139,7 +139,7 @@ class JobCardController extends Controller
                   ->where('hr_yhp_unit', $info->as_unit_id)
                   ->get()
                   ->keyBy('hr_yhp_dates_of_holidays')->toArray();
-      
+      // $dea = [];
       // dd($getAttendance);
       for($i=$iEx; $i<=$totalDays; $i++) {
         $date       = ($year."-".$month."-".$x++);
@@ -147,15 +147,16 @@ class JobCardController extends Controller
 
 
         $lineFloorInfo = DB::table('hr_station')
-                         ->where('associate_id',$associate)
-                         ->whereDate('start_date','<=',$thisDay)
-                         ->whereDate('end_date','>=',$thisDay)
-                         ->leftJoin('hr_floor','hr_station.changed_floor','hr_floor.hr_floor_id')
-                         ->leftJoin('hr_line','hr_station.changed_line','hr_line.hr_line_id')
-                         ->first();
+                        ->where('associate_id',$associate)
+                        ->whereDate('start_date','<=',$thisDay)
+                        ->where(function ($q) use($thisDay) {
+                          $q->whereDate('end_date', '>=', $thisDay);
+                          $q->orWhereNull('end_date');
+                        })
+                        ->first();
         
-
-
+        // $dea[$thisDay] = $lineFloorInfo;
+        // return $lineFloorInfo;
         //Default Values
         $attendance[$i]['in_time'] = null;
         $attendance[$i]['out_time'] = null;
@@ -164,8 +165,8 @@ class JobCardController extends Controller
         $attendance[$i]['present_status']="A";
         $attendance[$i]['remarks']= null;
         $attendance[$i]['date'] = $thisDay;
-        $attendance[$i]['floor'] = !empty($lineFloorInfo->hr_floor_name)?$lineFloorInfo->hr_floor_name:$floor;
-        $attendance[$i]['line'] = !empty($lineFloorInfo->hr_line_name)?$lineFloorInfo->hr_line_name:$line;
+        $attendance[$i]['floor'] = !empty($lineFloorInfo->changed_floor)?($getFloor[$lineFloorInfo->changed_floor]['hr_floor_name']??''):$floor;
+        $attendance[$i]['line'] = !empty($lineFloorInfo->changed_line)?($getLine[$lineFloorInfo->changed_line]['hr_line_name']??''):$line;
         $attendance[$i]['outside'] = null;
         $attendance[$i]['outside_msg'] = null;
         $attendance[$i]['attPlusOT'] = null;
@@ -196,7 +197,7 @@ class JobCardController extends Controller
                 $holidayCheck = $getHoliday[$thisDay]??'';
                 if($holidayCheck != ''){
                   if($holidayCheck->hr_yhp_open_status == 1) {
-                    $attendance[$i]['present_status'] = "Weekend(General)";
+                    $attendance[$i]['present_status'] = "Weekend(General)".(isset($getAttendance[$thisDay])?'':' - A');
                   }
                   else if($holidayCheck->hr_yhp_open_status == 2){
                     $attendance[$i]['present_status'] = "Weekend(OT)";
@@ -271,6 +272,7 @@ class JobCardController extends Controller
         }
 
       }
+      // return $dea;
       //end of loop
       $info->present = $total_attends;
       $info->absent = $absent;

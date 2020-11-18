@@ -585,7 +585,7 @@ class SalarySheetCustomController extends Controller
                 $getSalary = HrMonthlySalary::where('id',$salary->id)
                 ->update([
                     'disburse_date' => date('Y-m-d'),
-                    'updated_by' => auth::user()->id
+                    'updated_by' => auth()->user()->id
                 ]);
                 $result['status'] = 'success';
                 $result['value'] = 'হ্যাঁ '.Custom::engToBnConvert(date('Y-m-d'));

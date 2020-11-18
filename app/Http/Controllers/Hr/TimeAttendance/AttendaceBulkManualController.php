@@ -655,13 +655,15 @@ class AttendaceBulkManualController extends Controller
               $attendance[$i]['shift_break'] = $info->shift['hr_shift_break_time'];
               $attendance[$i]['shift_night'] = $info->shift['hr_shift_night_flag'];
             }
+            
             $lineFloorInfo = DB::table('hr_station')
-                             ->where('associate_id',$associate)
-                             ->whereDate('start_date','<=',$thisDay)
-                             ->whereDate('end_date','>=',$thisDay)
-                             ->leftJoin('hr_floor','hr_station.changed_floor','hr_floor.hr_floor_id')
-                             ->leftJoin('hr_line','hr_station.changed_line','hr_line.hr_line_id')
-                             ->first();
+                        ->where('associate_id',$associate)
+                        ->whereDate('start_date','<=',$thisDay)
+                        ->where(function ($q) use($thisDay) {
+                          $q->whereDate('end_date', '>=', $thisDay);
+                          $q->orWhereNull('end_date');
+                        })
+                        ->first();
 
             //Default Values
             $attendance[$i]['in_time']      = null;
@@ -670,8 +672,8 @@ class AttendaceBulkManualController extends Controller
             $attendance[$i]['late_status']  = null;
             $attendance[$i]['remarks']      = null;
             $attendance[$i]['date']         = $thisDay;
-            $attendance[$i]['floor']        = !empty($lineFloorInfo->hr_floor_name)?$lineFloorInfo->hr_floor_name:$floor;
-            $attendance[$i]['line']         = !empty($lineFloorInfo->hr_line_name)?$lineFloorInfo->hr_line_name:$line;
+            $attendance[$i]['floor'] = !empty($lineFloorInfo->changed_floor)?($getFloor[$lineFloorInfo->changed_floor]['hr_floor_name']??''):$floor;
+            $attendance[$i]['line'] = !empty($lineFloorInfo->changed_line)?($getLine[$lineFloorInfo->changed_line]['hr_line_name']??''):$line;
             $attendance[$i]['outside']      = null;
             $attendance[$i]['outside_msg']  = null;
             $attendance[$i]['overtime_time']    = null;
