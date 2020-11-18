@@ -881,6 +881,79 @@ class TestController extends Controller
 
     public function check()
     {
+        $educationDegree = DB::table('hr_education_degree_title')->pluck('education_degree_title', 'id');
+        $educations = DB::table('hr_education AS e')
+        ->select(DB::raw('t.*'))
+        ->from(DB::raw('(SELECT * FROM hr_education ORDER BY id DESC) t'))
+        ->groupBy('t.education_as_id')
+        ->pluck('education_degree_id_1', 'education_as_id');
+
+        dd($educations);
+        // $start = date('Y-m-d H:s' ,strtotime('2020-11-15 08:00'));
+        // $end = date('Y-m-d H:s' ,strtotime('2020-11-15 16:00'));
+        // // return $end;
+        // $dif = strtotime($start) - strtotime($end);
+        // return $dif;
+        // $getEmployee = DB::table('hr_as_basic_info AS b')
+        // ->where('as_unit_id', 5)
+        // ->pluck('associate_id');
+        // $shiftRoster = [];
+        // for ($i=1; $i < 32 ; $i++) { 
+        //     $getRoster = DB::table('hr_shift_roaster')
+        //     ->whereIn('shift_roaster_associate_id', $getEmployee)
+        //     ->where('day_'.$i, 'NIGHT')
+        //     ->get();
+        //     if(count($getRoster) > 0){
+        //         /*$shiftRoster[] = DB::table('hr_shift_roaster')
+        //         ->where('shift_roaster_id', $getRoster->shift_roaster_id)
+        //         ->update(['day_'.$i => 'CUTTING NIGHT']);*/
+        //         $shiftRoster[] = $getRoster;
+        //     }
+        // }
+
+
+        // dd($shiftRoster);
+
+        // $getAtt = DB::table('hr_attendance_mbm')
+        // ->select('hr_shift_code')
+        // ->distinct()
+        // ->pluck('hr_shift_code');
+
+        // $getA = DB::table('hr_attendance_mbm')->select(DB::raw('DISTINCT hr_shift_code, COUNT(*) AS count_pid'))->groupBy('hr_shift_code')->orderBy('count_pid', 'desc')->get();
+        // // dd($getA);exit;
+
+        // $getShift = DB::table('hr_shift AS s')
+        // ->whereIn('s.hr_shift_unit_id', [5])
+        // ->whereIn('s.hr_shift_code', $getAtt)
+        // ->pluck('hr_shift_name', 'hr_shift_code');
+        // // dd($getShift);
+
+        // $getShift = DB::table('hr_shift AS s')
+        // ->whereIn('s.hr_shift_unit_id', [5])
+        // ->whereNotIn('s.hr_shift_name', $getShift)
+        // ->pluck('hr_shift_name', 'hr_shift_code'); //ONESMS ONEMMSMS2
+        // // $getShift = DB::table('hr_shift AS s')
+        // // ->whereIn('s.hr_shift_unit_id', [5])
+        // // ->where('s.hr_shift_name', 'SECURITY Morning Shift -6')
+        // // ->pluck('hr_shift_name', 'hr_shift_code');
+        // dd($getShift);
+        // $shiftRoster = [];
+        // for ($i=1; $i < 32 ; $i++) { 
+        //     $getRoster = DB::table('hr_shift_roaster')
+        //     ->where('shift_roaster_month', '>=',9)
+        //     ->whereIn('day_'.$i, $getShift)
+        //     ->get();
+        //     if(count($getRoster) > 0){
+        //         $shiftRoster[] = $getRoster;
+        //     }
+        // }
+        
+        // $basic = DB::table("hr_as_basic_info")
+        // ->whereIn('as_shift_id', $getShift)
+        // ->get();
+
+
+        // dd($shiftRoster);
 
         // $getData = DB::table('hr_monthly_salary AS s')
         // ->join('hr_as_basic_info AS b', 's.as_id', 'b.associate_id')
@@ -945,25 +1018,25 @@ class TestController extends Controller
         //         dump($leave_array,$absent_array);
         //         dd('end');
 
-                // $leave_array = [];
-                // $absent_array = [];
-                // for($i=1; $i<=13; $i++) {
-                // $date = date('Y-m-d', strtotime('2020-11-'.$i));
-                // $leave = DB::table('hr_absent AS a')
-                //         ->where('a.date', '=', $date)
-                //         ->whereIn('b.as_unit_id', [1, 4, 5])
-                //         ->leftJoin('hr_as_basic_info AS b', function($q){
-                //             $q->on('b.associate_id', 'a.associate_id');
-                //         })
-                //         ->pluck('b.as_id', 'b.associate_id');
-                // $leave_array[] = $leave;
-                // $absent_array[] = DB::table('hr_attendance_mbm')
-                //         ->whereDate('in_time', $date)
-                //         ->whereIn('as_id', $leave)
-                //         ->get()->toArray();
-                // }
-                // dump($leave_array,$absent_array);
-                // dd('end');
+                $leave_array = [];
+                $absent_array = [];
+                for($i=1; $i<=20; $i++) {
+                $date = date('Y-m-d', strtotime('2020-11-'.$i));
+                $leave = DB::table('hr_absent AS a')
+                        ->where('a.date', '=', $date)
+                        ->whereIn('b.as_unit_id', [1, 4, 5])
+                        ->leftJoin('hr_as_basic_info AS b', function($q){
+                            $q->on('b.associate_id', 'a.associate_id');
+                        })
+                        ->pluck('b.as_id', 'b.associate_id');
+                $leave_array[] = $leave;
+                $absent_array[] = DB::table('hr_attendance_mbm')
+                        ->whereDate('in_time', $date)
+                        ->whereIn('as_id', $leave)
+                        ->get()->toArray();
+                }
+                dump($leave_array,$absent_array);
+                dd('end');
             // $leave_array = [];
             // $absent_array = [];
             // for($i=1; $i<=13; $i++) {

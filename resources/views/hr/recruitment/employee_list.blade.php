@@ -50,7 +50,7 @@
 		width: 60px !important;
 	}
 	tr th:nth-child(18) input{
-		width: 50px !important;
+		width: 100px !important;
 	}
 	tr th:nth-child(20) input{
 		width: 50px !important;
@@ -155,10 +155,12 @@
 								<th>Sub Section</th>
 								<th>Employee Type</th>
 								<th>Gender</th>
-								<th>Age</th>
+								<th>Date Of Birth</th>
 								<th>OT Status</th>
 								<th>Grade</th>
 								<th>Default Shift</th>
+								<th>Last Education</th>
+								<th>Salary</th>
 							</tr>
 						</thead>
 		
@@ -211,7 +213,7 @@ $(document).ready(function()
 		
 
 		
-		var exportColName = ['Sl.','','Associate ID','Name','Designation','Oracle ID','RFID','Date of Join','Unit','Location',  'Floor','Line','Department','Section','Subsection','Employee Type','Gender','Age','OT Status','Grade'];
+		var exportColName = ['Sl.','','Associate ID','Name','Designation','Oracle ID','RFID','Date of Join','Unit','Location',  'Floor','Line','Department','Section','Subsection','Employee Type','Gender','Date Of Birth','OT Status','Grade','Shift', 'Education', 'Salary'];
       	var exportCol = [2,3,4,5,10,11,12,13,14,15];
 
 	    var dt = $('#dataTables').DataTable({
@@ -266,7 +268,9 @@ $(document).ready(function()
 		        {data:'age', name: 'age', orderable: false,},
 		        {data:'as_ot', name: 'as_ot', orderable: false},
 		        {data:'hr_designation_grade', name: 'hr_designation_grade'},
-		        {data:'as_shift_id', name: 'as_shift_id', orderable: false}
+		        {data:'as_shift_id', name: 'as_shift_id', orderable: false},
+		        {data:'education', name: 'education'},
+		        {data:'salary', name: 'salary'}
 
 
 
@@ -296,7 +300,7 @@ $(document).ready(function()
                   header: true,
                   footer: false,
                   exportOptions: {
-                      columns: [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19],
+                      columns: [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19, 20, 21,22],
                       format: {
                           header: function ( data, columnIdx ) {
                               return exportColName[columnIdx];

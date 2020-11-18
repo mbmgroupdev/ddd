@@ -20,6 +20,7 @@ Route::group(['prefix' => 'hr','namespace' => 'Hr'], function(){
 		Route::get('user/sync-permission', 'UserController@syncPermission');
 
 		Route::get('employee/search', 'UserController@employeeSearch');
+		Route::get('all-employee/search', 'UserController@allEmployeeSearch');
 		Route::get('employee/female-associates', 'UserController@femaleSearch');
 		Route::get('user/search', 'UserController@userSearch');
 

@@ -279,7 +279,12 @@ class SalaryProcessController extends Controller
             $pageHead['month']     = $input['month'];
             $pageHead['year']     = $input['year'];
             $pageHead = (object)$pageHead;
-            return view('hr.operation.salary.load_salary_sheet_employee', compact('uniqueLocation', 'getSalaryList', 'pageHead','locationDataSet', 'info', 'salaryAddDeduct', 'designation', 'getSection', 'input'));
+            if($input['formattype'] == 0){
+                $viewPage = 'hr.operation.salary.load_salary_sheet_employee';
+            }else{
+                $viewPage = 'hr.operation.salary.load_salary_sheet';
+            }
+            return view($viewPage, compact('uniqueLocation', 'getSalaryList', 'pageHead','locationDataSet', 'info', 'salaryAddDeduct', 'designation', 'getSection', 'input'));
         } catch (\Exception $e) {
             $bug = $e->getMessage();
             return $bug;

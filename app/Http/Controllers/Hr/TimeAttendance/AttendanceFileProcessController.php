@@ -46,6 +46,7 @@ class AttendanceFileProcessController extends Controller
             $dataChunk = array_chunk($dataResult, 50);
             $data['arrayDataCount'] = count($dataResult);
             $data['chunkValues'] = $dataChunk;
+            // dd($dataChunk);
             return view('hr.timeattendance.att_status', $data);
         } catch (\Exception $e) {
             $bug = $e->getMessage();
@@ -248,7 +249,7 @@ class AttendanceFileProcessController extends Controller
                             $shift_end= $as_info->shift['hr_shift_end_time'];
                             $shift_break= $as_info->shift['hr_shift_break_time'];
                         }
-                        // return $shift_code.' '.$shift_start.' '.$shift_end;
+                        // return $checktime.' '.$shift_code.' '.$shift_start.' '.$shift_end;
                         if($shift_code != null && $shift_start != null && $shift_end !=null){
 
                             $att = $this->attendanceCrud($checktime, $shift_start, $shift_end, $shift_break, $shift_code, $tableName, $as_info, $checkHolidayFlag, $unit, $day_of_date, $month, $year, $unitId);
@@ -299,11 +300,11 @@ class AttendanceFileProcessController extends Controller
             $shift_end = $punch_date." ".$shift_end;
             $shift_in_time = Carbon::createFromFormat('Y-m-d H:i:s', $shift_start);
             $shift_out_time = Carbon::createFromFormat('Y-m-d H:i:s', $shift_end);
-
         
             if($shift_out_time < $shift_in_time){
                 $shift_out_time = $shift_out_time->copy()->addDays(1);
             }
+
             //shift start range
             $shift_start_begin = $shift_in_time->copy()->subHours(2); // 2 hour
             $shift_start_end = $shift_in_time->copy()->addHours(4); //4 hour
@@ -312,7 +313,11 @@ class AttendanceFileProcessController extends Controller
             // $shift_end_end= $shift_out_time+28800; // 8 hour OT calculate in previous system
             // $shift_end_end= $shift_end_begin+68399; // 18 hour 59 minute 59 second
 
-            $otAllow = 46000 - ($shift_break*60);// 13- hour 00 minute 00 second
+            $shiftDiff = strtotime($shift_out_time) - strtotime($shift_in_time); //total shift time
+            $totalShiftDiff = $shiftDiff + ($shift_break*60) + 7500; // 7500 = 2:05 extra allow time 
+            $otAllow = 86400 - $totalShiftDiff; //86400 = 24 hour
+
+            // $otAllow = 46000 - ($shift_break*60);// 13- hour 00 minute 00 second
             $shift_end_end = $shift_out_time->copy()->addSeconds($otAllow);
  
             //check time
@@ -322,8 +327,6 @@ class AttendanceFileProcessController extends Controller
             ->where('as_id', $as_info->as_id)
             ->where('in_date', '=', $check_time->format('Y-m-d'))
             ->first();
-            
-            
             if($last_punch){
                 if((($shift_start_begin >= $last_punch->in_time || $last_punch->in_time >= $shift_start_end)  && $last_punch->in_time != null) || $last_punch->remarks == 'DSI'){
                     DB::table($tableName)->where('id', $last_punch->id)->update([
@@ -365,6 +368,7 @@ class AttendanceFileProcessController extends Controller
                         ->update([
                             'in_time' => $newInTime,
                             'in_unit' => $unit,
+                            'hr_shift_code' => $shift_code,
                             'remarks' => ''
                         ]);
                         
@@ -386,7 +390,6 @@ class AttendanceFileProcessController extends Controller
 
             }
             else if(($shift_end_begin <= $check_time) && ($check_time <= $shift_end_end)  && $checkHolidayFlag == 0){
-
                 if(!empty($last_punch)){
                     $checkOutTimeFlag = 0;
                     if($last_punch->out_time == null){
@@ -445,7 +448,6 @@ class AttendanceFileProcessController extends Controller
                 }
             }
             else{
-                
                 $shift_code_new=null;
                 if($day_of_date == 1){
                     $day_of_date = $check_time->copy()->subDays(1);
@@ -460,7 +462,6 @@ class AttendanceFileProcessController extends Controller
                     $day_num= "day_".($day_of_date-1);
                 }
                     
-                
                 // return $day_num;
                 $shift= DB::table("hr_shift_roaster")
                 ->where('shift_roaster_month', $month)
@@ -504,26 +505,28 @@ class AttendanceFileProcessController extends Controller
                 ->where('in_date', $check_time->copy()->subDays(1)->format('Y-m-d'))
                 ->orderBy('id', "DESC")
                 ->first();
-
-
-
-
-                
-                
+                // return $check_time->copy()->subDays(1)->format('Y-m-d');
                 $outPunchDate = $punch_date;
                 if($last_punch != null){
                     $punch_date = date('Y-m-d', strtotime($last_punch->in_time));
+                }else{
+                    if($shift_night_flag == 1){
+                        $punch_date = $check_time->copy()->subDays(1)->format('Y-m-d');
+                    }
                 }
 
                 $shift_start = $punch_date." ".$shift_start_new;
                 $shift_end = $punch_date." ".$shift_end_new;
-                $shift_in_time_new = Carbon::createFromFormat('Y-m-d H:i:s', $shift_start);
-                $shift_out_time_new = Carbon::createFromFormat('Y-m-d H:i:s', $shift_end);
 
+                $shift_in_time_new = Carbon::createFromFormat('Y-m-d H:i:s', $shift_start);
+
+                $shift_out_time_new = Carbon::createFromFormat('Y-m-d H:i:s', $shift_end);
+                // return $shift_in_time_new.' '.$shift_out_time_new;
             
                 if($shift_out_time_new < $shift_in_time_new){
                     $shift_out_time_new = $shift_out_time_new->copy()->addDays(1);
                 }
+
                 //shift start range
                 $shift_start_begin_new = $shift_in_time_new->copy()->subHours(2); // 2 hour
                 $shift_start_end_new = $shift_in_time_new->copy()->addHours(4); //4 hour
@@ -531,8 +534,10 @@ class AttendanceFileProcessController extends Controller
                 $shift_end_begin_new = $shift_start_end_new->copy()->addSeconds(1); // after 4 hour
                 // $shift_end_end= $shift_out_time_new+28800; // 8 hour OT calculate in previous system
                 // $shift_end_end= $shift_end_begin+68399; // 18 hour 59 minute 59 second
-
-                $otAllow = 46000 - ($shift_break_new*60);// 13- hour 00 minute 00 second
+                $shiftDiffNew = strtotime($shift_out_time_new) - strtotime($shift_in_time_new); //total shift time
+                $totalShiftDiffNew = $shiftDiffNew + ($shift_break_new*60) + 7500; // 7500 = 2:05 extra allow time 
+                $otAllow = 86400 - $totalShiftDiffNew; //86400 = 24 hour
+                // $otAllow = 46000 - ($shift_break_new*60);// 13- hour 00 minute 00 second
                 $shift_end_end_new = $shift_out_time_new->copy()->addSeconds($otAllow);
                 
                 //check time
@@ -553,12 +558,7 @@ class AttendanceFileProcessController extends Controller
 
                     }
                 }
-
-           
-                
                 if($shift_end_begin_new <= $check_time && $check_time <= $shift_end_end_new){
-
-
 
                     if(!empty($last_punch)){
                         $checkOutTimeFlag = 0;
@@ -595,12 +595,7 @@ class AttendanceFileProcessController extends Controller
                         }
                     }else{
                         if(!empty($shift_code_new)){
-
-                            if($shift_night_flag = 1){
-                                $defaultInTime = date("Y-m-d H:i:s", strtotime("-1 days $shift_start"));
-                            }else{
-                                $defaultInTime = date("Y-m-d H:i:s", strtotime($shift_start));
-                            }
+                            $defaultInTime = date("Y-m-d H:i:s", strtotime($shift_start));
                             $lastPunchId = DB::table($tableName)
                             ->insertGetId([
                                 'as_id' => $as_info->as_id,

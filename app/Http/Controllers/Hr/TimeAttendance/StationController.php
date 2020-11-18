@@ -191,7 +191,7 @@ class StationController extends Controller
     public function unitEmployees(Request $request){
 
             $data=Employee::where('as_unit_id',$request->unit_id)
-                                ->select('as_name', 'associate_id', 'as_pic')
+                                ->select('as_name', 'associate_id', 'as_pic', 'as_oracle_code')
                                 ->where('as_ot', 1)
                                 ->get()
                                 ->toArray();

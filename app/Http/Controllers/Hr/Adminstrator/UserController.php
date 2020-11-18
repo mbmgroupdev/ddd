@@ -604,6 +604,27 @@ class UserController extends Controller
         return response()->json($data);
     }
 
+    public function allEmployeeSearch(Request $request)
+    {
+        $data = []; 
+        if($request->has('keyword')){
+            $search = $request->keyword;
+            $data = Employee::select("associate_id", DB::raw('CONCAT_WS(" - ", associate_id, as_name) AS user_name'))
+                ->whereIn('as_unit_id', auth()->user()->unit_permissions())
+                ->whereIn('as_location', auth()->user()->location_permissions())
+                // ->whereIn('as_status', [1,6])
+                ->where(function($q) use($search) {
+                    $q->where("associate_id", "LIKE" , "%{$search}%");
+                    $q->orWhere("as_name", "LIKE" , "%{$search}%");
+                    $q->orWhere("as_oracle_code", "LIKE" , "%{$search}%");
+                })
+                ->take(10)
+                ->get();
+        }
+
+        return response()->json($data);
+    }
+
     public function femaleSearch(Request $request)
     {
         $data = []; 

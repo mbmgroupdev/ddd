@@ -31,6 +31,31 @@ $(function() {
         }
     });
 
+    $('select.allassociates').select2({
+        placeholder: 'Select Employee',
+        ajax: {
+            url: baseurl+'hr/adminstrator/all-employee/search',
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return { 
+                    keyword: params.term
+                }; 
+            },
+            processResults: function (data) { 
+                return {
+                    results:  $.map(data, function (item) {
+                        return {
+                            text: item.user_name,
+                            id: item.associate_id
+                        }
+                    }) 
+                };
+            },
+            cache: true
+        }
+    });
+
     $('.female-associates').select2({
         placeholder: 'Select Employee',
         ajax: {
