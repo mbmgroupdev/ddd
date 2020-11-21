@@ -105,8 +105,8 @@ class LeaveWorkerController extends Controller
                         // attendance remove 
                         $attendance = DB::table($tableName)
                                     ->where('as_id', $getEmployee->as_id)
-                                    ->whereDate('in_time','>=', $startDate)
-                                    ->whereDate('in_time','<=', $endDate)
+                                    ->where('in_date','>=', $startDate)
+                                    ->where('in_date','<=', $endDate)
                                     ->delete();
 
                         

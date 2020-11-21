@@ -23,6 +23,9 @@ Route::group(['middleware' => 'guest'], function(){
 Auth::routes();
 
 
+// need to modify this routes
+Route::get('hr/payroll/promotion-jobs', 'Hr\Recruitment\BenefitController@promotionJobs');
+Route::get('hr/payroll/increment-jobs', 'Hr\Recruitment\BenefitController@incrementJobs');
 
 Route::group(['middleware' => 'auth'], function(){
 
@@ -30,9 +33,6 @@ Route::group(['middleware' => 'auth'], function(){
 	Route::get('/mmr-report', 'Hr\ReportController@mmr');
 	Route::get('/profile', 'Hr\ProfileController@showProfile');
 
-	// need to modify this routes
-	Route::get('hr/payroll/promotion-jobs', 'Hr\Recruitment\BenefitController@promotionJobs');
-	Route::get('hr/payroll/increment-jobs', 'Hr\Recruitment\BenefitController@incrementJobs');
 	Route::get('hr/timeattendance/shift-jobs', 'Hr\TimeAttendance\ShiftRoasterController@shiftJobs');
 	Route::get('hr/leave/leave_status_jobs', 'Hr\TimeAttendance\LeaveWorkerController@maternityLeaveCheck');
 	Route::get('hr/leave/leave_status_update_jobs', 'Hr\TimeAttendance\LeaveWorkerController@LeaveStatusCheckAndUpdate');

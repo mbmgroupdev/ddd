@@ -22,6 +22,7 @@ use Validator, Auth, ACL, DB, DataTables, stdClass;
 
 class SalarySearchController extends Controller
 {
+    
     public function hrSalarySearch(Request $request)
     {
         try{
@@ -54,7 +55,8 @@ class SalarySearchController extends Controller
         return $date;
     }
 
-    public function pageTitle($request){
+    public function pageTitle($request)
+    {
 
             $showTitle = ucwords($request['category']).' - '.ucwords($request['type']) ;
             if(isset($request['month']))
@@ -72,12 +74,12 @@ class SalarySearchController extends Controller
             return $showTitle;
     }
 
-    public function hrSalarySearchResWise(Request $request){        
+    public function hrSalarySearchResWise(Request $request)
+    {        
         $request2 = [];
         $parts = parse_url(url()->previous());
 
         parse_str($parts['query'], $request1);
-        //return $request1;
         
         if(isset($request->unit)){
             $infocon['e.as_unit_id'] = $request->unit;
@@ -167,42 +169,50 @@ class SalarySearchController extends Controller
         try {
             //return $request;
             $date = $this->getSearchType($request);
-
+            $employees = auth()->user()->permitted_all();
             
             $showTitle = $this->pageTitle($request);
             unset($request['unit'],$request['area'],$request['department'],$request['floor'],$request['section'],$request['subsection'],$request['view'],$request['salstatus']); 
 
-            $employees = DB::table('hr_as_basic_info')
-                         ->whereIn('as_unit_id', auth()->user()->unit_permissions())
-                         ->pluck('associate_id');
+
             if($request['type']=='range'){
                 $salaryInfo = HrMonthlySalary::select(
                     DB::raw('sum(ot_hour*ot_rate) AS ot_payable'),
                     DB::raw('sum(total_payable) AS total_payable'),
-                    DB::raw('count(distinct as_id) as emp')
+                    DB::raw('count(distinct as_id) as emp'),
+                    'emp_status'
                 )->whereBetween(DB::raw("CONCAT(month, '-', year)"),[$date['from'],$date['to']])
                 ->whereIn('as_id',  $employees)
+                ->whereIn('emp_status',  [1,2,3,4,5,6])
                 ->whereNotIn('as_id', config('base.ignore_salary'))
-                ->first();
+                ->groupBy('emp_status')
+                ->get();
             }else{
                 $salaryInfo = HrMonthlySalary::select(
                     DB::raw('sum(ot_hour*ot_rate) AS ot_payable'),
                     DB::raw('sum(total_payable) AS total_payable'),
-                    DB::raw('count(distinct as_id) as emp')
+                    DB::raw('count(distinct as_id) as emp'),
+                    'emp_status'
                 )->where($date)
                 ->whereIn('as_id',  $employees)
+                ->whereIn('emp_status',  [1,2,3,4,5,6])
                 ->whereNotIn('as_id', config('base.ignore_salary'))
-                ->first();
+                ->groupBy('emp_status')
+                ->get();
             }
+
+            $salaryInfo = collect($salaryInfo);
+
             $salary = new stdClass();
-            $salary->total_payable = round($salaryInfo->total_payable,2);
-            $salary->ot_payable = round($salaryInfo->ot_payable,2);
-            $salary->salary_payable = round(($salaryInfo->total_payable-$salaryInfo->ot_payable),2);
-            $salary->employee  = $salaryInfo->emp;
+            $salary->total_payable = ceil($salaryInfo->sum('total_payable'));
+            $salary->ot_payable = ceil($salaryInfo->sum('ot_payable'));
+            $salary->salary_payable = ceil(($salary->total_payable - $salary->ot_payable));
+            $salary->employee  = $salaryInfo->sum('emp');
+
             $unit_list      = Unit::whereIn('hr_unit_id', auth()->user()->unit_permissions())->get();
             $result = [];
             $result['page'] = view('hr.search.salary.allsalary',
-                compact('unit_list','salary','showTitle', 'request'))->render();
+                compact('unit_list','salary','showTitle', 'request','salaryInfo'))->render();
             $result['url'] = url('hr/search?').http_build_query($request);
             return $result;
         } catch(\Exception $e) {

@@ -24,12 +24,16 @@ use App\Models\Hr\HrMonthlySalary;
 use Rap2hpoutre\FastExcel\FastExcel;
 use Carbon\Carbon;
 use PDF, Validator, Auth, ACL, DB, DataTables;
+use Illuminate\Support\Arr;
 
 
 class TestController extends Controller
 {
     public function test()
     {
+        $array = ['products' => ['desk' => ['price' => 100], 'hi' => 'Test']];
+        Arr::forget($array, 'products.desk');
+        dd($array);
        /* $excel = Employee::select('as_oracle_code', 'as_name')->whereNull('as_ot')->where('as_status', 1)->where('as_unit_id', 2)->get()->toArray();
         
         return (new FastExcel(collect($excel)))->download('OT Status Missing CEIL.xlsx');

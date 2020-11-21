@@ -1,6 +1,6 @@
 <div class="panel">
 	<div class="panel-body">
-		<div class="report_section">
+		<div class="report_section" id="report_section">
 			@php
 				$unit = unit_by_id();
 				$line = line_by_id();
@@ -17,7 +17,7 @@
 				@if($input['report_format'] == 0 || ($input['report_format'] == 1 && $format != null))
 				<div class="page-header">
 		            <h2 style="margin:4px 10px; font-weight: bold; text-align: center;">Working Hour @if($input['report_format'] == 0) Details @else Summary @endif Report </h2>
-		            <table class="table no-border f-16" border="0">
+		            <table class="table table2excel no-border f-16" border="1">
 		            	<tr>
 		            		<td>
 		            			Unit <b>: {{ $unit[$input['unit']]['hr_unit_name'] }}</b> <br>
@@ -68,114 +68,6 @@
 		            	</tr>
 		            	
 		            </table>
-		            
-		            <div class="row">
-		            	<div class="col-4">
-		            		<div class="row">
-		                		<div class="col-2 pr-0">
-		                			<h5>Unit</h5>
-		                		</div>
-		                		<div class="col-10">
-		                			<b>: {{ $unit[$input['unit']]['hr_unit_name'] }}</b>
-		                		</div>
-		                		@if($input['area'] != null)
-		                		<div class="col-2 pr-0">
-		                			<h5>Area</h5>
-		                		</div>
-		                		<div class="col-10">
-		                			<b>: {{ $area[$input['area']]['hr_area_name'] }}</b>
-		                		</div>
-		                		@endif
-		                		@if($input['department'] != null)
-		                		<div class="col-2 pr-0">
-		                			<h5>Department</h5>
-		                		</div>
-		                		<div class="col-10">
-		                			<b>: {{ $department[$input['department']]['hr_department_name'] }}</b>
-		                		</div>
-		                		@endif
-		                		@if($input['section'] != null)
-		                		<div class="col-2 pr-0">
-		                			<h5>Section</h5>
-		                		</div>
-		                		<div class="col-10">
-		                			<b>: {{ $section[$input['section']]['hr_section_name'] }}</b>
-		                		</div>
-		                		@endif
-		            		</div>
-		            	</div>
-		            	<div class="col-5">
-		            		<div class="row">
-		            			<div class="col-3 pr-0">
-		                			<h5>Working Date</h5>
-		                		</div>
-		                		<div class="col-9">
-		                			<b>: {{ $input['date']}} </b>
-		                		</div>
-		                		@if($input['otnonot'] != null)
-		                		<div class="col-3 pr-0">
-		                			<h5>OT</h5>
-		                		</div>
-		                		<div class="col-9">
-		                			<b>: @if($input['otnonot'] == 0) No @else Yes @endif </b>
-		                		</div>
-		                		@endif
-		                		<div class="col-3 pr-0">
-		                			<h5>Total Employee</h5>
-		                		</div>
-		                		<div class="col-9">
-		                			<b>: {{ $totalEmployees }}</b>
-		                		</div>
-		                		<div class="col-3 pr-0">
-		                			<h5>Total</h5>
-		                		</div>
-		                		<div class="col-9">
-		                			<b>: {{ $totalValue }} Working/Employee</b>
-		                		</div>
-		                		
-		                		<div class="col-3 pr-0">
-		                			<h5>Average</h5>
-		                		</div>
-		                		<div class="col-9">
-		                			<b>: {{ $totalAvgHour }} Working/Employee</b>
-		                		</div>
-		                	</div>
-		            	</div>
-		            	<div class="col-3 no-padding">
-		            		<div class="row">
-		                		@if($input['subSection'] != null)
-		                		<div class="col-3 pr-0">
-		                			<h5>Sub Section</h5>
-		                		</div>
-		                		<div class="col-9 pl-0">
-		                			<b>: {{ $subSection[$input['subSection']]['hr_subsec_name'] }}</b>
-		                		</div>
-		                		@endif
-		                		@if($input['floor_id'] != null)
-		                		<div class="col-3 pr-0">
-		                			<h5>Floor</h5>
-		                		</div>
-		                		<div class="col-9 pl-0">
-		                			<b>: {{ $floor[$input['floor_id']]['hr_floor_name'] }}</b>
-		                		</div>
-		                		@endif
-		                		@if($input['line_id'] != null)
-		                		<div class="col-3 pr-0">
-		                			<h5>Line</h5>
-		                		</div>
-		                		<div class="col-9 pl-0">
-		                			<b>: {{ $line[$input['line_id']]['hr_line_name'] }}</b>
-		                		</div>
-		                		@endif
-		                		<div class="col-3 pr-0">
-		                			<h5>Format</h5>
-		                		</div>
-		                		<div class="col-9 pl-0">
-		                			<b class="capitalize">: {{ isset($formatHead[1])?$formatHead[1]:'N/A' }}</b>
-		                		</div>
-		                	</div>
-		            	</div>
-		            </div>
 		        </div>
 		        @else
 		        <div class="page-header-summery">
@@ -219,7 +111,7 @@
 				@if($input['report_format'] == 0)
 					@foreach($uniqueGroups as $group)
 					
-					<table class="table table-bordered table-hover table-head">
+					<table class="table table2excel table-bordered table-hover table-head" border="1" cellpadding="5">
 						<thead>
 							@if(count($getEmployee) > 0)
 			                <tr>
@@ -254,8 +146,10 @@
 			                    {{-- <th>Photo</th> --}}
 			                    <th>Associate ID</th>
 			                    <th>Name & Phone</th>
+			                    <th>Oracle ID</th>
 			                    <th>Designation</th>
 			                    <th>Department</th>
+			                    <th>Section</th>
 			                    <th>Floor</th>
 			                    <th>Line</th>
 			                    <th>In-time</th>
@@ -287,14 +181,16 @@
 				            		<b>{{ $employee->as_name }}</b>
 				            		<p>{{ $employee->as_contact }}</p>
 				            	</td>
+				            	<td>{{ $employee->as_oracle_code }}</td>
 				            	<td>{{ $designation[$employee->as_designation_id]['hr_designation_name']??'' }}</td>
 				            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
+				            	<td>{{ $section[$employee->as_section_id]['hr_section_name']??'' }}</td>
 				            	<td>{{ $floor[$employee->as_floor_id]['hr_floor_name']??'' }}</td>
 				            	<td>{{ $line[$employee->as_line_id]['hr_line_name']??'' }}</td>
 				            	<td>{{ date('H:i:s', strtotime($employee->in_time)) }}</td>
 				            	<td>{{ date('H:i:s', strtotime($employee->out_time)) }}</td>
 				            	<td>{{ $employee->hr_shift_break_time }} min</td>
-				            	<td>{{ $totalHour }}</td>
+				            	<td data-toggle="tooltip" data-placement="top" title="" data-original-title="{{$totalHour}}">{{ round($employee->hourDuration/60,2) }}</td>
 				            	<td>
 				            		
 				            	</td>
@@ -310,14 +206,16 @@
 				            		<b>{{ $employee->as_name }}</b>
 				            		<p>{{ $employee->as_contact }}</p>
 				            	</td>
+				            	<td>{{ $employee->as_oracle_code }}</td>
 				            	<td>{{ $designation[$employee->as_designation_id]['hr_designation_name']??'' }}</td>
 				            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
+				            	<td>{{ $section[$employee->as_section_id]['hr_section_name']??'' }}</td>
 				            	<td>{{ $floor[$employee->as_floor_id]['hr_floor_name']??'' }}</td>
 				            	<td>{{ $line[$employee->as_line_id]['hr_line_name']??'' }}</td>
 				            	<td>{{ date('H:i:s', strtotime($employee->in_time)) }}</td>
 				            	<td>{{ date('H:i:s', strtotime($employee->out_time)) }}</td>
 				            	<td>{{ $employee->hr_shift_break_time }} min</td>
-				            	<td>{{ $totalHour }}</td>
+				            	<td data-toggle="tooltip" data-placement="top" title="" data-original-title="{{$totalHour}}">{{ round($employee->hourDuration/60,2) }}</td>
 				            	<td>
 				            		
 				            	</td>
@@ -334,13 +232,13 @@
 			            </tbody>
 			            <tfoot>
 			            	<tr>
-			            		<td colspan="10"></td>
-			            		<td><b>Total Employee</b></td>
+			            		<td colspan="8"></td>
+			            		<td colspan="3"><b>Total Employee</b></td>
 			            		<td colspan="2"><b>{{ $i }}</b></td>
 			            	</tr>
 			            	<tr>
-			            		<td colspan="10"></td>
-			            		<td><b>Total Working Hour</b></td>
+			            		<td colspan="8"></td>
+			            		<td colspan="3"><b>Total Working Hour</b></td>
 			            		<td colspan="2"><b>
 			            			@php
 			            				$groupHours = $totalMinute == 0?0:floor($totalMinute / 60);
@@ -350,8 +248,8 @@
 			            		</b></td>
 			            	</tr>
 			            	<tr>
-			            		<td colspan="10"></td>
-			            		<td><b>Avg. Working Hour</b></td>
+			            		<td colspan="8"></td>
+			            		<td colspan="3"><b>Avg. Working Hour</b></td>
 			            		<td colspan="2"><b>
 			            			@php
 			            				$avgminuteG = $totalMinute == 0?0:$totalMinute / $i;
@@ -382,7 +280,7 @@
 							$head = '';
 						}
 					@endphp
-					<table class="table table-bordered table-hover table-head">
+					<table class="table table2excel table-bordered table-hover table-head" border="1" cellpadding="5">
 						<thead>
 							<tr>
 								<th>Sl</th>

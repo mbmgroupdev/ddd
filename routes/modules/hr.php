@@ -1099,6 +1099,8 @@ Route::get('hr/setup/retirement/get_employee_details', 'Hr\Setup\RetirementPolic
 	Route::get('hr/reports/get_att_summary', 'Hr\Reports\AttendanceReportController@attSummaryReport')->middleware(['permission:Attendance Summary Report']);
 	Route::get('hr/reports/get-att-emp', 'Hr\Reports\AttendanceReportController@getAttEmployee')->middleware(['permission:Attendance Summary Report']);
 
+	Route::get('hr/reports/get-daily-att-excel', 'Hr\Reports\AttendanceReportController@getAttEmployee');
+
 	// reports absent issue
 	Route::get('hr/reports/before-absent-after-present', 'Hr\Reports\DailyActivityReportController@beforeAfterStatus');
 	Route::get('hr/reports/before-absent-after-present-report', 'Hr\Reports\DailyActivityReportController@beforeAfterReport');

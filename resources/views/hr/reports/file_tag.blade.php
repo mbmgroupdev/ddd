@@ -33,31 +33,32 @@
 	            {{ Form::open(['url'=>'', 'class'=>'row', 'id'=>'IdCard']) }}
 				<div class="col-6">
 					<div class="row">
-						<div class="col-6 file_tag_field">
-							<div class="form-group has-float-label select-search-group">
-								
-		                        {{ Form::select('emp_type', $employeeTypes, null, ['placeholder'=>'Select Employee Type', 'class'=> 'form-control filter']) }}  
-		                        <label>Employee Type</label>
-							</div>
-						</div>
 						<div class="col-6">
 							<div class="form-group has-float-label select-search-group">
-	                        	{{ Form::select('unit', $unitList, null, ['placeholder'=>'Select Unit', 'class'=> 'form-control filter']) }} 
+	                        	{{ Form::select('unit', $unitList, null, ['placeholder'=>'Select Unit', 'class'=> 'form-control ']) }} 
 	                        	<label>Unit</label>
 							</div> 
 						</div>
+						<div class="col-6 file_tag_field">
+							<div class="form-group has-float-label select-search-group">
+								
+		                        {{ Form::select('emp_type', $employeeTypes, null, ['placeholder'=>'Select Employee Type', 'class'=> 'form-control ']) }}  
+		                        <label>Employee Type</label>
+							</div>
+						</div>
+						
 					</div>
 
 					<div class="row">
 						<div class="col-6 file_tag_field">
 							<div class="form-group has-float-label select-search-group">
-								{{ Form::select('floor', [], null, ['placeholder'=>'Select Floor', 'class'=>'form-control filter']) }}
+								{{ Form::select('floor', [], null, ['placeholder'=>'Select Floor', 'class'=>'form-control ']) }}
 								<label>Floor</label>
 							</div>   
 						</div>
 						<div class="col-6">
 							<div class="form-group has-float-label select-search-group">
-								{{ Form::select('line', [], null, ['placeholder'=>'Select Line', 'class'=>'form-control filter']) }} 
+								{{ Form::select('line', [], null, ['placeholder'=>'Select Line', 'class'=>'form-control ']) }} 
 								<label>Line</label>
 							</div>   
 						</div>  
@@ -66,24 +67,37 @@
 					<div class="row">
 						<div class="col-6 file_tag_field">
 							<div class="form-group has-float-label">
-								<input type="date"  name="doj_from" id="doj_from" class=" form-control" placeholder="Date of Join From" >
+								<input type="date"  name="doj_from" id="doj_from" class=" form-control " placeholder="Date of Join From" >
 								<label>DOJ From</label>
-							</div>  
+							</div>
+							 
 						</div>
 						<div class="col-6 file_tag_field">
 							<div class="form-group has-float-label">
-								<input type="date" name="doj_to" id="doj_to" class="datepicker form-control filter" placeholder="Date of Join To" >
+								<input type="date" name="doj_to" id="doj_to" class="datepicker form-control " placeholder="Date of Join To" >
 								<label>DOJ To</label>
 							</div> 
+							<div class="form-group" style="margin:10px 0px; display: none;">
+		                        
+							</div>
 						</div>  
 					</div>
-
-					<div class="row" id="search_btn" style="margin:10px 0px; display: none;">
-                        <button type="submit" class="btn btn-primary btn ck" type="button">
-                            <i class="ace-icon fa fa-search"></i> Search
-                        </button>  &nbsp;&nbsp;
-						<div id="printBtn" style="display:inline-block;"></div>
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="form-group">
+								<button type="button" class="btn btn-primary btn filter" type="button" style="width: 100px;">
+			                        <i class="ace-icon fa fa-search"></i>  Filter
+			                    </button>
+		                    	<button type="submit" class="btn btn-primary btn ck" type="button" style="display: none;">
+	                            	Generate File Tag
+	                        	</button>  &nbsp;&nbsp;
+								<div id="printBtn" style="display:inline-block;"></div>
+							</div> 
+						</div>
 					</div>
+								
+
+							
 				</div>
 
 
@@ -123,9 +137,9 @@ $(document).ready(function(){
 	$(document).on('click','.associate-select, #checkAll', function(){
 		var checkedItemsAsString = $('[class*="associate-select"]:checked').map(function() { return $(this).val().toString(); } ).get().join(",");
 		if(checkedItemsAsString) {
-			$('#search_btn').show();
+			$('.ck').show();
 		} else {
-			$('#search_btn').hide();
+			$('.ck').hide();
 		}
 	});
 	//date validation------------------
@@ -233,8 +247,9 @@ $(document).ready(function(){
 	});
 
 	// find_associate
-	$("body").on('change', ".filter", function(){
+	$("body").on('click', ".filter", function(){
 		$('#idCardPrint').attr('hidden','hidden');
+		$('.app-loader').show();
 		$.ajax({
 			url: '{{ url("hr/recruitment/employee/idcard/filter") }}',
 			data: {
@@ -251,10 +266,12 @@ $(document).ready(function(){
 				user_filter.html(data.filter); 
 				printBtn.html('');
 				idCardPrint.html('');
+				$('.app-loader').hide();
 			},
 			error:function(xhr)
 			{
 				console.log('Failed');
+				$('.app-loader').hide();
 			}
 		});
 	});
@@ -266,27 +283,35 @@ $(document).ready(function(){
 	var printBtn = $("#printBtn");
 	IdCard.on('submit', function(e){
 		e.preventDefault();
+		var checkedItemsAsString = $('[class*="associate-select"]:checked').map(function() { return $(this).val().toString(); } ).get().join(",");
+		if(checkedItemsAsString) {
 
-    	var formdata = new FormData($(this)[0]);
-    	idCardPrint.html('<center><table class"col-12"><thead><th><h4>Please Wait...</th></h4></thead></table></center>');
-		$.ajax({
-			url  : '{{ url("hr/reports/filetag/search") }}',
-			type : $(this).attr('method'),
-			dataType : 'json',
-	        processData: false,
-	        contentType: false,
-			data : formdata,
-			success:function(data)
-			{
-				// console.log(data);
-				printBtn.html(data.printbutton);
-				idCardPrint.html(data.filetag); 
-			},
-			error:function()
-			{
-				console.log('faild')
-			}
-		});
+			$('.app-loader').show();
+	    	var formdata = new FormData($(this)[0]);
+	    	idCardPrint.html('<center><table class"col-12"><thead><th><h4>Please Wait...</th></h4></thead></table></center>');
+			$.ajax({
+				url  : '{{ url("hr/reports/filetag/search") }}',
+				type : $(this).attr('method'),
+				dataType : 'json',
+		        processData: false,
+		        contentType: false,
+				data : formdata,
+				success:function(data)
+				{
+					// console.log(data);
+					printBtn.html(data.printbutton);
+					idCardPrint.html(data.filetag); 
+					$('.app-loader').hide();
+				},
+				error:function()
+				{
+					console.log('faild');
+					$('.app-loader').hide();
+				}
+			});
+		}else{
+			$.notify('Please select an associate id!', 'error');
+		}
 	});
 });
 

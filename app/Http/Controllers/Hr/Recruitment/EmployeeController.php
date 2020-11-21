@@ -1672,9 +1672,13 @@ class EmployeeController extends Controller
                 {
                     $q->where('as_line_id', $line);
                 }
-                if (!empty($doj_from) && !empty($doj_to))
+                if (!empty($doj_from) )
                 {
-                    $q->whereBetween('as_doj', [date("Y-m-d", strtotime($doj_from)), date("Y-m-d", strtotime($doj_to))]);
+                    $q->where('as_doj', '>=', $doj_from);
+                }
+                if (!empty($doj_to))
+                {
+                    $q->where('as_doj', '<=', $doj_to);
                 }
             })
             ->whereIn('as_unit_id', auth()->user()->unit_permissions())
@@ -1714,120 +1718,50 @@ class EmployeeController extends Controller
             ->select(
                 'b.as_id',
                 'b.associate_id',
+                'b.as_oracle_code',
                 'b.as_emp_type_id',
                 'b.temp_id',
                 'b.as_pic',
+                'b.as_gender',
                 'u.hr_unit_name',
                 'u.hr_unit_name_bn',
                 'u.hr_unit_logo',
                 'u.hr_unit_authorized_signature',
+                'u.hr_unit_address_bn',
+                'u.hr_unit_telephone',
                 'b.as_name',
-                'bn.hr_bn_associate_name',
+                'b.as_contact',
+                'bn.*',
                 'b.as_doj',
                 'd.hr_department_name',
                 'd.hr_department_name_bn',
                 'dg.hr_designation_name',
                 'dg.hr_designation_name_bn',
-                'm.med_blood_group'
+                's.hr_section_name_bn',
+                'm.med_blood_group',
+                'ad.emp_adv_info_per_upz',
+                'ad.emp_adv_info_per_dist',
+                'ad.emp_adv_info_nid',
+                'ad.emp_adv_info_emg_con_num'
             )
             ->leftJoin('hr_employee_bengali AS bn','bn.hr_bn_associate_id', 'b.associate_id')
+            ->leftJoin('hr_as_adv_info AS ad','ad.emp_adv_info_as_id', 'b.associate_id')
             ->leftJoin('hr_unit AS u','u.hr_unit_id', 'b.as_unit_id')
             ->leftJoin('hr_department AS d','d.hr_department_id', 'b.as_department_id')
             ->leftJoin('hr_designation AS dg','dg.hr_designation_id', 'b.as_designation_id')
+            ->leftJoin('hr_section AS s','s.hr_section_id', 'b.as_section_id')
             ->leftJoin('hr_med_info AS m','m.med_as_id', 'b.associate_id')
             ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
             ->whereIn('b.as_location', auth()->user()->location_permissions())
             ->whereIn('b.associate_id', $request->associate_id)
             ->get();
 
-        $data['idcard'] = "";
-        if (count($employees)>0)
-        {
-            foreach ($employees as $associate)
-            {
-                if ($request->type == "en")
-                {
-                    $data['idcard'] .= "<div style=\"float:left;margin:27px 15px;width:192px;height:288px;background:white;box-shadow:1px 1px 10px #333;border:1px solid #333;\">
-                        <div style=\"width:100%;height:10px\"></div>
-                        <div style=\"width:100%;height:10px;background:#FBAF42\"></div>
-                        <div style=\"width:100%;height:30px;padding:5px\">
-                            <div style=\"float:left;width:65%;line-height:16px;font-size:12px;font-weight:700\">$associate->hr_unit_name</div>
-                            <div style=\"float:left;width:35%\"><img style=\"width:55px;height:28px;display:block\" src=\"".url(!empty($associate->hr_unit_logo)?$associate->hr_unit_logo:'')."\" alt=\"Logo\"></div>
-                        </div>
-                        <div style=\"width:100%;height:80px;margin:0 0 10px 0\">
-                            <img style=\"margin:0px auto;width:75px;height:75px;display:block\" src=\"".url(!empty($associate->as_pic)?$associate->as_pic:'assets/idcard/avatar.png')."\" alt=\"Logo\">
-                        </div>
-                        <div style=\"height:50px;text-align:center\">
-                            <strong style=\"display:block;font-size:12px;font-weight:700\">$associate->as_name</strong>
-                            <span style=\"display:block;font-size:9px\">$associate->hr_designation_name</span>
-                            <span style=\"display:block;font-size:9px;color:blue\">$associate->hr_department_name</span>
-                            <span style=\"display:block;font-size:9px\">DOJ: ".(date("d-M-Y", strtotime($associate->as_doj)))."</span>
-                        </div>
-                        <div style=\"width:100%;height:40px;padding:10px 5px 0 10px\">
-                            <strong style=\"display:block;font-size:12px\">
-                            ".
-                                (!empty($associate->associate_id)?
-                                (substr_replace($associate->associate_id, "<big style='font-size:18px'>$associate->temp_id</big>", 3, 6)):
-                                null)
-                            .
-                            "</strong>
-                            <strong style=\"display:block;font-size: 11px;\">Blood Group: $associate->med_blood_group</strong>
-                        </div>
-                        <div style=\"padding: 0px 10px 5px 10px;\">
-                            <div class=\"col-xs-12 no-margin\" style=\"padding: 0px 0px 0px 86px;\"><img style=\"width: 83px;height: 20px;display:block;\" src=\"".url(!empty($associate->hr_unit_authorized_signature)?$associate->hr_unit_authorized_signature:'')."\" alt=\"Logo\"></div>
-                            <div class=\"col-xs-12 no-padding no-margin\">
-                            <strong style=\"float:left;display:inline-block;font-size:9px\">$associate->as_id</strong>
-                            <strong style=\"float:right;display:inline-block;font-size:9px\">Authorized Signature</strong>
-                            </div>
-                        </div>
-                    </div>";
-                }
-                else
-                {
-                    $data['idcard'] .= "<div style=\"float:left;margin:27px 15px;width:192px;height:288px;background:white;box-shadow:1px 1px 10px #333;border:1px solid #333;\">
-                        <div style=\"width:100%;height:10px\"></div>
-                        <div style=\"width:100%;height:10px;background:#FBAF42\"></div>
-                        <div style=\"width:100%;height:30px;padding:5px\">
-                            <div style=\"float:left;width:65%;line-height:16px;font-size:12px;font-weight:700\">$associate->hr_unit_name_bn</div>
-                            <div style=\"float:left;width:35%\"><img style=\"width:55px;height:28px;display:block\" src=\"".url(!empty($associate->hr_unit_logo)?$associate->hr_unit_logo:'')."\" alt=\"Logo\"></div>
-                        </div>
-                        <div style=\"width:100%;height:80px;margin:0 0 10px 0\">
-                            <img style=\"margin:0px auto;width:75px;height:75px;display:block\" src=\"".url(!empty($associate->as_pic)?$associate->as_pic:'assets/idcard/avatar.png')."\" alt=\"Logo\">
-                        </div>
-                        <div style=\"height:50px;text-align:center\">
-                            <strong style=\"display:block;font-size:12px;font-weight:700\">".($associate->hr_bn_associate_name?$associate->hr_bn_associate_name:null)."</strong>
-                            <span style=\"display:block;font-size:9px\">".($associate->hr_designation_name_bn?$associate->hr_designation_name_bn:null)."</span>
-                            <span style=\"display:block;font-size:9px;color:blue\">".($associate->hr_department_name_bn?$associate->hr_department_name_bn:null)."</span>
-                            <span style=\"display:block;font-size:9px\">যোগদান তারিখ: "
+        $type = $request->type;
+        $districts = DB::table('hr_dist')->pluck('dis_name_bn','dis_id');
+        $upzillas = DB::table('hr_upazilla')->pluck('upa_name_bn','upa_id');
 
-                            .str_replace(['0','1','2','3','4','5','6','7','8','9', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], ['০','১','২','৩','৪','৫','৬','৭','৮','৯', 'জানুয়ারী', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন', 'জুলাই', 'আগস্ট', 'সেপ্ট', 'অক্টোবর', 'নভেম্বর ', 'ডিসেম্বর'], (date("d-M-Y", strtotime($associate->as_doj))))
-                            ."</span>
-                        </div>
-                        <div style=\"width:100%;height:40px;padding:10px 5px 0px 10px\">
-                            <strong style=\"display:block;font-size:12px\">
-                            ".
-                                (!empty($associate->associate_id)?
-                                (substr_replace($associate->associate_id, "<big style='font-size:18px'>$associate->temp_id</big>", 3, 6)):
-                                null)
-                            .
-                            "</strong>
-                            <strong style=\"display:block;font-size: 9px;\">রক্তের গ্রুপ: ".($associate->med_blood_group?$associate->med_blood_group:null)."</strong>
-                        </div>
-                        <div style=\"padding: 0px 10px 5px 10px;\">
-                            <div class=\"col-xs-12 no-margin \" style=\"padding: 0px 0px 0px 86px;\"><img style=\"width: 83px;height: 20px;display:block;\" src=\"".url(!empty($associate->hr_unit_authorized_signature)?$associate->hr_unit_authorized_signature:'')."\" alt=\"Logo\"></div>
-                            <div class=\"col-xs-12 no-margin\"  style=\"margin-bottom: 8px;\">
-                            <strong style=\"float:left;display:inline-block;font-size:9px\"></strong>
-                            <strong style=\"float:right;display:inline-block;font-size:9px\">অনুমোদনকারীর স্বাক্ষর</strong>
-                            </div>
-                        </div>
-                    </div>";
-                }
-            }
-        }
-        else
-        {
-            $data['idcard'] = '<div class="alert alert-danger">No ID Card Found!</div>';
-        }
+        $data['idcard'] = view('hr.common.idcard_view', compact('employees','type','districts','upzillas'))->render();
+       
 
         $data['printbutton'] = "";
         if (strlen($data['idcard'])>1)

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Hr\Payroll;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Hr\Reports\JobCardController as JobCard;
 use App\Models\Employee;
 use App\Models\Hr\HrAllGivenBenefits;
 use App\Models\Hr\SalaryAddDeduct;
@@ -99,6 +100,14 @@ class BenefitsCalculationController extends Controller
             $details->earned = $earned->earned??0;
 	        $details->enjoyed = $earned->lenjoyed??0;
 
+            /*$input = array(
+                'associate' => $request->emp_id,
+                'month_year' => date('Y-m-d')
+            );*/
+            $request->associate = $request->emp_id;
+            $request->month_year = date('Y-m');
+
+            $details->jobcard = $this->getEmpJobcard($request);
 
 	    	return Response::json($details);
 
@@ -107,6 +116,16 @@ class BenefitsCalculationController extends Controller
     	}
     	
 
+    }
+
+    public function getEmpJobcard($request)
+    {
+        $jobcard = new JobCard();
+        $result = $jobcard->empAttendanceByMonth($request);
+        $attendance = $result['attendance'];
+        $info = $result['info'];
+
+        return view('hr.common.job_card_layout', compact('request','attendance','info'));
     }
 
     /*get employee attendance table*/

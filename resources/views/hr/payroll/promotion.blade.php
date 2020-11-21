@@ -13,6 +13,7 @@
 					<a href="#">Payroll</a>
 				</li>
 				<li class="active"> Promotion</li>
+                <li class="top-nav-btn"><a href="{{url('hr/payroll/promotion-list')}}" class="btn btn-primary pull-right">Promotion List</a></li>
 			</ul><!-- /.breadcrumb --> 
 		</div>
 
@@ -21,24 +22,18 @@
             @include('inc/message')
             @can('Manage Promotion') 
             <div class="panel">
-                <div class="panel-heading">
-                    <h6>Promotion
-                        <a href="{{url('hr/payroll/promotion-list')}}" class="btn btn-primary pull-right">Promotion List</a>
-                    </h6>
-                </div>
-                         
-                {{ Form::open(['url'=>'hr/payroll/promotion', 'class'=>'form-horizontal p-3']) }}
+                {{ Form::open(['url'=>'hr/payroll/promotion', 'class'=>'form-horizontal p-3', 'onsubmit' => "return validate(this);"]) }}
                     <div class="row justify-content-center">
                         
-                        <div class="col-4">
+                        <div class="col-sm-3">
          
                             <div class="form-group has-float-label has-required select-search-group">
-                                {{ Form::select('associate_id', [], null, ['placeholder'=>'Select Associate\'s ID', 'id'=>'associate_id', 'class'=> 'img-associates']) }}
+                                {{ Form::select('associate_id', [], null, ['placeholder'=>'Select Associate\'s ID', 'id'=>'associate_id', 'class'=> 'associates']) }}
                                 <label  for="associate_id"> Associate's ID </label>
                             </div>
 
+                            <input type="hidden" name="previous_designation_id">
                             <div class="form-group has-float-label has-required ">
-                                <input type="hidden" name="previous_designation_id">
                                 <input type="text" name="previous_designation" id="previous_designation" placeholder="No Previous Designation Found"  readonly  class="form-control" />
                                 <label for="previous_designation"> Previous Designation </label>
                             </div>
@@ -48,35 +43,42 @@
                                 <label for="current_designation_id"> Promoted Designation </label>
                             </div>
 
-                            <div class="form-group has-float-label  has-required">
+                            {{-- <div class="form-group has-float-label  has-required">
                                 <input type="date" name="eligible_date" palceholder="Y-m-d" id="eligible_date" class="form-control "  readonly />
                                 <label  for="eligible_date"> Eligible Date </label>
-                            </div>
+                            </div> --}}
 
                             <div class="form-group has-float-label has-required">
                                 <input type="date" name="effective_date" id="effective_date" class=" form-control filter" value="" />
                                 <label  for="effective_date"> Effective Date </label>
                             </div>
-                            
-     
+                            <div class="form-group">
+                                <button class="btn btn-primary " type="submit">
+                                    <i class="fa fa-check"></i> Save
+                                </button>
+                            </div>
                         </div>
-                        <div class="col-4 benefit-employee">
+                        <div class="col-sm-4 benefit-employee">
                             <div class="user-details-block">
                                   <div class="user-profile text-center">
                                         <img id="avatar" class="avatar-130 img-fluid" src="{{ asset('assets/images/user/09.jpg') }} " onerror="this.onerror=null;this.src='{{ asset("assets/images/user/09.jpg") }}';">
                                   </div>
                                   <div class="text-center mt-3">
-                                     <h4><b id="user-name">Selected User</b></h4>
-                                     <p class="mb-0" id="designation">
-                                        Employee designation</p>
+                                     <h4><b id="user-name">Associate</b></h4>
+                                     <p class="mb-0" > <span id="designation">
+                                        Designation</span>, <span id="section">Section</p>
                                      
                                   </div>
                                   <div class="form-group text-center mt-2">
-                                <button class="btn btn-primary " type="submit">
-                                    <i class="fa fa-check"></i> Save
-                                </button>
+                                
                             </div>
                                </div>
+                        </div>
+                        <div class="col-sm-4 benefit-employee border-left">
+                            <strong>Prmotion History</strong><hr>
+                            <div class="promotion-history">
+                                
+                            </div>
                         </div>
                     </div>
                           
@@ -90,32 +92,37 @@
 </div> 
 @push('js')
 <script type="text/javascript">
+function validate(form) {
+    var valid = false;
+    var designation = $('#current_designation_id').val();
+    var associate_id = $('#associate_id').val();
+    var effective_date = $('#effective_date').val();
+
+    if(effective_date && designation && associate_id){
+        valid = true;
+    }
+
+    if(!valid) {
+        $.notify('Please enter all required fields','error');
+        return false;
+    }
+    else {
+        return confirm('Do you really want to submit the form?');
+    }
+}
 $(document).ready(function()
 {  
-    $('#eligible_date').on('dp.change',function(){
-        $('#effective_date').val($('#eligible_date').val());    
-    });
-    $('#effective_date').on('dp.change',function(){
-        var end     = new Date($(this).val());
-        var start   = new Date($('#eligible_date').val());
-        if(start == '' || start == null){
-            alert("Please enter Start-Date first");
-            $('#effective_date').val('');
-        }
-        else{
-             if(end < start){
-                alert("Invalid!!\n Start-Date is latest than End-Date");
-                $('#effective_date').val('');
-            }
-        }
-    });
+   
     $('#dataTables').DataTable({
             pagingType: "full_numbers" ,
     });
-    
+
+
+        
 
     //Associate Information 
-    $("body").on('change', ".img-associates", function(){
+    $("body").on('change', ".associates", function(){
+        $('.app-loader').show();
         $.ajax({
             url: '{{ url("hr/payroll/promotion-associate-info") }}',
             type: 'get',
@@ -123,12 +130,13 @@ $(document).ready(function()
             data: {associate_id: $(this).val()},
             success: function(data)
             { 
-                console.log(data);
                 if (data.status)
                 { 
                     $('#avatar').attr('src',data.as_pic);
                     $('#user-name').text(data.as_name);
                     $('#designation').text(data.previous_designation);
+                    $('#section').text(data.section);
+                    $('.promotion-history').html(data.history);
 
                     $("select[name=current_designation_id").html("").append(data.designation);
                     $('select[name=current_designation_id').trigger('change'); 
@@ -137,6 +145,7 @@ $(document).ready(function()
                     $("input[name=previous_designation]").val(data.previous_designation);
                     $("input[name=previous_designation_id]").val(data.previous_designation_id);
                     $(".output").addClass("hide");
+                    $('.app-loader').hide();
                 }
                 else
                 {
@@ -144,11 +153,12 @@ $(document).ready(function()
                     $("input[name=previous_designation]").val("");
                     $("input[name=previous_designation_id]").val("");
                     $(".output").removeClass("hide").addClass("alert-danger").html(data.error);
+                    $('.app-loader').hide();
                 }         
             },
             error: function(xhr)
             {
-                alert('failed...');
+                $('.app-loader').hide();
             }
         });        
     });
