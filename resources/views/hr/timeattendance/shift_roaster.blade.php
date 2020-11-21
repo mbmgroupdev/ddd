@@ -192,7 +192,7 @@
 
 <script type="text/javascript">
   function getCellId(iteration){
-      return 5+iteration;
+      return 6+iteration;
   }
 
     $(document).ready(function(){  
@@ -308,7 +308,7 @@
               var dropdownList = {};
               var td = 0;
               var exportColName = ["","Name","Assoiate Id","Oracle ID","Desgnation","Line","Floor","Day 1","Day 2","Day 3","Day 4","Day 5","Day 6","Day 7","Day 8","Day 9","Day 10","Day 11","Day 12","Day 13","Day 14","Day 15","Day 16","Day 17","Day 18","Day 19","Day 20","Day 21","Day 22","Day 23","Day 24","Day 25","Day 26","Day 27","Day 28","Day 29","Day 30","Day 31"];
-              var exportCol = [1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36];
+              var exportCol = [1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38];
               var dt = $('#dataTablesShift').DataTable({
                   order: [], //reset auto order
                   lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],

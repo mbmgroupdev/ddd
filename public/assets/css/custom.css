@@ -1032,6 +1032,9 @@ table.dataTable thead>tr>td.sorting, table.dataTable thead>tr>td.sorting_asc, ta
 .f-100{
     font-size: 100px !important;
 }
+.f-80{
+    font-size: 80px !important;
+}
 #top-tab-list li i {
     height: 40px;
     width: 40px;

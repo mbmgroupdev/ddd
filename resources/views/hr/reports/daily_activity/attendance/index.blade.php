@@ -54,16 +54,37 @@
                     <form class="" role="form" id="activityReport" method="get" action="#"> 
                         <div class="panel">
                             <div class="panel-body pb-0">
+                              @php
+                                $mbmFlag = 0;
+                                $mbmAll = [1,4,5];
+                                $permission = auth()->user()->unit_permissions();
+                                $checkUnit = array_intersect($mbmAll,$permission);
+                                if(count($checkUnit) > 2){
+                                  $mbmFlag = 1;
+                                }
+                              @endphp
                                 <div class="row">
                                     <div class="col-3">
                                         <div class="form-group has-float-label has-required select-search-group">
-                                            <select name="unit" class="form-control capitalize select-search" id="unit" required="">
+                                            <select name="unit" class="form-control capitalize select-search" id="unit"required >
                                                 <option selected="" value="">Choose...</option>
+                                                @if($mbmFlag == 1)
+                                                <option value="145">MBM + MBF + MBM 2</option>
+                                                @endif
                                                 @foreach($unitList as $key => $value)
                                                 <option value="{{ $key }}">{{ $value }}</option>
                                                 @endforeach
                                             </select>
                                           <label for="unit">Unit</label>
+                                        </div>
+                                        <div class="form-group has-float-label select-search-group">
+                                            <select name="location" class="form-control capitalize select-search" id="location">
+                                                <option selected="" value="">Choose...</option>
+                                                @foreach($locationList as $key => $value)
+                                                <option value="{{ $key }}">{{ $value }}</option>
+                                                @endforeach
+                                            </select>
+                                          <label for="location">Location</label>
                                         </div>
                                         <div class="form-group has-float-label select-search-group">
                                             <select name="area" class="form-control capitalize select-search" id="area">
@@ -184,7 +205,9 @@
                             <div class="col-3">
                               <h4 class="card-title capitalize inline">
                                   <button class="btn btn-sm btn-primary hidden-print" onclick="printDiv('print-area')" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report"><i class="las la-print"></i> </button>
-                                  
+                                  <button class="btn btn-sm btn-info hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download">
+                                  <i class="fa fa-file-excel-o"></i>
+                                </button>
                                 </h4>
                             </div>
                             <div class="col-6 text-center">
@@ -206,7 +229,7 @@
                                   <div class="format">
                                     <div class="form-group has-float-label select-search-group mb-0">
                                         <?php
-                                            $type = ['as_unit_id'=>'Unit','as_line_id'=>'Line','as_floor_id'=>'Floor','as_department_id'=>'Department','as_section_id'=>'Section','as_designation_id'=>'Designation'];
+                                            $type = ['as_unit_id'=>'Unit','as_designation_id'=>'Designation','as_line_id'=>'Line','as_floor_id'=>'Floor','as_department_id'=>'Department','as_section_id'=>'Section','as_subsection_id'=>'Sub Section'];
                                         ?>
                                         {{ Form::select('report_group_select', $type, 'as_section_id', ['class'=>'form-control capitalize', 'id'=>'reportGroupHead']) }}
                                         <label for="reportGroupHead">Report Format</label>
@@ -322,6 +345,7 @@
           $("#single-employee-search").hide();
           
           var unit = $('select[name="unit"]').val();
+          var location = $('select[name="location"]').val();
           var area = $('select[name="area"]').val();
           var date = $('input[name="date"]').val();
           var format = $('input[name="report_format"]').val();
@@ -336,7 +360,9 @@
           var flag = 0;
           if(unit === '' || date === '' || type === ''){
             flag = 1;
+            $.notify('Select required field', 'error');
           }
+          
           if(flag === 0){
             $(".next_btn").attr('disabled', true);
             $(".prev_btn").attr('disabled', true);
@@ -387,6 +413,11 @@
             $("#result-data").html('');
           }
         }
+        $('#excel').click(function(){
+          var url='data:application/vnd.ms-excel,' + encodeURIComponent($('#report_section').html())
+          location.href=url;
+          return false;
+        });
         // change from data action
         $('#present_date').on('change', function() {
           var before = 1 ;
@@ -528,7 +559,6 @@
        
     });
     
-
     
 </script>
 @endpush

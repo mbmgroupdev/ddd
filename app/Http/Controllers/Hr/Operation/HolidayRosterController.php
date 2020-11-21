@@ -65,7 +65,7 @@ class HolidayRosterController extends Controller
 	        			->where('hr_yhp_dates_of_holidays', $selectedDate)
 	        			->where('hr_yhp_unit', $getSiEmployee->as_unit_id)
 	        			->where('hr_yhp_status', 1)
-	        			->where('hr_yhp_open_status', 1)
+	        			->where('hr_yhp_open_status', $openS)
 	        			->first();
 	        			if($holidayPlanner != null){
 	        				$flag = 1;

@@ -520,7 +520,8 @@ class EmployeeController extends Controller
                 'b.as_rfid_code',
                 'sec.hr_section_name',
                 'subsec.hr_subsec_name',
-                'b.as_shift_id'
+                'b.as_shift_id',
+                'ben.ben_current_salary'
             ])
             ->leftJoin('hr_area AS a', 'a.hr_area_id', '=', 'b.as_area_id')
             ->leftJoin('hr_emp_type AS e', 'e.emp_type_id', '=', 'b.as_emp_type_id')
@@ -532,6 +533,7 @@ class EmployeeController extends Controller
             ->leftJoin('hr_designation AS dg', 'dg.hr_designation_id', '=', 'b.as_designation_id')
             ->leftJoin('hr_section AS sec', 'sec.hr_section_id', '=', 'b.as_section_id')
             ->leftJoin('hr_subsection AS subsec', 'subsec.hr_subsec_id', '=', 'b.as_subsection_id')
+            ->leftJoin('hr_benefits AS ben', 'b.associate_id', '=', 'ben.ben_as_id')
             ->where('b.as_status',1)
             ->whereIn('b.as_location', auth()->user()->location_permissions())
             ->where(function ($query) use ($request) {
@@ -561,7 +563,15 @@ class EmployeeController extends Controller
             $perm = true; 
         }
 
-        
+        $sal = check_permission('Salary Sheet');
+        // education
+        $educationDegree = DB::table('hr_education_degree_title')->pluck('education_degree_title', 'id');
+        $educations = DB::table('hr_education AS e')
+        ->select(DB::raw('t.*'))
+        ->from(DB::raw('(SELECT * FROM hr_education ORDER BY id DESC) t'))
+        ->groupBy('t.education_as_id')
+        ->pluck('education_degree_id_1', 'education_as_id');
+
         return Datatables::of($data)
             ->addIndexColumn()
             ->editColumn('as_ot', function($user){
@@ -583,12 +593,32 @@ class EmployeeController extends Controller
                 
             })
             ->addColumn('age', function($user){
-                if($user->as_dob){
-                    return Carbon::parse($user->as_dob)->age;
+                // if($user->as_dob){
+                //     return Carbon::parse($user->as_dob)->age;
+                // }
+                // else{
+                //     return '';
+                // }
+                return date('Y-m-d', strtotime($user->as_dob));
+                
+            })
+            ->addColumn('education', function($user) use ($educations, $educationDegree){
+                $edu = $educations[$user->associate_id]??'';
+                if($edu != ''){
+                    $educationDeg = $educationDegree[$edu]??'';
+                }else{
+                    $educationDeg = '';
                 }
-                else{
-                    return '';
+                return $educationDeg;
+                
+            })
+            ->addColumn('salary', function($user) use ($sal){
+                if($sal){
+                    $salary = $user->ben_current_salary;
+                }else{
+                    $salary = '';
                 }
+                return $salary;
                 
             })
             ->editColumn('action', function ($user) use($perm) {
@@ -609,7 +639,9 @@ class EmployeeController extends Controller
                 'as_status',
                 'age',
                 'action',
-                'as_ot'
+                'as_ot',
+                'education',
+                'salary'
             ])
             ->make(true);
     }
@@ -1335,7 +1367,7 @@ class EmployeeController extends Controller
 
         // check if  id is restricted
         if (in_array($as_id, $m_restriction)) {
-            return redirect()->to('hr/recruitment/employee/employee_list')->with('error', 'You do not have permission!');
+            return redirect()->to('hr/recruitment/employee_list')->with('error', 'You do not have permission!');
         }
 
         else{

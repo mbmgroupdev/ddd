@@ -103,7 +103,7 @@ class MonthlyActivityReportController extends Controller
             })
             ->when(!empty($input['pay_status']), function ($query) use($input){
                 if($input['pay_status'] == "cash"){
-                    return $query->where('s.cash_payable', '>', 0);
+                    return $query->where('ben.ben_cash_amount', '>', 0);
                 }elseif($input['pay_status'] != 'cash' && $input['pay_status'] != 'all'){
                     return $query->where('ben.bank_name',$input['pay_status']);
                 }
@@ -366,7 +366,7 @@ class MonthlyActivityReportController extends Controller
             })
             ->addColumn('associate_id', function($data) use ($input){
                 $month = $input['month'];
-                $jobCard = url("hr/operation/job_card?associate=$data->associate_id&month=$month");
+                $jobCard = url("hr/operation/job_card?associate=$data->associate_id&month_year=$month");
                 return '<a href="'.$jobCard.'" target="_blank">'.$data->associate_id.'</a>';
             })
             

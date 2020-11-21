@@ -111,110 +111,45 @@
                     </div>
                 </div>
             </div>
-            {{-- <div class="panel panel-info">
-                <div class="panel-heading station-card-content">
-                    <h6 class="panel-title">
-                        <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#individual">
-                            <i class="bigger-110 ace-icon fa fa-angle-down" data-icon-hide="ace-icon fa fa-angle-down" data-icon-show="ace-icon fa fa-angle-right"></i>
-                            &nbsp;Individual Employee
-                        </a>
-                    </h6>
-                </div>
-
-                <div class="panel-collapse collapse" id="individual">
-                    <div class="panel-body">
-                        {{ Form::open(['url'=>'hr/operation/line-change', 'class'=>'form-horizontal', 'method'=>'POST']) }}
-                            <div class="row"> 
-                                <div class="col-sm-3">
-                                    <div class="form-group has-required has-float-label select-search-group">
-                                        {{ Form::select('associate_id', [], null, ['placeholder'=>'Select Associate\'s ID', 'id'=>'associate_id', 'class'=> 'associates no-select form-control', 'required'=>'required']) }}  
-                                        <label for="associate_id"> Associate's ID </label>
-                                    </div> 
-
-                                    <div class="form-group has-float-label">
-                                        <input type="text" id="unit" class="form-control" readonly>
-                                        <label> Unit </label>
-                                    </div> 
-                                    <div class="form-group has-float-label">
-                                        <input type="text" id="floor" class="form-control" readonly>
-                                        <label> Floor </label>
-                                    </div> 
-                                    <div class="form-group has-required has-float-label select-search-group">
-                                        {{Form::select('floor_id', [], null, ['id'=> 'floor_id', 'placeholder' => "Select Floor", 'class'=> "no-select form-control", 'required'=>'required'])}}
-                                        <label for="floor_id">Changed Floor </label>
-                                    </div> 
-                                    <div class="form-group has-float-label">
-                                        <input type="date" name="start_date" id="start_date" class="datetimepicker form-control " placeholder="Start Date" required="required">
-                                        <label for="shift_id">Start Date </label>
-                                    </div>
-                                    <div class="form-group">
-                                        <button class="btn btn-primary" type="submit">
-                                            <i class="ace-icon fa fa-check bigger-110"></i> Submit
-                                        </button>
-                                    </div> 
-                                    
-
-                                </div>
-                                <div class="col-sm-3">  
-                                      
-                                    <div class="form-group has-float-label">
-                                        <input type="text" id="line" class="form-control" readonly>
-                                        <label> Line </label>
-                                    </div> 
-                                    <div class="form-group has-float-label">
-                                        <input type="text" id="shift" class="form-control " readonly>
-                                        <label> Shift </label>
-                                    </div>
-                                    <div class="empty-form-group"></div>
-                                    <div class="form-group has-required has-float-label select-search-group">
-                                        {{Form::select('line_id', [], null, ['id'=> 'line_id', 'placeholder' => "Select Line", 'class'=> "no-select form-control ", 'required'=>'required'])}}
-                                        <label for="line_id">Changed Line </label>
-                                    </div> 
-                                    <div class="form-group has-float-label">
-                                        <input type="date" name="end_date" id="end_date"  class="datetimepicker form-control" placeholder="End Date" required="required">
-                                        <label for="shift_id">End Date </label>
-                                    </div> 
-                                    
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="user-details-block" style="padding-top: 3rem;">
-                                        <div class="user-profile text-center mt-0">
-                                            <img id="avatar" class="avatar-130 img-fluid" src="{{ asset('assets/images/user/09.jpg') }} " onerror="this.onerror=null;this.src='{{ asset("assets/images/user/09.jpg") }}';">
-                                        </div>
-                                        <div class="text-center mt-3">
-                                         <h4><b id="name">-------------</b></h4>
-                                         <p class="mb-0" id="designation">
-                                            --------------------------</p>
-                                         <p class="mb-0" >
-                                            Oracle ID: <span id="oracle_id" class="text-success">-------------</span>
-                                         </p>
-                                         <p class="mb-0" >
-                                            Associate ID: <span id="associate_id_emp" class="text-success">-------------</span>
-                                         </p>
-                                         <p  class="mb-0">Department: <span id="department" class="text-success">------------------------</span> </p>
-                                         
-                                        </div>
-                                    </div>
-                                </div>  
-                       
-                            </div>
-
-                        {{ Form::close() }}
-                    </div>
-                </div>
-            </div> --}}
             
         </div>
     </div>
 </div>
 @push('js')
 <script type="text/javascript">
+
+    /*$('#multiple_associate_id').select2({
+        placeholder: 'Select Employee',
+        ajax: {
+            url: url+'hr/adminstrator/employee/search',
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+
+                return { 
+                    keyword: params.term,
+                    unit: $("#unit").val()
+                }; 
+            },
+            processResults: function (data) { 
+                console.log(data);
+                return {
+                    results:  $.map(data, function (item) {
+                        return {
+                            text: item.user_name,
+                            id: item.associate_id
+                        }
+                    }) 
+                };
+            },
+            cache: true
+        }
+    });*/
 $(document).ready(function()
 {   
-    
-   
-    //get associate information on select associate id
     var url = '{{url('')}}';
+    //get associate information on select associate id
+    
     $("#associate_id").on("change", function(){
 
         if($(this).val() != ""){
@@ -313,7 +248,7 @@ $(document).ready(function()
                 { 
                     $("#multiple_associate_id").html('<option value="">Select Employees</option>');    
                      for(var i=0; i<data.length; i++){
-                        var app = "<option value="+data[i]['associate_id']+">"+data[i]['associate_id']+
+                        var app = "<option value="+data[i]['associate_id']+">"+data[i]['as_oracle_code']+'-'+data[i]['associate_id']+
                         "-"+data[i]['as_name']+"</option>";
                         $("#multiple_associate_id").append(app);
                      }

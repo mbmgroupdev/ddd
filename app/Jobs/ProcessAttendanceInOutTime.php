@@ -123,7 +123,7 @@ class ProcessAttendanceInOutTime implements ShouldQueue
                     $lateTime = $getLateCount->default_value;
                 }
             }else{
-                $lateTime = 3;
+                $lateTime = 2;
             }
             $inTime = ($cShifStartTime+($lateTime * 60));
 

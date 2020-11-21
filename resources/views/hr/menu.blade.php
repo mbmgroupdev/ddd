@@ -140,9 +140,16 @@
       <li class="@if($segment2 == 'payroll') active @endif">
          <a href="#payroll" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="las la-money-check-alt"></i><span>Payroll</span><i class="las la-angle-right iq-arrow-right"></i></a>
          <ul id="payroll" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+
+            @if($user->can('Bank Sheet') || $user->hasRole('Super Admin'))
+            <li class="@if($segment3 == 'bank-sheet') active @endif">
+               <a href="{{ url('hr/payroll/bank-sheet') }}"><i class="las la-chart-line"></i>Bank Sheet</a>
+            </li>
+            @endif
             @if($user->canany(['Assign Benefit','Benefit List']) || $user->hasRole('Super Admin'))
             <li class="@if($segment2 == 'payroll' && $segment3=='employee-benefit') active @endif">
                <a href="{{ url('hr/payroll/employee-benefit') }}"><i class="las la-gifts"></i> Benefits</a>
+
             </li>
             @endif
             @if($user->can('Manage Promotion') || $user->hasRole('Super Admin'))
@@ -316,7 +323,7 @@
       @endif
 
 
-      @if(auth()->user()->canany(['Monthly OT','Monthly MMR','Shift Roster','Monthly Increment','Attendance Summary Report','Fixed Salary Sheet','Manual Attendance Report','Outside List','Attendance Consecutive Report','Event History','Group Attendance','Leave Log']) || $user->hasRole('Super Admin'))
+      @if(auth()->user()->canany(['Monthly OT','Monthly MMR','Shift Roster','Monthly Increment','Attendance Summary Report','Fixed Salary Sheet','Manual Attendance Report','Outside List','Attendance Consecutive Report','Event History','Group Attendance','Leave Log', 'Salary Report']) || $user->hasRole('Super Admin'))
       <li class="@if($segment2 == 'reports') active @endif">
          <a href="#report" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="las la-file-invoice"></i><span>Reports</span><i class="las la-angle-right iq-arrow-right"></i></a>
          <ul id="report" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
@@ -341,7 +348,7 @@
             @endif
             {{-- <li class="@if($segment3 == 'monthly-reports') active @endif"><a href="{{ url('hr/reports/monthly-reports') }}"><i class="las la-chart-area"></i>Monthly Report</a></li> --}}
             {{-- <li><a href="{{ url('hr/reports/group_attendance') }}"><i class="las la-fingerprint"></i>Group Attendance</a></li> --}}
-            @if($user->can('Monthly Increment') || $user->hasRole('Super Admin'))
+            @if($user->can('Salary Report') || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'monthly-salary') active @endif"><a href="{{ url('hr/reports/monthly-salary') }}"><i class="las la-fingerprint"></i>Monthly Salary</a></li>
             @endif
             @if($user->can('Monthly OT') || $user->hasRole('Super Admin'))

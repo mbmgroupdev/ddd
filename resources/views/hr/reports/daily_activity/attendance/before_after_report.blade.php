@@ -1,15 +1,7 @@
 <div class="panel">
 	<div class="panel-body">
-		<div class="report_section">
+		<div class="report_section" id="report_section">
 			@php
-				$unit = unit_by_id();
-				$line = line_by_id();
-				$floor = floor_by_id();
-				$department = department_by_id();
-				$designation = designation_by_id();
-				$section = section_by_id();
-				$subSection = subSection_by_id();
-				$area = area_by_id();
 				$formatHead = explode('_',$format);
 			@endphp
 			
@@ -21,7 +13,12 @@
 		            <table class="table no-border f-16" border="0">
 		            	<tr>
 		            		<td>
-		            			Unit <b>: {{ $unit[$input['unit']]['hr_unit_name'] }}</b> <br>
+		            		@if($input['unit'] != null)
+	            				Unit <b>: {{ $input['unit'] == 145?'MBM + MBF + MBM 2':$unit[$input['unit']]['hr_unit_name'] }}</b> <br>
+		        			@endif
+		        			@if($input['location'] != null)
+		        				Location <b>: {{ $location[$input['location']]['hr_location_name'] }}</b> <br>
+		        			@endif
 		            		@if($input['area'] != null)
 		            			Area 
 		                			<b>: {{ $area[$input['area']]['hr_area_name'] }}</b> <br>
@@ -129,23 +126,29 @@
 									}elseif($format == 'as_section_id'){
 										$head = 'Section';
 										$body = $section[$group]['hr_section_name']??'';
+									}elseif($format == 'as_subsection_id'){
+										$head = 'Sub Section';
+										$body = $subSection[$group]['hr_subsec_name']??'N/A';
 									}else{
 										$head = '';
 									}
 								@endphp
 			                	@if($head != '')
 			                    <th colspan="2">{{ $head }}</th>
-			                    <th colspan="7">{{ $body }}</th>
+			                    <th colspan="9">{{ $body }}</th>
 			                    @endif
 			                </tr>
 			                @endif
 			                <tr>
 			                    <th>Sl</th>
-			                    <th>Photo</th>
+			                    {{-- <th>Photo</th> --}}
 			                    <th>Associate ID</th>
 			                    <th>Name & Phone</th>
+			                    <th>Oracle ID</th>
 			                    <th>Designation</th>
 			                    <th>Department</th>
+			                    <th>Section</th>
+			                    <th>Sub Section</th>
 			                    <th>Floor</th>
 			                    <th>Line</th>
 			                    <th>Action</th>
@@ -163,14 +166,17 @@
 			            	@if($head == '')
 			            	<tr>
 			            		<td>{{ ++$i }}</td>
-				            	<td><img src="{{ emp_profile_picture($employee) }}" class='small-image' style="height: 40px; width: auto;"></td>
+				            	{{-- <td><img src="{{ emp_profile_picture($employee) }}" class='small-image' style="height: 40px; width: auto;"></td> --}}
 				            	<td><a href='{{ url("hr/operation/job_card?associate=$employee->associate_id&month_year=$month") }}' target="_blank">{{ $employee->associate_id }}</a></td>
 				            	<td>
 				            		<b>{{ $employee->as_name }}</b>
 				            		<p>{{ $employee->as_contact }}</p>
 				            	</td>
+				            	<td>{{ $employee->as_oracle_code }}</td>
 				            	<td>{{ $designation[$employee->as_designation_id]['hr_designation_name']??'' }}</td>
 				            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
+				            	<td>{{ $section[$employee->as_section_id]['hr_section_name']??'' }}</td>
+				            	<td>{{ $subSection[$employee->as_subsection_id]['hr_subsec_name']??'' }}</td>
 				            	<td>{{ $floor[$employee->as_floor_id]['hr_floor_name']??'' }}</td>
 				            	<td>{{ $line[$employee->as_line_id]['hr_line_name']??'' }}</td>
 				            	<td>
@@ -181,14 +187,17 @@
 			            	@if($group == $employee->$format)
 			            	<tr>
 			            		<td>{{ ++$i }}</td>
-				            	<td><img src="{{ emp_profile_picture($employee) }}" class='small-image' style="height: 40px; width: auto;"></td>
+				            	{{-- <td><img src="{{ emp_profile_picture($employee) }}" class='small-image' style="height: 40px; width: auto;"></td> --}}
 				            	<td><a href='{{ url("hr/operation/job_card?associate=$employee->associate_id&month_year=$month") }}' target="_blank">{{ $employee->associate_id }}</a></td>
 				            	<td>
 				            		<b>{{ $employee->as_name }}</b>
 				            		<p>{{ $employee->as_contact }}</p>
 				            	</td>
+				            	<td>{{ $employee->as_oracle_code }}</td>
 				            	<td>{{ $designation[$employee->as_designation_id]['hr_designation_name']??'' }}</td>
 				            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
+				            	<td>{{ $section[$employee->as_section_id]['hr_section_name']??'' }}</td>
+				            	<td>{{ $subSection[$employee->as_subsection_id]['hr_subsec_name']??'' }}</td>
 				            	<td>{{ $floor[$employee->as_floor_id]['hr_floor_name']??'' }}</td>
 				            	<td>{{ $line[$employee->as_line_id]['hr_line_name']??'' }}</td>
 				            	<td>
@@ -198,19 +207,13 @@
 			            	@endif
 			            	@endif
 			            @endforeach
+			            	
 			            @else
 				            <tr>
-				            	<td colspan="9" class="text-center">No Employee Found!</td>
+				            	<td colspan="11" class="text-center">No Employee Found!</td>
 				            </tr>
 			            @endif
 			            </tbody>
-			            <tfoot>
-			            	<tr>
-			            		<td colspan="7"></td>
-			            		<td><b>Total Employee</b></td>
-			            		<td><b>{{ $i }}</b></td>
-			            	</tr>
-			            </tfoot>
 					</table>
 					@endforeach
 				@elseif(($input['report_format'] == 1 && $format != null))
@@ -227,6 +230,8 @@
 							$head = 'Designation';
 						}elseif($format == 'as_section_id'){
 							$head = 'Section';
+						}elseif($format == 'as_subsection_id'){
+							$head = 'Sub Section';
 						}else{
 							$head = '';
 						}
@@ -235,22 +240,51 @@
 						<thead>
 							<tr>
 								<th>Sl</th>
+								@if($format == 'as_section_id' || $format == 'as_subsection_id')
+								<th>Department Name</th>
+								@endif
+								@if($format == 'as_subsection_id')
+								<th>Section Name</th>
+								@endif
 								<th> {{ $head }} Name</th>
 								<th>Employee</th>
 							</tr>
 						</thead>
 						<tbody>
-							@php $i=0; $totalEmployee = 0; @endphp
+							@php $i=0; @endphp
 							@if(count($getEmployee) > 0)
 							@foreach($getEmployee as $employee)
-
+							@php $group = $employee->$format; @endphp
 							<tr>
 								<td>{{ ++$i }}</td>
+								@if($format == 'as_section_id' || $format == 'as_subsection_id')
 								<td>
 									@php
-										$group = $employee->$format;
+										if($format == 'as_subsection_id'){
+											$getDepar = $subSection[$group]['hr_subsec_department_id']??'';
+										}else{
+											$getDepar = $section[$group]['hr_section_department_id']??'';
+										}
+										echo $department[$getDepar]['hr_department_name']??'';
+									@endphp
+								</td>
+								@endif
+								@if($format == 'as_subsection_id')
+								<td>
+									@php
+										$getSec = $subSection[$group]['hr_subsec_section_id']??'';
+										echo $section[$getSec]['hr_section_name']??'';
+									@endphp
+								</td>
+								@endif
+								<td>
+									@php
 										if($format == 'as_unit_id'){
-											$body = $unit[$group]['hr_unit_name']??'';
+											if($group == 145){
+												$body = 'MBM + MBF + MBM 2';
+											}else{
+												$body = $unit[$group]['hr_unit_name']??'';
+											}
 										}elseif($format == 'as_line_id'){
 											$body = $line[$group]['hr_line_name']??'';
 										}elseif($format == 'as_floor_id'){
@@ -261,6 +295,8 @@
 											$body = $designation[$group]['hr_designation_name']??'';
 										}elseif($format == 'as_section_id'){
 											$body = $section[$group]['hr_section_name']??'';
+										}elseif($format == 'as_subsection_id'){
+											$body = $subSection[$group]['hr_subsec_name']??'';
 										}else{
 											$body = 'N/A';
 										}
@@ -269,13 +305,13 @@
 								</td>
 								<td>
 									{{ $employee->total }}
-									@php $totalEmployee += $employee->total; @endphp
+									
 								</td>
 							</tr>
 							@endforeach
 							@else
 							<tr>
-				            	<td colspan="3" class="text-center">No Employee Found!</td>
+				            	<td colspan="{{ ($format == 'as_subsection_id' || $format == 'as_subsection_id')?'5':'3'}}" class="text-center">No Employee Found!</td>
 				            </tr>
 							@endif
 						</tbody>
