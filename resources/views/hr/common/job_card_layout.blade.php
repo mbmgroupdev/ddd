@@ -1,10 +1,10 @@
 <div class="panel w-100">
     <div class="panel-body">
-        <div class="offset-1 col-10 h-min-400">
+        <div class="h-min-400">
             
             @php
-                $year  = date('Y', strtotime(request()->month_year));
-                $month = date('m', strtotime(request()->month_year));
+                $year  = date('Y', strtotime($request->month_year));
+                $month = date('m', strtotime($request->month_year));
                 $lastMonth = date('m',strtotime("-1 month"));
                 $thisMonth = date('m');
                 
@@ -34,37 +34,58 @@
                         <div class="col-6 text-center">
                           <h4 class="card-title capitalize inline">
                             @php
-                                $associate = request()->associate;
-                                $nextMonth = date('Y-m', strtotime(request()->month_year.' +1 month'));
-                                $prevMonth = date('Y-m', strtotime(request()->month_year.' -1 month'));
+                                $associate = $request->associate;
+                                $nextMonth = date('Y-m', strtotime($request->month_year.' +1 month'));
+                                $prevMonth = date('Y-m', strtotime($request->month_year.' -1 month'));
 
                                 $prevUrl = url("hr/operation/job_card?associate=$associate&month_year=$prevMonth");
                                 $nextUrl = url("hr/operation/job_card?associate=$associate&month_year=$nextMonth");
+                                $user  = auth()->user();
                             @endphp
+                            @if($user->can('Attendance Operation') || $user->hasRole('Super Admin'))
                             <a href="{{ $prevUrl }}" class="btn view prev_btn" data-toggle="tooltip" data-placement="top" title="" data-original-title="Previous Month Job Card" >
                               <i class="las la-chevron-left"></i>
                             </a>
-                            <b class="f-16" id="result-head">{{ request()->month_year }} </b>
+                            @endif
+                            <b class="f-16" id="result-head">{{ date('F, Y', strtotime($request->month_year)) }} </b>
+                            @if($user->can('Attendance Operation') || $user->hasRole('Super Admin'))
                             @if($month < $thisMonth)
                             <a href="{{ $nextUrl }}" class="btn view next_btn" data-toggle="tooltip" data-placement="top" title="" data-original-title="Next Month Job Card" >
                               <i class="las la-chevron-right"></i>
                             </a>
                             @endif
+                            @endif
                           </h4>
                         </div>
                         @php 
-                            $yearMonth = request()->month_year; 
+                            $yearMonth = $request->month_year; 
+
+                            $flagStatus = 0;
+                            $asStatus = emp_status_name($info->as_status);
+                            $statusDate = $info->as_status_date;
+                            if($statusDate != null && $info->as_status != 1){
+                                $statusMonth = date('Ym', strtotime($info->as_status_date));
+                                $requestMonth = date('Ym', strtotime($yearMonth));
+                              
+                                if($requestMonth > $statusMonth){
+                                    $flagStatus = 1;
+                                }
+                            }
                         @endphp
                         <div class="col-3">
-                          @if(($lastMonth == $month && $lockActivity == 0)|| $month == date('m'))
-                          <div class="text-right">
-                            <h4 class="card-title capitalize inline">
-                            <a href='{{url("hr/timeattendance/attendance_bulk_manual?associate=$info->associate_id&month=$yearMonth")}}' class="btn view list_view no-padding" data-toggle="tooltip" data-placement="top" title="" data-original-title="Manual Edit Job Card">
-                              <i class="fa fa-edit bigger-120"></i>
-                            </a>
-                            </h4>
-                          </div>
-                          @endif
+                        @if($flagStatus == 0)
+                            @if($user->can('Attendance Operation') || $user->hasRole('Super Admin'))
+                              @if(($lastMonth == $month && $lockActivity == 0)|| $month == date('m'))
+                              <div class="text-right">
+                                <h4 class="card-title capitalize inline">
+                                <a href='{{url("hr/timeattendance/attendance_bulk_manual?associate=$info->associate_id&month=$yearMonth")}}' class="btn view list_view no-padding" data-toggle="tooltip" data-placement="top" title="" data-original-title="Manual Edit Job Card">
+                                  <i class="fa fa-edit bigger-120"></i>
+                                </a>
+                                </h4>
+                              </div>
+                              @endif
+                            @endif
+                        @endif
                         </div>
                       </div>
                    </div>
@@ -77,7 +98,7 @@
                                 <h3 style="margin:4px 10px">{{ $info->unit }}</h3>
                                 <h5 style="margin:4px 10px">Job Card Report</h5>
 
-                                <h5 style="margin:4px 10px">For the month of {{date('F, Y', strtotime(request()->month_year))}}</h5>
+                                <h5 style="margin:4px 10px">For the month of {{date('F, Y', strtotime($request->month_year))}}</h5>
                             </div>
                             <table class="table" style="width:100%;border:1px solid #ccc;margin-bottom:0;font-size:14px;text-align:left"  cellpadding="5">
                                 <tr>
@@ -112,6 +133,8 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    
+                                    @if($flagStatus == 0)
                                     @foreach($attendance as $value)
                                     <tr>
                                         <td>
@@ -145,7 +168,7 @@
                                                 @endif
                                             @endif
                                         </td>
-                                        <td @if($value['present_status'] == 'A') style="background: #ea9d99;color:#000;" @endif>
+                                        <td @if($value['present_status'] == 'A' || $value['present_status'] == 'Weekend(General) - A') style="background: #ea9d99;color:#000;" @endif>
                                         {{ $value['present_status'] }}
 
                                         @if($value['late_status']==1)
@@ -170,7 +193,11 @@
                                         </td>
                                     </tr>
                                     @endforeach
-
+                                    @else
+                                    <tr>
+                                        <td colspan="7" class="text-center">This Employee is {{ $asStatus }}</td>
+                                    </tr>
+                                    @endif
                                 </tbody>
 
 

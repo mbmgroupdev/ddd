@@ -100,14 +100,13 @@ class BenefitsCalculationController extends Controller
             $details->earned = $earned->earned??0;
 	        $details->enjoyed = $earned->lenjoyed??0;
 
-            /*$input = array(
-                'associate' => $request->emp_id,
-                'month_year' => date('Y-m-d')
-            );*/
-            $request->associate = $request->emp_id;
-            $request->month_year = date('Y-m');
-
-            $details->jobcard = $this->getEmpJobcard($request);
+            if(empty($benefits)){
+                $request->associate = $request->emp_id;
+                $request->month_year = date('Y-m');
+                $jobcard = '<h4 class="text-danger text-center">Please check & verify jobcard of this employee first!</h4>';
+                $jobcard .= $this->getEmpJobcard($request);
+                $details->jobcard = $jobcard;
+            }
 
 	    	return Response::json($details);
 
@@ -124,8 +123,10 @@ class BenefitsCalculationController extends Controller
         $result = $jobcard->empAttendanceByMonth($request);
         $attendance = $result['attendance'];
         $info = $result['info'];
+        $joinExist = $result['joinExist'];
+        $leftExist = $result['leftExist'];
 
-        return view('hr.common.job_card_layout', compact('request','attendance','info'));
+        return view('hr.common.job_card_layout', compact('request','attendance','info','joinExist','leftExist'))->render();
     }
 
     /*get employee attendance table*/
@@ -405,7 +406,21 @@ class BenefitsCalculationController extends Controller
     {
         $month = date('m', strtotime($salary_date));
         $year = date('Y', strtotime($salary_date));
+        $total_day = date('d', strtotime($salary_date))-1;
+
+        $yearMonth = $year.'-'.$month;
+        $empdoj = $employee->as_doj;
+        $empdojMonth = date('Y-m', strtotime($employee->as_doj));
+        $empdojDay = date('d', strtotime($employee->as_doj));
+
         $first_day = Carbon::create($salary_date)->firstOfMonth()->format('Y-m-d');
+        if($empdojMonth ==  $yearMonth){
+            $first_day = $employee->as_doj;
+            $total_day = $total_day - $empdojDay + 1;
+        }
+
+
+
 
         $table = get_att_table($employee->as_unit_id);
         $att = DB::table($table)
@@ -430,13 +445,6 @@ class BenefitsCalculationController extends Controller
                         'year' => $year
                     ])
                     ->first();
-
-        
-        $yearMonth = $year.'-'.$month;
-        $empdoj = $employee->as_doj;
-        $empdojMonth = date('Y-m', strtotime($employee->as_doj));
-        $empdojDay = date('d', strtotime($employee->as_doj));
-
 
         if($employee->shift_roaster_status == 1){
             // check holiday roaster employee
@@ -496,7 +504,7 @@ class BenefitsCalculationController extends Controller
         $getAbsent = DB::table('hr_absent')
             ->where('associate_id', $employee->associate_id)
             ->where('date','>=', $first_day)
-            ->where('date','<=', $salary_date)
+            ->where('date','<', $salary_date)
             ->count();
 
         // get leave employee wise
@@ -581,7 +589,7 @@ class BenefitsCalculationController extends Controller
         $stamp = 0;
         
         // get salary payable calculation
-        $salaryPayable = ceil(((($perDayGross*$salary_date) - ($getAbsentDeduct + ($deductCost)))));
+        $salaryPayable = ceil(((($perDayGross*$total_day) - ($getAbsentDeduct + ($deductCost)))));
         $totalPayable = ceil((($salaryPayable + ($overtime_rate*$overtimes))));
         
         $salary['total_payable'] = $totalPayable;

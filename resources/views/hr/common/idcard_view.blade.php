@@ -9,7 +9,7 @@
     @php $chunkedEm = array_chunk($employees->toArray(), 8); @endphp
     @foreach($chunkedEm as $key1 => $emps)
         @foreach($emps as $key =>$associate )
-        <div style="float:left;margin: 20px 10px;width: 200px;height: 290px;background:white;border:1px solid #333;">
+        <div style="float:left;margin: 20px 10px;width: 200px;height: 290px;background:white;border:1px solid #333;margin-right: 0;">
             <div style="width:100%;height:10px"></div>
             <div style="width:100%;height:30px;padding:5px">
                 <div style="float:left;width:65%;line-height:16px;font-size:12px;font-weight:700">{{$associate->hr_unit_name}}</div>

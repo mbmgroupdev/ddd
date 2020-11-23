@@ -21,173 +21,115 @@
 
         @include('inc/message')
         <div class="panel panel-success">
-            <div class="panel-body">
-                <div class="row">
-                    <div class="col-3"> 
-                        <div class="form-group has-required has-float-label select-search-group">
-                            {{ Form::select('unit', $unitList, null, ['placeholder'=>'Select Unit','id'=>'unit_shift', 'class'=> 'form-control', 'required'=> 'required']) }} 
-                            <label  for="unit">Unit </label>
+            <div class="panel-body pb-0">
+                <form class="" role="form" id="activityReport" method="get" action="#" > 
+                    <div class="row">
+                      <div class="col-3">
+                        <div class="form-group has-float-label has-required select-search-group">
+                            <select name="unit" class="form-control capitalize select-search" id="unit" required="">
+                                <option selected="" value="">Choose...</option>
+                                @foreach($unitList as $key => $value)
+                                <option value="{{ $key }}">{{ $value }}</option>
+                                @endforeach
+                            </select>
+                          <label for="unit">Unit</label>
                         </div>
-                        <div class="form-group has-required has-float-label select-search-group">
-                            {{ Form::select('area', $areaList, null, ['placeholder'=>'Select Area','id'=>'area_shift', 'class'=> 'form-control filter', 'disabled']) }} 
-                            <label  for="area">Area </label>
+                        <div class="form-group has-float-label has-required select-search-group">
+                            <select name="area" class="form-control capitalize select-search" id="area" required="">
+                                <option selected="" value="">Choose...</option>
+                                @foreach($areaList as $key => $value)
+                                <option value="{{ $key }}">{{ $value }}</option>
+                                @endforeach
+                            </select>
+                            <label for="area">Area</label>
                         </div>
-                     </div>
-                    <div class="col-3">
                         <div class="form-group has-float-label select-search-group">
-                            <select name="department" id="department_shift" class= "form-control filter" disabled ><option value="">Select Department</option></select>
-                            <label  for="department">Department </label>
+                            <select name="department" class="form-control capitalize select-search" id="department" disabled>
+                                <option selected="" value="">Choose...</option>
+                            </select>
+                            <label for="department">Department</label>
                         </div>
-                        <div class="form-group has-float-label select-search-group">
-                            {{ Form::select('section', [], null, ['placeholder'=>'Select Section','id'=>'section_shift', 'class'=> 'form-control filter','disabled']) }} 
-                            <label  for="section">Section </label>
-                        </div>
-                     </div>
-                    <div class="col-3"> 
+                      </div>
+                      <div class="col-3">
                         
                         <div class="form-group has-float-label select-search-group">
-                            {{ Form::select('subsection', [], null, ['placeholder'=>'Select Sub Section','id'=>'subsection_shift', 'class'=> 'form-control filter', 'disabled']) }}
-                            <label  for="subsection">Sub Section </label>
+                            <select name="section" class="form-control capitalize select-search " id="section" disabled>
+                                <option selected="" value="">Choose...</option>
+                            </select>
+                            <label for="section">Section</label>
                         </div>
                         <div class="form-group has-float-label select-search-group">
-                            <select name="line_id" class="form-control capitalize filter" id="line_id" disabled >
+                            <select name="subSection" class="form-control capitalize select-search" id="subSection" disabled>
+                                <option selected="" value="">Choose...</option> 
+                            </select>
+                            <label for="subSection">Sub Section</label>
+                        </div>
+                        <div class="row">
+                          <div class="col-5 pr-0">
+                            <div class="form-group has-float-label has-required">
+                              <input type="number" class="report_date min_sal form-control" id="min_salary" name="min_salary" placeholder="Min Salary" required="required" value="0" min="0" max="{{$data['salaryMax']}}" autocomplete="off" />
+                              <label for="min_salary">Range From</label>
+                            </div>
+                          </div>
+                          <div class="col-1 p-0">
+                            <div class="c1DHiF text-center">-</div>
+                          </div>
+                          <div class="col-6">
+                            <div class="form-group has-float-label has-required">
+                              <input type="number" class="report_date max_sal form-control" id="max_salary" name="max_salary" placeholder="Max Salary" required="required" value="{{$data['salaryMax']}}" min="{{$data['salaryMin']}}" max="{{$data['salaryMax']}}" autocomplete="off" />
+                              <label for="max_salary">Range To</label>
+                            </div>
+                          </div>
+                        </div>
+                      </div> 
+                      <div class="col-3">
+                        <div class="form-group has-float-label select-search-group">
+                            <select name="floor_id" class="form-control capitalize select-search" id="floor_id" disabled >
+                                <option selected="" value="">Choose...</option>
+                            </select>
+                            <label for="floor_id">Floor</label>
+                        </div>
+                        <div class="form-group has-float-label select-search-group">
+                            <select name="line_id" class="form-control capitalize select-search" id="line_id" disabled >
                                 <option selected="" value="">Choose...</option>
                             </select>
                             <label for="line_id">Line</label>
                         </div>
-                     </div>
-                    <div class="col-3"> 
+                        
+                        
+                        
+                      </div>  
+                      <div class="col-3">
+                            <div class="form-group has-float-label has-required">
+                              <input type="month" class="report_date datepicker form-control" id="report_from" name="report_from" placeholder="Y-m" required="required" value="{{ date('Y-m') }}" autocomplete="off" />
+                              <label for="report_from">Month</label>
+                            </div>
                         <div class="form-group has-float-label select-search-group">
-                            <select class="col-sm-12 filter" id="shift_id" name="shift_id"  disabled="disabled">
-                                <option value="">Select</option>
-                            </select> 
-
-                            <label  for="shift_id" style="color: maroon;">Shift </label>
-                        </div>
-                        <div class="form-group has-float-label select-search-group">
-                            <select name="otnonot" id="otnonot" class="form-control filter">
-                                <option value="">Select OT/Non-OT</option>
-                                <option value="0">Non-OT</option>
-                                <option value="1">OT</option>
+                            <select name="as_ot" class="form-control capitalize select-search" id="line_id"  >
+                                <option selected="" value="">Choose...</option>
+                                <option  value="OT">OT</option>
+                                <option  value="NonOT">NonOT</option>
                             </select>
-                            <label  for="otnonot">OT/Non-OT </label>
+                            <label for="line_id">OT</label>
                         </div>
-                            
+                        
+                        
                         
                         <div class="form-group">
+                          <button class="btn btn-primary nextBtn btn-lg pull-right" type="submit" id="attendanceReport"><i class="fa fa-save"></i> Generate</button>
                         </div>
-                     </div>
-                </div>
-                        
+                      </div>
+                      
+                      
+                    </div>
+                </form>
+                
             </div>
         </div>
 
 		<div class="page-content"> 
             @can('Manage Increment')
-            <div class="panel panel-success">
-                <div class="panel-body">
-                    
-                    <form class="form-horizontal needs-validation" novalidate role="form" method="post" action="{{ url('hr/payroll/increment')  }}" enctype="multipart/form-data">
-                        {{ csrf_field() }} 
-                        <div class="row">
-                            <div class="col-6">
-                                <div class="form-group has-float-label select-search-group">
-                                    {{ Form::select('unit', $unitList, null, ['placeholder'=>'Select Unit', 'class'=> ' filter form-control']) }}
-                                    <label for="hr_unit_name" >Unit </label>
-                                </div>
-
-                                <div class="form-group has-float-label select-search-group">
-                                    {{ Form::select('emp_type', $employeeTypes, null, ['placeholder'=>'Select Associate Type', 'class'=> ' filter form-control']) }} 
-                                    <label  for="hr_unit_name" >Associate Type </label>
-                                </div>
-
-                                <div class="form-group has-float-label select-search-group">
-                                    {{ Form::select('increment_type', $typeList, null, ['placeholder'=>'Select Increment Type','class'=>'form-control']) }}
-                                    <label  for="hr_unit_name" >Increment Type </label>
-                                </div>
-                                <div class="row">
-                                    <div class="col-6">
-                                        
-                                        <div class="form-group has-float-label has-required">
-                                            <input type="date" name="applied_date" id="applied_date" class="form-control  " placeholder="Enter Date"  />
-                                            <label for="applied_date"> Applied Date </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        
-                                        <div class="form-group has-float-label has-required ">
-                                            <label for="effective_date"> Effective Date </label>
-                                            <input type="date" name="effective_date" id="effective_date" class="form-control" required placeholder="Enter Date" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    
-                                    <div class="col-6">
-                                        <div class="form-group has-float-label select-search-group has-required">
-                                            <select class="form-control" data-validation="required" id="amount_type" name="amount_type">
-                                                <option value="">Select Amount Type</option>
-                                                <option value="1">Increased Amount</option>
-                                                <option value="2">Percent</option>
-                                            </select>
-                                            <label>Type</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="form-group has-float-label has-required">
-                                            <input type="text" name="increment_amount" id="increment_amount" placeholder="Increment Amount/Percentage" class="form-control" required/>
-                                            <label  for="increment_amount">Amount </label>
-                                        </div>
-                                        
-                                    </div>
-                                </div>
-
-                                
-                                <div class="clearfix form-actions responsive-hundred">
-                                    <div class="align-center"> 
-                                        <button class="btn  btn-primary" type="submit">
-                                            <i class="ace-icon fa fa-check bigger-110"></i> Submit
-                                        </button>
-
-                                        &nbsp; &nbsp; &nbsp;
-                                        <button class="btn" type="reset">
-                                            <i class="ace-icon fa fa-undo bigger-110"></i> Reset
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-6">
-                                <div class="row m-0">
-                                    <div class="col-6 text-center" style="background-color:#099faf; color: #fff;">
-                                        <p style="padding-top: 5px;">Selected Employee: <span id="selectEmp" style="font-weight: bold;"></span></p>
-                                    </div>
-                                    <div class="col-6 text-center" style="background-color: #87B87F; color: #fff;">
-                                        <p style="padding-top: 5px;">Total Employee: <span id="totalEmp" style="font-weight: bold;"></span></p>
-                                    </div>
-                                </div>
-                                <div style="height: 400px; overflow: auto;">
-                                    <table id="AssociateTable" class="table header-fixed1 table-compact table-bordered" >
-                                        <thead>
-                                            <tr>
-                                                <th class="sticky-th"><input type="checkbox" id="checkAll" class="sticky-th" /></th>
-                                                <th class="sticky-th">Associate ID</th>
-                                                <th class="sticky-th">Associate Name</th>
-                                            </tr>
-                                            <tr>
-                                                <th class="sticky-th" colspan="3" id="user_filter" style='top: 40px;' ></th>
-                                            </tr>
-                                        </thead> 
-                                        <tbody id="user_info">
-                                        </tbody>
-                                    </table>
-                                </div>    
-                            </div>
-                        </div>
-                    </form>
-                    <!-- /.col -->
-                </div>
-            </div> 
+            
             @endcan
       
 		</div><!-- /.page-content -->
@@ -196,30 +138,106 @@
 @push('js')
 <script type="text/javascript"> 
 $(document).ready(function(){
-    var totalempcount = 0;
-    var totalemp = 0;
-     $('#dataTables').DataTable({
-            pagingType: "full_numbers" ,
-    }); 
-    var dt = $('#dataTables2').DataTable({
-            pagingType: "full_numbers",
-            dom: "<'row'<'col-2'l><'col-4'i><'col-3 text-center'B><'col-3'f>>tp",
-            buttons: [
-                {
-                    extend: 'print',
-                    className: 'btn-sm btn-success',
-                    title: 'Arear Salary List',
-                    pageSize: 'A4',
-                    header: true,
-                    exportOptions: {
-                        columns: ['0','1','2','3','4','5','6'],
-                        stripHtml: false
-                    },
-                    "action": allExport,
-                }
-            ]
-    }); 
-    
+    // change unit
+    $('#unit').on("change", function(){
+        $.ajax({
+            url : "{{ url('hr/attendance/floor_by_unit') }}",
+            type: 'get',
+            data: {unit : $(this).val()},
+            success: function(data)
+            {
+                $('#floor_id').removeAttr('disabled');
+                
+                $("#floor_id").html(data);
+            },
+            error: function(reject)
+            {
+               console.log(reject);
+            }
+        });
+
+        //Load Line List By Unit ID
+        $.ajax({
+           url : "{{ url('hr/reports/line_by_unit') }}",
+           type: 'get',
+           data: {unit : $(this).val()},
+           success: function(data)
+           {
+                $('#line_id').removeAttr('disabled');
+                $("#line_id").html(data);
+           },
+           error: function(reject)
+           {
+             console.log(reject);
+           }
+        });
+    });
+    //Load Department List By Area ID
+    $('#area').on("change", function(){
+        $.ajax({
+           url : "{{ url('hr/setup/getDepartmentListByAreaID') }}",
+           type: 'get',
+           data: {area_id : $(this).val()},
+           success: function(data)
+           {
+                $('#department').removeAttr('disabled');
+                
+                $("#department").html(data);
+           },
+           error: function(reject)
+           {
+             console.log(reject);
+           }
+        });
+    });
+
+    //Load Section List By department ID
+    $('#department').on("change", function(){
+        $.ajax({
+           url : "{{ url('hr/setup/getSectionListByDepartmentID') }}",
+           type: 'get',
+           data: {area_id: $("#area").val(), department_id: $(this).val()},
+           success: function(data)
+           {
+                $('#section').removeAttr('disabled');
+                
+                $("#section").html(data);
+           },
+           error: function(reject)
+           {
+             console.log(reject);
+           }
+        });
+    });
+    //Load Sub Section List by Section
+    $('#section').on("change", function(){
+       $.ajax({
+         url : "{{ url('hr/setup/getSubSectionListBySectionID') }}",
+         type: 'get',
+         data: {
+           area_id: $("#area").val(),
+           department_id: $("#department").val(),
+           section_id: $(this).val()
+         },
+         success: function(data)
+         {
+            $('#subSection').removeAttr('disabled');
+            
+            $("#subSection").html(data);
+         },
+         error: function(reject)
+         {
+           console.log(reject);
+         }
+       });
+    });
+
+
+
+    $('#activityReport').on('submit', function(e) {
+          e.preventDefault();
+          activityProcess();
+    });
     //Show increment list
     $('#increment_list_button').on('click', function(){
         $('#increment_list_div').removeAttr('hidden');
@@ -347,12 +365,11 @@ $(document).ready(function(){
         });
     });
 
-    //date range validation..
+    //date range validation
     $('#applied_date, #effective_date').on('dp.change', function(){
         var elligible = $('#applied_date').val();
         var effective = $('#effective_date').val();
         if(elligible != '' && effective != ''){
-            // console.log('applied_date :'+elligible+' effective_date: '+effective);
             if(new Date(elligible) > new Date(effective) ){
                 alert('Elligible Date can not be greater than Effective Date');
                 $('#applied_date').val($('#effective_date').val());

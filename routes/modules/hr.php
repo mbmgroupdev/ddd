@@ -497,7 +497,8 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 	});
 
 	//Increment
-	Route::get('hr/payroll/increment', 'Hr\Recruitment\BenefitController@showIncrementForm');
+	Route::get('hr/payroll/increment', 'Hr\Payroll\IncrementController@index');
+	//Route::get('hr/payroll/increment', 'Hr\Recruitment\BenefitController@showIncrementForm');
 	Route::get('hr/payroll/increment-list', 'Hr\Recruitment\BenefitController@incrementList');
 	Route::get('hr/payroll/increment-list-data', 'Hr\Recruitment\BenefitController@incrementListData');
 	Route::get('hr/payroll/get_associate', 'Hr\Recruitment\BenefitController@getAssociates')->middleware(['permission:Manage Increment']);

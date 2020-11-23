@@ -147,7 +147,7 @@
                                       
                                         <div class="form-group has-float-label select-search-group">
                                             <?php
-                                                $reportType = ['absent'=>'Absent', 'before_absent_after_present'=>'Present After Being Absent','leave'=>'Leave','ot'=>'OT', 'working_hour'=>'Working Hour', 'late'=>'Late'];
+                                                $reportType = ['absent'=>'Absent', 'before_absent_after_present'=>'Present After Being Absent','leave'=>'Leave','ot'=>'OT', 'working_hour'=>'Working Hour', 'late'=>'Late', 'missing_token' => 'Punch Missing Token'];
                                                 //$reportType = ['attendance'=>'Attendance', 'absent'=>'Absent', 'before_absent_after_present'=>'Before Absent After Present','leave'=>'Leave','ot'=>'OT', 'working_hour'=>'Working Hour', 'late'=>'Late'];
                                             ?>
                                             {{ Form::select('report_type', $reportType, null, ['placeholder'=>'Select Report Type ', 'class'=>'form-control capitalize select-search', 'id'=>'reportType']) }}
