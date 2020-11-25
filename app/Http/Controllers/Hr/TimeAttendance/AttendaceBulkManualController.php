@@ -187,6 +187,7 @@ class AttendaceBulkManualController extends Controller
                         $shift_end = $request->new_shift_end[$key];
                         $break = $request->new_shift_break[$key];
                         $nightFlag = $request->new_shift_night[$key];
+                        $billEligible = $request->new_bill_eligible[$key];
 
                         if($intime == null && $outtime == null){
                             $absentData = [
@@ -244,6 +245,13 @@ class AttendaceBulkManualController extends Controller
                             }
                             $insert['in_date'] = date('Y-m-d', strtotime($insert['in_time']));
                             DB::table($tableName)->insert($insert);
+
+                            if($info->as_ot == 1 && $outtime != null){
+                                if(date("H:i", strtotime($insert['out_time'])) > date("H:i", strtotime($billEligible))){
+
+                                    $bill = EmployeeHelper::dailyBillCalculation($info->as_unit_id, $insert['in_date'], $insert['as_id'], $nightFlag, $info->as_designation_id);
+                                }
+                            }
                             
                             //
                             $absentWhere = [
@@ -328,7 +336,7 @@ class AttendaceBulkManualController extends Controller
                         $shift_end = $request->this_shift_end[$key];
                         $break = $request->this_shift_break[$key];
                         $nightFlag = $request->this_shift_night[$key];
-
+                        $billEligible = $request->this_bill_eligible[$key];
                         if($intime == null && $outtime == null){
                             if($request->old_status[$key] == 'P' && $Att != null) {
                                 $eventPrevious = $Att;
@@ -436,6 +444,13 @@ class AttendaceBulkManualController extends Controller
                                 $update['ot_hour'] = 0;
                             }
                             
+                            if($info->as_ot == 1 && $outtime != null){
+                                if(date("H:i", strtotime($update['out_time'])) > date("H:i", strtotime($billEligible))){
+
+                                    $bill = EmployeeHelper::dailyBillCalculation($info->as_unit_id, $Att->in_date, $info->as_id, $nightFlag, $info->as_designation_id);
+                                }
+                            }
+
                             $event['ot_new'] = $update['ot_hour'];
 
                             if($request->old_status[$key] == 'A' && $Att == null) {
@@ -647,6 +662,7 @@ class AttendaceBulkManualController extends Controller
               $attendance[$i]['shift_end'] = $shift->hr_shift_end_time;
               $attendance[$i]['shift_break'] = $shift->hr_shift_break_time;
               $attendance[$i]['shift_night'] = $shift->hr_shift_night_flag;
+              $attendance[$i]['bill_eligible'] = $shift->bill_eligible;
             } else {
               $attendance[$i]['shift_id'] = $info->shift['hr_shift_name'];
               $attendance[$i]['shift_code'] = $info->shift['hr_shift_code'];
@@ -654,6 +670,7 @@ class AttendaceBulkManualController extends Controller
               $attendance[$i]['shift_end'] = $info->shift['hr_shift_end_time'];
               $attendance[$i]['shift_break'] = $info->shift['hr_shift_break_time'];
               $attendance[$i]['shift_night'] = $info->shift['hr_shift_night_flag'];
+              $attendance[$i]['bill_eligible'] = $info->shift['bill_eligible'];
             }
             
             $lineFloorInfo = DB::table('hr_station')

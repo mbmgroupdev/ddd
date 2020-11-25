@@ -28,7 +28,6 @@ class Shift extends Model
     {
     	return Shift::
     	where('hr_shift_id', $data['hr_shift_id'])
-    	->where('hr_shift_name', $data['hr_shift_name'])
     	->where('hr_shift_start_time', $data['hr_shift_start_time'])
     	->where('hr_shift_end_time', $data['hr_shift_end_time'])
     	->where('hr_shift_break_time', $data['hr_shift_break_time'])
@@ -63,6 +62,15 @@ class Shift extends Model
         where('hr_shift_unit_id', $unit)
         ->where('hr_shift_name', $shiftName)
         ->latest()
+        ->first();
+    }
+    public static function getCheckUniqueUnitIdTime($unit, $data)
+    {
+        return Shift::
+        where('hr_shift_unit_id', $unit)
+        ->where('hr_shift_start_time', $data['hr_shift_start_time'])
+        ->where('hr_shift_end_time', $data['hr_shift_end_time'])
+        ->where('hr_shift_break_time', $data['hr_shift_break_time'])
         ->first();
     }
 }

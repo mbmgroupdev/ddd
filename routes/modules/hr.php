@@ -458,6 +458,12 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 	//Raw Punch Data
 	Route::get('hr/timeattendance/raw_punch', 'Hr\TimeAttendance\RawPunchController@rawPunch');
 
+	// tiffin-dinner operation
+	Route::get('hr/operation/tiffin-dinner', 'Hr\Operation\BillOperationController@index');
+	Route::get('hr/operation/filter-wise-tiffin-dinner-bill-sheet', 'Hr\Operation\BillOperationController@filterWise');
+	Route::get('hr/operation/review-tiffin-dinner-bill', 'Hr\Operation\BillOperationController@review');
+	Route::get('hr/operation/pay-tiffin-dinner-bill', 'Hr\Operation\BillOperationController@pay');
+
 	//---------Hr/ Payroll-----------//
 	Route::get('hr/payroll/bank-sheet', 'Hr\Payroll\BankSheetController@index');
 	Route::get('hr/reports/monthly-salary-bank-report', 'Hr\Payroll\BankSheetController@report');
@@ -774,14 +780,18 @@ Route::get('hr/payroll/salary', 'Hr\Payroll\SalaryController@view');
 		Route::get('hr/setup/subsection_update/{hr_subsec_id}','Hr\Setup\SubsectionController@subsectionUpdate');
 		Route::post('hr/setup/subsection_update','Hr\Setup\SubsectionController@subsectionUpdateStore');
 	});
+	// bill-announce-setting
+	Route::resource('hr/setup/bill-setting', 'Hr\Setup\BillAnnounceSettingController');
 
-	//added on 19-10-2019
+	
 	Route::get('hr/setup/get_presfhit_times', 'Hr\Setup\ShiftController@getPreShiftTimes');
 	Route::post('hr/setup/shift_employee_update_processing','Hr\Setup\ShiftController@shiftUpdateEmployee');
 	Route::post('hr/setup/shift_roaster_employee_update_processing','Hr\Setup\ShiftController@shiftUpdateRoasterEmployee');
 
 	//designation
 	Route::group(['middleware' => 'permission:Designation Setup'], function(){
+		Route::get('hr/search-designation','Hr\Setup\DesignationController@searchDesignation');
+		
 		Route::get('hr/setup/designation','Hr\Setup\DesignationController@designation');
 		Route::get('hr/setup/getDesignationListByEmployeeTypeID','Hr\Setup\DesignationController@getDesignationListByEmployeeTypeID');
 		Route::post('hr/setup/designation','Hr\Setup\DesignationController@designationStore');

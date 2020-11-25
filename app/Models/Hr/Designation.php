@@ -21,4 +21,9 @@ class Designation extends Model
     {
     	return Designation::where('hr_designation_emp_type', $id)->where('hr_designation_status', 1)->get();
     }
+
+    public static function getDesignationCheckExists($name)
+    {
+        return Designation::where('hr_designation_name', $name)->first();
+    }
 }

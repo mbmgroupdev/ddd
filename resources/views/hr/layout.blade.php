@@ -54,6 +54,7 @@
         <div class="wrapper">
             <!-- Sidebar  -->
             <div class="iq-sidebar">
+              <input type="hidden" value="{{ url('/') }}" id="base_url">
                 <div class="iq-sidebar-logo d-flex justify-content-between">
                    <a href="{{ url('/') }}">
                    <img src="{{ asset('images/mbm-logo-w.png') }}" class="img-fluid" alt="MBM">

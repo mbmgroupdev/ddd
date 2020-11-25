@@ -17,7 +17,7 @@ class ShiftController extends Controller
     public function shift()
     {
 
-        $unitList  = Unit::where('hr_unit_status', '1')->whereIn('hr_unit_id', auth()->user()->unit_permissions())->pluck('hr_unit_name', 'hr_unit_id');
+        $unitList  = Unit::where('hr_unit_status', '1')->whereIn('hr_unit_id', auth()->user()->unit_permissions())->orderBy('hr_unit_name', 'desc')->pluck('hr_unit_name', 'hr_unit_id');
 
         $unitids = implode(",", auth()->user()->unit_permissions());
         $shifts = DB::select("SELECT
@@ -26,6 +26,7 @@ class ShiftController extends Controller
             s1.hr_shift_code,
             s1.hr_shift_start_time,
             s1.hr_shift_end_time,
+            s1.bill_eligible,
             s1.hr_shift_break_time,u.hr_unit_name
             FROM hr_shift s1
             LEFT JOIN hr_shift s2
@@ -41,8 +42,6 @@ class ShiftController extends Controller
 
     public function shiftStore(Request $request)
     {
-        
-
     	$validator= Validator::make($request->all(),[
     		'hr_shift_unit_id'    => 'required|max:11',
             'hr_shift_name'       => 'required|max:128',
@@ -60,75 +59,91 @@ class ShiftController extends Controller
     			->with('error', 'Please fill-up all required fields!');
     	}
         $input = $request->all();
-        $unitIdWord = Custom::convertNumberToWord($input['hr_shift_unit_id']);
-        $unitIdWord = preg_replace('/\s+/', '', $unitIdWord);
+        // return $input;
         
-        $getUnitName = Custom::unitIdWiseName($input['hr_shift_unit_id']);
-        // unit id and shift name unique check
-        $checkUnique = Shift::getCheckUniqueUnitIdShiftName($input['hr_shift_unit_id'], $input['hr_shift_name']);
-        if($checkUnique != null){
-            $msg = "Unit: ".$getUnitName." Shift: ".$input['hr_shift_name']." Already Exists.";
-            return back()->with('error', $msg);
-        }
-        unset($request['_token']);
-        
-        $shiftNames = explode(' ', $input['hr_shift_name']);
-        $shiftCode = "";
-        foreach($shiftNames as $words)
-        {
-            $shiftCode = $shiftCode . $words[0];
-        }
-        $shiftCodeUnit = $unitIdWord.$shiftCode;
-        $shiftCodeUpper = strtoupper($shiftCodeUnit);
-        $shiftCodeFormat = preg_replace('/[^a-zA-Z]/', '', $shiftCodeUpper); // spare number
-        $newShiftCode = $this->uniqueShiftCodeUnitWise($input['hr_shift_unit_id'], $shiftCodeFormat, $shiftCodeFormat);
-        $input['hr_shift_code'] = $newShiftCode;
         DB::beginTransaction();
     	try {
-            if($input['hr_shift_start_time'] > $input['hr_shift_end_time']){
-                $input['hr_shift_night_flag'] = 1;
-            }else{
-                $input['hr_shift_night_flag'] = 0;
+            unset($request['_token']);
+            for ($i=0; $i < count($input['hr_shift_unit_id']); $i++) { 
+                $unitId = $input['hr_shift_unit_id'][$i];
+                $unitIdWord = Custom::convertNumberToWord($unitId);
+                $unitIdWord = preg_replace('/\s+/', '', $unitIdWord);
+                
+                $getUnitName = Custom::unitIdWiseName($unitId);
+                // unit id and shift name unique check
+                $checkUnique = Shift::getCheckUniqueUnitIdShiftName($unitId, $input['hr_shift_name']);
+                if($checkUnique != null){
+                    $msg = "Unit: ".$getUnitName." Shift: ".$input['hr_shift_name']." Already Exists.";
+                    toastr()->error($msg);
+                    DB::rollback();
+                    return back()->withInput();
+                }
+                // unit id and time check
+                $checkTime = Shift::getCheckUniqueUnitIdTime($unitId, $input);
+                if($checkTime != null){
+                    $msg = "Unit: ".$getUnitName." This Time Shift Already Exists.";
+                    toastr()->error($msg);
+                    DB::rollback();
+                    return back()->withInput();
+                }
+                $shiftNames = explode(' ', $input['hr_shift_name']);
+                $shiftCode = "";
+                foreach($shiftNames as $words)
+                {
+                    $shiftCode = $shiftCode . $words[0];
+                }
+                $shiftCodeUnit = $unitIdWord.$shiftCode;
+                $shiftCodeUpper = strtoupper($shiftCodeUnit);
+                $shiftCodeFormat = preg_replace('/[^a-zA-Z]/', '', $shiftCodeUpper); // spare number
+                $newShiftCode = $this->uniqueShiftCodeUnitWise($unitId, $shiftCodeFormat, $shiftCodeFormat);
+                $input['hr_shift_code'] = $newShiftCode;
+
+                if($input['hr_shift_start_time'] > $input['hr_shift_end_time']){
+                    $input['hr_shift_night_flag'] = 1;
+                }else{
+                    $input['hr_shift_night_flag'] = 0;
+                }
+                
+                if($request->has('hr_shift_default'))
+                {
+                    DB::table('hr_shift')
+                    ->where('hr_shift_unit_id', $unitId)
+                    ->where('hr_shift_default', 1)
+                    ->update([
+                        'hr_shift_default'=> 0
+                        ]);
+                }else{
+                    $input['hr_shift_default'] = 0;
+                }
+
+                $data = [
+                    'hr_shift_unit_id'    => $unitId,
+                    'hr_shift_name'       => $input['hr_shift_name'],
+                    'hr_shift_name_bn'    => $input['hr_shift_name_bn'],
+                    'hr_shift_start_time' => $input['hr_shift_start_time'],
+                    'hr_shift_end_time'   => $input['hr_shift_end_time'],
+                    'hr_shift_break_time' => $input['hr_shift_break_time'],
+                    'hr_shift_default'    => $input['hr_shift_default'],
+                    'hr_shift_night_flag' => $input['hr_shift_night_flag'],
+                    'hr_shift_code'       => $input['hr_shift_code'],
+                    'bill_eligible'       => ($input['bill_eligible'] == '00:00:00'?null:$input['bill_eligible']),
+                    'created_by'          => auth()->user()->id
+                ];
+                $shiftId = Shift::insertGetId($data);
+                
+                $msg = "Unit: ".$getUnitName." New Shift: ".$input['hr_shift_name']." Created Successfully.";
+                $this->logFileWrite($msg, $shiftId);
             }
             
-            if($request->has('hr_shift_default'))
-            {
-                DB::table('hr_shift')
-                ->where('hr_shift_unit_id', $request->hr_shift_unit_id)
-                ->where('hr_shift_default', 1)
-                ->update([
-                    'hr_shift_default'=> 0
-                    ]);
-            }else{
-                $input['hr_shift_default'] = 0;
-            }
-
-            /*if(!$request->has('hr_shift_night_flag')){
-                $input['hr_shift_night_flag'] = 0;
-            }*/
-
-            $data = [
-                'hr_shift_unit_id'    => $input['hr_shift_unit_id'],
-                'hr_shift_name'       => $input['hr_shift_name'],
-                'hr_shift_name_bn'    => $input['hr_shift_name_bn'],
-                'hr_shift_start_time' => $input['hr_shift_start_time'],
-                'hr_shift_end_time'   => $input['hr_shift_end_time'],
-                'hr_shift_break_time' => $input['hr_shift_break_time'],
-                'hr_shift_default'    => $input['hr_shift_default'],
-                'hr_shift_night_flag' => $input['hr_shift_night_flag'],
-                'hr_shift_code'       => $input['hr_shift_code'],
-            ];
-            $shiftId = Shift::insertGetId($data);
-            
-            $msg = "Unit: ".$getUnitName." New Shift: ".$input['hr_shift_name']." Created Successfully.";
-            $this->logFileWrite($msg, $shiftId);
             DB::commit();
             Cache::forget('shift_code');
+            toastr()->success("New Shift: ".$input['hr_shift_name']." Created Successfully.");
             return back()->with('success', $msg);
         } catch (\Exception $e) {
             DB::rollback();
             $bug = $e->getMessage();
-            return back()->with('error', $bug);
+            toastr()->error($bug);
+            return back()->withInput();
         }
     }
 
@@ -141,8 +156,6 @@ class ShiftController extends Controller
             $code = $code.$value;
             return $this->uniqueShiftCodeUnitWise($unit, $code, $value);
         }
-
-
     }
 
     # Return Shift List by Line ID with Select Option
@@ -153,7 +166,7 @@ class ShiftController extends Controller
         {
             $shiftList  = Shift::where('hr_shift_unit_id', $request->unit_id)
                     ->where('hr_shift_status', '1')
-                    ->pluck('hr_shift_name', 'hr_shift_id');
+                    ->pluck('hr_shift_name', 'hr_shift_name');
 
             foreach ($shiftList as $key => $value)
             {
@@ -162,9 +175,6 @@ class ShiftController extends Controller
         }
         return $list;
     }
-
-
-
 
     public function shiftDelete($id)
     {
@@ -189,6 +199,7 @@ class ShiftController extends Controller
             s1.hr_shift_code,
             s1.hr_shift_start_time,
             s1.hr_shift_end_time,
+            s1.bill_eligible,
             s1.hr_shift_break_time,u.hr_unit_name
             FROM hr_shift s1
             LEFT JOIN hr_shift s2
@@ -219,6 +230,7 @@ class ShiftController extends Controller
         $input = $request->all();
         $getShift = Shift::getShiftIdWise($input['hr_shift_id']);
         $shift = Shift::checkExistsTimeWiseShift($input);
+
         DB::beginTransaction();
         try {
             $default_shift = 0;
@@ -236,7 +248,6 @@ class ShiftController extends Controller
                 $default_shift = 1;
             }
 
-
             if($input['hr_shift_start_time'] > $input['hr_shift_end_time']){
                 DB::table('hr_shift')
                 ->where('hr_shift_unit_id', $request->hr_shift_unit_id)
@@ -248,19 +259,17 @@ class ShiftController extends Controller
                 $night_shift=1;
             }
 
-            //get shift name
-            $getUnitName = Custom::unitIdWiseName($request->hr_shift_unit_id);
-            $msg = $getUnitName." Shift Successfully updated";
-            $this->logFileWrite($msg, $request->hr_shift_id);
-
             if($shift != null){
                 // update record in shift table
                 DB::table('hr_shift')
                 ->where('hr_shift_id', $request->hr_shift_id)
                 ->update([
-                    'hr_shift_name_bn' => $request->hr_shift_name_bn,
-                    'hr_shift_default' => $default_shift,
-                    'hr_shift_night_flag' => $night_shift
+                    'hr_shift_name'       => $request->hr_shift_name,
+                    'hr_shift_name_bn'    => $request->hr_shift_name_bn,
+                    'hr_shift_default'    => $default_shift,
+                    'hr_shift_night_flag' => $night_shift,
+                    'bill_eligible'       => ($input['bill_eligible'] == '00:00:00'?null:$input['bill_eligible']),
+                    'updated_by'          => auth()->user()->id
                     ]);
             }else{
                 //new Shift code value
@@ -280,16 +289,24 @@ class ShiftController extends Controller
                     'hr_shift_break_time' => $request->hr_shift_break_time,
                     'hr_shift_code'       => $newshiftCode,
                     'hr_shift_night_flag' => $night_shift,
-                    'hr_shift_default'    => $default_shift
+                    'hr_shift_default'    => $default_shift,
+                    'bill_eligible'       => ($input['bill_eligible'] == '00:00:00'?null:$input['bill_eligible']),
+                    'created_by'          => auth()->user()->id
                 ]; 
                 $shiftId = Shift::insertGetId($data);
             }
             DB::commit();
+            //get shift name
+            $getUnitName = Custom::unitIdWiseName($request->hr_shift_unit_id);
+            $msg = $getUnitName." Shift Successfully updated";
+            $this->logFileWrite($msg, $request->hr_shift_id);
             Cache::forget('shift_code');
-            return redirect('hr/setup/shift')->with('success', $msg);
+            toastr()->success($msg);
+            return back();
         } catch (\Exception $e) {
             DB::rollback();
             $bug = $e->getMessage();
+            toastr()->error($bug);
             return redirect()->back()->with('error', $bug);
         }
     }

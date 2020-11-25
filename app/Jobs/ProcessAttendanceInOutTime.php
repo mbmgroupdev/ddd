@@ -88,7 +88,8 @@ class ProcessAttendanceInOutTime implements ShouldQueue
                 'hr_shift.hr_shift_end_time',
                 'hr_shift.hr_shift_break_time',
                 'hr_shift.hr_shift_night_flag',
-                'hr_shift.hr_shift_name'
+                'hr_shift.hr_shift_name',
+                'hr_shift.bill_eligible'
             ])
             ->leftJoin('hr_shift', function($q) use($day_num, $unitId) {
                 $q->on('hr_shift.hr_shift_name', 'hr_shift_roaster.'.$day_num);
@@ -104,6 +105,7 @@ class ProcessAttendanceInOutTime implements ShouldQueue
                 $cBreak = $shift->hr_shift_break_time;
                 $nightFlag = $shift->hr_shift_night_flag;
                 $shiftName = $shift->hr_shift_name;
+                $billEligible = $shift->bill_eligible;
             }
             else{
                 $cShifStartTime = strtotime(date("H:i", strtotime($getEmployee->shift['hr_shift_start_time'])));
@@ -112,6 +114,7 @@ class ProcessAttendanceInOutTime implements ShouldQueue
                 $cBreak = $getEmployee->shift['hr_shift_break_time'];
                 $nightFlag = $getEmployee->shift['hr_shift_night_flag'];
                 $shiftName = $getEmployee->as_shift_id;
+                $billEligible = $getEmployee->shift['bill_eligible'];
             }
 
             //late count
@@ -151,6 +154,15 @@ class ProcessAttendanceInOutTime implements ShouldQueue
                     'ot_hour' => $otHour,
                     'late_status' => $late
                 ]);
+
+                // bill announce 
+
+                if($getEmployee->as_ot == 1 && $billEligible != null){
+                    if($cOut > date("H:i", strtotime($billEligible))){
+
+                        $bill = EmployeeHelper::dailyBillCalculation($getEmployee->as_unit_id, $getEmpAtt->in_date, $getEmpAtt->as_id, $nightFlag, $getEmployee->as_designation_id);
+                    }
+                }
                 
                 $yearMonth = $year.'-'.$month; 
                 if($month == date('m')){
