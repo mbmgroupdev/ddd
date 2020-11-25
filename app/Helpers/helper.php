@@ -421,7 +421,9 @@ if(!function_exists('emp_status_name')){
     function emp_status_name($status)
     {
         $name = '';
-        if($status == 2) {
+        if($status == 1) {
+            $name = 'active';
+        } else if($status == 2) {
             $name = 'resign';
         } else if($status == 3) {
             $name = 'terminate';

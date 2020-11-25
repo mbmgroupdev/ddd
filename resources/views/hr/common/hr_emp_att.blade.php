@@ -55,6 +55,7 @@
                 <div class="page-header-summery">
                     
                     <h2>Daily Attendance Employee Report </h2>
+                    <h3>Unit: {{$query['unit_name']}}</h3>
                     <h4>Date: {{$query['date']}}</h4>
                     <h4>Total Employee: <b>{{ count($employees) }}</b></h4>
                             

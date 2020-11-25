@@ -23,54 +23,87 @@
     <hr>
     <p class="search-title">Search results of  {{ $showTitle }}</p>
     <div class="panel-body">
-        <!-- <h4 class="center">MBM Group</h4> -->
         
     	<div class="row choice_2_div" id="choice_2_div" name="choice_2_div">
-			<div class="search_unit col-xs-6 col-sm-3 pricing-box">
-				<div class="widget-box widget-color-green2">
-					<div class="widget-header">
-						<h5 class="widget-title bigger lighter">Total Unit</h5>
-					</div>
+            <div class="col-sm-3 col-xs-6">
+                <div class="row">    
+        			<div class="search_unit col-xs-12 col-sm-12 pricing-box pr-0 mb-2" >
+        				<div class="widget-box widget-color-green2">
+        					<div class="widget-header">
+        						<h5 class="widget-title bigger lighter">Total Unit</h5>
+        					</div>
 
-					<div class="widget-body" style="height:100px;">
-						<div class="widget-main center" style="margin: 34px 0;">
-							<span class="infobox-data-number">{{ count($unit_list) }}</span>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="col-xs-6 col-sm-3 pricing-box">
-				<div class="widget-box widget-color-green2 search_emp">
-					<div class="widget-header">
-							<h5 class="widget-title bigger lighter">
-								Total Employee
-							</h5>
-					</div>
+        					<div class="widget-body" style="height:80px;">
+        						<div class="widget-main center" style="margin: 10px 0;">
+        							<span class="infobox-data-number">{{ count($unit_list) }}</span>
+        						</div>
+        					</div>
+        				</div>
+        			</div>
+        			<div class="col-xs-12 col-sm-12 pricing-box pr-0">
+        				<div class="widget-box widget-color-green2 search_emp">
+        					<div class="widget-header">
+        							<h5 class="widget-title bigger lighter">
+        								Total Employee
+        							</h5>
+        					</div>
 
-					<div class="widget-body" style="height:100px;">
-						<div class="widget-main center" style="margin: 34px 0;">
-							<span class="infobox-data-number">{{ $salary->employee }}</span>
-						</div>
-					</div>
-				</div>
-			</div>
+        					<div class="widget-body" style="height:80px;">
+        						<div class="widget-main center" style="margin: 10px 0;">
+        							<span class="infobox-data-number">{{ $salary->employee }}</span>
+        						</div>
+        					</div>
+        				</div>
+        			</div>
+                </div>
+                    
+            </div>
 
 			
 
-			<div class="col-xs-6 col-sm-4 pricing-box">
+			<div class="col-xs-6 col-sm-6 pricing-box">
 				<div class="widget-box widget-color-green2" >
 					<div class="widget-header search_emp">
 							<h5 class="widget-title bigger lighter">Salary</h5>
 					</div>
 
 					<div class="widget-body">
-						<div class="widget-main">
+                        <table class="table table-bordered ">
+                            <tr>
+                                <th>Status</th>
+                                <th>Employee</th>
+                                <th>Salary Amount</th>
+                                <th>OT Amount</th>
+                                <th>Total Payable</th>
+                            </tr>
+                            @php $salary_pay = 0; $ot_pay = 0; @endphp
+                            @foreach($salaryInfo as $key => $sal)
+                                <tr>
+                                    @php 
+                                        $salary_pay += $sal->total_payable - ceil($sal->ot_payable);
+                                        $ot_pay += ceil($sal->ot_payable);
+                                    @endphp
+                                    <td class="text-bold text-capitalize">{{ emp_status_name($sal->emp_status) }}</td>
+                                    <td style="text-align: center;">{{$sal->emp}}</td>
+                                    <td class="text-right pr-2">{{ bn_money($sal->total_payable - ceil($sal->ot_payable))}}</td>
+                                    <td class="text-right pr-2">{{ bn_money(ceil($sal->ot_payable))}}</td>
+                                    <td class="text-right pr-2">{{ bn_money($sal->total_payable)}}</td>
+                                </tr>
+                            @endforeach
+                            <tr>
+                                <th colspan="2">Total</th>
+                                <th class="text-right pr-2">{{ bn_money($salary_pay) }}</th>
+                                <th class="text-right pr-2">{{ bn_money($ot_pay) }}</th>
+                                <th class="text-right pr-2" style="font-size: 20px;">{{ bn_money($salary->total_payable) }}</th>
+                            </tr>
+                        </table>
+						{{-- <div class="widget-main">
 							<a href="#" class="search_emp" data-salstatus='salary'>
                                 <div class="profile-info-row">
                                     <div class="profile-info-name"> Salary Payable  </div>
 
                                     <div class="profile-info-value">
-                                        <span>{{ $salary->salary_payable }} </span>
+                                        <span>{{ bn_money($salary->salary_payable) }} </span>
                                     </div>
                                 </div>
                             </a>
@@ -79,7 +112,7 @@
                                     <div class="profile-info-name"> OT Payable </div>
 
                                     <div class="profile-info-value">
-                                        <span>{{ $salary->ot_payable }} </span>
+                                        <span>{{ bn_money($salary->ot_payable) }} </span>
                                     </div>
                                 </div>
                             </a>
@@ -88,13 +121,13 @@
                                     <div class="profile-info-name"> Total Payable</div>
 
                                     <div class="profile-info-value">
-                                        <span class="infobox-data-number">{{ $salary->total_payable}} </span>
+                                        <span class="infobox-data-number">{{ bn_money($salary->total_payable)}} </span>
                                     </div>
                                 </div>
                             </a>
 
 
-						</div>
+						</div> --}}
 					</div>
 				</div>
 			</div>

@@ -100,6 +100,7 @@ class LeaveWorkerController extends Controller
                         }
                     }
 
+
                     $getEmployee = Employee::getEmployeeAssociateIdWise($request->leave_ass_id);
                     $tableName = Custom::unitWiseAttendanceTableName($getEmployee->as_unit_id);
                     // attendance remove 

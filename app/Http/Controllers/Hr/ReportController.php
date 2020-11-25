@@ -33,52 +33,44 @@ class ReportController extends Controller
         
     	
     	$date = $request->date??date('Y-m-d');
-    	$units  = unit_by_id();
-    	$operator = DB::table('hr_as_basic_info')
-    				->select(DB::raw('COUNT(*) as emp'), 'as_unit_id')
-    				->where('as_status', 1)
-    				->where('as_subsection_id', 138)
-    				->orWhere('as_subsection_id', 54)
-    				->groupBy('as_unit_id')
-    				->pluck('emp','as_unit_id');
-
+        $all_unit = unit_by_id();
+    	$units  = auth()->user()->unit_permissions();
     	$present = array();
 
-    	$present = DB::table('hr_attendance_mbm AS a')
-					->where('a.in_date', $date)
-					->select(
-						DB::raw('count(*) AS count'),
-						'b.as_unit_id'
-					)
-					->leftJoin('hr_as_basic_info AS b', 'a.as_id', 'b.as_id')
-					->where('b.as_status',1) 
-					->groupBy('b.as_unit_id')
-					->pluck('count', 'b.as_unit_id');
+        foreach ($units as $key => $u) {
+            $table = get_att_table($u);
 
-        $present[2] = DB::table('hr_attendance_ceil')
-                        ->where('in_date', $date)
-                        ->count();
-        $present[3] = DB::table('hr_attendance_aql')
-                        ->where('in_date', $date)
-                        ->count();
+            $present[$u] = DB::table($table.' AS a')
+                    ->where('a.in_date', $date)
+                    ->select(
+                        DB::raw('count(*) AS count'),
+                        'b.as_subsection_id'
+                    )
+                    ->leftJoin('hr_as_basic_info AS b', 'a.as_id', 'b.as_id')
+                    ->when(in_array($u, [1,4,5]), function ($q) {
+                        // ignore head office and washing department
+                        return $q->where('b.as_location', '!=', 12)->where('b.as_department_id', '!=', 67);
+                    })
+                    ->where('b.as_unit_id',$u)
+                    ->groupBy('b.as_subsection_id')
+                    ->pluck('count', 'b.as_subsection_id')->toArray();
 
-        $present[8] = DB::table('hr_attendance_cew')
-                        ->where('in_date', $date)
-                        ->count();
-        
+            $unit[$u]['present'] = array_sum($present[$u]);
+            $unit[$u]['name'] = $all_unit[$u]['hr_unit_name'];
+            $op = ($present[$u][138]??0)+($present[$u][219]??0)+($present[$u][214]??0)+($present[$u][306]??0);
+            $unit[$u]['operator'] = $op;
 
-        foreach ($operator as $key => $op) {
-            $op = $op == 0?1:$op; 
-            $p  = $present[$key]??0;
-            $mmr = round(($p/$op),2); 
+            $mmr = round(($unit[$u]['present']/($op < 1?1:$op)),2);
+            
+            $unit[$u]['mmr'] = $mmr;
+
             $chart_data[] = array(
-                'Unit' => $units[$key]['hr_unit_short_name'],
+                'Unit' => $all_unit[$u]['hr_unit_short_name'],
                 'MMR'  => $mmr
             );
-            $mmr_data[$key] = $mmr;
         }
 
-    	return view('common.daily_mmr_report', compact('chart_data','units','present','operator','mmr_data'));
+    	return view('common.daily_mmr_report', compact('chart_data','unit'));
     }
 
     public function monthlyOT(Request $request)

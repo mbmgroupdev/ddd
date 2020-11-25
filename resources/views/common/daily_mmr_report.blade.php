@@ -58,33 +58,29 @@
 		        			</tr>
 		        		</thead>
 		        		<tbody>
-		        			@foreach($operator as $key => $op)
+		        			@foreach($unit as $key => $op)
 		        			<tr>
 		        				<td>
 		        					<a href="{{url('hr/reports/attendance_summary_report')}}?unit={{$key}}&date={{$date}}" data-toggle="tooltip" data-placement="top" title="" data-original-title="See details MMR report">
-				        				{{$units[$key]['hr_unit_name']}}({{$units[$key]['hr_unit_short_name']}})
+				        				{{$op['name']}}
 		        						
 		        					</a>
 			        			</td>
-		        				<td class="text-center">{{$present[$key]??0}}</td>
-		        				<td class="text-center">{{$op}}</td>
-		        				<td class="text-center">{{$mmr_data[$key]}}</td>
+		        				<td class="text-center">{{$op['present']??0}}</td>
+		        				<td class="text-center">{{$op['operator']??0}}</td>
+		        				<td class="text-center">{{$op['mmr']??0}}</td>
 		        			</tr>
 		        			@endforeach
                             <tr>
                                 <td>
                                     MBM Combined (MBM,MFW,MBM-2)
                                     @php
-                                        $combpresent = (($present[1]??0)+($present[4]??0)+($present[5]??0));
-                                        $comoperator = (($operator[1]??0)+($operator[4]??0)+($operator[5]??0));
-                                        if($comoperator == 0){
-                                            $comoperator = 1;
-                                        }
+                                        
                                     @endphp
                                 </td>
-                                <td class="text-center">{{$combpresent}}</td>
+                                {{-- <td class="text-center">{{$combpresent}}</td>
                                 <td class="text-center">{{$comoperator}}</td>
-                                <td class="text-center">{{round(($combpresent/$comoperator),2)}}</td>
+                                <td class="text-center">{{round(($combpresent/$comoperator),2)}}</td> --}}
                             </tr>
 		        		</tbody>
 		        	</table>
@@ -94,7 +90,7 @@
                             <span style="font-size:11px;font-weight:normal;">(Current)</span>
                         @endif
                     </h3>
-                    <div style="padding: 20px 13px;font-size: 40px;font-weight: bold;line-height: 40px;color: #099faf;">{{ round(array_sum($present->toArray())/array_sum($operator->toArray()),2) }}</div>
+                    <div style="padding: 20px 13px;font-size: 40px;font-weight: bold;line-height: 40px;color: #099faf;"></div>
 	        	</div>
         	</div>
         </div>

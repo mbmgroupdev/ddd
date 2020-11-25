@@ -27,53 +27,51 @@ class FileTagController extends Controller
         if (!is_array($request->associate_id) || sizeof($request->associate_id) == 0)
             return response()->json(['filetag'=>'<div class="alert alert-danger">Please Select Associate ID</div>', 'printbutton'=>'']);
 
-
+        $designation = designation_by_id();
+        $department = department_by_id();
+        $section = section_by_id();
         $employees = [];
-        $employees = DB::table('hr_as_basic_info AS b')
+        $employees = DB::table('hr_as_basic_info')
             ->select(
-                'b.as_id',
-                'b.associate_id',
-                'b.as_oracle_code',
-                'b.as_emp_type_id',
-                'b.temp_id',
-                'b.as_pic',
-                'u.hr_unit_name',
-                'u.hr_unit_name_bn',
-                'u.hr_unit_logo',
-                'b.as_name',
-                'bn.hr_bn_associate_name',
-                'b.as_doj',
-                'd.hr_department_name',
-                'd.hr_department_name_bn',
-                'dg.hr_designation_name',
-                'dg.hr_designation_name_bn',
-                'm.med_blood_group'
+                'as_id',
+                'associate_id',
+                'as_oracle_code',
+                'temp_id',
+                'as_pic',
+                'as_name',
+                'as_doj',
+                'as_unit_id',
+                'as_designation_id',
+                'as_department_id',
+                'as_section_id',
+                'as_unit_id'
             )
-            ->leftJoin('hr_employee_bengali AS bn','bn.hr_bn_associate_id', 'b.associate_id')
-            ->leftJoin('hr_unit AS u','u.hr_unit_id', 'b.as_unit_id')
-            ->leftJoin('hr_department AS d','d.hr_department_id', 'b.as_department_id')
-            ->leftJoin('hr_designation AS dg','dg.hr_designation_id', 'b.as_designation_id')
-            ->leftJoin('hr_med_info AS m','m.med_as_id', 'b.associate_id')
-            ->whereIn('b.associate_id', $request->associate_id)
-            ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
-            ->whereIn('b.as_location', auth()->user()->location_permissions())
+            ->whereIn('associate_id', $request->associate_id)
+            ->whereIn('as_unit_id', auth()->user()->unit_permissions())
+            ->whereIn('as_location', auth()->user()->location_permissions())
             ->get();
 
-        $data['filetag'] = "";
+        $data['filetag'] = "<style media='print'>.page-break{page-break-after: always;}</style>";
         if (count($employees)>0)
         {
-            foreach ($employees as $associate)
-            {
-                    $data['filetag'] .= "
-                    <div style=\"border-style: solid;width:900px;margin: 10px auto;\">
-                    <p style=\"text-align:center; font-size:72px; font-weight:700; margin:0px; padding:0px;\">".strtoupper($associate->as_name)."</p>
-                    <p style=\"text-align:center; font-weight:600; font-size:48px; margin:0px; padding:0px;\">".
-                                (!empty($associate->associate_id)?
-                                (substr_replace($associate->associate_id, "<big style='font-size:72px; font-weight:700'>$associate->temp_id</big>", 3, 6)):
-                                null) ." <span style='font-size:40px'>(".$associate->as_oracle_code.")</span></p>
-                    <p style=\"text-align:center; font-size:36px; font-weight:700; margin:0px; padding:0px;\">".strtoupper($associate->hr_designation_name)."</p>
-                    <p style=\"text-align:center; font-size:60px; font-weight:700; margin:0px; padding:0px;\">".date('d-M-Y',strtotime($associate->as_doj))."</p>
-                    </div>";
+            $page = array_chunk($employees->toArray(), 3);
+            foreach ($page as $key => $emps) {
+                # code...
+                foreach ($emps as $associate)
+                {
+                        $data['filetag'] .= "
+                        <div style=\"border-style: solid;width:900px;margin: 10px auto;\">
+                        <p style=\"text-align:center; font-size:72px; font-weight:700; margin:0px; padding:0px;\">".strtoupper($associate->as_name)."</p>
+                        <p style=\"text-align:center; font-weight:600; font-size:48px; margin:0px; padding:0px;\">".
+                                    (!empty($associate->associate_id)?
+                                    (substr_replace($associate->associate_id, "<big style='font-size:72px; font-weight:700'>$associate->temp_id</big>", 3, 6)):
+                                    null) ." <span style='font-size:40px'>(".$associate->as_oracle_code.")</span><br></p>
+                        <p style=\"text-align:center; font-size:36px; font-weight:700; margin:0px; padding:0px;\">".strtoupper($designation[$associate->as_designation_id]['hr_designation_name'])."</p>
+                        <p style=\"text-align:center; font-size:36px; font-weight:700; margin:0px; padding:0px;\">Section: ".strtoupper($section[$associate->as_section_id]['hr_section_name'])."</p>
+                        <p style=\"text-align:center; font-size:60px; font-weight:700; margin:0px; padding:0px;\">".date('d-M-Y',strtotime($associate->as_doj))."</p>
+                        </div>";
+                }
+                $data['filetag'] .= "<div class='page-break'></div>";
             }
         }
         else

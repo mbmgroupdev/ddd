@@ -475,49 +475,7 @@ class BenefitController extends Controller
     }
 
 
-    public function promotionList()
-    {
-        return view('hr/payroll/promotion_list');
-    }
-
-    public function promotionListData()
-    {
-        $designation = designation_by_id();
-        $data = DB::table('hr_promotion AS inc')
-                    ->select([
-                        'inc.*',
-                        'b.as_name',
-                    ])
-                    ->leftJoin('hr_as_basic_info AS b', 'b.associate_id', 'inc.associate_id')
-                    ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
-                    ->whereIn('b.as_location', auth()->user()->location_permissions())
-                    ->orderBy('inc.effective_date','desc')
-                    ->get();
-
-        $perm = check_permission('Manage Promotion');
-
-        return DataTables::of($data)
-            ->addIndexColumn()
-            ->editColumn('previous_designation_id', function ($data) use ($designation) {
-                return $designation[$data->previous_designation_id]['hr_designation_name']??'';
-            })
-            ->editColumn('current_designation_id', function ($data) use ($designation) {
-                return $designation[$data->current_designation_id]['hr_designation_name']??'';
-            })
-            ->addColumn('action', function ($data) use ($perm) {
-                if($perm){
-
-                    return "<div class=\"btn-group\">
-                        <a type=\"button\" href=".url('hr/payroll/promotion_edit/'.$data->id)." class=\"btn btn-xs btn-primary\"><i class=\"fa fa-pencil\"></i></a>
-                    </div>";
-                }else{
-                    return '';
-                }
-            })
-            ->rawColumns(['action'])
-            ->make(true);  
-                             
-    }
+    
 
     public function showIncrementForm()
     {
@@ -925,14 +883,110 @@ class BenefitController extends Controller
         return view('hr/payroll/promotion', compact('designationList'));
     }
 
+
+    public function promotionList()
+    {
+        return view('hr/payroll/promotion_list');
+    }
+
+    public function promotionListData(Request $request)
+    {
+        if(isset($request->year)){
+            $year = $request->year;
+        }else{
+            $year = date('Y');
+        }
+        $designation = designation_by_id();
+        $department = department_by_id();
+        $section = section_by_id();
+        $unit = unit_by_id();
+        $data = DB::table('hr_promotion AS inc')
+                    ->select([
+                        'inc.*',
+                        'b.as_name',
+                        'b.as_gender',
+                        'b.as_doj',
+                        'b.as_section_id',
+                        'b.as_department_id',
+                        'b.as_unit_id',
+                        'b.as_emp_type_id',
+                        'bn.hr_bn_associate_name',
+                    ])
+                    ->leftJoin('hr_as_basic_info AS b', 'b.associate_id', 'inc.associate_id')
+                    ->leftJoin('hr_employee_bengali AS bn', 'bn.hr_bn_associate_id', 'b.associate_id')
+                    ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
+                    ->whereIn('b.as_location', auth()->user()->location_permissions())
+                    ->whereYear('inc.effective_date', $year)
+                    ->orderBy('inc.effective_date','desc')
+                    ->get();
+
+        $perm = check_permission('Manage Promotion');
+
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->editColumn('as_unit_id', function($data) use ($unit){
+                return $unit[$data->as_unit_id]?$unit[$data->as_unit_id]['hr_unit_short_name']:'';
+            })
+            ->editColumn('previous_designation_id', function ($data) use ($designation) {
+                return $designation[$data->previous_designation_id]['hr_designation_name']??'';
+            })
+            ->editColumn('current_designation_id', function ($data) use ($designation) {
+                return $designation[$data->current_designation_id]['hr_designation_name']??'';
+            })
+            ->addColumn('month', function ($data) {
+                return date('F', strtotime($data->effective_date));
+            })
+            ->addColumn('action', function ($data) use ($perm, $designation,$section,$department) {
+                if($perm){
+
+                    if($data->as_emp_type_id == 3){
+
+                        $letter = array(
+                            'name' => $data->hr_bn_associate_name,
+                            'prev_desg' => $designation[$data->previous_designation_id]['hr_designation_name_bn']??'',
+                            'curr_desg' => $designation[$data->current_designation_id]['hr_designation_name_bn']??'',
+                            'section' => $section[$data->as_section_id]['hr_section_name_bn']??'',
+                            'effective_date' => eng_to_bn($data->effective_date),
+                            'associate_id' => $data->associate_id
+                        );
+                    }else{
+                        $letter = array(
+                            'name' => $data->as_name,
+                            'prev_desg' => $designation[$data->previous_designation_id]['hr_designation_name']??'',
+                            'curr_desg' => $designation[$data->current_designation_id]['hr_designation_name']??'',
+                            'department' => $department[$data->as_department_id]['hr_department_name']??'',
+                            'effective_date' => $data->effective_date,
+                            'associate_id' => $data->associate_id,
+                            'title' => ($data->as_gender == 'Male' ? 'Mr. ': 'Mrs. ').$data->as_name,
+                            'doj' => $data->as_doj
+                        );
+                    }
+
+                    $output = "<div class=\"btn-group\">
+                        <a type=\"button\" href=".url('hr/payroll/promotion_edit/'.$data->id)." class=\"btn btn-xs btn-primary\"><i class=\"fa fa-pencil\"></i></a> &nbsp;";
+                    if($data->as_emp_type_id == 3){
+                        $output .="<button type=\"button\" onclick='printLetter(".json_encode($letter).")' class=\"btn btn-xs btn-danger\"><i class=\"fa fa-print\"></i></a></button"; 
+                    }else{
+                        $output .="<button type=\"button\" onclick='printEnLetter(".json_encode($letter).")' class=\"btn btn-xs btn-danger\"><i class=\"fa fa-print\"></i></a></button"; 
+                    }
+                    $output .= "</div>";
+                    return $output;
+                }else{
+                    return '';
+                }
+            })
+            ->rawColumns(['action','month'])
+            ->make(true);  
+                             
+    }
+
     public function storePromotion(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'associate_id'           => 'required|min:10|max:10',
-            'previous_designation_id' => 'required|max:11',
-            'previous_designation'   => 'required|max:64',
+            'associate_id'           => 'required',
+            'previous_designation_id' => 'required',
+            'previous_designation'   => 'required',
             'current_designation_id' => 'required|max:11',
-            'eligible_date'          => 'required|date',
             'effective_date'         => 'required|date',
         ]);
 
@@ -945,51 +999,105 @@ class BenefitController extends Controller
         }
         else
         {
-            $store = new Promotion;
-            $store->associate_id = $request->associate_id;
-            $store->previous_designation_id = $request->previous_designation_id;
-            $store->current_designation_id  = $request->current_designation_id;
-            $store->eligible_date           = $request->eligible_date;
-            $store->effective_date          = $request->effective_date;
+            $check = Promotion::where('associate_id', $request->associate_id)->where('status', 0)->first();
 
-            if ( $store->save())
-            {
-                log_file_write("Associate Promoted Saved", $store->id);
+            if($check){
                 return back()
-                    ->with('success', 'Associate Promoted Successfully!');
-            }
-            else
-            {
-                return back()
-                    ->withInput()->with('error', 'Please try again.');
+                        ->withInput()->with('error', 'This employe has already a pending request! <a href="'.url('hr/payroll/promotion_edit/'.$check->id).'">View</a>');
+            }else{
+
+
+                $store = new Promotion;
+                $store->associate_id = $request->associate_id;
+                $store->previous_designation_id = $request->previous_designation_id;
+                $store->current_designation_id  = $request->current_designation_id;
+                $store->effective_date          = $request->effective_date;
+                if($request->effective_date <= date('Y-m-d')){
+                    $store->status          = 1;  
+                }
+
+                if( $store->save())
+                {
+
+                    if($store->status == 1){
+                        Employee::where("associate_id", $request->associate_id)
+                        ->update([
+                            'as_designation_id' => $request->current_designation_id
+                        ]);
+                    }
+
+                    log_file_write($request->associate_id." Associate Promoted!", $store->id);
+                    return back()
+                        ->with('success', 'Promotion data stored! Employee will get promoted on the effective date!');
+                }
+                else
+                {
+                    return back()
+                        ->withInput()->with('error', 'Please try again.');
+                }
             }
         }
     }
     //Promotion Edit
-    public function promotionEdit($id){
+    public function promotionEdit($id)
+    {
         $designationList = Designation::where('hr_designation_status', 1)->pluck("hr_designation_name", "hr_designation_id");
+
         $promotion= DB::table('hr_promotion AS p')
                         ->select(
                             'p.*',
-                            'd.hr_designation_name AS prev_desg',
                             'b.as_name',
                             'b.as_gender',
-                            'b.as_pic'
+                            'b.as_doj',
+                            'b.as_pic',
+                            'b.as_section_id',
+                            'b.as_department_id',
+                            'b.as_designation_id',
+                            's.hr_section_name'
                         )
                         ->where('p.id', $id)
-                        ->leftJoin('hr_designation AS d', 'p.previous_designation_id', 'd.hr_designation_id')
                         ->leftJoin('hr_as_basic_info as b','p.associate_id', 'b.associate_id')
+                        ->leftJoin("hr_section AS s", "s.hr_section_id", "=", "b.as_section_id")
                         ->first();
-        return view('hr/payroll/promotion_edit', compact('promotion', 'designationList'));
+        $designation = designation_by_id();
+        $history = Promotion::where('associate_id', $promotion->associate_id)
+                            ->orderBy('effective_date', 'DESC')->get();
+
+        $isLatest = 1;
+
+        
+
+        if(count($history)>0){
+            if($history->first()->id != $promotion->id){
+                $isLatest = 0; 
+            }
+            $historyview = "";
+
+            foreach ($history as $key => $h) {
+                if($h->status == 0){
+                    $historyview .= '<div class="promotions"> <i class="text-danger las la-exclamation-circle"></i>  ';
+                }else{
+                    $historyview .= '<div> <i class="text-success las la-check-circle"></i>  ';
+                }
+                $historyview .= $designation[$h->current_designation_id]['hr_designation_name']. '- <span style="font-size:11px;">'.date('d M, Y', strtotime($h->effective_date)).'</span></div>';
+            }
+            $last = $history->last();
+            $historyview .= '<div> <i class="text-success las la-check-circle"></i> '.$designation[$h->previous_designation_id]['hr_designation_name']. '- <span class="badge bg-primary">Joined ('.date('d M, Y', strtotime($promotion->as_doj)).')</span></div>';
+        }else{
+            $historyview = "<span class='text-danger'>No record found!</span>";
+        }
+
+        return view('hr/payroll/promotion_edit', compact('promotion', 'designationList','historyview', 'designation','isLatest'));
     }
-    public function updatePromotion(Request $request){
+
+    public function updatePromotion(Request $request)
+    {
         $validator = Validator::make($request->all(), [
-            'promotion_id'           => 'required|max:11',
-            'associate_id'           => 'required|min:10|max:10',
+            'promotion_id'           => 'required',
+            'associate_id'           => 'required',
             'previous_designation_id' => 'required|max:11',
             'current_designation_id' => 'required|max:11',
-            'eligible_date'          => 'required|date',
-            'effective_date'         => 'required|date',
+            'effective_date'         => 'required|date'
         ]);
 
         if ($validator->fails())
@@ -1001,14 +1109,19 @@ class BenefitController extends Controller
         }
         else
         {
-            Promotion::where('id', $request->promotion_id)
-                    ->update([
-                        'associate_id'           => $request->associate_id,
-                        'previous_designation_id' => $request->previous_designation_id,
-                        'current_designation_id' => $request->current_designation_id,
-                        'eligible_date'          => $request->eligible_date,
-                        'effective_date'         => $request->effective_date,
-                    ]);
+            $promotion = Promotion::where('id', $request->promotion_id)->first();
+            Promotion::where('id', $request->promotion_id)->update([
+                'previous_designation_id' => $request->previous_designation_id,
+                'current_designation_id' => $request->current_designation_id,
+                'effective_date'         => $request->effective_date,
+            ]);
+
+            if($promotion->status == 1){
+                Employee::where("associate_id", $request->associate_id)
+                ->update([
+                    'as_designation_id' => $request->current_designation_id
+                ]);
+            }
 
             log_file_write("Promotion Updated", $request->promotion_id);
 
@@ -1022,30 +1135,23 @@ class BenefitController extends Controller
     public function promotionJobs()
     {
         $records = Promotion::where("status", 0)
-            ->whereDate("effective_date", "<=", date("Y-m-d"));
+                  ->where("effective_date", "<=", date("Y-m-d"))
+                  ->get();
 
-        if ($records->exists())
+        foreach ($records as $item)
         {
-            $items = $records->limit(10)->get();
-            foreach ($items as $item)
-            {
-                Employee::where("associate_id", $item->associate_id)
-                ->update([
-                    'as_designation_id' => $item->current_designation_id
-                ]);
+            Employee::where("associate_id", $item->associate_id)
+            ->update([
+                'as_designation_id' => $item->current_designation_id
+            ]);
 
-                $id = Employee::where("associate_id", $item->associate_id)->value('as_id');
-                // log_file_write("Employee Designation Updated", $id);
-
-                Promotion::where("id", $item->id)
-                ->update([
-                    'status' => 1
-                ]);
-
-                // log_file_write("Promotion Status Updated", $item->id);
-            }
+            Promotion::where("id", $item->id)
+            ->update([
+                'status' => 1
+            ]);
         }
     }
+
 
     # Search Associate ID returns NAME & ID
     public function searchPromotedAssociate(Request $request)
@@ -1070,28 +1176,52 @@ class BenefitController extends Controller
         if($request->has('associate_id'))
         {
 
-            $query = DB::table("hr_benefits AS ben")
-                ->select("b.associate_id", "b.as_doj", "b.as_designation_id", "d.hr_designation_name",'b.as_name','b.as_pic')
-                ->leftJoin("hr_as_basic_info AS b", "b.associate_id", "=", "ben.ben_as_id")
-                ->leftJoin("hr_designation AS d", "d.hr_designation_id", "=", "b.as_designation_id")
-                ->where("b.associate_id",  $request->associate_id);
+            $info = DB::table("hr_as_basic_info AS b")
+                    ->select("b.associate_id", "b.as_doj", "b.as_designation_id", "d.hr_designation_name",'b.as_name','b.as_pic', 'd.hr_designation_position','b.as_gender','b.as_emp_type_id','s.hr_section_name')
+                    ->leftJoin("hr_designation AS d", "d.hr_designation_id", "=", "b.as_designation_id")
+                    ->leftJoin("hr_section AS s", "s.hr_section_id", "=", "b.as_section_id")
+                    ->where("b.associate_id",  $request->associate_id)
+                    ->first();
 
-            if ($query->exists())
+            if($info)
             {
-                $info = $query->first();
                 $date = $info->as_doj;
-                $data['eligible_date'] = date("Y-m-d", strtotime("$date + 1 year"));
                 $data['as_name'] = $info->as_name;
-                $data['as_pic'] = $info->as_pic??'assets/images/user/09.jpg';
+                $data['as_pic'] = emp_profile_picture($info);
                 $data['previous_designation'] = $info->hr_designation_name;
+                $data['section'] = $info->hr_section_name;
                 $data['previous_designation_id'] = $info->as_designation_id;
 
                 //update designations
-                $position = Designation::where("hr_designation_id", "=", $info->as_designation_id)->value('hr_designation_position');
-                $designations = Designation::where('hr_designation_position', ">", $position)
+                $designations = Designation::where('hr_designation_emp_type', $info->as_emp_type_id)
                 ->where('hr_designation_status', 1)
                 ->orderBy('hr_designation_position', 'ASC')
                 ->get();
+
+                $designation = designation_by_id();
+
+                $history = Promotion::where('associate_id', $request->associate_id)
+                            ->orderBy('effective_date', 'DESC')->get();
+
+                if(count($history)>0){
+                    $data['history'] = "";
+
+                    foreach ($history as $key => $h) {
+                        if($h->status == 0){
+                            $data['history'] .= '<div class="promotions"> <i class="text-danger las la-exclamation-circle"></i>  ';
+                        }else{
+                            $data['history'] .= '<div> <i class="text-success las la-check-circle"></i>  ';
+                        }
+                        $data['history'] .= $designation[$h->current_designation_id]['hr_designation_name']. '- <span style="font-size:11px;">'.date('d M, Y', strtotime($h->effective_date)).'</span></div>';
+                    }
+                    $last = $history->last();
+                    if($last && isset($designation[$last->previous_designation_id])){
+
+                        $data['history'] .= '<div> <i class="text-success las la-check-circle"></i> '.$designation[$last->previous_designation_id]['hr_designation_name']. '- <span class="badge bg-primary">Joined ('.date('d M, Y', strtotime($date)).')</span></div>';
+                    }
+                }else{
+                    $data['history'] = "<span class='text-danger'>No record found!</span>";
+                }
 
                 $data['designation'] = "<option value=''>Select Promoted Designation</option>";
                 foreach ($designations as $value)
