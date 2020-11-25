@@ -229,6 +229,11 @@ class DailyActivityReportController extends Controller
             $input['section']    = isset($request['section'])?$request['section']:'';
             $input['subSection'] = isset($request['subSection'])?$request['subSection']:'';
 
+
+            if($input['report_type'] == 'missing_token'){
+                return $this->getatttoken($request, $input);
+            }
+
             $getEmployee = array();
             $data = array();
             $format = $request['report_group'];
@@ -441,6 +446,80 @@ class DailyActivityReportController extends Controller
             return $bug;
             return 'error';
         }
+    }
+
+
+    public function getatttoken($input,$request)
+    {
+
+        $associates = DB::table('hr_as_basic_info')
+                        ->whereIn('as_unit_id', auth()->user()->unit_permissions())
+                        ->whereIn('as_location', auth()->user()->location_permissions())
+                        ->when(!empty($input['unit']), function ($query) use($input){
+                            if($input['unit'] == 145){
+                                return $query->whereIn('as_unit_id',[1, 4, 5]);
+                            }else{
+                                return $query->where('as_unit_id',$input['unit']);
+                            }
+                        })
+                        ->when(!empty($input['location']), function ($query) use($input){
+                           return $query->where('as_location',$input['location']);
+                        })
+                        ->when(!empty($input['area']), function ($query) use($input){
+                           return $query->where('as_area_id',$input['area']);
+                        })
+                        ->when(!empty($input['department']), function ($query) use($input){
+                           return $query->where('as_department_id',$input['department']);
+                        })
+                        ->when(!empty($input['line_id']), function ($query) use($input){
+                           return $query->where('as_line_id', $input['line_id']);
+                        })
+                        ->when(!empty($input['floor_id']), function ($query) use($input){
+                           return $query->where('as_floor_id',$input['floor_id']);
+                        })
+                        ->when($request['otnonot']!=null, function ($query) use($input){
+                           return $query->where('as_ot',$input['otnonot']);
+                        })
+                        ->when(!empty($input['section']), function ($query) use($input){
+                           return $query->where('as_section_id', $input['section']);
+                        })
+                        ->when(!empty($input['subSection']), function ($query) use($input){
+                           return $query->where('as_subsection_id', $input['subSection']);
+                        })
+                        ->pluck('associate_id')->toArray();
+
+
+        $tableName = get_att_table($request['unit']).' AS a';
+
+        $unit = unit_by_id();
+        $department = department_by_id();
+        $designation = designation_by_id();
+        $section = section_by_id();
+
+        $attData = DB::table($tableName)
+                    ->select('b.as_name','b.as_designation_id','b.as_department_id','b.as_section_id','a.in_time','a.out_time','a.remarks','b.as_oracle_code','b.as_unit_id','b.associate_id')
+                    ->leftJoin('hr_as_basic_info AS b','b.as_id','a.as_id')
+                    ->where('a.in_date', $request['date'])
+                    ->whereIn('b.associate_id', $associates)
+                    ->where( function($q) use ($request){
+                        $q->whereNull('a.in_time');
+                        if($request['date'] != date('Y-m-d')){
+                            $q->orWhereNull('a.out_time');
+                        }
+                        $q->orWhere('a.remarks','DSI');
+                    })
+                    ->orderBy('b.as_unit_id', 'ASC')
+                    ->get();
+
+        /*$absData = DB::table('hr_absent AS a')
+                    ->select('b.as_name','b.as_designation_id','b.as_department_id','b.as_section_id','b.as_oracle_code','b.as_unit_id','b.associate_id')
+                    ->leftJoin('hr_as_basic_info AS b','b.associate_id','a.associate_id')
+                    ->where('a.date', $request['date'])
+                    ->whereIn('b.associate_id', $associates)
+                    ->orderBy('b.as_unit_id', 'ASC')
+                    ->get();*/
+
+        return view('hr.common.in_out_token', compact('attData','unit','department','designation','section','request'));
     }
 
     public function activityProcess($input)

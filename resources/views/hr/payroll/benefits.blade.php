@@ -9,6 +9,9 @@
             cursor: default !important;
         }
         .custom-control-label:after, .custom-control-label:before {zoom:1.5;top: 2px;}
+        .benefit-voucher .iq-card-body{
+            padding: 0 !important;
+        }
     </style>
 @endpush
 <div class="main-content">
@@ -24,7 +27,7 @@
                 </li>
                 <li class="active">End of Job </li>
                 <li class="top-nav-btn"><a href="{{url('hr/payroll/given_benefits_list')}}" target="_blank" class="btn btn-sm btn-primary" >Benefit List <i class="fa fa-list bigger-120"></i></a></li>
-            </ul><!-- /.breadcrumb --> 
+            </ul>
         </div>
 
         
@@ -45,7 +48,8 @@
                             <div class="form-group has-required has-float-label select-search-group">
                                 <select id="benefit_on" name="benefit_on" class="form-control" required="required">
                                    <option value="">Select Type</option>
-                                   <option value="on_resign">Resign/Left</option>
+                                   <option value="on_left">Left</option>
+                                   <option value="on_resign">Resign</option>
                                    <option value="on_dismiss">Dismiss</option>
                                    <option value="on_terminate">Termination</option>
                                    <option value="on_death">Death</option>
@@ -76,9 +80,9 @@
                         </div>
                         
                         <div class="col-sm-2">
-                            <div class="form-group has-float-label has-required">
-                                <input id="status_date" type="date" name="status_date" value="{{date('Y-m-d')}}" class="form-control" required >
-                                <label for="status_date">Status Date</label>
+                            <div class="form-group has-float-label has-required" data-toggle="tooltip" data-placement="top" title="" data-original-title="Employee salary will be calculated based on this date! Date suggestion will be the last working day (If last leave date greater than attendance date then last leave date). If any holiday after last attendance date than that holiday will be last working day.">
+                                <input id="status_date" type="date" name="status_date" value="{{date('Y-m-d')}}" class="form-control" required  >
+                                <label for="status_date">Effective Date</label>
                             </div>
                         </div>
                         <div id="notice_pay_div" class="col-sm-2 pt-2" style="display: none;">
@@ -146,7 +150,7 @@
                             </li>
                         </ul>
                     </div>
-                    <div class="col-sm-8">
+                    <div class="col-sm-8 p-0">
                         <div id="benefit-voucher"></div>
                         <hr>
                         <div id="salary-voucher"></div>
@@ -225,14 +229,14 @@
                         $('#total_earn_leave').text(data['earned']);
                         $('#enjoyed_earn_leave').text(data['enjoyed']);
                         $('#remained_earn_leave').text(data['remain']);
+                        
 
 
                         if(data['already_given'] == 'yes'){
                             $('#benefit-voucher').html(data['benefit']);
 
                         }else{
-                            $('#benefit-voucher').html('');
-                            $('#salary-voucher').html('');
+                            $('#benefit-voucher').html(data['jobcard']);
                         }
                         $('.app-loader').hide();
                     },

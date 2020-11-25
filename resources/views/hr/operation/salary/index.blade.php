@@ -339,7 +339,15 @@
 
 <script>
     var _token = $('input[name="_token"]').val();
-    
+    function printDiv(divName)
+    { 
+        var myWindow=window.open('','','width=800,height=800');
+        myWindow.document.write(document.getElementById(divName).innerHTML); 
+        myWindow.document.close();
+        myWindow.focus();
+        myWindow.print();
+        myWindow.close();
+    }
     // show error message
     function errorMsgRepeter(id, check, text){
         var flug1 = false;

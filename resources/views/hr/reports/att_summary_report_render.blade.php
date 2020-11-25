@@ -50,13 +50,19 @@
                 .pagebreak { page-break-before: always; }
             </style>
              @php
+                $flag = 0;
                 if( $input['unit'] == 101 || $input['unit'] == 102 || $input['unit'] == 103){
                     $unitid = '1,4,5';
+                    
                 }else if($input['unit'] == 100){
                     $unitid = '1,4';
                 }
                 else{
                     $unitid = $unit->hr_unit_id;
+                }
+
+                if(in_array($input['unit'], [1,4,5,100,101])){
+                    $flag = 1;
                 }
             @endphp
             @if($input['unit'] != 102)
@@ -69,8 +75,8 @@
                                 $tsw = (int) ((int) ($nonot['present'][229]??0)+(int) ($ot['present'][229]??0)+(int) ($nonot['present'][231]??0)+(int) ($ot['present'][231]??0));
 
                             }else{
-                                // operator 138,48
-                                $tsw = (int) ((int) ($nonot['present'][138]??0)+(int) ($ot['present'][138]??0)+(int) ($nonot['present'][219]??0)+(int) ($ot['present'][219]??0));
+                                // operator 138 - sewing, 219 - finishing, 214 - button, 306 - Special Operator
+                                $tsw = (int) ((int) ($nonot['present'][138]??0)+(int) ($ot['present'][138]??0)+(int) ($nonot['present'][219]??0)+(int) ($ot['present'][219]??0)+(int) ($nonot['present'][214]??0)+(int) ($ot['present'][214]??0)+(int) ($nonot['present'][306]??0)+(int) ($ot['present'][306]??0));
                             }
 
                             if($tsw > 0){
@@ -110,7 +116,7 @@
                             <td width="15%" style="text-align: center;" >{{array_sum($ot['present'])}}</td>
                             <td width="15%" style="text-align: center;" >{{array_sum($ot['absent'])}}</td>
                             <td width="15%" style="text-align: center;" >{{array_sum($ot['leave'])}}</td>
-                            <td width="15%" style="text-align: center;" ><a href="{{url('hr/reports/get-att-emp?unit='.$unitid.'&date='.$date.'&type=holiday&ot=1')}}">{{$ot['dayoff']??0}} </a></td>
+                            <td width="15%" style="text-align: center;" ><a href="{{url('hr/reports/get-att-emp?flag='.$flag.'&&unit='.$unitid.'&date='.$date.'&type=holiday&ot=1')}}">{{$ot['dayoff']??0}} </a></td>
                             <td>
                                 {{round((array_sum($ot['absent'])/array_sum($ot['total'])*100),2)}}%
                             </td>
@@ -122,7 +128,7 @@
                             <td width="15%" style="text-align: center;" >{{array_sum($nonot['present'])}}</td>
                             <td width="15%" style="text-align: center;" >{{array_sum($nonot['absent'])}}</td>
                             <td width="15%" style="text-align: center;" >{{array_sum($nonot['leave'])}}</td>
-                            <td width="15%" style="text-align: center;" ><a href="{{url('hr/reports/get-att-emp?unit='.$unitid.'&date='.$date.'&type=holiday&ot=0')}}">{{$nonot['dayoff']??0}}</a></td>
+                            <td width="15%" style="text-align: center;" ><a href="{{url('hr/reports/get-att-emp?flag='.$flag.'&&unit='.$unitid.'&date='.$date.'&type=holiday&ot=0')}}">{{$nonot['dayoff']??0}}</a></td>
                             
                             <td>{{round((array_sum($nonot['absent'])/array_sum($nonot['total'])*100),2)}}%</td>
 
@@ -133,7 +139,7 @@
                             <td bgcolor="#C2C2C2" width="15%" style="text-align: center;"  >{{array_sum($ot['present'])+array_sum($nonot['present'])}}</td>
                             <td bgcolor="#C2C2C2" width="15%" style="text-align: center;"  >{{array_sum($ot['absent'])+array_sum($nonot['absent'])}}</td>
                             <td bgcolor="#C2C2C2" width="15%" style="text-align: center;"  >{{array_sum($ot['leave'])+array_sum($nonot['leave'])}}</td>
-                            <td bgcolor="#C2C2C2" width="15%" style="text-align: center;"  ><a href="{{url('hr/reports/get-att-emp?unit='.$unitid.'&date='.$date.'&type=holiday')}}">{{($ot['dayoff']??0)+($nonot['dayoff'])}}</a></td>
+                            <td bgcolor="#C2C2C2" width="15%" style="text-align: center;"  ><a href="{{url('hr/reports/get-att-emp?flag='.$flag.'&&unit='.$unitid.'&date='.$date.'&type=holiday')}}">{{($ot['dayoff']??0)+($nonot['dayoff'])}}</a></td>
                             <td>
                                 {{round(((array_sum($ot['absent'])+array_sum($nonot['absent']))/(array_sum($ot['total'])+array_sum($nonot['total']))*100),2)}}%
                             </td>
@@ -216,11 +222,11 @@
                                             <td  style="text-align: center; padding: 10px;">{{$count}}</td>
                                             <td  style="text-align: center; padding: 10px; @if($sec != 1) border:none!important; @else border-bottom:none!important; @endif">
                                                 @if($sec == 1)
-                                                <a href="{{url('hr/reports/get-att-emp?unit='.$unitid.'&date='.$date.'&section='.$section->hr_section_id.'&ot=1')}}">{{$section->hr_section_name}}</a>
+                                                <a href="{{url('hr/reports/get-att-emp?flag='.$flag.'&&unit='.$unitid.'&date='.$date.'&section='.$section->hr_section_id.'&ot=1')}}">{{$section->hr_section_name}}</a>
                                                 @endif
                                             </td>
                                             <td style="text-align: center; padding: 10px;">
-                                                <a href="{{url('hr/reports/get-att-emp?unit='.$unitid.'&date='.$date.'&subsection='.$subsec->hr_subsec_id.'&ot=1')}}">{{$subsec->hr_subsec_name}} </a></td>
+                                                <a href="{{url('hr/reports/get-att-emp?flag='.$flag.'&&unit='.$unitid.'&date='.$date.'&subsection='.$subsec->hr_subsec_id.'&ot=1')}}">{{$subsec->hr_subsec_name}} </a></td>
                                             <td width="7%" style="text-align: center; padding: 10px;">{{$ot['total'][$subsec->hr_subsec_id]??0}}</td>
                                             <td width="7%" style="text-align: center; padding: 10px;">{{$ot['present'][$subsec->hr_subsec_id]??0}}</td>
                                             <td width="7%" style="text-align: center; padding: 10px;">{{$ot['absent'][$subsec->hr_subsec_id]??0}}</td>
@@ -473,11 +479,11 @@
                                             <td  style="text-align: center; padding: 10px;">{{$count}}</td>
                                             <td  style="text-align: center; padding: 10px; @if($sec != 1) border:none!important; @else border-bottom:none!important; @endif">
                                                 @if($sec == 1)
-                                                <a href="{{url('hr/reports/get-att-emp?unit='.$unitid.'&date='.$date.'&section='.$section->hr_section_id.'&ot=0')}}">{{$section->hr_section_name}}</a>
+                                                <a href="{{url('hr/reports/get-att-emp?flag='.$flag.'&&unit='.$unitid.'&date='.$date.'&section='.$section->hr_section_id.'&ot=0')}}">{{$section->hr_section_name}}</a>
                                                 @endif
                                             </td>
                                             <td style="text-align: center; padding: 10px;">
-                                                <a href="{{url('hr/reports/get-att-emp?unit='.$unitid.'&date='.$date.'&subsection='.$subsec->hr_subsec_id.'&ot=0')}}">{{$subsec->hr_subsec_name}} </a></td>
+                                                <a href="{{url('hr/reports/get-att-emp?flag='.$flag.'&&unit='.$unitid.'&date='.$date.'&subsection='.$subsec->hr_subsec_id.'&ot=0')}}">{{$subsec->hr_subsec_name}} </a></td>
                                             <td width="7%" style="text-align: center; padding: 10px;">{{$nonot['total'][$subsec->hr_subsec_id]??0}}</td>
                                             <td width="7%" style="text-align: center; padding: 10px;">{{$nonot['present'][$subsec->hr_subsec_id]??0}}</td>
                                             <td width="7%" style="text-align: center; padding: 10px;">{{$nonot['absent'][$subsec->hr_subsec_id]??0}}</td>

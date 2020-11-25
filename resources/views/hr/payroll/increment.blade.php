@@ -3,11 +3,8 @@
 @section('main-content')
 @push('css')
     <style type="text/css">
-        {{-- removing the links in print and adding each page header --}}
         a[href]:after { content: none !important; }
         thead {display: table-header-group;}
-
-        /*.form-group {overflow: hidden;}*/
         table.header-fixed1 tbody {max-height: 240px;  overflow-y: scroll;}
 
     </style>

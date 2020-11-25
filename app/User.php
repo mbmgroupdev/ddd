@@ -79,6 +79,14 @@ class User extends Authenticatable
             ->pluck('associate_id');
     }
 
+    public function permitted_all()
+    {
+        return Employee::whereIn('as_unit_id', $this->unit_permissions())
+            ->whereIn('as_location', $this->location_permissions())
+            ->whereIn('as_status',  [1,2,3,4,5,6])
+            ->pluck('associate_id');
+    }
+
     public function permitted_asid()
     {
         return Employee::whereIn('as_unit_id', $this->unit_permissions())

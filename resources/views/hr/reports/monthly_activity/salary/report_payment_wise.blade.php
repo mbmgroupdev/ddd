@@ -25,7 +25,10 @@
               .f-14 th, .f-14 td, .f-14 td b{
                 font-size: 14px !important;
               }
-            </style>
+              .table thead th {
+			    vertical-align: inherit;
+			}
+			</style>
 			@php
 				$unit = unit_by_id();
 				$line = line_by_id();
@@ -381,94 +384,198 @@
 						}
 					@endphp
 					<table class="table table-bordered table-hover table-head" border="1" style="width:100%;border:1px solid #ccc;margin-bottom:0;font-size:14px;text-align:left" cellpadding="5">
-						<thead>
-							<tr class="text-center">
-								<th>Sl</th>
-								<th> {{ $head }} Name</th>
-								<th>No. Of Employee</th>
-								@if($input['pay_status'] == 'all')
-								<th>Salary Amount (BDT)</th>
+						<!-- custom design for all-->
+						@if($input['pay_status'] == 'all')
+							<thead>
+								<tr class="text-center">
+									<th rowspan="2">Sl</th>
+									<th rowspan="2"> {{ $head }} Name</th>
+									<th colspan="3">No. of Employee</th>
+									<th rowspan="2">Salary (BDT)</th>
+									
+									<th colspan="2">Over Time</th>
+									<th colspan="5">Salary Payable (BDT)</th>
+								</tr>
+								<tr class="text-center">
+									<th>Non OT</th>
+									<th>OT</th>
+									<th>Total</th>
+									<th>Time (Hour)</th>
+									<th>Amount (BDT)</th>
+									<th>Cash</th>
+									<th>Bank</th>
+									<th>Tax</th>
+									<th>Stamp</th>
+									<th>Total</th>
+								</tr>
+							</thead>
+							<tbody>
+								@php $i=0; $totalEmployee = 0; @endphp
+								@if(count($getEmployee) > 0)
+								@foreach($getEmployee as $employee)
+								
+								<tr>
+									<td>{{ ++$i }}</td>
+									<td>
+										@php
+											$group = $employee->$format;
+											if($format == 'as_unit_id'){
+												$body = $unit[$group]['hr_unit_name']??'';
+											}elseif($format == 'as_line_id'){
+												$body = $line[$group]['hr_line_name']??'';
+											}elseif($format == 'as_floor_id'){
+												$body = $floor[$group]['hr_floor_name']??'';
+											}elseif($format == 'as_department_id'){
+												$body = $department[$group]['hr_department_name']??'';
+											}elseif($format == 'as_designation_id'){
+												$body = $designation[$group]['hr_designation_name']??'';
+											}elseif($format == 'as_section_id'){
+												$depId = $section[$group]['hr_section_department_id']??'';
+												$seDeName = $department[$depId]['hr_department_name']??'';
+												$seName = $section[$group]['hr_section_name']??'';
+												$body = $seDeName.' - '.$seName;
+											}elseif($format == 'as_subsection_id'){
+												$body = $subSection[$group]['hr_subsec_name']??'';
+											}else{
+												$body = 'N/A';
+											}
+										@endphp
+										{{ ($body == null)?'N/A':$body }}
+									</td>
+									<td style="text-align: center;">
+										{{ $employee->nonot }}
+									</td>
+									<td style="text-align: center;">
+										{{ $employee->ot }}
+									</td>
+									<td style="text-align: center;">
+										{{ $employee->total }}
+										@php $totalEmployee += $employee->total; @endphp
+									</td>
+									<td class="text-right">
+										{{ bn_money(round($employee->groupTotal-$employee->groupOtAmount)) }}
+									</td>
+									
+									<td class="text-right">
+										{{ numberToTimeClockFormat($employee->groupOt) }}
+									</td>
+									<td class="text-right">
+										{{ bn_money(round($employee->groupOtAmount)) }}
+									</td>
+									<td class="text-right">
+										{{ bn_money(round($employee->groupCashSalary)) }}
+									</td>
+									<td class="text-right">
+										{{ bn_money(round($employee->groupBankSalary)) }}
+									</td>
+									<td class="text-right">
+										{{ bn_money(round($employee->groupTds)) }}
+									</td>
+									<td class="text-right">
+										{{ bn_money(round($employee->groupStamp)) }}
+									</td>
+									<td class="text-right">
+										{{ bn_money(round($employee->groupTotal+$employee->groupStamp)) }}
+									</td>
+								</tr>
+								@endforeach
+								@else
+								<tr>
+					            	<td colspan="9" class="text-center">No Data Found!</td>
+					            </tr>
 								@endif
-								@if($input['pay_status'] == 'all' || $input['pay_status'] == 'cash')
-								<th>Cash Amount (BDT)</th>
+							</tbody>
+						@else
+							<!-- custom design for cash/bank/partial -->
+							<thead>
+								<tr class="text-center">
+									<th>Sl</th>
+									<th> {{ $head }} Name</th>
+									<th>No. Of Employee</th>
+									@if($input['pay_status'] == 'all')
+									<th>Salary Amount (BDT)</th>
+									@endif
+									@if($input['pay_status'] == 'all' || $input['pay_status'] == 'cash')
+									<th>Cash Amount (BDT)</th>
+									@endif
+									@if($input['pay_status'] == 'all' || ($input['pay_status'] != 'cash' && $input['pay_status'] != null))
+									<th>Bank Amount (BDT)</th>
+									<th>Tax Amount (BDT)</th>
+									@endif
+									<th>OT Hour</th>
+									<th>OT Amount (BDT)</th>
+								</tr>
+							</thead>
+							<tbody>
+								@php $i=0; $totalEmployee = 0; @endphp
+								@if(count($getEmployee) > 0)
+								@foreach($getEmployee as $employee)
+								
+								<tr>
+									<td>{{ ++$i }}</td>
+									<td>
+										@php
+											$group = $employee->$format;
+											if($format == 'as_unit_id'){
+												$body = $unit[$group]['hr_unit_name']??'';
+											}elseif($format == 'as_line_id'){
+												$body = $line[$group]['hr_line_name']??'';
+											}elseif($format == 'as_floor_id'){
+												$body = $floor[$group]['hr_floor_name']??'';
+											}elseif($format == 'as_department_id'){
+												$body = $department[$group]['hr_department_name']??'';
+											}elseif($format == 'as_designation_id'){
+												$body = $designation[$group]['hr_designation_name']??'';
+											}elseif($format == 'as_section_id'){
+												$depId = $section[$group]['hr_section_department_id']??'';
+												$seDeName = $department[$depId]['hr_department_name']??'';
+												$seName = $section[$group]['hr_section_name']??'';
+												$body = $seDeName.' - '.$seName;
+											}elseif($format == 'as_subsection_id'){
+												$body = $subSection[$group]['hr_subsec_name']??'';
+											}else{
+												$body = 'N/A';
+											}
+										@endphp
+										{{ ($body == null)?'N/A':$body }}
+									</td>
+									<td style="text-align: center;">
+										{{ $employee->total }}
+										@php $totalEmployee += $employee->total; @endphp
+									</td>
+									@if($input['pay_status'] == 'all')
+									<td class="text-right">
+										{{ bn_money(round($employee->groupSalary,2)) }}
+									</td>
+									@endif
+									@if($input['pay_status'] == 'all' || $input['pay_status'] == 'cash')
+									<td class="text-right">
+										{{ bn_money(round($employee->groupCashSalary,2)) }}
+									</td>
+									@endif
+									@if($input['pay_status'] == 'all' || ($input['pay_status'] != 'cash' && $input['pay_status'] != null))
+									<td class="text-right">
+										{{ bn_money(round($employee->groupBankSalary,2)) }}
+									</td>
+									<td class="text-right">
+										{{ bn_money(round($employee->groupTds,2)) }}
+									</td>
+									@endif
+									<td class="text-right">
+										{{ numberToTimeClockFormat($employee->groupOt) }}
+									</td>
+									<td class="text-right">
+										{{ bn_money(round($employee->groupOtAmount,2)) }}
+									</td>
+								</tr>
+								@endforeach
+								@else
+								<tr>
+					            	<td colspan="9" class="text-center">No Data Found!</td>
+					            </tr>
 								@endif
-								@if($input['pay_status'] == 'all' || ($input['pay_status'] != 'cash' && $input['pay_status'] != null))
-								<th>Bank Amount (BDT)</th>
-								<th>Tax Amount (BDT)</th>
-								@endif
-								<th>OT Hour</th>
-								<th>OT Amount (BDT)</th>
-							</tr>
-						</thead>
-						<tbody>
-							@php $i=0; $totalEmployee = 0; @endphp
-							@if(count($getEmployee) > 0)
-							@foreach($getEmployee as $employee)
-							
-							<tr>
-								<td>{{ ++$i }}</td>
-								<td>
-									@php
-										$group = $employee->$format;
-										if($format == 'as_unit_id'){
-											$body = $unit[$group]['hr_unit_name']??'';
-										}elseif($format == 'as_line_id'){
-											$body = $line[$group]['hr_line_name']??'';
-										}elseif($format == 'as_floor_id'){
-											$body = $floor[$group]['hr_floor_name']??'';
-										}elseif($format == 'as_department_id'){
-											$body = $department[$group]['hr_department_name']??'';
-										}elseif($format == 'as_designation_id'){
-											$body = $designation[$group]['hr_designation_name']??'';
-										}elseif($format == 'as_section_id'){
-											$depId = $section[$group]['hr_section_department_id']??'';
-											$seDeName = $department[$depId]['hr_department_name']??'';
-											$seName = $section[$group]['hr_section_name']??'';
-											$body = $seDeName.' - '.$seName;
-										}elseif($format == 'as_subsection_id'){
-											$body = $subSection[$group]['hr_subsec_name']??'';
-										}else{
-											$body = 'N/A';
-										}
-									@endphp
-									{{ ($body == null)?'N/A':$body }}
-								</td>
-								<td style="text-align: center;">
-									{{ $employee->total }}
-									@php $totalEmployee += $employee->total; @endphp
-								</td>
-								@if($input['pay_status'] == 'all')
-								<td class="text-right">
-									{{ bn_money(round($employee->groupSalary,2)) }}
-								</td>
-								@endif
-								@if($input['pay_status'] == 'all' || $input['pay_status'] == 'cash')
-								<td class="text-right">
-									{{ bn_money(round($employee->groupCashSalary,2)) }}
-								</td>
-								@endif
-								@if($input['pay_status'] == 'all' || ($input['pay_status'] != 'cash' && $input['pay_status'] != null))
-								<td class="text-right">
-									{{ bn_money(round($employee->groupBankSalary,2)) }}
-								</td>
-								<td class="text-right">
-									{{ bn_money(round($employee->groupTds,2)) }}
-								</td>
-								@endif
-								<td class="text-right">
-									{{ numberToTimeClockFormat($employee->groupOt) }}
-								</td>
-								<td class="text-right">
-									{{ bn_money(round($employee->groupOtAmount,2)) }}
-								</td>
-							</tr>
-							@endforeach
-							@else
-							<tr>
-				            	<td colspan="9" class="text-center">No Data Found!</td>
-				            </tr>
-							@endif
-						</tbody>
+							</tbody>
+						@endif
 						
 					</table>
 				@endif

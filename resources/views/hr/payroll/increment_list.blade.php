@@ -29,6 +29,28 @@
                 </li>
 			</ul><!-- /.breadcrumb --> 
 		</div>
+        @php
+            $nextyear = null;
+            $year = request()->get('year')??date('Y');
+            $prevyear = $year-1;
+            if($year < date('Y')){
+                $nextyear = $year+1;
+            }
+        @endphp
+        <div class="panel">
+            <div class="panel-body text-center p-2">
+                <a href="{{url('hr/payroll/increment-list?year='.$prevyear)}}" class="btn" data-toggle="tooltip" data-placement="top" title="" data-original-title="Previous Year Report" >
+                  <i class="las la-chevron-left f-16"></i>
+                </a>
+
+                <b class="f-16" id="result-head">Increment List: {{ $year }} </b>
+                @if($nextyear != null)
+                <a href="{{url('hr/payroll/increment-list?year='.$nextyear)}}" class="btn" data-toggle="tooltip" data-placement="top" title="" data-original-title="Next Year Report" >
+                  <i class="las la-chevron-right f-16"></i>
+                </a>
+                @endif
+            </div>
+        </div>
 
 		<div class="page-content"> 
             <div class="panel panel-success">

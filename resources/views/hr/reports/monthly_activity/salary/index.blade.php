@@ -294,10 +294,10 @@
           if(month === '' || stauts === ''){
             flag = 1;
           }
-          if(unit === '' && location === ''){
+          /*if(unit === '' && location === ''){
             flag = 1;
             $.notify('Select One Unit Or Location', 'error');
-          }
+          }*/
           if(flag === 0){
             $('html, body').animate({
                 scrollTop: $("#result-data").offset().top

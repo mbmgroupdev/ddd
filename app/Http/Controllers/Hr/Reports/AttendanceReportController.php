@@ -527,126 +527,100 @@ class AttendanceReportController extends Controller
         $subsection = subSection_by_id();
         $unit = unit_by_id();
 
+        if(isset($request->unit)){
+        	$punit =  explode(',', $request->unit);
+        }else{
+        	$punit = auth()->user()->unit_permissions();
+        }
 
         $condition = [];
         if(isset($request->department)){
-        	$condition['b.as_department_id'] = $request->department;
+        	$condition['as_department_id'] = $request->department;
         }
         if(isset($request->section)){
-        	$condition['b.as_section_id'] = $request->section;
+        	$condition['as_section_id'] = $request->section;
         }
         if(isset($request->subsection)){
-        	$condition['b.as_subsection_id'] = $request->subsection;
+        	$condition['as_subsection_id'] = $request->subsection;
         }
         if(isset($request->area)){
-        	$condition['b.as_area_id'] = $request->area;
+        	$condition['as_area_id'] = $request->area;
         }
         if(isset($request->ot)){
-        	$condition['b.as_ot'] = $request->ot;
+        	$condition['as_ot'] = $request->ot;
         }
-        if(isset($request->unit)){
-        	$condition['b.as_unit_id'] = $request->unit;
-        }
-
-        $employees = [];
 
         
+        $associates = DB::table('hr_as_basic_info')
+    				->where($condition)
+    				->whereIn('as_unit_id', $punit)
+    				->where('as_status', '!=', 0)
+    				->whereIn('as_location', auth()->user()->location_permissions());
 
+    	// ignoring headoffice and washing 
+    	if(isset($request->flag)){
+	        if(in_array(1, $punit) || in_array(4, $punit) || in_array(5, $punit)){
+	        	$associates = $associates->where('as_location', '!=', 12);
+
+	        	if(isset($request->department) && $request->department != 67)
+	        	{
+	        		$associates = $associates->where('as_department_id', '!=', 67);
+	        	}
+	        }
+        }
+        
+        $associates = $associates->pluck('associate_id');
+        $employees = [];
         // get present
         if(!isset($request->type) || $request->type == 'present'){
-	        if(isset($request->unit)){
-	        	$u = $request->unit;
-	        	$table = get_att_table($u).' AS a';
-	            $att = DB::table($table)
-	                    ->leftJoin('hr_as_basic_info as b','b.as_id','a.as_id')
-	                    ->where('a.in_date', $date)
-	                    ->where($condition)
-	                    ->whereIn('b.associate_id', auth()->user()->permitted_associate())
-	                    ->get();
-	            foreach ($att as $key => $a) {
-	                $employees[$a->associate_id] = array(
-	                    'associate_id' => $a->associate_id,
-	                    'image' => emp_profile_picture($a),
-	                    'oracle_code' => $a->as_oracle_code,
-	                    'name' => $a->as_name,
-	                    'rfid' => $a->as_rfid_code??0,
-	                    'doj' => date('d-M-Y', strtotime($a->as_doj)),
-	                    'designation' => $designation[$a->as_designation_id]['hr_designation_name']??'',
-	                    'department' => $department[$a->as_department_id]['hr_department_name']??'',
-	                    'section' => $section[$a->as_section_id]['hr_section_name']??'',
-	                    'subsection' => $subsection[$a->as_subsection_id]['hr_subsec_name']??'',
-	                    'Unit' => $unit[$a->as_unit_id]['hr_unit_short_name']??'',
-	                    'ot' => $a->as_ot == 1?'OT':'NonOT',
-	                    'status' => 'Present',
-	                    'late' => $a->late_status,
-	                    'ot_hour' => numberToTimeClockFormat($a->ot_hour)
-	                );
-	                $employees[$a->associate_id]['in_time'] = 'blank';
-	                $employees[$a->associate_id]['out_time'] = 'blank';
-	                if($a->in_time != null && $a->remarks != 'DSI'){
-	                    $employees[$a->associate_id]['in_time'] = date('H.i', strtotime($a->in_time));
-	                }
-	                if($a->out_time != null){
-	                    if(date('H:i', strtotime($a->out_time)) != '00:00'){
-	                        $employees[$a->associate_id]['out_time'] = date('H.i', strtotime($a->out_time));
-	                    }
-	                }
-	            }
-
-	        }else{
-		        $units = auth()->user()->unit_permissions();
-
-		        foreach ($units as $key => $u) {
-	                
-	                $table = get_att_table($u).' AS a';
-	                $att = DB::table($table)
-	                        ->leftJoin('hr_as_basic_info as b','b.as_id','a.as_id')
-	                        ->where('a.in_date', $date)
-	                        ->where($condition)
-	                        ->whereIn('b.associate_id', auth()->user()->permitted_associate())
-	                        ->get();
-	                
-	                foreach ($att as $key => $a) {
-	                    $employees[$a->associate_id] = array(
-	                        'associate_id' => $a->associate_id,
-	                        'image' => emp_profile_picture($a),
-	                        'oracle_code' => $a->as_oracle_code,
-	                        'name' => $a->as_name,
-	                        'rfid' => $a->as_rfid_code??0,
-	                        'doj' => date('d-M-Y', strtotime($a->as_doj)),
-	                        'designation' => $designation[$a->as_designation_id]['hr_designation_name']??'',
-	                        'department' => $department[$a->as_department_id]['hr_department_name']??'',
-	                        'section' => $section[$a->as_section_id]['hr_section_name']??'',
-	                        'subsection' => $subsection[$a->as_subsection_id]['hr_subsec_name']??'',
-	                        'Unit' => $unit[$a->as_unit_id]['hr_unit_short_name']??'',
-	                        'ot' => $a->as_ot == 1?'OT':'NonOT',
-	                        'status' => 'Present',
-	                        'late' => $a->late_status,
-	                        'ot_hour' => numberToTimeClockFormat($a->ot_hour)
-	                    );
-	                    $employees[$a->associate_id]['in_time'] = '';
-	                    $employees[$a->associate_id]['out_time'] = '';
-	                    if($a->in_time != null && $a->remarks != 'DSI'){
-	                        $employees[$a->associate_id]['in_time'] = date('H.i', strtotime($a->in_time));
-	                    }
-	                    if($a->out_time != null){
-	                        if(date('H:i', strtotime($a->out_time)) != '00:00'){
-	                            $employees[$a->associate_id]['out_time'] = date('H.i', strtotime($a->out_time));
-	                        }
-	                    }
-	                } 
-	            }
-	            
-
-	        }
+	        
+	        foreach ($punit as $key => $u) {
+                
+                $table = get_att_table($u).' AS a';
+                $att = DB::table($table)
+                        ->leftJoin('hr_as_basic_info as b','b.as_id','a.as_id')
+                        ->where('a.in_date', $date)
+                        ->whereIn('b.associate_id', $associates)
+                        ->get();
+                
+                foreach ($att as $key => $a) {
+                    $employees[$a->associate_id] = array(
+                        'associate_id' => $a->associate_id,
+                        'image' => emp_profile_picture($a),
+                        'oracle_code' => $a->as_oracle_code,
+                        'name' => $a->as_name,
+                        'rfid' => $a->as_rfid_code??0,
+                        'doj' => date('d-M-Y', strtotime($a->as_doj)),
+                        'designation' => $designation[$a->as_designation_id]['hr_designation_name']??'',
+                        'department' => $department[$a->as_department_id]['hr_department_name']??'',
+                        'section' => $section[$a->as_section_id]['hr_section_name']??'',
+                        'subsection' => $subsection[$a->as_subsection_id]['hr_subsec_name']??'',
+                        'Unit' => $unit[$a->as_unit_id]['hr_unit_short_name']??'',
+                        'ot' => $a->as_ot == 1?'OT':'NonOT',
+                        'status' => 'Present',
+                        'late' => $a->late_status,
+                        'ot_hour' => numberToTimeClockFormat($a->ot_hour)
+                    );
+                    $employees[$a->associate_id]['in_time'] = '';
+                    $employees[$a->associate_id]['out_time'] = '';
+                    if($a->in_time != null && $a->remarks != 'DSI'){
+                        $employees[$a->associate_id]['in_time'] = date('H.i', strtotime($a->in_time));
+                    }
+                    if($a->out_time != null){
+                        if(date('H:i', strtotime($a->out_time)) != '00:00'){
+                            $employees[$a->associate_id]['out_time'] = date('H.i', strtotime($a->out_time));
+                        }
+                    }
+                } 
+            }
+            
 	    }
 
 	    if(!isset($request->type) || $request->type == 'absent'){
 	        $ab = DB::table('hr_absent as a')
 		            ->leftJoin('hr_as_basic_info as b','b.associate_id','a.associate_id')
 		            ->where('a.date', $date)
-		            ->where($condition)
-		            ->whereIn('b.associate_id', auth()->user()->permitted_associate())
+		            ->whereIn('b.associate_id', $associates)
 		            ->get();
 	     
 		    foreach ($ab as $key => $a) {
@@ -678,8 +652,7 @@ class AttendanceReportController extends Controller
 		            ->leftJoin('hr_as_basic_info as b','b.associate_id','a.leave_ass_id')
 		            ->where('a.leave_from', "<=", $date)
 		            ->where('a.leave_to', ">=", $date)
-		            ->where($condition)
-		            ->whereIn('b.associate_id', auth()->user()->permitted_associate())
+		            ->whereIn('b.associate_id', $associates)
 		            ->get();
 
 	        foreach ($lv as $key => $a) {
@@ -709,8 +682,7 @@ class AttendanceReportController extends Controller
 	        $do = DB::table('holiday_roaster as a')
 		            ->leftJoin('hr_as_basic_info as b','b.associate_id','a.as_id')
 		            ->where('a.date', $date)
-		            ->where($condition)
-		            ->whereIn('b.associate_id', auth()->user()->permitted_associate())
+		            ->whereIn('b.associate_id', $associates)
 		            ->where('a.remarks', 'Holiday')
 		            ->get();
 
@@ -744,11 +716,11 @@ class AttendanceReportController extends Controller
 	        $data = DB::table('hr_as_basic_info AS b')
 	                ->where('b.as_status',1)
 	                ->where('b.as_doj' , '<=', $date)
-	                ->where($condition)
-	                ->whereIn('b.associate_id', auth()->user()->permitted_associate())
+	                ->whereIn('b.associate_id', $associates)
 	                ->get();
 
 	        $data = collect($data)->keyBy('associate_id');
+
 	        foreach ($data as $key => $a) {
 	            if(!isset($employees[$a->associate_id])){
 	            	$employees[$a->associate_id] = array(
@@ -777,7 +749,10 @@ class AttendanceReportController extends Controller
 
 	    $query = $request->all();
 	    $query['date'] = $date;
-
+	    $query['unit_name'] = '';
+	    foreach ($punit as $key => $u) {
+	    	$query['unit_name'] .= $unit[$u]['hr_unit_short_name'].', ';
+	    } 
         
         return view('hr.common.hr_emp_att', compact('employees','query'));
 
@@ -797,7 +772,8 @@ class AttendanceReportController extends Controller
 		$data = array();
 
 		$query = DB::table('hr_as_basic_info')
-				 ->whereIn('associate_id', auth()->user()->permitted_associate());
+				 ->whereIn('as_location', auth()->user()->location_permissions())
+				 ->whereIn('as_unit_id', auth()->user()->unit_permissions());
 
 		if ($unit  == 101 || $unit == 102 || $unit == 103) {
 		    $query->whereIn('as_unit_id',[1,4,5] );
@@ -810,21 +786,36 @@ class AttendanceReportController extends Controller
 		if($unit == 103){
 			// department washing 67
 			$query->where('as_department_id', 67);
-		}else if($unit == 1|| $unit == 4 || $unit == 5){
+		}else if($unit == 1|| $unit == 4 || $unit == 5 || $unit  == 101 || $unit == 100){
 			$query->where('as_department_id', '!=', 67);
 		}
 
 		if($unit == 102){
 			// head office 12
 			$query->where('as_location', 12);
-		}else if($unit == 1|| $unit == 4 || $unit == 5){
+		}else if($unit == 1|| $unit == 4 || $unit == 5 || $unit  == 101 || $unit == 100){
 			$query->where('as_location', '!=', 12);
 		}
-		$employees = $query->where('as_doj','<=', $date)
-					->where('as_status',1) 
-					->where('as_ot', $ot)
-					->pluck('associate_id')->toArray();
+		$ex = $query;
+		$px = $query;
+		
 
+		$employees = $px->where('as_ot', $ot)
+					  ->where('as_doj','<=', $date)
+					  ->where('as_status','!=',0) 
+					  /*->orWhere(function ($q) use ($date){
+					  		$q->whereIn('as_status', [2,3,4,5,6]);
+					  		$q->where('as_status_date', '>=', $date);
+					  })*/
+					  ->pluck('associate_id')->toArray();
+
+		$exclude = $ex->where('as_ot', $ot)
+						 ->where('as_doj','<=', $date)
+						 ->whereIn('as_status', [2,3,4,5,6])
+					  	 ->where('as_status_date', '<=', $date)
+					  	 ->pluck('associate_id')->toArray();
+
+		dd($employees, $exclude);
 
 		$data['dayoff'] = DB::table('holiday_roaster AS r')
 							->leftJoin('hr_as_basic_info AS b', 'r.as_id', 'b.associate_id')

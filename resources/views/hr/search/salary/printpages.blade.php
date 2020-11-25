@@ -27,7 +27,7 @@
 </style>
 <div id="full_body_area">
 	<div id="header_area">
-		<h2 style="margin-bottom: 0px; ">MBM Garments Ltd.</h2>
+		<h2 style="margin-bottom: 0px; ">MBM Group</h2>
 		<h3 style="margin-top: 5px; margin-bottom: 5px;">Salary Report @if($type != 'Total') ({{$type}}  Wise) @endif</h3>
 		@if(isset($info['unit']))
 		<h3 style="margin: 5px 0px;">Unit: {{$info['unit']}}</h3>
@@ -50,10 +50,10 @@
 		<h3 style="margin: 5px 0px;">Total Payable: {{$data->total}}</h3>
 	@else
 		@php 
-			$totalOt=0;
-			$totalSal=0;
-			$totalPay=0;
-			$totalEmp=0;
+			$totalOt = 0;
+			$totalSal = 0;
+			$totalPay = 0;
+			$totalEmp = 0;
 		@endphp
 		
 			<table>
@@ -74,10 +74,10 @@
 						<td>{{$page['total']}}</td>
 					</tr>
 					@php 
-						$totalOt+=$page['ot'];
-						$totalSal+=$page['salary'];
-						$totalPay+=$page['total'];
-						$totalEmp+=$page['emp'];
+						$totalOt += $page['ot'];
+						$totalSal += $page['salary'];
+						$totalPay += $page['total'];
+						$totalEmp += $page['emp'];
 					@endphp
 					@endforeach
 					<tr>

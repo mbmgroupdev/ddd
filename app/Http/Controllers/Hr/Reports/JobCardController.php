@@ -170,6 +170,7 @@ class JobCardController extends Controller
         $attendance[$i]['outside'] = null;
         $attendance[$i]['outside_msg'] = null;
         $attendance[$i]['attPlusOT'] = null;
+        $attendance[$i]['day_status'] = "A";
 
 
         //check leave first
@@ -181,6 +182,7 @@ class JobCardController extends Controller
                         ->first();
         if($leaveCheck){
           $attendance[$i]['present_status']=$leaveCheck->leave_type." Leave";
+          $attendance[$i]['day_status'] = "P";
         } else {
           // check attendance
           
@@ -196,8 +198,10 @@ class JobCardController extends Controller
                 
                 $holidayCheck = $getHoliday[$thisDay]??'';
                 if($holidayCheck != ''){
+                  $attendance[$i]['day_status'] = isset($getAttendance[$thisDay])?'P':'';
                   if($holidayCheck->hr_yhp_open_status == 1) {
                     $attendance[$i]['present_status'] = "Weekend(General)".(isset($getAttendance[$thisDay])?'':' - A');
+
                   }
                   else if($holidayCheck->hr_yhp_open_status == 2){
                     $attendance[$i]['present_status'] = "Weekend(OT)";
@@ -205,6 +209,7 @@ class JobCardController extends Controller
                   }
                   else if($holidayCheck->hr_yhp_open_status == 0){
                     $attendance[$i]['present_status'] = $holidayCheck->hr_yhp_comments;
+                    $attendance[$i]['day_status'] = "W";
                   }
                 }
               }
@@ -214,8 +219,10 @@ class JobCardController extends Controller
                 if($holidayRoaster['comment'] != null) {
                   $attendance[$i]['present_status'] .= ' - '.$holidayRoaster['comment'];
                 }
+                $attendance[$i]['day_status'] = "P";
               }
               if($holidayRoaster['remarks'] == 'OT') {
+                $attendance[$i]['day_status'] = isset($getAttendance[$thisDay])?'P':'';
                 $attendance[$i]['present_status'] = "OT";
                 $attendance[$i]['attPlusOT'] = 'OT - '.$holidayRoaster['comment'];
               }
@@ -233,6 +240,7 @@ class JobCardController extends Controller
               $attendance[$i]['overtime_time'] = (($info->as_ot==1)? $attendCheck->ot_hour:"");
               $attendance[$i]['late_status']= $attendCheck->late_status;
               $attendance[$i]['remarks']= $attendCheck->remarks;
+              $attendance[$i]['day_status'] = "P";
               $attendance[$i]['present_status']=$attendance[$i]['attPlusOT']? "P (".$attendance[$i]['attPlusOT'].")":'P';
               if($info->as_ot==1){
                 $total_ot+= (float) $attendCheck->ot_hour;
@@ -281,7 +289,7 @@ class JobCardController extends Controller
       $result ['info']= $info;
       $result ['joinExist']= $joinExist;
       $result ['leftExist']= $leftExist;
-      //dd($result);exit;
+      
       return $result;
     }
   }

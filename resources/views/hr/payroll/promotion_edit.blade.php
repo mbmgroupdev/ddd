@@ -13,24 +13,19 @@
                     <a href="#">Payroll</a>
                 </li>
                 <li class="active"> Promotion Edit</li>
+                <li class="top-nav-btn"><a href="{{url('hr/payroll/promotion-list')}}" class="btn btn-primary pull-right">Promotion List</a></li>
             </ul><!-- /.breadcrumb --> 
         </div>
 
-        <div class="page-content"> 
-            
-            @include('inc/message')
+        <div class="page-content">
             @can('Manage Promotion') 
-            <div class="panel">
-                <div class="panel-heading">
-                    <h6>Promotion Edit
-                        <a href="{{url('hr/payroll/promotion-list')}}" class="btn btn-primary pull-right">Promotion List</a>
-                    </h6>
-                </div>
-                         
+            <div class="panel @if($isLatest == 0) p-3 m-3 @endif">
+                @if($isLatest == 1)
                 {{ Form::open(['url'=>'hr/payroll/promotion_update', 'class'=>'form-horizontal p-3 m-3']) }}
+                @endif
                     <div class="row justify-content-center">
                         
-                        <div class="col-4">
+                        <div class="col-sm-3">
                             <input type="hidden" name="promotion_id" value="{{ $promotion->id }}">
                             <div class="form-group has-float-label has-required ">
                                 <input type="text" name="associate_id" id="associate_id" value="{{ $promotion->associate_id }}" class="form-control" readonly>
@@ -39,47 +34,62 @@
 
                             <div class="form-group has-float-label has-required ">
                                 <input type="hidden" name="previous_designation_id" value="{{ $promotion->previous_designation_id }}">
-                                <input type="text" name="previous_designation" id="previous_designation" placeholder="No Previous Designation Found"  readonly  class="form-control" value="{{ $promotion->prev_desg }}"/>
+                                <input type="text" name="previous_designation" id="previous_designation" placeholder="No Previous Designation Found"  readonly  class="form-control" value="{{ $designation[$promotion->previous_designation_id]['hr_designation_name'] }}"/>
                                 <label for="previous_designation"> Previous Designation </label>
                             </div>
+                            @php
+                                if($isLatest == 1){
+                                    $disabled = '';
+                                }
+                                else{
+                                    $disabled = 'disabled';
+                                }
 
+                            @endphp
                             <div class="form-group has-float-label has-required select-search-group">
-                                {{ Form::select('current_designation_id', $designationList, $promotion->current_designation_id , ['placeholder'=>'Select Promoted Designation', 'id'=>'current_designation_id']) }}  
+                                {{ Form::select('current_designation_id', $designationList, $promotion->current_designation_id , ['placeholder'=>'Select Promoted Designation', 'id'=>'current_designation_id', $disabled]) }}  
                                 <label for="current_designation_id"> Promoted Designation </label>
                             </div>
 
-                            <div class="form-group has-float-label  has-required">
-                                <input type="date" name="eligible_date" palceholder="Y-m-d" id="eligible_date" class="form-control " value="{{ $promotion->eligible_date }}"  readonly />
-                                <label  for="eligible_date"> Eligible Date </label>
-                            </div>
 
                             <div class="form-group has-float-label has-required">
-                                <input type="date" name="effective_date" id="effective_date" class=" form-control filter" value="{{ $promotion->effective_date }}"/>
+                                <input type="date" name="effective_date" id="effective_date" class=" form-control filter" value="{{ $promotion->effective_date }}" {{$disabled}}/>
                                 <label  for="effective_date"> Effective Date </label>
                             </div>
-                            
+                            @if($isLatest == 1)
+                            <div class="form-group text-center mt-3">
+                                <button class="btn btn-primary " type="submit">
+                                    <i class="fa fa-check"></i> Save
+                                </button>
+                            </div>
+                            @endif
      
                         </div>
-                        <div class="col-4 benefit-employee">
+                        <div class="col-sm-4 benefit-employee">
                             <div class="user-details-block">
                                   <div class="user-profile text-center">
                                         <img id="avatar" class="avatar-130 img-fluid" src="{{ emp_profile_picture($promotion)  }}">
                                   </div>
                                   <div class="text-center mt-3">
                                      <h4><b id="user-name">{{$promotion->as_name}}</b></h4>
+                                     <p class="mb-0" > <span id="designation">
+                                        {{$designation[$promotion->as_designation_id]['hr_designation_name']}}</span>, <span id="section">{{$promotion->hr_section_name}}</p>
                                      
                                   </div>
                                </div>
-                            <div class="form-group text-center mt-3">
-                                <button class="btn btn-primary " type="submit">
-                                    <i class="fa fa-check"></i> Save
-                                </button>
+                            
+                        </div>
+                        <div class="col-sm-4 benefit-employee border-left">
+                            <strong>Prmotion History</strong><hr>
+                            <div class="promotion-history">
+                                {!!$historyview!!}
                             </div>
                         </div>
                         
                     </div>
-                          
+                @if($isLatest == 1)        
                 {{ Form::close() }}
+                @endif
             </div>
             @endcan      
           

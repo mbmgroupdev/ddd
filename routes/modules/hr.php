@@ -503,7 +503,9 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 	});
 
 	//Increment
-	Route::get('hr/payroll/increment', 'Hr\Recruitment\BenefitController@showIncrementForm');
+	Route::get('hr/payroll/increment', 'Hr\Payroll\IncrementController@index');
+	Route::get('hr/payroll/increment-eligible', 'Hr\Payroll\IncrementController@getEligibleList');
+	//Route::get('hr/payroll/increment', 'Hr\Recruitment\BenefitController@showIncrementForm');
 	Route::get('hr/payroll/increment-list', 'Hr\Recruitment\BenefitController@incrementList');
 	Route::get('hr/payroll/increment-list-data', 'Hr\Recruitment\BenefitController@incrementListData');
 	Route::get('hr/payroll/get_associate', 'Hr\Recruitment\BenefitController@getAssociates')->middleware(['permission:Manage Increment']);
@@ -1110,6 +1112,8 @@ Route::get('hr/setup/retirement/get_employee_details', 'Hr\Setup\RetirementPolic
 
 	Route::get('hr/reports/get_att_summary', 'Hr\Reports\AttendanceReportController@attSummaryReport')->middleware(['permission:Attendance Summary Report']);
 	Route::get('hr/reports/get-att-emp', 'Hr\Reports\AttendanceReportController@getAttEmployee')->middleware(['permission:Attendance Summary Report']);
+
+	Route::get('hr/reports/get-daily-att-excel', 'Hr\Reports\AttendanceReportController@getAttEmployee');
 
 	// reports absent issue
 	Route::get('hr/reports/before-absent-after-present', 'Hr\Reports\DailyActivityReportController@beforeAfterStatus');
