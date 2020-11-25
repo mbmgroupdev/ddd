@@ -3,8 +3,11 @@ namespace App\Helpers;
 
 use App\Helpers\Custom;
 use App\Jobs\ProcessUnitWiseSalary;
-use App\Models\Hr\Absent;
 use App\Models\Employee;
+use App\Models\Hr\Absent;
+use App\Models\Hr\BillSettings;
+use App\Models\Hr\BillSpecialSettings;
+use App\Models\Hr\Bills;
 use App\Models\Hr\HolidayRoaster;
 use App\Models\Hr\Leave;
 use App\Models\Hr\YearlyHolyDay;
@@ -346,6 +349,44 @@ class EmployeeHelper
 	        }
         }
         return $day;
+	}
+
+	// daily bill calculation
+	public static function dailyBillCalculation($unit, $date, $asId, $shiftNight, $designationId)
+	{
+		try {
+			$billSetting = BillSettings::where('unit_id', $unit)->where('status', 1)->whereNull('end_date')->first();
+			if($billSetting != null){
+				$billSpecial = BillSpecialSettings::where('bill_id', $billSetting->id)->where('designation_id', $designationId)->whereNull('end_date')->where('status', 1)->first();
+				if($billSpecial != null){
+					$tiffin = $billSpecial->tiffin_bill;
+					$dinner = $billSpecial->dinner_bill;
+				}else{
+					$tiffin = $billSetting->tiffin_bill;
+					$dinner = $billSetting->dinner_bill;
+				}
+				$getBill = Bills::where('as_id', $asId)->where('bill_date', $date)->first();
+				$bills = [
+					'as_id' => $asId,
+					'bill_date' => $date,
+					'bill_type' => $shiftNight==1?2:1,
+					'amount' => $shiftNight==1?$dinner:$tiffin
+				];
+				if($getBill != null){
+					Bills::where('id', $getBill->id)
+					->update($bills);
+				}else{
+					$bills['pay_status'] = 0;
+					Bills::insert($bills);
+				}
+				
+			} 
+			return "success";
+		} catch (\Exception $e) {
+			$bug = $e->getMessage();
+			return $bug;
+			return 'error';
+		}
 	}
 
 }

@@ -2,6 +2,7 @@
 @section('title', 'Shift '.$shift->hr_shift_name)
 @section('main-content')
     @push('css')
+        <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-datetimepicker.min.css') }}" />
     @endpush
     <div class="breadcrumbs ace-save-state" id="breadcrumbs">
         <ul class="breadcrumb">
@@ -14,8 +15,8 @@
             </li>
             <li class="active"> Shift : {{$shift->hr_shift_name}}  </li>
             <li class="top-nav-btn">
-                <a class="btn btn-success mr-3 btn-sm" href="{{ url('hr/operation/shift_assign') }}"><i class="fa fa-list"></i> Shift List</a>
-                <a class="btn btn-primary pull-right btn-sm" href="#list"><i class="fa fa-users"></i> Shift Assign</a>
+                <a class="btn btn-success mr-3 btn-sm" href="{{ url('hr/operation/shift') }}"><i class="fa fa-list"></i> Shift List</a>
+                <a class="btn btn-primary pull-right btn-sm" href="{{ url('hr/operation/shift_assign') }}"><i class="fa fa-users"></i> Shift Assign</a>
             </li>
         </ul><!-- /.breadcrumb --> 
     </div>
@@ -34,68 +35,67 @@
                                     <label  for="hr_shift_unit_id"> Unit Name  </label>
                                 </div>
 
-                                <div class="form-group has-required has-float-label">
-                                    <input type="text" name="hr_shift_name" id="hr_shift_name" placeholder="Shift Name" class="form-control" required="required" value="{{ $shift->hr_shift_name }}"/>
-                                    <label  for="hr_shift_name" > Shift Name  </label>
-                                </div> 
-                            </div>
-                            <div class="col-sm-3">
-
-                                <div class="form-group has-required has-float-label">
-                                    <input type="time" name="hr_shift_start_time" id="hr_shift_start_time" class="form-control" required="required" placeholder="--:--:--" onClick="this.select();" value="{{ $shift->hr_shift_start_time }}" />
-                                    <label  for="hr_shift_start_time">Shift Time Start</label>
-                                </div>
-
-                                <div class="form-group has-float-label">
-                                    <input type="text" name="hr_shift_name_bn" id="hr_shift_name_bn" placeholder="শিফট এর নাম" class="form-control" value="{{ $shift->hr_shift_name_bn }}"/>
-                                    <label  for="hr_shift_name_bn" > শিফট (বাংলা) </label>
-                                </div>
-                                
-
                                 
                             </div>
-                            <div class="col-sm-3">
-                                
-                                <div class="form-group has-required has-float-label">
-                                    <input type="time" name="hr_shift_end_time" id="hr_shift_end_time" class="form-control"  placeholder="--:--:--" onClick="this.select();" required value="{{ $shift->hr_shift_end_time }}"/> 
-                                    <label  for="hr_shift_end_time">Shift Time End</label>
-                                </div>
+                            <div class="col-sm-9 pl-0">
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <div class="form-group has-required has-float-label">
+                                            <input type="text" name="hr_shift_name" id="hr_shift_name" placeholder="Shift Name" class="form-control" required="required" value="{{ $shift->hr_shift_name }}"/ readonly="readonly">
+                                            <label  for="hr_shift_name" > Name  </label>
+                                        </div> 
+                                        
 
-                                <div class="form-group has-required has-float-label">
-                                    <input type="text" id="hr_shift_break_time" name="hr_shift_break_time" required="required" placeholder="Break time in Minutes" class="form-control" value="{{ $shift->hr_shift_break_time }}"/>
-                                    <label  for="hr_shift_break_time">Break Time (Minutes)</label>
-                                </div>
-                            </div>
-                            @php
-                                // convert minute to H:i
-                                $breakTime = date('H:i', mktime(0, $shift->hr_shift_break_time));
+                                        <div class="form-group has-float-label">
+                                            <input type="text" name="hr_shift_name_bn" id="hr_shift_name_bn" placeholder="শিফট এর নাম" class="form-control" value="{{ $shift->hr_shift_name_bn }}"/>
+                                            <label  for="hr_shift_name_bn" > নাম (বাংলা) </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3 pl-0">
+                                        <div class="form-group has-required has-float-label">
+                                            <input type="text" name="hr_shift_start_time" id="hr_shift_start_time" class="time form-control" required="required" placeholder="--:--:--" onClick="this.select();" value="{{ $shift->hr_shift_start_time }}" />
+                                            <label  for="hr_shift_start_time">Start Time (24 hour format)</label>
+                                        </div>
+                                        <div class="form-group has-required has-float-label">
+                                            <input type="text" name="hr_shift_end_time" id="hr_shift_end_time" class="time form-control"  placeholder="--:--:--" onClick="this.select();" required value="{{ $shift->hr_shift_end_time }}"/> 
+                                            <label  for="hr_shift_end_time">End Time (24 hour format)</label>
+                                        </div>
+                                    </div>
+                                    @php
+                                        // convert minute to H:i
+                                        $breakTime = date('H:i', mktime(0, $shift->hr_shift_break_time));
 
-                                // sum end time + break time
-                                $break   = strtotime($breakTime)-strtotime("00:00:00");
-                                $outTime = date("H:i:s",strtotime($shift->hr_shift_end_time)+$break);
-                            @endphp
-                            <div class="col-sm-3">
-                                <div class="form-group has-required has-float-label">
-                                    <input type="time" id="hr_shift_out_time" name="hr_shift_out_time" required="required" class="form-control" disabled="disabled" value="{{$outTime}}" />
-                                    <label  for="hr_shift_out_time">Out Time</label>
+                                        // sum end time + break time
+                                        $break   = strtotime($breakTime)-strtotime("00:00:00");
+                                        $outTime = date("H:i:s",strtotime($shift->hr_shift_end_time)+$break);
+                                    @endphp
+                                    <div class="col-sm-3 pl-0">
+                                        <div class="form-group has-required has-float-label">
+                                            <input type="text" id="hr_shift_break_time" name="hr_shift_break_time" required="required" placeholder="Break time in Minutes" class="form-control" value="{{ $shift->hr_shift_break_time }}"/>
+                                            <label  for="hr_shift_break_time">Break Time (Minutes)</label>
+                                        </div>
+                                        <div class="form-group has-required has-float-label">
+                                            <input type="text" id="hr_shift_out_time" name="hr_shift_out_time" required="required" class="time form-control" disabled="disabled" value="{{$outTime}}" />
+                                            <label  for="hr_shift_out_time">Out Time (24 hour format)</label>
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="col-sm-3 pl-0">
+                                        <div class="form-group has-float-label">
+                                            <input type="text" id="bill_eligible" name="bill_eligible" class="time form-control" onClick="this.select();" value="{{ $shift->bill_eligible ?? '00:00:00' }}" />
+                                            <label  for="bill_eligible">Bill Eligible Time (24 hour format)</label>
+                                        </div>
+                                        <div class="form-group custom-control custom-checkbox custom-checkbox-color-check custom-control-inline">
+                                           <input type="checkbox" name="hr_shift_default" class="custom-control-input bg-primary" id="customCheck-1"  value="1" {{ ($shift->hr_shift_default == 1)?"checked":"" }}>
+                                           <label class="custom-control-label" for="customCheck-1"> Default Shift</label>
+                                        </div>
+                                        <input type="hidden" name="hr_shift_id" value="{{ $shift->hr_shift_id}}">
+                                        <div class="form-group"> 
+                                            <button class="btn pull-right btn-primary" type="submit">Update</button>
+                                        </div>
+                                    </div>
                                 </div>
-    
-                                <div class="custom-control custom-checkbox custom-checkbox-color-check custom-control-inline">
-                                   <input type="checkbox" name="hr_shift_default" class="custom-control-input bg-primary" id="customCheck-1"  value="1" {{ ($shift->hr_shift_default == 1)?"checked":"" }}>
-                                   <label class="custom-control-label" for="customCheck-1"> Default Shift</label>
-                                </div>
-                                <input type="hidden" name="hr_shift_id" value="{{ $shift->hr_shift_id}}">
-                                <div class="form-group"> 
-                                    <button class="btn pull-right btn-primary" type="submit">Update</button>
-                                </div>
-                                
-                            </div>
-                            
-                                 
-
-                            
-
-                                
+                            </div>  
                         </div>    
                             
                     </form> 
@@ -124,6 +124,7 @@
                                             {{-- <th width="20%">Shift Code</th> --}}
                                             <th width="20%">Shift Time</th>
                                             <th width="10%">Break Time</th>
+                                            <th width="10%">Bill Eligible Time</th>
                                             <th width="30%">Action</th>
                                         </tr>
                                     </thead>
@@ -140,6 +141,7 @@
                                             <td>{{ $shift->hr_shift_name }}</td>
                                             <td>{{ $shift->hr_shift_start_time }} - {{ $shift->hr_shift_end_time }}</td>
                                             <td>{{ $shift->hr_shift_break_time }}</td>
+                                            <td>{{ $shift->bill_eligible }}</td>
                                             <td>
                                                 <div class="btn-group">
                                                     <a type="button" href="{{ url('hr/setup/shift_update/'.$shift->hr_shift_id) }}" class='btn btn-xs btn-primary' data-toggle="tooltip" title="Edit"> <i class="ace-icon fa fa-pencil bigger-120"></i></a>
@@ -239,7 +241,8 @@
         </div>
     </div>
 @push('js')
-
+<script src="{{ asset('assets/js/moment.min.js') }}"></script>
+<script src="{{ asset('assets/js/bootstrap-datetimepicker.min.js') }}"></script>
 <script type="text/javascript">
 
 // sum two time ex: 12:00:00+11:30:00
@@ -267,7 +270,7 @@ function convertMinsToHrsMins(mins) {
 $('#hr_shift_end_time, #hr_shift_break_time').on('keyup', function() {
     var breakTime = $('#hr_shift_break_time').val()==''?0:$('#hr_shift_break_time').val();
     var endTime = $('#hr_shift_end_time').val()==''?0:$('#hr_shift_end_time').val();
-    var sum = additionTime(endTime,convertMinsToHrsMins(breakTime));
+    var sum = (moment.utc(endTime,'HH:mm').add(breakTime,'minutes').format('HH:mm:ss'));
     $('#hr_shift_out_time').val(sum);
 });
 
@@ -311,6 +314,10 @@ $(document).ready(function(){
                 alert('failed...');
             }
         });
+    });
+    $('.time').datetimepicker({
+      format:'HH:mm:ss',
+      allowInputToggle: false
     });
 });
 </script>

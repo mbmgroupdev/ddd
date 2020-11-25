@@ -1040,3 +1040,6 @@ table.dataTable thead>tr>td.sorting, table.dataTable thead>tr>td.sorting_asc, ta
     width: 40px;
     line-height: 40px;
 }
+.vertical-align{
+    vertical-align:middle !important;
+}

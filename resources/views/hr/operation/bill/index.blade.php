@@ -1,10 +1,10 @@
 @extends('hr.layout')
-@section('title', 'Monthly Salary')
+@section('title', 'Tiffin/Dinner Bill')
 
 @section('main-content')
 @push('js')
     <style>
-        table tr p span{
+       table tr p span{
             font-size: 10px !important;
         }
         table td, table th{
@@ -36,7 +36,7 @@
         }
         .iq-accordion-block{
             padding: 10px 0;
-        }
+        } 
     </style>
 @endpush
 <div class="main-content">
@@ -50,13 +50,13 @@
                 <li>
                     <a href="#">Operation</a>
                 </li>
-                <li class="active"> Monthly Salary</li>
+                <li class="active"> Tiffin/Dinner Bill</li>
             </ul>
         </div>
 
         <div class="page-content"> 
             <div class="iq-accordion career-style mat-style  ">
-                <div class="iq-card iq-accordion-block accordion-active">
+                {{-- <div class="iq-card iq-accordion-block accordion-active">
                    <div class="active-mat clearfix">
                       <div class="container-fluid">
                          <div class="row">
@@ -103,12 +103,12 @@
                           </div>
                       </div>
                    </div>
-                </div>
+                </div> --}}
                 <div class="iq-card iq-accordion-block  ">
                    <div class="active-mat clearfix">
                       <div class="container-fluid">
                          <div class="row">
-                            <div class="col-sm-12"><a class="accordion-title"><span class="header-title"> Unit Wise </span> </a></div>
+                            <div class="col-sm-12"><a class="accordion-title"><span class="header-title">Filter </span> </a></div>
                          </div>
                       </div>
                    </div>
@@ -141,22 +141,25 @@
                                                 </div>
                                                 <div class="form-group has-float-label select-search-group">
                                                     <select name="area" class="form-control capitalize select-search" id="area">
-                                                        <option selected="" value="">Choose...</option>
+                                                        <option value="">Choose...</option>
                                                         @foreach($areaList as $key => $value)
-                                                        <option value="{{ $key }}">{{ $value }}</option>
+                                                        <option value="{{ $key }}" @if($value == 'Factory') selected @endif>{{ $value }}</option>
                                                         @endforeach
                                                     </select>
                                                     <label for="area">Area</label>
                                                 </div>
+                                                
+                                            </div>
+                                            <div class="col-3">
                                                 <div class="form-group has-float-label select-search-group">
-                                                    <select name="department" class="form-control capitalize select-search" id="department" disabled>
+                                                    <select name="department" class="form-control capitalize select-search" id="department">
                                                         <option selected="" value="">Choose...</option>
+                                                        @foreach($departmentList as $key => $value)
+                                                        <option value="{{ $key }}">{{ $value }}</option>
+                                                        @endforeach
                                                     </select>
                                                     <label for="department">Department</label>
                                                 </div>
-                                            </div>
-                                            <div class="col-3">
-                                                
                                                 <div class="form-group has-float-label select-search-group">
                                                     <select name="section" class="form-control capitalize select-search " id="section" disabled>
                                                         <option selected="" value="">Choose...</option>
@@ -169,6 +172,9 @@
                                                     </select>
                                                     <label for="subSection">Sub Section</label>
                                                 </div>
+                                                
+                                            </div> 
+                                            <div class="col-3">
                                                 <div class="form-group has-float-label select-search-group">
                                                     <select name="floor" class="form-control capitalize select-search" id="floor" disabled >
                                                         <option selected="" value="">Choose...</option>
@@ -181,65 +187,38 @@
                                                     </select>
                                                     <label for="line">Line</label>
                                                 </div>
-                                            </div> 
-                                            <div class="col-3">
-                                                
                                                 <div class="form-group has-float-label select-search-group">
                                                     <select name="otnonot" class="form-control capitalize select-search" id="otnonot" >
-                                                        <option selected="" value="">Choose...</option>
+                                                        <option  value="">Choose...</option>
                                                         <option value="0">Non-OT</option>
-                                                        <option value="1">OT</option>
+                                                        <option value="1" selected="">OT</option>
                                                     </select>
                                                     <label for="otnonot">OT/Non-OT</label>
                                                 </div>
-                                                <div class="row">
-                                                  <div class="col-5 pr-0">
-                                                    <div class="form-group has-float-label has-required">
-                                                      <input type="number" class="report_date min_sal form-control" id="min_sal" name="min_sal" placeholder="Min Salary" required="required" value="{{ $salaryMin }}" min="{{ $salaryMin}}" max="{{ $salaryMax}}" autocomplete="off" />
-                                                      <label for="min_sal">Range From</label>
-                                                    </div>
-                                                  </div>
-                                                  <div class="col-1 p-0">
-                                                    <div class="c1DHiF text-center">-</div>
-                                                  </div>
-                                                  <div class="col-6">
-                                                    <div class="form-group has-float-label has-required">
-                                                      <input type="number" class="report_date max_sal form-control" id="max_sal" name="max_sal" placeholder="Max Salary" required="required" value="{{ $salaryMax }}" min="{{ $salaryMin}}" max="{{ $salaryMax}}" autocomplete="off" />
-                                                      <label for="max_sal">Range To</label>
-                                                    </div>
-                                                  </div>
-                                                </div>
-                                                <div class="form-group has-float-label has-required">
-                                                  <input type="number" class="perpage form-control" id="perpage" name="perpage" placeholder="Per Page" required="required" value="6" min="0" autocomplete="off" />
-                                                  <label for="perpage">Per Page</label>
-                                                </div>
-                                                <div class="form-group has-float-label select-search-group">
-                                                    <?php
-                                                      $payType = ['cash'=>'Cash', 'rocket'=>'Rocket', 'bKash'=>'bKash', 'dbbl'=>'Duch-Bangla Bank Limited.'];
-                                                    ?>
-                                                    {{ Form::select('pay_status', $payType, null, ['placeholder'=>'Select Payment Type', 'class'=>'form-control capitalize select-search', 'id'=>'paymentType']) }}
-                                                    <label for="paymentType">Payment Type</label>
-                                                </div>
+                                                
                                             </div>
                                             <div class="col-3">
-                                                <div class="form-group has-float-label has-required">
-                                                  <input type="month" class="report_date form-control" id="month" name="month_year" placeholder=" Month-Year"required="required" value="{{ date('Y-m', strtotime('-1 month')) }}"autocomplete="off" />
-                                                  <label for="month">Month</label>
-                                                </div>
-                                                <div class="form-group has-float-label select-search-group">
-                                                    <?php
-                                                      $status = ['1'=>'Active','2'=>'Resign','3'=>'Terminate','4'=>'Suspend','5'=>'Left', '6'=> 'Maternity'];
-                                                    ?>
-                                                    {{ Form::select('employee_status', $status, 1, ['placeholder'=>'Select Employee Status ', 'class'=>'form-control capitalize select-search', 'id'=>'estatus']) }}
-                                                    <label for="estatus">Status</label>
-                                                </div>
                                                 
                                                 <div class="form-group has-float-label select-search-group">
                                                     <?php
-                                                      $status = ['0'=>'No','1'=>'Yes'];
+                                                      $status = ['0'=>'Unpaid','1'=>'Paid'];
                                                     ?>
-                                                    {{ Form::select('disbursed', $status, null, ['placeholder'=>'Select Salary Status ', 'class'=>'form-control capitalize select-search', 'id'=>'disbursed']) }}
-                                                    <label for="disbursed">Disbursed</label>
+                                                    {{ Form::select('pay_status', $status, 0, ['placeholder'=>'Select Payable Status ', 'class'=>'form-control capitalize select-search', 'id'=>'pay_status']) }}
+                                                    <label for="pay_status">Payable Status</label>
+                                                </div>
+                                                <div class="row">
+                                                  <div class="col pr-0">
+                                                      <div class="form-group has-float-label has-required">
+                                                          <input type="date" class="report_date datepicker form-control" id="from_date" name="from_date" placeholder="Y-m-d" required="required" value="{{ date('Y-m-d') }}" autocomplete="off" />
+                                                          <label for="from_date">From Date</label>
+                                                      </div>
+                                                  </div>
+                                                  <div class="col">
+                                                      <div class="form-group has-float-label has-required">
+                                                          <input type="date" class="report_date datepicker form-control" id="to_date" name="to_date" placeholder="Y-m-d" required="required" value="{{ date('Y-m-d') }}" autocomplete="off" />
+                                                          <label for="to_date">To Date</label>
+                                                      </div>
+                                                  </div>
                                                 </div>
                                                 <div class="form-group">
                                                   <button onclick="multiple()" class="btn btn-primary nextBtn btn-lg pull-right" type="button" id="unitFromBtn"><i class="fa fa-save"></i> Generate</button>
@@ -339,15 +318,7 @@
 
 <script>
     var _token = $('input[name="_token"]').val();
-    function printDiv(divName)
-    { 
-        var myWindow=window.open('','','width=800,height=800');
-        myWindow.document.write(document.getElementById(divName).innerHTML); 
-        myWindow.document.close();
-        myWindow.focus();
-        myWindow.print();
-        myWindow.close();
-    }
+    
     // show error message
     function errorMsgRepeter(id, check, text){
         var flug1 = false;
@@ -520,21 +491,25 @@
         var form = $("#unitWiseSalary");
         var unit = $("#unit").val();
         var location = $('select[name="location"]').val();
-        var month = $("#month").val();
-        if((unit !== '' || location !== '') && month !== ''){
+        var area = $('select[name="area"]').val();
+        var department = $('select[name="department"]').val();
+        var fromDate = $("#from_date").val();
+        var toDate = $("#to_date").val();
+        if((unit !== '' || location !== '' || area !== '' || department !== '') && fromDate !== '' && toDate != ''){
             $("#result-process-bar").show();
             $("#result-show").html(loader);
             $('#setFlug').val(0);
             processbar(0);
             $.ajax({
                 type: "get",
-                url: '{{ url("hr/operation/unit-wise-salary-sheet")}}',
+                url: '{{ url("hr/operation/filter-wise-tiffin-dinner-bill-sheet")}}',
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
                 },
                 data: form.serialize(), // serializes the form's elements.
                 success: function(response)
                 {
+                    // console.log(response)
                     if(response !== 'error'){
                         $('#setFlug').val(1); 
                         processbar('success');
@@ -553,12 +528,8 @@
             });
         }else{
             $("#result-process-bar").hide();
-            if((unit === '' || location === '')){
-                $.notify("Select Unit Or Location", 'error');
-            }
-            if(month === ''){
-                $.notify("Please Select Month", 'error');
-            }
+            $.notify("Select Unit/Location/Area/Department", 'error');
+            
         }
     }
 

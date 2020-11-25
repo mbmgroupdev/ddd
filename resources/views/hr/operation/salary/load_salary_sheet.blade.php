@@ -464,8 +464,11 @@
 
                     </div>
                 </div>
-                @if(count($locationDataSet) != $pageKey || count($locationDataSet) != 1)
-                <div class="pagebreak"> </div>
+                
+                @if(count($locationDataSet) != $pageKey)
+                    @if(count($locationDataSet) != 1)
+                    <div class="pagebreak"> </div>
+                    @endif
                 @endif
             @endif
         @endforeach

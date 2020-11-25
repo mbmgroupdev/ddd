@@ -135,18 +135,19 @@
 			                </tr>
 			                @endif
 			                <tr>
-			                    <th>Sl</th>
+			                    <th width="2%">Sl</th>
 			                    {{-- <th>Photo</th> --}}
-			                    <th>Associate ID</th>
-			                    <th>Name & Phone</th>
-			                    <th>Oracle ID</th>
-			                    <th>Designation</th>
-			                    <th>Department</th>
-			                    <th>Section</th>
-			                    <th>Sub Section</th>
-			                    <th>Floor</th>
-			                    <th>Line</th>
-			                    <th>Action</th>
+			                    <th width="10%">Associate ID</th>
+			                    <th width="16%">Name & Phone</th>
+			                    <th width="12%">Shift</th>
+			                    <th width="8%">Oracle ID</th>
+			                    <th width="10%">Designation</th>
+			                    <th width="9%">Department</th>
+			                    <th width="9%">Section</th>
+			                    <th width="9%">Sub Section</th>
+			                    <th width="5%">Floor</th>
+			                    <th width="5%">Line</th>
+			                    <th width="5%">Action</th>
 			                </tr>
 			            </thead>
 			            <tbody>
@@ -167,6 +168,13 @@
 				            		<b>{{ $employee->as_name }}</b>
 				            		<p>{{ $employee->as_contact }}</p>
 				            	</td>
+				            	<td>
+				            		@if(isset($absentShift[$employee->associate_id]) && $absentShift[$employee->associate_id] != null)
+				            			{{ $absentShift[$employee->associate_id] }}
+				            		@else
+				            			{{ $employee->as_shift_id }}
+				            		@endif
+				            	</td>
 				            	<td>{{ $employee->as_oracle_code }}</td>
 				            	<td>{{ $designation[$employee->as_designation_id]['hr_designation_name']??'' }}</td>
 				            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
@@ -174,6 +182,7 @@
 				            	<td>{{ $subSection[$employee->as_subsection_id]['hr_subsec_name']??'' }}</td>
 				            	<td>{{ $floor[$employee->as_floor_id]['hr_floor_name']??'' }}</td>
 				            	<td>{{ $line[$employee->as_line_id]['hr_line_name']??'' }}</td>
+				            		
 				            	<td>
 				            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Yearly Activity Report' ><i class="fa fa-eye"></i></button>
 				            	</td>
@@ -188,6 +197,13 @@
 				            		<b>{{ $employee->as_name }}</b>
 				            		<p>{{ $employee->as_contact }}</p>
 				            	</td>
+				            	<td>
+				            		@if(isset($absentShift[$employee->associate_id]) && $absentShift[$employee->associate_id] != null)
+				            			{{ $absentShift[$employee->associate_id] }}
+				            		@else
+				            			{{ $employee->as_shift_id }}
+				            		@endif
+				            	</td>
 				            	<td>{{ $employee->as_oracle_code }}</td>
 				            	<td>{{ $designation[$employee->as_designation_id]['hr_designation_name']??'' }}</td>
 				            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
@@ -195,6 +211,7 @@
 				            	<td>{{ $subSection[$employee->as_subsection_id]['hr_subsec_name']??'' }}</td>
 				            	<td>{{ $floor[$employee->as_floor_id]['hr_floor_name']??'' }}</td>
 				            	<td>{{ $line[$employee->as_line_id]['hr_line_name']??'' }}</td>
+				            	
 				            	<td>
 				            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Yearly Activity Report' ><i class="fa fa-eye"></i></button>
 				            	</td>

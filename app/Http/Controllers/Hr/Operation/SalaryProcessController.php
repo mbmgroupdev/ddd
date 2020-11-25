@@ -142,7 +142,7 @@ class SalaryProcessController extends Controller
                 $join->on('bemp.hr_bn_associate_id','emp.associate_id')->addBinding($employeeBanData->getBindings());
             });
 	            
-	        $queryData->select('s.*', 'emp.as_doj', 'emp.as_ot', 'emp.as_designation_id', 'emp.as_section_id', 'emp.as_location', 'bemp.hr_bn_associate_name', 'emp.as_oracle_code', 'emp.as_unit_id', 's.ot_hour', 's.ot_rate', 's.total_payable', 's.bank_payable', 's.cash_payable', 's.tds', 's.stamp', 's.pay_status');
+	        $queryData->select('s.*', 'emp.as_doj', 'emp.as_ot', 'emp.as_designation_id', 'emp.as_section_id', 'emp.as_location', 'bemp.hr_bn_associate_name', 'emp.as_oracle_code', 'emp.as_unit_id');
             $totalSalary = round($queryData->sum("s.total_payable"));
             $totalCashSalary = round($queryData->sum("s.cash_payable"));
             $totalBankSalary = round($queryData->sum("s.bank_payable"));
