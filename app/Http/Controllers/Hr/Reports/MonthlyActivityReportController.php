@@ -141,9 +141,12 @@ class MonthlyActivityReportController extends Controller
             });
 
             if($input['report_format'] == 1 && $input['report_group'] != null){
-                $queryData->select('emp.'.$input['report_group'], DB::raw('count(*) as total'), DB::raw('sum(total_payable) as groupSalary'), DB::raw('sum(cash_payable) as groupCashSalary'),DB::raw('sum(stamp) as groupStamp'),DB::raw('sum(tds) as groupTds'), DB::raw('sum(bank_payable) as groupBankSalary'), DB::raw('sum(ot_hour) as groupOt'), DB::raw('sum(ot_hour * ot_rate) as groupOtAmount'))->groupBy('emp.'.$input['report_group']);
+                $queryData->select('emp.'.$input['report_group'], DB::raw('count(*) as total'), DB::raw('sum(total_payable) as groupTotal'),DB::raw('
+                    COUNT(CASE WHEN emp.as_ot = 1 THEN emp.as_ot END) AS ot, 
+                    COUNT(CASE WHEN emp.as_ot = 0 THEN emp.as_ot END) AS nonot'),
+                DB::raw('sum(salary_payable) as groupSalary'), DB::raw('sum(cash_payable) as groupCashSalary'),DB::raw('sum(stamp) as groupStamp'),DB::raw('sum(tds) as groupTds'), DB::raw('sum(bank_payable) as groupBankSalary'), DB::raw('sum(ot_hour) as groupOt'), DB::raw('sum(ot_hour * ot_rate) as groupOtAmount'))->groupBy('emp.'.$input['report_group']);
             }else{
-                $queryData->select('deg.hr_designation_position','deg.hr_designation_name', 'ben.bank_name','ben.bank_no', 'ben.ben_tds_amount','emp.as_id','emp.as_gender', 'emp.as_oracle_code', 'emp.associate_id', 'emp.as_unit_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_section_id', 's.present', 's.absent', 's.ot_hour', 's.ot_rate', 's.total_payable', 's.bank_payable', 's.cash_payable', 's.tds', 's.stamp', 's.pay_status');
+                $queryData->select('deg.hr_designation_position','deg.hr_designation_name', 'ben.bank_name','ben.bank_no', 'ben.ben_tds_amount','emp.as_id','emp.as_gender', 'emp.as_oracle_code', 'emp.associate_id', 'emp.as_unit_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_section_id', 's.present', 's.absent', 's.ot_hour', 's.ot_rate', 's.total_payable','s.salary_payable', 's.bank_payable', 's.cash_payable', 's.tds', 's.stamp', 's.pay_status');
                 $totalSalary = round($queryData->sum("s.total_payable"));
                 $totalCashSalary = round($queryData->sum("s.cash_payable"));
                 $totalBankSalary = round($queryData->sum("s.bank_payable"));
@@ -154,9 +157,9 @@ class MonthlyActivityReportController extends Controller
             }
 
             $getEmployee = $queryData->orderBy('deg.hr_designation_position', 'asc')->get();
-            // dd($getEmployee);
+            
             if($input['report_format'] == 1 && $input['report_group'] != null){
-                $totalSalary = round(array_sum(array_column($getEmployee->toArray(),'groupSalary')));
+                $totalSalary = round(array_sum(array_column($getEmployee->toArray(),'groupTotal')));
                 $totalCashSalary = round(array_sum(array_column($getEmployee->toArray(),'groupCashSalary')));
                 $totalBankSalary = round(array_sum(array_column($getEmployee->toArray(),'groupBankSalary')));
                 // $totalStamp = round(array_sum(array_column($getEmployee->toArray(),'groupStamp')));
@@ -167,6 +170,7 @@ class MonthlyActivityReportController extends Controller
             }else{
                 $totalEmployees = count($getEmployee);
             }
+            
             // dd($input);
             if($format != null && count($getEmployee) > 0 && $input['report_format'] == 0){
                 $getEmployeeArray = $getEmployee->toArray();

@@ -87,11 +87,20 @@
                     </strong>
                 </div>
                 <div style="padding: 0px 10px 5px 10px;">
-                    <br><br>
-                    <div class="col-xs-12 no-margin " style="padding: 0px 0px 0px 86px;"></div>
-                    <div class="col-xs-12 no-margin"  style="margin-bottom: 8px;">
-                    <strong style="float:left;display:inline-block;font-size:9px">শ্রমিকের স্বাক্ষর</strong>
-                    <strong style="float:right;display:inline-block;font-size:9px">মালিক/ব্যবস্থাপক</strong>
+                    
+                    <div style="display: flex">
+                        <div style="width: 50%;">
+                            <br><br>
+                            <strong style="float:left;display:inline-block;font-size:9px">শ্রমিকের স্বাক্ষর</strong>
+                        </div>
+                        <div style="text-align: center;width: 50%;padding-top: 14px;">
+                            @if($associate->hr_unit_authorized_signature)
+                            <img style="height: 30px;    padding-left: 10px;" src="{{asset($associate->hr_unit_authorized_signature)}}">
+                            @endif
+                            <br>
+                            <strong style="float:right;display:inline-block;font-size:9px">
+                                মালিক/ব্যবস্থাপক</strong>
+                        </div>
                     </div>
                 </div>
             </div>

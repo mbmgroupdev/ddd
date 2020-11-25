@@ -346,6 +346,7 @@
                         <div id="result-data">
                             <div class="step_one" id="step_one" style="display: none">
                                 <div class="stepLetter" id="letter" style="font-size: 12px;">
+                                    <style type="text/css">p{margin: 0;}</style>
                                     <p>
                                     <center><h3 class="underline">“রেজিস্ট্রি ডাক যোগে প্রেরিত”</h3></center>
                                     <p>তারিখ :&nbsp; <b id="firstIssueDate">@if($notice != null){{ eng_to_bn(date('d-m-Y', strtotime($notice->first_step_date))) }} @endif</b> ইং</p>
@@ -384,12 +385,12 @@
                                     <p>ব্যবস্থাপক-মানব সম্পদ প্রশাসন ও কমপ্লাইন্স</p>
                                     <br>
                                     <p>অনুলিপিঃ </p>
-                                    <p><small>১। মাননীয় ব্যবস্থাপনা পরিচালক মহোদয় (সদয় অবগণ),</small></p>
-                                    <p><small>২। সহকারী ব্যবস্থাপনা পরিচালক (সদয় অবগতণ),</small></p>
-                                    <p><small>৩। উৎপাদক ব্যবস্থাপকগন),</small></p>
-                                    <p><small>৪। কারখানার নোটিশ বোর্ড,</small></p>
-                                    <p><small>৫। ব্যাক্তিগত নথি,</small></p>
-                                    <p><small>৬। মাস্টার ফাইল,</small></p>
+                                    <p><small>১। মাননীয় ব্যবস্থাপনা পরিচালক মহোদয় (সদয় অবগণ)</small></p>
+                                    <p><small>২। সহকারী ব্যবস্থাপনা পরিচালক (সদয় অবগতণ)</small></p>
+                                    <p><small>৩। উৎপাদক ব্যবস্থাপকগন)</small></p>
+                                    <p><small>৪। কারখানার নোটিশ বোর্ড</small></p>
+                                    <p><small>৫। ব্যাক্তিগত নথি</small></p>
+                                    <p><small>৬। মাস্টার ফাইল</small></p>
                                     <p><small>৭। সিকিউরিটি সুপারভাইজার।</small></p>
                                     </p>
                                 </div>

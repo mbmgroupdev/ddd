@@ -498,6 +498,7 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 
 	//Increment
 	Route::get('hr/payroll/increment', 'Hr\Payroll\IncrementController@index');
+	Route::get('hr/payroll/increment-eligible', 'Hr\Payroll\IncrementController@getEligibleList');
 	//Route::get('hr/payroll/increment', 'Hr\Recruitment\BenefitController@showIncrementForm');
 	Route::get('hr/payroll/increment-list', 'Hr\Recruitment\BenefitController@incrementList');
 	Route::get('hr/payroll/increment-list-data', 'Hr\Recruitment\BenefitController@incrementListData');

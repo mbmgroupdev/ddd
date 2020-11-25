@@ -501,23 +501,25 @@ class DailyActivityReportController extends Controller
                     ->leftJoin('hr_as_basic_info AS b','b.as_id','a.as_id')
                     ->where('a.in_date', $request['date'])
                     ->whereIn('b.associate_id', $associates)
-                    ->where( function($q){
+                    ->where( function($q) use ($request){
                         $q->whereNull('a.in_time');
-                        $q->orWhereNull('a.out_time');
+                        if($request['date'] != date('Y-m-d')){
+                            $q->orWhereNull('a.out_time');
+                        }
                         $q->orWhere('a.remarks','DSI');
                     })
                     ->orderBy('b.as_unit_id', 'ASC')
                     ->get();
 
-        $absData = DB::table('hr_absent AS a')
+        /*$absData = DB::table('hr_absent AS a')
                     ->select('b.as_name','b.as_designation_id','b.as_department_id','b.as_section_id','b.as_oracle_code','b.as_unit_id','b.associate_id')
                     ->leftJoin('hr_as_basic_info AS b','b.associate_id','a.associate_id')
                     ->where('a.date', $request['date'])
                     ->whereIn('b.associate_id', $associates)
                     ->orderBy('b.as_unit_id', 'ASC')
-                    ->get();
+                    ->get();*/
 
-        return view('hr.common.in_out_token', compact('attData','absData','unit','department','designation','section','request'));
+        return view('hr.common.in_out_token', compact('attData','unit','department','designation','section','request'));
     }
 
     public function activityProcess($input)

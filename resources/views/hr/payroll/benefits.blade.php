@@ -36,7 +36,7 @@
             <div class="panel-body">
                 {{Form::open(['url'=>'hr/payroll/benefits_save', 'class'=>'form-horizontal'])}}
                     <div class="row">
-                        <div class="col-sm-2">
+                        <div class="col-sm-3">
                             <div class="form-group has-required has-float-label emp select-search-group">
                                 
                                 {{ Form::select('associate',  [Request::get('associate') => Request::get('associate')], Request::get('associate'), ['placeholder'=>'Select Associate\'s ID', 'id'=>'associate', 'class'=> 'associates form-control', 'data-validation'=>'required']) }}
@@ -48,6 +48,7 @@
                             <div class="form-group has-required has-float-label select-search-group">
                                 <select id="benefit_on" name="benefit_on" class="form-control" required="required">
                                    <option value="">Select Type</option>
+                                   <option value="on_left">Left</option>
                                    <option value="on_resign">Resign</option>
                                    <option value="on_dismiss">Dismiss</option>
                                    <option value="on_terminate">Termination</option>
@@ -79,15 +80,9 @@
                         </div>
                         
                         <div class="col-sm-2">
-                            <div class="form-group has-float-label has-required" data-toggle="tooltip" data-placement="top" title="" data-original-title="Employee end of job effects on this date!">
+                            <div class="form-group has-float-label has-required" data-toggle="tooltip" data-placement="top" title="" data-original-title="Employee salary will be calculated based on this date! Date suggestion will be the last working day (If last leave date greater than attendance date then last leave date). If any holiday after last attendance date than that holiday will be last working day.">
                                 <input id="status_date" type="date" name="status_date" value="{{date('Y-m-d')}}" class="form-control" required  >
                                 <label for="status_date">Effective Date</label>
-                            </div>
-                        </div>
-                        <div class="col-sm-2">
-                            <div class="form-group has-float-label has-required" data-toggle="tooltip" data-placement="top" title="" data-original-title="Employee salary will be calculated based on this date! Date suggestion will be the last working day (If last leave date greater than attendance date then last leave date). If any holiday after last attendance date than that holiday will be last working day.">
-                                <input id="salary_date" type="date" name="salary_date" value="{{date('Y-m-d')}}" class="form-control" required  >
-                                <label for="salary_date">Last Working Date</label>
                             </div>
                         </div>
                         <div id="notice_pay_div" class="col-sm-2 pt-2" style="display: none;">

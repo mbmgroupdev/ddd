@@ -223,10 +223,6 @@
                                             <input name="pr_post" type="text" id="pr_post" placeholder="Present PO" class="form-control" required/>
                                             <label  for="pr_post"> PO </label>
                                         </div>
-                                        <div class="form-group has-required has-float-label">
-                                            <input name="pr_village" type="text" id="pr_village" placeholder="Present village" class="form-control" required/>
-                                            <label  for="pr_village"> Village </label>
-                                        </div>
                                         <div class="form-group has-float-label">
                                             <input name="pr_road" type="text" id="pr_road" placeholder="Present Road" class="form-control"  />
                                             <label  for="pr_road"> Road </label>

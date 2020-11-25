@@ -13,6 +13,7 @@ use App\Models\Hr\HrMonthlySalary;
 use App\Models\Hr\HolidayRoaster;
 use App\Models\Hr\YearlyHolyDay;
 use Carbon\Carbon;
+use Illuminate\Support\Arr;
 use DB, Response, Auth, Exception, DataTables, Validator;
 
 class BenefitsCalculationController extends Controller
@@ -99,12 +100,16 @@ class BenefitsCalculationController extends Controller
             $details->remain = $earned->l??0;
             $details->earned = $earned->earned??0;
 	        $details->enjoyed = $earned->lenjoyed??0;
-
             if(empty($benefits)){
-                $request->associate = $request->emp_id;
-                $request->month_year = date('Y-m');
-                $jobcard = '<h4 class="text-danger text-center">Please check & verify jobcard of this employee first!</h4>';
-                $jobcard .= $this->getEmpJobcard($request);
+                $input = [];
+                $input['associate'] = $request->emp_id;
+                $input['month_year'] = date('Y-m');
+                $input = (object) $input;
+                $att = $this->getEmpJobcard($input);
+                $lastdate = $att['lastdate']['date'];
+                $details->effective_date = Carbon::parse($lastdate)->addDay()->toDateString();
+                $jobcard = '<div class="alert alert-danger " role="alert" style="background-color: #fff5f4 !important;"><p class="iq-alert-text">Last working day of this employee  was <b> '.$att['lastdate']['date'] .'</b>. Effective date will be <b>'.$details->effective_date.'</b> <br><span style="font-size:10px;">*Including holiday & leave</span></p></div>';
+                $jobcard .= $att['jobcard'];
                 $details->jobcard = $jobcard;
             }
 
@@ -126,112 +131,28 @@ class BenefitsCalculationController extends Controller
         $joinExist = $result['joinExist'];
         $leftExist = $result['leftExist'];
 
-        return view('hr.common.job_card_layout', compact('request','attendance','info','joinExist','leftExist'))->render();
-    }
-
-    /*get employee attendance table*/
-    public function getTableName($unit)
-	{
-	    $tableName = "";
-	    //CEIL
-	    if($unit == 2){
-	        $tableName= "hr_attendance_ceil AS a";
-	    }
-	    //AQl
-	    else if($unit == 3){
-	        $tableName= "hr_attendance_aql AS a";
-	    }
-	    // MBM
-	    else if($unit == 1 || $unit == 4 || $unit == 5 || $unit == 9){
-	        $tableName= "hr_attendance_mbm AS a";
-	    }
-	    //HO
-	    else if($unit == 6){
-	        $tableName= "hr_attendance_ho AS a";
-	    }
-	    // CEW
-	    else if($unit == 8){
-	        $tableName= "hr_attendance_cew AS a";
-	    }
-	    else{
-	        $tableName= "hr_attendance_mbm AS a";
-	    }
-	    return $tableName;
-	}
-
-    //Get earned leave
-    public function earnedLeave($leaves, $as_id, $associate_id, $unit_id)
-    {
-        $table = $this->getTableName($unit_id);
-        $leavesForEarned = collect($leaves)->sortBy('year');
-
-            
-        $earnedLeaves = [];
-        if(count($leavesForEarned)>0){
-            $remainEarned = 0;
-            foreach($leavesForEarned AS $yearlyLeave){
-                
-                $attendance = DB::table($table)
-                                ->where('a.as_id',$as_id)
-                                ->whereYear('a.in_time', $yearlyLeave->year)
-                                ->count();
-
-                $earnedTotal = intval($attendance/18)+$remainEarned;
-                
-
-                $enjoyed = DB::table("hr_leave")
-                            ->select(
-                                DB::raw("
-                                    SUM(CASE WHEN leave_type = 'Earned' THEN DATEDIFF(leave_to, leave_from)+1 END) AS enjoyed
-                                ")
-                            )
-                            ->where("leave_ass_id", $associate_id)
-                            ->where("leave_status", "1")
-                            ->where(DB::raw("YEAR(leave_from)"), '=', $yearlyLeave->year)
-                            ->value("enjoyed");
-
-                $remainEarned = $earnedTotal-$enjoyed;
-
-                $earnedLeaves[$yearlyLeave->year]['remain'] = $remainEarned;
-                $earnedLeaves[$yearlyLeave->year]['enjoyed'] = $enjoyed;
-                $earnedLeaves[$yearlyLeave->year]['earned'] = $earnedTotal;
-
-            }   
-        }else{
-            $yearAtt = DB::table($table)
-                            ->select(DB::raw('count(as_id) as att'))
-                            ->where('a.as_id',$as_id)
-                            ->groupBy(DB::raw('Year(in_time)'))
-                            ->first();
-            //dd($yearAtt);
-            $earnedTotal = 0;
-            if($yearAtt!= null){
-                foreach ($yearAtt as $key => $att) {
-                    $earnedTotal += intval($att/18);    
-                }
-                
+        $filtered = Arr::where($attendance, function ($value, $key) {
+            if($value['day_status'] == 'P'){
+                return $value;
             }
-            $earnedLeaves[date('Y')]['remain'] = $earnedTotal;
-            $earnedLeaves[date('Y')]['enjoyed'] = 0;
-            $earnedLeaves[date('Y')]['earned'] = $earnedTotal;
+        });
+
+        $last_key = array_key_last($filtered);
+        $last_date = $attendance[$last_key];
+        if(isset($attendance[$last_key+1])){
+            if(($attendance[$last_key+1]['day_status']) == 'W'){
+                $last_date = $attendance[$last_key+1];
+            }
         }
+        $card = view('hr.common.job_card_layout_custom', compact('request','attendance','info','joinExist','leftExist'))->render();
 
-        //Total the results
-        $total_earned = 0;
-        $total_enjoy  = 0;
-        $total_remain = 0;
-        foreach ($earnedLeaves as $el) {
-        	$total_earned += $el['earned'];
-        	$total_enjoy  += $el['enjoyed'];
-        	$total_remain += $el['remain'];
-        }
-
-        $total_earnedLeaves['total_earned'] = $total_earned; 
-        $total_earnedLeaves['total_enjoy']  = $total_enjoy;
-        $total_earnedLeaves['total_remain'] = $total_remain;
-
-        return $total_earnedLeaves;  
+        return array(
+            'jobcard' => $card,
+            'lastdate' => $last_date
+        );
     }
+
+   
 
 
     public function saveBenefits(Request $request)
@@ -269,10 +190,17 @@ class BenefitsCalculationController extends Controller
                 $status = $data['status'];
 
                 $benefit_page = view('hr.common.end_of_job_final_pay', compact('employee','benefits','years','months'))->render();
+                $salary_date = Carbon::parse($request->status_date)->subDay();
+                $month_last = $salary_date->copy()->endOfMonth()->toDateString();
 
-                $salary = $this->processPartialSalary($employee, $request->status_date, $status);
+                if($salary_date->toDateString() != $request->status_date){
 
-                $salary_page = view('hr.common.partial_salary_sheet', compact('salary','employee' ))->render();
+                    $salary = $this->processPartialSalary($employee, $request->status_date, $status);
+
+                    $salary_page = view('hr.common.partial_salary_sheet', compact('salary','employee' ))->render();
+                }else{
+                    $salary_page = '<p class="text-center">Salary of this employee has been recorded in active salary sheet!</p>';
+                }
 
                 
 
@@ -299,6 +227,7 @@ class BenefitsCalculationController extends Controller
         $death_days = 0;
         $termination_benefits = 0;
         $notice_pay_month = 0;
+        $status_date = $request->status_date;
 
         $per_day_basic = round($employee->ben_basic/30,2);
         $per_day_gross = round($employee->ben_current_salary/30,2);
@@ -310,14 +239,14 @@ class BenefitsCalculationController extends Controller
         $service_years = $years;
         $service_months = $months;
         if( 5 <= $service_years && $service_years < 10){
-            if($service_months >= 11){
+            if($service_months >= 8){
                 $service_years++;
             }
 
             $service_benefit =  (14*$service_years)*$per_day_basic;
             $service_days =  (14*$service_years);
         }else if($service_years >= 10){
-            if($service_months >= 11){
+            if($service_months >= 8){
                 $service_years++;
             }
             $service_benefit =  (30*$service_years)*$per_day_basic;
@@ -331,7 +260,14 @@ class BenefitsCalculationController extends Controller
             }
             $total_payment = $earn_leave_payment + $service_benefit - $notice_pay;
             $status = 2;
-        }else if($request->benefit_on == 'on_dismiss') {
+        }else if($request->benefit_on == 'on_left'){
+            $notice_pay_month = 2;
+            $notice_pay = 2*$employee->ben_basic;
+            $total_payment = $earn_leave_payment + $service_benefit - $notice_pay;
+            $status = 5;
+            $status_date = date('Y-m-d');
+        }
+        else if($request->benefit_on == 'on_dismiss') {
             $subsistance_allowance = ($request->suspension_days*$per_day_basic)+1850;
             $total_payment = $earn_leave_payment + $subsistance_allowance;
             $status = 4;
@@ -348,9 +284,9 @@ class BenefitsCalculationController extends Controller
             // death_benefit
             $death_benefit = 0;
             if($years >= 2){
-                if($months > 6 && $months < 11) {
+                if($months > 4 && $months < 8) {
                     $years += 0.5;
-                }else if($months == 11){
+                }else if($months > 8){
                     $years += 1;
                 }
                 if($request->death_reason == 'natural_death'){
@@ -366,6 +302,7 @@ class BenefitsCalculationController extends Controller
 
             $total_payment = $earn_leave_payment + $service_benefit + $death_benefit;
         }else if($request->benefit_on == 'on_retirement') {
+            $total_payment = $earn_leave_payment + $service_benefit;
             $status = 8;
         }
 

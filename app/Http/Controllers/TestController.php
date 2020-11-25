@@ -31,6 +31,271 @@ class TestController extends Controller
 {
     public function test()
     {
+        $designation = designation_by_id();
+        $department = department_by_id();
+        $section = section_by_id();
+        $subsection = subSection_by_id();
+        $unit = unit_by_id();
+        $disctrict = district_by_id();
+        $upzilla = upzila_by_id();
+
+        $data = DB::table('hr_as_basic_info as b')
+        ->leftJoin('hr_benefits as ben','ben.ben_as_id','b.associate_id')
+        ->leftJoin('hr_as_adv_info as adv','adv.emp_adv_info_as_id','b.associate_id')
+        ->leftJoin('hr_employee_bengali as bn','bn.hr_bn_associate_id','b.associate_id')
+        ->whereIn('as_unit_id',[1,4,5])
+        ->where('as_status',1)
+        ->get();
+
+
+        $benefit = [];
+        $bank_cash = [];
+        $father = [];
+        $mother = [];
+        $maritial_status = [];
+        $religion = [];
+        $present_road = [];
+        $present_po = [];
+        $present_upz = [];
+        $present_dist = [];
+        $perm_vill = [];
+        $perm_po = [];
+        $perm_upz = [];
+        $perm_dist = [];
+        $bn_name = [];
+        $bn_father = [];
+        $bn_mother = [];
+        $bn_pres_road = [];
+        $bn_pres_po = [];
+        $bn_per_vill = [];
+        $bn_per_po= [];
+        $image = [];
+
+        $bangla = [];
+        $image_miss = [];
+        $benefit_miss = [];
+        $advance_info = [];
+        foreach ($data as $key => $e) {
+            if(!$e->ben_current_salary || ($e->ben_cash_amount == 0 && $e->ben_bank_amount == 0)){
+                $benefit_miss[] = $e->associate_id;
+            }
+            if(!$e->emp_adv_info_fathers_name || !$e->emp_adv_info_mothers_name || !$e->emp_adv_info_marital_stat || !$e->emp_adv_info_religion || !$e->emp_adv_info_per_vill || !$e->emp_adv_info_per_po){
+                $advance_info[] = $e->associate_id;
+            }
+
+            if(!$e->hr_bn_associate_name || !$e->hr_bn_father_name || !$e->hr_bn_mother_name || !$e->hr_bn_permanent_village){
+                $bangla[] = $e->associate_id;
+            }
+           
+            /*if(!$e->ben_current_salary){
+                $benefit[] = $e->associate_id;
+            }
+            if($e->ben_cash_amount == 0 && $e->ben_bank_amount == 0){
+                $bank_cash[] = $e->associate_id;
+            }
+            if(!$e->emp_adv_info_fathers_name){
+                $father[] = $e->associate_id;
+            }
+            if(!$e->emp_adv_info_mothers_name){
+                $mother[] = $e->associate_id;
+            }
+            if(!$e->emp_adv_info_marital_stat){
+                $maritial_status[] = $e->associate_id;
+            }
+            if(!$e->emp_adv_info_religion){
+                $religion[] = $e->associate_id;
+            }
+            if(!$e->emp_adv_info_per_vill){
+                $perm_vill[] = $e->associate_id;
+            }
+            if(!$e->emp_adv_info_per_po){
+                $perm_po[] = $e->associate_id;
+            }
+            if(!$e->emp_adv_info_per_dist){
+                $perm_dist[] = $e->associate_id;
+            }
+            if(!$e->emp_adv_info_per_upz){
+                $perm_upz[] = $e->associate_id;
+            }
+            if(!$e->emp_adv_info_pres_road){
+                $present_road[] = $e->associate_id;
+            }
+            if(!$e->emp_adv_info_pres_po){
+                $present_po[] = $e->associate_id;
+            }
+            if(!$e->emp_adv_info_pres_dist){
+                $present_dist[] = $e->associate_id;
+            }
+            if(!$e->emp_adv_info_pres_upz){
+                $present_upz[] = $e->associate_id;
+            }
+
+            if(!$e->hr_bn_associate_name){
+                $bn_name[] = $e->associate_id;
+            }
+            if(!$e->hr_bn_father_name){
+                $bn_father[] = $e->associate_id;
+            }
+            if(!$e->hr_bn_mother_name){
+                $bn_mother[] = $e->associate_id;
+            }
+            if(!$e->hr_bn_permanent_village){
+                $bn_per_vill[] = $e->associate_id;
+            }
+            if(!$e->hr_bn_permanent_po){
+                $bn_per_po[] = $e->associate_id;
+            }
+            if(!$e->hr_bn_present_road){
+                $bn_pres_road[] = $e->associate_id;
+            }
+            if(!$e->hr_bn_present_po){
+                $bn_pres_po[] = $e->associate_id;
+            }*/
+            if(!$e->as_pic){
+                $image[] = $e->associate_id;
+            }
+            
+        }
+
+
+        $arr = array(
+           'Benefit' => $benefit_miss,
+           'Advance Info' => $advance_info,
+           'Bangla' => $bangla,
+           'Image' => $image
+        );
+
+        return (new FastExcel(collect($arr)))->download('Employee Missing List.xlsx');
+
+        $total = count($data);
+
+        $text = 'Benefit '. count($benefit).' '.((round(count($benefit)/$total,4))*100).'%<br>';
+        $text .= 'Bank/cash '. count($bank_cash).' '.((round(count($bank_cash)/$total,4))*100).'%<br>';
+        $text .= 'Father Name '. count($father).' '.((round(count($father)/$total,4))*100).'%<br>';
+        $text .= 'Mother Name '. count($mother).' '.((round(count($mother)/$total,4))*100).'%<br>';
+        $text .= 'Maritial Status '. count($maritial_status).' '.((round(count($maritial_status)/$total,4))*100).'%<br>';
+        $text .= 'Present Road '. count($present_road).' '.((round(count($present_road)/$total,4))*100).'%<br>';
+        $text .= 'Present PO '. count($present_po).' '.((round(count($present_po)/$total,4))*100).'%<br>';
+        $text .= 'Present Upzilla '. count($present_upz).' '.((round(count($present_upz)/$total,4))*100).'%<br>';
+        $text .= 'Present District '. count($present_dist).' '.((round(count($present_dist)/$total,4))*100).'%<br>';
+        $text .= 'Permanent Village '. count($perm_vill).' '.((round(count($perm_vill)/$total,4))*100).'%<br>';
+        $text .= 'Permanent PO '. count($perm_po).' '.((round(count($perm_po)/$total,4))*100).'%<br>';
+        $text .= 'Permanent Upzilla '. count($perm_upz).' '.((round(count($perm_upz)/$total,4))*100).'%<br>';
+        $text .= 'Permanent District '. count($perm_dist).' '.((round(count($perm_dist)/$total,4))*100).'%<br>';
+        $text .= 'Name (Bangla) '. count($bn_name).' '.((round(count($bn_name)/$total,4))*100).'%<br>';
+         $text .= 'Father Name (Bangla) '. count($bn_father).' '.((round(count($bn_father)/$total,4))*100).'%<br>';
+        $text .= 'Mother Name (Bangla) '. count($bn_mother).' '.((round(count($bn_mother)/$total,4))*100).'%<br>';
+        $text .= 'Present Road (Bangla) '. count($bn_pres_road).' '.((round(count($bn_pres_road)/$total,4))*100).'%<br>';
+        $text .= 'Present PO  (Bangla) '. count($bn_pres_po).' '.((round(count($bn_pres_po)/$total,4))*100).'%<br>';
+        $text .= 'Permanent Village  (Bangla) '. count($bn_per_vill).' '.((round(count($bn_per_vill)/$total,4))*100).'%<br>';
+        $text .= 'Permanent PO  (Bangla) '. count($bn_per_po).' '.((round(count($bn_per_po)/$total,4))*100).'%<br>';
+        $text .= 'Image '. count($image).' '.((round(count($image)/$total,4))*100).'%<br>';
+       
+        echo html_entity_decode($text);
+       
+        dd($text,$benefit,
+        $bank_cash,
+        $father,
+        $mother,
+        $maritial_status,
+        $religion,
+        $present_road,
+        $present_po,
+        $present_upz,
+        $present_dist,
+        $perm_vill,
+        $perm_po,
+        $perm_upz,
+        $perm_dist,
+        $bn_name,
+        $bn_father,
+        $bn_mother,
+        $bn_pres_road,
+        $bn_pres_po,
+        $bn_per_vill,
+        $bn_per_po,
+        $image);
+
+
+
+
+        foreach ($data as $key => $a) {
+            # code...
+            $excel[$a->associate_id] = array(
+                    'Associate ID' => $a->associate_id,
+                    'Oracle ID' => $a->as_oracle_code,
+                    'Name' => $a->as_name,
+                    'RF ID' => $a->as_rfid_code??0,
+                    'DOJ' => date('d-M-Y', strtotime($a->as_doj)),
+                    'Current Salary' => $a->ben_current_salary,
+                    'Basic Salary' => $a->ben_basic,
+                    'House Rent' => $a->ben_house_rent??0,
+                    'Cash Amount' => $a->ben_cash_amount??0,
+                    'Bank/Rocket' => $a->ben_bank_amount??0,
+                    'Designation' => $designation[$a->as_designation_id]['hr_designation_name']??'',
+                    'Department' => $department[$a->as_department_id]['hr_department_name']??'',
+                    'Section' => $section[$a->as_section_id]['hr_section_name']??'',
+                    'Sub Section' => $subsection[$a->as_subsection_id]['hr_subsec_name']??'',
+                    'Unit' => $unit[$a->as_unit_id]['hr_unit_short_name']??'',
+                    'OT/NONOT' => $a->as_ot == 1?'OT':'NonOT',
+                    'Father' => $a->emp_adv_info_fathers_name??'',
+                    'Mother' => $a->emp_adv_info_mothers_name??'',
+                    'Maritial Status' => $a->emp_adv_info_marital_stat??'',
+                    'Spouse' => $a->emp_adv_info_spouse??'',
+                    'Contact' => $a->as_contact,
+                    'Passport' => $a->emp_adv_info_passport??'',
+                    'Permanent District' => $district[($a->emp_adv_info_per_dist??0)]??'',
+                    'Permanent Upazila' => $upzilla[($a->emp_adv_info_per_upz??0)]??'',
+                    'Permanent Post' => $a->emp_adv_info_per_po??'',
+                    'Permanent Village' => $a->emp_adv_info_per_vill??'',
+                    'Present District' => $district[($a->emp_adv_info_pres_dist??0)]??'',
+                    'Present Upazila' => $upzilla[($a->emp_adv_info_pres_upz??0)]??'',
+                    'Present Post' => $a->emp_adv_info_pres_po??'',
+                    'Present Road' => $a->emp_adv_info_pres_road??'',
+                    'Present House' => $a->emp_adv_info_pres_house_no??'',
+                    'NID' => $a->emp_adv_info_nid??''
+                );
+        }
+
+            return (new FastExcel(collect($excel)))->download('Employee.xlsx');
+
+
+
+
+
+
+
+
+
+        $data = DB::table('hr_as_basic_info AS b')
+                ->select('r.as_id','r.in_date','b.associate_id','b.as_oracle_code','b.as_name','b.as_section_id','b.as_designation_id','b.as_department_id','b.as_unit_id','bn.ben_current_salary','b.as_doj')
+                ->leftJoin('hr_attendance_mbm AS r','b.as_id','r.as_id')
+                ->leftJoin('hr_benefits as bn','bn.ben_as_id','b.associate_id')
+                ->whereIn('r.in_date',['2020-10-30','2020-10-02'])
+                ->where('b.as_emp_type_id', 3)
+                ->where('b.as_doj','>=','2020-08-09')
+                ->get();
+           
+        $employees = collect($data)->groupBy('as_id');
+        $sal=[];
+        foreach ($employees as $key => $e) {
+            $sal[] = array(
+                'Associate ID' =>  $e[0]->associate_id,
+                'Oracle ID' =>  $e[0]->as_oracle_code,
+                'Name' =>  $e[0]->as_name,
+                'DOJ' =>  $e[0]->as_doj,
+                'Designation' =>  $designation[$e[0]->as_designation_id]['hr_designation_name'],
+                'Section' =>  $section[$e[0]->as_section_id]['hr_section_name'],
+                'Department' =>  $department[$e[0]->as_department_id]['hr_department_name'],
+                'Unit' =>  $unit[$e[0]->as_unit_id]['hr_unit_short_name'],
+                'Gross' =>  $e[0]->ben_current_salary,
+                'Day' => count($e),
+                'Per Day' =>  round($e[0]->ben_current_salary/31,2),
+                'Total' => ceil(count($e)*round($e[0]->ben_current_salary/31,2))
+            );
+        }
+        return (new FastExcel(collect($sal)))->download('Substitute Holiday Payment.xlsx');
+        dd($employees);
         $array = ['products' => ['desk' => ['price' => 100], 'hi' => 'Test']];
         Arr::forget($array, 'products.desk');
         dd($array);
