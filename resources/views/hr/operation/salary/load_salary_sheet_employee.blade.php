@@ -94,7 +94,7 @@
                     <td style="text-align: center;">{{ Custom::engToBnConvert($j) }}</td>
                     <td>
                         <p style="margin:0;padding:0;">{{ $salary->hr_bn_associate_name }}</p>
-                        <p style="margin:0;padding:0;">{{ Custom::engToBnConvert($salary->as_doj) }}</p>
+                        <p style="margin:0;padding:0;">{{ Custom::engToBnConvert(date('Y-m-d', strtotime($salary->as_doj))) }}</p>
                         <p style="margin:0;padding:0;">
                             {{ $designation[$salary->as_designation_id]['hr_designation_name_bn']}}
                             @if($salary->as_ot == 0)

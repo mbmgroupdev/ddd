@@ -105,7 +105,7 @@ class BillOperationController extends Controller
             $unitDataSet = $getBillList->toArray();
             $unitList = array_column($unitDataSet, 'as_unit_id');
             $uniqueUnit = array_unique($unitList);
-            $getBillDataSet = array_chunk($unitDataSet, 17, true);
+            $getBillDataSet = array_chunk($unitDataSet, 25, true);
             $pageHead['totalBill'] = $totalAmount;
             $pageHead['totalEmployees'] = $totalEmployees;
             // dd($getBillDataSet);
@@ -159,7 +159,7 @@ class BillOperationController extends Controller
             $unitDataSet = $getBillList->toArray();
             $unitList = array_column($unitDataSet, 'as_unit_id');
             $uniqueUnit = array_unique($unitList);
-            $getBillDataSet = array_chunk($unitDataSet, 17, true);
+            $getBillDataSet = array_chunk($unitDataSet, 25, true);
             $pageHead['totalBill'] = $totalAmount;
             $pageHead['totalEmployees'] = $totalEmployees;
             // dd($getBillDataSet);
