@@ -13,6 +13,9 @@ hr {
     margin-bottom: 10px;
     border-top: 1px solid #eee;
 }
+a{
+    cursor: pointer;
+}
 a .profile-info-row{
     width: 100%;display: block;
 }
@@ -119,6 +122,77 @@ p.f-9 span, p.f-9 span font{
 #printButton{margin-top:5px; }
 .fc-event-container a{margin-top: 10px; padding: 10px;}
 .modal-dialog{width: 600px!important;}
+.modal.left .modal-dialog,
+.modal.right .modal-dialog,
+.modal.top .modal-dialog,
+.modal.bottom .modal-dialog {
+  -webkit-transform: translate3d(0%, 0, 0);
+  -ms-transform: translate3d(0%, 0, 0);
+  -o-transform: translate3d(0%, 0, 0);
+  transform: translate3d(0%, 0, 0);
+}
+
+/* Left & Right */
+
+.modal.left .modal-dialog,
+.modal.right .modal-dialog {
+  position: fixed;
+  margin: auto;
+  width: 500px;
+  max-width: 100%;
+  height: 100%;
+}
+
+.modal.left .modal-content,
+.modal.right .modal-content {
+  height: 100%;
+  overflow-y: auto;
+}
+
+.modal.left .modal-body,
+.modal.right .modal-body {
+  padding: 15px 15px 80px;
+}
+
+.modal.left.fade .modal-dialog {
+  left: -500px;
+  -webkit-transition: opacity 0.3s linear, left 0.3s ease-out;
+  -moz-transition: opacity 0.3s linear, left 0.3s ease-out;
+  -o-transition: opacity 0.3s linear, left 0.3s ease-out;
+  transition: opacity 0.3s linear, left 0.3s ease-out;
+}
+
+.modal.left.fade.show .modal-dialog {
+  left: 0;
+}
+
+.modal.right.fade .modal-dialog {
+  right: -500px;
+  -webkit-transition: opacity 0.3s linear, right 0.3s ease-out;
+  -moz-transition: opacity 0.3s linear, right 0.3s ease-out;
+  -o-transition: opacity 0.3s linear, right 0.3s ease-out;
+  transition: opacity 0.3s linear, right 0.3s ease-out;
+}
+
+.modal.right.fade.show .modal-dialog {
+  right: 0;
+}
+
+.modal.left .modal-content,
+.modal.right .modal-content,
+.modal.top .modal-content,
+.modal.bottom .modal-content,
+.modal.full .modal-content {
+  border-radius: 0;
+  border: none;
+}
+.right-modal-width{
+  width:83% !important;
+}
+.right-modal-title{
+    line-height: 1.9;
+    margin-left: 20px;
+}
 div.dataTables_wrapper, div.dataTables_processing {
     background-color: transparent !important;
     z-index: 999 !important;
@@ -1042,4 +1116,12 @@ table.dataTable thead>tr>td.sorting, table.dataTable thead>tr>td.sorting_asc, ta
 }
 .vertical-align{
     vertical-align:middle !important;
+}
+.select-group{
+    display: inline-block;
+    width: 100%;
+    color: #1d68a7 !important;
+}
+.fwb{
+    font-weight: bold;
 }

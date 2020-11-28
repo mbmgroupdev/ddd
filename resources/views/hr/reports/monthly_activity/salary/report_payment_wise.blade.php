@@ -1,6 +1,11 @@
 <div class="panel">
 	<div class="panel-body">
 		
+		@php
+			$urldata = http_build_query($input) . "\n";
+		@endphp
+		<a href='{{ url("hr/reports/monthly-salary-excel?$urldata")}}' target="_blank" class="btn btn-sm btn-info hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download" style="position: absolute; top: 16px; left: 65px;"><i class="fa fa-file-excel-o"></i></a>
+		
 		<div id="report_section" class="report_section">
 			<style type="text/css" media="print">
 				h4, h2, p{margin: 0;}
@@ -27,7 +32,10 @@
               }
               .table thead th {
 			    vertical-align: inherit;
-			}
+				}
+				#content-result .panel .panel-body .loader-p{
+					margin-top: 20% !important;
+				} 
 			</style>
 			@php
 				$unit = unit_by_id();
@@ -46,10 +54,7 @@
 				@if($input['report_format'] == 0 || ($input['report_format'] == 1 && $format != null))
 				<div class="page-header">
 		            <h2 style="margin:4px 10px; font-weight: bold; text-align: center;">Salary @if($input['report_format'] == 0) Details @else Summary @endif Report </h2>
-		            <h4  style="text-align: center;">Month : {{ date('M Y', strtotime($input['month'])) }} </h4>
-		            <h4  style="text-align: center;">Total Employee : {{ $totalEmployees }} </h4>
-		            @if($input['pay_status'] == 'all')
-		            <h4  style="text-align: center;">Total Payable : {{ bn_money(round($totalSalary,2)) }} </h4>
+		            
 		            @endif
 		            <table class="table no-border f-14" border="0" style="width:100%;margin-bottom:0;font-size:14px;text-align:left"  cellpadding="5">
 		            	<tr>
@@ -74,26 +79,11 @@
 		                		@endif
 		            		</td>
 		            		<td>
-		            			@if($input['pay_status'] == 'all' || $input['pay_status'] == 'cash')
-	                			Total Cash
-	                			<b>: {{ bn_money(round($totalCashSalary,2)) }} </b><br>
-	                			@endif	
+		            			<h6  style="text-align: center;">Month : {{ date('M Y', strtotime($input['month'])) }} </h6>
+					            <h6  style="text-align: center;">Total Employee : {{ $totalEmployees }} </h6>
+					            @if($input['pay_status'] == 'all')
+					            <h6  style="text-align: center;">Total Payable : {{ bn_money(round($totalSalary,2)) }} </h6>
 	                			
-	                			@if($input['pay_status'] == 'all' || ($input['pay_status'] != 'cash' && $input['pay_status'] != null))
-	                			Total Bank
-	                			<b>: {{ bn_money(round($totalBankSalary,2)) }} </b><br>
-	                			Tax Amount
-	                			<b>: {{ bn_money(round($totalTax,2)) }} </b>
-	                			@endif
-	                			
-		            		</td>
-		            		
-		            		<td>
-	                			Total OT Hour
-	                			<b>: {{ numberToTimeClockFormat(round($totalOtHour,2)) }} </b><br>
-	                			Total OT Amount
-	                			<b>: {{ bn_money(round($totalOTAmount,2)) }} </b>
-		                		
 		            		</td>
 		            		<td>
 		            			@if($input['subSection'] != null)
@@ -198,7 +188,7 @@
 								@endphp
 			                	@if($head != '')
 			                    <th colspan="2">{{ $head }}</th>
-			                    <th colspan="12">{{ $body }}</th>
+			                    <th colspan="14">{{ $body }}</th>
 			                    @endif
 			                </tr>
 			                @endif
@@ -282,7 +272,7 @@
 					            		{{ bn_money($totalNet) }}
 					            	</td>
 					            	<td>
-					            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-yearmonth="{{ $input['month'] }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Yearly Activity Report' ><i class="fa fa-eye"></i></button>
+					            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-yearmonth="{{ $input['month'] }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Employee Salary Report' ><i class="fa fa-eye"></i></button>
 					            	</td>
 				            	</tr>
 				            	@else
@@ -335,7 +325,7 @@
 					            		{{ bn_money($totalNet) }}
 					            	</td>
 					            	<td>
-					            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-yearmonth="{{ $input['month'] }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Yearly Activity Report' ><i class="fa fa-eye"></i></button>
+					            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-yearmonth="{{ $input['month'] }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Employee Salary Report' ><i class="fa fa-eye"></i></button>
 					            	</td>
 				            	</tr>
 				            	@endif
@@ -353,14 +343,7 @@
 				            </tr>
 			            @endif
 			            </tbody>
-			            {{-- <tfoot>
-			            	<tr>
-			            		<td colspan="11" class="text-right"><b>Sub Total</b></td>
-			            		
-			            		<td><b>{{ $otHourSum }}</b></td>
-			            		<td><b>{{ bn_money($salarySum) }}</b></td>
-			            	</tr>
-			            </tfoot> --}}
+			            
 					</table>
 					@endforeach
 				@elseif(($input['report_format'] == 1 && $format != null))
@@ -391,29 +374,43 @@
 									<th rowspan="2">Sl</th>
 									<th rowspan="2"> {{ $head }} Name</th>
 									<th colspan="3">No. of Employee</th>
-									<th rowspan="2">Salary (BDT)</th>
+									<th rowspan="2">OT Hour</th>
 									
-									<th colspan="2">Over Time</th>
-									<th colspan="5">Salary Payable (BDT)</th>
+									<th colspan="5">Salary Amount (BDT)</th>
+									<th colspan="5">Bank & Cash (BDT)</th>
 								</tr>
 								<tr class="text-center">
 									<th>Non OT</th>
 									<th>OT</th>
 									<th>Total</th>
-									<th>Time (Hour)</th>
-									<th>Amount (BDT)</th>
+									<th>Salary</th>
+									<th>Wages</th>
+									<th>OT Amount</th>
+									<th>stamp</th>
+									<th>Total</th>
 									<th>Cash</th>
+									<th>Stamp</th>
 									<th>Bank</th>
 									<th>Tax</th>
-									<th>Stamp</th>
 									<th>Total</th>
 								</tr>
 							</thead>
 							<tbody>
-								@php $i=0; $totalEmployee = 0; @endphp
+								@php $i=0; $tNonOt = 0; $tOt = 0; $totalOtSalary =0; $totalNonOtSalary =0; $totalGroupSalary = 0; @endphp
 								@if(count($getEmployee) > 0)
 								@foreach($getEmployee as $employee)
-								
+								@php 
+									$groupTotalSalary = $employee->groupTotal-$employee->groupOtAmount;
+									$nonOtSalary = $employee->totalNonOt;
+									$otSalary = $groupTotalSalary - $nonOtSalary;
+
+									$tNonOt += $employee->nonot; 
+									$tOt += $employee->ot; 
+									$totalNonOtSalary += $nonOtSalary;
+									$totalOtSalary += $otSalary;
+									$totalGroupStampSalary = $employee->groupTotal+$employee->groupStamp;
+									$totalGroupSalary += $totalGroupStampSalary;
+								@endphp
 								<tr>
 									<td>{{ ++$i }}</td>
 									<td>
@@ -421,26 +418,35 @@
 											$group = $employee->$format;
 											if($format == 'as_unit_id'){
 												$body = $unit[$group]['hr_unit_name']??'';
+												$exPar = '&selected='.$unit[$group]['hr_unit_id']??'';
 											}elseif($format == 'as_line_id'){
 												$body = $line[$group]['hr_line_name']??'';
+												$exPar = '&selected='.$line[$group]['hr_line_id']??'';
 											}elseif($format == 'as_floor_id'){
 												$body = $floor[$group]['hr_floor_name']??'';
+												$exPar = '&selected='.$floor[$group]['hr_floor_name']??'';
 											}elseif($format == 'as_department_id'){
 												$body = $department[$group]['hr_department_name']??'';
+												$exPar = '&selected='.$department[$group]['hr_department_id']??'';
 											}elseif($format == 'as_designation_id'){
 												$body = $designation[$group]['hr_designation_name']??'';
+												$exPar = '&selected='.$designation[$group]['hr_designation_id']??'';
 											}elseif($format == 'as_section_id'){
 												$depId = $section[$group]['hr_section_department_id']??'';
 												$seDeName = $department[$depId]['hr_department_name']??'';
 												$seName = $section[$group]['hr_section_name']??'';
 												$body = $seDeName.' - '.$seName;
+												$exPar = '&selected='.$section[$group]['hr_section_id']??'';
 											}elseif($format == 'as_subsection_id'){
 												$body = $subSection[$group]['hr_subsec_name']??'';
+												$exPar = '&selected='.$subSection[$group]['hr_subsec_id']??'';
 											}else{
 												$body = 'N/A';
+												$exPar = '';
 											}
+											$secUrl = $urldata.$exPar;
 										@endphp
-										{{ ($body == null)?'N/A':$body }}
+										<a onClick="selectedGroup(this.id, '{{ $body }}')" data-body="{{ $body }}" id="{{$exPar}}" class="select-group">{{ ($body == null)?'N/A':$body }}</a>
 									</td>
 									<td style="text-align: center;">
 										{{ $employee->nonot }}
@@ -450,26 +456,20 @@
 									</td>
 									<td style="text-align: center;">
 										{{ $employee->total }}
-										@php $totalEmployee += $employee->total; @endphp
+										
 									</td>
-									<td class="text-right">
-										{{ bn_money(round($employee->groupTotal-$employee->groupOtAmount)) }}
-									</td>
-									
 									<td class="text-right">
 										{{ numberToTimeClockFormat($employee->groupOt) }}
 									</td>
+
+									<td class="text-right">
+										{{ bn_money(round($nonOtSalary)) }}
+									</td>
+									<td class="text-right">
+										{{ bn_money(round($otSalary)) }}
+									</td>
 									<td class="text-right">
 										{{ bn_money(round($employee->groupOtAmount)) }}
-									</td>
-									<td class="text-right">
-										{{ bn_money(round($employee->groupCashSalary)) }}
-									</td>
-									<td class="text-right">
-										{{ bn_money(round($employee->groupBankSalary)) }}
-									</td>
-									<td class="text-right">
-										{{ bn_money(round($employee->groupTds)) }}
 									</td>
 									<td class="text-right">
 										{{ bn_money(round($employee->groupStamp)) }}
@@ -477,11 +477,54 @@
 									<td class="text-right">
 										{{ bn_money(round($employee->groupTotal+$employee->groupStamp)) }}
 									</td>
+
+									<td class="text-right">
+										{{ bn_money(round($employee->groupCashSalary)) }}
+									</td>
+									<td class="text-right">
+										{{ bn_money(round($employee->groupStamp)) }}
+									</td>
+									<td class="text-right">
+										{{ bn_money(round($employee->groupBankSalary)) }}
+									</td>
+									<td class="text-right">
+										{{ bn_money(round($employee->groupTds)) }}
+									</td>
+									
+									<td class="text-right">
+										{{ bn_money(round($employee->groupTotal+$employee->groupStamp)) }}
+									</td>
 								</tr>
 								@endforeach
+								<tr>
+									<td></td>
+									<td class="text-center fwb"> Total </td>
+									<td class="text-center fwb">{{ $tNonOt }}</td>
+									<td class="text-center fwb">{{ $tOt }}</td>
+									<td class="text-center fwb">{{ $totalEmployees }}</td>
+									<td class="text-right fwb">{{ numberToTimeClockFormat(round($totalOtHour,2)) }}</td>
+									<td class="text-right fwb">{{ bn_money(round($totalNonOtSalary,2)) }}</td>
+									<td class="text-right fwb">{{ bn_money(round($totalOtSalary,2)) }}</td>
+									<td class="text-right fwb">{{ bn_money(round($totalOTAmount,2)) }}</td>
+									<td class="text-right fwb">{{ bn_money(round($totalStamp,2)) }}</td>
+									<td class="text-right fwb">{{ bn_money(round($totalGroupSalary,2)) }}</td>
+									<td class="text-right fwb">{{ bn_money(round($totalCashSalary,2)) }}</td>
+									<td class="text-right fwb">{{ bn_money(round($totalStamp,2)) }}</td>
+									<td class="text-right fwb">{{ bn_money(round($totalBankSalary,2)) }}</td>
+									<td class="text-right fwb">{{ bn_money(round($totalTax,2)) }}</td>
+									<td class="text-right fwb">{{ bn_money(round($totalGroupSalary,2)) }}</td>
+									
+								</tr>
+								<tr>
+									<td colspan="6" class="text-right fwb"> Salary Payable <br>
+										<span class="red">* Without stamp</span></td>
+									<td colspan="3" class="text-center fwb">{{ bn_money(round(($totalNonOtSalary + $totalOtSalary + $totalOTAmount))) }}</td>
+									<td colspan="7"></td>
+
+								</tr>
 								@else
 								<tr>
-					            	<td colspan="9" class="text-center">No Data Found!</td>
+					            	<td colspan="14" class="text-center">No Data Found!</td>
 					            </tr>
 								@endif
 							</tbody>
@@ -582,7 +625,7 @@
 			</div>
 		</div>
 
-		{{-- modal --}}
+		{{-- modal employee salary --}}
 		<div class="item_details_section">
 		    <div class="overlay-modal overlay-modal-details" style="margin-left: 0px; display: none;">
 		      <div class="item_details_dialog show_item_details_modal" style="min-height: 115px;">
@@ -617,12 +660,34 @@
 		      </div>
 		    </div>
 		</div>
+		{{--  --}}
 	</div>
 </div>
 
+<div class="modal right fade" id="right_modal_lg" tabindex="-1" role="dialog" aria-labelledby="right_modal_lg">
+  <div class="modal-dialog modal-lg right-modal-width" role="document" > 
+    <div class="modal-content">
+      <div class="modal-header">
+      	<a class="view prev_btn" data-toggle="tooltip" data-dismiss="modal" data-placement="top" title="" data-original-title="Back to Report">
+			<i class="las la-chevron-left"></i>
+		</a>
+        <h5 class="modal-title right-modal-title text-center" id="modal-title-right"> &nbsp; </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-content-result" id="content-result">
+        	
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
 
 <script type="text/javascript">
-    var loaderModal = '<div class="panel"><div class="panel-body"><p style="text-align:center;margin:10px;"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>';
+    var loaderModal = '<div class="panel"><div class="panel-body"><p style="text-align:center;margin:10px;" class="loader-p"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>';
     $(".overlay-modal, .item_details_dialog").css("opacity", 0);
     /*Remove inline styles*/
     $(".overlay-modal, .item_details_dialog").removeAttr("style");
@@ -682,11 +747,34 @@
           $('body').css('overflow', 'unset');
         });
     });
+    function selectedGroup(e, body){
+    	var part = e;
+    	var input = @json($urldata);
+    	var pareUrl = input+part;
+    	$("#modal-title-right").html(' '+body+' Salary Details');
+    	$('#right_modal_lg').modal('show');
+    	$("#content-result").html(loaderModal);
+    	$.ajax({
+            url: '/hr/reports/group-salary-sheet-details?'+pareUrl,
+            data: {
+                body: body
+            },
+            type: "GET",
+            success: function(response){
+            	// console.log(response);
+                if(response !== 'error'){
+                	setTimeout(function(){
+                		$("#content-result").html(response);
+                	}, 1000);
+                }else{
+                	console.log(response);
+                }
+            }
+        });
 
+    }
     function printDiv(divName)
     {   
-        
-
         var mywindow=window.open('','','width=800,height=800');
         
         mywindow.document.write('<html><head><title>Print Contents</title>');

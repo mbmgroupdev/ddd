@@ -30,10 +30,6 @@
       padding: 15px 15px;
       padding-bottom: 8px;
     }
-    .modal-h3{
-      line-height: 15px !important;
-    }
-    
     
   </style>
 @endpush
