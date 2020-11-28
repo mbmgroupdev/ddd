@@ -277,9 +277,15 @@
                <a href="{{ url('hr/operation/salary-sheet') }}"><i class="las la-file-invoice-dollar"></i>Salary Disburse</a>
             </li>
             @endif
-             @if($user->can('Payslip') || $user->hasRole('Super Admin'))
+            @if($user->can('Payslip') || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'payslip') active @endif">
                <a href="{{ url('hr/operation/payslip') }}"><i class="las la-address-card"></i>Payslip</a>
+            </li>
+            @endif
+
+            @if($user->can('Tiffin/Dinner') || $user->hasRole('Super Admin'))
+            <li class="@if($segment3 == 'tiffin-dinner') active @endif">
+               <a href="{{ url('hr/operation/tiffin-dinner') }}"><i class="las la-address-card"></i>Tiffin/Dinner Bill</a>
             </li>
             @endif
            {{-- @if($user->can('Bonus Sheet') || $user->hasRole('Super Admin'))
@@ -452,6 +458,10 @@
             
             <li class="@if($segment3 == 'late_count_default') active @endif"><a  href="{{ url('hr/setup/late_count_default') }}"><i class="las la-comment-dollar"></i>Late Count Default</a></li>
             <li class="@if($segment3 == 'late_count_customize') active @endif"><a  href="{{ url('hr/setup/late_count_customize') }}"><i class="las la-comment-dollar"></i>Late Count Customize</a></li>
+            @endif
+            @if($user->can('Bill Setup') || $user->hasRole('Super Admin'))
+            
+            <li class="@if($segment3 == 'bill-setting') active @endif"><a  href="{{ url('hr/setup/bill-setting') }}"><i class="las la-comment-dollar"></i>Tiffin/Dinner Bill</a></li>
             @endif
             @if($user->can('Loan Setup') || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'loan_type') active @endif"><a  href="{{ url('hr/setup/loan_type') }}"><i class="las la-comment-dollar"></i>Loan</a></li>

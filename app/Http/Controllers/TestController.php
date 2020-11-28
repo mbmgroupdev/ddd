@@ -1152,14 +1152,13 @@ class TestController extends Controller
 
     public function check()
     {
-        $educationDegree = DB::table('hr_education_degree_title')->pluck('education_degree_title', 'id');
-        $educations = DB::table('hr_education AS e')
-        ->select(DB::raw('t.*'))
-        ->from(DB::raw('(SELECT * FROM hr_education ORDER BY id DESC) t'))
-        ->groupBy('t.education_as_id')
-        ->pluck('education_degree_id_1', 'education_as_id');
-
-        dd($educations);
+        $asId = 10242;
+        $unit = 1;
+        $date = '2020-10-12';
+        $shiftNight = 0;
+        $designationId = 363;
+        $test = EmployeeHelper::dailyBillCalculation($unit, $date, $asId, $shiftNight, $designationId);
+        dd($test);
         // $start = date('Y-m-d H:s' ,strtotime('2020-11-15 08:00'));
         // $end = date('Y-m-d H:s' ,strtotime('2020-11-15 16:00'));
         // // return $end;

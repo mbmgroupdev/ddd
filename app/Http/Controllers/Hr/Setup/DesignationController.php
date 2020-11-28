@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Hr\Designation;
 use App\Models\Hr\EmpType;
-use Validator,DB, ACL, Cache;
+use Validator,DB, ACL, Cache, stdClass;
 
 class DesignationController extends Controller
 {
@@ -167,6 +167,20 @@ class DesignationController extends Controller
             Cache::forget('designation');
             return redirect('/hr/setup/designation')->with('success', "Successfuly updated Designation");
         }
+    }
+
+    public function searchDesignation(Request $request)
+    {
+        $input = $request->all();
+        $getDesignation = Designation::where('hr_designation_name', 'LIKE', '%'.$input['keyvalue'].'%')->limit(10)->get();
+        $data = array();
+        foreach ($getDesignation as $designation) {
+            $des = new stdClass();
+            $des->id = $designation['hr_designation_id'];
+            $des->name = $designation['hr_designation_name'];
+            $data[] = $des;
+        }
+        return $data;
     }
 
 }

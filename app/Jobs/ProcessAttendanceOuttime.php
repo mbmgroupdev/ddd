@@ -72,7 +72,8 @@ class ProcessAttendanceOuttime implements ShouldQueue
                 'hr_shift.hr_shift_start_time',
                 'hr_shift.hr_shift_end_time',
                 'hr_shift.hr_shift_break_time',
-                'hr_shift.hr_shift_night_flag'
+                'hr_shift.hr_shift_night_flag',
+                'hr_shift.bill_eligible'
             ])
             ->leftJoin('hr_shift', function($q) use($day_num, $unitId) {
                 $q->on('hr_shift.hr_shift_name', 'hr_shift_roaster.'.$day_num);
@@ -87,6 +88,7 @@ class ProcessAttendanceOuttime implements ShouldQueue
                 $cShifEnd = $shift->hr_shift_end_time;
                 $cBreak = $shift->hr_shift_break_time;
                 $nightFlag = $shift->hr_shift_night_flag;
+                $billEligible = $shift->bill_eligible;
             }
             else{
                 $cShifStartTime = strtotime(date("H:i", strtotime($getEmployee->shift['hr_shift_start_time'])));
@@ -94,6 +96,7 @@ class ProcessAttendanceOuttime implements ShouldQueue
                 $cShifEnd = $getEmployee->shift['hr_shift_end_time'];
                 $cBreak = $getEmployee->shift['hr_shift_break_time'];
                 $nightFlag = $getEmployee->shift['hr_shift_night_flag'];
+                $billEligible = $getEmployee->shift['bill_eligible'];
             }
 
             //late count
@@ -133,6 +136,14 @@ class ProcessAttendanceOuttime implements ShouldQueue
                     'late_status' => $late
                 ]);
 
+                // bill announce 
+
+                if($getEmployee->as_ot == 1 && $billEligible != null){
+                    if($cOut > date("H:i", strtotime($billEligible))){
+
+                        $bill = EmployeeHelper::dailyBillCalculation($getEmployee->as_unit_id, $getEmpAtt->in_date, $getEmpAtt->as_id, $nightFlag, $getEmployee->as_designation_id);
+                    }
+                }
                 
                 $yearMonth = $year.'-'.$month; 
                 if($month == date('m')){
