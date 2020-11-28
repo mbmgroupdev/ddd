@@ -1770,6 +1770,7 @@ class EmployeeController extends Controller
                 'dg.hr_designation_name',
                 'dg.hr_designation_name_bn',
                 's.hr_section_name_bn',
+                's.hr_section_name',
                 'm.med_blood_group',
                 'ad.emp_adv_info_per_upz',
                 'ad.emp_adv_info_per_dist',

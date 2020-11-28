@@ -39,6 +39,8 @@ class TestController extends Controller
         $disctrict = district_by_id();
         $upzilla = upzila_by_id();
 
+
+
         $data = DB::table('hr_as_basic_info as b')
         ->leftJoin('hr_benefits as ben','ben.ben_as_id','b.associate_id')
         ->leftJoin('hr_as_adv_info as adv','adv.emp_adv_info_as_id','b.associate_id')

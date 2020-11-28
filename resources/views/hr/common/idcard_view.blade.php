@@ -2,31 +2,32 @@
     $position = ['0','1','2','3','4','5','6','7','8','9', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     $bnValue  = ['০','১','২','৩','৪','৫','৬','৭','৮','৯', 'জানুয়ারী', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন', 'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর ', 'ডিসেম্বর']; 
 @endphp
-<style type="text/css" media="print">
+<style type="text/css" media="all">
     .pagebreak{page-break-after: always;}
+    div,p{line-height: 100%;}
 </style>
 @if($type == "en")
     @php $chunkedEm = array_chunk($employees->toArray(), 8); @endphp
     @foreach($chunkedEm as $key1 => $emps)
         @foreach($emps as $key =>$associate )
         <div style="float:left;margin: 20px 10px;width: 200px;height: 290px;background:white;border:1px solid #333;margin-right: 0;">
-            <div style="width:100%;height:10px"></div>
             <div style="width:100%;height:30px;padding:5px">
                 <div style="float:left;width:65%;line-height:16px;font-size:12px;font-weight:700">{{$associate->hr_unit_name}}</div>
                 <div style="float:left;width:35%"><img style="width:55px;height:28px;display:block" src="{{url(!empty($associate->hr_unit_logo)?$associate->hr_unit_logo:'')}}" alt="Logo"></div>
             </div>
-            <div style="width:100%;height:80px;margin:0 0 10px 0">
+            <div style="width:100%;height:80px;margin:0 0 5px 0">
                 <img style="margin:0px auto;width:75px;height:75px;display:block" src="{{url(emp_profile_picture($associate))}}" >
             </div>
             <div style="height:50px;text-align:center">
-                <strong style="display:block;font-size:12px;font-weight:700">{{$associate->as_name}}</strong>
+                <strong style="display:block;font-size:11px;font-weight:700">{{$associate->as_name}}</strong>
                 <span style="display:block;font-size:9px">{{$associate->hr_designation_name}}</span>
-                <strong style="display:block;font-size:9px;">{{$associate->hr_department_name}}</strong>
+                <strong style="display:block;font-size:9px;">Sec: {{$associate->hr_section_name}}</strong>
+                <strong style="display:block;font-size:9px;">Dept: {{$associate->hr_department_name}}</strong>
                 <span style="display:block;font-size:9px">DOJ: {{date("d-M-Y", strtotime($associate->as_doj))}}</span>
                 <span style="display:block;font-size:9px">Previous ID: {{$associate->as_oracle_code}}</span>
             </div>
             <br>
-            <div style="width:100%;height:40px;padding:10px 5px 0 10px">
+            <div style="width:100%;height:40px;padding:20px 5px 0 10px">
                 <strong style="display:block;font-size:12px">
                     @php
                         $strId = (!empty($associate->associate_id)?
@@ -35,12 +36,29 @@
                     @endphp
                     {!!$strId!!}
                 </strong>
-                <strong style="display:block;font-size: 11px;">Blood Group: {{$associate->med_blood_group}}</strong>
+                <strong style="display:block;font-size: 10px;">Blood Group: {{$associate->med_blood_group}}</strong>
             </div>
             <div style="padding: 0px 10px 5px 10px;">
                 <br>
                 <div class="col-xs-12 no-padding no-margin">
-                <span style="float:right;display:inline-block;font-size:9px">Authorized Signature</span>
+                <span style="float:right;display:inline-block;font-size:9px"></span>
+                </div>
+                <div style="display: flex">
+                    <div style="width: 50%;">
+                        <br><br>
+                        <strong style="float:left;display:inline-block;font-size:9px">শ্রমিকের স্বাক্ষর</strong>
+                    </div>
+                    <div style="text-align: center;width: 50%;padding-top: 14px;">
+                        @if($associate->hr_unit_authorized_signature)
+                        <img style="height: 30px;    padding-left: 10px;" src="{{asset($associate->hr_unit_authorized_signature)}}">
+                        @else
+
+                        <br>
+                        <br>
+                        @endif
+                        <strong style="float:right;display:inline-block;font-size:9px">
+                            Authorized Signature</strong>
+                    </div>
                 </div>
             </div>
         </div>
@@ -55,7 +73,6 @@
         @foreach($emps as $key =>$associate )
             
             <div style="float:left;margin: 20px 10px;width: 200px;height: 290px;background:white;border:1px solid #333;">
-                <div style="width:100%;height:10px"></div>
                 <div style="width:100%;height:30px;padding:5px">
                     <div style="float:left;width:65%;line-height:16px;font-size:12px;font-weight:700">{{$associate->hr_unit_name_bn}}</div>
                     <div style="float:left;width:35%"><img style="width:55px;height:28px;display:block" src="{{url(!empty($associate->hr_unit_logo)?$associate->hr_unit_logo:'')}}" alt="Logo"></div>
@@ -64,14 +81,15 @@
                     <img style="margin:0px auto;width:75px;height:75px;display:block" src="{{url(emp_profile_picture($associate))}}" alt="Logo">
                 </div>
                 <div style="height:50px;text-align:center">
-                    <strong style="display:block;font-size:11px;font-weight:700">নামঃ {{($associate->hr_bn_associate_name?$associate->hr_bn_associate_name:null)}}</strong>
-                    <strong style="display:block;font-size:10px">পদবীঃ {{$associate->hr_designation_name_bn?$associate->hr_designation_name_bn:null}}</strong>
-                    <strong style="display:block;font-size:10px;">সেকশনঃ {{($associate->hr_section_name_bn?$associate->hr_section_name_bn:null)}}</strong>
-                    <strong style="display:block;font-size:10px">যোগদানের তারিখ: 
+                    <strong style="display:block;font-size:10px;font-weight:700"> {{($associate->hr_bn_associate_name?$associate->hr_bn_associate_name:null)}}</strong>
+                    <strong style="display:block;font-size:9px">পদবীঃ {{$associate->hr_designation_name_bn?$associate->hr_designation_name_bn:null}}</strong>
+                    <strong style="display:block;font-size:9px;">সেকশনঃ {{($associate->hr_section_name_bn?$associate->hr_section_name_bn:null)}}</strong>
+                    <strong style="display:block;font-size:9px;">বিভাগ {{($associate->hr_department_name_bn?$associate->hr_department_name_bn:null)}}</strong>
+                    <strong style="display:block;font-size:9px">যোগদানের তারিখ: 
                         {{str_replace($position, $bnValue, (date("d M, Y", strtotime($associate->as_doj))))}} ইং
 
                     </strong>
-                    <strong style="display:block;font-size:10px;">পূর্বের আইডিঃ {{($associate->as_oracle_code?$associate->as_oracle_code:null)}}</strong>
+                    <strong style="display:block;font-size:9px;">পূর্বের আইডিঃ {{($associate->as_oracle_code?$associate->as_oracle_code:null)}}</strong>
                     
                 </div>
                 <div style="width:100%;height:40px;padding:10px 5px 0px 10px">
@@ -96,8 +114,11 @@
                         <div style="text-align: center;width: 50%;padding-top: 14px;">
                             @if($associate->hr_unit_authorized_signature)
                             <img style="height: 30px;    padding-left: 10px;" src="{{asset($associate->hr_unit_authorized_signature)}}">
-                            @endif
+                            @else
+
                             <br>
+                            <br>
+                            @endif
                             <strong style="float:right;display:inline-block;font-size:9px">
                                 মালিক/ব্যবস্থাপক</strong>
                         </div>

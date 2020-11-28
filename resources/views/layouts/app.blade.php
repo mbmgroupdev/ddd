@@ -15,7 +15,7 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
-    <link rel="stylesheet" href="{{ asset('assets/css/all.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/all.css') }}" media="all">
     @stack('css')
     {{-- Custom CSS --}}
     <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">

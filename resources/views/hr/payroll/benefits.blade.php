@@ -275,6 +275,7 @@
 
         $(document).on('click','#pay_button', function()
         {
+            
             $('.app-loader').show();
             var notice_pay = 0;
             if ($('input#notice_pay').is(':checked')) {

@@ -81,13 +81,13 @@
                                 <th>Maximum</th>
                                 <th>Average</th>
                             </tr>
-                            @foreach($data as $key => $ot)
+                            @foreach($otdata as $key => $ot)
                                 <tr>
-                                    <td>{{$ot->in_date}}</td>
-                                    <td style="text-align: center;">{{$ot->emp}}</td>
-                                    <td style="text-align: right;"> {{numberToTimeClockFormat($ot->total_ot)}}</td>
-                                    <td style="text-align: center;"> {{numberToTimeClockFormat($ot->maximum)}}</td>
-                                    <td style="text-align: center;"> {{numberToTimeClockFormat($ot->avg)}}</td>
+                                    <td>{{$key}}</td>
+                                    <td style="text-align: center;">{{$ot['emp']}}</td>
+                                    <td style="text-align: right;"> {{numberToTimeClockFormat($ot['ot_hour'])}}</td>
+                                    <td style="text-align: center;"> {{numberToTimeClockFormat($ot['max'])}}</td>
+                                    <td style="text-align: center;"> {{numberToTimeClockFormat($ot['avg'])}}</td>
                                 </tr>
                             @endforeach
                         </table>
