@@ -72,8 +72,5 @@ class RetirementPolicyContorller extends Controller
 
     }
 
-    public function saveData(Request $request){
-    	dd($request->all());
-    }
 
 }

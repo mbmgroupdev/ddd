@@ -1,4 +1,4 @@
-@extends('hr.layout')
+\@extends('hr.layout')
 @section('title', 'Maternity Leave Application')
 @section('main-content')
 <div class="main-content">
@@ -54,7 +54,11 @@
                                  </tr>
                                  <tr>
                                      <td><i class="field-title">Age</i></td>
-                                     <td class="field-data">: {{ $employee->as_dob->age }} Years</td>
+                                     <td class="field-data">: 
+                                        @if($employee->as_dob)
+                                        {{ $employee->as_dob->age }} Years
+                                        @endif
+                                    </td>
                                  </tr>
                                  <tr>
                                      <td><i class="field-title">Husband Name</i></td>

@@ -22,7 +22,6 @@ class ReportController extends Controller
     	->get()
     	->groupBy('as_line_id');
 
-    	dd($lines);
 
     	return view('hr.line_report', compact('lines'));
     }
@@ -79,39 +78,69 @@ class ReportController extends Controller
         $monthFormat = Carbon::createFromFormat("Y-m", $month);
         $start_date = $monthFormat->copy()->firstOfMonth();
         $end_date = $monthFormat->copy()->lastOfMonth()->format('Y-m-d');
+        $empAs = auth()->user()->permitted_asid();
 
-        $data = DB::table('hr_attendance_mbm')
-                ->select(
-                    DB::raw('sum(ot_hour) as total_ot'),
-                    DB::raw('max(ot_hour) as maximum'),
-                    DB::raw('count(*) as emp'),
-                    DB::raw('round((sum(ot_hour)/count(*)),2) as avg'),
-                    'in_date'
-                )
-                ->where('in_date','>=',$start_date->format('Y-m-d'))
-                ->where('in_date','<=',$end_date)
-                ->where('ot_hour','>',0)
-                ->groupBy('in_date')
-                ->get()
-                ->keyBy('in_date');
+        $att_table = [1,2,3,8];
+
+
+        foreach ( $att_table as $key => $u) {
+            if(in_array($u, auth()->user()->unit_permissions())){
+
+                $table = get_att_table($u);
+
+                $data[$u] = DB::table($table)
+                    ->select(
+                        DB::raw('sum(ot_hour) as total_ot'),
+                        DB::raw('max(ot_hour) as maximum'),
+                        DB::raw('count(*) as emp'),
+                        'in_date'
+                    )
+                    ->where('in_date','>=',$start_date->format('Y-m-d'))
+                    ->where('in_date','<=',$end_date)
+                    ->whereIn('as_id',$empAs)
+                    ->where('ot_hour','>',0)
+                    ->groupBy('in_date')
+                    ->get()
+                    ->keyBy('in_date');
+            }
+        }
+
+
+        
         
         $totalday = date('d', strtotime($end_date));
         $chart_data = [];
+        $otdata = [];
+        
         for ($i=0; $i < $totalday; $i++) { 
             $otday = $start_date->copy()->addDays($i)->format('Y-m-d');
             $thisday = $start_date->copy()->addDays($i)->format('d M');
-            if(isset($data[$otday])){
-                $thisOT = $data[$otday]->maximum??0;  
-            }else{
-                $thisOT = 0;
+            $maxOT = 0;
+            $employee = 0;
+            $ot = 0;
+            $avg = 0;
+            foreach ($data as $key => $u) {
+                if(isset($u[$otday])){
+                    $employee += $u[$otday]->emp??0; 
+                    $ot += $u[$otday]->total_ot??0; 
+                    if($u[$otday]->maximum > $maxOT){
+                        $maxOT = $u[$otday]->maximum??0;  
+                    }
+                }
             }
+
+            $otdata[$i]['emp'] = $employee;
+            $otdata[$i]['ot_hour'] = $ot;
+            $otdata[$i]['max'] = $maxOT;
+            $otdata[$i]['avg'] = round($ot/($employee == 0?1:$employee),2);
+            
             $chart_data[] = array(
                 'Date' => $thisday,
-                'Avg'  => $thisOT
+                'Avg'  => $maxOT
             );
         }
 
-        return view('common.monthly_ot', compact('chart_data','data'));
+        return view('common.monthly_ot', compact('chart_data','otdata'));
 
     }
 

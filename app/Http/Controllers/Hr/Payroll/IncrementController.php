@@ -81,6 +81,6 @@ class IncrementController extends Controller
     				->get();
 
 
-    	dd($eligible,$no_associate);
+    	return ($eligible,$no_associate);
     }
 }

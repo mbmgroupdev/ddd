@@ -92,12 +92,9 @@ class MaternityPaymentController extends Controller
 	            })
 	            ->addColumn('action', function($data){
 	            	$buttons = '<div class="center">';
-	            	if($data->medical){
 	            		$buttons .= '<a class="btn btn-sm btn-primary" href="'.url('hr/operation/maternity-leave/'.$data->id).'"><i class="las la-eye"></i></a>';
-	            	}else{
-	            		$buttons .= ' <a class="btn btn-sm btn-success" href=""><i class="las la-pen"></i></a>';
-	            	}
-	            	$buttons .= ' <a class="btn btn-sm btn-primary" href="'.url('hr/operation/maternity-medical-process/'.$data->id).'"><i class="las la-stethoscope"></i></a>';
+	            	
+	            		$buttons .= ' <a class="btn btn-sm btn-primary" href="'.url('hr/operation/maternity-medical-process/'.$data->id).'"><i class="las la-stethoscope"></i></a>';
 	            	
 	            		
 	            	if($data->status == 'Approved'){

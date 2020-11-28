@@ -783,11 +783,7 @@
             }
             
          });
-        window.addEventListener('beforeunload', function (e) { 
-            e.preventDefault(); 
-            alert('hi');
-            e.returnValue = ''; 
-        }); 
+         
       </script>
    @endpush
 @endsection
