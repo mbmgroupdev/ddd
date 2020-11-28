@@ -98,6 +98,7 @@ class HomeController extends Controller
         $exitCode = Artisan::call('route:clear');
         $exitCode = Artisan::call('config:cache');
         $exitCode = Artisan::call('route:cache');
+        $exitCode = Artisan::call('clear-compiled');
         $exitCode = Artisan::call('optimize');
         return 'DONE'; //Return anything
     }

@@ -1110,7 +1110,7 @@ Route::get('hr/setup/retirement/get_employee_details', 'Hr\Setup\RetirementPolic
 
 	Route::get('hr/reports/attendance_summary_report', 'Hr\Reports\AttendanceReportController@showForm2')->middleware(['permission:Attendance Summary Report']);
 
-	Route::get('hr/reports/get_att_summary', 'Hr\Reports\AttendanceReportController@attSummaryReport')->middleware(['permission:Attendance Summary Report']);
+	Route::get('hr/reports/get_att_summary_report', 'Hr\Reports\AttendanceReportController@attSummaryReport')->middleware(['permission:Attendance Summary Report']);
 	Route::get('hr/reports/get-att-emp', 'Hr\Reports\AttendanceReportController@getAttEmployee')->middleware(['permission:Attendance Summary Report']);
 
 	Route::get('hr/reports/get-daily-att-excel', 'Hr\Reports\AttendanceReportController@getAttEmployee');
@@ -1468,3 +1468,9 @@ Route::get('hr/reports/employee-daily-attendance', 'TestController@exportReport'
 
 // test route
 Route::get('hr/check-report', 'TestController@check');
+
+
+Route::group(['prefix' => 'hr/reports/summary','namespace' => 'Hr\Reports'], function(){
+		Route::get('/', 'SummaryReportController@index');
+		Route::get('/report', 'SummaryReportController@attendanceReport');
+});

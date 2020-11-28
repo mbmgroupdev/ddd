@@ -83,7 +83,7 @@ class User extends Authenticatable
     {
         return Employee::whereIn('as_unit_id', $this->unit_permissions())
             ->whereIn('as_location', $this->location_permissions())
-            ->whereIn('as_status',  [1,2,3,4,5,6])
+            ->whereIn('as_status',  [1,2,3,4,5,6,7,8])
             ->pluck('associate_id');
     }
 
@@ -91,7 +91,7 @@ class User extends Authenticatable
     {
         return Employee::whereIn('as_unit_id', $this->unit_permissions())
             ->whereIn('as_location', $this->location_permissions())
-            ->where('as_status', 1)
+            ->where('as_status', [1,2,3,4,5,6,7,8])
             ->pluck('as_id');
     }
 

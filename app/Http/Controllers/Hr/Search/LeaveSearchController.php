@@ -744,7 +744,6 @@ class LeaveSearchController extends Controller
                 ->groupBy("leave_ass_id")
                 ->get();
         }
-        dd($leaves);
         
 
         // $data = (array) $data;

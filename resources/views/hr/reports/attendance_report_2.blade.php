@@ -145,7 +145,7 @@
             btn.attr("disabled",true);
             $("#generate-report").html(loader);
             $.ajax({
-                url : "{{ url('hr/reports/get_att_summary') }}",
+                url : "{{ url('hr/reports/get_att_summary_report') }}",
                 type: 'get',
                 data: {unit : unit, date : date},
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
