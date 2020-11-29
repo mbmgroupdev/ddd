@@ -39,14 +39,14 @@
                         <div class="col-sm-3">
                             <div class="form-group has-required has-float-label emp select-search-group">
                                 
-                                {{ Form::select('associate',  [Request::get('associate') => Request::get('associate')], Request::get('associate'), ['placeholder'=>'Select Associate\'s ID', 'id'=>'associate', 'class'=> 'associates form-control', 'data-validation'=>'required']) }}
+                                {{ Form::select('associate',  [Request::get('associate') => Request::get('associate')], Request::get('associate'), ['placeholder'=>'Select Associate\'s ID', 'id'=>'associate', 'class'=> 'allassociates form-control', 'data-validation'=>'required']) }}
                                 <label >Employee</label>
                             </div>
                         </div>
-                        <div class="col-sm-2">
+                        <div class="col-sm-2 operation">
                             
                             <div class="form-group has-required has-float-label select-search-group">
-                                <select id="benefit_on" name="benefit_on" class="form-control" required="required">
+                                <select id="benefit_on" name="benefit_on" class="form-control operation" required="required">
                                    <option value="">Select Type</option>
                                    <option value="on_left">Left</option>
                                    <option value="on_resign">Resign</option>
@@ -58,10 +58,10 @@
                                 <label for="benefit_on">Benefit Type</label>
                             </div>
                         </div>
-                        <div  id="death_reason_div" class="col-sm-3" style="display: none;">
+                        <div  id="death_reason_div" class="col-sm-3 " style="display: none;">
                             <div  class="form-group has-required has-float-label select-search-group" >
                                 
-                                <select id="death_reason"  name="death_reason" class="form-control death_reason"  required="required">
+                                <select id="death_reason"  name="death_reason" class="form-control death_reason operation"  required="required">
                                    <option value="none">Select One</option>
                                    <option value="natural_death" >Natural Death on Duty</option>
                                    <option value="duty_accidental_death">On Duty/On Duty Accidental Death </option>
@@ -74,25 +74,25 @@
                         <div id="suspension_days_div" class="col-sm-2" style="display: none;">
                             <div class="form-group has-required has-float-label" >
                                 
-                                <input type="text" class="form-control" name="suspension_days" id="suspension_days" value="0" required="required">
+                                <input type="text" class="form-control operation" name="suspension_days" id="suspension_days" value="0" required="required">
                                 <label >Suspension Days</label>
                             </div>
                         </div>
                         
                         <div class="col-sm-2">
                             <div class="form-group has-float-label has-required" data-toggle="tooltip" data-placement="top" title="" data-original-title="Employee salary will be calculated based on this date! Date suggestion will be the last working day (If last leave date greater than attendance date then last leave date). If any holiday after last attendance date than that holiday will be last working day.">
-                                <input id="status_date" type="date" name="status_date" value="{{date('Y-m-d')}}" class="form-control" required  >
-                                <label for="status_date">Effective Date</label>
+                                <input id="status_date" type="date" name="status_date" value="{{date('Y-m-d')}}" class="form-control operation" required  >
+                                <label for="status_date operation">Effective Date</label>
                             </div>
                         </div>
                         <div id="notice_pay_div" class="col-sm-2 pt-2" style="display: none;">
-                            <div class="custom-control custom-checkbox custom-checkbox-color-check custom-control-inline">
+                            <div class="custom-control custom-checkbox custom-checkbox-color-check custom-control-inline operation">
                               <input type="checkbox" class="custom-control-input bg-primary pt-1" id="notice_pay" value="1">
                               <label class="custom-control-label" style="font-size: 14px;" for="notice_pay"> Notice Pay</label>
                             </div>
                         </div>
                         <div class="col-sm-2">
-                            <button type="button" class="btn btn-primary" id="pay_button"  disabled="disabled">Proceed</button>
+                            <button type="button" class="btn btn-primary operation" id="pay_button"  disabled="disabled">Proceed</button>
                         </div>
                     </div>
                     
@@ -166,6 +166,11 @@
 <script type="text/javascript">
     $(document).ready(function(){
 
+        var associate = '{{request()->get('associate')}}';
+        if(associate){
+            employe_info(associate);
+        }
+
         $('#benefit_on').on('change', function(){     
 
             var category = $(this).val();
@@ -200,6 +205,10 @@
 
         $('#associate').on('change', function(){
             var emp_id = $(this).val();
+            employe_info(emp_id);
+        });
+
+        function employe_info(emp_id) {
             if(emp_id != ""){
                 $('.app-loader').show();
                 var url = '{{url('')}}';
@@ -230,13 +239,16 @@
                         $('#enjoyed_earn_leave').text(data['enjoyed']);
                         $('#remained_earn_leave').text(data['remain']);
                         
-
+                        $('#status_date').val(data.effective_date);
 
                         if(data['already_given'] == 'yes'){
                             $('#benefit-voucher').html(data['benefit']);
+                            $('#salary-voucher').html(data['salary_page']);
+                            $('.operation').hide();
 
                         }else{
                             $('#benefit-voucher').html(data['jobcard']);
+                            $('.operation').show();
                         }
                         $('.app-loader').hide();
                     },
@@ -271,7 +283,7 @@
                 $('.app-loader').hide();
             }
 
-        });
+        }
 
         $(document).on('click','#pay_button', function()
         {
@@ -281,6 +293,7 @@
             if ($('input#notice_pay').is(':checked')) {
                 notice_pay = 1;
             }
+
             $.ajax({
                 url: '{{url('hr/payroll/save_benefit_data')}}',
                 type: 'get',
@@ -292,7 +305,6 @@
                     death_reason    : $('#death_reason').val(),
                     suspension_days : $('#suspension_days').val(),
                     notice_pay      : notice_pay
-
                 },
                 success: function(data){
                     $('#benefit-voucher').html(data.benefit);
@@ -300,6 +312,10 @@
                     $('.app-loader').hide();
                 },
                 error: function(data){
+                    $.notify('failed...','error');
+                        $('#benefit-voucher').html('');
+                        $('#salary-voucher').html('');
+                        $('.app-loader').hide();
                 }
             });
 

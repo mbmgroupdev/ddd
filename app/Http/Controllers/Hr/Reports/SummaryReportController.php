@@ -141,7 +141,7 @@ class SummaryReportController extends Controller
                     $totalOtHour =  array_sum(array_column($attData->get()->toArray(),'groupOt'));
                 }else{
                     $attData->select('emp.as_id', 'emp.as_gender', 'emp.as_shift_id', 'emp.as_oracle_code', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_contact', 'emp.as_section_id','emp.as_subsection_id', DB::raw('sum(a.ot_hour) as ot_hour'), DB::raw('sum(a.ot_hour*(bn.ben_basic/104)) as ot_amount'),DB::raw('count(  a.in_date) as days'))->orderBy('a.ot_hour','desc')->groupBy('emp.as_id');
-                    $totalOtHour = $attData->sum("ot_hour");
+                    $totalOtHour = array_sum(array_column($attData->get()->toArray(),'ot_hour'));
                     
                 }
                 
@@ -192,6 +192,7 @@ class SummaryReportController extends Controller
                 $attData->orderBy('emp.as_section_id', 'asc');
             } 
             $getEmployee = $attData->get();
+
 
             if($input['report_format'] == 1 && $input['report_group'] != null){
                 $totalEmployees = array_sum(array_column($getEmployee->toArray(),'total'));

@@ -1,3 +1,4 @@
+
 <div id="payment_slip_data" style="font-size: 9px;">
         <button type="button" onclick="printMe('partial_data')" class="btn btn-warning" title="Print">
             <i class="fa fa-print"></i> 
@@ -55,7 +56,7 @@
                 </tr>
                 <tr>
                     <td>যোগদানের তারিখ</td>
-                    <td>{{str_replace($en, $bn, $employee->as_doj->format('Y-m-d'))}}</td>
+                    <td>{{str_replace($en, $bn, $employee->as_doj->format('d-m-Y'))}} ইং</td>
                     <td></td>
                 </tr>
                 <tr>
@@ -108,7 +109,7 @@
                     <td style="text-align: right;">{{eng_to_bn(round(($salary['absent_deduct']),2))}}</td>
                 </tr>
                 <tr>
-                    <td>স্ট্যাম্প এবং মজুরী সমন্বয় বাবদ</td>
+                    <td>মজুরী সমন্বয় বাবদ</td>
                     <td></td>
                     <td></td>
                     <td style="text-align: right;">{{eng_to_bn(round(($salary['deduct']),2))}}</td>
@@ -150,7 +151,7 @@
                     <td style="text-align: center;">
                         <br><br><br><br>
                         <hr>
-                        হিসাবরক্ষন বিভাগ 
+                        হিসাব বিভাগ 
                     </td>
                     <td style="text-align: center;">
                        <br><br><br><br>
@@ -174,7 +175,7 @@
                     <td>অনুলিপিঃ</td>
                 </tr>
                 <tr>
-                    <td>১। একাউন্টস বিভাগ</td>
+                    <td>১। হিসাব বিভাগ</td>
                 </tr>
                 <tr>
                     <td>২। ব্যাক্তিগত নথি</td>

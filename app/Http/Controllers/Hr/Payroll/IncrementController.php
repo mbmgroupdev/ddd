@@ -80,7 +80,5 @@ class IncrementController extends Controller
     				->whereNotIn('associate_id',$no_associate)
     				->get();
 
-
-    	return ($eligible,$no_associate);
     }
 }

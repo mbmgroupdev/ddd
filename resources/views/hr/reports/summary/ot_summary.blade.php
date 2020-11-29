@@ -205,7 +205,7 @@
 			            	</tr>
 			            	@php 
 			            		$totalOt += $employee->ot_hour; 
-			            		$totalPay += $employee->ot_amount; 
+			            		$totalPay += ceil($employee->ot_amount); 
 			            	@endphp
 			            	@else
 				            	@if($group == $employee->$format)
@@ -234,7 +234,7 @@
 				            	</tr>
 				            	@php 
 				            		$totalOt += $employee->ot_hour; 
-				            		$totalPay += $employee->ot_amount; 
+				            		$totalPay += ceil($employee->ot_amount); 
 				            	@endphp
 				            	@endif
 			            	@endif

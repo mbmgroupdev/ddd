@@ -219,7 +219,7 @@ class JobCardController extends Controller
                 if($holidayRoaster['comment'] != null) {
                   $attendance[$i]['present_status'] .= ' - '.$holidayRoaster['comment'];
                 }
-                $attendance[$i]['day_status'] = "P";
+                $attendance[$i]['day_status'] = "W";
               }
               if($holidayRoaster['remarks'] == 'OT') {
                 $attendance[$i]['day_status'] = isset($getAttendance[$thisDay])?'P':'';
