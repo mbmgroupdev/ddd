@@ -124,9 +124,9 @@ class Employee extends Model
 
     public function get_shift_name()
     {
-        $shifts = Shift::select('hr_shift_id','hr_shift_name','hr_shift_unit_id')->latest()->get()->groupBy('hr_shift_name','hr_shift_unit_id')->toArray();
+        return Shift::select('hr_shift_id','hr_shift_name','hr_shift_unit_id')->latest()->get()->groupBy('hr_shift_name','hr_shift_unit_id')->toArray();
 
-        dd($shifts);
+        // dd($shifts);
     }
 
     public function salary()

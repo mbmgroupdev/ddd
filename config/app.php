@@ -178,7 +178,8 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        Yoeunes\Toastr\ToastrServiceProvider::class
+        Yoeunes\Toastr\ToastrServiceProvider::class,
+        Maatwebsite\Excel\ExcelServiceProvider::class,
 
     ],
 
@@ -237,6 +238,7 @@ return [
         // custom
         'Custom'  => App\Helpers\Custom::class,
         'EmployeeHelper'  => App\Helpers\EmployeeHelper::class,
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
 
     ],
 

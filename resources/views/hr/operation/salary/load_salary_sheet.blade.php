@@ -167,7 +167,7 @@
                                             <td style="text-align: center;">{{ Custom::engToBnConvert($j) }}</td>
                                             <td>
                                                 <p style="margin:0;padding:0;">{{ $list->hr_bn_associate_name }}</p>
-                                                <p style="margin:0;padding:0;">{{ Custom::engToBnConvert($list->as_doj) }}</p>
+                                                <p style="margin:0;padding:0;">{{ Custom::engToBnConvert(date('Y-m-d', strtotime($list->as_doj))) }}</p>
                                                 <p style="margin:0;padding:0;">
                                                     {{ $designation[$list->as_designation_id]['hr_designation_name_bn']}}
                                                     @if($list->as_ot == 0)

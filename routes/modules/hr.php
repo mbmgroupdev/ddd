@@ -1145,10 +1145,11 @@ Route::get('hr/setup/retirement/get_employee_details', 'Hr\Setup\RetirementPolic
 	// monthly report
 	Route::get('hr/reports/monthly-salary', 'Hr\Reports\MonthlyActivityReportController@salary');
 	Route::get('hr/reports/monthly-salary-report', 'Hr\Reports\MonthlyActivityReportController@salaryReport');
+	Route::get('hr/reports/monthly-salary-excel', 'Hr\Reports\MonthlyActivityReportController@salaryReportExcel');
 	Route::get('hr/reports/employee-yearly-salary-modal', 'Hr\Reports\MonthlyActivityReportController@salaryReportModal');
 	Route::get('hr/reports/employee-salary-modal', 'Hr\Reports\MonthlyActivityReportController@empSalaryModal');
 
-
+	Route::get('/hr/reports/group-salary-sheet-details', 'Hr\Reports\MonthlyActivityReportController@groupSalary');
 	#------------- Search associate with paramenters(unit, floor, line)---------#
 	Route::get('hr/reports/search_associate', 'Hr\Reports\IncrementReportController@searchAssociate');
 	Route::get('hr/recruitment/background-verification', 'Hr\Reports\BackgroundController@backgroundVerification');

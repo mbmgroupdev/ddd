@@ -214,14 +214,14 @@
                             </p>
                             
                         </td>
-                        <td style="width:25%;">
+                        <td style="width:30%;">
                             <p style="margin:0;padding: 0"><strong>সর্বমোট টাকার পরিমান: </strong>
                                 {{ Custom::engToBnConvert(bn_money($pageHead['totalBill'])) }}
                             </p>
                             
                         </td>
                         
-                        <td style="width:25%; text-align:right;">
+                        <td style="width:20%; text-align:right;">
                             
                         </td>
                         

@@ -1152,6 +1152,15 @@ class TestController extends Controller
 
     public function check()
     {
+        $n = 5;
+        $a = [4, 0, 1, -2, 3];
+        $result = array();
+        $p = array();
+        for($i=0; $i<$n; $i++){
+            $p[] =($a[$i-1]??0).' - '.($a[$i]??0).' - '.($a[$i+1]??0);
+            $result[] = $a[$i-1]??0+$a[$i]??0+$a[$i+1]??0;
+        }
+        return $p;
         $asId = 10242;
         $unit = 1;
         $date = '2020-10-12';

@@ -815,7 +815,7 @@ class AttendanceReportController extends Controller
 					  	 ->where('as_status_date', '<=', $date)
 					  	 ->pluck('associate_id')->toArray();
 
-		dd($employees, $exclude);
+		// dd($employees, $exclude);
 
 		$data['dayoff'] = DB::table('holiday_roaster AS r')
 							->leftJoin('hr_as_basic_info AS b', 'r.as_id', 'b.associate_id')

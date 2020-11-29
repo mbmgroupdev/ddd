@@ -24,7 +24,7 @@
                     
                     <td>
                         <p style="margin:0;padding:0;">{{ $salary->employee_bengali['hr_bn_associate_name']??'' }}</p>
-                        <p style="margin:0;padding:0;">{{ Custom::engToBnConvert($salary->employee['as_doj'])??'' }}</p>
+                        <p style="margin:0;padding:0;">{{ Custom::engToBnConvert(date('Y-m-d', strtotime($salary->employee['as_doj'])))??'' }}</p>
                         @php
                         	$designationId = $salary->employee['as_designation_id'];
                         @endphp
@@ -36,7 +36,7 @@
                     </td>
                     <td>
                         <p style="font-size:14px;margin:0;padding:0;color:blueviolet">
-                            {{ $salary['associate_id'] }}
+                            {{ $salary['as_id'] }}
                         </p>
                         <p style="margin:0;padding:0;color:hotpink">
                             বিলম্ব উপস্থিতিঃ {{ Custom::engToBnConvert($salary['late_count']) }}

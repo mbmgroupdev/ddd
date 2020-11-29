@@ -138,7 +138,7 @@ class LeaveWorkerController extends Controller
                         }else{
                             if($absentCount > 0){
                                 $getBenefit = Benefits::getEmployeeAssIdwise($request->leave_ass_id);
-                                $perDayBasic = $getBenefit->ben_basic / 30;
+                                $perDayBasic = ceil($getBenefit->ben_basic / 30);
                                 $getSalaryAdjust = SalaryAdjustMaster::getCheckEmployeeIdMonthYearWise($request->leave_ass_id, $month, $year);
                                 
                                 if($getSalaryAdjust == null){
