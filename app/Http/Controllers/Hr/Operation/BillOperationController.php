@@ -82,6 +82,9 @@ class BillOperationController extends Controller
             if(isset($input['pay_status']) && $input['pay_status'] != null){
                 $queryData->where('s.pay_status', $input['pay_status']);
             }
+            if(isset($input['bill_type']) && $input['bill_type'] != null){
+                $queryData->where('s.bill_type', $input['bill_type']);
+            }
             $queryData->leftjoin(DB::raw('(' . $employeeDataSql. ') AS emp'), function($join) use ($employeeData) {
                 $join->on('emp.as_id','s.as_id')->addBinding($employeeData->getBindings());
             });

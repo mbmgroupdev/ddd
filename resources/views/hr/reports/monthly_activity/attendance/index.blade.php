@@ -35,6 +35,9 @@
     .badge {
       font-size: 100%;
     }
+    div.dataTables_wrapper div.dataTables_processing {
+      top: 10% !important;
+    }
   </style>
 @endpush
 @section('main-content')

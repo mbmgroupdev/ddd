@@ -247,7 +247,7 @@ class AttendaceBulkManualController extends Controller
                             DB::table($tableName)->insert($insert);
 
                             if($info->as_ot == 1 && $outtime != null){
-                                if(date("H:i", strtotime($insert['out_time'])) > date("H:i", strtotime($billEligible))){
+                                if(strtotime(date("H:i", strtotime($insert['out_time']))) > strtotime(date("H:i", strtotime($billEligible)))){
 
                                     $bill = EmployeeHelper::dailyBillCalculation($info->as_unit_id, $insert['in_date'], $insert['as_id'], $nightFlag, $info->as_designation_id);
                                 }
@@ -256,8 +256,7 @@ class AttendaceBulkManualController extends Controller
                             //
                             $absentWhere = [
                                 'associate_id' => $info->associate_id,
-                                'date' => $date,
-                                'hr_unit' => $info->as_unit_id
+                                'date' => $date
                             ];
                             Absent::where($absentWhere)->delete();
                             
@@ -266,8 +265,7 @@ class AttendaceBulkManualController extends Controller
 
                         $absentWhere = [
                             'associate_id' => $info->associate_id,
-                            'date' => $date,
-                            'hr_unit' => $info->as_unit_id
+                            'date' => $date
                         ];
                         
                         Absent::where($absentWhere)->delete();
@@ -445,7 +443,7 @@ class AttendaceBulkManualController extends Controller
                             }
                             
                             if($info->as_ot == 1 && $outtime != null){
-                                if(date("H:i", strtotime($update['out_time'])) > date("H:i", strtotime($billEligible))){
+                                if(strtotime(date("H:i", strtotime($update['out_time']))) > strtotime(date("H:i", strtotime($billEligible)))){
 
                                     $bill = EmployeeHelper::dailyBillCalculation($info->as_unit_id, $Att->in_date, $info->as_id, $nightFlag, $info->as_designation_id);
                                 }
@@ -462,10 +460,10 @@ class AttendaceBulkManualController extends Controller
                                 // remove absent
                                 $absentWhere = [
                                     'as_id' => $info->as_id,
-                                    'date' => $date,
-                                    'hr_unit' => $info->as_unit_id
+                                    'date' => $date
                                 ];
                                 Absent::where($absentWhere)->delete();
+                                $absentWhere['hr_unit'] = $info->as_unit_id; 
                                 // add event history
                                 $this->eventModified($info->associate_id,2,$absentWhere,$event); // absent to present
                             } else {
@@ -479,8 +477,7 @@ class AttendaceBulkManualController extends Controller
                                 ->update($update);
                                 $absentWhere = [
                                     'associate_id' => $info->associate_id,
-                                    'date' => $date,
-                                    'hr_unit' => $info->as_unit_id
+                                    'date' => $date
                                 ];
                                 Absent::where($absentWhere)->delete();
                             }
@@ -489,8 +486,7 @@ class AttendaceBulkManualController extends Controller
                     else{
                         $absentWhere = [
                             'associate_id' => $info->associate_id,
-                            'date' => $date,
-                            'hr_unit' => $info->as_unit_id
+                            'date' => $date
                         ];
                         Absent::where($absentWhere)->delete();
                         // attendance delete

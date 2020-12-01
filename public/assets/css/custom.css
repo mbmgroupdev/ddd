@@ -1125,3 +1125,6 @@ table.dataTable thead>tr>td.sorting, table.dataTable thead>tr>td.sorting_asc, ta
 .fwb{
     font-weight: bold;
 }
+div.dataTables_wrapper div.dataTables_processing {
+  top: 10% !important;
+}

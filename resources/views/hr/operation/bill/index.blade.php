@@ -118,7 +118,7 @@
                             <form class="" role="form" id="unitWiseSalary"> 
                                 <div class="panel mb-0">
                                     
-                                    <div class="panel-body pb-0">
+                                    <div class="panel-body">
                                         <div class="row">
                                             <div class="col-3">
                                                 <div class="form-group has-float-label select-search-group">
@@ -205,6 +205,13 @@
                                                     ?>
                                                     {{ Form::select('pay_status', $status, 0, ['placeholder'=>'Select Payable Status ', 'class'=>'form-control capitalize select-search', 'id'=>'pay_status']) }}
                                                     <label for="pay_status">Payable Status</label>
+                                                </div>
+                                                <div class="form-group has-float-label select-search-group">
+                                                    <?php
+                                                      $billType = ['1'=>'Tiffin','2'=>'Dinner'];
+                                                    ?>
+                                                    {{ Form::select('bill_type', $billType, 0, ['placeholder'=>'Select Payable Status ', 'class'=>'form-control capitalize select-search', 'id'=>'bill_type']) }}
+                                                    <label for="bill_type">Bill Type</label>
                                                 </div>
                                                 <div class="row">
                                                   <div class="col pr-0">

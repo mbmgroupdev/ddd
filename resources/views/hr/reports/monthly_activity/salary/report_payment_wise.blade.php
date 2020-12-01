@@ -9,6 +9,8 @@
 		<div id="report_section" class="report_section">
 			<style type="text/css" media="print">
 				h4, h2, p{margin: 0;}
+				.text-right{text-align:right;}
+				.text-center{text-align:center;}
 			</style>
 			<style type="text/css">
               .table{
@@ -79,10 +81,10 @@
 		                		@endif
 		            		</td>
 		            		<td>
-		            			<h6  style="text-align: center;">Month : {{ date('M Y', strtotime($input['month'])) }} </h6>
-					            <h6  style="text-align: center;">Total Employee : {{ $totalEmployees }} </h6>
+		            			<p style="text-align: center; font-size: 14px;">Month : {{ date('M Y', strtotime($input['month'])) }} </p>
+					            <p style="text-align: center; font-size: 14px;">Total Employee : {{ $totalEmployees }} </p>
 					            @if($input['pay_status'] == 'all')
-					            <h6  style="text-align: center;">Total Payable : {{ bn_money(round($totalSalary,2)) }} </h6>
+					            <p style="text-align: center; font-size: 14px;">Total Payable : {{ bn_money(round($totalSalary,2)) }} </p>
 	                			
 		            		</td>
 		            		<td>

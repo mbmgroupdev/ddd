@@ -246,32 +246,46 @@
                         @if($input['pay_status'] == 'all')
                             <thead>
                                 <tr class="text-center">
-                                    <th style=" font-weight: bold; font-size:13px;" rowspan="2">Sl</th>
-                                    <th style=" font-weight: bold; font-size:13px;" rowspan="2"> {{ $head }} Name</th>
-                                    <th style=" font-weight: bold; font-size:13px;" colspan="3">No. of Employee</th>
-                                    <th style=" font-weight: bold; font-size:13px;" rowspan="2">Salary (BDT)</th>
+                                    <th rowspan="2">Sl</th>
+                                    <th rowspan="2"> {{ $head }} Name</th>
+                                    <th colspan="3">No. of Employee</th>
+                                    <th rowspan="2">OT Hour</th>
                                     
-                                    <th style=" font-weight: bold; font-size:13px;" colspan="2">Over Time</th>
-                                    <th style=" font-weight: bold; font-size:13px;" colspan="5">Salary Payable (BDT)</th>
+                                    <th colspan="5">Salary Amount (BDT)</th>
+                                    <th colspan="5">Bank &amp; Cash (BDT)</th>
                                 </tr>
                                 <tr class="text-center">
-                                    <th style=" font-weight: bold; font-size:13px;">Non OT</th>
-                                    <th style=" font-weight: bold; font-size:13px;">OT</th>
-                                    <th style=" font-weight: bold; font-size:13px;">Total</th>
-                                    <th style=" font-weight: bold; font-size:13px;">Time (Hour)</th>
-                                    <th style=" font-weight: bold; font-size:13px;">Amount (BDT)</th>
-                                    <th style=" font-weight: bold; font-size:13px;">Cash</th>
-                                    <th style=" font-weight: bold; font-size:13px;">Bank</th>
-                                    <th style=" font-weight: bold; font-size:13px;">Tax</th>
-                                    <th style=" font-weight: bold; font-size:13px;">Stamp</th>
-                                    <th style=" font-weight: bold; font-size:13px;">Total</th>
+                                    <th>Non OT</th>
+                                    <th>OT</th>
+                                    <th>Total</th>
+                                    <th>Salary</th>
+                                    <th>Wages</th>
+                                    <th>OT Amount</th>
+                                    <th>stamp</th>
+                                    <th>Total</th>
+                                    <th>Cash</th>
+                                    <th>Stamp</th>
+                                    <th>Bank</th>
+                                    <th>Tax</th>
+                                    <th>Total</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @php $i=0; $totalEmployee = 0; @endphp
+                                @php $i=0; $tNonOt = 0; $tOt = 0; $totalOtSalary =0; $totalNonOtSalary =0; $totalGroupSalary = 0; @endphp
                                 @if(count($getEmployee) > 0)
                                 @foreach($getEmployee as $employee)
-                                
+                                @php 
+                                    $groupTotalSalary = $employee->groupTotal-$employee->groupOtAmount;
+                                    $nonOtSalary = $employee->totalNonOt;
+                                    $otSalary = $groupTotalSalary - $nonOtSalary;
+
+                                    $tNonOt += $employee->nonot; 
+                                    $tOt += $employee->ot; 
+                                    $totalNonOtSalary += $nonOtSalary;
+                                    $totalOtSalary += $otSalary;
+                                    $totalGroupStampSalary = $employee->groupTotal+$employee->groupStamp;
+                                    $totalGroupSalary += $totalGroupStampSalary;
+                                @endphp
                                 <tr>
                                     <td>{{ ++$i }}</td>
                                     <td>
@@ -281,19 +295,25 @@
                                                 $body = $unit[$group]['hr_unit_name']??'';
                                             }elseif($format == 'as_line_id'){
                                                 $body = $line[$group]['hr_line_name']??'';
+                                                
                                             }elseif($format == 'as_floor_id'){
                                                 $body = $floor[$group]['hr_floor_name']??'';
+                                                
                                             }elseif($format == 'as_department_id'){
                                                 $body = $department[$group]['hr_department_name']??'';
+                                                
                                             }elseif($format == 'as_designation_id'){
                                                 $body = $designation[$group]['hr_designation_name']??'';
+                                                
                                             }elseif($format == 'as_section_id'){
                                                 $depId = $section[$group]['hr_section_department_id']??'';
                                                 $seDeName = $department[$depId]['hr_department_name']??'';
                                                 $seName = $section[$group]['hr_section_name']??'';
                                                 $body = $seDeName.' - '.$seName;
+                                                
                                             }elseif($format == 'as_subsection_id'){
                                                 $body = $subSection[$group]['hr_subsec_name']??'';
+                                                
                                             }else{
                                                 $body = 'N/A';
                                             }
@@ -308,26 +328,20 @@
                                     </td>
                                     <td style="text-align: center;">
                                         {{ $employee->total }}
-                                        @php $totalEmployee += $employee->total; @endphp
+                                        
                                     </td>
                                     <td class="text-right">
-                                        {{ (round($employee->groupTotal-$employee->groupOtAmount)) }}
+                                        {{ numberToTimeClockFormat($employee->groupOt) }}
                                     </td>
-                                    
+
                                     <td class="text-right">
-                                        {{ ($employee->groupOt) }}
+                                        {{ (round($nonOtSalary)) }}
+                                    </td>
+                                    <td class="text-right">
+                                        {{ (round($otSalary)) }}
                                     </td>
                                     <td class="text-right">
                                         {{ (round($employee->groupOtAmount)) }}
-                                    </td>
-                                    <td class="text-right">
-                                        {{ (round($employee->groupCashSalary)) }}
-                                    </td>
-                                    <td class="text-right">
-                                        {{ (round($employee->groupBankSalary)) }}
-                                    </td>
-                                    <td class="text-right">
-                                        {{ (round($employee->groupTds)) }}
                                     </td>
                                     <td class="text-right">
                                         {{ (round($employee->groupStamp)) }}
@@ -335,11 +349,54 @@
                                     <td class="text-right">
                                         {{ (round($employee->groupTotal+$employee->groupStamp)) }}
                                     </td>
+
+                                    <td class="text-right">
+                                        {{ (round($employee->groupCashSalary)) }}
+                                    </td>
+                                    <td class="text-right">
+                                        {{ (round($employee->groupStamp)) }}
+                                    </td>
+                                    <td class="text-right">
+                                        {{ (round($employee->groupBankSalary)) }}
+                                    </td>
+                                    <td class="text-right">
+                                        {{ (round($employee->groupTds)) }}
+                                    </td>
+                                    
+                                    <td class="text-right">
+                                        {{ (round($employee->groupTotal+$employee->groupStamp)) }}
+                                    </td>
                                 </tr>
                                 @endforeach
+                                <tr>
+                                    <td></td>
+                                    <td class="text-center fwb" style="font-weight: bold; font-size:13px;"> Total </td>
+                                    <td class="text-center fwb" style="font-weight: bold; font-size:13px;">{{ $tNonOt }}</td>
+                                    <td class="text-center fwb" style="font-weight: bold; font-size:13px;">{{ $tOt }}</td>
+                                    <td class="text-center fwb" style="font-weight: bold; font-size:13px;">{{ $totalEmployees }}</td>
+                                    <td class="text-right fwb" style="font-weight: bold; font-size:13px;">{{ numberToTimeClockFormat(round($totalOtHour,2)) }}</td>
+                                    <td class="text-right fwb" style="font-weight: bold; font-size:13px;">{{ (round($totalNonOtSalary,2)) }}</td>
+                                    <td class="text-right fwb" style="font-weight: bold; font-size:13px;">{{ (round($totalOtSalary,2)) }}</td>
+                                    <td class="text-right fwb" style="font-weight: bold; font-size:13px;">{{ (round($totalOTAmount,2)) }}</td>
+                                    <td class="text-right fwb" style="font-weight: bold; font-size:13px;">{{ (round($totalStamp,2)) }}</td>
+                                    <td class="text-right fwb" style="font-weight: bold; font-size:13px;">{{ (round($totalGroupSalary,2)) }}</td>
+                                    <td class="text-right fwb" style="font-weight: bold; font-size:13px;">{{ (round($totalCashSalary,2)) }}</td>
+                                    <td class="text-right fwb" style="font-weight: bold; font-size:13px;">{{ (round($totalStamp,2)) }}</td>
+                                    <td class="text-right fwb" style="font-weight: bold; font-size:13px;">{{ (round($totalBankSalary,2)) }}</td>
+                                    <td class="text-right fwb" style="font-weight: bold; font-size:13px;">{{ (round($totalTax,2)) }}</td>
+                                    <td class="text-right fwb" style="font-weight: bold; font-size:13px;">{{ (round($totalGroupSalary,2)) }}</td>
+                                    
+                                </tr>
+                                <tr>
+                                    <td colspan="6" class="text-right fwb" style="font-weight: bold; font-size:13px; text-align: right"> Salary Payable <br>
+                                        <span class="red">* Without stamp</span></td>
+                                    <td colspan="3" class="text-center fwb" style="font-weight: bold; font-size:13px; text-align: center;">{{ (round(($totalNonOtSalary + $totalOtSalary + $totalOTAmount))) }}</td>
+                                    <td colspan="7"></td>
+
+                                </tr>
                                 @else
                                 <tr>
-                                    <td colspan="9" class="text-center">No Data Found!</td>
+                                    <td colspan="14" class="text-center">No Data Found!</td>
                                 </tr>
                                 @endif
                             </tbody>
