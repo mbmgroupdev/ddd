@@ -148,6 +148,17 @@ class AttendanceFileProcessController extends Controller
 
                     
                     if(!empty($as_info) && strlen($rfid)>0 && $checktime != null && $as_info->as_status == 1){
+                        // check other unit ot employee
+                        
+                        if($as_info->as_ot == 1 && in_array($unit, [1, 4, 5])){
+                           if(!in_array($as_info->as_unit_id, [1,4,5])){
+                                $msg[] = $value." - ".$today." This employee assign other unit";
+                                continue;
+                            }
+                        }else if($as_info->as_ot == 1 && $as_info->as_unit_id != $unit){
+                            $msg[] = $value." - ".$today." This employee assign other unit";
+                            continue;
+                        }
                         // check lock month
                         $checkL['month'] = $month;
                         $checkL['year'] = $year;

@@ -180,7 +180,7 @@
                                                 @endif
                                             @endif
                                           </td>
-                                            <td>
+                                            <td @if($data['present_status'] == 'A' || $data['present_status'] == 'Weekend(General) - A') style="background: #ea9d99;color:#000;" @endif>
                                                 @if($data['attPlusOT'])
                                                    P ( {{ $data['attPlusOT'] }} )
                                                 @else
