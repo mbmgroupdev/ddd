@@ -43,13 +43,22 @@
                                   <div class="panel">
                                         <div class="panel-body">
                                             <div class="row">
-                                                <div class="col-sm-8">
+                                                <div class="col-sm-6">
                                                     <div class="form-group has-float-label has-required select-search-group">
                                                         {{ Form::select('unit[]', $unitList,'', ['id'=>'unit', 'class'=> 'form-control select-search no-select', 'multiple'=>"multiple",'style', 'data-validation'=>'required']) }}
                                                         <label for="unit">Unit</label>
                                                     </div>
                                                 </div>
-                                                
+                                                <div class="col-sm-2">
+                                                  <div class="form-group has-float-label select-search-group">
+                                                      <select name="as_ot" class="form-control capitalize select-search" id="as_ot" >
+                                                          <option value="0">Non-OT</option>
+                                                          <option value="1" selected>OT</option>
+                                                          <option value="2">Both</option>
+                                                      </select>
+                                                      <label for="as_ot">OT/Non-OT</label>
+                                                  </div>
+                                                </div>    
                                                 <div class="col-sm-2">
                                                     <div class="form-group has-float-label has-required">
                                                       <input type="number" class="form-control" id="tiffin-bill" name="tiffin" placeholder="Entre Tiffin Bill"required="required" value="0"autocomplete="off" onClick="this.select()" />
@@ -155,6 +164,7 @@
                                                     <th class="vertical-align" rowspan="2" width="2%">SL.</th>
                                                     <th class="vertical-align" rowspan="2" >Unit Name</th>
                                                     <th class="vertical-align" rowspan="2" >Status</th>
+                                                    <th class="vertical-align" rowspan="2" >OT Status</th>
                                                     <th class="vertical-align" rowspan="2" >Tiffin Bill</th>
                                                     <th class="vertical-align" rowspan="2" >Dinner Bill</th>
                                                     <th class="vertical-align" rowspan="2">Action</th>
@@ -189,6 +199,9 @@
                                                           <label class="custom-control-label" for="status-{{$bill->id}}"></label>
                                                         </div> --}}
                                                       </td>
+                                                      <td rowspan="{{ count($bill->available_special)+1 }}">
+                                                        {{ ($bill->as_ot == 2?'Both':($bill->as_ot ==1?'OT':'Non OT'))}}
+                                                      </td>
                                                       <td rowspan="{{ count($bill->available_special)+1 }}">{{ $bill->tiffin_bill }}</td>
                                                       <td rowspan="{{ count($bill->available_special)+1 }}">{{ $bill->dinner_bill }}</td>
                                                       <td rowspan="{{ count($bill->available_special)+1 }}"></td>
@@ -219,6 +232,9 @@
                                                         <label class="custom-control-label" for="status-{{$bill->id}}"></label>
                                                       </div> --}}
                                                     </td>
+                                                    <td>
+                                                        {{ ($bill->as_ot == 2?'Both':($bill->as_ot ==1?'OT':'Non OT'))}}
+                                                      </td>
                                                     <td>{{ $bill->tiffin_bill }}</td>
                                                     <td>{{ $bill->dinner_bill }}</td>
                                                     <td></td>

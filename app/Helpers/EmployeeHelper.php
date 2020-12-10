@@ -352,32 +352,44 @@ class EmployeeHelper
 	}
 
 	// daily bill calculation
-	public static function dailyBillCalculation($unit, $date, $asId, $shiftNight, $designationId)
+	public static function dailyBillCalculation($asOt, $unit, $date, $asId, $shiftNight, $designationId)
 	{
 		try {
 			$billSetting = BillSettings::where('unit_id', $unit)->where('status', 1)->whereNull('end_date')->first();
+			$flag = 0;
 			if($billSetting != null){
-				$billSpecial = BillSpecialSettings::where('bill_id', $billSetting->id)->where('designation_id', $designationId)->whereNull('end_date')->where('status', 1)->first();
-				if($billSpecial != null){
-					$tiffin = $billSpecial->tiffin_bill;
-					$dinner = $billSpecial->dinner_bill;
-				}else{
-					$tiffin = $billSetting->tiffin_bill;
-					$dinner = $billSetting->dinner_bill;
+				if($billSetting->as_ot == 2){
+					$flag = 1;
 				}
-				$getBill = Bills::where('as_id', $asId)->where('bill_date', $date)->first();
-				$bills = [
-					'as_id' => $asId,
-					'bill_date' => $date,
-					'bill_type' => $shiftNight==1?2:1,
-					'amount' => $shiftNight==1?$dinner:$tiffin
-				];
-				if($getBill != null){
-					Bills::where('id', $getBill->id)
-					->update($bills);
-				}else{
-					$bills['pay_status'] = 0;
-					Bills::insert($bills);
+				if($flag == 0){
+					if($billSetting->as_ot == $asOt){
+						$flag = 1;
+					}
+				}
+
+				if($flag == 1){
+					$billSpecial = BillSpecialSettings::where('bill_id', $billSetting->id)->where('designation_id', $designationId)->whereNull('end_date')->where('status', 1)->first();
+					if($billSpecial != null){
+						$tiffin = $billSpecial->tiffin_bill;
+						$dinner = $billSpecial->dinner_bill;
+					}else{
+						$tiffin = $billSetting->tiffin_bill;
+						$dinner = $billSetting->dinner_bill;
+					}
+					$getBill = Bills::where('as_id', $asId)->where('bill_date', $date)->first();
+					$bills = [
+						'as_id' => $asId,
+						'bill_date' => $date,
+						'bill_type' => $shiftNight==1?2:1,
+						'amount' => $shiftNight==1?$dinner:$tiffin
+					];
+					if($getBill != null){
+						Bills::where('id', $getBill->id)
+						->update($bills);
+					}else{
+						$bills['pay_status'] = 0;
+						Bills::insert($bills);
+					}
 				}
 				
 			} 

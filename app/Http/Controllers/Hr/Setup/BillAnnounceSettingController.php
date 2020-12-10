@@ -77,8 +77,9 @@ class BillAnnounceSettingController extends Controller
                     'unit_id' => $unitId,
                     'tiffin_bill' => $input['tiffin'],
                     'dinner_bill' => $input['dinner'],
-                    'start_date' => date('Y-m-d'),
-                    'created_by' => auth()->user()->id
+                    'start_date'  => date('Y-m-d'),
+                    'as_ot'       => $input['as_ot'],
+                    'created_by'  => auth()->user()->id
                 ];
                 $billId = BillSettings::create($bill)->id;
 
