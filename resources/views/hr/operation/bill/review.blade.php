@@ -64,7 +64,14 @@
                                         {{ $getUnitHead }}
                                     </h3>
                                     <h5 style="margin:4px 10px;text-align:center;font-weight:600;font-size:12px;">
-                                        টিফিন / ডিনার বিল 
+                                        @if($input['bill_type'] == 1)
+                                        টিফিন
+                                        @elseif($input['bill_type'] == 2)
+                                        ডিনার
+                                        @else
+                                        টিফিন / ডিনার 
+                                        @endif 
+                                        বিল
                                         
                                         <br/>
                                         তারিখ: {{ Custom::engToBnConvert($fromDate) }} থেকে {{ Custom::engToBnConvert($toDate) }}

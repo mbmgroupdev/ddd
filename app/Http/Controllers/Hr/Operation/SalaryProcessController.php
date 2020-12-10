@@ -22,20 +22,20 @@ use Illuminate\Support\Facades\Cache;
 
 class SalaryProcessController extends Controller
 {
-	public function index()
+    public function index()
     {
         //
     }
     public function unitWise(Request $request)
     {
-    	$input = $request->all();
-    	$input['department'] = $input['department']??'';
-    	$input['section'] = $input['section']??'';
-    	$input['subSection'] = $input['subSection']??'';
-    	$input['month'] = date('m', strtotime($input['month_year']));
-    	$input['year'] = date('Y', strtotime($input['month_year']));
-    	// return $input;
-    	try {
+        $input = $request->all();
+        $input['department'] = $input['department']??'';
+        $input['section'] = $input['section']??'';
+        $input['subSection'] = $input['subSection']??'';
+        $input['month'] = date('m', strtotime($input['month_year']));
+        $input['year'] = date('Y', strtotime($input['month_year']));
+        // return $input;
+        try {
             /*$audit = 1;
             $input['unit_id'] = $input['unit'];
             $salaryStatus = SalaryAudit::checkSalaryAuditStatus($input);
@@ -53,7 +53,7 @@ class SalaryProcessController extends Controller
             }*/
 
             $getUnit = Unit::getUnitNameBangla($input['unit']);
-    		$info = [];
+            $info = [];
             if(isset($input['area'])){
                 $info['area'] = Area::where('hr_area_id',$input['area'])->first()->hr_area_name_bn??'';
             }
@@ -70,14 +70,14 @@ class SalaryProcessController extends Controller
                 $info['sub_sec'] = Subsection::where('hr_subsec_id',$input['subSection'])->first()->hr_subsec_name_bn??'';
             }
             // employee info
-    		$employeeData = DB::table('hr_as_basic_info');
-	        $employeeDataSql = $employeeData->toSql();
+            $employeeData = DB::table('hr_as_basic_info');
+            $employeeDataSql = $employeeData->toSql();
             
             // employee bangla info
             $employeeBanData = DB::table('hr_employee_bengali');
             $employeeBanDataSql = $employeeBanData->toSql();
 
-	        $queryData = DB::table('hr_monthly_salary as s')
+            $queryData = DB::table('hr_monthly_salary as s')
             ->whereIn('emp.as_unit_id', auth()->user()->unit_permissions())
             ->whereIn('emp.as_location', auth()->user()->location_permissions())
             ->where('s.year', $input['year'])
@@ -110,7 +110,7 @@ class SalaryProcessController extends Controller
                return $query->where('emp.as_subsection_id', $input['subSection']);
             });
             if(isset($input['otnonot']) && $input['otnonot'] != null){
-                $queryData->where('emp.as_ot',$input['otnonot']);
+                $queryData->where('s.ot_status',$input['otnonot']);
             }
             if(isset($input['disbursed']) && $input['disbursed'] != null){
                 if($input['disbursed'] == 1){
@@ -141,23 +141,23 @@ class SalaryProcessController extends Controller
             $queryData->leftjoin(DB::raw('(' . $employeeBanDataSql. ') AS bemp'), function($join) use ($employeeBanData) {
                 $join->on('bemp.hr_bn_associate_id','emp.associate_id')->addBinding($employeeBanData->getBindings());
             });
-	            
-	        $queryData->select('s.*', 'emp.as_doj', 'emp.as_ot', 'emp.as_designation_id', 'emp.as_section_id', 'emp.as_location', 'bemp.hr_bn_associate_name', 'emp.as_oracle_code', 'emp.as_unit_id');
-            $totalSalary = round($queryData->sum("s.total_payable"));
-            $totalCashSalary = round($queryData->sum("s.cash_payable"));
-            $totalBankSalary = round($queryData->sum("s.bank_payable"));
-            $totalStamp = round($queryData->sum("s.stamp"));
-            $totalTax = round($queryData->sum("s.tds"));
-            $totalOtHour = ($queryData->sum("s.ot_hour"));
-            $totalOTAmount = round($queryData->sum(DB::raw('s.ot_hour * s.ot_rate')));
+                
+            $queryData->select('s.*', 'emp.as_doj','emp.associate_id', 'emp.as_ot', 'emp.as_designation_id', 'emp.as_section_id', 'emp.as_location', 'bemp.hr_bn_associate_name', 'emp.as_oracle_code', 'emp.as_unit_id',DB::raw('s.ot_hour * s.ot_rate as ot_amount'));
             $getSalaryList = $queryData->orderBy('emp.as_oracle_sl', 'asc')->get();
+            $totalSalary = round($getSalaryList->sum("total_payable"));
+            $totalCashSalary = round($getSalaryList->sum("cash_payable"));
+            $totalBankSalary = round($getSalaryList->sum("bank_payable"));
+            $totalStamp = round($getSalaryList->sum("stamp"));
+            $totalTax = round($getSalaryList->sum("tds"));
+            $totalOtHour = ($getSalaryList->sum("ot_hour"));
+            $totalOTAmount = round($getSalaryList->sum("ot_amount"));
             $totalEmployees = count($getSalaryList);
             // return $totalEmployees;
-            $employeeAssociates = $queryData->select('emp.associate_id')->pluck('emp.associate_id')->toArray();
+            $employeeAssociates = collect($getSalaryList)->pluck('associate_id')->toArray();
             // salary adjust
             $salaryAddDeduct = DB::table('hr_salary_add_deduct')
                 ->where('year', $input['year'])
-                ->where('month', date('n', strtotime($input['month'])))
+                ->where('month', $input['month'])
                 ->whereIn('associate_id', $employeeAssociates)
                 ->get()->keyBy('associate_id')->toArray();
             // employee designation
@@ -198,10 +198,10 @@ class SalaryProcessController extends Controller
             }else{
                 return view('hr.operation.salary.load_salary_sheet', compact('uniqueLocation', 'getSalaryList', 'pageHead','locationDataSet', 'info', 'salaryAddDeduct', 'designation', 'getSection', 'input'));
             }
-    	} catch (\Exception $e) {
-    		$bug = $e->getMessage();
-    		return $bug;
-    	}
+        } catch (\Exception $e) {
+            $bug = $e->getMessage();
+            return $bug;
+        }
     }
 
     public function employeeWise(Request $request)
@@ -257,7 +257,7 @@ class SalaryProcessController extends Controller
             // salary adjust
             $salaryAddDeduct = DB::table('hr_salary_add_deduct')
                 ->where('year', $input['year'])
-                ->where('month', date('n', strtotime($input['month'])))
+                ->where('month', $input['month'])
                 ->whereIn('associate_id', $employeeAssociates)
                 ->get()->keyBy('associate_id')->toArray();
             // employee designation

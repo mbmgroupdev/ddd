@@ -57,8 +57,7 @@ class ProcessAttendanceInOutTime implements ShouldQueue
             $month = Carbon::parse($getEmpAtt->in_time)->format('m');
             //check absent table if exists then delete
             $getAbsent = Absent::
-            where('hr_unit', $getEmployee->as_unit_id)
-            ->where('date', $today)
+            where('date', $today)
             ->where('associate_id', $getEmployee->associate_id)
             ->first();
             if($getAbsent != null){

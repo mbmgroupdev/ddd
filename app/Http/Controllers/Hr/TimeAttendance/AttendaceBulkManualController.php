@@ -4,10 +4,11 @@ namespace App\Http\Controllers\Hr\TimeAttendance;
 use App\Helpers\EmployeeHelper;
 use App\Http\Controllers\Controller;
 use App\Jobs\ProcessUnitWiseSalary;
+use App\Models\Employee;
 use App\Models\Hr\Absent;
 use App\Models\Hr\Attendace;
 use App\Models\Hr\AttendaceManual;
-use App\Models\Employee;
+use App\Models\Hr\Bills;
 use App\Models\Hr\HolidayRoaster;
 use App\Models\Hr\HrLateCount;
 use App\Models\Hr\Leave;
@@ -250,6 +251,11 @@ class AttendaceBulkManualController extends Controller
                                 if(strtotime(date("H:i", strtotime($insert['out_time']))) > strtotime(date("H:i", strtotime($billEligible)))){
 
                                     $bill = EmployeeHelper::dailyBillCalculation($info->as_unit_id, $insert['in_date'], $insert['as_id'], $nightFlag, $info->as_designation_id);
+                                }else{
+                                    $getBill = Bills::where('as_id', $insert['as_id'])->where('bill_date', $insert['in_date'])->first();
+                                    if($getBill != null){
+                                        Bills::where('id', $getBill->id)->delete();
+                                    }
                                 }
                             }
                             
@@ -446,6 +452,11 @@ class AttendaceBulkManualController extends Controller
                                 if(strtotime(date("H:i", strtotime($update['out_time']))) > strtotime(date("H:i", strtotime($billEligible)))){
 
                                     $bill = EmployeeHelper::dailyBillCalculation($info->as_unit_id, $Att->in_date, $info->as_id, $nightFlag, $info->as_designation_id);
+                                }else{
+                                    $getBill = Bills::where('as_id', $info->as_id)->where('bill_date', $Att->in_date)->first();
+                                    if($getBill != null){
+                                        Bills::where('id', $getBill->id)->delete();
+                                    }
                                 }
                             }
 
