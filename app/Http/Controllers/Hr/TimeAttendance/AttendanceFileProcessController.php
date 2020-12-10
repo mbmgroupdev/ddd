@@ -519,7 +519,7 @@ class AttendanceFileProcessController extends Controller
                 // return $check_time->copy()->subDays(1)->format('Y-m-d');
                 $outPunchDate = $punch_date;
                 if($last_punch != null){
-                    $punch_date = date('Y-m-d', strtotime($last_punch->in_time));
+                    $punch_date = date('Y-m-d', strtotime($last_punch->in_date));
                 }else{
                     if($shift_night_flag == 1){
                         $punch_date = $check_time->copy()->subDays(1)->format('Y-m-d');

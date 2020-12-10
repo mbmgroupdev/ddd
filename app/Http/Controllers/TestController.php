@@ -1152,7 +1152,13 @@ class TestController extends Controller
 
     public function check()
     {
-        
+        $chec = DB::table('hr_as_basic_info')
+        ->select(\DB::raw('substr(as_oracle_code, 1, 8) AS oracle'))
+        ->whereIn('as_status', [1,6])
+        ->groupBy('oracle')
+        ->havingRaw('COUNT(*) > 1')
+        ->get();
+        return $chec;
         $n = 5;
         $a = [4, 0, 1, -2, 3];
         $result = array();
@@ -1815,6 +1821,11 @@ class TestController extends Controller
 
 
         // dd($shiftRoster);
+    }
+
+    public function paymentExcel()
+    {
+        
     }
     
 

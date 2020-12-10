@@ -7,7 +7,7 @@
     .single-employee-search {
       margin-top: 82px !important;
     }
-    .view:hover, .view:hover{
+    .view:hover{
       color: #ccc !important;
       
     }
@@ -182,8 +182,9 @@
                                             <label for="paymentType">Payment Type</label>
                                         </div>
                                         <div class="form-group">
-                                          <button class="btn btn-primary nextBtn btn-lg pull-right" type="submit" ><i class="fa fa-save"></i> Generate</button>
+                                          <button class="btn btn-primary nextBtn btn-lg pull-right" type="submit" ><i class="fa fa-save"></i> Filter</button>
                                         </div>
+
                                     </div>   
                                 </div>
                                 
@@ -193,7 +194,7 @@
                                        <div class="modal-content">
                                         <form class="form-horizontal" role="form" action="#" id="auditSalary">
                                           <div class="modal-header">
-                                             <h5 class="modal-title" id="exampleModalCenteredScrollableTitle"><strong>{{ date('F, Y', strtotime($input['month'])) }} </strong> Salary Audit Process</h5>
+                                             <h5 class="modal-title" id="exampleModalCenteredScrollableTitle"><strong>{{ date('F, Y', strtotime($input['month'])) }} </strong> Salary Process</h5>
                                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                              <span aria-hidden="true">×</span>
                                              </button>
@@ -220,13 +221,15 @@
                                     </div>
                                  </div> 
                                 </div>
+
+                            </div>
+                            <div class="single-employee-search" id="single-employee-search" style="display: none;">
+                              <div class="form-group">
+                                <input type="text" name="employee" class="form-control" placeholder="Search Employee Associate ID..." id="searchEmployee" autocomplete="off">
+                              </div>
                             </div>
                         </div>
-                        <div class="single-employee-search" id="single-employee-search" style="display: none;">
-                          <div class="form-group">
-                            <input type="text" name="employee" class="form-control" placeholder="Search Employee Associate ID..." id="searchEmployee">
-                          </div>
-                        </div>
+                        
                     </form>
                     <!-- PAGE CONTENT ENDS -->
                 </div>
@@ -250,7 +253,7 @@
                                 $unit = $input['unit'];
                               @endphp
                               <div class="salary-section text-left inline">
-                                <button type="button" data-toggle="modal" data-target="#exampleModalCenteredScrollable" class="btn btn-outline-success" data-toggle="tooltip" data-placement="top" title="" data-original-title="Salary Audit Process" ><i class="fa fa-save"></i> Audit Process</button>
+                                <button type="button" data-toggle="modal" data-target="#exampleModalCenteredScrollable" class="btn btn-outline-success" data-toggle="tooltip" data-placement="top" title="" data-original-title="Salary Audit Process" ><i class="fa fa-save"></i> {{ $input['audit'] }} Process</button>
                                 
                               </div>
                             </div>

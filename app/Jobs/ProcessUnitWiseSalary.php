@@ -433,6 +433,7 @@ class ProcessUnitWiseSalary implements ShouldQueue
                             'leave' => $leaveCount,
                             'absent_deduct' => $getAbsentDeduct,
                             'half_day_deduct' => $getHalfDeduct,
+                            'salary_add_deduct_id' => $deductId,
                             'salary_payable' => $salaryPayable,
                             'ot_rate' => $overtime_rate,
                             'ot_hour' => $getPresentOT->ot,

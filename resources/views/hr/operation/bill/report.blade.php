@@ -39,6 +39,7 @@
     <form class="" role="form" id="billReport" method="get" action="#">
         <input type="hidden" value="{{ $input['from_date'] }}" name="from_date">
         <input type="hidden" value="{{ $input['to_date'] }}" name="to_date">
+        <input type="hidden" value="{{ $input['bill_type']}}" name="bill_type">
         @foreach($uniqueUnit as $key=>$unit)
             @php
                 $pageKey = 0;
@@ -68,8 +69,14 @@
                                         {{ $getUnitHead }}
                                     </h3>
                                     <h5 style="margin:4px 10px;text-align:center;font-weight:600;font-size:12px;">
-                                        টিফিন / ডিনার বিল 
-                                        
+                                        @if($input['bill_type'] == 1)
+                                        টিফিন
+                                        @elseif($input['bill_type'] == 2)
+                                        ডিনার
+                                        @else
+                                        টিফিন / ডিনার 
+                                        @endif 
+                                        বিল
                                         <br/>
                                         তারিখ: {{ Custom::engToBnConvert($fromDate) }} থেকে {{ Custom::engToBnConvert($toDate) }}
                                         
@@ -91,9 +98,10 @@
                                         <br/> যোগদানের তারিখ</th>
                                     <th width="200">পদবি  ও গ্রেড</th>
                                     <th width="120">ইআরপি ও ওরাকল আইডি</th>
-                                    <th>তারিখ</th>
+                                    <th width="120">তারিখ ও টাকা </th>
+                                    <th width="180">ইনটাইম - আউটটাইম</th>
                                     <th width="120">দিন</th>
-                                    <th width="120">টিফিন / ডিনার বিল</th>
+                                    <th width="120">বিল</th>
                                     <th width="120">মোট দেয় টাকার পরিমান</th>
                                     <th class="signature" width="80" >দস্তখত</th>
                                     <th class="disburse-button" width="80">
@@ -138,27 +146,48 @@
                                                 </p>
                                             </td>
                                             <td>
-                                                <div class="flex-content" style="display: flex; height: 100%; border: 0;">
+                                                <div class="flex-content" style="display: block; height: 100%; border: 0;">
                                                     @if(isset($getBillLists[$list->as_id]))
                                                     @foreach($getBillLists[$list->as_id]->chunk(2) as $billLists)
-                                                        <div class="flex-chunk">
+                                                        <div class="flex-chunk1">
                                                         @foreach($billLists as $dateList)
                                                         <p style="margin:0;padding:0" >
-                                                            <span style="text-align: left; width: 40%; float: left;  white-space: wrap; {{ $dateList->pay_status ==0?'color:hotpink':'' }}" >
+                                                            <span style="text-align: left; width: 65%; float: left;  white-space: wrap; {{ $dateList->pay_status ==0?'color:hotpink':'' }}" >
                                                                 @php
-                                                                    $singDate = date('d', strtotime($dateList->bill_date));
+                                                                    $singDate = date('d-m-Y', strtotime($dateList->bill_date));
                                                                 @endphp
                                                                 {{ Custom::engToBnConvert($singDate) }}
                                                             </span>
                                                             <span style ="text-align: right;width: 10%; float: left;white-space: wrap; {{ $dateList->pay_status ==0?'color:hotpink':'' }}" >=
                                                             </span>
-                                                            <span style="text-align: right;width: 50%; float: right;  white-space: wrap; {{ $dateList->pay_status ==0?'color:hotpink':'' }}" >
+                                                            <span style="text-align: right;width: 25%; float: right;  white-space: wrap; {{ $dateList->pay_status ==0?'color:hotpink':'' }}" >
                                                                 <font > {{ Custom::engToBnConvert($dateList->amount) }}</font>
                                                             </span>
 
                                                         </p>
                                                         @endforeach
                                                         </div>
+                                                    @endforeach
+                                                    @endif
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="flex-content" style="display: block; height: 100%; border: 0;">
+                                                    @if(isset($getBillLists[$list->as_id]))
+                                                    @foreach($getBillLists[$list->as_id] as $dateList)
+                                                        @if(isset($attendance[$list->as_id][$dateList->bill_date]))
+                                                        <p style="margin:0;padding:0" >
+                                                            
+                                                            <span style="width: 40%; text-align: left; white-space: wrap; float: left;" >
+                                                                <font > {{ $attendance[$list->as_id][$dateList->bill_date]->in_time == null?'null':Custom::engToBnConvert(date('H:i',strtotime($attendance[$list->as_id][$dateList->bill_date]->in_time))) }}</font>
+                                                            </span>
+                                                            <span style ="width: 20%; text-align: left; white-space: wrap; float: left;" > -
+                                                            </span>
+                                                            <span style="width: 40%; text-align: left; float: left; white-space: wrap;" >
+                                                                <font > {{ Custom::engToBnConvert(date('H:i',strtotime($attendance[$list->as_id][$dateList->bill_date]->out_time))) }}</font>
+                                                            </span>
+                                                        </p>
+                                                        @endif
                                                     @endforeach
                                                     @endif
                                                 </div>
@@ -229,7 +258,7 @@
                                 @endforeach
                                 @if(count($lists) > 0)
                                 <tr>
-                                    <td colspan="7" style="text-align: right">মোট দেয় টাকার</td>
+                                    <td colspan="8" style="text-align: right">মোট দেয় টাকার</td>
                                     <td style="text-align: center;">{{ Custom::engToBnConvert(bn_money($total)) }}</td>
                                     <td></td>
                                 </tr>

@@ -65,6 +65,7 @@
                             @endif
                             <tr>
                                 <th style=" font-weight: bold; font-size:13px;">Sl</th>
+                                <th style=" font-weight: bold; font-size:13px;">Oracle ID</th>
                                 <th style=" font-weight: bold; font-size:13px;">Associate ID</th>
                                 <th style=" font-weight: bold; font-size:13px;">Name</th>
                                 <th style=" font-weight: bold; font-size:13px;">Designation</th>
@@ -98,6 +99,7 @@
                                 <tr>
                                     <td>{{ ++$i }}</td>
                                     
+                                    <td>{{ $employee->as_oracle_code }}</td>
                                     <td>{{ $employee->associate_id }}</td>
                                     <td>
                                         <b>{{ $employee->as_name }}</b>
@@ -153,7 +155,7 @@
                                 @if($group == $employee->$format)
                                 <tr>
                                     <td>{{ ++$i }}</td>
-                                    
+                                    <td>{{ $employee->as_oracle_code }}</td>
                                     <td>{{ $employee->associate_id }}</td>
                                     <td>
                                         <b>{{ $employee->as_name }}</b>

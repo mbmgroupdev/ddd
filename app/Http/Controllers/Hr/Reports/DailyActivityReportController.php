@@ -251,12 +251,21 @@ class DailyActivityReportController extends Controller
 
             $tableName = get_att_table($request['unit']).' AS a';
 
-            if($input['report_type'] == 'ot' || $input['report_type'] == 'working_hour' || $input['report_type'] == 'late'){
+            if($input['report_type'] == 'ot' || $input['report_type'] == 'working_hour' || $input['report_type'] == 'late' || $input['report_type'] == 'in_out_missing'){
                 
                 $attData = DB::table($tableName)
                 ->where('a.in_date', $request['date']);
                 if($input['report_type'] == 'late'){
                     $attData->where('a.late_status', 1);
+                }
+                if($input['report_type'] == 'in_out_missing'){
+                    $attData->where( function($q) use ($request){
+                        $q->whereNull('a.in_time');
+                        if($request['date'] != date('Y-m-d')){
+                            $q->orWhereNull('a.out_time');
+                        }
+                        $q->orWhere('a.remarks','DSI');
+                    });
                 }
             }elseif($input['report_type'] == 'absent'){
                 $attData = DB::table('hr_absent AS a')
@@ -309,7 +318,7 @@ class DailyActivityReportController extends Controller
                return $query->where('emp.as_subsection_id', $input['subSection']);
             });
 
-            if($input['report_type'] == 'ot' || $input['report_type'] == 'working_hour' || $input['report_type'] == 'late' || $input['report_type'] == 'before_absent_after_present'){
+            if($input['report_type'] == 'ot' || $input['report_type'] == 'working_hour' || $input['report_type'] == 'late' || $input['report_type'] == 'before_absent_after_present' || $input['report_type'] == 'in_out_missing'){
                 $attData->leftjoin(DB::raw('(' . $employeeData_sql. ') AS emp'), function($join) use ($employeeData) {
                     $join->on('a.as_id', '=', 'emp.as_id')->addBinding($employeeData->getBindings());
                 });
@@ -385,6 +394,10 @@ class DailyActivityReportController extends Controller
                     if($input['report_type'] == 'leave'){
                         $attData->addSelect('l.leave_type');
                     }
+
+                    if($input['report_type'] == 'in_out_missing'){
+                        $attData->addSelect('a.in_time', 'a.out_time', 'a.remarks');
+                    }
                 }
             }
             if($input['report_group'] == 'as_section_id' || $input['report_group'] == 'as_subsection_id'){
@@ -396,6 +409,7 @@ class DailyActivityReportController extends Controller
                 $attData->orderBy('emp.as_section_id', 'asc');
             } 
             $getEmployee = $attData->get();
+            // dd($getEmployee);
             if($input['report_format'] == 1 && $input['report_group'] != null){
                 $totalEmployees = array_sum(array_column($getEmployee->toArray(),'total'));
             }else{
@@ -430,6 +444,8 @@ class DailyActivityReportController extends Controller
             // dd($uniqueGroups);
             if($input['report_type'] == 'ot'){
                 return view('hr.reports.daily_activity.attendance.ot_report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees','totalValue', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area'));
+            }elseif($input['report_type'] == 'in_out_missing'){
+                return view('hr.reports.daily_activity.attendance.in_out_mis_report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area'));
             }elseif($input['report_type'] == 'absent'){
                 return view('hr.reports.daily_activity.attendance.absent_report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area', 'absentShift'));
             }elseif($input['report_type'] == 'leave'){

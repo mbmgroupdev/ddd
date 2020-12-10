@@ -57,7 +57,7 @@
 				<div class="page-header">
 		            <h2 style="margin:4px 10px; font-weight: bold; text-align: center;">Salary @if($input['report_format'] == 0) Details @else Summary @endif Report </h2>
 		            
-		            @endif
+		            
 		            <table class="table no-border f-14" border="0" style="width:100%;margin-bottom:0;font-size:14px;text-align:left"  cellpadding="5">
 		            	<tr>
 		            		<td width="32%">
@@ -85,7 +85,7 @@
 					            <p style="text-align: center; font-size: 14px;">Total Employee : {{ $totalEmployees }} </p>
 					            @if($input['pay_status'] == 'all')
 					            <p style="text-align: center; font-size: 14px;">Total Payable : {{ bn_money(round($totalSalary,2)) }} </p>
-	                			
+	                			@endif
 		            		</td>
 		            		<td>
 		            			@if($input['subSection'] != null)
@@ -196,6 +196,7 @@
 			                @endif
 			                <tr>
 			                    <th>Sl</th>
+			                    
 			                    <th>Associate ID</th>
 			                    <th>Name</th>
 			                    <th>Designation</th>

@@ -20,8 +20,11 @@
         .fc-bgevent, .fc-highlight {
             opacity: .7 !important;
         }
+        .fc-day-grid-container{
+            height: auto !important;
+        }
     </style>
-    <link rel="stylesheet" href="{{ asset('assets/css/fullcalendar.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/fullcalendar2.min.css') }}">
 @endpush
 <div class="main-content">
     <div class="main-content-inner">
@@ -227,47 +230,7 @@
                             </div>
                         </div>
                         <input type="hidden" id="assignDates" name="assignDates" value="">
-                        {{-- <div class="panel panel-warning" id="calendarSection" style="display: none;">
-                            <div class="panel-heading"> <h6>Assign Date  <a id="substitute-remove" class="btn btn-xx btn-danger pull-right">Remove</a></div>
-                            <div class="panel-body">
-                                <div class="form-group col-sm-6">
-                                    <label class="col-sm-12 no-padding control-label no-padding-right" for="">Type* </label>
-                                    <div class="col-sm-12 no-padding" style="">
-                                      <?php
-                                        $types=['Holiday'=>'Holiday','General'=>'General','OT'=>'OT']
-                                      ?>
-                                        {{ Form::select('subtype', $types, null, ['placeholder'=>'Select Type', 'class'=> 'form-control', 'data-validation'=> 'required']) }}
-                                    </div>
-                                </div>
-                                <div class="form-group col-sm-6">
-                                    <label class="col-sm-12 no-padding control-label no-padding-right" for="comment">Comment </label>
-                                    <div class="col-sm-12 no-padding" style="">
-                                      <input type="text" name="subcomment" class="form-control" value="Substitute" placeholder="Comment" disabled>
-
-                                    </div>
-                                </div>
-                                <input type="hidden" name="subDates" id="subDates" value="">
-                                <div class="col-sm-12">
-                                    <div class="widget-box widget-color-blue3">
-                                        <div class="widget-header">
-                                            <h4 class="widget-title smaller">
-                                              Select Dates From Calendar *
-                                            </h4>
-                                            <div class="widget-toolbar">
-                                                <a href="#" data-action="collapse">
-                                                    <i class="ace-icon fa fa-chevron-down"></i>
-                                                </a>
-                                            </div>
-                                        </div>
-                                        <div class="widget-body">
-                                            <div class="widget-main padding-16">
-                                                <div id='calendar'></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> --}}
+                        
                         <div class="form-group overflow-hidden"> 
                             <button type="button" id="formSubmit" class="btn btn-primary pull-left" >
                                 <i class="fa fa-save"></i> Save
@@ -282,7 +245,7 @@
 </div>
 @push('js')
 <script src="{{ asset('assets/js/moment.min.js') }}"></script>
-<script src="{{ asset('assets/js/fullcalendar.min.js') }}"></script>
+<script src="{{ asset('assets/js/fullcalendar2.min.js') }}"></script>
 
 <script type="text/javascript">
 var multiselect = [];
@@ -490,7 +453,11 @@ $(document).ready(function(){
                 },
                 success: function(response)
                 {
-                    // console.log(response);
+                    // console.log(response.message);
+                    for (i = 0; i < response.message.length; i++) {
+                        $.notify(response.message[i], response.type);
+                    }
+                    
                     if(response.type === 'success'){
                         $('input[type="checkbox"]:checked').each(function() {
                             $(this).prop("checked", false);
@@ -508,13 +475,16 @@ $(document).ready(function(){
                             return true;
                         });
                         loadEmployeeSearchWise();
-                        window.location.href='{{ url("/hr/operation/holiday-roster") }}';
+                        setTimeout(function(){
+                            window.location.href='{{ url("/hr/operation/holiday-roster") }}';
+                        }, 1000);
                     }
                     
                     setTimeout(function(){
                         $(".app-loader").hide();
                     }, 2000);
-                    $.notify(response.message, response.type);
+                    
+                    
                 },
                 error: function (reject) {
                     $(".app-loader").hide();
@@ -528,7 +498,7 @@ $(document).ready(function(){
     });
     function removeEventCalendar(event) {
         console.log(event);
-        $('#event-calendar').fullCalendar('removeEvents', event.id);
+        $('#event-calendar').fullCalendar('removeEvents', [event._id]);
         $("#assignDates").val('');
     }
     /// Target & Current Shift
@@ -711,7 +681,7 @@ $(document).ready(function() {
                 // console.log(selectDate);
                 // console.log(subArrayDate);
                 $("#event-calendar").fullCalendar('addEventSource', [{
-                    id: i,
+                    _id: i,
                     selectDate: selectDate,
                     start: start,
                     end: end,
@@ -728,7 +698,7 @@ $(document).ready(function() {
             // console.log(event);
             subArrayDate.splice(subArrayDate.indexOf(selectDate), 1);
             // console.log(subArrayDate);
-            $('#event-calendar').fullCalendar('removeEvents', event.id);
+            $('#event-calendar').fullCalendar('removeEvents', event._id);
             $("#assignDates").val(subArrayDate);
 
         }
