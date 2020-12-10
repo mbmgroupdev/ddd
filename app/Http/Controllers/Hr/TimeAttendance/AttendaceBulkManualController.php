@@ -247,10 +247,10 @@ class AttendaceBulkManualController extends Controller
                             $insert['in_date'] = date('Y-m-d', strtotime($insert['in_time']));
                             DB::table($tableName)->insert($insert);
 
-                            if($info->as_ot == 1 && $outtime != null){
+                            if($outtime != null){
                                 if(strtotime(date("H:i", strtotime($insert['out_time']))) > strtotime(date("H:i", strtotime($billEligible)))){
 
-                                    $bill = EmployeeHelper::dailyBillCalculation($info->as_unit_id, $insert['in_date'], $insert['as_id'], $nightFlag, $info->as_designation_id);
+                                    $bill = EmployeeHelper::dailyBillCalculation($info->as_ot, $info->as_unit_id, $insert['in_date'], $insert['as_id'], $nightFlag, $info->as_designation_id);
                                 }else{
                                     $getBill = Bills::where('as_id', $insert['as_id'])->where('bill_date', $insert['in_date'])->first();
                                     if($getBill != null){
@@ -448,10 +448,10 @@ class AttendaceBulkManualController extends Controller
                                 $update['ot_hour'] = 0;
                             }
                             
-                            if($info->as_ot == 1 && $outtime != null){
+                            if($outtime != null){
                                 if(strtotime(date("H:i", strtotime($update['out_time']))) > strtotime(date("H:i", strtotime($billEligible)))){
 
-                                    $bill = EmployeeHelper::dailyBillCalculation($info->as_unit_id, $Att->in_date, $info->as_id, $nightFlag, $info->as_designation_id);
+                                    $bill = EmployeeHelper::dailyBillCalculation($info->as_ot, $info->as_unit_id, $Att->in_date, $info->as_id, $nightFlag, $info->as_designation_id);
                                 }else{
                                     $getBill = Bills::where('as_id', $info->as_id)->where('bill_date', $Att->in_date)->first();
                                     if($getBill != null){
