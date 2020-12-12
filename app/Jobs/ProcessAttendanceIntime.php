@@ -146,10 +146,10 @@ class ProcessAttendanceIntime implements ShouldQueue
                 }else{
                     $totalDay = Carbon::parse($yearMonth)->daysInMonth;
                 }
-                $queue = (new ProcessUnitWiseSalary($this->tableName, $month, $year, $getEmployee->as_id, $totalDay))
+                /*$queue = (new ProcessUnitWiseSalary($this->tableName, $month, $year, $getEmployee->as_id, $totalDay))
                         ->onQueue('salarygenerate')
                         ->delay(Carbon::now()->addSeconds(2));
-                        dispatch($queue); 
+                        dispatch($queue); */
             }
         }
             

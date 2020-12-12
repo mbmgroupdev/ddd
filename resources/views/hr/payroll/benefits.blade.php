@@ -211,7 +211,7 @@
         function employe_info(emp_id) {
             if(emp_id != ""){
                 $('.app-loader').show();
-                var url = '{{url('')}}';
+                var url = '{{ url('hr/payroll/benefits/get_employee_details') }}';
                 $.ajax({
                     url : "{{ url('hr/payroll/benefits/get_employee_details') }}",
                     type: 'get',
@@ -248,13 +248,14 @@
 
                         }else{
                             $('#benefit-voucher').html(data['jobcard']);
+                            $('#salary-voucher').html('');
                             $('.operation').show();
                         }
                         $('.app-loader').hide();
                     },
                     error: function(data)
                     {
-                        $.notify('failed...','error');
+                        $.notify(data,'error');
                         $('#benefit-voucher').html('');
                         $('#salary-voucher').html('');
                         $('.app-loader').hide();

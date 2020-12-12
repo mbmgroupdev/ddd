@@ -902,6 +902,21 @@ if(!function_exists('unit_list')){
     }
 }
 
+if(!function_exists('permitted_unit_short')){
+    function permitted_unit_short()
+    {
+        $unit = unit_by_id();
+        $auth_unit = auth()->user()->unit_permissions();
+        $untiList = [];
+        foreach($auth_unit as $key => $u) {
+            $untiList[$u] = $unit[$u]['hr_unit_short_name']??'';
+        }  
+
+        return $untiList;   
+
+    }
+}
+
 if(!function_exists('permitted_units')){
     function permitted_units()
     {

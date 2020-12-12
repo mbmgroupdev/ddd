@@ -303,9 +303,9 @@ $(document).ready(function(){
 					idCardPrint.html(data.filetag); 
 					$('.app-loader').hide();
 				},
-				error:function()
+				error:function(data)
 				{
-					console.log('faild');
+					idCardPrint.html(data.responseText);
 					$('.app-loader').hide();
 				}
 			});

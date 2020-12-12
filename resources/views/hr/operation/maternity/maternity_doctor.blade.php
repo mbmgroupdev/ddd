@@ -1,6 +1,9 @@
-\@extends('hr.layout')
+@extends('hr.layout')
 @section('title', 'Maternity Leave Application')
 @section('main-content')
+<style type="text/css">
+    .custom-switch.custom-switch-icon label .switch-icon-left, .custom-switch.custom-switch-icon label .switch-icon-right, .custom-switch.custom-switch-text label .switch-icon-left, .custom-switch.custom-switch-text label .switch-icon-right { top:0;}
+</style>
 <div class="main-content">
     <div class="main-content-inner">
         <div class="breadcrumbs ace-save-state" id="breadcrumbs">

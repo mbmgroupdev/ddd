@@ -49,6 +49,7 @@ class RecruitController extends Controller
         $data = WorkerRecruitment::with(['employee_type:emp_type_id,hr_emp_type_name', 'designation:hr_designation_id,hr_designation_name','unit:hr_unit_id,hr_unit_short_name', 'area:hr_area_id,hr_area_name'])
         ->where('worker_is_migrated','!=' ,1)
         ->whereIn('worker_unit_id', auth()->user()->unit_permissions())
+        ->whereIn('location_id', auth()->user()->location_permissions())
         ->orderBy('worker_id','DESC')->get();
         return DataTables::of($data)
         ->addIndexColumn()
@@ -87,6 +88,8 @@ class RecruitController extends Controller
             }else{
                 $migrate = '';
             }
+            $migrate .= '<a class="btn btn-danger btn-sm" href="'.url('hr/recruitment/worker/remove/'.$data->worker_id).'" data-toggle="tooltip" data-placement="top" title="" data-original-title="Remove" ><i class="fa fa-trash f-18"></i></a>';
+
             return '<div style="width:80px;"><a class="btn btn-primary btn-sm" href="'.url('hr/recruitment/recruit/'.$data->worker_id.'/edit/').'" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit Recruitment Information"><i class="las la-pencil-alt f-18"></i></a> '.$migrate.'</div>';
         })
         ->rawColumns(['DT_RowIndex', 'hr_emp_type_name', 'hr_designation_name', 'hr_unit_short_name','hr_area_name','worker_name','worker_contact','worker_doj','medical_info','ie_info','action'])
@@ -141,12 +144,19 @@ class RecruitController extends Controller
 
         $input = $request->except('_token');
 
+        if($request->worker_unit_id){
+            $input['location_id'] = Location::where('hr_location_unit_id', $request->worker_unit_id)->orderBy('hr_location_id', 'asc')->first()->hr_location_id;; 
+            
+        }
+
         // check existing Employee
         $worker = AdvanceInfo::checkExistID($input['worker_nid']);
         if($worker != null){
             toastr()->error($input['worker_name'].' Employee NID/Birth already exists');
             return redirect()->back()->withErrors($validator)->withInput();
         }
+
+
 
         $input['worker_ot'] = isset($input['worker_ot'])?1:0;
         $input['worker_doctor_acceptance'] = isset($input['worker_doctor_acceptance'])?1:2;
@@ -266,7 +276,9 @@ class RecruitController extends Controller
      */
     public function destroy($id)
     {
-        //
+        WorkerRecruitment::where('worker_id', $id)->delete();
+
+        return back()->with("success", "Migration information deleted successfully!");
     }
 
     /**
@@ -308,6 +320,11 @@ class RecruitController extends Controller
         try {
             $input['worker_ot'] = isset($input['worker_ot'])?1:0;
             $input['worker_created_by'] = Auth::user()->id;
+
+            if($request->worker_unit_id){
+                $input['location_id'] = Location::where('hr_location_unit_id', $request->worker_unit_id)->orderBy('hr_location_id', 'asc')->first()->hr_location_id;
+            }
+
             WorkerRecruitment::create($input);
 
             $data['type'] = 'success';

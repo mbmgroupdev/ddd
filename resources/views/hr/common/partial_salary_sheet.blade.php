@@ -100,19 +100,19 @@
                     <td>{{num_to_bn_month($salary['month'])}}, {{eng_to_bn($salary['year'])}} এর বেতন</td>
                     <td>{{eng_to_bn($salary['salary_date']??0)}}</td>
                     <td>{{eng_to_bn($salary['per_day_gross']??0)}}</td>
-                    <td style="text-align: right;">{{eng_to_bn(round(($salary['salary_date']*$salary['per_day_gross']),2))}}</td>
+                    <td style="text-align: right;">{{eng_to_bn(bn_money(number_format(($salary['salary_date']*$salary['per_day_gross']),2,".","")))}}</td>
                 </tr>
                 <tr>
                     <td>অনুপস্থিতির কর্তন</td>
                     <td>{{eng_to_bn($salary['absent']??0)}}</td>
                     <td>{{eng_to_bn($salary['per_day_basic']??0)}}</td>
-                    <td style="text-align: right;">{{eng_to_bn(round(($salary['absent_deduct']),2))}}</td>
+                    <td style="text-align: right;">{{eng_to_bn(bn_money(number_format(($salary['absent_deduct']),2,".","")))}}</td>
                 </tr>
                 <tr>
                     <td>মজুরী সমন্বয় বাবদ</td>
                     <td></td>
                     <td></td>
-                    <td style="text-align: right;">{{eng_to_bn(round(($salary['deduct']),2))}}</td>
+                    <td style="text-align: right;">{{eng_to_bn(bn_money(number_format(($salary['adjust']),2,".","")))}}</td>
                 </tr>
                 <tr>
                     <td></td>
@@ -124,19 +124,19 @@
                     <td>{{num_to_bn_month($salary['month'])}}, {{eng_to_bn($salary['year'])}} এর অতিরিক্ত</td>
                     <td>{{eng_to_bn($salary['ot_hour']??0)}}</td>
                     <td>{{eng_to_bn($salary['ot_rate']??0)}}</td>
-                    <td style="text-align: right;">{{eng_to_bn(round(($salary['ot_hour']*$salary['ot_rate']),2))}}</td>
+                    <td style="text-align: right;">{{eng_to_bn(bn_money(number_format(($salary['ot_hour']*$salary['ot_rate']),2,".","")))}}</td>
                 </tr>
                 <tr>
                     <td> </td>
                     <td>সর্বমোট টাকা</td>
                     <td></td>
-                    <td style="text-align: right;">{{eng_to_bn($salary['total_payable']??0)}}</td>
+                    <td style="text-align: right;">{{eng_to_bn(bn_money(number_format($salary['total_payable'],2,".","")))}}</td>
                 </tr>
                 <tr>
                     <td> </td>
                     <td>চূড়ান্ত প্রাপ্য</td>
                     <td></td>
-                    <td style="text-align: right;">{{eng_to_bn($salary['total_payable']??0)}}</td>
+                    <td style="text-align: right;">{{eng_to_bn(bn_money(number_format($salary['total_payable'],2,".","")))}}</td>
                 </tr>
             </table>
             

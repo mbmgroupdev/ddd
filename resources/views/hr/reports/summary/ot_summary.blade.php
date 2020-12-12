@@ -1,11 +1,9 @@
 <div class="panel">
 	<div class="panel-body">
-		@if($input['report_format'] == 0)
 			@php
 				$urldata = http_build_query($input) . "\n";
 			@endphp
-			{{-- <a href='{{ url("hr/reports/activity-report-excle?$urldata")}}' target="_blank" class="btn btn-sm btn-info hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download" style="position: absolute; top: 15px; left: 65px;"><i class="fa fa-file-excel-o"></i></a> --}}
-		@endif
+			<a href='{{ url("hr/reports/summary/excel?$urldata")}}' target="_blank" class="btn btn-sm btn-info hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download" style="position: absolute; top: 15px; left: 65px;"><i class="fa fa-file-excel-o"></i></a>
 		<div class="report_section" id="report_section">
 			@php
 				$formatHead = explode('_',$format);
@@ -47,7 +45,8 @@
 	                			Total Employe
 	                			<b>: {{ $totalEmployees }}</b><br>
 	                			Total OT Hour
-	                			<b>: {{ $totalValue }}</b>
+	                			<b>: {{ $totalValue }}</b><br>
+	                			Total OT Amount: <b>{{ bn_money(number_format($totalOtAmount,2, '.', ''))}}</b>
 		                		
 		            		</td>
 		            		<td style="text-align: right;width: 33.33%">
@@ -103,6 +102,7 @@
         			<h4>OT Date: {{ $input['date']}}</h4>
         			<h4>Total OT Employee: <b>{{ $totalEmployees }}</b></h4>
         			<h4>Total OT Hour: <b>{{ $totalValue }}</b></h4>
+        			<h4>Total OT Amount: <b>{{ bn_money(number_format($totalOtAmount,2, '.', ''))}}</b></h4>
 		            		
 		        </div>
 		        @endif
@@ -198,7 +198,7 @@
 				            	<td>{{ $line[$employee->as_line_id]['hr_line_name']??'' }}</td>
 				            	<td style="text-align: center;">{{$employee->days}}</td>
 				            	<td>{{ $otHour }}</td>
-				            	<td style="text-align: right;">{{ bn_money(ceil($employee->ot_amount)) }}</td>
+				            	<td style="text-align: right;">{{ bn_money(number_format($employee->ot_amount,2, '.', '')) }}</td>
 				            	<td>
 				            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Yearly Activity Report' ><i class="fa fa-eye"></i></button>
 				            	</td>
@@ -227,7 +227,7 @@
 				            		<td style="text-align: center;">{{$employee->days}}</td>
 
 					            	<td style="text-align: right">{{ $otHour }}</td>
-					            	<td style="text-align: right;">{{ bn_money(ceil($employee->ot_amount)) }}</td>
+					            	<td style="text-align: right;">{{ bn_money(number_format($employee->ot_amount,2, '.', '')) }}</td>
 					            	<td>
 					            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Yearly Activity Report' ><i class="fa fa-eye"></i></button>
 					            	</td>
@@ -255,7 +255,7 @@
 			            		</b>
 			            		</td>
 
-			            		<td style="text-align: right"><strong>{{bn_money(ceil($totalPay))}}</strong></td>
+			            		<td style="text-align: right"><strong>{{bn_money(number_format($totalPay,2, '.', ''))}}</strong></td>
 			            		<td></td>
 			            	</tr>
 			            @else
@@ -371,9 +371,26 @@
 
 									{{$sumOT}}
 								</td>
-								<td style="text-align: right">{{ bn_money(ceil($employee->ot_amount)) }}</td>
+								<td style="text-align: right">{{ bn_money(number_format($employee->ot_amount,2, '.', '')) }}</td>
 							</tr>
 							@endforeach
+							<tr style="font-weight: bold;">
+								<td 
+								@if($format == 'as_section_id')
+									colspan="3" 
+								@elseif($format == 'as_subsection_id')
+									colspan="4" 
+								@else
+									colspan="2" 
+								@endif
+								>
+									Total
+								</td>
+								<td style="text-align: right;">{{$totalEmployees}}</td>
+								<td style="text-align: right;">{{$totalValue}}</td>
+								<td style="text-align: right;">{{bn_money(number_format($totalOtAmount,2, '.', ''))}}</td>
+							</tr>
+							
 							@else
 							<tr>
 				            	<td colspan="{{ ($format == 'as_subsection_id' || $format == 'as_subsection_id')?'6':'4'}}" class="text-center">No OT Employee Found!</td>

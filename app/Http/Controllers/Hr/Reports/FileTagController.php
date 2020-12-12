@@ -18,66 +18,44 @@ class FileTagController extends Controller
             ->pluck('hr_unit_short_name', 'hr_unit_id');
     	return view('hr/reports/file_tag',compact('employeeTypes','unitList'));
     }
-        # Associate ID CARD Search
+        # Associate ID CARD Searc
+
     public function fileTagSearch(Request $request)
     {
-        // ACL::check(["permission" => "hr_time_id_card"]);
-        #-----------------------------------------------------------#
 
         if (!is_array($request->associate_id) || sizeof($request->associate_id) == 0)
             return response()->json(['filetag'=>'<div class="alert alert-danger">Please Select Associate ID</div>', 'printbutton'=>'']);
 
         $designation = designation_by_id();
+        $unit = unit_by_id();
         $department = department_by_id();
         $section = section_by_id();
         $employees = [];
-        $employees = DB::table('hr_as_basic_info')
+        $employees = DB::table('hr_as_basic_info as b')
             ->select(
-                'as_id',
-                'associate_id',
-                'as_oracle_code',
-                'temp_id',
-                'as_pic',
-                'as_name',
-                'as_doj',
-                'as_unit_id',
-                'as_designation_id',
-                'as_department_id',
-                'as_section_id',
-                'as_unit_id'
+                'b.as_id',
+                'b.associate_id',
+                'b.as_oracle_code',
+                'b.as_emp_type_id',
+                'b.temp_id',
+                'b.as_pic',
+                'b.as_gender',
+                'b.as_name',
+                'b.as_doj',
+                'b.as_unit_id',
+                'b.as_designation_id',
+                'b.as_department_id',
+                'b.as_section_id',
+                'b.as_unit_id',
+                'bn.hr_bn_associate_name'
             )
+            ->leftJoin('hr_employee_bengali as bn', 'bn.hr_bn_associate_id','b.associate_id')
             ->whereIn('associate_id', $request->associate_id)
             ->whereIn('as_unit_id', auth()->user()->unit_permissions())
             ->whereIn('as_location', auth()->user()->location_permissions())
             ->get();
 
-        $data['filetag'] = "<style media='print'>.page-break{page-break-after: always;}</style>";
-        if (count($employees)>0)
-        {
-            $page = array_chunk($employees->toArray(), 3);
-            foreach ($page as $key => $emps) {
-                # code...
-                foreach ($emps as $associate)
-                {
-                        $data['filetag'] .= "
-                        <div style=\"border-style: solid;width:900px;margin: 10px auto;\">
-                        <p style=\"text-align:center; font-size:72px; font-weight:700; margin:0px; padding:0px;\">".strtoupper($associate->as_name)."</p>
-                        <p style=\"text-align:center; font-weight:600; font-size:48px; margin:0px; padding:0px;\">".
-                                    (!empty($associate->associate_id)?
-                                    (substr_replace($associate->associate_id, "<big style='font-size:72px; font-weight:700'>$associate->temp_id</big>", 3, 6)):
-                                    null) ." <span style='font-size:40px'>(".$associate->as_oracle_code.")</span><br></p>
-                        <p style=\"text-align:center; font-size:36px; font-weight:700; margin:0px; padding:0px;\">".strtoupper($designation[$associate->as_designation_id]['hr_designation_name'])."</p>
-                        <p style=\"text-align:center; font-size:36px; font-weight:700; margin:0px; padding:0px;\">Section: ".strtoupper($section[$associate->as_section_id]['hr_section_name'])."</p>
-                        <p style=\"text-align:center; font-size:60px; font-weight:700; margin:0px; padding:0px;\">".date('d-M-Y',strtotime($associate->as_doj))."</p>
-                        </div>";
-                }
-                $data['filetag'] .= "<div class='page-break'></div>";
-            }
-        }
-        else
-        {
-            $data['filetag'] = '<div class="alert alert-danger">No File Tag Found!</div>';
-        }
+        $data['filetag'] = view('hr.common.file_tag_view', compact('employees','designation','department','section','unit'))->render();
 
         $data['printbutton'] = "";
         if (strlen($data['filetag'])>1)

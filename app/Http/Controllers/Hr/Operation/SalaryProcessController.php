@@ -142,18 +142,18 @@ class SalaryProcessController extends Controller
                 $join->on('bemp.hr_bn_associate_id','emp.associate_id')->addBinding($employeeBanData->getBindings());
             });
 	            
-	        $queryData->select('s.*', 'emp.as_doj', 'emp.as_ot', 'emp.as_designation_id', 'emp.as_section_id', 'emp.as_location', 'bemp.hr_bn_associate_name', 'emp.as_oracle_code', 'emp.as_unit_id');
-            $totalSalary = round($queryData->sum("s.total_payable"));
-            $totalCashSalary = round($queryData->sum("s.cash_payable"));
-            $totalBankSalary = round($queryData->sum("s.bank_payable"));
-            $totalStamp = round($queryData->sum("s.stamp"));
-            $totalTax = round($queryData->sum("s.tds"));
-            $totalOtHour = ($queryData->sum("s.ot_hour"));
-            $totalOTAmount = round($queryData->sum(DB::raw('s.ot_hour * s.ot_rate')));
+	        $queryData->select('s.*', 'emp.as_doj','emp.associate_id', 'emp.as_ot', 'emp.as_designation_id', 'emp.as_section_id', 'emp.as_location', 'bemp.hr_bn_associate_name', 'emp.as_oracle_code', 'emp.as_unit_id',DB::raw('s.ot_hour * s.ot_rate as ot_amount'));
             $getSalaryList = $queryData->orderBy('emp.as_oracle_sl', 'asc')->get();
+            $totalSalary = round($getSalaryList->sum("total_payable"));
+            $totalCashSalary = round($getSalaryList->sum("cash_payable"));
+            $totalBankSalary = round($getSalaryList->sum("bank_payable"));
+            $totalStamp = round($getSalaryList->sum("stamp"));
+            $totalTax = round($getSalaryList->sum("tds"));
+            $totalOtHour = ($getSalaryList->sum("ot_hour"));
+            $totalOTAmount = round($getSalaryList->sum("ot_amount"));
             $totalEmployees = count($getSalaryList);
             // return $totalEmployees;
-            $employeeAssociates = $queryData->select('emp.associate_id')->pluck('emp.associate_id')->toArray();
+            $employeeAssociates = collect($getSalaryList)->pluck('associate_id')->toArray();
             // salary adjust
             $salaryAddDeduct = DB::table('hr_salary_add_deduct')
                 ->where('year', $input['year'])

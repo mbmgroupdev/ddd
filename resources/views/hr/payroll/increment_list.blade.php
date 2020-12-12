@@ -100,7 +100,7 @@ $(document).ready(function(){
             },
             pagingType: "full_numbers",
             ajax: {
-                url: '{!! url("hr/payroll/increment-list-data") !!}',
+                url: '{!! url("hr/payroll/increment-list-data?year=".$year) !!}',
                 type: "get",
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'

@@ -292,6 +292,28 @@
             });
         });
 
+        $('#section').on("change", function(){
+           $.ajax({
+             url : "{{ url('hr/setup/getSubSectionListBySectionID') }}",
+             type: 'get',
+             data: {
+               area_id: $("#area").val(),
+               department_id: $("#department").val(),
+               section_id: $(this).val()
+             },
+             success: function(data)
+             {
+                $('#subSection').removeAttr('disabled');
+                
+                $("#subSection").html(data);
+             },
+             error: function(reject)
+             {
+               console.log(reject);
+             }
+           });
+        });
+
         var searchable = [2,3,4,5,6,7,8];
         var selectable = []; //use 4,5,6,7,8,9,10,11,....and * for all
         var dropdownList = {};

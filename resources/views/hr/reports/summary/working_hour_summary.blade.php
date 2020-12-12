@@ -1,11 +1,9 @@
 <div class="panel">
 	<div class="panel-body">
-		@if($input['report_format'] == 0)
 			@php
 				$urldata = http_build_query($input) . "\n";
 			@endphp
-			{{-- <a href='{{ url("hr/reports/activity-report-excle?$urldata")}}' target="_blank" class="btn btn-sm btn-info hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download" style="position: absolute; top: 15px; left: 65px;"><i class="fa fa-file-excel-o"></i></a> --}}
-		@endif
+			<a href='{{ url("hr/reports/summary/excel?$urldata")}}' target="_blank" class="btn btn-sm btn-info hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download" style="position: absolute; top: 15px; left: 65px;"><i class="fa fa-file-excel-o"></i></a>
 		<div class="report_section" id="report_section">
 			@php
 				$formatHead = explode('_',$format);
@@ -369,6 +367,22 @@
 								</td>
 							</tr>
 							@endforeach
+							<tr style="font-weight: bold;">
+								<td 
+								@if($format == 'as_section_id')
+									colspan="3" 
+								@elseif($format == 'as_subsection_id')
+									colspan="4" 
+								@else
+									colspan="2" 
+								@endif
+								>
+									Total
+								</td>
+								<td style="text-align: center;">{{$totalEmployees}}</td>
+								<td style="text-align: right;">{{$totalValue}}</td>
+								<td style="text-align: right;">{{$totalAvgHour}}</td>
+							</tr>
 							@else
 							<tr>
 				            	<td colspan="5" class="text-center">No Employee Found!</td>

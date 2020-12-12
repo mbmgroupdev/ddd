@@ -12,6 +12,8 @@ use App\Models\Hr\Subsection;
 use App\Models\Hr\Unit;
 use DB, PDF;
 use Illuminate\Http\Request;
+use App\Exports\Hr\SummaryExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SummaryReportController extends Controller
 {
@@ -33,11 +35,9 @@ class SummaryReportController extends Controller
     public function attendanceReport(Request $request)
     {
         $input = $request->all();
-        // dd($input);
-        // return $input;
         try {
             
-             $input['area']       = isset($request['area'])?$request['area']:'';
+            $input['area']       = isset($request['area'])?$request['area']:'';
             $input['otnonot']    = isset($request['otnonot'])?$request['otnonot']:'';
             $input['department'] = isset($request['department'])?$request['department']:'';
             $input['line_id']    = isset($request['line_id'])?$request['line_id']:'';
@@ -45,10 +45,7 @@ class SummaryReportController extends Controller
             $input['section']    = isset($request['section'])?$request['section']:'';
             $input['subSection'] = isset($request['subSection'])?$request['subSection']:'';
 
-            if($input['report_type'] == 'missing_token'){
-                return $this->getatttoken($request, $input);
-            }
-
+         
             $getEmployee = array();
             $data = array();
             $format = $request['report_group'];
@@ -138,10 +135,14 @@ class SummaryReportController extends Controller
                 if($input['report_format'] == 1 && $input['report_group'] != null){
 
                     $attData->select($groupBy, DB::raw('count( distinct emp.as_id) as total'), DB::raw('sum(ot_hour) as groupOt'), DB::raw('sum(a.ot_hour*(bn.ben_basic/104)) as ot_amount'))->groupBy($groupBy);
-                    $totalOtHour =  array_sum(array_column($attData->get()->toArray(),'groupOt'));
+                    $alldata = $attData->get();
+                    $totalOtHour =  array_sum(array_column($alldata->toArray(),'groupOt'));
+                    $totalOtAmount =  array_sum(array_column($alldata->toArray(),'ot_amount'));
                 }else{
                     $attData->select('emp.as_id', 'emp.as_gender', 'emp.as_shift_id', 'emp.as_oracle_code', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_contact', 'emp.as_section_id','emp.as_subsection_id', DB::raw('sum(a.ot_hour) as ot_hour'), DB::raw('sum(a.ot_hour*(bn.ben_basic/104)) as ot_amount'),DB::raw('count(  a.in_date) as days'))->orderBy('a.ot_hour','desc')->groupBy('emp.as_id');
-                    $totalOtHour = array_sum(array_column($attData->get()->toArray(),'ot_hour'));
+                    $alldata = $attData->get();
+                    $totalOtHour = array_sum(array_column($alldata->toArray(),'ot_hour'));
+                    $totalOtAmount =  array_sum(array_column($alldata->toArray(),'ot_amount'));
                     
                 }
                 
@@ -230,7 +231,7 @@ class SummaryReportController extends Controller
 
             // dd($uniqueGroups);
             if($input['report_type'] == 'ot'){
-                return view('hr.reports.summary.ot_summary', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees','totalValue', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area'));
+                return view('hr.reports.summary.ot_summary', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees','totalValue', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area','totalOtAmount'));
             }else if($input['report_type'] == 'working_hour'){
                 return view('hr.reports.summary.working_hour_summary', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees', 'totalValue', 'totalAvgHour', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area'));
             }
@@ -239,5 +240,23 @@ class SummaryReportController extends Controller
             return $bug;
             return 'error';
         }
+    }
+
+
+
+
+    public function excel(Request $request)
+    {
+        $input = $request->all();
+        $filename = 'Summary Report ';
+
+        if($input['report_type'] == 'ot'){
+            $filename = 'Over Time Report ';
+        }else if($input['report_type'] == 'working_hour'){
+            $filename = 'Working Hour Report ';
+        }
+        $filename .= $input['from_date'].' to '.$input['to_date'];
+        $filename .= '.xlsx';
+        return Excel::download(new SummaryExport($input), $filename);
     }
 }

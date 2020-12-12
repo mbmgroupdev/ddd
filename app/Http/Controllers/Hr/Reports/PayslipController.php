@@ -117,7 +117,7 @@ class PayslipController extends Controller
             ->when(!empty($input['location']), function ($query) use($input){
                return $query->where('emp.as_location',$input['location']);
             })
-            ->where('emp.as_status', $input['employee_status'])
+            ->where('s.emp_status', $input['employee_status'])
             ->when(!empty($input['area']), function ($query) use($input){
                return $query->where('emp.as_area_id',$input['area']);
             })
