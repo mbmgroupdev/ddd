@@ -70,7 +70,7 @@ class BankSheetController extends Controller
                 $join->on('ben.ben_as_id','emp.associate_id')->addBinding($benefitData->getBindings());
             });
 
-            $queryData->select('ben.bank_name','ben.bank_no', 'ben.ben_tds_amount','emp.as_id', 'emp.as_oracle_code', 'emp.associate_id', 'emp.as_unit_id', 'emp.as_pic', 'emp.as_name', 's.total_payable', 's.bank_payable', 's.tds', 's.pay_status');
+            $queryData->select('ben.bank_name','ben.bank_no', 'ben.ben_tds_amount','emp.as_id', 'emp.as_oracle_code', 'emp.associate_id', 'emp.as_unit_id', 'emp.as_location', 'emp.as_pic', 'emp.as_name', 's.total_payable', 's.bank_payable', 's.tds', 's.pay_status');
             $totalSalary = round($queryData->sum("s.total_payable"));
             $totalBankSalary = round($queryData->sum("s.bank_payable"));
             // $totalStamp = round($queryData->sum("s.stamp"));

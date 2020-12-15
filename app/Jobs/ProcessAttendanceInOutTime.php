@@ -57,8 +57,7 @@ class ProcessAttendanceInOutTime implements ShouldQueue
             $month = Carbon::parse($getEmpAtt->in_time)->format('m');
             //check absent table if exists then delete
             $getAbsent = Absent::
-            where('hr_unit', $getEmployee->as_unit_id)
-            ->where('date', $today)
+            where('date', $today)
             ->where('associate_id', $getEmployee->associate_id)
             ->first();
             if($getAbsent != null){
@@ -157,10 +156,10 @@ class ProcessAttendanceInOutTime implements ShouldQueue
 
                 // bill announce 
 
-                if($getEmployee->as_ot == 1 && $billEligible != null){
-                    if($cOut > date("H:i", strtotime($billEligible))){
+                if($billEligible != null){
+                    if($cOut > strtotime(date("H:i", strtotime($billEligible)))){
 
-                        $bill = EmployeeHelper::dailyBillCalculation($getEmployee->as_unit_id, $getEmpAtt->in_date, $getEmpAtt->as_id, $nightFlag, $getEmployee->as_designation_id);
+                        $bill = EmployeeHelper::dailyBillCalculation($getEmployee->as_ot, $getEmployee->as_unit_id, $getEmpAtt->in_date, $getEmpAtt->as_id, $nightFlag, $getEmployee->as_designation_id);
                     }
                 }
                 

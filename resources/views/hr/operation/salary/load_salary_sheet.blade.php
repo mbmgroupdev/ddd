@@ -155,7 +155,7 @@
                                     <th width="250">মোট দেয় টাকার পরিমান</th>
                                     <th width="120">সর্বমোট টাকার পরিমান</th>
                                     <th width="70">দস্তখত</th>
-                                    <th class="disburse-button" width="80">বিতরণ</th>
+                                    {{-- <th class="disburse-button" width="80">বিতরণ</th> --}}
                                 </tr>
                             </thead>
                             <tbody>
@@ -249,7 +249,7 @@
 
                                                     <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">অনুপস্থিতির জন্য</span>
                                                     <span style="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=</span>
-                                                    <span style="text-align: right;width: 30%; float: right;  white-space: wrap;"><font style="color:hotpink">{{  Custom::engToBnConvert(round($list->absent_deduct)) }}</font>
+                                                    <span style="text-align: right;width: 30%; float: right;  white-space: wrap;"><font style="color:hotpink">{{  Custom::engToBnConvert(number_format($list->absent_deduct,2)) }}</font>
                                                     </span>
                                                 </p>
                                                 @if($list->half_day_deduct > 0)
@@ -258,7 +258,7 @@
                                                     <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">অর্ধ দিবসের জন্য কর্তন </span>
                                                     <span style="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=</span>
                                                     <span style="text-align: right;width: 30%; float: right;  white-space: wrap;">
-                                                        <font style="color:hotpink">{{ Custom::engToBnConvert(round($list->half_day_deduct)) }}</font>
+                                                        <font style="color:hotpink">{{ Custom::engToBnConvert(number_format($list->half_day_deduct,2)) }}</font>
                                                     </span>
                                                 </p>
                                                 @endif
@@ -267,7 +267,14 @@
                                                     <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">অগ্রিম গ্রহণ বাবদ </span>
                                                     <span style ="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=
                                                     </span>
-                                                    <span style="text-align: right;width: 30%; float: right;  white-space: wrap;"><font style="color:hotpink">{{ ($list->salary_add_deduct_id == null) ? Custom::engToBnConvert('0.00') : Custom::engToBnConvert($salaryAddDeduct[$list->as_id]['advp_deduct']) }}</font>
+                                                    <span style="text-align: right;width: 30%; float: right;  white-space: wrap;"><font style="color:hotpink">
+                                                        @if(array_key_exists($list->as_id, $salaryAddDeduct))
+                                                            {{ Custom::engToBnConvert(number_format($salaryAddDeduct[$list->as_id]->advp_deduct,2)??'0.0') }}
+                                                        @else
+                                                            {{ Custom::engToBnConvert('0.00') }}
+                                                        @endif
+                                                        
+                                                    </font>
                                                     </span>
 
                                                 </p>
@@ -276,7 +283,7 @@
                                                     <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">স্ট্যাম্প বাবদ </span>
                                                     <span style="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=</span>
                                                     <span style="text-align: right;width: 30%; float: right;  white-space: wrap;">
-                                                        <font style="color:hotpink">{{ Custom::engToBnConvert($list->stamp??0) }}</font>
+                                                        <font style="color:hotpink">{{ Custom::engToBnConvert(number_format($list->stamp,2)??0) }}</font>
                                                     </span>
                                                 </p>
                                                 <p style="margin:0;padding:0">
@@ -285,31 +292,43 @@
                                                     <span style ="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=
                                                     </span>
                                                     <span style="text-align: right;width: 30%; float: right;  white-space: wrap;"><font style="color:hotpink">
-                                                        @if($list->salary_add_deduct_id == null)
-                                                            {{ Custom::engToBnConvert('0.00') }}
+                                                        @if(array_key_exists($list->as_id, $salaryAddDeduct))
+                                                            {{ Custom::engToBnConvert(number_format($salaryAddDeduct[$list->as_id]->cg_deduct,2)??'0.0') }}
                                                         @else
-                                                            {{ Custom::engToBnConvert($salaryAddDeduct[$list->as_id]['cg_product']) }}
+                                                            {{ Custom::engToBnConvert('0.00') }}
                                                         @endif
                                                     </font>
                                                     </span>
                                                 </p>
-                                                @if($list->salary_add_deduct_id)
-                                                    @if($salaryAddDeduct[$list->as_id]['food_deduct'] > 0)
+                                                @if($list->as_location == 7)
+                                                    
                                                     <p style="margin:0;padding:0">
                                                         <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">খাবার বাবদ কর্তন </span>
                                                         <span style ="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=
                                                         </span>
                                                         <span style="text-align: right;width: 30%; float: right;  white-space: wrap;"><font style="color:hotpink">
-                                                          {{   Custom::engToBnConvert($salaryAddDeduct[$list->as_id]['food_deduct']) }} </font>
+                                                            @if(array_key_exists($list->as_id, $salaryAddDeduct))
+                                                                {{ Custom::engToBnConvert(number_format($salaryAddDeduct[$list->as_id]->food_deduct,2)??'0.0') }}
+                                                            @else
+                                                                {{ Custom::engToBnConvert('0.00') }}
+                                                            @endif
+                                                           </font>
                                                         </span>
                                                     </p>
-                                                    @endif
+                                                    
                                                 @endif
                                                 <p style="margin:0;padding:0">
                                                     <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">অন্যান্য </span>
                                                     <span style ="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=
                                                     </span>
-                                                    <span style="text-align: right;width: 30%; float: right;  white-space: wrap;"><font style="color:hotpink">{{ ($list->salary_add_deduct_id == null) ? Custom::engToBnConvert('0.00') : Custom::engToBnConvert($salaryAddDeduct[$list->as_id]['others_deduct']) }} </font>
+                                                    <span style="text-align: right;width: 30%; float: right;  white-space: wrap;"><font style="color:hotpink">
+                                                        @if(array_key_exists($list->as_id, $salaryAddDeduct))
+                                                            {{ Custom::engToBnConvert(number_format($salaryAddDeduct[$list->as_id]->others_deduct,2)??'0.0') }}
+                                                        @else
+                                                            {{ Custom::engToBnConvert('0.00') }}
+                                                        @endif
+                                            
+                                                    </font>
                                                     </span>
 
                                                 </p>
@@ -320,26 +339,25 @@
                                                 $otHour = numberToTimeClockFormat($list->ot_hour);
                                                 $ot = ((float)($list->ot_rate) * $list->ot_hour);
                                                 $ot = number_format((float)$ot, 2, '.', '');
-                                                $salaryAdd = ($list->salary_add_deduct_id == null) ? '0.00' : ($salaryAddDeduct[$list->as_id]['salary_add']);
-                                                // $total = ($list->salary_payable + $ot + $list->attendance_bonus + $salaryAdd);
+                                                
                                                 $totalPayable = $totalPayable + $list->salary_payable;
                                                 $attendanceBonus = $attendanceBonus + $list->attendance_bonus;
                                             @endphp
                                             <td>
                                                 <p style="margin:0;padding:0">
 
-                                                      <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">বেতন/মজুরী </span>
-                                                      <span style="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=</span>
-                                                      <span style="text-align: right;width: 30%; float: right;  white-space: wrap;">
-                                                            <font style="color:hotpink"> {{ Custom::engToBnConvert($list->salary_payable) }}</font>
-                                                     </span>
+                                                    <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">বেতন/মজুরী </span>
+                                                    <span style="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=</span>
+                                                    <span style="text-align: right;width: 30%; float: right;  white-space: wrap;">
+                                                        <font style="color:hotpink"> {{ Custom::engToBnConvert(number_format($list->salary_payable,2)) }}</font>
+                                                    </span>
                                                 </p>
                                                 <p style="margin:0;padding:0">
 
                                                     <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">অতিরিক্ত সময়ের কাজের মজুরী </span>
                                                     <span style="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=</span>
                                                     <span style="text-align: right;width: 30%; float: right;  white-space: wrap;">
-                                                        <font style="color:hotpink">{{ Custom::engToBnConvert($ot) }}</font>
+                                                        <font style="color:hotpink">{{ Custom::engToBnConvert(number_format($ot,2)) }}</font>
                                                     </span>
                                                 </p>
                                                 <p style="margin:0;padding:0">
@@ -347,7 +365,7 @@
                                                          <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">অতিরিক্ত কাজের মজুরী হার </span>
                                                         <span style="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=</span>
                                                         <span style="text-align: right;width: 30%; float: right;  white-space: wrap;">
-                                                            <font style="color:hotpink">{{ Custom::engToBnConvert($list->ot_rate) }} </font>
+                                                            <font style="color:hotpink">{{ Custom::engToBnConvert(number_format($list->ot_rate,2)) }} </font>
                                                         </span>
                                                         @if($list->as_ot>0)
                                                         <span style="text-align: right;width: 30%; float: right;  white-space: wrap;">
@@ -367,7 +385,7 @@
                                                     <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">উপস্থিত বোনাস </span>
                                                         <span style="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=</span>
                                                         <span style="text-align: right;width: 30%; float: right;  white-space: wrap;">
-                                                            <font style="color:hotpink">{{ Custom::engToBnConvert($list->attendance_bonus) }}</font>
+                                                            <font style="color:hotpink">{{ Custom::engToBnConvert(number_format($list->attendance_bonus,2)) }}</font>
                                                         </span>
                                                 </p>
                                                 <p style="margin:0;padding:0">
@@ -375,7 +393,7 @@
                                                     <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">প্রোডাকশন বোনাস </span>
                                                         <span style="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=</span>
                                                         <span style="text-align: right;width: 30%; float: right;  white-space: wrap;">
-                                                            <font style="color:hotpink">{{ Custom::engToBnConvert($list->production_bonus) }}</font>
+                                                            <font style="color:hotpink">{{ Custom::engToBnConvert(number_format($list->production_bonus,2)) }}</font>
                                                         </span>
                                                 </p>
                                                 <p style="margin:0;padding:0">
@@ -384,7 +402,13 @@
                                                     <span style="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=
                                                     </span>
                                                     <span style="text-align: right;width: 30%; float: right;  white-space: wrap;">
-                                                        <font style="color:hotpink">{{ Custom::engToBnConvert($salaryAdd) }}</font>
+                                                        <font style="color:hotpink">
+                                                            @if(array_key_exists($list->as_id, $salaryAddDeduct))
+                                                                {{ Custom::engToBnConvert(number_format($salaryAddDeduct[$list->as_id]->salary_add,2)??'0.0') }}
+                                                            @else
+                                                                {{ Custom::engToBnConvert('0.00') }}
+                                                            @endif
+                                                        </font>
                                                     </span>
 
                                                 </p>
@@ -395,7 +419,7 @@
                                                     <span style="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=
                                                     </span>
                                                     <span style="text-align: right;width: 30%; float: right;  white-space: wrap;">
-                                                        <font style="color:hotpink">{{ Custom::engToBnConvert($list->leave_adjust) }}</font>
+                                                        <font style="color:hotpink">{{ Custom::engToBnConvert(number_format($list->leave_adjust,2)) }}</font>
                                                     </span>
 
                                                 </p>
@@ -434,7 +458,7 @@
                                                 @endif
                                             </td>
                                             <td></td>
-                                            <td class="disburse-button" id="{{ $j }}-{{ $list->as_id }}">
+                                            {{-- <td class="disburse-button" id="{{ $j }}-{{ $list->as_id }}">
                                                 @if($list->disburse_date == null)
                                                     <a data-id="{{ $j }}-{{ $list->as_id }}" class="btn btn-primary btn-sm disbursed_salary text-white" data-eaid="{{ $list->as_id }}" data-date="{{ $pageHead->for_date }}" data-month="{{ $pageHead->month }}" data-year="{{ $pageHead->year }}" data-name="{{ $list->hr_bn_associate_name }}" data-post="{{ $designation[$list->as_designation_id]['hr_designation_name_bn']}}"  rel='tooltip' data-tooltip-location='top' data-tooltip='বেতন প্রদান করুন' > হয় নি </a>
                                                 @else
@@ -442,7 +466,7 @@
                                                     <br>
                                                     <b>{{ Custom::engToBnConvert($list->disburse_date) }}</b>
                                                 @endif
-                                            </td>
+                                            </td> --}}
                                         </tr>
                                         <?php $j++; ?>
                                     @endif

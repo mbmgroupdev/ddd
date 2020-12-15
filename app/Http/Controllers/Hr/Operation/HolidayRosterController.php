@@ -19,14 +19,15 @@ class HolidayRosterController extends Controller
     	$input = $request->all();
     	// return $input;
     	DB::beginTransaction();
-	     // return $input;
-	     try {
+	    $results = array();
+	    try {
 	        $assignDates = !empty($input['assignDates']) ? explode(',', $input['assignDates']): '';
 	        // $subDates = !empty($input['subDates']) ? explode(',', $input['subDates']): '';
 
 	        foreach ($request->assigned as $associate_id) {
 	          	if($assignDates != ''){
-	            	$result = $this->employeeWiseRosterSave($associate_id, $assignDates, $request->type, $request->comment);
+	            	$value = $this->employeeWiseRosterSave($associate_id, $assignDates, $request->type, $request->comment);
+	            	$results = array_merge($results, $value);
 	            	// return $result;
 	          	}
 
@@ -36,11 +37,11 @@ class HolidayRosterController extends Controller
 	        }
 	        DB::commit();
 	        $data['type'] = 'success';
-	        $data['message'] = 'Holiday Roaster Saved Successfully';
+	        $data['message'] = $results;
 	        return $data;
 	    } catch (Exception $e) {
 	        DB::rollback();
-	        $data['message'] = $e->getMessage();
+	        $data['message'][] = $e->getMessage();
 	        return $data;
 	    }
     }
@@ -49,31 +50,32 @@ class HolidayRosterController extends Controller
     {
 	    DB::beginTransaction();
 	    try {
+	    	$results = array();
 	        foreach ($selectedDates as $selectedDate) {
-	        	$getSiEmployee = Employee::select('as_id','shift_roaster_status', 'as_unit_id')->where('associate_id', $associate_id)->first();
-	        	$flag = 0;
-	        	if($getSiEmployee != null){
-	        		if($getSiEmployee->shift_roaster_status == 0){
-	        			if($type == 'Holiday'){
-	        				$openS = 0;
-	        			}elseif($type == 'General'){
-	        				$openS = 1;
-	        			}else{
-	        				$openS = 2;
-	        			}
-	        			$holidayPlanner = DB::table('hr_yearly_holiday_planner')
-	        			->where('hr_yhp_dates_of_holidays', $selectedDate)
-	        			->where('hr_yhp_unit', $getSiEmployee->as_unit_id)
-	        			->where('hr_yhp_status', 1)
-	        			->where('hr_yhp_open_status', $openS)
-	        			->first();
-	        			if($holidayPlanner != null){
-	        				$flag = 1;
-	        			}
+	        	$getEmployee = Employee::select('as_id','shift_roaster_status', 'as_unit_id', 'as_ot')->where('associate_id', $associate_id)->first();
+	        	$flag = 1;
+	        	if($getEmployee != null){
 
-	        		}
+	        		$dayCheck = EmployeeHelper::employeeDateWiseStatus($selectedDate, $associate_id, $getEmployee->as_unit_id, $getEmployee->shift_roaster_status);
+	        		if($type == 'OT' && $getEmployee->as_ot == 0){
+        				$type = 'Holiday';
+        			}
+	        		if($type == 'Holiday'){
+        				if(in_array($dayCheck, ['open','OT'])){
+        					$flag = 0;
+        				}
+        			}elseif($type == 'General'){
+        				if(in_array($dayCheck, ['Holiday','OT'])){
+        					$flag = 0;
+        				}
+        			}else{
+        				if(in_array($dayCheck, ['Holiday','open'])){
+        					$flag = 0;
+        				}
+        			}
 	        		
 	        		if($flag == 0){
+	        			
 	        			$exist = DB::table('holiday_roaster')->where('date',$selectedDate)->where('as_id',$associate_id)->first();
 			          	$year = date('Y',strtotime($selectedDate));
 			          	$month = date('m',strtotime($selectedDate));
@@ -93,6 +95,7 @@ class HolidayRosterController extends Controller
 			             		'status'=>1
 			            	]);
 			          	}
+
 			          	$today = date('Y-m-d');
 			          	$yearMonth = $year.'-'.$month;
 			          	if($today > $selectedDate){
@@ -114,8 +117,8 @@ class HolidayRosterController extends Controller
 				            }
 
 				            if($modifyFlag == 1){
-				              	$getEmployee = Employee::getEmployeeAssIdWiseSelectedField($associate_id, ['as_id', 'as_unit_id']);
-				              	$tableName = Custom::unitWiseAttendanceTableName($getEmployee->as_unit_id);
+				              	
+				              	$tableName = get_att_table($getEmployee->as_unit_id);
 				              	if($month == date('m')){
 				                	$totalDay = date('d');
 				              	}else{
@@ -127,13 +130,16 @@ class HolidayRosterController extends Controller
 				                      dispatch($queue); 
 				            }
 			          	}
+			          	$results[] = $associate_id.' - '.$selectedDate.' - '.$type.' - Assign Successfully ';
+	        		}else{
+	        			$results[] = $associate_id.' - '.$selectedDate.' - Already '.$type;
 	        		}
 	        	}
 		          	
 	        }
 
 	        DB::commit();
-	        return "success";
+	        return $results;
 	    } catch (\Exception $e) {
 	        DB::rollback();
 	        $bug = $e->getMessage();

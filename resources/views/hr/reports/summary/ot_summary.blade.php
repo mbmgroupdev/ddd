@@ -134,6 +134,9 @@
 									}elseif($format == 'as_designation_id'){
 										$head = 'Designation';
 										$body = $designation[$group]['hr_designation_name']??'N/A';
+									}elseif($format == 'as_unit_id'){
+										$head = 'Unit';
+										$body = $unit[$group]['hr_unit_name']??'N/A';
 									}elseif($format == 'ot_hour'){
 										$head = 'OT Hour';
 										
@@ -290,7 +293,7 @@
 					@endphp
 					<table class="table table-bordered table-hover table-head" border="1">
 						<thead>
-							<tr>
+							<tr style="text-align: center;">
 								<th>Sl</th>
 								@if($format == 'as_section_id' || $format == 'as_subsection_id')
 								<th>Department Name</th>
@@ -298,6 +301,7 @@
 								@if($format == 'as_subsection_id')
 								<th>Section Name</th>
 								@endif
+								@if($format == 'as_line_id')<th> Unit </th> <th> Floor </th>@endif
 								<th> {{ $head }} {{ $format != 'ot_hour'?'Name':'' }}</th>
 								<th>No. Of Employee</th>
 								<th>Total OT Hour</th>
@@ -328,6 +332,20 @@
 									@php
 										$getSec = $subSection[$group]['hr_subsec_section_id']??'';
 										echo $section[$getSec]['hr_section_name']??'';
+									@endphp
+								</td>
+								@endif
+								@if($format == 'as_line_id')
+								<td>
+									@php
+										$getUnit = $line[$group]['hr_line_unit_id']??'';
+										echo $unit[$getUnit]['hr_unit_short_name']??'';
+									@endphp
+								</td>
+								<td>
+									@php
+										$getLine = $line[$group]['hr_line_floor_id']??'';
+										echo $floor[$getLine]['hr_floor_name']??'';
 									@endphp
 								</td>
 								@endif
@@ -376,9 +394,9 @@
 							@endforeach
 							<tr style="font-weight: bold;">
 								<td 
-								@if($format == 'as_section_id')
+								@if($format == 'as_section_id' )
 									colspan="3" 
-								@elseif($format == 'as_subsection_id')
+								@elseif($format == 'as_subsection_id' || $format == 'as_line_id')
 									colspan="4" 
 								@else
 									colspan="2" 

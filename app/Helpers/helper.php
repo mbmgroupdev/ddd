@@ -433,6 +433,8 @@ if(!function_exists('emp_status_name')){
             $name = 'left';
         } else if($status == 6) {
             $name = 'maternity';
+        } else if($status == 25){
+            $name = 'Left & Resign';
         }
         return $name;
     }

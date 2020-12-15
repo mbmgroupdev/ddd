@@ -59,6 +59,7 @@
 		                    <th>TDS</th>
 		                    <th class="capitalize">{{ $input['pay_status']}} Account No.</th>
 		                    <th>Unit</th>
+		                    <th>Location</th>
 		                </tr>
 		            </thead>
 		            <tbody>
@@ -80,6 +81,7 @@
 				            		@endphp
 				            	</td>
 				            	<td>{{ $unit[$employee->as_unit_id]['hr_unit_short_name'] }}</td>
+				            	<td>{{ $location[$employee->as_location]['hr_location_short_name'] }}</td>
 			            	</tr>
 			            @endforeach
 			            	<tr>
@@ -87,11 +89,11 @@
 		            		
 			            		<td style="text-align:right;"><b>{{ ($salarySum) }}</b></td>
 			            		<td style="text-align:right;"><b>{{ ($tds) }}</b></td>
-			            		<td colspan="2"> &nbsp;</td>
+			            		<td colspan="3"> &nbsp;</td>
 			            	</tr>
 		            @else
 			            <tr>
-			            	<td colspan="8" class="text-center">No Employee Found!</td>
+			            	<td colspan="9" class="text-center">No Employee Found!</td>
 			            </tr>
 		            @endif
 		            </tbody>

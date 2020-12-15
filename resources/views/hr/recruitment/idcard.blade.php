@@ -71,6 +71,13 @@
 									<label for="emp_type">DOJ To</label> 
 								</div> 
 							</div>  
+							<div class="col-sm-12 d-block">
+								<hr>
+								<div class="form-group has-float-label select-search-group" style="height: 100px;">
+                                    {{ Form::select('as_id[]', [],'', ['id'=>'as_id', 'class'=> 'associates form-control select-search no-select filter', 'multiple'=>"multiple",'style', 'data-validation'=>'required']) }}
+                                    <label for="as_id">Employees</label>
+                                </div>
+							</div>
 							<div class="col-sm-6">
 	    						{{ Form::radio('type', 'en',true, ['id'=>'en']) }}  
 								<label for="en">English</label>
@@ -241,6 +248,7 @@ $(document).ready(function(){
 				floor: $("select[name=floor]").val(),
 				line: $("select[name=line]").val(), 
 				doj_from: $("input[name=doj_from]").val(), 
+				associate_id: $("#as_id").val(), 
 				doj_to: $("input[name=doj_to]").val() 
 			},
 			success: function(data)

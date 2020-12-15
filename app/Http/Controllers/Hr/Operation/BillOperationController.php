@@ -53,7 +53,11 @@ class BillOperationController extends Controller
             ->whereIn('emp.as_location', auth()->user()->location_permissions())
 
             ->when(!empty($input['unit']), function ($query) use($input){
-               return $query->where('emp.as_unit_id',$input['unit']);
+                if($input['unit'] == 145){
+                    return $query->whereIn('emp.as_unit_id',[1, 4, 5]);
+                }else{
+                    return $query->where('emp.as_unit_id',$input['unit']);
+                }
             })
             ->when(!empty($input['location']), function ($query) use($input){
                return $query->where('emp.as_location',$input['location']);
@@ -82,6 +86,9 @@ class BillOperationController extends Controller
             if(isset($input['pay_status']) && $input['pay_status'] != null){
                 $queryData->where('s.pay_status', $input['pay_status']);
             }
+            if(isset($input['bill_type']) && $input['bill_type'] != null){
+                $queryData->where('s.bill_type', $input['bill_type']);
+            }
             $queryData->leftjoin(DB::raw('(' . $employeeDataSql. ') AS emp'), function($join) use ($employeeData) {
                 $join->on('emp.as_id','s.as_id')->addBinding($employeeData->getBindings());
             });
@@ -91,11 +98,26 @@ class BillOperationController extends Controller
             });
 	        $listData = clone $queryData;
 	        $queryData->select('emp.as_doj', 'emp.as_ot', 'emp.as_designation_id', 'emp.as_section_id', 'emp.as_location', 'bemp.hr_bn_associate_name', 'emp.as_oracle_code', 'emp.as_unit_id','emp.as_id','emp.associate_id', DB::raw('sum(amount) as totalAmount'), DB::raw('count(*) as totalDay'), DB::raw("SUM(IF(pay_status=0,1,0)) AS dueDay"), DB::raw("SUM(IF(pay_status=0,amount,0)) AS dueAmount"))->groupBy('emp.as_id');
-	        $totalAmount =  array_sum(array_column($queryData->get()->toArray(),'dueAmount'));
 	        $getBillList = $queryData->orderBy('emp.as_oracle_sl', 'asc')->get();
+	        $totalAmount =  $getBillList->sum('dueAmount');
+            $employeeKey = array_column($getBillList->toArray(), 'as_id');
 
             $getBillLists = $listData->select('s.*')->orderBy('s.bill_date', 'asc')->get()->groupBy('as_id',true);
             $totalEmployees = count($getBillLists);
+
+            // attendance info
+            
+            $tableName = get_att_table($request['unit']);
+            $attData = DB::table($tableName)
+            ->select('in_date','as_id', 'in_time', 'out_time')
+            ->whereIn('as_id',$employeeKey)
+            ->whereBetween('in_date', [$input['from_date'],$input['to_date']])
+            ->get()->toArray();
+
+
+            $attendance = collect($attData)->groupBy('as_id',true)->map(function($row) {
+                        return collect($row)->keyBy('in_date');
+                    });
 
             // employee designation
             $designation = designation_by_id();
@@ -109,7 +131,7 @@ class BillOperationController extends Controller
             $pageHead['totalBill'] = $totalAmount;
             $pageHead['totalEmployees'] = $totalEmployees;
             // dd($getBillDataSet);
-            return view('hr.operation.bill.report', compact('getBillList', 'designation', 'section', 'uniqueUnit', 'input', 'getBillDataSet', 'getBillLists', 'pageHead'));
+            return view('hr.operation.bill.report', compact('getBillList', 'designation', 'section', 'uniqueUnit', 'input', 'getBillDataSet', 'getBillLists', 'pageHead','attendance'));
     	} catch (\Exception $e) {
     		// return 'error';
     		return $e->getMessage();

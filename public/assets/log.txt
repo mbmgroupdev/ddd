@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 2020-12-10 11:30:01 "20F025016D" Materny leave medical routine checkup for  119
 2020-12-10 11:29:53 "20F025016D" Materny leave medical for  32
 2020-12-10 11:29:31 "20F025016D" Materny leave application for  33
@@ -6,6 +7,9 @@
 2020-11-30 15:32:03 "20F025016D" Location Changed for 9071 143
 2020-11-30 15:27:11 "20F025016D" Location Changed for 14 141
 2020-11-30 13:02:32 "20F025016D" Location Changed for 2688 137
+=======
+2020-11-29 13:27:58 "20F025017D" Employee Data Updated 9071
+>>>>>>> bfe1669fa1053282b0cc3cf9df30d7c4f9cbd7c1
 2020-11-25 11:59:10 "20F025016D" Materny leave medical routine checkup for  23
 2020-11-25 11:59:03 "20F025016D" Materny leave medical for  8
 2020-11-25 11:58:46 "20F025016D" Materny leave application for  9

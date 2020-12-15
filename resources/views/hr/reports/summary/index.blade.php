@@ -140,14 +140,23 @@
                                             </select>
                                             <label for="otnonot">OT/Non-OT</label>
                                         </div>
-                                        <input type="hidden" id="reportformat" name="report_format" value="0">
+                                        <input type="hidden" id="reportformat" name="report_format" value="1">
                                         <input type="hidden" id="reportGroup" name="report_group" value="as_subsection_id">
                                     </div>
                                     <div class="col-4">
                                       
                                         <div class="form-group has-float-label has-required select-search-group">
                                             <?php
-                                                $reportType = ['ot'=>'OT', 'working_hour' => 'Working Hour'];
+                                                $reportType = [
+                                                    'ot'=>'OT', 
+                                                    'working_hour' => 'Working Hour'
+                                                ];
+                                                if(auth()->user()->can('End of Job Benefits')){
+                                                   $reportType['left_resign'] = 'Left & Resign';
+                                                }
+                                                if(auth()->user()->can('Manage Employee')){
+                                                   $reportType['recruitment'] = 'Recruitment';
+                                                }
                                             ?>
                                             {{ Form::select('report_type', $reportType, null, ['placeholder'=>'Select Report Type ', 'class'=>'form-control capitalize select-search', 'id'=>'reportType']) }}
                                             <label for="reportType">Report Type</label>

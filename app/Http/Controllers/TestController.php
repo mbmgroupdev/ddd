@@ -27,19 +27,36 @@ use PDF, Validator, Auth, ACL, DB, DataTables;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\TestMail;
-use App\Jobs\ProcessAttendanceIntime;
 use App\Jobs\ProcessAttendanceInOutTime;
+
 
 class TestController extends Controller
 {
+    public function jobcardupdate()
+    {
+        $data = DB::table('hr_attendance_ceil')
+            ->where('in_date','2020-11-15')
+            ->get();
+
+        foreach ($data as $key => $v) 
+        {
+
+
+            $queue = (new ProcessAttendanceInOutTime('hr_attendance_ceil', $v->id, 2))
+                    ->delay(Carbon::now()->addSeconds(2));
+                    dispatch($queue);
+            
+        }
+        return 'success 30';
+
+    } 
     public function test()
     {
-        return $this->inoutProcess();
+        return $this->jobcardupdate();
         return $this->testMail();
-
+        
+        return '';
         return $this->getLeftEmployee();
-
-
         $designation = designation_by_id();
         $department = department_by_id();
         $section = section_by_id();
@@ -47,230 +64,6 @@ class TestController extends Controller
         $unit = unit_by_id();
         $disctrict = district_by_id();
         $upzilla = upzila_by_id();
-
-
-
-        $data = DB::table('hr_as_basic_info as b')
-        ->leftJoin('hr_benefits as ben','ben.ben_as_id','b.associate_id')
-        ->leftJoin('hr_as_adv_info as adv','adv.emp_adv_info_as_id','b.associate_id')
-        ->leftJoin('hr_employee_bengali as bn','bn.hr_bn_associate_id','b.associate_id')
-        ->whereIn('as_unit_id',[1,4,5])
-        ->where('as_status',1)
-        ->get();
-
-
-        $benefit = [];
-        $bank_cash = [];
-        $father = [];
-        $mother = [];
-        $maritial_status = [];
-        $religion = [];
-        $present_road = [];
-        $present_po = [];
-        $present_upz = [];
-        $present_dist = [];
-        $perm_vill = [];
-        $perm_po = [];
-        $perm_upz = [];
-        $perm_dist = [];
-        $bn_name = [];
-        $bn_father = [];
-        $bn_mother = [];
-        $bn_pres_road = [];
-        $bn_pres_po = [];
-        $bn_per_vill = [];
-        $bn_per_po= [];
-        $image = [];
-
-        $bangla = [];
-        $image_miss = [];
-        $benefit_miss = [];
-        $advance_info = [];
-        foreach ($data as $key => $e) {
-            if(!$e->ben_current_salary || ($e->ben_cash_amount == 0 && $e->ben_bank_amount == 0)){
-                $benefit_miss[] = $e->associate_id;
-            }
-            if(!$e->emp_adv_info_fathers_name || !$e->emp_adv_info_mothers_name || !$e->emp_adv_info_marital_stat || !$e->emp_adv_info_religion || !$e->emp_adv_info_per_vill || !$e->emp_adv_info_per_po){
-                $advance_info[] = $e->associate_id;
-            }
-
-            if(!$e->hr_bn_associate_name || !$e->hr_bn_father_name || !$e->hr_bn_mother_name || !$e->hr_bn_permanent_village){
-                $bangla[] = $e->associate_id;
-            }
-           
-            /*if(!$e->ben_current_salary){
-                $benefit[] = $e->associate_id;
-            }
-            if($e->ben_cash_amount == 0 && $e->ben_bank_amount == 0){
-                $bank_cash[] = $e->associate_id;
-            }
-            if(!$e->emp_adv_info_fathers_name){
-                $father[] = $e->associate_id;
-            }
-            if(!$e->emp_adv_info_mothers_name){
-                $mother[] = $e->associate_id;
-            }
-            if(!$e->emp_adv_info_marital_stat){
-                $maritial_status[] = $e->associate_id;
-            }
-            if(!$e->emp_adv_info_religion){
-                $religion[] = $e->associate_id;
-            }
-            if(!$e->emp_adv_info_per_vill){
-                $perm_vill[] = $e->associate_id;
-            }
-            if(!$e->emp_adv_info_per_po){
-                $perm_po[] = $e->associate_id;
-            }
-            if(!$e->emp_adv_info_per_dist){
-                $perm_dist[] = $e->associate_id;
-            }
-            if(!$e->emp_adv_info_per_upz){
-                $perm_upz[] = $e->associate_id;
-            }
-            if(!$e->emp_adv_info_pres_road){
-                $present_road[] = $e->associate_id;
-            }
-            if(!$e->emp_adv_info_pres_po){
-                $present_po[] = $e->associate_id;
-            }
-            if(!$e->emp_adv_info_pres_dist){
-                $present_dist[] = $e->associate_id;
-            }
-            if(!$e->emp_adv_info_pres_upz){
-                $present_upz[] = $e->associate_id;
-            }
-
-            if(!$e->hr_bn_associate_name){
-                $bn_name[] = $e->associate_id;
-            }
-            if(!$e->hr_bn_father_name){
-                $bn_father[] = $e->associate_id;
-            }
-            if(!$e->hr_bn_mother_name){
-                $bn_mother[] = $e->associate_id;
-            }
-            if(!$e->hr_bn_permanent_village){
-                $bn_per_vill[] = $e->associate_id;
-            }
-            if(!$e->hr_bn_permanent_po){
-                $bn_per_po[] = $e->associate_id;
-            }
-            if(!$e->hr_bn_present_road){
-                $bn_pres_road[] = $e->associate_id;
-            }
-            if(!$e->hr_bn_present_po){
-                $bn_pres_po[] = $e->associate_id;
-            }*/
-            if(!$e->as_pic){
-                $image[] = $e->associate_id;
-            }
-            
-        }
-
-
-        $arr = array(
-           'Benefit' => $benefit_miss,
-           'Advance Info' => $advance_info,
-           'Bangla' => $bangla,
-           'Image' => $image
-        );
-
-        return (new FastExcel(collect($arr)))->download('Employee Missing List.xlsx');
-
-        $total = count($data);
-
-        $text = 'Benefit '. count($benefit).' '.((round(count($benefit)/$total,4))*100).'%<br>';
-        $text .= 'Bank/cash '. count($bank_cash).' '.((round(count($bank_cash)/$total,4))*100).'%<br>';
-        $text .= 'Father Name '. count($father).' '.((round(count($father)/$total,4))*100).'%<br>';
-        $text .= 'Mother Name '. count($mother).' '.((round(count($mother)/$total,4))*100).'%<br>';
-        $text .= 'Maritial Status '. count($maritial_status).' '.((round(count($maritial_status)/$total,4))*100).'%<br>';
-        $text .= 'Present Road '. count($present_road).' '.((round(count($present_road)/$total,4))*100).'%<br>';
-        $text .= 'Present PO '. count($present_po).' '.((round(count($present_po)/$total,4))*100).'%<br>';
-        $text .= 'Present Upzilla '. count($present_upz).' '.((round(count($present_upz)/$total,4))*100).'%<br>';
-        $text .= 'Present District '. count($present_dist).' '.((round(count($present_dist)/$total,4))*100).'%<br>';
-        $text .= 'Permanent Village '. count($perm_vill).' '.((round(count($perm_vill)/$total,4))*100).'%<br>';
-        $text .= 'Permanent PO '. count($perm_po).' '.((round(count($perm_po)/$total,4))*100).'%<br>';
-        $text .= 'Permanent Upzilla '. count($perm_upz).' '.((round(count($perm_upz)/$total,4))*100).'%<br>';
-        $text .= 'Permanent District '. count($perm_dist).' '.((round(count($perm_dist)/$total,4))*100).'%<br>';
-        $text .= 'Name (Bangla) '. count($bn_name).' '.((round(count($bn_name)/$total,4))*100).'%<br>';
-         $text .= 'Father Name (Bangla) '. count($bn_father).' '.((round(count($bn_father)/$total,4))*100).'%<br>';
-        $text .= 'Mother Name (Bangla) '. count($bn_mother).' '.((round(count($bn_mother)/$total,4))*100).'%<br>';
-        $text .= 'Present Road (Bangla) '. count($bn_pres_road).' '.((round(count($bn_pres_road)/$total,4))*100).'%<br>';
-        $text .= 'Present PO  (Bangla) '. count($bn_pres_po).' '.((round(count($bn_pres_po)/$total,4))*100).'%<br>';
-        $text .= 'Permanent Village  (Bangla) '. count($bn_per_vill).' '.((round(count($bn_per_vill)/$total,4))*100).'%<br>';
-        $text .= 'Permanent PO  (Bangla) '. count($bn_per_po).' '.((round(count($bn_per_po)/$total,4))*100).'%<br>';
-        $text .= 'Image '. count($image).' '.((round(count($image)/$total,4))*100).'%<br>';
-       
-        echo html_entity_decode($text);
-       
-        dd($text,$benefit,
-        $bank_cash,
-        $father,
-        $mother,
-        $maritial_status,
-        $religion,
-        $present_road,
-        $present_po,
-        $present_upz,
-        $present_dist,
-        $perm_vill,
-        $perm_po,
-        $perm_upz,
-        $perm_dist,
-        $bn_name,
-        $bn_father,
-        $bn_mother,
-        $bn_pres_road,
-        $bn_pres_po,
-        $bn_per_vill,
-        $bn_per_po,
-        $image);
-
-
-
-
-        foreach ($data as $key => $a) {
-            # code...
-            $excel[$a->associate_id] = array(
-                    'Associate ID' => $a->associate_id,
-                    'Oracle ID' => $a->as_oracle_code,
-                    'Name' => $a->as_name,
-                    'RF ID' => $a->as_rfid_code??0,
-                    'DOJ' => date('d-M-Y', strtotime($a->as_doj)),
-                    'Current Salary' => $a->ben_current_salary,
-                    'Basic Salary' => $a->ben_basic,
-                    'House Rent' => $a->ben_house_rent??0,
-                    'Cash Amount' => $a->ben_cash_amount??0,
-                    'Bank/Rocket' => $a->ben_bank_amount??0,
-                    'Designation' => $designation[$a->as_designation_id]['hr_designation_name']??'',
-                    'Department' => $department[$a->as_department_id]['hr_department_name']??'',
-                    'Section' => $section[$a->as_section_id]['hr_section_name']??'',
-                    'Sub Section' => $subsection[$a->as_subsection_id]['hr_subsec_name']??'',
-                    'Unit' => $unit[$a->as_unit_id]['hr_unit_short_name']??'',
-                    'OT/NONOT' => $a->as_ot == 1?'OT':'NonOT',
-                    'Father' => $a->emp_adv_info_fathers_name??'',
-                    'Mother' => $a->emp_adv_info_mothers_name??'',
-                    'Maritial Status' => $a->emp_adv_info_marital_stat??'',
-                    'Spouse' => $a->emp_adv_info_spouse??'',
-                    'Contact' => $a->as_contact,
-                    'Passport' => $a->emp_adv_info_passport??'',
-                    'Permanent District' => $district[($a->emp_adv_info_per_dist??0)]??'',
-                    'Permanent Upazila' => $upzilla[($a->emp_adv_info_per_upz??0)]??'',
-                    'Permanent Post' => $a->emp_adv_info_per_po??'',
-                    'Permanent Village' => $a->emp_adv_info_per_vill??'',
-                    'Present District' => $district[($a->emp_adv_info_pres_dist??0)]??'',
-                    'Present Upazila' => $upzilla[($a->emp_adv_info_pres_upz??0)]??'',
-                    'Present Post' => $a->emp_adv_info_pres_po??'',
-                    'Present Road' => $a->emp_adv_info_pres_road??'',
-                    'Present House' => $a->emp_adv_info_pres_house_no??'',
-                    'NID' => $a->emp_adv_info_nid??''
-                );
-        }
-
-            return (new FastExcel(collect($excel)))->download('Employee.xlsx');
-
-
 
 
 
@@ -331,9 +124,9 @@ class TestController extends Controller
         $data = DB::table('hr_as_basic_info as b')
                     ->leftJoin('hr_benefits as ben', 'ben.ben_as_id', 'b.associate_id')
                     ->whereIn('b.as_unit_id', auth()->user()
-                    ->unit_permissions())->whereIn('b.as_status', [2,3,4,5])
+                    ->unit_permissions())->whereIn('b.as_status', [2,3,4,5,6])
                     ->whereIn('b.as_location', auth()->user()->location_permissions())
-                    ->where('b.as_status_date', '>=', '2020-11-01')->where('b.as_status_date', '<=', '2020-11-30')->get();
+                    ->where('b.as_status_date', '>=', '2020-10-01')->where('b.as_status_date', '<=', '2020-10-31')->get();
 
         $emps = []; 
         foreach ($data as $key => $emp) {
@@ -476,710 +269,6 @@ class TestController extends Controller
         return (new FastExcel(collect($excel)))->download('Monthly Salary.xlsx');
        
     }
-
-    public function jobcardupdate()
-    {
-        $data = DB::table('hr_attendance_ceil')
-            ->where('in_date','2020-11-01')
-            ->get();
-
-        foreach ($data as $key => $v) 
-        {
-
-
-            $queue = (new ProcessAttendanceIntime('hr_attendance_ceil', $v->id, 2))
-                    ->delay(Carbon::now()->addSeconds(2));
-                    dispatch($queue);
-            
-        }
-        return 'success';
-
-    } 
-
-
-    function time($number){
-        // $number = round($number,1);
-        $hour = explode(".", $number);
-
-        if(isset($hour[1])){
-            $hour[1] = $hour[1];
-        }else{
-            $hour[1] = '00';
-        }
-
-        if(isset($hour[2])){
-            $hour[2] = $hour[2];
-        }else{
-            $hour[2] = '00';
-        }
-        
-        if(empty($hour[0])){
-            $hour[0] = '00';
-        }
-        return sprintf("%02d",$hour[0]).':'.sprintf("%02d",$hour[1]).':'.$hour[2];
-    }
-
-    public function inoutProcess()
-    {
-        $data = array(
-            0 => array('as_id' => '3866', 'in_date' => '2020-11-30', 'in_time' => '0', 'out_time' => '0'),
-            1 => array('as_id' => '3881', 'in_date' => '2020-11-01', 'in_time' => '0', 'out_time' => '0'),
-            2 => array('as_id' => '3881', 'in_date' => '2020-11-02', 'in_time' => '0', 'out_time' => '0'),
-            3 => array('as_id' => '3924', 'in_date' => '2020-11-12', 'in_time' => '0', 'out_time' => '0'),
-            4 => array('as_id' => '3949', 'in_date' => '2020-11-09', 'in_time' => '0', 'out_time' => '0'),
-            5 => array('as_id' => '3949', 'in_date' => '2020-11-10', 'in_time' => '0', 'out_time' => '0'),
-            6 => array('as_id' => '3949', 'in_date' => '2020-11-11', 'in_time' => '0', 'out_time' => '0'),
-            7 => array('as_id' => '3949', 'in_date' => '2020-11-12', 'in_time' => '0', 'out_time' => '0'),
-            8 => array('as_id' => '3949', 'in_date' => '2020-11-14', 'in_time' => '0', 'out_time' => '0'),
-            9 => array('as_id' => '3949', 'in_date' => '2020-11-15', 'in_time' => '0', 'out_time' => '0'),
-            10 => array('as_id' => '3949', 'in_date' => '2020-11-16', 'in_time' => '0', 'out_time' => '0'),
-            11 => array('as_id' => '3949', 'in_date' => '2020-11-17', 'in_time' => '0', 'out_time' => '0'),
-            12 => array('as_id' => '3949', 'in_date' => '2020-11-18', 'in_time' => '0', 'out_time' => '0'),
-            13 => array('as_id' => '3949', 'in_date' => '2020-11-19', 'in_time' => '0', 'out_time' => '0'),
-            14 => array('as_id' => '3949', 'in_date' => '2020-11-21', 'in_time' => '0', 'out_time' => '0'),
-            15 => array('as_id' => '3949', 'in_date' => '2020-11-22', 'in_time' => '0', 'out_time' => '0'),
-            16 => array('as_id' => '3956', 'in_date' => '2020-11-25', 'in_time' => '0', 'out_time' => '0'),
-            17 => array('as_id' => '3956', 'in_date' => '2020-11-26', 'in_time' => '0', 'out_time' => '0'),
-            18 => array('as_id' => '3956', 'in_date' => '2020-11-28', 'in_time' => '0', 'out_time' => '0'),
-            19 => array('as_id' => '3956', 'in_date' => '2020-11-29', 'in_time' => '0', 'out_time' => '0'),
-            20 => array('as_id' => '3956', 'in_date' => '2020-11-30', 'in_time' => '0', 'out_time' => '0'),
-            21 => array('as_id' => '4499', 'in_date' => '2020-11-01', 'in_time' => '0', 'out_time' => '0'),
-            22 => array('as_id' => '4499', 'in_date' => '2020-11-08', 'in_time' => '0', 'out_time' => '0'),
-            23 => array('as_id' => '4499', 'in_date' => '2020-11-15', 'in_time' => '0', 'out_time' => '0'),
-            24 => array('as_id' => '4499', 'in_date' => '2020-11-22', 'in_time' => '0', 'out_time' => '0'),
-            25 => array('as_id' => '4500', 'in_date' => '2020-11-04', 'in_time' => '0', 'out_time' => '0'),
-            26 => array('as_id' => '4501', 'in_date' => '2020-11-12', 'in_time' => '0', 'out_time' => '0'),
-            27 => array('as_id' => '4502', 'in_date' => '2020-11-01', 'in_time' => '0', 'out_time' => '0'),
-            28 => array('as_id' => '4502', 'in_date' => '2020-11-08', 'in_time' => '0', 'out_time' => '0'),
-            29 => array('as_id' => '4502', 'in_date' => '2020-11-15', 'in_time' => '0', 'out_time' => '0'),
-            30 => array('as_id' => '4502', 'in_date' => '2020-11-22', 'in_time' => '0', 'out_time' => '0'),
-            31 => array('as_id' => '4511', 'in_date' => '2020-11-03', 'in_time' => '0', 'out_time' => '0'),
-            32 => array('as_id' => '4511', 'in_date' => '2020-11-10', 'in_time' => '0', 'out_time' => '0'),
-            33 => array('as_id' => '4511', 'in_date' => '2020-11-17', 'in_time' => '0', 'out_time' => '0'),
-            34 => array('as_id' => '4511', 'in_date' => '2020-11-30', 'in_time' => '0', 'out_time' => '0'),
-            35 => array('as_id' => '4515', 'in_date' => '2020-11-07', 'in_time' => '0', 'out_time' => '0'),
-            36 => array('as_id' => '4515', 'in_date' => '2020-11-21', 'in_time' => '0', 'out_time' => '0'),
-            37 => array('as_id' => '4518', 'in_date' => '2020-11-18', 'in_time' => '0', 'out_time' => '0'),
-            38 => array('as_id' => '4519', 'in_date' => '2020-11-03', 'in_time' => '0', 'out_time' => '0'),
-            39 => array('as_id' => '4520', 'in_date' => '2020-11-18', 'in_time' => '0', 'out_time' => '0'),
-            40 => array('as_id' => '4521', 'in_date' => '2020-11-01', 'in_time' => '0', 'out_time' => '0'),
-            41 => array('as_id' => '4521', 'in_date' => '2020-11-02', 'in_time' => '0', 'out_time' => '0'),
-            42 => array('as_id' => '4521', 'in_date' => '2020-11-03', 'in_time' => '0', 'out_time' => '0'),
-            43 => array('as_id' => '4521', 'in_date' => '2020-11-04', 'in_time' => '0', 'out_time' => '0'),
-            44 => array('as_id' => '4521', 'in_date' => '2020-11-05', 'in_time' => '0', 'out_time' => '0'),
-            45 => array('as_id' => '4521', 'in_date' => '2020-11-07', 'in_time' => '0', 'out_time' => '0'),
-            46 => array('as_id' => '4521', 'in_date' => '2020-11-08', 'in_time' => '0', 'out_time' => '0'),
-            47 => array('as_id' => '4521', 'in_date' => '2020-11-09', 'in_time' => '0', 'out_time' => '0'),
-            48 => array('as_id' => '4521', 'in_date' => '2020-11-10', 'in_time' => '0', 'out_time' => '0'),
-            49 => array('as_id' => '4521', 'in_date' => '2020-11-11', 'in_time' => '0', 'out_time' => '0'),
-            50 => array('as_id' => '4521', 'in_date' => '2020-11-12', 'in_time' => '0', 'out_time' => '0'),
-            51 => array('as_id' => '4521', 'in_date' => '2020-11-14', 'in_time' => '0', 'out_time' => '0'),
-            52 => array('as_id' => '4521', 'in_date' => '2020-11-15', 'in_time' => '0', 'out_time' => '0'),
-            53 => array('as_id' => '4521', 'in_date' => '2020-11-16', 'in_time' => '0', 'out_time' => '0'),
-            54 => array('as_id' => '4521', 'in_date' => '2020-11-17', 'in_time' => '0', 'out_time' => '0'),
-            55 => array('as_id' => '4521', 'in_date' => '2020-11-18', 'in_time' => '0', 'out_time' => '0'),
-            56 => array('as_id' => '4521', 'in_date' => '2020-11-19', 'in_time' => '0', 'out_time' => '0'),
-            57 => array('as_id' => '4521', 'in_date' => '2020-11-21', 'in_time' => '0', 'out_time' => '0'),
-            58 => array('as_id' => '4521', 'in_date' => '2020-11-22', 'in_time' => '0', 'out_time' => '0'),
-            59 => array('as_id' => '4521', 'in_date' => '2020-11-23', 'in_time' => '0', 'out_time' => '0'),
-            60 => array('as_id' => '4521', 'in_date' => '2020-11-24', 'in_time' => '0', 'out_time' => '0'),
-            61 => array('as_id' => '4521', 'in_date' => '2020-11-25', 'in_time' => '0', 'out_time' => '0'),
-            62 => array('as_id' => '4521', 'in_date' => '2020-11-26', 'in_time' => '0', 'out_time' => '0'),
-            63 => array('as_id' => '4521', 'in_date' => '2020-11-28', 'in_time' => '0', 'out_time' => '0'),
-            64 => array('as_id' => '4521', 'in_date' => '2020-11-29', 'in_time' => '0', 'out_time' => '0'),
-            65 => array('as_id' => '4521', 'in_date' => '2020-11-30', 'in_time' => '0', 'out_time' => '0'),
-            66 => array('as_id' => '4526', 'in_date' => '2020-11-01', 'in_time' => '0', 'out_time' => '0'),
-            67 => array('as_id' => '4526', 'in_date' => '2020-11-02', 'in_time' => '0', 'out_time' => '0'),
-            68 => array('as_id' => '4526', 'in_date' => '2020-11-03', 'in_time' => '0', 'out_time' => '0'),
-            69 => array('as_id' => '4526', 'in_date' => '2020-11-05', 'in_time' => '0', 'out_time' => '0'),
-            70 => array('as_id' => '4526', 'in_date' => '2020-11-07', 'in_time' => '0', 'out_time' => '0'),
-            71 => array('as_id' => '4526', 'in_date' => '2020-11-08', 'in_time' => '0', 'out_time' => '0'),
-            72 => array('as_id' => '4526', 'in_date' => '2020-11-09', 'in_time' => '0', 'out_time' => '0'),
-            73 => array('as_id' => '4526', 'in_date' => '2020-11-10', 'in_time' => '0', 'out_time' => '0'),
-            74 => array('as_id' => '4526', 'in_date' => '2020-11-12', 'in_time' => '0', 'out_time' => '0'),
-            75 => array('as_id' => '4526', 'in_date' => '2020-11-14', 'in_time' => '0', 'out_time' => '0'),
-            76 => array('as_id' => '4526', 'in_date' => '2020-11-15', 'in_time' => '0', 'out_time' => '0'),
-            77 => array('as_id' => '4526', 'in_date' => '2020-11-16', 'in_time' => '0', 'out_time' => '0'),
-            78 => array('as_id' => '4526', 'in_date' => '2020-11-17', 'in_time' => '0', 'out_time' => '0'),
-            79 => array('as_id' => '4526', 'in_date' => '2020-11-19', 'in_time' => '0', 'out_time' => '0'),
-            80 => array('as_id' => '4526', 'in_date' => '2020-11-21', 'in_time' => '0', 'out_time' => '0'),
-            81 => array('as_id' => '4526', 'in_date' => '2020-11-22', 'in_time' => '0', 'out_time' => '0'),
-            82 => array('as_id' => '4526', 'in_date' => '2020-11-23', 'in_time' => '0', 'out_time' => '0'),
-            83 => array('as_id' => '4528', 'in_date' => '2020-11-01', 'in_time' => '0', 'out_time' => '0'),
-            84 => array('as_id' => '4528', 'in_date' => '2020-11-02', 'in_time' => '0', 'out_time' => '0'),
-            85 => array('as_id' => '4528', 'in_date' => '2020-11-04', 'in_time' => '0', 'out_time' => '0'),
-            86 => array('as_id' => '4528', 'in_date' => '2020-11-05', 'in_time' => '0', 'out_time' => '0'),
-            87 => array('as_id' => '4528', 'in_date' => '2020-11-07', 'in_time' => '0', 'out_time' => '0'),
-            88 => array('as_id' => '4528', 'in_date' => '2020-11-08', 'in_time' => '0', 'out_time' => '0'),
-            89 => array('as_id' => '4528', 'in_date' => '2020-11-09', 'in_time' => '0', 'out_time' => '0'),
-            90 => array('as_id' => '4528', 'in_date' => '2020-11-11', 'in_time' => '0', 'out_time' => '0'),
-            91 => array('as_id' => '4528', 'in_date' => '2020-11-12', 'in_time' => '0', 'out_time' => '0'),
-            92 => array('as_id' => '4528', 'in_date' => '2020-11-14', 'in_time' => '0', 'out_time' => '0'),
-            93 => array('as_id' => '4528', 'in_date' => '2020-11-15', 'in_time' => '0', 'out_time' => '0'),
-            94 => array('as_id' => '4528', 'in_date' => '2020-11-16', 'in_time' => '0', 'out_time' => '0'),
-            95 => array('as_id' => '4528', 'in_date' => '2020-11-18', 'in_time' => '0', 'out_time' => '0'),
-            96 => array('as_id' => '4528', 'in_date' => '2020-11-19', 'in_time' => '0', 'out_time' => '0'),
-            97 => array('as_id' => '4528', 'in_date' => '2020-11-21', 'in_time' => '0', 'out_time' => '0'),
-            98 => array('as_id' => '4528', 'in_date' => '2020-11-22', 'in_time' => '0', 'out_time' => '0'),
-            99 => array('as_id' => '4528', 'in_date' => '2020-11-23', 'in_time' => '0', 'out_time' => '0'),
-            100 => array('as_id' => '4530', 'in_date' => '2020-11-01', 'in_time' => '0', 'out_time' => '0'),
-            101 => array('as_id' => '4530', 'in_date' => '2020-11-02', 'in_time' => '0', 'out_time' => '0'),
-            102 => array('as_id' => '4530', 'in_date' => '2020-11-04', 'in_time' => '0', 'out_time' => '0'),
-            103 => array('as_id' => '4530', 'in_date' => '2020-11-05', 'in_time' => '0', 'out_time' => '0'),
-            104 => array('as_id' => '4530', 'in_date' => '2020-11-07', 'in_time' => '0', 'out_time' => '0'),
-            105 => array('as_id' => '4530', 'in_date' => '2020-11-08', 'in_time' => '0', 'out_time' => '0'),
-            106 => array('as_id' => '4530', 'in_date' => '2020-11-09', 'in_time' => '0', 'out_time' => '0'),
-            107 => array('as_id' => '4530', 'in_date' => '2020-11-11', 'in_time' => '0', 'out_time' => '0'),
-            108 => array('as_id' => '4530', 'in_date' => '2020-11-12', 'in_time' => '0', 'out_time' => '0'),
-            109 => array('as_id' => '4530', 'in_date' => '2020-11-14', 'in_time' => '0', 'out_time' => '0'),
-            110 => array('as_id' => '4530', 'in_date' => '2020-11-15', 'in_time' => '0', 'out_time' => '0'),
-            111 => array('as_id' => '4530', 'in_date' => '2020-11-16', 'in_time' => '0', 'out_time' => '0'),
-            112 => array('as_id' => '4530', 'in_date' => '2020-11-18', 'in_time' => '0', 'out_time' => '0'),
-            113 => array('as_id' => '4530', 'in_date' => '2020-11-19', 'in_time' => '0', 'out_time' => '0'),
-            114 => array('as_id' => '4530', 'in_date' => '2020-11-21', 'in_time' => '0', 'out_time' => '0'),
-            115 => array('as_id' => '4530', 'in_date' => '2020-11-22', 'in_time' => '0', 'out_time' => '0'),
-            116 => array('as_id' => '4530', 'in_date' => '2020-11-28', 'in_time' => '0', 'out_time' => '0'),
-            117 => array('as_id' => '4535', 'in_date' => '2020-11-10', 'in_time' => '0', 'out_time' => '0'),
-            118 => array('as_id' => '4535', 'in_date' => '2020-11-26', 'in_time' => '0', 'out_time' => '0'),
-            119 => array('as_id' => '4535', 'in_date' => '2020-11-28', 'in_time' => '0', 'out_time' => '0'),
-            120 => array('as_id' => '4535', 'in_date' => '2020-11-29', 'in_time' => '0', 'out_time' => '0'),
-            121 => array('as_id' => '4536', 'in_date' => '2020-11-02', 'in_time' => '0', 'out_time' => '0'),
-            122 => array('as_id' => '4536', 'in_date' => '2020-11-09', 'in_time' => '0', 'out_time' => '0'),
-            123 => array('as_id' => '4536', 'in_date' => '2020-11-10', 'in_time' => '0', 'out_time' => '0'),
-            124 => array('as_id' => '4536', 'in_date' => '2020-11-11', 'in_time' => '0', 'out_time' => '0'),
-            125 => array('as_id' => '4536', 'in_date' => '2020-11-12', 'in_time' => '0', 'out_time' => '0'),
-            126 => array('as_id' => '4536', 'in_date' => '2020-11-14', 'in_time' => '0', 'out_time' => '0'),
-            127 => array('as_id' => '4536', 'in_date' => '2020-11-16', 'in_time' => '0', 'out_time' => '0'),
-            128 => array('as_id' => '4536', 'in_date' => '2020-11-17', 'in_time' => '0', 'out_time' => '0'),
-            129 => array('as_id' => '4536', 'in_date' => '2020-11-18', 'in_time' => '0', 'out_time' => '0'),
-            130 => array('as_id' => '4536', 'in_date' => '2020-11-19', 'in_time' => '0', 'out_time' => '0'),
-            131 => array('as_id' => '4536', 'in_date' => '2020-11-21', 'in_time' => '0', 'out_time' => '0'),
-            132 => array('as_id' => '4536', 'in_date' => '2020-11-23', 'in_time' => '0', 'out_time' => '0'),
-            133 => array('as_id' => '4536', 'in_date' => '2020-11-24', 'in_time' => '0', 'out_time' => '0'),
-            134 => array('as_id' => '4537', 'in_date' => '2020-11-01', 'in_time' => '0', 'out_time' => '0'),
-            135 => array('as_id' => '4537', 'in_date' => '2020-11-02', 'in_time' => '0', 'out_time' => '0'),
-            136 => array('as_id' => '4537', 'in_date' => '2020-11-03', 'in_time' => '0', 'out_time' => '0'),
-            137 => array('as_id' => '4537', 'in_date' => '2020-11-05', 'in_time' => '0', 'out_time' => '0'),
-            138 => array('as_id' => '4537', 'in_date' => '2020-11-07', 'in_time' => '0', 'out_time' => '0'),
-            139 => array('as_id' => '4537', 'in_date' => '2020-11-08', 'in_time' => '0', 'out_time' => '0'),
-            140 => array('as_id' => '4537', 'in_date' => '2020-11-09', 'in_time' => '0', 'out_time' => '0'),
-            141 => array('as_id' => '4537', 'in_date' => '2020-11-10', 'in_time' => '0', 'out_time' => '0'),
-            142 => array('as_id' => '4537', 'in_date' => '2020-11-12', 'in_time' => '0', 'out_time' => '0'),
-            143 => array('as_id' => '4537', 'in_date' => '2020-11-14', 'in_time' => '0', 'out_time' => '0'),
-            144 => array('as_id' => '4537', 'in_date' => '2020-11-15', 'in_time' => '0', 'out_time' => '0'),
-            145 => array('as_id' => '4537', 'in_date' => '2020-11-16', 'in_time' => '0', 'out_time' => '0'),
-            146 => array('as_id' => '4537', 'in_date' => '2020-11-17', 'in_time' => '0', 'out_time' => '0'),
-            147 => array('as_id' => '4537', 'in_date' => '2020-11-19', 'in_time' => '0', 'out_time' => '0'),
-            148 => array('as_id' => '4537', 'in_date' => '2020-11-21', 'in_time' => '0', 'out_time' => '0'),
-            149 => array('as_id' => '4537', 'in_date' => '2020-11-22', 'in_time' => '0', 'out_time' => '0'),
-            150 => array('as_id' => '4537', 'in_date' => '2020-11-23', 'in_time' => '0', 'out_time' => '0'),
-            151 => array('as_id' => '4537', 'in_date' => '2020-11-24', 'in_time' => '0', 'out_time' => '0'),
-            152 => array('as_id' => '4538', 'in_date' => '2020-11-01', 'in_time' => '0', 'out_time' => '0'),
-            153 => array('as_id' => '4538', 'in_date' => '2020-11-02', 'in_time' => '0', 'out_time' => '0'),
-            154 => array('as_id' => '4538', 'in_date' => '2020-11-03', 'in_time' => '0', 'out_time' => '0'),
-            155 => array('as_id' => '4538', 'in_date' => '2020-11-04', 'in_time' => '0', 'out_time' => '0'),
-            156 => array('as_id' => '4538', 'in_date' => '2020-11-05', 'in_time' => '0', 'out_time' => '0'),
-            157 => array('as_id' => '4538', 'in_date' => '2020-11-07', 'in_time' => '0', 'out_time' => '0'),
-            158 => array('as_id' => '4538', 'in_date' => '2020-11-08', 'in_time' => '0', 'out_time' => '0'),
-            159 => array('as_id' => '4538', 'in_date' => '2020-11-09', 'in_time' => '0', 'out_time' => '0'),
-            160 => array('as_id' => '4538', 'in_date' => '2020-11-10', 'in_time' => '0', 'out_time' => '0'),
-            161 => array('as_id' => '4538', 'in_date' => '2020-11-11', 'in_time' => '0', 'out_time' => '0'),
-            162 => array('as_id' => '4538', 'in_date' => '2020-11-12', 'in_time' => '0', 'out_time' => '0'),
-            163 => array('as_id' => '4538', 'in_date' => '2020-11-14', 'in_time' => '0', 'out_time' => '0'),
-            164 => array('as_id' => '4538', 'in_date' => '2020-11-15', 'in_time' => '0', 'out_time' => '0'),
-            165 => array('as_id' => '4538', 'in_date' => '2020-11-16', 'in_time' => '0', 'out_time' => '0'),
-            166 => array('as_id' => '4538', 'in_date' => '2020-11-17', 'in_time' => '0', 'out_time' => '0'),
-            167 => array('as_id' => '4538', 'in_date' => '2020-11-18', 'in_time' => '0', 'out_time' => '0'),
-            168 => array('as_id' => '4538', 'in_date' => '2020-11-19', 'in_time' => '0', 'out_time' => '0'),
-            169 => array('as_id' => '4538', 'in_date' => '2020-11-21', 'in_time' => '0', 'out_time' => '0'),
-            170 => array('as_id' => '4538', 'in_date' => '2020-11-22', 'in_time' => '0', 'out_time' => '0'),
-            171 => array('as_id' => '4538', 'in_date' => '2020-11-23', 'in_time' => '0', 'out_time' => '0'),
-            172 => array('as_id' => '4538', 'in_date' => '2020-11-24', 'in_time' => '0', 'out_time' => '0'),
-            173 => array('as_id' => '4538', 'in_date' => '2020-11-25', 'in_time' => '0', 'out_time' => '0'),
-            174 => array('as_id' => '4538', 'in_date' => '2020-11-26', 'in_time' => '0', 'out_time' => '0'),
-            175 => array('as_id' => '4538', 'in_date' => '2020-11-28', 'in_time' => '0', 'out_time' => '0'),
-            176 => array('as_id' => '4538', 'in_date' => '2020-11-29', 'in_time' => '0', 'out_time' => '0'),
-            177 => array('as_id' => '4538', 'in_date' => '2020-11-30', 'in_time' => '0', 'out_time' => '0'),
-            178 => array('as_id' => '4540', 'in_date' => '2020-11-01', 'in_time' => '0', 'out_time' => '0'),
-            179 => array('as_id' => '4540', 'in_date' => '2020-11-02', 'in_time' => '0', 'out_time' => '0'),
-            180 => array('as_id' => '4540', 'in_date' => '2020-11-03', 'in_time' => '0', 'out_time' => '0'),
-            181 => array('as_id' => '4540', 'in_date' => '2020-11-04', 'in_time' => '0', 'out_time' => '0'),
-            182 => array('as_id' => '4540', 'in_date' => '2020-11-07', 'in_time' => '0', 'out_time' => '0'),
-            183 => array('as_id' => '4540', 'in_date' => '2020-11-08', 'in_time' => '0', 'out_time' => '0'),
-            184 => array('as_id' => '4540', 'in_date' => '2020-11-09', 'in_time' => '0', 'out_time' => '0'),
-            185 => array('as_id' => '4540', 'in_date' => '2020-11-10', 'in_time' => '0', 'out_time' => '0'),
-            186 => array('as_id' => '4540', 'in_date' => '2020-11-11', 'in_time' => '0', 'out_time' => '0'),
-            187 => array('as_id' => '4540', 'in_date' => '2020-11-14', 'in_time' => '0', 'out_time' => '0'),
-            188 => array('as_id' => '4540', 'in_date' => '2020-11-15', 'in_time' => '0', 'out_time' => '0'),
-            189 => array('as_id' => '4540', 'in_date' => '2020-11-16', 'in_time' => '0', 'out_time' => '0'),
-            190 => array('as_id' => '4540', 'in_date' => '2020-11-17', 'in_time' => '0', 'out_time' => '0'),
-            191 => array('as_id' => '4540', 'in_date' => '2020-11-18', 'in_time' => '0', 'out_time' => '0'),
-            192 => array('as_id' => '4540', 'in_date' => '2020-11-21', 'in_time' => '0', 'out_time' => '0'),
-            193 => array('as_id' => '4540', 'in_date' => '2020-11-22', 'in_time' => '0', 'out_time' => '0'),
-            194 => array('as_id' => '4540', 'in_date' => '2020-11-23', 'in_time' => '0', 'out_time' => '0'),
-            195 => array('as_id' => '4540', 'in_date' => '2020-11-28', 'in_time' => '0', 'out_time' => '0'),
-            196 => array('as_id' => '4540', 'in_date' => '2020-11-30', 'in_time' => '0', 'out_time' => '0'),
-            197 => array('as_id' => '4541', 'in_date' => '2020-11-01', 'in_time' => '0', 'out_time' => '0'),
-            198 => array('as_id' => '4545', 'in_date' => '2020-11-22', 'in_time' => '0', 'out_time' => '0'),
-            199 => array('as_id' => '4548', 'in_date' => '2020-11-07', 'in_time' => '0', 'out_time' => '0'),
-            200 => array('as_id' => '4549', 'in_date' => '2020-11-09', 'in_time' => '0', 'out_time' => '0'),
-            201 => array('as_id' => '4549', 'in_date' => '2020-11-23', 'in_time' => '0', 'out_time' => '0'),
-            202 => array('as_id' => '4549', 'in_date' => '2020-11-24', 'in_time' => '0', 'out_time' => '0'),
-            203 => array('as_id' => '4549', 'in_date' => '2020-11-25', 'in_time' => '0', 'out_time' => '0'),
-            204 => array('as_id' => '4549', 'in_date' => '2020-11-26', 'in_time' => '0', 'out_time' => '0'),
-            205 => array('as_id' => '4569', 'in_date' => '2020-11-01', 'in_time' => '0', 'out_time' => '0'),
-            206 => array('as_id' => '4569', 'in_date' => '2020-11-02', 'in_time' => '0', 'out_time' => '0'),
-            207 => array('as_id' => '4569', 'in_date' => '2020-11-05', 'in_time' => '0', 'out_time' => '0'),
-            208 => array('as_id' => '4569', 'in_date' => '2020-11-07', 'in_time' => '0', 'out_time' => '0'),
-            209 => array('as_id' => '4569', 'in_date' => '2020-11-08', 'in_time' => '0', 'out_time' => '0'),
-            210 => array('as_id' => '4569', 'in_date' => '2020-11-09', 'in_time' => '0', 'out_time' => '0'),
-            211 => array('as_id' => '4569', 'in_date' => '2020-11-11', 'in_time' => '0', 'out_time' => '0'),
-            212 => array('as_id' => '4569', 'in_date' => '2020-11-12', 'in_time' => '0', 'out_time' => '0'),
-            213 => array('as_id' => '4569', 'in_date' => '2020-11-14', 'in_time' => '0', 'out_time' => '0'),
-            214 => array('as_id' => '4569', 'in_date' => '2020-11-15', 'in_time' => '0', 'out_time' => '0'),
-            215 => array('as_id' => '4569', 'in_date' => '2020-11-16', 'in_time' => '0', 'out_time' => '0'),
-            216 => array('as_id' => '4569', 'in_date' => '2020-11-18', 'in_time' => '0', 'out_time' => '0'),
-            217 => array('as_id' => '4569', 'in_date' => '2020-11-19', 'in_time' => '0', 'out_time' => '0'),
-            218 => array('as_id' => '4569', 'in_date' => '2020-11-21', 'in_time' => '0', 'out_time' => '0'),
-            219 => array('as_id' => '4569', 'in_date' => '2020-11-22', 'in_time' => '0', 'out_time' => '0'),
-            220 => array('as_id' => '4569', 'in_date' => '2020-11-23', 'in_time' => '0', 'out_time' => '0'),
-            221 => array('as_id' => '4613', 'in_date' => '2020-11-10', 'in_time' => '0', 'out_time' => '0'),
-            222 => array('as_id' => '4622', 'in_date' => '2020-11-01', 'in_time' => '7.56', 'out_time' => '20.21'),
-            223 => array('as_id' => '4622', 'in_date' => '2020-11-02', 'in_time' => '7.54', 'out_time' => '20'),
-            224 => array('as_id' => '4622', 'in_date' => '2020-11-03', 'in_time' => '8', 'out_time' => '20.03'),
-            225 => array('as_id' => '4622', 'in_date' => '2020-11-04', 'in_time' => '7.58', 'out_time' => '20.35'),
-            226 => array('as_id' => '4622', 'in_date' => '2020-11-05', 'in_time' => '7.45', 'out_time' => '20.45'),
-            227 => array('as_id' => '4622', 'in_date' => '2020-11-07', 'in_time' => '7.42', 'out_time' => '20.45'),
-            228 => array('as_id' => '4622', 'in_date' => '2020-11-08', 'in_time' => '7.56', 'out_time' => '20.36'),
-            229 => array('as_id' => '4622', 'in_date' => '2020-11-09', 'in_time' => '7.54', 'out_time' => '20.35'),
-            230 => array('as_id' => '4622', 'in_date' => '2020-11-10', 'in_time' => '7.58', 'out_time' => '20.31'),
-            231 => array('as_id' => '4622', 'in_date' => '2020-11-11', 'in_time' => '7.45', 'out_time' => '20.45'),
-            232 => array('as_id' => '4622', 'in_date' => '2020-11-12', 'in_time' => '7.48', 'out_time' => '20.32'),
-            233 => array('as_id' => '4622', 'in_date' => '2020-11-14', 'in_time' => '7.3', 'out_time' => '20.3'),
-            234 => array('as_id' => '4622', 'in_date' => '2020-11-15', 'in_time' => '7.54', 'out_time' => '20.34'),
-            235 => array('as_id' => '4622', 'in_date' => '2020-11-16', 'in_time' => '7.32', 'out_time' => '20.35'),
-            236 => array('as_id' => '4622', 'in_date' => '2020-11-17', 'in_time' => '7.24', 'out_time' => '20.35'),
-            237 => array('as_id' => '4622', 'in_date' => '2020-11-18', 'in_time' => '7.26', 'out_time' => '20.35'),
-            238 => array('as_id' => '4622', 'in_date' => '2020-11-19', 'in_time' => '7.54', 'out_time' => '20.45'),
-            239 => array('as_id' => '4622', 'in_date' => '2020-11-21', 'in_time' => '7.25', 'out_time' => '20.36'),
-            240 => array('as_id' => '4622', 'in_date' => '2020-11-22', 'in_time' => '7.5', 'out_time' => '20.35'),
-            241 => array('as_id' => '4622', 'in_date' => '2020-11-23', 'in_time' => '7.45', 'out_time' => '20.45'),
-            242 => array('as_id' => '4622', 'in_date' => '2020-11-24', 'in_time' => '7.46', 'out_time' => '20.36'),
-            243 => array('as_id' => '4622', 'in_date' => '2020-11-25', 'in_time' => '7.45', 'out_time' => '20.35'),
-            244 => array('as_id' => '4622', 'in_date' => '2020-11-26', 'in_time' => '7.48', 'out_time' => '20.35'),
-            245 => array('as_id' => '4622', 'in_date' => '2020-11-28', 'in_time' => '7.45', 'out_time' => '20.45'),
-            246 => array('as_id' => '4622', 'in_date' => '2020-11-29', 'in_time' => '7.45', 'out_time' => '20.25'),
-            247 => array('as_id' => '4622', 'in_date' => '2020-11-30', 'in_time' => '7.45', 'out_time' => '20.24'),
-            248 => array('as_id' => '4712', 'in_date' => '2020-11-28', 'in_time' => '0', 'out_time' => '0'),
-            249 => array('as_id' => '4718', 'in_date' => '2020-11-15', 'in_time' => '0', 'out_time' => '0'),
-            250 => array('as_id' => '5791', 'in_date' => '2020-11-07', 'in_time' => '0', 'out_time' => '0'),
-            251 => array('as_id' => '5791', 'in_date' => '2020-11-10', 'in_time' => '0', 'out_time' => '0'),
-            252 => array('as_id' => '5791', 'in_date' => '2020-11-15', 'in_time' => '0', 'out_time' => '0'),
-            253 => array('as_id' => '5793', 'in_date' => '2020-11-01', 'in_time' => '0', 'out_time' => '0'),
-            254 => array('as_id' => '5793', 'in_date' => '2020-11-02', 'in_time' => '0', 'out_time' => '0'),
-            255 => array('as_id' => '5793', 'in_date' => '2020-11-03', 'in_time' => '0', 'out_time' => '0'),
-            256 => array('as_id' => '5793', 'in_date' => '2020-11-04', 'in_time' => '0', 'out_time' => '0'),
-            257 => array('as_id' => '5793', 'in_date' => '2020-11-05', 'in_time' => '0', 'out_time' => '0'),
-            258 => array('as_id' => '5793', 'in_date' => '2020-11-07', 'in_time' => '0', 'out_time' => '0'),
-            259 => array('as_id' => '5793', 'in_date' => '2020-11-08', 'in_time' => '0', 'out_time' => '0'),
-            260 => array('as_id' => '5793', 'in_date' => '2020-11-11', 'in_time' => '0', 'out_time' => '0'),
-            261 => array('as_id' => '5793', 'in_date' => '2020-11-12', 'in_time' => '0', 'out_time' => '0'),
-            262 => array('as_id' => '5793', 'in_date' => '2020-11-15', 'in_time' => '0', 'out_time' => '0'),
-            263 => array('as_id' => '5793', 'in_date' => '2020-11-21', 'in_time' => '0', 'out_time' => '0'),
-            264 => array('as_id' => '5793', 'in_date' => '2020-11-22', 'in_time' => '0', 'out_time' => '0'),
-            265 => array('as_id' => '5793', 'in_date' => '2020-11-28', 'in_time' => '0', 'out_time' => '0'),
-            266 => array('as_id' => '5793', 'in_date' => '2020-11-30', 'in_time' => '0', 'out_time' => '0'),
-            267 => array('as_id' => '5860', 'in_date' => '2020-11-09', 'in_time' => '0', 'out_time' => '0'),
-            268 => array('as_id' => '5860', 'in_date' => '2020-11-26', 'in_time' => '0', 'out_time' => '0'),
-            269 => array('as_id' => '6969', 'in_date' => '2020-11-15', 'in_time' => '0', 'out_time' => '0'),
-            270 => array('as_id' => '6970', 'in_date' => '2020-11-07', 'in_time' => '0', 'out_time' => '0'),
-            271 => array('as_id' => '6970', 'in_date' => '2020-11-21', 'in_time' => '0', 'out_time' => '0'),
-            272 => array('as_id' => '6970', 'in_date' => '2020-11-28', 'in_time' => '0', 'out_time' => '0'),
-            273 => array('as_id' => '6978', 'in_date' => '2020-11-10', 'in_time' => '0', 'out_time' => '0'),
-            274 => array('as_id' => '6979', 'in_date' => '2020-11-29', 'in_time' => '0', 'out_time' => '0'),
-            275 => array('as_id' => '6980', 'in_date' => '2020-11-01', 'in_time' => '0', 'out_time' => '0'),
-            276 => array('as_id' => '6982', 'in_date' => '2020-11-14', 'in_time' => '0', 'out_time' => '0'),
-            277 => array('as_id' => '6982', 'in_date' => '2020-11-15', 'in_time' => '0', 'out_time' => '0'),
-            278 => array('as_id' => '6983', 'in_date' => '2020-11-07', 'in_time' => '0', 'out_time' => '0'),
-            279 => array('as_id' => '6983', 'in_date' => '2020-11-14', 'in_time' => '0', 'out_time' => '0'),
-            280 => array('as_id' => '6983', 'in_date' => '2020-11-21', 'in_time' => '0', 'out_time' => '0'),
-            281 => array('as_id' => '6983', 'in_date' => '2020-11-29', 'in_time' => '0', 'out_time' => '0'),
-            282 => array('as_id' => '6985', 'in_date' => '2020-11-07', 'in_time' => '0', 'out_time' => '0'),
-            283 => array('as_id' => '6985', 'in_date' => '2020-11-14', 'in_time' => '0', 'out_time' => '0'),
-            284 => array('as_id' => '6985', 'in_date' => '2020-11-21', 'in_time' => '0', 'out_time' => '0'),
-            285 => array('as_id' => '6985', 'in_date' => '2020-11-29', 'in_time' => '0', 'out_time' => '0'),
-            286 => array('as_id' => '7030', 'in_date' => '2020-11-30', 'in_time' => '0', 'out_time' => '0'),
-            287 => array('as_id' => '7072', 'in_date' => '2020-11-14', 'in_time' => '0', 'out_time' => '0'),
-            288 => array('as_id' => '7072', 'in_date' => '2020-11-15', 'in_time' => '0', 'out_time' => '0'),
-            289 => array('as_id' => '7072', 'in_date' => '2020-11-16', 'in_time' => '0', 'out_time' => '0'),
-            290 => array('as_id' => '7072', 'in_date' => '2020-11-17', 'in_time' => '0', 'out_time' => '0'),
-            291 => array('as_id' => '7072', 'in_date' => '2020-11-18', 'in_time' => '0', 'out_time' => '0'),
-            292 => array('as_id' => '7072', 'in_date' => '2020-11-19', 'in_time' => '0', 'out_time' => '0'),
-            293 => array('as_id' => '7072', 'in_date' => '2020-11-21', 'in_time' => '0', 'out_time' => '0'),
-            294 => array('as_id' => '7072', 'in_date' => '2020-11-22', 'in_time' => '0', 'out_time' => '0'),
-            295 => array('as_id' => '7076', 'in_date' => '2020-11-30', 'in_time' => '0', 'out_time' => '0'),
-            296 => array('as_id' => '7090', 'in_date' => '2020-11-09', 'in_time' => '0', 'out_time' => '0'),
-            297 => array('as_id' => '7090', 'in_date' => '2020-11-11', 'in_time' => '0', 'out_time' => '0'),
-            298 => array('as_id' => '7090', 'in_date' => '2020-11-14', 'in_time' => '0', 'out_time' => '0'),
-            299 => array('as_id' => '7090', 'in_date' => '2020-11-25', 'in_time' => '0', 'out_time' => '0'),
-            300 => array('as_id' => '7090', 'in_date' => '2020-11-26', 'in_time' => '0', 'out_time' => '0'),
-            301 => array('as_id' => '7090', 'in_date' => '2020-11-28', 'in_time' => '0', 'out_time' => '0'),
-            302 => array('as_id' => '7092', 'in_date' => '2020-11-04', 'in_time' => '0', 'out_time' => '0'),
-            303 => array('as_id' => '7092', 'in_date' => '2020-11-05', 'in_time' => '0', 'out_time' => '0'),
-            304 => array('as_id' => '7092', 'in_date' => '2020-11-07', 'in_time' => '0', 'out_time' => '0'),
-            305 => array('as_id' => '7092', 'in_date' => '2020-11-08', 'in_time' => '0', 'out_time' => '0'),
-            306 => array('as_id' => '7092', 'in_date' => '2020-11-09', 'in_time' => '0', 'out_time' => '0'),
-            307 => array('as_id' => '7092', 'in_date' => '2020-11-10', 'in_time' => '0', 'out_time' => '0'),
-            308 => array('as_id' => '7092', 'in_date' => '2020-11-14', 'in_time' => '0', 'out_time' => '0'),
-            309 => array('as_id' => '7092', 'in_date' => '2020-11-15', 'in_time' => '0', 'out_time' => '0'),
-            310 => array('as_id' => '7092', 'in_date' => '2020-11-16', 'in_time' => '0', 'out_time' => '0'),
-            311 => array('as_id' => '7092', 'in_date' => '2020-11-17', 'in_time' => '0', 'out_time' => '0'),
-            312 => array('as_id' => '7092', 'in_date' => '2020-11-18', 'in_time' => '0', 'out_time' => '0'),
-            313 => array('as_id' => '7092', 'in_date' => '2020-11-19', 'in_time' => '0', 'out_time' => '0'),
-            314 => array('as_id' => '7092', 'in_date' => '2020-11-21', 'in_time' => '0', 'out_time' => '0'),
-            315 => array('as_id' => '7092', 'in_date' => '2020-11-22', 'in_time' => '0', 'out_time' => '0'),
-            316 => array('as_id' => '7092', 'in_date' => '2020-11-24', 'in_time' => '0', 'out_time' => '0'),
-            317 => array('as_id' => '7092', 'in_date' => '2020-11-29', 'in_time' => '0', 'out_time' => '0'),
-            318 => array('as_id' => '7095', 'in_date' => '2020-11-01', 'in_time' => '0', 'out_time' => '0'),
-            319 => array('as_id' => '7095', 'in_date' => '2020-11-02', 'in_time' => '0', 'out_time' => '0'),
-            320 => array('as_id' => '7095', 'in_date' => '2020-11-03', 'in_time' => '0', 'out_time' => '0'),
-            321 => array('as_id' => '7095', 'in_date' => '2020-11-04', 'in_time' => '0', 'out_time' => '0'),
-            322 => array('as_id' => '7095', 'in_date' => '2020-11-05', 'in_time' => '0', 'out_time' => '0'),
-            323 => array('as_id' => '7095', 'in_date' => '2020-11-07', 'in_time' => '0', 'out_time' => '0'),
-            324 => array('as_id' => '7095', 'in_date' => '2020-11-08', 'in_time' => '0', 'out_time' => '0'),
-            325 => array('as_id' => '7095', 'in_date' => '2020-11-09', 'in_time' => '0', 'out_time' => '0'),
-            326 => array('as_id' => '7095', 'in_date' => '2020-11-10', 'in_time' => '0', 'out_time' => '0'),
-            327 => array('as_id' => '7095', 'in_date' => '2020-11-11', 'in_time' => '0', 'out_time' => '0'),
-            328 => array('as_id' => '7095', 'in_date' => '2020-11-12', 'in_time' => '0', 'out_time' => '0'),
-            329 => array('as_id' => '7095', 'in_date' => '2020-11-14', 'in_time' => '0', 'out_time' => '0'),
-            330 => array('as_id' => '7095', 'in_date' => '2020-11-16', 'in_time' => '0', 'out_time' => '0'),
-            331 => array('as_id' => '7095', 'in_date' => '2020-11-17', 'in_time' => '0', 'out_time' => '0'),
-            332 => array('as_id' => '7095', 'in_date' => '2020-11-18', 'in_time' => '0', 'out_time' => '0'),
-            333 => array('as_id' => '7095', 'in_date' => '2020-11-19', 'in_time' => '0', 'out_time' => '0'),
-            334 => array('as_id' => '7095', 'in_date' => '2020-11-21', 'in_time' => '0', 'out_time' => '0'),
-            335 => array('as_id' => '7095', 'in_date' => '2020-11-22', 'in_time' => '0', 'out_time' => '0'),
-            336 => array('as_id' => '7095', 'in_date' => '2020-11-23', 'in_time' => '0', 'out_time' => '0'),
-            337 => array('as_id' => '7095', 'in_date' => '2020-11-24', 'in_time' => '0', 'out_time' => '0'),
-            338 => array('as_id' => '7095', 'in_date' => '2020-11-25', 'in_time' => '0', 'out_time' => '0'),
-            339 => array('as_id' => '7095', 'in_date' => '2020-11-28', 'in_time' => '0', 'out_time' => '0'),
-            340 => array('as_id' => '7095', 'in_date' => '2020-11-29', 'in_time' => '0', 'out_time' => '0'),
-            341 => array('as_id' => '7095', 'in_date' => '2020-11-30', 'in_time' => '0', 'out_time' => '0'),
-            342 => array('as_id' => '7097', 'in_date' => '2020-11-01', 'in_time' => '0', 'out_time' => '0'),
-            343 => array('as_id' => '7097', 'in_date' => '2020-11-02', 'in_time' => '0', 'out_time' => '0'),
-            344 => array('as_id' => '7097', 'in_date' => '2020-11-03', 'in_time' => '0', 'out_time' => '0'),
-            345 => array('as_id' => '7097', 'in_date' => '2020-11-04', 'in_time' => '0', 'out_time' => '0'),
-            346 => array('as_id' => '7097', 'in_date' => '2020-11-05', 'in_time' => '0', 'out_time' => '0'),
-            347 => array('as_id' => '7097', 'in_date' => '2020-11-07', 'in_time' => '0', 'out_time' => '0'),
-            348 => array('as_id' => '7097', 'in_date' => '2020-11-08', 'in_time' => '0', 'out_time' => '0'),
-            349 => array('as_id' => '7097', 'in_date' => '2020-11-09', 'in_time' => '0', 'out_time' => '0'),
-            350 => array('as_id' => '7097', 'in_date' => '2020-11-10', 'in_time' => '0', 'out_time' => '0'),
-            351 => array('as_id' => '7097', 'in_date' => '2020-11-11', 'in_time' => '0', 'out_time' => '0'),
-            352 => array('as_id' => '7097', 'in_date' => '2020-11-12', 'in_time' => '0', 'out_time' => '0'),
-            353 => array('as_id' => '7097', 'in_date' => '2020-11-14', 'in_time' => '0', 'out_time' => '0'),
-            354 => array('as_id' => '7097', 'in_date' => '2020-11-15', 'in_time' => '0', 'out_time' => '0'),
-            355 => array('as_id' => '7097', 'in_date' => '2020-11-16', 'in_time' => '0', 'out_time' => '0'),
-            356 => array('as_id' => '7097', 'in_date' => '2020-11-17', 'in_time' => '0', 'out_time' => '0'),
-            357 => array('as_id' => '7097', 'in_date' => '2020-11-18', 'in_time' => '0', 'out_time' => '0'),
-            358 => array('as_id' => '7097', 'in_date' => '2020-11-19', 'in_time' => '0', 'out_time' => '0'),
-            359 => array('as_id' => '7097', 'in_date' => '2020-11-22', 'in_time' => '0', 'out_time' => '0'),
-            360 => array('as_id' => '7097', 'in_date' => '2020-11-23', 'in_time' => '0', 'out_time' => '0'),
-            361 => array('as_id' => '7097', 'in_date' => '2020-11-24', 'in_time' => '0', 'out_time' => '0'),
-            362 => array('as_id' => '7097', 'in_date' => '2020-11-25', 'in_time' => '0', 'out_time' => '0'),
-            363 => array('as_id' => '7097', 'in_date' => '2020-11-26', 'in_time' => '0', 'out_time' => '0'),
-            364 => array('as_id' => '7097', 'in_date' => '2020-11-28', 'in_time' => '0', 'out_time' => '0'),
-            365 => array('as_id' => '7097', 'in_date' => '2020-11-29', 'in_time' => '0', 'out_time' => '0'),
-            366 => array('as_id' => '7097', 'in_date' => '2020-11-30', 'in_time' => '0', 'out_time' => '0'),
-            367 => array('as_id' => '7098', 'in_date' => '2020-11-26', 'in_time' => '0', 'out_time' => '0'),
-            368 => array('as_id' => '7112', 'in_date' => '2020-11-01', 'in_time' => '0', 'out_time' => '0'),
-            369 => array('as_id' => '7112', 'in_date' => '2020-11-02', 'in_time' => '0', 'out_time' => '0'),
-            370 => array('as_id' => '7112', 'in_date' => '2020-11-03', 'in_time' => '0', 'out_time' => '0'),
-            371 => array('as_id' => '7112', 'in_date' => '2020-11-04', 'in_time' => '0', 'out_time' => '0'),
-            372 => array('as_id' => '7112', 'in_date' => '2020-11-05', 'in_time' => '0', 'out_time' => '0'),
-            373 => array('as_id' => '7112', 'in_date' => '2020-11-07', 'in_time' => '0', 'out_time' => '0'),
-            374 => array('as_id' => '7112', 'in_date' => '2020-11-08', 'in_time' => '0', 'out_time' => '0'),
-            375 => array('as_id' => '7112', 'in_date' => '2020-11-09', 'in_time' => '0', 'out_time' => '0'),
-            376 => array('as_id' => '7112', 'in_date' => '2020-11-10', 'in_time' => '0', 'out_time' => '0'),
-            377 => array('as_id' => '7112', 'in_date' => '2020-11-11', 'in_time' => '0', 'out_time' => '0'),
-            378 => array('as_id' => '7112', 'in_date' => '2020-11-12', 'in_time' => '0', 'out_time' => '0'),
-            379 => array('as_id' => '7112', 'in_date' => '2020-11-14', 'in_time' => '0', 'out_time' => '0'),
-            380 => array('as_id' => '7112', 'in_date' => '2020-11-15', 'in_time' => '0', 'out_time' => '0'),
-            381 => array('as_id' => '7112', 'in_date' => '2020-11-16', 'in_time' => '0', 'out_time' => '0'),
-            382 => array('as_id' => '7135', 'in_date' => '2020-11-21', 'in_time' => '0', 'out_time' => '0'),
-            383 => array('as_id' => '7135', 'in_date' => '2020-11-22', 'in_time' => '0', 'out_time' => '0'),
-            384 => array('as_id' => '7846', 'in_date' => '2020-11-01', 'in_time' => '0', 'out_time' => '0'),
-            385 => array('as_id' => '7883', 'in_date' => '2020-11-02', 'in_time' => '0', 'out_time' => '0'),
-            386 => array('as_id' => '7884', 'in_date' => '2020-11-22', 'in_time' => '0', 'out_time' => '0'),
-            387 => array('as_id' => '7885', 'in_date' => '2020-11-28', 'in_time' => '0', 'out_time' => '0'),
-            388 => array('as_id' => '7885', 'in_date' => '2020-11-29', 'in_time' => '0', 'out_time' => '0'),
-            389 => array('as_id' => '7887', 'in_date' => '2020-11-01', 'in_time' => '0', 'out_time' => '0'),
-            390 => array('as_id' => '7887', 'in_date' => '2020-11-02', 'in_time' => '0', 'out_time' => '0'),
-            391 => array('as_id' => '7887', 'in_date' => '2020-11-03', 'in_time' => '0', 'out_time' => '0'),
-            392 => array('as_id' => '7887', 'in_date' => '2020-11-04', 'in_time' => '0', 'out_time' => '0'),
-            393 => array('as_id' => '7887', 'in_date' => '2020-11-05', 'in_time' => '0', 'out_time' => '0'),
-            394 => array('as_id' => '7887', 'in_date' => '2020-11-07', 'in_time' => '0', 'out_time' => '0'),
-            395 => array('as_id' => '7887', 'in_date' => '2020-11-08', 'in_time' => '0', 'out_time' => '0'),
-            396 => array('as_id' => '7887', 'in_date' => '2020-11-09', 'in_time' => '0', 'out_time' => '0'),
-            397 => array('as_id' => '7887', 'in_date' => '2020-11-10', 'in_time' => '0', 'out_time' => '0'),
-            398 => array('as_id' => '7887', 'in_date' => '2020-11-11', 'in_time' => '0', 'out_time' => '0'),
-            399 => array('as_id' => '7887', 'in_date' => '2020-11-12', 'in_time' => '0', 'out_time' => '0'),
-            400 => array('as_id' => '7887', 'in_date' => '2020-11-19', 'in_time' => '0', 'out_time' => '0'),
-            401 => array('as_id' => '7887', 'in_date' => '2020-11-21', 'in_time' => '0', 'out_time' => '0'),
-            402 => array('as_id' => '7887', 'in_date' => '2020-11-22', 'in_time' => '0', 'out_time' => '0'),
-            403 => array('as_id' => '7887', 'in_date' => '2020-11-23', 'in_time' => '0', 'out_time' => '0'),
-            404 => array('as_id' => '7887', 'in_date' => '2020-11-24', 'in_time' => '0', 'out_time' => '0'),
-            405 => array('as_id' => '7887', 'in_date' => '2020-11-25', 'in_time' => '0', 'out_time' => '0'),
-            406 => array('as_id' => '7887', 'in_date' => '2020-11-26', 'in_time' => '0', 'out_time' => '0'),
-            407 => array('as_id' => '7887', 'in_date' => '2020-11-28', 'in_time' => '0', 'out_time' => '0'),
-            408 => array('as_id' => '7887', 'in_date' => '2020-11-29', 'in_time' => '0', 'out_time' => '0'),
-            409 => array('as_id' => '7887', 'in_date' => '2020-11-30', 'in_time' => '0', 'out_time' => '0'),
-            410 => array('as_id' => '7888', 'in_date' => '2020-11-01', 'in_time' => '0', 'out_time' => '0'),
-            411 => array('as_id' => '7888', 'in_date' => '2020-11-02', 'in_time' => '0', 'out_time' => '0'),
-            412 => array('as_id' => '7888', 'in_date' => '2020-11-03', 'in_time' => '0', 'out_time' => '0'),
-            413 => array('as_id' => '7888', 'in_date' => '2020-11-04', 'in_time' => '0', 'out_time' => '0'),
-            414 => array('as_id' => '7888', 'in_date' => '2020-11-05', 'in_time' => '0', 'out_time' => '0'),
-            415 => array('as_id' => '7888', 'in_date' => '2020-11-07', 'in_time' => '0', 'out_time' => '0'),
-            416 => array('as_id' => '7888', 'in_date' => '2020-11-08', 'in_time' => '0', 'out_time' => '0'),
-            417 => array('as_id' => '7888', 'in_date' => '2020-11-09', 'in_time' => '0', 'out_time' => '0'),
-            418 => array('as_id' => '7888', 'in_date' => '2020-11-10', 'in_time' => '0', 'out_time' => '0'),
-            419 => array('as_id' => '7888', 'in_date' => '2020-11-11', 'in_time' => '0', 'out_time' => '0'),
-            420 => array('as_id' => '7888', 'in_date' => '2020-11-12', 'in_time' => '0', 'out_time' => '0'),
-            421 => array('as_id' => '7888', 'in_date' => '2020-11-14', 'in_time' => '0', 'out_time' => '0'),
-            422 => array('as_id' => '7888', 'in_date' => '2020-11-15', 'in_time' => '0', 'out_time' => '0'),
-            423 => array('as_id' => '7888', 'in_date' => '2020-11-16', 'in_time' => '0', 'out_time' => '0'),
-            424 => array('as_id' => '7888', 'in_date' => '2020-11-17', 'in_time' => '0', 'out_time' => '0'),
-            425 => array('as_id' => '7888', 'in_date' => '2020-11-18', 'in_time' => '0', 'out_time' => '0'),
-            426 => array('as_id' => '7888', 'in_date' => '2020-11-19', 'in_time' => '0', 'out_time' => '0'),
-            427 => array('as_id' => '7888', 'in_date' => '2020-11-21', 'in_time' => '0', 'out_time' => '0'),
-            428 => array('as_id' => '7888', 'in_date' => '2020-11-22', 'in_time' => '0', 'out_time' => '0'),
-            429 => array('as_id' => '7888', 'in_date' => '2020-11-23', 'in_time' => '0', 'out_time' => '0'),
-            430 => array('as_id' => '7888', 'in_date' => '2020-11-24', 'in_time' => '0', 'out_time' => '0'),
-            431 => array('as_id' => '7888', 'in_date' => '2020-11-25', 'in_time' => '0', 'out_time' => '0'),
-            432 => array('as_id' => '7888', 'in_date' => '2020-11-26', 'in_time' => '0', 'out_time' => '0'),
-            433 => array('as_id' => '7888', 'in_date' => '2020-11-28', 'in_time' => '0', 'out_time' => '0'),
-            434 => array('as_id' => '7888', 'in_date' => '2020-11-29', 'in_time' => '0', 'out_time' => '0'),
-            435 => array('as_id' => '7888', 'in_date' => '2020-11-30', 'in_time' => '0', 'out_time' => '0'),
-            436 => array('as_id' => '7889', 'in_date' => '2020-11-01', 'in_time' => '0', 'out_time' => '0'),
-            437 => array('as_id' => '7889', 'in_date' => '2020-11-02', 'in_time' => '0', 'out_time' => '0'),
-            438 => array('as_id' => '7889', 'in_date' => '2020-11-03', 'in_time' => '0', 'out_time' => '0'),
-            439 => array('as_id' => '7889', 'in_date' => '2020-11-04', 'in_time' => '0', 'out_time' => '0'),
-            440 => array('as_id' => '7889', 'in_date' => '2020-11-05', 'in_time' => '0', 'out_time' => '0'),
-            441 => array('as_id' => '7889', 'in_date' => '2020-11-07', 'in_time' => '0', 'out_time' => '0'),
-            442 => array('as_id' => '7889', 'in_date' => '2020-11-08', 'in_time' => '0', 'out_time' => '0'),
-            443 => array('as_id' => '7889', 'in_date' => '2020-11-09', 'in_time' => '0', 'out_time' => '0'),
-            444 => array('as_id' => '7889', 'in_date' => '2020-11-10', 'in_time' => '0', 'out_time' => '0'),
-            445 => array('as_id' => '7889', 'in_date' => '2020-11-11', 'in_time' => '0', 'out_time' => '0'),
-            446 => array('as_id' => '7889', 'in_date' => '2020-11-12', 'in_time' => '0', 'out_time' => '0'),
-            447 => array('as_id' => '7889', 'in_date' => '2020-11-14', 'in_time' => '0', 'out_time' => '0'),
-            448 => array('as_id' => '7889', 'in_date' => '2020-11-15', 'in_time' => '0', 'out_time' => '0'),
-            449 => array('as_id' => '7889', 'in_date' => '2020-11-16', 'in_time' => '0', 'out_time' => '0'),
-            450 => array('as_id' => '7889', 'in_date' => '2020-11-17', 'in_time' => '0', 'out_time' => '0'),
-            451 => array('as_id' => '7889', 'in_date' => '2020-11-18', 'in_time' => '0', 'out_time' => '0'),
-            452 => array('as_id' => '7889', 'in_date' => '2020-11-19', 'in_time' => '0', 'out_time' => '0'),
-            453 => array('as_id' => '7889', 'in_date' => '2020-11-21', 'in_time' => '0', 'out_time' => '0'),
-            454 => array('as_id' => '7889', 'in_date' => '2020-11-22', 'in_time' => '0', 'out_time' => '0'),
-            455 => array('as_id' => '7889', 'in_date' => '2020-11-23', 'in_time' => '0', 'out_time' => '0'),
-            456 => array('as_id' => '7889', 'in_date' => '2020-11-24', 'in_time' => '0', 'out_time' => '0'),
-            457 => array('as_id' => '7889', 'in_date' => '2020-11-25', 'in_time' => '0', 'out_time' => '0'),
-            458 => array('as_id' => '7889', 'in_date' => '2020-11-26', 'in_time' => '0', 'out_time' => '0'),
-            459 => array('as_id' => '7889', 'in_date' => '2020-11-28', 'in_time' => '0', 'out_time' => '0'),
-            460 => array('as_id' => '7889', 'in_date' => '2020-11-29', 'in_time' => '0', 'out_time' => '0'),
-            461 => array('as_id' => '7889', 'in_date' => '2020-11-30', 'in_time' => '0', 'out_time' => '0'),
-            462 => array('as_id' => '7891', 'in_date' => '2020-11-02', 'in_time' => '0', 'out_time' => '0'),
-            463 => array('as_id' => '7891', 'in_date' => '2020-11-03', 'in_time' => '0', 'out_time' => '0'),
-            464 => array('as_id' => '7891', 'in_date' => '2020-11-05', 'in_time' => '0', 'out_time' => '0'),
-            465 => array('as_id' => '7891', 'in_date' => '2020-11-08', 'in_time' => '0', 'out_time' => '0'),
-            466 => array('as_id' => '7891', 'in_date' => '2020-11-09', 'in_time' => '0', 'out_time' => '0'),
-            467 => array('as_id' => '7891', 'in_date' => '2020-11-11', 'in_time' => '0', 'out_time' => '0'),
-            468 => array('as_id' => '7891', 'in_date' => '2020-11-12', 'in_time' => '0', 'out_time' => '0'),
-            469 => array('as_id' => '7891', 'in_date' => '2020-11-15', 'in_time' => '0', 'out_time' => '0'),
-            470 => array('as_id' => '7891', 'in_date' => '2020-11-16', 'in_time' => '0', 'out_time' => '0'),
-            471 => array('as_id' => '7891', 'in_date' => '2020-11-17', 'in_time' => '0', 'out_time' => '0'),
-            472 => array('as_id' => '7891', 'in_date' => '2020-11-19', 'in_time' => '0', 'out_time' => '0'),
-            473 => array('as_id' => '7891', 'in_date' => '2020-11-22', 'in_time' => '0', 'out_time' => '0'),
-            474 => array('as_id' => '7891', 'in_date' => '2020-11-24', 'in_time' => '0', 'out_time' => '0'),
-            475 => array('as_id' => '7891', 'in_date' => '2020-11-25', 'in_time' => '0', 'out_time' => '0'),
-            476 => array('as_id' => '7891', 'in_date' => '2020-11-28', 'in_time' => '0', 'out_time' => '0'),
-            477 => array('as_id' => '7891', 'in_date' => '2020-11-29', 'in_time' => '0', 'out_time' => '0'),
-            478 => array('as_id' => '7893', 'in_date' => '2020-11-02', 'in_time' => '0', 'out_time' => '0'),
-            479 => array('as_id' => '7893', 'in_date' => '2020-11-03', 'in_time' => '0', 'out_time' => '0'),
-            480 => array('as_id' => '7893', 'in_date' => '2020-11-04', 'in_time' => '0', 'out_time' => '0'),
-            481 => array('as_id' => '7893', 'in_date' => '2020-11-05', 'in_time' => '0', 'out_time' => '0'),
-            482 => array('as_id' => '7893', 'in_date' => '2020-11-08', 'in_time' => '0', 'out_time' => '0'),
-            483 => array('as_id' => '7893', 'in_date' => '2020-11-09', 'in_time' => '0', 'out_time' => '0'),
-            484 => array('as_id' => '7893', 'in_date' => '2020-11-10', 'in_time' => '0', 'out_time' => '0'),
-            485 => array('as_id' => '7893', 'in_date' => '2020-11-15', 'in_time' => '0', 'out_time' => '0'),
-            486 => array('as_id' => '7893', 'in_date' => '2020-11-18', 'in_time' => '0', 'out_time' => '0'),
-            487 => array('as_id' => '7893', 'in_date' => '2020-11-22', 'in_time' => '0', 'out_time' => '0'),
-            488 => array('as_id' => '7893', 'in_date' => '2020-11-23', 'in_time' => '0', 'out_time' => '0'),
-            489 => array('as_id' => '7893', 'in_date' => '2020-11-24', 'in_time' => '0', 'out_time' => '0'),
-            490 => array('as_id' => '7893', 'in_date' => '2020-11-28', 'in_time' => '0', 'out_time' => '0'),
-            491 => array('as_id' => '7893', 'in_date' => '2020-11-29', 'in_time' => '0', 'out_time' => '0'),
-            492 => array('as_id' => '7893', 'in_date' => '2020-11-30', 'in_time' => '0', 'out_time' => '0'),
-            493 => array('as_id' => '7894', 'in_date' => '2020-11-01', 'in_time' => '0', 'out_time' => '0'),
-            494 => array('as_id' => '7894', 'in_date' => '2020-11-02', 'in_time' => '0', 'out_time' => '0'),
-            495 => array('as_id' => '7894', 'in_date' => '2020-11-03', 'in_time' => '0', 'out_time' => '0'),
-            496 => array('as_id' => '7894', 'in_date' => '2020-11-04', 'in_time' => '0', 'out_time' => '0'),
-            497 => array('as_id' => '7894', 'in_date' => '2020-11-05', 'in_time' => '0', 'out_time' => '0'),
-            498 => array('as_id' => '7894', 'in_date' => '2020-11-07', 'in_time' => '0', 'out_time' => '0'),
-            499 => array('as_id' => '7894', 'in_date' => '2020-11-08', 'in_time' => '0', 'out_time' => '0'),
-            500 => array('as_id' => '7894', 'in_date' => '2020-11-09', 'in_time' => '0', 'out_time' => '0'),
-            501 => array('as_id' => '7894', 'in_date' => '2020-11-10', 'in_time' => '0', 'out_time' => '0'),
-            502 => array('as_id' => '7894', 'in_date' => '2020-11-11', 'in_time' => '0', 'out_time' => '0'),
-            503 => array('as_id' => '7894', 'in_date' => '2020-11-12', 'in_time' => '0', 'out_time' => '0'),
-            504 => array('as_id' => '7894', 'in_date' => '2020-11-14', 'in_time' => '0', 'out_time' => '0'),
-            505 => array('as_id' => '7894', 'in_date' => '2020-11-15', 'in_time' => '0', 'out_time' => '0'),
-            506 => array('as_id' => '7894', 'in_date' => '2020-11-16', 'in_time' => '0', 'out_time' => '0'),
-            507 => array('as_id' => '7894', 'in_date' => '2020-11-17', 'in_time' => '0', 'out_time' => '0'),
-            508 => array('as_id' => '7894', 'in_date' => '2020-11-18', 'in_time' => '0', 'out_time' => '0'),
-            509 => array('as_id' => '7894', 'in_date' => '2020-11-19', 'in_time' => '0', 'out_time' => '0'),
-            510 => array('as_id' => '7894', 'in_date' => '2020-11-21', 'in_time' => '0', 'out_time' => '0'),
-            511 => array('as_id' => '7894', 'in_date' => '2020-11-22', 'in_time' => '0', 'out_time' => '0'),
-            512 => array('as_id' => '7894', 'in_date' => '2020-11-23', 'in_time' => '0', 'out_time' => '0'),
-            513 => array('as_id' => '7894', 'in_date' => '2020-11-24', 'in_time' => '0', 'out_time' => '0'),
-            514 => array('as_id' => '7894', 'in_date' => '2020-11-25', 'in_time' => '0', 'out_time' => '0'),
-            515 => array('as_id' => '7894', 'in_date' => '2020-11-26', 'in_time' => '0', 'out_time' => '0'),
-            516 => array('as_id' => '7894', 'in_date' => '2020-11-28', 'in_time' => '0', 'out_time' => '0'),
-            517 => array('as_id' => '7894', 'in_date' => '2020-11-29', 'in_time' => '0', 'out_time' => '0'),
-            518 => array('as_id' => '7894', 'in_date' => '2020-11-30', 'in_time' => '0', 'out_time' => '0'),
-            519 => array('as_id' => '7904', 'in_date' => '2020-11-12', 'in_time' => '0', 'out_time' => '0'),
-            520 => array('as_id' => '9740', 'in_date' => '2020-11-02', 'in_time' => '0', 'out_time' => '0'),
-            521 => array('as_id' => '9740', 'in_date' => '2020-11-07', 'in_time' => '0', 'out_time' => '0'),
-            522 => array('as_id' => '9740', 'in_date' => '2020-11-09', 'in_time' => '0', 'out_time' => '0'),
-            523 => array('as_id' => '9740', 'in_date' => '2020-11-14', 'in_time' => '0', 'out_time' => '0'),
-            524 => array('as_id' => '9740', 'in_date' => '2020-11-16', 'in_time' => '0', 'out_time' => '0'),
-            525 => array('as_id' => '9740', 'in_date' => '2020-11-17', 'in_time' => '0', 'out_time' => '0'),
-            526 => array('as_id' => '9740', 'in_date' => '2020-11-18', 'in_time' => '0', 'out_time' => '0'),
-            527 => array('as_id' => '9740', 'in_date' => '2020-11-19', 'in_time' => '0', 'out_time' => '0'),
-            528 => array('as_id' => '9740', 'in_date' => '2020-11-23', 'in_time' => '0', 'out_time' => '0'),
-            529 => array('as_id' => '9841', 'in_date' => '2020-11-07', 'in_time' => '0', 'out_time' => '0'),
-            530 => array('as_id' => '9841', 'in_date' => '2020-11-21', 'in_time' => '0', 'out_time' => '0'),
-            531 => array('as_id' => '9841', 'in_date' => '2020-11-29', 'in_time' => '0', 'out_time' => '0'),
-            532 => array('as_id' => '10152', 'in_date' => '2020-11-22', 'in_time' => '0', 'out_time' => '0'),
-            533 => array('as_id' => '10171', 'in_date' => '2020-11-01', 'in_time' => '0', 'out_time' => '0'),
-            534 => array('as_id' => '10171', 'in_date' => '2020-11-02', 'in_time' => '0', 'out_time' => '0'),
-            535 => array('as_id' => '10171', 'in_date' => '2020-11-03', 'in_time' => '0', 'out_time' => '0'),
-            536 => array('as_id' => '10171', 'in_date' => '2020-11-04', 'in_time' => '0', 'out_time' => '0'),
-            537 => array('as_id' => '10171', 'in_date' => '2020-11-05', 'in_time' => '0', 'out_time' => '0'),
-            538 => array('as_id' => '10171', 'in_date' => '2020-11-08', 'in_time' => '0', 'out_time' => '0'),
-            539 => array('as_id' => '10171', 'in_date' => '2020-11-09', 'in_time' => '0', 'out_time' => '0'),
-            540 => array('as_id' => '10171', 'in_date' => '2020-11-10', 'in_time' => '0', 'out_time' => '0'),
-            541 => array('as_id' => '10171', 'in_date' => '2020-11-11', 'in_time' => '0', 'out_time' => '0'),
-            542 => array('as_id' => '10171', 'in_date' => '2020-11-12', 'in_time' => '0', 'out_time' => '0'),
-            543 => array('as_id' => '10171', 'in_date' => '2020-11-15', 'in_time' => '0', 'out_time' => '0'),
-            544 => array('as_id' => '10171', 'in_date' => '2020-11-16', 'in_time' => '0', 'out_time' => '0'),
-            545 => array('as_id' => '10171', 'in_date' => '2020-11-17', 'in_time' => '0', 'out_time' => '0'),
-            546 => array('as_id' => '10171', 'in_date' => '2020-11-18', 'in_time' => '0', 'out_time' => '0'),
-            547 => array('as_id' => '10171', 'in_date' => '2020-11-19', 'in_time' => '0', 'out_time' => '0'),
-            548 => array('as_id' => '10171', 'in_date' => '2020-11-22', 'in_time' => '0', 'out_time' => '0'),
-            549 => array('as_id' => '10171', 'in_date' => '2020-11-23', 'in_time' => '0', 'out_time' => '0'),
-            550 => array('as_id' => '10171', 'in_date' => '2020-11-24', 'in_time' => '0', 'out_time' => '0'),
-            551 => array('as_id' => '10171', 'in_date' => '2020-11-25', 'in_time' => '0', 'out_time' => '0'),
-            552 => array('as_id' => '10171', 'in_date' => '2020-11-26', 'in_time' => '0', 'out_time' => '0'),
-            553 => array('as_id' => '10174', 'in_date' => '2020-11-09', 'in_time' => '0', 'out_time' => '0'),
-            554 => array('as_id' => '10174', 'in_date' => '2020-11-23', 'in_time' => '0', 'out_time' => '0'),
-            555 => array('as_id' => '10237', 'in_date' => '2020-11-04', 'in_time' => '0', 'out_time' => '0'),
-            556 => array('as_id' => '10289', 'in_date' => '2020-11-03', 'in_time' => '7.54', 'out_time' => '16.58'),
-            557 => array('as_id' => '10289', 'in_date' => '2020-11-04', 'in_time' => '7.54', 'out_time' => '17'),
-            558 => array('as_id' => '10289', 'in_date' => '2020-11-05', 'in_time' => '7.56', 'out_time' => '16.58'),
-            559 => array('as_id' => '10408', 'in_date' => '2020-11-04', 'in_time' => '0', 'out_time' => '0'),
-            560 => array('as_id' => '10408', 'in_date' => '2020-11-05', 'in_time' => '0', 'out_time' => '0'),
-            561 => array('as_id' => '10408', 'in_date' => '2020-11-07', 'in_time' => '0', 'out_time' => '0'),
-            562 => array('as_id' => '10718', 'in_date' => '2020-11-07', 'in_time' => '7.55', 'out_time' => '17.01'),
-            563 => array('as_id' => '10872', 'in_date' => '2020-11-14', 'in_time' => '0', 'out_time' => '0'),
-            564 => array('as_id' => '10872', 'in_date' => '2020-11-15', 'in_time' => '0', 'out_time' => '0'),
-            565 => array('as_id' => '10872', 'in_date' => '2020-11-16', 'in_time' => '0', 'out_time' => '0'),
-            566 => array('as_id' => '11044', 'in_date' => '2020-11-24', 'in_time' => '0', 'out_time' => '0'),
-            567 => array('as_id' => '11044', 'in_date' => '2020-11-25', 'in_time' => '0', 'out_time' => '0'),
-        );
-        foreach ($data as $key => $v) 
-        {
-
-            $shift = DB::table('hr_shift')
-                     ->get()->keyBy('hr_shift_code');
-
-            $att = DB::table('hr_attendance_ceil')
-            ->where('as_id',$v['as_id'])
-            ->where('in_date',$v['in_date'])
-            ->first();
-
-            if($att){
-
-                if($v['in_time'] > 0 && $v['out_time'] > 0){
-
-                    $out = $this->time($v['out_time']);
-                    $in = $this->time($v['in_time']);
-                    $intime = date('Y-m-d H:i:s',strtotime($v['in_date'].' '.$in));
-                    if($v['in_time'] > $v['out_time']){
-                        $d = Carbon::create($v['in_date'])->addDay()->toDateString();
-                        $outtime = date('Y-m-d H:i:s',strtotime($d.' '.$out));
-                    }else{
-                        $outtime = date('Y-m-d H:i:s',strtotime($v['in_date'].' '.$out));
-                    }
-                    $queue = (new ProcessAttendanceInOutTime('hr_attendance_ceil', $att->id, 2))
-                        ->delay(Carbon::now()->addSeconds(2));
-                        dispatch($queue);
-
-                }else{
-                    $intime = $v['in_date'].' '.$shift[$att->hr_shift_code]->hr_shift_start_time;
-                    $outtime = null;
-                    $queue = (new ProcessAttendanceIntime('hr_attendance_ceil', $att->id, 2))
-                        ->delay(Carbon::now()->addSeconds(2));
-                        dispatch($queue);
-                }
-                DB::table('hr_attendance_ceil')
-                ->where('id', $att->id)
-                ->update([
-                    'out_time' => $outtime,
-                    'in_time' => $intime
-                ]);
-
-
-
-                
-            }
-
-            
-        }
-        return 'success';
-
-    } 
-
-
-    public function outtimeProcess()
-    {
-        $data = [];
-        foreach ($data as $key => $v) 
-        {
-            $att = DB::table('hr_attendance_ceil as a')
-            ->leftJoin('hr_as_basic_info as b','a.as_id', 'b.as_id' )
-            ->where('b.associate_id',$key)
-            ->where('a.in_date',$v['date'])
-            ->first();
-
-            $out = $this->time($v['out']);
-            if(strtotime(date('H:i:s',strtotime($att->in_time))) > strtotime(date('H:i:s',strtotime($out)))){
-                $d = Carbon::create($v['date'])->addDay()->toDateString();
-                $outtime = date('Y-m-d H:i:s',strtotime($v['date'].' '.$out));
-            }else{
-                $outtime = date('Y-m-d H:i:s',strtotime($v['date'].' '.$out));
-            }
-
-            DB::table('hr_attendance_ceil')
-            ->where('id', $att->id)
-            ->update([
-                'out_time' => $outtime
-            ]);
-
-
-
-            $queue = (new ProcessAttendanceOuttime('hr_attendance_ceil', $att->id, 2))
-                    ->delay(Carbon::now()->addSeconds(2));
-                    dispatch($queue);
-            
-        }
-        return 'success';
-
-    } 
 
 
     public function processPartialSalary($employee, $salary_date, $status)
@@ -1865,6 +954,124 @@ class TestController extends Controller
 
     public function check()
     {
+        $salaryAddDeduct = DB::table('hr_salary_add_deduct')
+                ->where('year',2020)
+                ->where('month', 11)
+                ->get()->keyBy('associate_id')->toArray();
+            return $salaryAddDeduct;
+        // $user = DB::table('hr_as_basic_info')->where('as_doj', 'like','2020-11%')->get();
+        // $data = [];
+        // foreach ($user as $key => $e) {
+        //     $query[] = DB::table('hr_monthly_salary')
+        //                               ->where('as_id', $e->associate_id)
+        //                               ->where('month',10)
+        //                               ->get()->toArray();
+            
+        // }
+        // return ($query);
+        // $user = DB::table('hr_as_basic_info')->where('as_doj', '>=','2020-11-01')->get();
+        //     $data = [];
+        // foreach ($user as $key => $e) {
+        //     $query = DB::table('holiday_roaster')
+        //                               ->where('as_id', $e->associate_id)
+        //                               ->whereDate('date','<',$e->as_doj)
+        //                               ->get()->toArray();
+            
+        // }
+        // return ($query);
+        // $user = DB::table('hr_as_basic_info')->where('as_doj', '>=','2020-11-01')->get();
+        //     $data = [];
+        // foreach ($user as $key => $e) {
+        //     $query = DB::table('hr_absent')
+        //                               ->where('date', 'like', '2020-11%')
+        //                               ->where('associate_id', $e->associate_id)
+        //                               ->whereDate('date','<',$e->as_doj)
+        //                               ->pluck('id','date');
+        //     if(count($query) > 0){
+        //         $data[$e->associate_id] = $query;
+        //     }
+        // }
+        // return ($data);
+        // $leave_array = [];
+        //         $absent_array = [];
+        //         for($i=1; $i<=12; $i++) {
+        //         $date = date('Y-m-d', strtotime('2020-11-'.$i));
+        //         $leave = DB::table('hr_attendance_mbm AS a')
+        //                 ->where('a.in_time', 'like', $date.'%')
+        //                 // ->where('a.as_id', 8958)
+        //                 ->leftJoin('hr_as_basic_info AS b', function($q){
+        //                     $q->on('b.as_id', 'a.as_id');
+        //                 })
+        //                 ->pluck('b.associate_id');
+        //         $leave_array[] = $leave;
+        //         $absent_array[] = DB::table('hr_absent')
+        //                 ->whereDate('date', $date)
+        //                 ->whereIn('associate_id', $leave)
+        //                 ->get()->toArray();
+        //         }
+        //         return ($absent_array);
+        
+
+                $leave_array = [];
+                $absent_array = [];
+                for($i=1; $i<=20; $i++) {
+                $date = date('Y-m-d', strtotime('2020-11-'.$i));
+                $leave = DB::table('hr_absent AS a')
+                        ->where('a.date', '=', $date)
+                        ->whereIn('b.as_unit_id', [1, 4, 5])
+                        ->leftJoin('hr_as_basic_info AS b', function($q){
+                            $q->on('b.associate_id', 'a.associate_id');
+                        })
+                        ->pluck('b.as_id', 'b.associate_id');
+                $leave_array[] = $leave;
+                $absent_array[] = DB::table('hr_attendance_mbm')
+                        ->whereDate('in_time', $date)
+                        ->whereIn('as_id', $leave)
+                        ->get()->toArray();
+                }
+                return ($absent_array);
+                
+            // $leave_array = [];
+            // $absent_array = [];
+            // for($i=1; $i<=13; $i++) {
+            // $date = date('Y-m-d', strtotime('2020-11-'.$i));
+            // $leave = DB::table('hr_leave AS l')
+            //         ->where('l.leave_from', '<=', $date)
+            //         ->where('l.leave_to',   '>=', $date)
+            //         ->where('l.leave_status', '=', 1)
+            //         ->whereIn('b.as_unit_id', [1, 4, 5])
+            //         ->leftJoin('hr_as_basic_info AS b', function($q){
+            //             $q->on('b.associate_id', 'l.leave_ass_id');
+            //         })
+            //         ->pluck('b.as_id', 'b.associate_id');
+            // $leave_array[] = $leave;
+            // $absent_array[] = DB::table('hr_attendance_mbm')
+            //         ->whereDate('in_time', $date)
+            //         ->whereIn('as_id', $leave)
+            //         ->get()->toArray();
+            // }
+            // return $absent_array;
+            
+
+            // $leave_array = [];
+            // $absent_array = [];
+            // for($i=1; $i<=14; $i++) {
+            // $date = date('Y-m-d', strtotime('2020-11-'.$i));
+            // $leave = DB::table('hr_leave AS l')
+            //         ->where('l.leave_from', '<=', $date)
+            //         ->where('l.leave_to',   '>=', $date)
+            //         ->where('l.leave_status', '=', 1)
+            //         ->leftJoin('hr_as_basic_info AS b', function($q){
+            //             $q->on('b.associate_id', 'l.leave_ass_id');
+            //         })
+            //         ->pluck('b.associate_id','b.as_id');
+            // $leave_array[] = $leave;
+            // $absent_array[] = DB::table('hr_absent')
+            //         ->whereDate('date', $date)
+            //         ->whereIn('associate_id', $leave)
+            //         ->get()->toArray();
+            // }
+            // return ($absent_array);
         $n = 5;
         $a = [4, 0, 1, -2, 3];
         $result = array();
@@ -2073,8 +1280,8 @@ class TestController extends Controller
             // dump($leave_array,$absent_array);
             // dd('end');
     }
-
-    public function getLeftEmployee()
+    
+     public function getLeftEmployee()
     {
 
         $designation = designation_by_id();
@@ -2114,7 +1321,8 @@ class TestController extends Controller
         return (new FastExcel(collect($sal)))->download('Monthly Summary.xlsx');
 
     }
-
+    
+    
     public function getMonthlySalary(Request $request)
     {
 
@@ -2146,7 +1354,7 @@ class TestController extends Controller
                 'Leave' => $e->leave,
                 'Absent' => $e->absent,
                 'Holiday' => $e->holiday,
-                'Total Day' => $e->present + $e->leave + $e->holiday + $e->absent,
+                'Total Day' => $e->present + $e->leave + $e->holiday ,
                 'Late Count' => $e->late_count,
                 'OT Hour' => $e->ot_hour,
                 'OT Rate' => $e->ot_rate,
@@ -2176,8 +1384,7 @@ class TestController extends Controller
         return (new FastExcel(collect($sal)))->download('Monthly Salary.xlsx');
 
     }
-
-
+    
     public function testMail()
     {
         $data = [];

@@ -133,6 +133,8 @@ class NotifLeaveController extends Controller
                                 
                                 if($getSalaryAdjust == null){
                                     $mId = SalaryAdjustMaster::insertEmployeeIdMonthYearWise($getLeave->leave_ass_id, $month, $year); 
+                                    $leave = Leave::findOrFail($request->id);
+                                    $leave->update(['leave_comment' => 'Adjustment for '.date('F, Y', strtotime($today))]);
                                 }else{
                                     $mId = $getSalaryAdjust->id;
                                 }

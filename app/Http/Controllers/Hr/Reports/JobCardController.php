@@ -181,7 +181,7 @@ class JobCardController extends Controller
                         })
                         ->first();
         if($leaveCheck){
-          $attendance[$i]['present_status']=$leaveCheck->leave_type." Leave";
+          $attendance[$i]['present_status']=$leaveCheck->leave_type." Leave <br><b>".$leaveCheck->leave_comment.'</b>';
           $attendance[$i]['day_status'] = "P";
         } else {
           // check attendance

@@ -117,13 +117,24 @@
                         <div class="col-12">
                             <form class="" role="form" id="unitWiseSalary"> 
                                 <div class="panel mb-0">
-                                    
-                                    <div class="panel-body pb-0">
+                                    @php
+                                      $mbmFlag = 0;
+                                      $mbmAll = [1,4,5];
+                                      $permission = auth()->user()->unit_permissions();
+                                      $checkUnit = array_intersect($mbmAll,$permission);
+                                      if(count($checkUnit) > 2){
+                                        $mbmFlag = 1;
+                                      }
+                                    @endphp
+                                    <div class="panel-body">
                                         <div class="row">
                                             <div class="col-3">
                                                 <div class="form-group has-float-label select-search-group">
                                                     <select name="unit" class="form-control capitalize select-search" id="unit" >
                                                         <option selected="" value="">Choose...</option>
+                                                        @if($mbmFlag == 1)
+                                                        <option value="145">MBM + MBF + MBM 2</option>
+                                                        @endif
                                                         @foreach($unitList as $key => $value)
                                                         <option value="{{ $key }}">{{ $value }}</option>
                                                         @endforeach
@@ -205,6 +216,13 @@
                                                     ?>
                                                     {{ Form::select('pay_status', $status, 0, ['placeholder'=>'Select Payable Status ', 'class'=>'form-control capitalize select-search', 'id'=>'pay_status']) }}
                                                     <label for="pay_status">Payable Status</label>
+                                                </div>
+                                                <div class="form-group has-float-label select-search-group">
+                                                    <?php
+                                                      $billType = ['1'=>'Tiffin','2'=>'Dinner'];
+                                                    ?>
+                                                    {{ Form::select('bill_type', $billType, 0, ['placeholder'=>'Select Payable Status ', 'class'=>'form-control capitalize select-search', 'id'=>'bill_type']) }}
+                                                    <label for="bill_type">Bill Type</label>
                                                 </div>
                                                 <div class="row">
                                                   <div class="col pr-0">

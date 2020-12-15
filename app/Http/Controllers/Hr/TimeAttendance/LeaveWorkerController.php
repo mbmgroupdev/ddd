@@ -110,7 +110,6 @@ class LeaveWorkerController extends Controller
                                 ->where('in_date','<=', $endDate)
                                 ->delete();
 
-                    
                     // check previous month leave
                     if($leaveMonth == $lastMonth){
                         // check activity lock/unlock
@@ -143,6 +142,9 @@ class LeaveWorkerController extends Controller
                                 
                                 if($getSalaryAdjust == null){
                                     $mId = SalaryAdjustMaster::insertEmployeeIdMonthYearWise($request->leave_ass_id, $month, $year); 
+                                    // leave update
+                                    $leave = Leave::findOrFail($store->id);
+                                    $leave->update(['leave_comment' => 'Adjustment for '.date('F, Y', strtotime($today))]);
                                 }else{
                                     $mId = $getSalaryAdjust->id;
                                 }

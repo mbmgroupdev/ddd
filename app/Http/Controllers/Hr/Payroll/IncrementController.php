@@ -40,11 +40,13 @@ class IncrementController extends Controller
 
 	    $subSectionList= [];
 
+        $employeeTypes  = EmpType::where('hr_emp_type_status', '1')->pluck('hr_emp_type_name', 'emp_type_id');
+
 	    $data['salaryMin']      = Benefits::getSalaryRangeMin();
 	    $data['salaryMax']      = Benefits::getSalaryRangeMax();
 
 
-	    return view('hr.payroll.increment.index', compact('unitList','floorList','lineList','areaList','deptList','sectionList','subSectionList', 'data'));
+	    return view('hr.payroll.increment.index', compact('unitList','floorList','lineList','areaList','deptList','sectionList','subSectionList', 'data','employeeTypes'));
 
     }
 
@@ -124,10 +126,6 @@ class IncrementController extends Controller
         //month difference
         $month_diff = (($year2 - $year1) * 12) + ($month2 - $month1);
 
-        // dd($request->applied_date, $request->effective_date,"Difference: ".$month_diff.' Months ');
-
-
-
         for($i=0; $i<sizeof($request->associate_id); $i++)
         {
             $salary= DB::table('hr_benefits')
@@ -175,7 +173,6 @@ class IncrementController extends Controller
              $m = (int)$month1;
 
              for($j=0; $j<$month_diff; $j++ ){
-                    //-----------master data insert
                         $master = new SalaryAdjustMaster();
                         $master->associate_id = $request->associate_id[$i];
                         if($m > 12){
@@ -193,8 +190,6 @@ class IncrementController extends Controller
                         
                         $master->save();
 
-
-                    //-----------details insert
                         $detail = new SalaryAdjustDetails();
                         $detail->salary_adjust_master_id = $master->id;
                         $detail->date                    = date('Y-m-d');
@@ -203,7 +198,7 @@ class IncrementController extends Controller
                         $detail->save();
                     
              }   
-            //-----------------------------------------------------------------------------
+            
         }
 
 
@@ -325,6 +320,8 @@ class IncrementController extends Controller
                             ->update([
                                 'status' => 1
                             ]);
+
+
             }
         }
     }
@@ -337,37 +334,174 @@ class IncrementController extends Controller
 
     public function getEligibleList(Request $request)
     {
+        $input = $request->all();
+
+        $request_associates = DB::table('hr_as_basic_info as b')
+                    ->leftJoin('hr_benefits as ben','ben.ben_as_id','b.associate_id')
+                    ->where('b.as_status',1)
+                    ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
+                    ->whereIn('b.as_location', auth()->user()->location_permissions())
+                    ->when(!empty($input['unit']), function ($query) use($input){
+                        if($input['unit'] == 145){
+                            return $query->whereIn('b.as_unit_id',[1, 4, 5]);
+                        }else{
+                            return $query->where('b.as_unit_id',$input['unit']);
+                        }
+                    })
+                    ->when(!empty($input['area']), function ($query) use($input){
+                       return $query->where('b.as_area_id',$input['area']);
+                    })
+                    ->when(!empty($input['department']), function ($query) use($input){
+                       return $query->where('b.as_department_id',$input['department']);
+                    })
+                    ->when(!empty($input['line_id']), function ($query) use($input){
+                       return $query->where('b.as_line_id', $input['line_id']);
+                    })
+                    ->when(!empty($input['floor_id']), function ($query) use($input){
+                       return $query->where('b.as_floor_id',$input['floor_id']);
+                    })
+                    ->when($input['as_ot']!=null, function ($query) use($input){
+                       return $query->where('b.as_ot',$input['as_ot']);
+                    })
+                    ->when($input['emp_type']!=null, function ($query) use($input){
+                       return $query->where('b.as_emp_type_id',$input['emp_type']);
+                    })
+                    ->when(!empty($input['section']), function ($query) use($input){
+                       return $query->where('b.as_section_id', $input['section']);
+                    })
+                    ->when(!empty($input['subSection']), function ($query) use($input){
+                       return $query->where('b.as_subsection_id', $input['subSection']);
+                    })
+                    ->where('ben.ben_current_salary','>=' ,$input['min_salary'])
+                    ->where('ben.ben_current_salary','<=' ,$input['max_salary'])
+                    ->pluck('b.associate_id')->toArray();
+
     	$inc_month = $request->month;
-    	$effective_date = Carbon::parse($request->month.'-01');
-    	$range_start = $effective_date->copy()->subYear()->toDateString();
+        $date = $request->month.'-01';
+        $inc_year = date('Y', strtotime($date));
+    	$effective_date = Carbon::parse($date);
+    	$range_start = $effective_date->copy()->subMonths(11)->toDateString();
     	$range_end = $effective_date->copy()->endOfMonth()->toDateString();
 
 
     	$gazette_date = '2018-12-01';
-    	$eligible_date = Carbon::parse($range_end)->endOfMonth()->toDateString();
-
+        $gazette_month = date('m', strtotime($gazette_date)) ;
+        $isGazette = $gazette_month == date('m', strtotime($inc_month))?1:0;
+    	$eligible_date = Carbon::parse($range_end)->subYear()->endOfMonth()->toDateString();
+        
     	$increment = DB::table('hr_increment')
+                     ->where('increment_type', 1)
     				 ->where('effective_date','>=',$range_start)
     				 ->where('effective_date','<=',$range_end)
     				 ->pluck('associate_id')->toArray();
 
-    	
+    	// if gazette month gazzette employee will be added
     	$gazette = DB::table('hr_as_basic_info')
     				->where('as_doj', '<=', $gazette_date)
     				->where('as_emp_type_id', 3)
-    				->whereIn('as_unit_id', auth()->user()->unit_permissions())
-    				->whereIn('as_location', auth()->user()->location_permissions())
+    				->whereIn('associate_id', $request_associates)
     				->pluck('associate_id')->toArray();
 
-    	$no_associate = array_merge($increment,$gazette);
+        $no_associate = $increment;
+
+        if($isGazette == 0){
+    	   $no_associate = array_merge($increment,$gazette);
+        }
 
     	$eligible = DB::table('hr_as_basic_info')
-    				->leftJoin('hr_benefits')
     				->where('as_doj','<=',$eligible_date)
-    				->whereIn('as_unit_id', auth()->user()->unit_permissions())
-    				->whereIn('as_location', auth()->user()->location_permissions())
+                    ->whereIn('associate_id', $request_associates)
     				->whereNotIn('associate_id',$no_associate)
-    				->get();
+    				->pluck('associate_id')->toArray();
+
+        if($isGazette == 1){
+            $eligible = array_merge($eligible,$gazette);
+        }
+
+
+
+        $data = DB::table('hr_as_basic_info as b')
+                ->select(
+                    'b.as_name',
+                    'b.associate_id',
+                    'b.as_oracle_code',
+                    'b.as_emp_type_id',
+                    'b.as_unit_id',
+                    'b.as_location',
+                    'b.as_department_id',
+                    'b.as_area_id',
+                    'b.as_floor_id',
+                    'b.as_line_id',
+                    'b.as_section_id',
+                    'b.as_subsection_id',
+                    'b.as_designation_id', 
+                    'b.as_gender',
+                    'b.as_doj',
+                    'ben.ben_current_salary',
+                    DB::raw('CEIL((ben.ben_current_salary - 1850)*0.05) as inc'),
+                    DB::raw('MONTH(as_doj) AS doj_month')
+                )
+                ->leftJoin('hr_benefits as ben','ben.ben_as_id','b.associate_id')
+                ->whereIn('b.associate_id', $eligible)
+                ->orderBy('as_oracle_sl','ASC')
+                ->get();
+
+        if($request->type == 'running' ){
+
+            $data = collect($data)->filter(function ($item) use ($inc_month, $isGazette, $gazette) {
+                            if($item->doj_month == date('m', strtotime($inc_month)) || ($isGazette == 1 && in_array($item->associate_id, $gazette))){
+                                return $item;
+                            }
+                        })->values()->toArray();
+        }else if($request->type == 'pending'){
+            $data = collect($data)->filter(function ($item) use ($inc_month, $isGazette, $gazette) {
+                            if($item->doj_month != date('m', strtotime($inc_month)) && (!in_array($item->associate_id, $gazette))){
+                                return $item;
+                            }
+                        })->values()->toArray();
+
+        }
+
+        $unit = unit_by_id();
+        $location = location_by_id();
+        $line = line_by_id();
+        $floor = floor_by_id();
+        $department = department_by_id();
+        $designation = designation_by_id();
+        $section = section_by_id();
+        $subSection = subSection_by_id();
+        $area = area_by_id();
+
+        return view('hr.payroll.increment.eligible-list', compact('data','unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area','effective_date','gazette','inc_year','date','request'))->render();
+
+    }
+
+    public function incrementAction(Request $request)
+    {
+        
+        $increment = $request->increment;
+
+        foreach ($increment as $key => $v) {
+            // if checked
+            if(isset($v['status'])){
+
+                $inc= new Increment();
+                $inc->associate_id = $key;
+                $inc->current_salary = $v['salary'];
+                $inc->increment_type = $request->increment_type;
+                $inc->increment_amount = $v['amount'] ;
+                $inc->amount_type = 1 ;
+                $inc->applied_date = null ;
+                $inc->eligible_date = date('Y-m-01');
+                $inc->effective_date = $v['date'] ;
+                $inc->status = 0 ;
+                $inc->created_by = auth()->id();
+                $inc->save();
+
+
+            }
+        }
+
 
     }
 }

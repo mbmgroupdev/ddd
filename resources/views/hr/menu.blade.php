@@ -136,7 +136,7 @@
       </li>
       @endif
 
-      @if(auth()->user()->canany(['Manage Promotion','Manage Increment','Salary Adjustment','End of Job Benefits','Loan List','Assign Benefit']) || $user->hasRole('Super Admin'))
+      @if(auth()->user()->canany(['Manage Promotion','Manage Increment','Salary Adjustment','End of Job Benefits','Loan List','Assign Benefit','Bank Sheet']) || $user->hasRole('Super Admin'))
       <li class="@if($segment2 == 'payroll') active @endif">
          <a href="#payroll" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="las la-money-check-alt"></i><span>Payroll</span><i class="las la-angle-right iq-arrow-right"></i></a>
          <ul id="payroll" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
@@ -393,6 +393,9 @@
             @endif
             @if($user->can('Employee Attendance Excel') || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'employee-daily-attendance') active @endif"><a href="{{ url('hr/reports/employee-daily-attendance') }}"><i class="las la-calendar-alt"></i>Employee  Excel</a></li>
+            @endif
+            @if($user->id == 17)
+            <li class="@if($segment3 == 'monthly-salary-sheet') active @endif"><a href="{{ url('hr/reports/monthly-salary-sheet') }}"><i class="las la-calendar-alt"></i>Salary  Excel</a></li>
             @endif
          </ul>
       </li>

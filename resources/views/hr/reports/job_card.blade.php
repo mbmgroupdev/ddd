@@ -240,7 +240,7 @@
                                                         @endif
                                                     </td>
                                                     <td @if($value['present_status'] == 'A' || $value['present_status'] == 'Weekend(General) - A') style="background: #ea9d99;color:#000;" @endif>
-                                                    {{ $value['present_status'] }}
+                                                    {!! $value['present_status'] !!}
 
                                                     @if($value['late_status']==1)
                                                         <span style="height: auto;float:right;" class="label label-warning pull-right">Late</span>

@@ -1,4 +1,4 @@
-@extends('hr.layout')
+@extends('hr.layout') 
 @section('title', 'Increment')
 @section('main-content')
 @push('css')

@@ -131,7 +131,28 @@ class ProcessUnitWiseSalary implements ShouldQueue
                     $lateCount = $getPresentOT->late??0;
                     $halfCount = $getPresentOT->halfday??0;
 
-                    
+                    // check OT roaster employee
+                    $rosterOTCount = HolidayRoaster::where('year', $year)
+                    ->where('month', $month)
+                    ->where('as_id', $getEmployee->associate_id)
+                    ->where('date','>=', $firstDateMonth)
+                    ->where('date','<=', $lastDateMonth)
+                    ->where('remarks', 'OT')
+                    ->get();
+                    $rosterOtData = $rosterOTCount->pluck('date');
+
+                    $otDayCount = 0;
+                    $totalOt = count($rosterOTCount);
+                    // return $rosterOTCount;
+                    foreach ($rosterOTCount as $ot) {
+                        $checkAtt = DB::table($this->tableName)
+                        ->where('as_id', $getEmployee->as_id)
+                        ->where('in_date', $ot->date)
+                        ->first();
+                        if($checkAtt != null){
+                            $otDayCount += 1;
+                        }
+                    }
 
                     if($getEmployee->shift_roaster_status == 1){
                         // check holiday roaster employee
@@ -142,6 +163,7 @@ class ProcessUnitWiseSalary implements ShouldQueue
                         ->where('date','<=', $lastDateMonth)
                         ->where('remarks', 'Holiday')
                         ->count();
+                        $getHoliday = $getHoliday + ($totalOt - $otDayCount);
                     }else{
                         // check holiday roaster employee
                         $RosterHolidayCount = HolidayRoaster::where('year', $year)
@@ -159,35 +181,39 @@ class ProcessUnitWiseSalary implements ShouldQueue
                         ->where('date','<=', $lastDateMonth)
                         ->where('remarks', 'General')
                         ->count();
+                        
                          // check holiday shift employee
                         
                         if($empdojMonth == $yearMonth){
-                            $shiftHolidayCount = YearlyHolyDay::
+                            $query = YearlyHolyDay::
                                 where('hr_yhp_unit', $getEmployee->as_unit_id)
                                 ->where('hr_yhp_dates_of_holidays','>=', $firstDateMonth)
                                 ->where('hr_yhp_dates_of_holidays','<=', $lastDateMonth)
                                 ->where('hr_yhp_dates_of_holidays','>=', $empdoj)
-                                ->where('hr_yhp_open_status', 0)
-                                ->count();
+                                ->where('hr_yhp_open_status', 0);
+                            if(count($rosterOtData) > 0){
+                                $query->whereNotIn('hr_yhp_dates_of_holidays', $rosterOtData);
+                            }
+                            $shiftHolidayCount = $query->count();
                         }else{
-                            $shiftHolidayCount = YearlyHolyDay::
+                            $query = YearlyHolyDay::
                                 where('hr_yhp_unit', $getEmployee->as_unit_id)
                                 ->where('hr_yhp_dates_of_holidays','>=', $firstDateMonth)
                                 ->where('hr_yhp_dates_of_holidays','<=', $lastDateMonth)
-                                ->where('hr_yhp_open_status', 0)
-                                ->count();
+                                ->where('hr_yhp_open_status', 0);
+                            if(count($rosterOtData) > 0){
+                                $query->whereNotIn('hr_yhp_dates_of_holidays', $rosterOtData);
+                            }
+                            $shiftHolidayCount = $query->count();
                         }
-                        
+                        $shiftHolidayCount = $shiftHolidayCount + ($totalOt - $otDayCount);
+
                         if($RosterHolidayCount > 0 || $RosterGeneralCount > 0){
                             $getHoliday = ($RosterHolidayCount + $shiftHolidayCount) - $RosterGeneralCount;
                         }else{
                             $getHoliday = $shiftHolidayCount;
                         }
                     }
-                    
-                    $getHoliday = $getHoliday < 0 ? 0:$getHoliday;
-
-
                     $getHoliday = $getHoliday < 0 ? 0:$getHoliday;
 
 
@@ -359,6 +385,7 @@ class ProcessUnitWiseSalary implements ShouldQueue
                     if($getSalary == null){
                         $salary = [
                             'as_id' => $getEmployee->associate_id,
+                            'ot_status' => $getEmployee->as_ot,
                             'month' => $month,
                             'year'  => $year,
                             'gross' => $getBenefit->ben_current_salary,
@@ -392,6 +419,7 @@ class ProcessUnitWiseSalary implements ShouldQueue
                         HrMonthlySalary::insert($salary);
                     }else{
                         $salary = [
+                            'ot_status' => $getEmployee->as_ot,
                             'gross' => $getBenefit->ben_current_salary,
                             'basic' => $getBenefit->ben_basic,
                             'house' => $getBenefit->ben_house_rent,
@@ -405,6 +433,7 @@ class ProcessUnitWiseSalary implements ShouldQueue
                             'leave' => $leaveCount,
                             'absent_deduct' => $getAbsentDeduct,
                             'half_day_deduct' => $getHalfDeduct,
+                            'salary_add_deduct_id' => $deductId,
                             'salary_payable' => $salaryPayable,
                             'ot_rate' => $overtime_rate,
                             'ot_hour' => $getPresentOT->ot,

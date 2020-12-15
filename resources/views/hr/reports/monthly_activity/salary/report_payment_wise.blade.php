@@ -9,6 +9,8 @@
 		<div id="report_section" class="report_section">
 			<style type="text/css" media="print">
 				h4, h2, p{margin: 0;}
+				.text-right{text-align:right;}
+				.text-center{text-align:center;}
 			</style>
 			<style type="text/css">
               .table{
@@ -55,7 +57,7 @@
 				<div class="page-header">
 		            <h2 style="margin:4px 10px; font-weight: bold; text-align: center;">Salary @if($input['report_format'] == 0) Details @else Summary @endif Report </h2>
 		            
-		            @endif
+		            
 		            <table class="table no-border f-14" border="0" style="width:100%;margin-bottom:0;font-size:14px;text-align:left"  cellpadding="5">
 		            	<tr>
 		            		<td width="32%">
@@ -79,11 +81,11 @@
 		                		@endif
 		            		</td>
 		            		<td>
-		            			<h6  style="text-align: center;">Month : {{ date('M Y', strtotime($input['month'])) }} </h6>
-					            <h6  style="text-align: center;">Total Employee : {{ $totalEmployees }} </h6>
+		            			<p style="text-align: center; font-size: 14px;">Month : {{ date('M Y', strtotime($input['month'])) }} </p>
+					            <p style="text-align: center; font-size: 14px;">Total Employee : {{ $totalEmployees }} </p>
 					            @if($input['pay_status'] == 'all')
-					            <h6  style="text-align: center;">Total Payable : {{ bn_money(round($totalSalary,2)) }} </h6>
-	                			
+					            <p style="text-align: center; font-size: 14px;">Total Payable : {{ bn_money(round($totalSalary,2)) }} </p>
+	                			@endif
 		            		</td>
 		            		<td>
 		            			@if($input['subSection'] != null)
@@ -194,6 +196,7 @@
 			                @endif
 			                <tr>
 			                    <th>Sl</th>
+			                    
 			                    <th>Associate ID</th>
 			                    <th>Name</th>
 			                    <th>Designation</th>

@@ -160,7 +160,7 @@
                         </div>
                         <div class="single-employee-search" id="single-employee-search" style="display: none;">
                           <div class="form-group">
-                            <input type="text" name="employee" class="form-control" placeholder="Search Employee Associate ID..." id="searchEmployee" autocomplete="off">
+                            <input type="text" name="employee" class="form-control" placeholder="Search Employee Associate ID..." id="searchEmployee1" autocomplete="off">
                           </div>
                         </div>
                     </form>

@@ -68,10 +68,23 @@ class SummaryReportController extends Controller
                 $attData = DB::table($tableName)
                             ->where('a.in_date','>=', $input['from_date'])
                             ->where('a.in_date','<=', $input['to_date']);
+            }else if($input['report_type'] == 'left_resign'){
+
+                $attData = DB::table('hr_as_basic_info AS emp')
+                            ->whereIn('emp.as_status', [2,5])
+                            ->where('emp.as_status_date','>=', $input['from_date'])
+                            ->where('emp.as_status_date','<=', $input['to_date']);
+
+            }else if($input['report_type'] == 'recruitment'){
+
+                $attData = DB::table('hr_as_basic_info AS emp')
+                            ->where('emp.as_doj','>=', $input['from_date'])
+                            ->where('emp.as_doj','<=', $input['to_date']);
+
             }else if($input['report_type'] == 'absent'){
                 $attData = DB::table('hr_absent AS a')
                 ->where('a.date', $request['date']);
-            }elseif($input['report_type'] == 'leave'){
+            }else if($input['report_type'] == 'leave'){
                 $attData = DB::table('hr_leave AS l')
                 ->whereRaw('? between leave_from and leave_to', [$request['date']])
                 ->where('l.leave_status',1);
@@ -115,19 +128,21 @@ class SummaryReportController extends Controller
                return $query->where('emp.as_subsection_id', $input['subSection']);
             });
 
+            // if non basic table then join basic
+
             if($input['report_type'] == 'ot' || $input['report_type'] == 'working_hour'){
                 $attData->leftjoin(DB::raw('(' . $employeeData_sql. ') AS emp'), function($join) use ($employeeData) {
                     $join->on('a.as_id', '=', 'emp.as_id')->addBinding($employeeData->getBindings());
                 });
             }
 
-            // $countEmployee = $attData->select('emp.as_id', DB::raw('count(*) as countEmp'))->pluck('countEmp')->first();
             if($input['report_group'] == 'ot_hour'){
                 $groupBy = 'a.'.$input['report_group'];
                 $attData->orderBy('a.ot_hour','desc');
             }else{
                 $groupBy = 'emp.'.$input['report_group'];
             }
+
             if($input['report_type'] == 'ot'){
                 
                 $attData->where('a.ot_hour', '>', 0);
@@ -147,6 +162,7 @@ class SummaryReportController extends Controller
                 }
                 
                 $totalValue = numberToTimeClockFormat($totalOtHour);
+
             }else if($input['report_type'] == 'working_hour'){
                 $attData->leftjoin(DB::raw('(' . $shiftDataSql. ') AS s'), function($join) use ($shiftData) {
                     $join->on('a.hr_shift_code', '=', 's.hr_shift_code')->addBinding($shiftData->getBindings());
@@ -168,22 +184,40 @@ class SummaryReportController extends Controller
                 $hours = $totalWorkingMinute == 0?0:floor($totalWorkingMinute / 60);
                 $minutes = $totalWorkingMinute == 0?0:($totalWorkingMinute % 60);
                 $totalValue = sprintf('%02d Hours, %02d Minutes', $hours, $minutes);
-            }else{
+            }else if($input['report_type'] == 'left_resign'){
                 if($input['report_format'] == 1 && $input['report_group'] != null){
                     
-                    $attData->select('emp.'.$input['report_group'], DB::raw('count(*) as total'))->groupBy('emp.'.$input['report_group']);
+                    $attData->select(
+                        'emp.'.$input['report_group'], 
+                        DB::raw('count(*) as total'),
+                        DB::raw("COUNT(CASE WHEN as_status = '5' THEN as_status END) AS lefts,
+                            COUNT(CASE WHEN as_status = '2' THEN as_status END) AS resigns
+                        ")
+                    )
+                    ->groupBy('emp.'.$input['report_group']);
                     
                 }else{
-                    $attData->select('emp.as_id', 'emp.as_gender', 'emp.as_shift_id', 'emp.as_oracle_code','emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_contact', 'emp.as_section_id','emp.as_subsection_id');
-                    if($input['report_type'] == 'leave'){
-                        $attData->addSelect('l.leave_type');
-                    }
+                    $attData->get();
+                }
+            }else if($input['report_type'] == 'recruitment'){
+                if($input['report_format'] == 1 && $input['report_group'] != null){
+                    
+                    $attData->select(
+                        'emp.'.$input['report_group'], 
+                        DB::raw('count(*) as total')
+                    )
+                    ->groupBy('emp.'.$input['report_group']);
+                    
+                }else{
+                    $attData->get();
                 }
             }
 
 
             if($input['report_group'] == 'as_section_id' || $input['report_group'] == 'as_subsection_id'){
                 $attData->orderBy('emp.as_department_id', 'asc');
+            }else if($input['report_group'] == 'as_line_id'){
+                $attData->orderBy('emp.as_unit_id', 'asc');
             }else{
                 $attData->orderBy($groupBy, 'asc');
             }
@@ -234,12 +268,22 @@ class SummaryReportController extends Controller
                 return view('hr.reports.summary.ot_summary', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees','totalValue', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area','totalOtAmount'));
             }else if($input['report_type'] == 'working_hour'){
                 return view('hr.reports.summary.working_hour_summary', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees', 'totalValue', 'totalAvgHour', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area'));
+            }else if($input['report_type'] == 'left_resign'){
+                return view('hr.reports.summary.left_resign', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area'));
+            }else if($input['report_type'] == 'recruitment'){
+                return view('hr.reports.summary.recruitment', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area'));
             }
         } catch (\Exception $e) {
             $bug = $e->getMessage();
             return $bug;
             return 'error';
         }
+    }
+
+
+    public function getEmployees(Request $request)
+    {
+
     }
 
 
@@ -254,6 +298,10 @@ class SummaryReportController extends Controller
             $filename = 'Over Time Report ';
         }else if($input['report_type'] == 'working_hour'){
             $filename = 'Working Hour Report ';
+        }else if($input['report_type'] == 'left_resign'){
+            $filename = 'Left & Resign Report ';
+        }else if($input['report_type'] == 'recruitment'){
+            $filename = 'Recruitment Report ';
         }
         $filename .= $input['from_date'].' to '.$input['to_date'];
         $filename .= '.xlsx';

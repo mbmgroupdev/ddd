@@ -56,6 +56,19 @@ class SummaryExport implements FromView, WithHeadingRow
         }else if($input['report_type'] == 'absent'){
             $attData = DB::table('hr_absent AS a')
             ->where('a.date', $input['date']);
+        }else if($input['report_type'] == 'left_resign'){
+
+            $attData = DB::table('hr_as_basic_info AS emp')
+                        ->whereIn('emp.as_status', [2,5])
+                        ->where('emp.as_status_date','>=', $input['from_date'])
+                        ->where('emp.as_status_date','<=', $input['to_date']);
+
+        }else if($input['report_type'] == 'recruitment'){
+
+            $attData = DB::table('hr_as_basic_info AS emp')
+                        ->where('emp.as_doj','>=', $input['from_date'])
+                        ->where('emp.as_doj','<=', $input['to_date']);
+
         }
 
         // employee check
@@ -102,7 +115,6 @@ class SummaryExport implements FromView, WithHeadingRow
             });
         }
 
-        // $countEmployee = $attData->select('emp.as_id', DB::raw('count(*) as countEmp'))->pluck('countEmp')->first();
         if($input['report_group'] == 'ot_hour'){
             $groupBy = 'a.'.$input['report_group'];
             $attData->orderBy('a.ot_hour','desc');
@@ -144,6 +156,33 @@ class SummaryExport implements FromView, WithHeadingRow
                 $totalValue = array_sum(array_column($attData->get()->toArray(),'hourDuration'))/60;
             }
 
+        }else if($input['report_type'] == 'left_resign'){
+            if($input['report_format'] == 1 && $input['report_group'] != null){
+                
+                $attData->select(
+                    'emp.'.$input['report_group'], 
+                    DB::raw('count(*) as total'),
+                    DB::raw("COUNT(CASE WHEN as_status = '5' THEN as_status END) AS lefts,
+                        COUNT(CASE WHEN as_status = '2' THEN as_status END) AS resigns
+                    ")
+                )
+                ->groupBy('emp.'.$input['report_group']);
+                
+            }else{
+                $attData->get();
+            }
+        }else if($input['report_type'] == 'recruitment'){
+            if($input['report_format'] == 1 && $input['report_group'] != null){
+                
+                $attData->select(
+                    'emp.'.$input['report_group'], 
+                    DB::raw('count(*) as total')
+                )
+                ->groupBy('emp.'.$input['report_group']);
+                
+            }else{
+                $attData->get();
+            }
         }
 
 
@@ -197,6 +236,10 @@ class SummaryExport implements FromView, WithHeadingRow
             return view('hr.reports.summary.export.ot', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees','totalValue','totalAmount', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area'));
         }else if($input['report_type'] == 'working_hour'){
             return view('hr.reports.summary.export.working_hour', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees', 'totalValue', 'totalAvgHour', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area'));
+        }else if($input['report_type'] == 'left_resign'){
+            return view('hr.reports.summary.export.left_resign', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area'));
+        }else if($input['report_type'] == 'recruitment'){
+            return view('hr.reports.summary.export.recruitment', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area'));
         }
     }
     public function headingRow(): int

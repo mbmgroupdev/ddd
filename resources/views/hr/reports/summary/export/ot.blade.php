@@ -73,6 +73,9 @@
 									}elseif($format == 'as_designation_id'){
 										$head = 'Designation';
 										$body = $designation[$group]['hr_designation_name']??'N/A';
+									}elseif($format == 'as_unit_id'){
+										$head = 'Unit';
+										$body = $unit[$group]['hr_unit_name']??'N/A';
 									}elseif($format == 'ot_hour'){
 										$head = 'OT Hour';
 										

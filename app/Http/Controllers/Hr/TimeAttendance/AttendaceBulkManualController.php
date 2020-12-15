@@ -4,10 +4,11 @@ namespace App\Http\Controllers\Hr\TimeAttendance;
 use App\Helpers\EmployeeHelper;
 use App\Http\Controllers\Controller;
 use App\Jobs\ProcessUnitWiseSalary;
+use App\Models\Employee;
 use App\Models\Hr\Absent;
 use App\Models\Hr\Attendace;
 use App\Models\Hr\AttendaceManual;
-use App\Models\Employee;
+use App\Models\Hr\Bills;
 use App\Models\Hr\HolidayRoaster;
 use App\Models\Hr\HrLateCount;
 use App\Models\Hr\Leave;
@@ -246,18 +247,22 @@ class AttendaceBulkManualController extends Controller
                             $insert['in_date'] = date('Y-m-d', strtotime($insert['in_time']));
                             DB::table($tableName)->insert($insert);
 
-                            if($info->as_ot == 1 && $outtime != null){
-                                if(date("H:i", strtotime($insert['out_time'])) > date("H:i", strtotime($billEligible))){
+                            if($outtime != null){
+                                if(strtotime(date("H:i", strtotime($insert['out_time']))) > strtotime(date("H:i", strtotime($billEligible)))){
 
-                                    $bill = EmployeeHelper::dailyBillCalculation($info->as_unit_id, $insert['in_date'], $insert['as_id'], $nightFlag, $info->as_designation_id);
+                                    $bill = EmployeeHelper::dailyBillCalculation($info->as_ot, $info->as_unit_id, $insert['in_date'], $insert['as_id'], $nightFlag, $info->as_designation_id);
+                                }else{
+                                    $getBill = Bills::where('as_id', $insert['as_id'])->where('bill_date', $insert['in_date'])->first();
+                                    if($getBill != null){
+                                        Bills::where('id', $getBill->id)->delete();
+                                    }
                                 }
                             }
                             
                             //
                             $absentWhere = [
                                 'associate_id' => $info->associate_id,
-                                'date' => $date,
-                                'hr_unit' => $info->as_unit_id
+                                'date' => $date
                             ];
                             Absent::where($absentWhere)->delete();
                             
@@ -266,8 +271,7 @@ class AttendaceBulkManualController extends Controller
 
                         $absentWhere = [
                             'associate_id' => $info->associate_id,
-                            'date' => $date,
-                            'hr_unit' => $info->as_unit_id
+                            'date' => $date
                         ];
                         
                         Absent::where($absentWhere)->delete();
@@ -444,10 +448,15 @@ class AttendaceBulkManualController extends Controller
                                 $update['ot_hour'] = 0;
                             }
                             
-                            if($info->as_ot == 1 && $outtime != null){
-                                if(date("H:i", strtotime($update['out_time'])) > date("H:i", strtotime($billEligible))){
+                            if($outtime != null){
+                                if(strtotime(date("H:i", strtotime($update['out_time']))) > strtotime(date("H:i", strtotime($billEligible)))){
 
-                                    $bill = EmployeeHelper::dailyBillCalculation($info->as_unit_id, $Att->in_date, $info->as_id, $nightFlag, $info->as_designation_id);
+                                    $bill = EmployeeHelper::dailyBillCalculation($info->as_ot, $info->as_unit_id, $Att->in_date, $info->as_id, $nightFlag, $info->as_designation_id);
+                                }else{
+                                    $getBill = Bills::where('as_id', $info->as_id)->where('bill_date', $Att->in_date)->first();
+                                    if($getBill != null){
+                                        Bills::where('id', $getBill->id)->delete();
+                                    }
                                 }
                             }
 
@@ -462,10 +471,10 @@ class AttendaceBulkManualController extends Controller
                                 // remove absent
                                 $absentWhere = [
                                     'as_id' => $info->as_id,
-                                    'date' => $date,
-                                    'hr_unit' => $info->as_unit_id
+                                    'date' => $date
                                 ];
                                 Absent::where($absentWhere)->delete();
+                                $absentWhere['hr_unit'] = $info->as_unit_id; 
                                 // add event history
                                 $this->eventModified($info->associate_id,2,$absentWhere,$event); // absent to present
                             } else {
@@ -479,8 +488,7 @@ class AttendaceBulkManualController extends Controller
                                 ->update($update);
                                 $absentWhere = [
                                     'associate_id' => $info->associate_id,
-                                    'date' => $date,
-                                    'hr_unit' => $info->as_unit_id
+                                    'date' => $date
                                 ];
                                 Absent::where($absentWhere)->delete();
                             }
@@ -489,8 +497,7 @@ class AttendaceBulkManualController extends Controller
                     else{
                         $absentWhere = [
                             'associate_id' => $info->associate_id,
-                            'date' => $date,
-                            'hr_unit' => $info->as_unit_id
+                            'date' => $date
                         ];
                         Absent::where($absentWhere)->delete();
                         // attendance delete

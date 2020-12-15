@@ -505,6 +505,7 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 	//Increment
 	Route::get('hr/payroll/increment', 'Hr\Payroll\IncrementController@index');
 	Route::get('hr/payroll/increment-eligible', 'Hr\Payroll\IncrementController@getEligibleList');
+	Route::post('hr/payroll/increment-action', 'Hr\Payroll\IncrementController@incrementAction');
 	//Route::get('hr/payroll/increment', 'Hr\Recruitment\BenefitController@showIncrementForm');
 	Route::get('hr/payroll/increment-list', 'Hr\Payroll\IncrementController@incrementList');
 	Route::get('hr/payroll/increment-list-data', 'Hr\Payroll\IncrementController@incrementListData');
@@ -1080,6 +1081,7 @@ Route::get('hr/setup/retirement/get_employee_details', 'Hr\Setup\RetirementPolic
 	#----------  Reports By Mati-----------#
 	//Salary/Wages Increment Status
 	Route::get('hr/recruitment/increment_report', 'Hr\Reports\IncrementReportController@incrementReport');
+	
 	Route::get('hr/recruitment/nominee', 'Hr\Reports\NomineeController@showForm')->middleware(['permission:Nominee']);
 	Route::get('hr/reports/leave_log', 'Hr\Reports\LeaveLogController@showForm')->middleware(['permission:Leave Log']);
 	Route::get('hr/reports/leave_check', 'Hr\Reports\LeaveLogController@checkDueLeave');

@@ -60,8 +60,8 @@ $(document).ready(function(){
         '3' :[@foreach($unitList as $e) <?php echo "'$e'," ?> @endforeach]
     };
 
-    var exportColName = ['Associate ID','Name','Oracle ID','Unit','Joining Salary', 'Current Salary', 'Basic Salary', 'Payment Method', 'Cash Amount', 'Bank Amount', 'Tax Amount'];
-    var exportCol = [0,1,2,3,4,5,6];
+    var exportColName = ['Associate ID','Name','Oracle ID','Unit','Joining Salary', 'Current Salary', 'Basic Salary', 'House Rent', 'Payment Method', 'Cash Amount', 'Bank Amount', 'Tax Amount'];
+    var exportCol = [0,1,2,3,4,5,6,7,8,9,10,11];
     
     var dt = $('#dataTables').DataTable({
         order: [], //reset auto order
