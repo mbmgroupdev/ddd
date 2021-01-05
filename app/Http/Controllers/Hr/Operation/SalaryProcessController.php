@@ -13,6 +13,7 @@ use App\Models\Hr\HrMonthlySalary;
 use App\Models\Hr\SalaryAdjustMaster;
 use App\Models\Hr\SalaryAudit;
 use App\Models\Hr\SalaryAuditHistory;
+use App\Models\Hr\SalaryIndividualAudit;
 use App\Models\Hr\Section;
 use App\Models\Hr\Subsection;
 use App\Models\Hr\Unit;
@@ -336,6 +337,11 @@ class SalaryProcessController extends Controller
                     $aduit['initial_audit'] = Auth::user()->id;
                     $aduit['initial_comment'] = $input['comment'];
                     $aduitHistory['stage'] = 2;
+                    // special comment process
+                    $getIndividualAudit = SalaryIndividualAudit::getSalaryIndividualAuditMonthStatusWise($aduit, 2);
+                    if(count($getIndividualAudit) > 0){
+                        $aduitHistory['special_comment'] = $getIndividualAudit->toJson();
+                    }
                 }elseif($salaryAuditStatus->accounts_audit == null){
                     $aduit['accounts_audit'] = Auth::user()->id;
                     $aduit['accounts_comment'] = $input['comment'];
@@ -350,6 +356,8 @@ class SalaryProcessController extends Controller
                 }else{
                     $audit = SalaryAudit::findOrFail($salaryAuditStatus->id);
                     $audit->delete();
+                    // audit individual
+                    SalaryIndividualAudit::getSalaryIndividualAuditMonthWiseDelete($aduit);
                 }
             }else{
                 if($input['status'] == 1){
@@ -382,5 +390,61 @@ class SalaryProcessController extends Controller
             return $data;
 
         }
+    }
+    public function individualAudit(Request $request)
+    {
+        $input = $request->all();
+        
+        $data['type'] = 'error';
+        if($input['month_year'] == '' || $input['as_id'] == ''){
+            $data['message'] = 'Something Wrong, please reload the page and try again!';
+            return $data;
+        }
+        try {
+            $input['month'] = date('m', strtotime($input['month_year'])); 
+            $input['year'] = date('Y', strtotime($input['month_year']));
+            $getEmployee = Employee::select('as_id', 'as_unit_id')->where('as_id', $input['as_id'])->first();
+            if($getEmployee == null){
+                $data['message'] = 'Something Wrong, please reload the page and try again!';
+                return $data;
+            }
+            $input['unit_id'] = $getEmployee->as_unit_id;
+            $input['audit_by'] = auth()->user()->id;
+            $checkAudit = SalaryIndividualAudit::checkSalaryIndividualAuditStatus($input);
+            unset($input['month_year']);
+            // return $input;
+            if($checkAudit != null){
+                $salaryIndividual = SalaryIndividualAudit::findOrFail($checkAudit->id);
+                $salaryIndividual->update($input);
+                $data['count'] = 0;
+            }else{
+                SalaryIndividualAudit::create($input);
+                $data['count'] = 1;
+            }
+            if($input['status'] == '1'){
+                $data['message'] = 'Audit Passed';
+            }else{
+                $data['message'] = 'Audit Failed';
+            }
+            $data['type'] = 'success';
+            return $data;
+        } catch (\Exception $e) {
+            $data['message'] = $e->getMessage();
+            return $data;
+
+        }
+        
+    }
+
+    public function failHistory($id)
+    {
+        $getHistory = SalaryAuditHistory::findOrFail($id);
+        if($getHistory != null){
+            $getEmployee = Employee::where('as_unit_id', $getHistory->unit_id)->get()->keyBy('as_id');
+            return view('hr.operation.salary.audit_history', compact('getHistory', 'getEmployee'));
+        }else{
+            return "Something Wrong!, Please try again";
+        }
+        
     }
 }

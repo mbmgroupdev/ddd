@@ -220,7 +220,7 @@ $(document).ready(function() {
         months['November']  = 10; 
         months['December']  = 11;  
         var month = months[(($("#month").val())?($("#month").val()):"January")];
-        var year  = (($("#year").val())?($("#year").val()):2018);
+        var year  = (($("#year").val())?($("#year").val()):date('Y'));
         var firstDay = new Date(year, month, 1);
         var lastDay = new Date(year, month+1, 0); 
 

@@ -333,6 +333,7 @@
              d.min_sal       = $("#min_sal").val();
              d.max_sal       = $("#max_sal").val();
              d.employee_status = $("#employee_status").val();
+             d.location = $("#location").val();
 
            },
            type: "get",

@@ -280,6 +280,11 @@ class AttendaceBulkManualController extends Controller
                         ->where('in_date', $date)
                         ->where('as_id',$info->as_id)
                         ->delete();
+                        // bill
+                        $getBill = Bills::where('as_id', $info->as_id)->where('bill_date', $date)->first();
+                        if($getBill != null){
+                            Bills::where('id', $getBill->id)->delete();
+                        }
                     }
 
                 }
@@ -505,6 +510,12 @@ class AttendaceBulkManualController extends Controller
                         ->where('id', $key)
                         ->where('as_id',$request->ass_id)
                         ->delete();
+
+                        // bill
+                        $getBill = Bills::where('as_id', $info->as_id)->where('bill_date', $date)->first();
+                        if($getBill != null){
+                            Bills::where('id', $getBill->id)->delete();
+                        }
                     }
                 }
             }

@@ -40,6 +40,11 @@
         <input type="hidden" value="{{ $input['from_date'] }}" name="from_date">
         <input type="hidden" value="{{ $input['to_date'] }}" name="to_date">
         <input type="hidden" value="{{ $input['bill_type']}}" name="bill_type">
+        <input type="hidden" value="{{ $input['subSection'] }}" name="subSection">
+        <input type="hidden" value="{{ $input['section'] }}" name="section">
+        <input type="hidden" value="{{ $input['department'] }}" name="department">
+        <input type="hidden" value="{{ $input['area']}}" name="area">
+        @csrf
         @foreach($uniqueUnit as $key=>$unit)
             @php
                 $pageKey = 0;
@@ -372,7 +377,7 @@
         // ajax call
         $.ajax({
             url: '{{ url("/hr/operation/review-tiffin-dinner-bill")}}',
-            type: "GET",
+            type: "POST",
             data: form.serialize(),
             success: function(response){
                 // console.log(response)
@@ -406,7 +411,7 @@
         // ajax call
         $.ajax({
             url: '{{ url("/hr/operation/pay-tiffin-dinner-bill")}}',
-            type: "GET",
+            type: "POST",
             data: form.serialize(),
             success: function(response){
                 console.log(response)

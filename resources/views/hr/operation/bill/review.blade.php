@@ -27,7 +27,6 @@
         
     </style>
     @php
-        
         $getUnit = unit_by_id();
         $fromDate = date('d-m-Y', strtotime($input['from_date']));
         $toDate = date('d-m-Y', strtotime($input['to_date']));
@@ -35,6 +34,7 @@
     <form class="" role="form" id="billReport" method="get" action="#">
         <input type="hidden" value="{{ $input['from_date'] }}" name="from_date">
         <input type="hidden" value="{{ $input['to_date'] }}" name="to_date">
+        <input type="hidden" value="{{ $input['bill_type']}}" name="bill_type">
         @foreach($uniqueUnit as $key=>$unit)
             @php
                 $pageKey = 0;
@@ -81,7 +81,15 @@
                                 <td width="0%"> &nbsp;</td>
                                 <td style="width:30%" style="text-align: right;">
                                     
-                                    
+                                    @if(!empty($input['subSection']))
+                                        <strong>সাব-সেকশন:</strong> {{ $subSection[$input['subSection']]['hr_subsec_name_bn']??'' }}
+                                    @elseif(!empty($input['section']))
+                                        <strong>সেকশন: </strong> {{ $section[$input['section']]['hr_section_name_bn']??'' }}
+                                    @elseif(!empty($input['department']))
+                                        <strong>ডিপার্টমেন্ট: </strong> {{ $department[$input['department']]['hr_department_name_bn']??'' }}
+                                    @elseif(!empty($input['area']))
+                                        <strong>এরিয়া: </strong> {{ $area[$input['area']]['hr_area_name_bn']??'' }}
+                                    @endif
                                 </td>
                             </tr>
                         </table>
@@ -90,14 +98,14 @@
                             <thead>
                                 <tr style="color:hotpink">
                                     <th style="color:lightseagreen" width="10">ক্রমিক নং</th>
-                                    <th width="100" style="width: 225px;">নাম ও 
+                                    <th width="100" style="width: 205px;">নাম ও 
                                         <br/> যোগদানের তারিখ</th>
-                                    <th width="200">পদবি  ও গ্রেড</th>
-                                    <th width="120">ইআরপি ও ওরাকল আইডি</th>
+                                    <th width="240">পদবি  ও গ্রেড</th>
+                                    <th width="100">ইআরপি ও ওরাকল</th>
                                     <th>তারিখ</th>
                                     <th width="80">দিন</th>
-                                    <th width="120">মোট দেয় টাকার পরিমান</th>
-                                    <th class="" width="80" >দস্তখত</th>
+                                    <th width="120">মোট টাকার পরিমান</th>
+                                    <th class="" width="120" >দস্তখত</th>
                                     
                                 </tr>
                             </thead>
@@ -141,10 +149,14 @@
                                                 <div class="flex-content" style="display: flex; height: 100%; border: 0;">
                                                     @if(isset($getBillLists[$list->as_id]))
                                                     @foreach($getBillLists[$list->as_id]->chunk(2) as $billLists)
-                                                        <div class="flex-chunk">
+                                                        <div class="flex-chunk1">
                                                         @foreach($billLists as $dateList)
-                                                        <p style="margin:0;padding:0" >
-                                                            <span style="text-align: left; width: 40%; float: left;  white-space: wrap; {{ $dateList->pay_status ==0?'color:hotpink':'' }}" >
+                                                        <p style="margin:0;border: 1px solid #ccc; padding: 0px 5px;" >
+                                                            @php
+                                                                $singDate = date('d', strtotime($dateList->bill_date));
+                                                            @endphp
+                                                            {{ Custom::engToBnConvert($singDate) }}
+                                                            {{-- <span style="text-align: left; width: 40%; float: left;  white-space: wrap; {{ $dateList->pay_status ==0?'color:hotpink':'' }}" >
                                                                 @php
                                                                     $singDate = date('d', strtotime($dateList->bill_date));
                                                                 @endphp
@@ -154,7 +166,7 @@
                                                             </span>
                                                             <span style="text-align: right;width: 50%; float: right;  white-space: wrap; {{ $dateList->pay_status ==0?'color:hotpink':'' }}" >
                                                                 <font > {{ Custom::engToBnConvert($dateList->amount) }}</font>
-                                                            </span>
+                                                            </span> --}}
 
                                                         </p>
                                                         @endforeach

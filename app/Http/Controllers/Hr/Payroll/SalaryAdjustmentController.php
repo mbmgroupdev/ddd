@@ -164,7 +164,18 @@ class SalaryAdjustmentController extends Controller
             $countEmp = count($input['associate']);
             for ($i=0; $i < $countEmp; $i++) { 
                 if($input['associate'][$i] != '' || $input['name'][$i] != ''){
+                    
                     $associate = $input['associate'][$i];
+                    $info = Employee::select('as_name','as_id', 'as_unit_id')->where('associate_id',$associate)->first();
+                    $lock['unit_id'] = $info->as_unit_id;
+                    $lock['month'] = $month;
+                    $lock['year'] = $year;
+                    $checkLock = monthly_activity_close($lock);
+                    // return $info;
+                    if($checkLock == 1){
+                        toastr()->success('This month already locked!');
+                        continue;
+                    }
                     $adjust = DB::table('hr_salary_add_deduct AS s')
                     ->where('s.associate_id', $associate)
                     ->where('s.year', $year)
@@ -200,7 +211,7 @@ class SalaryAdjustmentController extends Controller
                     }else{
                         $totalDay = Carbon::parse($yearMonth)->daysInMonth;
                     }
-                    $info = Employee::select('as_id', 'as_unit_id')->where('associate_id',$associate)->first();
+                    toastr()->success($info->as_name.' Salary Adjustment Successfully Done');
                     $tableName= get_att_table($info->as_unit_id);
                     $queue = (new ProcessUnitWiseSalary($tableName, $month, $year, $info->as_id, $totalDay))
                     ->onQueue('salarygenerate')
@@ -208,7 +219,7 @@ class SalaryAdjustmentController extends Controller
                     dispatch($queue);
                 }
             }
-            toastr()->success('Salary Adjustment Successfully Done');
+            
             return redirect("hr/payroll/monthly-salary-adjustment-list?month_year=$yearMonth");
         } catch (\Exception $e) {
             $bug = $e->getMessage();

@@ -28,6 +28,12 @@
             border-radius: 10px !important;
             -webkit-border-radius: 10px !important;
         }
+        #content-result .panel .panel-body .loader-p{
+            margin-top: 20% !important;
+        } 
+        .modal-h3{
+            line-height: 1;
+        }
     </style>
 @endpush
 <div class="main-content">
@@ -96,9 +102,31 @@
         </div><!-- /.page-content -->
     </div>
 </div>
+<div class="modal right fade" id="right_modal_lg" tabindex="-1" role="dialog" aria-labelledby="right_modal_lg">
+  <div class="modal-dialog modal-lg right-modal-width" role="document" > 
+    <div class="modal-content">
+      <div class="modal-header">
+        <a class="view prev_btn" data-toggle="tooltip" data-dismiss="modal" data-placement="top" title="" data-original-title="Back to Previous ">
+            <i class="las la-chevron-left"></i>
+        </a>
+        <h5 class="modal-title right-modal-title text-center" id="modal-title-right"> &nbsp; </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-content-result" id="content-result">
+            
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
 @push('js')
 
 <script>
+    var loaderModal = '<div class="panel"><div class="panel-body"><p style="text-align:center;margin:10px;" class="loader-p"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>';
     @if(request()->month != null && request()->unit != null)
         generate();
     @endif 
@@ -138,6 +166,28 @@
                 $.notify("Please Select Month", 'error');
             }
         }
+    }
+
+    function selectedGroup(id){
+        
+        $("#modal-title-right").html('Audit Details');
+        $('#right_modal_lg').modal('show');
+        $("#content-result").html(loaderModal);
+        $.ajax({
+            url: '/hr/reports/salary-fail-audit-history/'+id,
+            type: "GET",
+            success: function(response){
+                // console.log(response);
+                if(response !== 'error'){
+                    setTimeout(function(){
+                        $("#content-result").html(response);
+                    }, 1000);
+                }else{
+                    console.log(response);
+                }
+            }
+        });
+
     }
 
 </script>
