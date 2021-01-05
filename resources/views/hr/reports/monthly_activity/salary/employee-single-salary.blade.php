@@ -109,7 +109,7 @@
                             <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">অগ্রিম গ্রহণ বাবদ </span>
                             <span style ="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=
                             </span>
-                            <span style="text-align: right;width: 30%; float: right;  white-space: wrap;"><font style="color:hotpink">{{ ($salary['salary_add_deduct'] == null) ? Custom::engToBnConvert('0.00') : Custom::engToBnConvert($salary->add_deduct['advp_deduct']) }} </font>
+                            <span style="text-align: right;width: 30%; float: right;  white-space: wrap;"><font style="color:hotpink">{{ ($salary['salary_add_deduct'] == null) ? Custom::engToBnConvert('0.00') : Custom::engToBnConvert($salary->add_deduct['advp_deduct']??'0.00') }} </font>
                             </span>
 
                         </p>
@@ -141,14 +141,14 @@
                             </span>
                             <span style="text-align: right;width: 30%; float: right;  white-space: wrap;"><font style="color:hotpink">
                                 
-                              {{ ($salary['salary_add_deduct'] == null) ? Custom::engToBnConvert('0.00') : Custom::engToBnConvert($salary->add_deduct['food_deduct']) }} </font>
+                              {{ ($salary['salary_add_deduct'] == null) ? Custom::engToBnConvert('0.00') : Custom::engToBnConvert(($salary->add_deduct['food_deduct']??'0.00')) }} </font>
                             </span>
                         </p>
                         <p style="margin:0;padding:0">
                             <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">অন্যান্য </span>
                             <span style ="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=
                             </span>
-                            <span style="text-align: right;width: 30%; float: right;  white-space: wrap;"><font style="color:hotpink">{{ ($salary['salary_add_deduct'] == null) ? Custom::engToBnConvert('0.00') : Custom::engToBnConvert($salary->add_deduct['others_deduct']) }} </font>
+                            <span style="text-align: right;width: 30%; float: right;  white-space: wrap;"><font style="color:hotpink">{{ ($salary['salary_add_deduct'] == null) ? Custom::engToBnConvert('0.00') : Custom::engToBnConvert(($salary->add_deduct['others_deduct']??'0.00')) }} </font>
                             </span>
 
                         </p>
@@ -159,7 +159,7 @@
 
                         // $otHour = $salary['ot_hour'];
                         $ot = round((float)($salary['ot_rate']) * $salary['ot_hour']);
-                        $salaryAdd = ($salary['salary_add_deduct'] == null) ? '0.00' : $salary->add_deduct['salary_add'];
+                        $salaryAdd = ($salary['salary_add_deduct'] == null) ? '0.00' : ($salary->add_deduct['salary_add']??'0.00');
                         // $total = ($list->salary_payable + $ot + $list->attendance_bonus + $salaryAdd);
                     @endphp
                     <td>

@@ -45,7 +45,7 @@
                             <div class="row">
                                 <div class="col-4">
                                     <div class="form-group has-float-label has-required select-search-group">
-                                        {{ Form::select('associate', [Request::get('associate') => Request::get('associate')], Request::get('allassociates'), ['placeholder'=>'Select Associate\'s ID', 'id'=>'associate', 'class'=> 'allassociates no-select col-xs-12','style', 'required'=>'required']) }}
+                                        {{ Form::select('associate', [Request::get('associate') => Request::get('associate')], Request::get('associate'), ['placeholder'=>'Select Associate\'s ID', 'id'=>'associate', 'class'=> 'allassociates no-select col-xs-12','style', 'required'=>'required']) }}
                                         <label  for="associate"> Associate's ID </label>
                                     </div>
                                 </div>

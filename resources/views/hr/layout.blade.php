@@ -212,6 +212,7 @@
             //"delay": {"show": 1000, "hide": 0},
         });
       });
+      
     </script>
     <script src="{{ asset('assets/js/custom.js') }}"></script>
     <script src="{{ asset('js/custom.js') }}"></script>

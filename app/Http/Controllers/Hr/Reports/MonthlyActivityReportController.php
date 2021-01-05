@@ -8,6 +8,7 @@ use App\Models\Hr\Benefits;
 use App\Models\Hr\HrMonthlySalary;
 use App\Models\Hr\Location;
 use App\Models\Hr\SalaryAudit;
+use App\Models\Hr\SalaryIndividualAudit;
 use App\Models\Hr\Unit;
 use DB, DataTables;
 use Illuminate\Http\Request;
@@ -37,7 +38,6 @@ class MonthlyActivityReportController extends Controller
     public function salaryReport(Request $request)
     {
         $input = $request->all();
-        // return $input;
         try {
             $yearMonth = explode('-', $input['month']);
             $month = $yearMonth[1];
@@ -299,6 +299,9 @@ class MonthlyActivityReportController extends Controller
     public function attendanceData(Request $request)
     {
         $input = $request->all();
+        if($input['unit'] == '' && $input['location'] == ''){
+            $input['unit'] = 1;
+        }
         $yearMonth = explode('-', $input['month']);
         $month = $yearMonth[1];
         $year = $yearMonth[0];
@@ -310,11 +313,12 @@ class MonthlyActivityReportController extends Controller
         $input['floor_id']   = isset($request['floor_id'])?$request['floor_id']:'';
         $input['section']    = isset($request['section'])?$request['section']:'';
         $input['subSection'] = isset($request['subSection'])?$request['subSection']:'';
+        $input['shift_roaster_status'] = isset($request['shift_roaster_status'])?$request['shift_roaster_status']:'';
+
         $getDesignation = designation_by_id();
         // employee basic sql binding
         $employeeData = DB::table('hr_as_basic_info');
         $employeeData_sql = $employeeData->toSql();
-
         // employee basic sql binding
         $designationData = DB::table('hr_designation');
         $designationData_sql = $designationData->toSql();
@@ -332,7 +336,11 @@ class MonthlyActivityReportController extends Controller
            return $query->where('emp.as_location',$input['location']);
         })
         ->when(!empty($input['employee_status']), function ($query) use($input){
-           return $query->where('s.emp_status',$input['employee_status']);
+            if($input['employee_status'] == 25){
+                return $query->whereIn('s.emp_status', [2,5]);
+            }else{
+               return $query->where('s.emp_status', $input['employee_status']);
+            }
         })
         ->when(!empty($input['area']), function ($query) use($input){
            return $query->where('emp.as_area_id',$input['area']);
@@ -354,6 +362,9 @@ class MonthlyActivityReportController extends Controller
         })
         ->when(!empty($input['subSection']), function ($query) use($input){
            return $query->where('emp.as_subsection_id', $input['subSection']);
+        })
+        ->when(!empty($input['shift_roaster_status']), function ($query) use($input){
+           return $query->where('emp.shift_roaster_status', $input['shift_roaster_status']);
         });
         $queryData->leftjoin(DB::raw('(' . $employeeData_sql. ') AS emp'), function($join) use ($employeeData) {
             $join->on('emp.associate_id','s.as_id')->addBinding($employeeData->getBindings());
@@ -376,7 +387,6 @@ class MonthlyActivityReportController extends Controller
                 $jobCard = url("hr/operation/job_card?associate=$data->associate_id&month_year=$month");
                 return '<a href="'.$jobCard.'" target="_blank">'.$data->associate_id.'</a>';
             })
-            
             ->addColumn('as_name', function($data){
                 return $data->as_name;
             })
@@ -402,7 +412,6 @@ class MonthlyActivityReportController extends Controller
     public function groupSalary(Request $request)
     {
         $input = $request->all();
-        // return $input;
         try {
             $yearMonth = explode('-', $input['month']);
             $month = $yearMonth[1];
@@ -500,9 +509,14 @@ class MonthlyActivityReportController extends Controller
             $getEmployee = $queryData->orderBy('deg.hr_designation_position', 'asc')->get();
             
             $totalEmployees = count($getEmployee);
+            $auditedEmployee = [];
+            if(isset($input['audit']) && $input['audit'] == 'Audit'){
+                $employeeList = array_column($getEmployee->toArray(), 'as_id');
+                $auditedEmployee = SalaryIndividualAudit::with('user')->where('month', $month)->where('year', $year)->whereIn('as_id', $employeeList)->get()->keyBy('as_id');
+
+            }
             
-            
-            return view('hr.reports.monthly_activity.salary.group_salary_details', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalSalary', 'totalEmployees', 'totalOtHour','totalOTAmount', 'totalCashSalary', 'totalBankSalary', 'totalTax', 'totalStamp'));
+            return view('hr.reports.monthly_activity.salary.group_salary_details', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalSalary', 'totalEmployees', 'totalOtHour','totalOTAmount', 'totalCashSalary', 'totalBankSalary', 'totalTax', 'totalStamp', 'auditedEmployee'));
         } catch (\Exception $e) {
             return $e->getMessage();
             return 'error';

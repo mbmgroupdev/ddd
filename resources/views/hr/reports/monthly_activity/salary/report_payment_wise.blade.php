@@ -8,6 +8,7 @@
 		
 		<div id="report_section" class="report_section">
 			<style type="text/css" media="print">
+
 				h4, h2, p{margin: 0;}
 				.text-right{text-align:right;}
 				.text-center{text-align:center;}
@@ -38,6 +39,9 @@
 				#content-result .panel .panel-body .loader-p{
 					margin-top: 20% !important;
 				} 
+				.modal-h3{
+					line-height: 1;
+				}
 			</style>
 			@php
 				$unit = unit_by_id();
@@ -741,7 +745,7 @@
         // 
         
     });
-
+    
     $(".cancel_details").click(function() {
         $(".overlay-modal-details, .show_item_details_modal").fadeOut("slow", function() {
           /*Remove inline styles*/

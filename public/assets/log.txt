@@ -1,3 +1,17 @@
+2021-01-02 16:17:26 "20F025017D" Location Changed for 8748 151
+2021-01-02 12:30:11 "20F025017D" User information updated 41
+2020-12-24 15:06:33 "20F025017D" Style Wash Inserted 77
+2020-12-24 15:06:33 "20F025017D" Style Wash Inserted 76
+2020-12-24 15:06:32 "20F025017D" Style Size Gruop Created 38
+2020-12-24 15:06:32 "20F025017D" New Style Saved 23
+2020-12-12 14:44:17 "20F025017D" Style and Style related data Updated 23
+2020-12-12 14:44:17 "20F025017D" Style Size Gruop Created 40
+2020-12-12 14:43:40 "20F025017D" Style and Style related data Updated 23
+2020-12-12 14:43:40 "20F025017D" Style Size Gruop Created 39
+2020-12-12 11:38:40 "20F025017D" Style Wash Inserted 77
+2020-12-12 11:38:40 "20F025017D" Style Wash Inserted 76
+2020-12-12 11:38:40 "20F025017D" Style Size Gruop Created 38
+2020-12-12 11:38:40 "20F025017D" New Style Saved 23
 2020-11-29 13:27:58 "20F025017D" Employee Data Updated 9071
 2020-11-25 11:59:10 "20F025016D" Materny leave medical routine checkup for  23
 2020-11-25 11:59:03 "20F025016D" Materny leave medical for  8

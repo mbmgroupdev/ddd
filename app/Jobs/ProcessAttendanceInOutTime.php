@@ -156,12 +156,12 @@ class ProcessAttendanceInOutTime implements ShouldQueue
 
                 // bill announce 
 
-                if($billEligible != null){
-                    if($cOut > strtotime(date("H:i", strtotime($billEligible)))){
+                // if($billEligible != null){
+                //     if($cOut > strtotime(date("H:i", strtotime($billEligible)))){
 
-                        $bill = EmployeeHelper::dailyBillCalculation($getEmployee->as_ot, $getEmployee->as_unit_id, $getEmpAtt->in_date, $getEmpAtt->as_id, $nightFlag, $getEmployee->as_designation_id);
-                    }
-                }
+                //         $bill = EmployeeHelper::dailyBillCalculation($getEmployee->as_ot, $getEmployee->as_unit_id, $getEmpAtt->in_date, $getEmpAtt->as_id, $nightFlag, $getEmployee->as_designation_id);
+                //     }
+                // }
                 
                 $yearMonth = $year.'-'.$month; 
                 if($month == date('m')){
