@@ -61,27 +61,17 @@ class YearlyHolidayController extends Controller
             ->addColumn("open_status", function($data) {
 
                 return "<label class=\"radio-inline\">
-
                       <input type=\"radio\" data-id=\"$data->hr_yhp_id\" name=\"hr_yhp_open_status[$data->hr_yhp_id]\" class=\"open_status\" value=\"0\" style=\"margin-left:-15px\" ".($data->hr_yhp_open_status=="0"?'checked':null)."> Holiday
-
                     </label>
-
                     <label class=\"radio-inline\">
-
                       <input type=\"radio\" data-id=\"$data->hr_yhp_id\" name=\"hr_yhp_open_status[$data->hr_yhp_id]\" class=\"open_status\" value=\"1\" style=\"margin-left:-15px\" ".($data->hr_yhp_open_status=="1"?'checked':null)."> General
-
                     </label>
-
                     <label class=\"radio-inline\">
-
                       <input type=\"radio\" data-id=\"$data->hr_yhp_id\" name=\"hr_yhp_open_status[$data->hr_yhp_id]\" class=\"open_status\" value=\"2\" style=\"margin-left:-15px\" ".($data->hr_yhp_open_status=="2"?'checked':null)."> OT
-
                     </label>";
 
             })
-
             ->rawColumns(['hr_unit_name','open_status', 'action','date'])
-
             ->toJson();
 
     }
@@ -89,18 +79,11 @@ class YearlyHolidayController extends Controller
 
 
     public function create()
-
     {
 
-        //ACL::check(["permission" => "hr_time_op_holiday"]);
-
-        #-----------------------------------------------------------#
-
         $unitList  = Unit::where('hr_unit_status', '1')
-
-            ->whereIn('hr_unit_id', auth()->user()->unit_permissions())
-
-            ->pluck('hr_unit_short_name', 'hr_unit_id');
+                    ->whereIn('hr_unit_id', auth()->user()->unit_permissions())
+                    ->pluck('hr_unit_short_name', 'hr_unit_id');
 
         return view('hr/timeattendance/yearly_holiday', compact('unitList'));
 
@@ -121,42 +104,68 @@ class YearlyHolidayController extends Controller
                 ->withInput()
                 ->with('error', 'Please fillup all required fileds!.');
         }
-        // return $request->all();
+
+
         try {
-            for($i=0; $i<sizeof($request->hr_yhp_dates_of_holidays); $i++)
-            {
-                if($request->hr_yhp_dates_of_holidays[$i] != null){
-                    $date = (date("Y-m-d", strtotime($request->hr_yhp_dates_of_holidays[$i])));
-                    if (YearlyHolyDay::where('hr_yhp_unit', $request->as_unit_id)->where('hr_yhp_dates_of_holidays', $date)->exists())
-                    {
-                        YearlyHolyDay::where('hr_yhp_unit', $request->as_unit_id)->where('hr_yhp_dates_of_holidays', $date)
-                        ->update([
-                            'hr_yhp_unit'               => $request->as_unit_id,
-                            'hr_yhp_dates_of_holidays'  => $date,
-                            'hr_yhp_comments' => $request->hr_yhp_comments[$i],
-                            'hr_yhp_status' => 1
-                        ]);
-                        $last_id = YearlyHolyDay::where('hr_yhp_unit', $request->as_unit_id)->where('hr_yhp_dates_of_holidays', $date)
-                        ->value('hr_yhp_id');
-                        $this->logFileWrite("Yearly Holiday Entry Updated", $last_id);
-                    }
-                    else
-                    {
-                        YearlyHolyDay::insert([
-                            'hr_yhp_unit'               => $request->as_unit_id,
-                            'hr_yhp_dates_of_holidays'  => $date,
-                            'hr_yhp_comments'            => $request->hr_yhp_comments[$i],
-                            'hr_yhp_status' => 1
-                        ]);
 
-                        $last_id = DB::getPdo()->lastInsertId();
+            $lock['month'] = date('m', strtotime($request->month_year));
+            $lock['year'] = date('Y', strtotime($request->month_year));
+            $lock['unit_id'] = $request->as_unit_id;
+            $lockActivity = monthly_activity_close($lock);
 
-                        $this->logFileWrite("Yearly Holiday Entry Saved", $last_id);
+            if($lockActivity == 0){
+
+                for($i=0; $i<sizeof($request->hr_yhp_dates_of_holidays); $i++)
+                {
+                    if($request->hr_yhp_dates_of_holidays[$i] != null){
+                        $date = (date("Y-m-d", strtotime($request->hr_yhp_dates_of_holidays[$i])));
+                        if (YearlyHolyDay::where('hr_yhp_unit', $request->as_unit_id)->where('hr_yhp_dates_of_holidays', $date)->exists()){
+
+                            YearlyHolyDay::where('hr_yhp_unit', $request->as_unit_id)->where('hr_yhp_dates_of_holidays', $date)
+                            ->update([
+                                'hr_yhp_unit'               => $request->as_unit_id,
+                                'hr_yhp_dates_of_holidays'  => $date,
+                                'hr_yhp_comments' => $request->hr_yhp_comments[$i],
+                                'hr_yhp_status' => 1
+                            ]);
+
+                            $last_id = YearlyHolyDay::where('hr_yhp_unit', $request->as_unit_id)->where('hr_yhp_dates_of_holidays', $date)
+                            ->value('hr_yhp_id');
+                            $this->logFileWrite("Yearly Holiday Entry Updated", $last_id);
+                        }
+                        else
+                        {
+                            YearlyHolyDay::insert([
+                                'hr_yhp_unit'               => $request->as_unit_id,
+                                'hr_yhp_dates_of_holidays'  => $date,
+                                'hr_yhp_comments'            => $request->hr_yhp_comments[$i],
+                                'hr_yhp_status' => 1
+                            ]);
+
+                            $last_id = DB::getPdo()->lastInsertId();
+
+                            $this->logFileWrite("Yearly Holiday Entry Saved", $last_id);
+                        }
+
+                        // if planner inserted remove absent data of shift employee
+                        $available = DB::table('hr_as_basic_info')
+                        ->whereIn('as_unit_id', auth()->user()->unit_permissions())
+                        ->whereIn('as_location', auth()->user()->location_permissions())
+                        ->where('shift_roaster_status', 0)
+                        ->pluck('associate_id');
+
+                        DB::table('hr_absent')
+                        ->where('date', $date)
+                        ->whereIn('associate_id', $available)
+                        ->delete();
+                
                     }
                 }
-            }
 
-            toastr()->success('Successful Completed');
+                toastr()->success('Successful Completed');
+            }else{
+                toastr()->error('Monthly salary has been locked!');
+            }
             return back();
         } catch (\Exception $e) {
             $bug = $e->getMessage();
@@ -168,11 +177,6 @@ class YearlyHolidayController extends Controller
     public function status(Request $request)
 
     {
-
-        //ACL::check(["permission" => "hr_time_op_holiday"]);
-
-        #-----------------------------------------------------------#
-
 
 
          DB::table("hr_yearly_holiday_planner")
@@ -193,7 +197,8 @@ class YearlyHolidayController extends Controller
 
 
 
-    public function getHolidays(Request $request){
+    public function getHolidays(Request $request)
+    {
         $input = $request->all();
         $month = date('m', strtotime($input['month_year']));
         $year = date('Y', strtotime($input['month_year']));

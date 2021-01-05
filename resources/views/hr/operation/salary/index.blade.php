@@ -258,7 +258,7 @@
                    </div>
                 </div>
                 
-             </div>
+            </div>
             <input type="hidden" value="0" id="setFlug">
             <div class="row">
                 <div class="col h-min-400">

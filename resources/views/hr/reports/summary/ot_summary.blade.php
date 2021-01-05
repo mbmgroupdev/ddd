@@ -109,11 +109,11 @@
 			</div>
 			<div class="content_list_section" >
 				@if($input['report_format'] == 0)
-					@foreach($uniqueGroups as $group)
+					@foreach($uniqueGroups as $group => $employees)
 					
-					<table class="table table-bordered table-hover table-head" border="1">
+					<table class="table table-bordered table-hover table-head table-responsive" border="1">
 						<thead>
-							@if(count($getEmployee) > 0)
+							@if(count($employees) > 0)
 			                <tr>
 			                	@php
 									if($format == 'as_line_id'){
@@ -175,15 +175,15 @@
 			             $i = 0; $month = date('Y-m',strtotime($input['from_date'])); 
 			             $totalOt=0; $totalPay = 0;
 			            @endphp
-			            @if(count($getEmployee) > 0)
-			            @foreach($getEmployee as $employee)
+			            @if(count($employees) > 0)
+			            @foreach($employees as $employee)
 			            	@php
 			            		$designationName = $designation[$employee->as_designation_id]['hr_designation_name']??'';
 			            		
 			                    $otHour = numberToTimeClockFormat($employee->ot_hour);
+			                    
 
 			            	@endphp
-			            	@if($head == '')
 			            	<tr>
 			            		<td>{{ ++$i }}</td>
 				            	{{-- <td><img src="{{ emp_profile_picture($employee) }}" class='small-image' style="height: 40px; width: auto;"></td> --}}
@@ -210,37 +210,6 @@
 			            		$totalOt += $employee->ot_hour; 
 			            		$totalPay += ceil($employee->ot_amount); 
 			            	@endphp
-			            	@else
-				            	@if($group == $employee->$format)
-				            	<tr>
-				            		<td>{{ ++$i }}</td>
-					            	{{-- <td><img src="{{ emp_profile_picture($employee) }}" class='small-image' style="height: 40px; width: auto;"></td> --}}
-					            	<td><a href='{{ url("hr/operation/job_card?associate=$employee->associate_id&month_year=$month") }}' target="_blank">{{ $employee->associate_id }}</a></td>
-					            	<td>
-					            		<b>{{ $employee->as_name }}</b>
-					            		<p>{{ $employee->as_contact }}</p>
-					            	</td>
-					            	<td>{{ $employee->as_oracle_code }}</td>
-					            	<td>{{ $designation[$employee->as_designation_id]['hr_designation_name']??'' }}</td>
-					            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
-					            	<td>{{ $section[$employee->as_section_id]['hr_section_name']??'' }}</td>
-					            	<td>{{ $subSection[$employee->as_subsection_id]['hr_subsec_name']??'' }}</td>
-					            	<td>{{ $floor[$employee->as_floor_id]['hr_floor_name']??'' }}</td>
-					            	<td>{{ $line[$employee->as_line_id]['hr_line_name']??'' }}</td>
-				            		<td style="text-align: center;">{{$employee->days}}</td>
-
-					            	<td style="text-align: right">{{ $otHour }}</td>
-					            	<td style="text-align: right;">{{ bn_money(number_format($employee->ot_amount,2, '.', '')) }}</td>
-					            	<td>
-					            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Yearly Activity Report' ><i class="fa fa-eye"></i></button>
-					            	</td>
-				            	</tr>
-				            	@php 
-				            		$totalOt += $employee->ot_hour; 
-				            		$totalPay += ceil($employee->ot_amount); 
-				            	@endphp
-				            	@endif
-			            	@endif
 			            @endforeach
 			            	{{-- <tr>
 			            		<td colspan="10"></td>
@@ -354,21 +323,32 @@
 										if($format == 'as_unit_id'){
 											if($group == 145){
 												$body = 'MBM + MBF + MBM 2';
+												$exPar = '&selected=145';
 											}else{
 												$body = $unit[$group]['hr_unit_name']??'';
+												$exPar = '&selected='.$unit[$group]['hr_unit_id']??'';
 											}
 										}elseif($format == 'as_line_id'){
 											$body = $line[$group]['hr_line_name']??'';
+											$exPar = '&selected='.$line[$group]['hr_line_id']??'';
 										}elseif($format == 'as_floor_id'){
 											$body = $floor[$group]['hr_floor_name']??'';
+											$exPar = '&selected='.$floor[$group]['hr_floor_name']??'';
 										}elseif($format == 'as_department_id'){
 											$body = $department[$group]['hr_department_name']??'';
-										}elseif($format == 'as_section_id'){
-											$body = $section[$group]['hr_section_name']??'N/A';
-										}elseif($format == 'as_subsection_id'){
-											$body = $subSection[$group]['hr_subsec_name']??'';
+											$exPar = '&selected='.$department[$group]['hr_department_id']??'';
 										}elseif($format == 'as_designation_id'){
 											$body = $designation[$group]['hr_designation_name']??'';
+											$exPar = '&selected='.$designation[$group]['hr_designation_id']??'';
+										}elseif($format == 'as_section_id'){
+											$depId = $section[$group]['hr_section_department_id']??'';
+											$seDeName = $department[$depId]['hr_department_name']??'';
+											$seName = $section[$group]['hr_section_name']??'';
+											$body = $seDeName.' - '.$seName;
+											$exPar = '&selected='.$section[$group]['hr_section_id']??'';
+										}elseif($format == 'as_subsection_id'){
+											$body = $subSection[$group]['hr_subsec_name']??'';
+											$exPar = '&selected='.$subSection[$group]['hr_subsec_id']??'';
 										}elseif($format == 'ot_hour'){
 											
 						                    $otHourBody = numberToTimeClockFormat($group);
@@ -377,7 +357,11 @@
 											$body = 'N/A';
 										}
 									@endphp
-									{{ ($body == null)?'N/A':$body }}
+
+
+									<a class="generate-drawer" data-url="{{($urldata.$exPar)}}" data-body="{{ $body }}" id="{{$exPar}}" class="select-group"> 
+										{{ ($body == null)?'N/A':$body }} 
+									</a>
 								</td>
 								<td style="text-align: right">
 									{{ $employee->total }}

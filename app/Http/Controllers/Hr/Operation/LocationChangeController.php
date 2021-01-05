@@ -164,17 +164,15 @@ class LocationChangeController extends Controller
     }
 
     //Show Location Change enttry Form
-    public function showForm(){
+    public function showForm()
+    {
 
-
-        $employees = Employee::getSelectIdNameEmployee();
-        // $units = Unit::unitListAsObject();
         $locationList= Location::pluck('hr_location_name', 'hr_location_name');
         $locationList['default'] = 'Default Location';
         $locationList['Outside']= "Outside";
         $locationList['WFHOME']= "Work from Home";
 
-        return view('hr/operation/location_change_entry', compact('employees', 'locationList'));
+        return view('hr/operation/location_change_entry', compact( 'locationList'));
     }
 
     private function generateDateRange(Carbon $start_date, Carbon $end_date)
@@ -364,6 +362,8 @@ class LocationChangeController extends Controller
                 }else{
                     log_file_write("Default punch for ".$employee->as_id. 'from '.$start_date.' to'.' $end_date', null);
                 }
+                // regenerate salary sheet
+                
                 DB::commit();
                 return redirect()->back()->with("success", "Outside Entry Successfull.");
                 

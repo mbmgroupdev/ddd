@@ -9,7 +9,7 @@ use App\Models\Hr\Designation;
 use App\Models\Hr\SalaryStructure;
 use App\Models\Hr\Unit;
 use App\Models\Hr\EmpType;
-use App\Models\Employee;
+use App\Models\Employee; 
 use App\Models\Hr\Increment;
 use App\Models\Hr\Promotion;
 use App\Models\Hr\FixedSalary;
@@ -57,46 +57,90 @@ class IncrementController extends Controller
 
     public function incrementListData(Request $request)
     {
+
         $year = $request->year??date('Y');
+        $designation = designation_by_id();
+        $department = department_by_id();
+        $section = section_by_id();
+        $unit = unit_by_id();
+
         $data= DB::table('hr_increment AS inc')
-                    ->where('status', 0)
-                    ->select([
-                        'inc.id',
-                        'inc.associate_id',
-                        'b.as_name',
-                        'inc.increment_type',
-                        'inc.increment_amount',
-                        'inc.amount_type',
-                        'inc.eligible_date',
-                        'inc.effective_date',
-                        'c.increment_type AS inc_type_name',
-                    ])
-                    ->leftJoin('hr_as_basic_info AS b', 'b.associate_id', 'inc.associate_id')
-                    ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
-                    ->whereIn('b.as_location', auth()->user()->location_permissions())
-                    ->leftJoin('hr_increment_type AS c', 'c.id', 'inc.increment_type' )
-                    ->whereYear('effective_date', $year)
-                    ->orderBy('inc.effective_date','desc')
-                    ->get();
+                ->select([
+                    'inc.*',
+                    'b.as_name',
+                    'b.as_oracle_code',
+                    'b.as_emp_type_id',
+                    'b.as_gender',
+                    'b.as_doj',
+                    'b.as_section_id',
+                    'b.as_department_id',
+                    'b.as_designation_id',
+                    'b.as_unit_id',
+                    'bn.hr_bn_associate_name',
+                ])
+                ->leftJoin('hr_as_basic_info AS b', 'b.associate_id', 'inc.associate_id')
+                ->where('applied_date', '>=', $year.'-01-01')
+                ->leftJoin('hr_employee_bengali AS bn', 'bn.hr_bn_associate_id', 'b.associate_id')
+                ->where('applied_date', '<=', $year.'-12-31')
+                ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
+                ->whereIn('b.as_location', auth()->user()->location_permissions())
+                ->orderBy('inc.effective_date','desc')
+                ->orderBy('inc.created_at','desc')
+                ->get();
 
         $perm = check_permission('Manage Increment');
 
         return DataTables::of($data)
             ->addIndexColumn()
-            ->addColumn('action', function ($data) use ($perm) {
+            ->addColumn('action', function ($data) use ($perm, $designation,$section,$department) {
+                $button = '<div class=\"btn-group\">';
                 if($perm){
 
-                    return "<div class=\"btn-group\">
-                        <a type=\"button\" href=".url('hr/payroll/increment_edit/'.$data->id)." class=\"btn btn-xs btn-primary\"><i class=\"fa fa-pencil\"></i></a>
-                    </div>";
-                }else{
-                    return '';
+                    $button .= "<a type=\"button\" href=".url('hr/payroll/increment_edit/'.$data->id)." class=\"btn btn-sm btn-primary\"><i class=\"fa fa-pencil\"></i></a>";
+                    if($data->status == 1){
+                        if($data->as_emp_type_id == 3){
+                            $letter = array(
+                                'name' => $data->hr_bn_associate_name,
+                                /*'salary' => eng_to_bn(bn_money($data->current_salary)),
+                                'inc' => eng_to_bn(bn_money($data->increment_amount)),
+                                'new_salary' => eng_to_bn(bn_money(($data->current_salary + $data->increment_amount))),*/
+                                'designation' => $designation[$data->as_designation_id]['hr_designation_name_bn']??'',
+                                'section' => $section[$data->as_section_id]['hr_section_name_bn']??'',
+                                'effective_date' => eng_to_bn($data->effective_date),
+                                'associate_id' => $data->associate_id
+                            );
+
+                            $button .=" <button type=\"button\" onclick='printLetter(".json_encode($letter).")' class=\"btn btn-sm btn-danger\"><i class=\"fa fa-print\"></i></button"; 
+                        }else{
+                            $letter = array(
+                                'name' => $data->as_name,
+                                'designation' => $designation[$data->as_designation_id]['hr_designation_name']??'',
+                                /*'salary' => bn_money($data->current_salary),
+                                'inc' => bn_money($data->increment_amount),
+                                'new_salary' => bn_money(($data->current_salary + $data->increment_amount)),*/
+                                'department' => $department[$data->as_department_id]['hr_department_name']??'',
+                                'effective_date' => $data->effective_date,
+                                'associate_id' => $data->associate_id,
+                                'doj' => $data->as_doj
+                            );
+
+                            $button .=" <button type=\"button\" onclick='printEnLetter(".json_encode($letter).")' class=\"btn btn-sm btn-danger\"><i class=\"fa fa-print\"></i></button";
+                        }
+
+                    }
                 }
+
+                $button .= '</div>';
+
+                return $button;
             })
-            ->editColumn('effective_date', function($data){
-                return date('Y-m-d', strtotime($data->effective_date));
+            ->addColumn('designation', function ($data) use ($designation) {
+                return $designation[$data->as_designation_id]['hr_designation_name']??'';
             })
-            ->rawColumns(['action'])
+            ->editColumn('increment_type', function($data){
+                return $data->increment_type == 2?'Yearly':'Special';
+            })
+            ->rawColumns(['action','designation','increment_type'])
             ->make(true);  
                              
     }
@@ -332,49 +376,97 @@ class IncrementController extends Controller
 
     }
 
+    public function getEmployeeSpecialList(Request $request)
+    {
+
+        $data = DB::table('hr_as_basic_info as b')
+                ->select(
+                    'b.as_id',
+                    'b.as_name',
+                    'b.associate_id',
+                    'b.as_oracle_code',
+                    'b.as_emp_type_id',
+                    'b.as_unit_id',
+                    'b.as_location',
+                    'b.as_department_id',
+                    'b.as_area_id',
+                    'b.as_floor_id',
+                    'b.as_line_id',
+                    'b.as_section_id',
+                    'b.as_subsection_id',
+                    'b.as_designation_id', 
+                    'b.as_gender',
+                    'b.as_doj',
+                    'b.as_pic',
+                    'ben.ben_current_salary',
+                    DB::raw('CEIL((ben.ben_current_salary - 1850)*0.05) as inc'),
+                    DB::raw('MONTH(as_doj) AS doj_month')
+                )
+                ->leftJoin('hr_benefits as ben','ben.ben_as_id','b.associate_id')
+                ->whereIn('b.associate_id', $request->associate_id)
+                ->orderBy('as_oracle_sl','ASC')
+                ->get();
+
+        $unit = unit_by_id();
+        $location = location_by_id();
+        $line = line_by_id();
+        $floor = floor_by_id();
+        $department = department_by_id();
+        $designation = designation_by_id();
+        $section = section_by_id();
+        $subSection = subSection_by_id();
+        $area = area_by_id();
+
+        $date = date('Y-m-01');
+        $effective_date = Carbon::parse(date('Y-m-01'));
+
+        return view('hr.payroll.increment.employee_wise', compact('data','unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area','effective_date','date','request'))->render();
+
+    }
+
     public function getEligibleList(Request $request)
     {
         $input = $request->all();
 
         $request_associates = DB::table('hr_as_basic_info as b')
-                    ->leftJoin('hr_benefits as ben','ben.ben_as_id','b.associate_id')
-                    ->where('b.as_status',1)
-                    ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
-                    ->whereIn('b.as_location', auth()->user()->location_permissions())
-                    ->when(!empty($input['unit']), function ($query) use($input){
-                        if($input['unit'] == 145){
-                            return $query->whereIn('b.as_unit_id',[1, 4, 5]);
-                        }else{
-                            return $query->where('b.as_unit_id',$input['unit']);
-                        }
-                    })
-                    ->when(!empty($input['area']), function ($query) use($input){
-                       return $query->where('b.as_area_id',$input['area']);
-                    })
-                    ->when(!empty($input['department']), function ($query) use($input){
-                       return $query->where('b.as_department_id',$input['department']);
-                    })
-                    ->when(!empty($input['line_id']), function ($query) use($input){
-                       return $query->where('b.as_line_id', $input['line_id']);
-                    })
-                    ->when(!empty($input['floor_id']), function ($query) use($input){
-                       return $query->where('b.as_floor_id',$input['floor_id']);
-                    })
-                    ->when($input['as_ot']!=null, function ($query) use($input){
-                       return $query->where('b.as_ot',$input['as_ot']);
-                    })
-                    ->when($input['emp_type']!=null, function ($query) use($input){
-                       return $query->where('b.as_emp_type_id',$input['emp_type']);
-                    })
-                    ->when(!empty($input['section']), function ($query) use($input){
-                       return $query->where('b.as_section_id', $input['section']);
-                    })
-                    ->when(!empty($input['subSection']), function ($query) use($input){
-                       return $query->where('b.as_subsection_id', $input['subSection']);
-                    })
-                    ->where('ben.ben_current_salary','>=' ,$input['min_salary'])
-                    ->where('ben.ben_current_salary','<=' ,$input['max_salary'])
-                    ->pluck('b.associate_id')->toArray();
+            ->leftJoin('hr_benefits as ben','ben.ben_as_id','b.associate_id')
+            ->where('b.as_status',1)
+            ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
+            ->whereIn('b.as_location', auth()->user()->location_permissions())
+            ->when(!empty($input['unit']), function ($query) use($input){
+                if($input['unit'] == 145){
+                    return $query->whereIn('b.as_unit_id',[1, 4, 5]);
+                }else{
+                    return $query->where('b.as_unit_id',$input['unit']);
+                }
+            })
+            ->when(!empty($input['area']), function ($query) use($input){
+               return $query->where('b.as_area_id',$input['area']);
+            })
+            ->when(!empty($input['department']), function ($query) use($input){
+               return $query->where('b.as_department_id',$input['department']);
+            })
+            ->when(!empty($input['line_id']), function ($query) use($input){
+               return $query->where('b.as_line_id', $input['line_id']);
+            })
+            ->when(!empty($input['floor_id']), function ($query) use($input){
+               return $query->where('b.as_floor_id',$input['floor_id']);
+            })
+            ->when($input['as_ot']!=null, function ($query) use($input){
+               return $query->where('b.as_ot',$input['as_ot']);
+            })
+            ->when($input['emp_type']!=null, function ($query) use($input){
+               return $query->where('b.as_emp_type_id',$input['emp_type']);
+            })
+            ->when(!empty($input['section']), function ($query) use($input){
+               return $query->where('b.as_section_id', $input['section']);
+            })
+            ->when(!empty($input['subSection']), function ($query) use($input){
+               return $query->where('b.as_subsection_id', $input['subSection']);
+            })
+            ->where('ben.ben_current_salary','>=' ,$input['min_salary'])
+            ->where('ben.ben_current_salary','<=' ,$input['max_salary'])
+            ->pluck('b.associate_id')->toArray();
 
     	$inc_month = $request->month;
         $date = $request->month.'-01';
@@ -390,16 +482,17 @@ class IncrementController extends Controller
     	$eligible_date = Carbon::parse($range_end)->subYear()->endOfMonth()->toDateString();
         
     	$increment = DB::table('hr_increment')
-                     ->where('increment_type', 1)
-    				 ->where('effective_date','>=',$range_start)
-    				 ->where('effective_date','<=',$range_end)
+                     ->where('increment_type', 2)
+    				 ->where('applied_date','>=',$range_start)
+    				 ->where('applied_date','<=',$range_end)
     				 ->pluck('associate_id')->toArray();
 
     	// if gazette month gazzette employee will be added
     	$gazette = DB::table('hr_as_basic_info')
     				->where('as_doj', '<=', $gazette_date)
     				->where('as_emp_type_id', 3)
-    				->whereIn('associate_id', $request_associates)
+                    ->whereIn('associate_id', $request_associates)
+    				->whereNotIn('associate_id', $increment)
     				->pluck('associate_id')->toArray();
 
         $no_associate = $increment;
@@ -422,6 +515,7 @@ class IncrementController extends Controller
 
         $data = DB::table('hr_as_basic_info as b')
                 ->select(
+                    'b.as_id',
                     'b.as_name',
                     'b.associate_id',
                     'b.as_oracle_code',
@@ -436,6 +530,7 @@ class IncrementController extends Controller
                     'b.as_subsection_id',
                     'b.as_designation_id', 
                     'b.as_gender',
+                    'b.as_pic',
                     'b.as_doj',
                     'ben.ben_current_salary',
                     DB::raw('CEIL((ben.ben_current_salary - 1850)*0.05) as inc'),
@@ -478,29 +573,43 @@ class IncrementController extends Controller
 
     public function incrementAction(Request $request)
     {
+        $created_by= Auth::user()->associate_id;
+
+        //return (count($request->increment));
+        if(empty($request->increment) || !is_array($request->increment))
+        {
+            return response([
+                'msg' => 'Please select at least one associate.',
+                'status' => 'failed'
+            ]);
+        }
         
         $increment = $request->increment;
-
+        $count = 0;
         foreach ($increment as $key => $v) {
-            // if checked
-            if(isset($v['status'])){
 
-                $inc= new Increment();
+            if(isset($v['status'])){
+                $count++;
+                $inc = new Increment();
                 $inc->associate_id = $key;
                 $inc->current_salary = $v['salary'];
                 $inc->increment_type = $request->increment_type;
                 $inc->increment_amount = $v['amount'] ;
                 $inc->amount_type = 1 ;
-                $inc->applied_date = null ;
-                $inc->eligible_date = date('Y-m-01');
-                $inc->effective_date = $v['date'] ;
+                $inc->eligible_date =  $request->effective_date;
+                $inc->effective_date = $request->effective_date;
+                $inc->applied_date = $v['date'] ;
                 $inc->status = 0 ;
                 $inc->created_by = auth()->id();
                 $inc->save();
 
-
             }
         }
+
+        return response([
+                'msg' => 'Increment information saved successfully!',
+                'status' => 'success'
+        ]);
 
 
     }

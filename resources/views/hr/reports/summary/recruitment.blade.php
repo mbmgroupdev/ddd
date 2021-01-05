@@ -103,11 +103,11 @@
 			</div>
 			<div class="content_list_section" >
 				@if($input['report_format'] == 0)
-					@foreach($uniqueGroups as $group)
+					@foreach($uniqueGroups as $group => $employees)
 					
 					<table class="table table-bordered table-hover table-head" border="1">
 						<thead>
-							@if(count($getEmployee) > 0)
+							@if(count($employees) > 0)
 			                <tr>
 			                	@php
 									if($format == 'as_line_id'){
@@ -163,14 +163,13 @@
 			             $i = 0; $month = date('Y-m',strtotime($input['from_date'])); 
 			             $totalOt=0; $totalPay = 0;
 			            @endphp
-			            @if(count($getEmployee) > 0)
-			            @foreach($getEmployee as $employee)
+			            @if(count($employees) > 0)
+			            @foreach($employees as $employee)
 			            	@php
 			            		$designationName = $designation[$employee->as_designation_id]['hr_designation_name']??'';
 			            		
 
 			            	@endphp
-			            	@if($head == '')
 			            	<tr>
 			            		<td>{{ ++$i }}</td>
 				            	{{-- <td><img src="{{ emp_profile_picture($employee) }}" class='small-image' style="height: 40px; width: auto;"></td> --}}
@@ -195,33 +194,6 @@
 				            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Yearly Activity Report' ><i class="fa fa-eye"></i></button>
 				            	</td>
 			            	</tr>
-			            	@else
-				            	@if($group == $employee->$format)
-				            	<tr>
-				            		<td>{{ ++$i }}</td>
-					            	<td><a href='{{ url("hr/operation/job_card?associate=$employee->associate_id&month_year=$month") }}' target="_blank">{{ $employee->associate_id }}</a></td>
-					            	<td>
-					            		<b>{{ $employee->as_name }}</b>
-					            		<p>{{ $employee->as_contact }}</p>
-					            	</td>
-					            	<td>{{ $employee->as_oracle_code }}</td>
-					            	<td>{{ $designation[$employee->as_designation_id]['hr_designation_name']??'' }}</td>
-					            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
-					            	<td>{{ $section[$employee->as_section_id]['hr_section_name']??'' }}</td>
-					            	<td>{{ $subSection[$employee->as_subsection_id]['hr_subsec_name']??'' }}</td>
-					            	<td>{{ $floor[$employee->as_floor_id]['hr_floor_name']??'' }}</td>
-					            	<td>{{ $line[$employee->as_line_id]['hr_line_name']??'' }}</td>
-				            		<td style="text-align: center;text-transform: capitalize;">
-				            			{{emp_status_name($employee->as_status)}}
-				            		</td>
-
-					            	<td style="text-align: right">{{$employee->as_doj}}</td>
-					            	<td>
-					            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Yearly Activity Report' ><i class="fa fa-eye"></i></button>
-					            	</td>
-				            	</tr>
-				            	@endif
-			            	@endif
 			            @endforeach
 			            @else
 				            <tr>
@@ -251,7 +223,7 @@
 							$head = '';
 						}
 					@endphp
-					<table class="table table-bordered table-hover table-head" border="1">
+					<table class="table table-bordered table-hover table-head table-responsive" border="1">
 						<thead>
 							<tr style="text-align: center;">
 								<th>Sl</th>

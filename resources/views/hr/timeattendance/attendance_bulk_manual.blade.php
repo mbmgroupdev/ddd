@@ -232,7 +232,7 @@
 
                                             @php
                                                 $disabled_input = '';
-                                                if($data['present_status']=='Holiday' || $data['present_status']=='Weekend' || $data['present_status']=='Day Off' || strpos($data['present_status'],'Leave')!==false) {
+                                                if($data['holiday'] == 1 || $data['present_status']=='Holiday' || $data['present_status']=='Weekend' || $data['present_status']=='Day Off' || strpos($data['present_status'],'Leave')!==false) {
                                                     $disabled_input = 'readonly="readonly"';
                                                 }
                                             @endphp

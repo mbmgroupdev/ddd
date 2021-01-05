@@ -67,7 +67,8 @@ class SummaryExport implements FromView, WithHeadingRow
 
             $attData = DB::table('hr_as_basic_info AS emp')
                         ->where('emp.as_doj','>=', $input['from_date'])
-                        ->where('emp.as_doj','<=', $input['to_date']);
+                        ->where('emp.as_doj','<=', $input['to_date'])
+                        ->where('emp.as_status',1);
 
         }
 
@@ -211,13 +212,8 @@ class SummaryExport implements FromView, WithHeadingRow
         }
 
         if($format != null && count($getEmployee) > 0 && $input['report_format'] == 0){
-            $getEmployeeArray = $getEmployee->toArray();
-            $formatBy = array_column($getEmployeeArray, $input['report_group']);
-            $uniqueGroups = array_unique($formatBy);
-            if (!array_filter($uniqueGroups)) {
-                $uniqueGroups = ['all'];
-                // $format = '';
-            }
+            $uniqueGroups = collect($getEmployee)->groupBy($request['report_group'],true);
+            $format = $request['report_group'];
         }
 
         $unit = unit_by_id();

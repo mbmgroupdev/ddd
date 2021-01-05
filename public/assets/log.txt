@@ -1,3 +1,42 @@
+2021-01-03 14:29:14 "20F025016D" Materny leave medical routine checkup for  151
+2021-01-03 14:29:06 "20F025016D" Materny leave medical for  40
+2021-01-03 14:28:37 "20F025016D" Maternity leave application for  41
+2020-12-30 21:16:18 "20F025016D" User information updated 42
+2020-12-30 16:56:07 "20F025016D" Employee benefits updated successfully 1380
+2020-12-30 16:39:42 "20F025016D" Employee benefits updated successfully 1380
+2020-12-30 13:32:22 "20F025016D" Employee benefits updated successfully 13
+2020-12-30 13:28:54 "20F025016D" Employee benefits updated successfully 13
+2020-12-30 10:22:27 "20F025016D" Maternity leave application updated for  38
+2020-12-28 12:16:17 "20F025016D" Materny leave medical routine checkup for  137
+2020-12-28 12:16:09 "20F025016D" Materny leave medical for  37
+2020-12-28 12:15:36 "20F025016D" Maternity leave application for  38
+2020-12-28 10:24:39 "20F025016D" Maternity leave application updated for  37
+2020-12-27 13:01:11 "20F025016D" Yearly Holiday Entry Updated 313
+2020-12-27 13:00:38 "20F025016D" Yearly Holiday Entry Saved 313
+2020-12-27 12:02:17 "20F025016D" Leave Entry Saved 6453
+2020-12-27 11:41:50 "20F025016D" Leave Entry Saved 6452
+2020-12-27 11:04:40 "20F025016D" Shift Roster Day Wise Updated 8138
+2020-12-27 11:04:40 "20F025016D" Shift Roster Day Wise Updated 8138
+2020-12-27 11:04:40 "20F025016D" Shift Roster Day Wise Updated 8138
+2020-12-27 11:01:49 "20F025016D" Shift Roster Day Wise Updated 8082
+2020-12-27 11:01:49 "20F025016D" Shift Roster Day Wise Updated 8082
+2020-12-27 11:01:49 "20F025016D" Shift Roster Day Wise Updated 8082
+2020-12-27 11:00:18 "20F025016D" Shift Roster Day Wise Updated 8082
+2020-12-23 13:41:54 "20F025016D" Leave Entry Saved 6103
+2020-12-23 13:05:17 "20F025016D" Employee benefits updated successfully 3855
+2020-12-23 12:48:38 "20F025016D" Employee benefits updated successfully 3855
+2020-12-23 12:40:06 "20F025016D" Employee benefits updated successfully 3855
+2020-12-22 17:13:33 "20F025016D" Employee migration updated 120
+2020-12-20 14:24:44 "20F025016D" Employee migration updated 124
+2020-12-20 12:30:34 "20F025016D" Location Changed for 108 151
+2020-12-19 12:54:39 "20F025016D" Attendance file rollback hr_attendance_mbm - 2020-12-19 1
+2020-12-19 12:54:33 "20F025016D" Attendance file rollback hr_attendance_mbm - 2020-12-19 1
+2020-12-19 12:54:26 "20F025016D" Attendance file rollback hr_attendance_mbm - 2020-12-19 1
+2020-12-15 12:09:16 "20F025016D" Employee Data Updated 11111
+2020-12-15 12:08:03 "20F025016D" Employee Data Updated 11111
+2020-12-15 12:07:45 "20F025016D" Employee Data Updated 11111
+2020-12-15 12:07:39 "20F025016D" Employee Data Updated 11111
+2020-12-15 11:57:52 "20F025016D" Shift Roster Day Wise Updated 8235
 <<<<<<< HEAD
 2020-12-10 11:30:01 "20F025016D" Materny leave medical routine checkup for  119
 2020-12-10 11:29:53 "20F025016D" Materny leave medical for  32

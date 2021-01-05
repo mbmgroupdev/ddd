@@ -20,6 +20,8 @@
             .table-bordered td {
               border: 1px solid #000 !important;
               padding: 0 5px;
+              white-space: nowrap;
+
             }
         </style>
     	<div style="display: flex; justify-content:space-between;font-size: 14px;">
@@ -64,7 +66,7 @@
         </p>
         <br>
         <h4>গর্ভকালীন সেবাঃ</h4>
-        <table style="text-align: center;" class="table-bordered">
+        <table style="text-align: center;width: 100%;display: block;overflow: auto;" class="table-bordered">
         	<thead>
         		<tr>
         			<th rowspan="2">

@@ -61,26 +61,28 @@
 
             @endphp
             <tr>
-                <td colspan="2">প্রতিষ্ঠানের চাকুরী হইতে পদত্যাগ এর পরিপ্রেক্ষিতে জনাব/জনাবা</td>
-                <td colspan="2">তারিখঃ {{$date}} ইং</td>
+                <td colspan="3">প্রতিষ্ঠানের চাকুরী হইতে পদত্যাগ এর পরিপ্রেক্ষিতে জনাব/জনাবা</td>
+                <td style="text-align: right;">তারিখঃ {{eng_to_bn(date('d-m-Y', strtotime($benefits->status_date)))}} ইং</td>
             </tr>
             <tr>
-                <td style="width: 28%;"><div class="d-flex">নামঃ <span class="uline">{{$employee->hr_bn_associate_name??''}}</span></div></td>
-                <td style="width: 27%;"><div class="d-flex">আইডি নংঃ <span class="uline">{{str_replace($en, $bn, $employee->associate_id)}}</span> </div></td>
+                <td colspan="2"  style="width: 28%;"><div class="d-flex">নামঃ <span class="uline">{{$employee->hr_bn_associate_name??''}}</span></div></td>
+                <td style="width: 27%;"><div class="d-flex">আইডি নংঃ <span class="uline">{{$employee->associate_id}}</span> </div></td>
+                <td style="width: 45%;"><div class="d-flex">পূর্বের আইডিঃ<span class="uline">{{$employee->as_oracle_code??''}}</span></div></td>
+            </tr>
+            <tr>
                 <td colspan="2" style="width: 45%;"><div class="d-flex">পদবীঃ <span class="uline">{{$employee->hr_designation_name_bn??''}}</span></div></td>
-            </tr>
-            <tr>
                 <td><div class="d-flex">সেকশনঃ <span class="uline">{{$employee->hr_section_name_bn??''}}</span></div></td>
                 <td><div class="d-flex">বিভাগঃ <span class="uline">{{str_replace($en, $bn, $employee->hr_department_name_bn)}}</span> </div></td>
-                <td colspan="2">এর চূড়ান্ত নিস্পত্তিকরন নিম্নলিখিতভাবে সম্পন্ন করা হইলঃ</td>
+                
             </tr>
+            <tr><td colspan="4">এর চূড়ান্ত নিস্পত্তিকরন নিম্নলিখিতভাবে সম্পন্ন করা হইলঃ</td></tr>
             <tr>
                 <td>১। চাকুরীতে যোগদানের তারিখ</td>
-                <td colspan="3">{{str_replace($en, $bn, $employee->as_doj->format('Y-m-d'))}}</td>
+                <td colspan="3">{{str_replace($en, $bn, $employee->as_doj->format('d-m-Y'))}} ইং</td>
             </tr>
             <tr>
                 <td>২। চাকুরী ছাড়ার তারিখ</td>
-                <td colspan="3">{{$date}}</td>
+                <td colspan="3">{{eng_to_bn(date('d-m-Y', strtotime($benefits->status_date)))}} ইং</td>
             </tr>
             <tr>
                 <td>৩। চাকুরীকালীন সময়ে মোট কার্যকাল</td>
@@ -167,11 +169,17 @@
                 <td colspan="2"><b>{{eng_to_bn(bn_money($total_s2))}}  টাকা </b></td>
             </tr>
             <tr>
-                <td colspan="4"></td>
+                <td colspan="4"><br></td>
             </tr>
             <tr>
                 <td colspan="4">
-                    কথায়ঃ 
+
+                    @php
+                        $bnConvert = new BnConvert();
+                        $toword = $bnConvert->bnMoney($total_s2);
+
+                    @endphp
+                    <strong>কথায়ঃ {{$toword}} মাত্র </strong>
                 </td>
             </tr>
         </table>

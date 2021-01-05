@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Hr\Recruitment;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Jobs\ProcessUnitWiseSalary;
 use App\Models\Hr\Benefits;
 use App\Models\Hr\Designation;
 use App\Models\Hr\SalaryStructure;
@@ -18,8 +19,8 @@ use App\Models\Hr\OtherBenefits;
 use App\Models\Hr\OtherBenefitAssign;
 use App\Models\Hr\SalaryAdjustMaster;
 use App\Models\Hr\SalaryAdjustDetails;
+use Carbon\Carbon;
 use Validator,DB, DataTables, ACL,Auth;
-
 class BenefitController extends Controller
 {
     public function benefits(Request $request)
@@ -87,6 +88,31 @@ class BenefitController extends Controller
 
             if ($benefits->save())
             {
+                // process salary
+                $emp = DB::table('hr_as_basic_info')->where('associate_id',$request->ben_as_id)->first();
+                $tableName = get_att_table($emp->as_unit_id);
+
+                $queue = (new ProcessUnitWiseSalary($tableName, date('m'), date('Y'), $emp->as_id, date('d')))
+                        ->onQueue('salarygenerate')
+                        ->delay(Carbon::now()->addSeconds(2));
+                        dispatch($queue);
+
+                // update previous month also
+                $yearMonth = date("Y-m-d", strtotime("-1 months"));
+                $lock['month'] = date('m', strtotime($yearMonth));
+                $lock['year'] = date('Y', strtotime($yearMonth));
+                $lock['unit_id'] = $emp->as_unit_id;
+                $lockActivity = monthly_activity_close($lock);
+                
+                if($lockActivity  == 0){
+                    
+                    $queue = (new ProcessUnitWiseSalary($tableName, $lock['month'], $lock['year'] , $emp->as_id, date('t', strtotime($yearMonth))))
+                            ->onQueue('salarygenerate')
+                            ->delay(Carbon::now()->addSeconds(2));
+                            dispatch($queue);
+                }
+
+               
                 log_file_write("Employee benefits updated successfully", $benefits->ben_id);
 
                 return redirect('hr/payroll/employee-benefit?associate_id='.$request->ben_as_id)
@@ -107,7 +133,7 @@ class BenefitController extends Controller
         }
     }
 
-
+ 
     public function benefitList()
     {
         

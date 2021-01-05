@@ -37,19 +37,11 @@
                             <br>
                         </div>
                         <div class="col-sm-2 print-hidden">
-                            <div class="form-group has-float-label selet-search-group" >
-                                <select id="report_type" name="type" class="form-control" >
-                                    <option value="All" @if($request->type == 'all')selected @endif>Select Type</option>
-                                    <option value="pending" @if($request->type == 'pending')selected @endif>Pending</option>
-                                    <option value="running" @if($request->type == 'running')selected @endif>Running</option>
-                                </select>
-                                <label for="report_type">Report Type</label>
-                            </div>
                         </div>
                         <div class="col-sm-3 print-hidden">
                             <div class="form-group has-float-label" >
-                                <input type="text" class="inc_percent datepicker form-control" id="AssociateSearch" name="AssociateSearch" placeholder="Enter associate id/oracle id"  autocomplete="off"  />
-                                <label for="AssociateSearch">Search Employee</label>
+                                <input type="text" class="inc_percent datepicker form-control" id="AssociateSearch" name="AssociateSearch" placeholder="Search employee from list"  autocomplete="off"  />
+                                <label for="AssociateSearch">Search Employee </label>
                             </div>
                         </div>
                         <div class="col-sm-3 print-hidden">
@@ -62,8 +54,8 @@
                         <div class="col-sm-2 print-hidden">
                             <div class="form-group has-float-label selet-search-group" >
                                 <select id="increment_type" name="increment_type" class="form-control" >
-                                    <option value="2" selected>Yearly</option>
-                                    <option value="3" >Special</option>
+                                    <option value="2" >Yearly</option>
+                                    <option value="3" selected>Special</option>
                                 </select>
                                 <label for="increment_type">Increment Type</label>
                             </div>
@@ -154,12 +146,11 @@
                                     <tr class="row_{{ $list->associate_id }} row_{{ $list->as_oracle_code }}">
                                         <td style="text-align: center;">
                                             {{ ($k+1) }}
-                                            @if(in_array($list->associate_id, $gazette))
-                                                <span class="badge badge-primary" data-toggle="tooltip" data-placement="top" title="" data-original-title="According to gazette!">G</span>
-                                            @endif
                                         </td>
                                         <td>
-                                            <p class="yearly-activity text-primary" style="margin:0;padding:0;width: 150px;cursor: pointer;font-weight: bold;" data-id="{{ $list->as_id}}" data-eaid="{{ $list->associate_id }}" data-ename="{{ $list->as_name }}" data-edesign="{{ $designation[$list->as_designation_id]['hr_designation_name']}}" data-image="{{emp_profile_picture($list)}}" data-toggle="tooltip" data-placement="top" title="" data-original-title="Preview yearly activity report">{{ $list->as_name }}</p>
+                                            <p class="yearly-activity text-primary" style="margin:0;padding:0;width: 150px;cursor: pointer;font-weight: bold;" data-id="{{ $list->as_id}}" data-eaid="{{ $list->associate_id }}" data-ename="{{ $list->as_name }}" data-edesign="{{ $designation[$list->as_designation_id]['hr_designation_name']}}" data-image="{{emp_profile_picture($list)}}" data-toggle="tooltip" data-placement="top" title="" data-original-title="Preview yearly activity report">
+                                                {{ $list->as_name }}
+                                            </p>
                                             <p style="margin:0;padding:0;">
                                                 @php
                                                     $doj = date('d-m-Y', strtotime($list->as_doj));
@@ -192,9 +183,7 @@
                                             <b>{{ $department[$list->as_department_id]['hr_department_name']??''}}</b>
                                         </td>
                                         <td style="text-align: center;">
-                                            @if(in_array($list->associate_id, $gazette))
-                                                {{date('M, y', strtotime($date))}} 
-                                            @elseif(date('n', strtotime($date)) == $list->doj_month)
+                                            @if(date('n', strtotime($date)) == $list->doj_month)
                                                 {{date('M, y', strtotime($date))}}
                                             @elseif(date('n', strtotime($date)) < $list->doj_month )
                                                 {{date('M', strtotime($list->as_doj))}}, {{date('y', strtotime($date. '-1 year'))}}
@@ -206,8 +195,8 @@
                                             {{$list->ben_current_salary}}
                                         </td>
                                         <td style="text-align: center;">
-                                            <input type="hidden" name="increment['{{ $list->associate_id }}']['salary']" value="{{ $list->ben_current_salary }}">
-                                            <input id="inc_{{$list->associate_id}}" type="text" name="increment['{{ $list->associate_id }}']['amount']" class="form-control text-center increment-amount " style="width:80px;margin: 0 auto;" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"  data-salary="{{ $list->ben_current_salary }}" value="{{ceil($list->inc)}}" data-checked="1">
+                                            <input type="hidden" name="increment[{{ $list->associate_id }}][salary]" value="{{ $list->ben_current_salary }}">
+                                            <input id="inc_{{$list->associate_id}}" type="text" name="increment[{{ $list->associate_id }}][amount]" class="form-control text-center increment-amount " style="width:80px;margin: 0 auto;" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"  data-salary="{{ $list->ben_current_salary }}" value="{{ceil($list->inc)}}" data-checked="1">
                                         </td>
                                         <td style="text-align: center;">
                                             <input type="date" name="increment[{{ $list->associate_id }}][date]" class="form-control" style="width:110px;" value="{{$effective_date->toDateString()}}">

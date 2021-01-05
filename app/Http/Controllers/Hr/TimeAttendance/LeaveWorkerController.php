@@ -102,7 +102,7 @@ class LeaveWorkerController extends Controller
 
 
                     $getEmployee = Employee::getEmployeeAssociateIdWise($request->leave_ass_id);
-                    $tableName = Custom::unitWiseAttendanceTableName($getEmployee->as_unit_id);
+                    $tableName = get_att_table($getEmployee->as_unit_id);
                     // attendance remove 
                     $attendance = DB::table($tableName)
                                 ->where('as_id', $getEmployee->as_id)
@@ -163,6 +163,12 @@ class LeaveWorkerController extends Controller
                             }
                         }
                         
+                    }else if($leaveMonth == date('m')){
+                        $queue = (new ProcessUnitWiseSalary($tableName, date('m'), date('Y'), $getEmployee->as_id, date('d')))
+                                ->onQueue('salarygenerate')
+                                ->delay(Carbon::now()->addSeconds(2));
+                                dispatch($queue);
+
                     }
                     
                     $msg = 'Leave Entry Saved';
@@ -183,37 +189,6 @@ class LeaveWorkerController extends Controller
 
     }
 
-    public function getTableName($unit)
-    {
-        $tableName = "";
-        //CEIL
-        if($unit == 2){
-            $tableName= "hr_attendance_ceil AS a";
-        }
-        //AQl
-        else if($unit == 3){
-            $tableName= "hr_attendance_aql AS a";
-        }
-        // MBM
-        else if($unit == 1 || $unit == 4 || $unit == 5 || $unit == 9){
-            $tableName= "hr_attendance_mbm AS a";
-        }
-        //HO
-        else if($unit == 6){
-            $tableName= "hr_attendance_ho AS a";
-        }
-        // CEW
-        else if($unit == 8){
-            $tableName= "hr_attendance_cew AS a";
-        }
-        else{
-            $tableName= "hr_attendance_mbm AS a";
-        }
-        return $tableName;
-    }
-
-
-    //Maternity Leave Status Check Function for cron job
 
     public function LeaveStatusCheckAndUpdate(){
         $leave_exists= Leave::where('leave_status', 1)

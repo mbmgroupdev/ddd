@@ -43,7 +43,9 @@ class AttendanceRollbackController extends Controller
     	try {
     		// date wise attendance table data delete
     		$getAtt = DB::table($tableName)
-    		->where('in_time', 'LIKE', $input['day']."%")
+    		->where('in_date', $input['day'])
+            ->where('remarks', '!=', 'BM')
+            ->where('remarks', '!=', 'DP')
     		->delete();
 
     		// date wise absent table data delete

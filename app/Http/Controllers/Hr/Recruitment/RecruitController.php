@@ -564,6 +564,15 @@ class RecruitController extends Controller
                     WorkerRecruitment::where('worker_id', $request->worker_id)
                         ->delete();
 
+                    // make default absent
+                    DB::table('hr_absent')->insert([
+                        'associate_id' => $IDGenerator['id'],
+                        'date' => date('Y-m-d'),
+                        'hr_unit' => $worker->worker_unit_id
+                    ]);
+
+                    
+
                     Cache::forget('employee_count');
                     DB::commit();
                     toastr()->success('Migration successful!');

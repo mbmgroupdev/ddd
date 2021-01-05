@@ -113,11 +113,11 @@
 			</div>
 			<div class="content_list_section">
 				@if($input['report_format'] == 0)
-					@foreach($uniqueGroups as $group)
+					@foreach($uniqueGroups as $group => $employees)
 					
-					<table class="table table2excel table-bordered table-hover table-head" border="1" cellpadding="5">
+					<table class="table table2excel table-bordered table-hover table-head " border="1" cellpadding="5">
 						<thead>
-							@if(count($getEmployee) > 0)
+							@if(count($employees) > 0)
 			                <tr>
 			                	@php
 									if($format == 'as_line_id'){
@@ -169,15 +169,14 @@
 			            @php
 			             $i = 0; $month = date('Y-m',strtotime($input['from_date'])); $totalMinute = 0;
 			            @endphp
-			            @if(count($getEmployee) > 0)
-			            @foreach($getEmployee as $employee)
+			            @if(count($employees) > 0)
+			            @foreach($employees as $employee)
 			            	@php
 			            		$designationName = $designation[$employee->as_designation_id]['hr_designation_name']??'';
 			            		$hours = $employee->hourDuration == 0?0:floor($employee->hourDuration / 60);
 			                    $minutes = $employee->hourDuration == 0?0:($employee->hourDuration % 60);
 			                    $totalHour = sprintf('%02d h:%02d m', $hours, $minutes);
 			            	@endphp
-			            	@if($head == '')
 			            	<tr>
 			            		<td>{{ ++$i }}</td>
 				            	{{-- <td><img src="{{ emp_profile_picture($employee) }}" class='small-image' style="height: 40px; width: auto;"></td> --}}
@@ -198,30 +197,8 @@
 				            	
 			            	</tr>
 			            	@php $totalMinute += $employee->hourDuration; @endphp
-			            	@else
-			            	@if($group == $employee->$format)
-			            	<tr>
-			            		<td>{{ ++$i }}</td>
-				            	{{-- <td><img src="{{ emp_profile_picture($employee) }}" class='small-image' style="height: 40px; width: auto;"></td> --}}
-				            	<td><a href='{{ url("hr/operation/job_card?associate=$employee->associate_id&month_year=$month") }}' target="_blank">{{ $employee->associate_id }}</a></td>
-				            	<td>
-				            		<b>{{ $employee->as_name }}</b>
-				            		<p>{{ $employee->as_contact }}</p>
-				            	</td>
-				            	<td>{{ $employee->as_oracle_code }}</td>
-				            	<td>{{ $designation[$employee->as_designation_id]['hr_designation_name']??'' }}</td>
-				            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
-				            	<td>{{ $section[$employee->as_section_id]['hr_section_name']??'' }}</td>
-				            	<td>{{ $subSection[$employee->as_subsection_id]['hr_subsec_name']??'' }}</td>
-				            	<td>{{ $floor[$employee->as_floor_id]['hr_floor_name']??'' }}</td>
-				            	<td>{{ $line[$employee->as_line_id]['hr_line_name']??'' }}</td>
-				            	<td style="text-align: center;">{{ $employee->days }}</td>
-				            	<td data-toggle="tooltip" data-placement="top" style="text-align: right;" title="" data-original-title="{{$totalHour}}">{{ round($employee->hourDuration/60,2) }}</td>
-				            	
-			            	</tr>
-			            	@php $totalMinute += $employee->hourDuration; @endphp
-			            	@endif
-			            	@endif
+			            	
+			            	
 			            @endforeach
 			            	{{-- <tr>
 			            		<td colspan="8"></td>

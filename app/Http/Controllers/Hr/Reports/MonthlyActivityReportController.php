@@ -315,6 +315,9 @@ class MonthlyActivityReportController extends Controller
         $input['floor_id']   = isset($request['floor_id'])?$request['floor_id']:'';
         $input['section']    = isset($request['section'])?$request['section']:'';
         $input['subSection'] = isset($request['subSection'])?$request['subSection']:'';
+        $input['shift_roaster_status'] = isset($request['shift_roaster_status'])?$request['shift_roaster_status']:'';
+
+        
         $getDesignation = designation_by_id();
         // employee basic sql binding
         $employeeData = DB::table('hr_as_basic_info');
@@ -364,6 +367,9 @@ class MonthlyActivityReportController extends Controller
         })
         ->when(!empty($input['subSection']), function ($query) use($input){
            return $query->where('emp.as_subsection_id', $input['subSection']);
+        })
+        ->when(!empty($input['shift_roaster_status']), function ($query) use($input){
+           return $query->where('emp.shift_roaster_status', $input['shift_roaster_status']);
         });
         $queryData->leftjoin(DB::raw('(' . $employeeData_sql. ') AS emp'), function($join) use ($employeeData) {
             $join->on('emp.associate_id','s.as_id')->addBinding($employeeData->getBindings());

@@ -48,11 +48,11 @@
 			</div>
 			<div class="content_list_section" >
 				@if($input['report_format'] == 0)
-					@foreach($uniqueGroups as $group)
+					@foreach($uniqueGroups as $group => $employees)
 					
 					<table class="table table-bordered table-hover table-head" border="1">
 						<thead >
-							@if(count($getEmployee) > 0)
+							@if(count($employees) > 0)
 			                <tr>
 			                	@php
 									if($format == 'as_line_id'){
@@ -120,7 +120,6 @@
 			                    $otHour = $employee->ot_hour;
 
 			            	@endphp
-			            	@if($head == '')
 			            	<tr>
 			            		<td>{{ ++$i }}</td>
 				            	{{-- <td><img src="{{ emp_profile_picture($employee) }}" class='small-image' style="height: 40px; width: auto;"></td> --}}
@@ -145,34 +144,6 @@
 			            		$totalOt += $otHour; 
 			            		$totalPay += ceil($employee->ot_amount); 
 			            	@endphp
-			            	@else
-				            	@if($group == $employee->$format)
-				            	<tr>
-				            		<td>{{ ++$i }}</td>
-					            	{{-- <td><img src="{{ emp_profile_picture($employee) }}" class='small-image' style="height: 40px; width: auto;"></td> --}}
-					            	<td>{{ $employee->associate_id }}</td>
-					            	<td>
-					            		<b>{{ $employee->as_name }}</b>
-					            		<p>{{ $employee->as_contact }}</p>
-					            	</td>
-					            	<td>{{ $employee->as_oracle_code }}</td>
-					            	<td>{{ $designation[$employee->as_designation_id]['hr_designation_name']??'' }}</td>
-					            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
-					            	<td>{{ $section[$employee->as_section_id]['hr_section_name']??'' }}</td>
-					            	<td>{{ $subSection[$employee->as_subsection_id]['hr_subsec_name']??'' }}</td>
-					            	<td>{{ $floor[$employee->as_floor_id]['hr_floor_name']??'' }}</td>
-					            	<td>{{ $line[$employee->as_line_id]['hr_line_name']??'' }}</td>
-				            		<td style="text-align: center;">{{$employee->days}}</td>
-
-					            	<td style="text-align: right">{{ number_format($otHour,2, '.', '') }}</td>
-					            	<td style="text-align: right;">{{number_format($employee->ot_amount,2, '.', '') }}</td>
-				            	</tr>
-				            	@php 
-				            		$totalOt += $employee->ot_hour; 
-				            		$totalPay += $employee->ot_amount; 
-				            	@endphp
-				            	@endif
-			            	@endif
 			            @endforeach
 			            	<tr>
 			            		<td colspan="11" style="text-align: right;font-weight: bold;"><b>Total</b></td>
@@ -221,7 +192,7 @@
 								<th style="font-weight: bold;">Section Name</th>
 								@endif
 								<th style="font-weight: bold;"> {{ $head }} {{ $format != 'ot_hour'?'Name':'' }}</th>
-								<th style="font-weight: bold;">No of Employee</th>
+								<th style="font-weight: bold;text-align: center;">Employee</th>
 								<th style="font-weight: bold;">Total OT Hour</th>
 								<th style="font-weight: bold;">Total OT Amount</th>
 							</tr>
@@ -292,7 +263,7 @@
 											@endphp
 											{{ (($body == null)?'N/A':$body) }}
 										</td>
-										<td style="text-align: right">
+										<td style="text-align: center">
 											{{ $employee->total }}
 										</td>
 										<td style="text-align: right">
@@ -315,7 +286,7 @@
 									>
 										Total
 									</td>
-									<td style="text-align: right;font-weight: bold;">{{$totalEmployees}}</td>
+									<td style="text-align: center;font-weight: bold;">{{$totalEmployees}}</td>
 									<td style="text-align: right;font-weight: bold;">{{number_format($totalValue,2, '.', '')}}</td>
 									<td style="text-align: right;font-weight: bold;">{{number_format($totalAmount,2, '.', '')}}</td>
 								</tr>

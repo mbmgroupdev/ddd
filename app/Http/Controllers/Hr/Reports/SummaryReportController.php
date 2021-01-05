@@ -38,6 +38,7 @@ class SummaryReportController extends Controller
         try {
             
             $input['area']       = isset($request['area'])?$request['area']:'';
+            $input['location']       = isset($request['location'])?$request['location']:'';
             $input['otnonot']    = isset($request['otnonot'])?$request['otnonot']:'';
             $input['department'] = isset($request['department'])?$request['department']:'';
             $input['line_id']    = isset($request['line_id'])?$request['line_id']:'';
@@ -79,7 +80,8 @@ class SummaryReportController extends Controller
 
                 $attData = DB::table('hr_as_basic_info AS emp')
                             ->where('emp.as_doj','>=', $input['from_date'])
-                            ->where('emp.as_doj','<=', $input['to_date']);
+                            ->where('emp.as_doj','<=', $input['to_date'])
+                            ->where('emp.as_status',1);
 
             }else if($input['report_type'] == 'absent'){
                 $attData = DB::table('hr_absent AS a')
@@ -126,6 +128,9 @@ class SummaryReportController extends Controller
             })
             ->when(!empty($input['subSection']), function ($query) use($input){
                return $query->where('emp.as_subsection_id', $input['subSection']);
+            })
+            ->when(!empty($input['selected']), function ($query) use($input){
+               return $query->where('emp.'.$input['report_group'], $input['selected']);
             });
 
             // if non basic table then join basic
@@ -154,7 +159,7 @@ class SummaryReportController extends Controller
                     $totalOtHour =  array_sum(array_column($alldata->toArray(),'groupOt'));
                     $totalOtAmount =  array_sum(array_column($alldata->toArray(),'ot_amount'));
                 }else{
-                    $attData->select('emp.as_id', 'emp.as_gender', 'emp.as_shift_id', 'emp.as_oracle_code', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_contact', 'emp.as_section_id','emp.as_subsection_id', DB::raw('sum(a.ot_hour) as ot_hour'), DB::raw('sum(a.ot_hour*(bn.ben_basic/104)) as ot_amount'),DB::raw('count(  a.in_date) as days'))->orderBy('a.ot_hour','desc')->groupBy('emp.as_id');
+                    $attData->select('emp.as_id', 'emp.as_gender', 'emp.as_unit_id', 'emp.as_shift_id', 'emp.as_oracle_code', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_contact', 'emp.as_section_id','emp.as_subsection_id', DB::raw('sum(a.ot_hour) as ot_hour'), DB::raw('sum(a.ot_hour*(bn.ben_basic/104)) as ot_amount'),DB::raw('count(  a.in_date) as days'))->orderBy('a.ot_hour','desc')->groupBy('emp.as_id');
                     $alldata = $attData->get();
                     $totalOtHour = array_sum(array_column($alldata->toArray(),'ot_hour'));
                     $totalOtAmount =  array_sum(array_column($alldata->toArray(),'ot_amount'));
@@ -175,7 +180,7 @@ class SummaryReportController extends Controller
                     
                     $totalWorkingMinute =  array_sum(array_column($attData->get()->toArray(),'groupHourDuration'));
                 }else{
-                    $attData->select('emp.as_id', 'emp.as_gender', 'emp.as_shift_id', 'emp.as_oracle_code', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_contact', 'emp.as_section_id','emp.as_subsection_id', 's.hr_shift_break_time', DB::raw('sum(a.ot_hour) as ot_hour'),DB::raw('count(  a.in_date) as days'))->groupBy('a.as_id');
+                    $attData->select('emp.as_id', 'emp.as_gender', 'emp.as_shift_id', 'emp.as_oracle_code', 'emp.associate_id', 'emp.as_line_id', 'emp.as_unit_id','emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_contact', 'emp.as_section_id','emp.as_subsection_id', 's.hr_shift_break_time', DB::raw('sum(a.ot_hour) as ot_hour'),DB::raw('count(  a.in_date) as days'))->groupBy('a.as_id');
                     $attData->addSelect(DB::raw('sum(TIMESTAMPDIFF(minute, in_time, out_time) - s.hr_shift_break_time) as hourDuration'));
                     $totalWorkingMinute =  array_sum(array_column($attData->get()->toArray(),'hourDuration'));
                     
@@ -196,8 +201,6 @@ class SummaryReportController extends Controller
                     )
                     ->groupBy('emp.'.$input['report_group']);
                     
-                }else{
-                    $attData->get();
                 }
             }else if($input['report_type'] == 'recruitment'){
                 if($input['report_format'] == 1 && $input['report_group'] != null){
@@ -208,8 +211,6 @@ class SummaryReportController extends Controller
                     )
                     ->groupBy('emp.'.$input['report_group']);
                     
-                }else{
-                    $attData->get();
                 }
             }
 
@@ -244,13 +245,8 @@ class SummaryReportController extends Controller
             }
 
             if($format != null && count($getEmployee) > 0 && $input['report_format'] == 0){
-                $getEmployeeArray = $getEmployee->toArray();
-                $formatBy = array_column($getEmployeeArray, $request['report_group']);
-                $uniqueGroups = array_unique($formatBy);
-                if (!array_filter($uniqueGroups)) {
-                    $uniqueGroups = ['all'];
-                    // $format = '';
-                }
+                $uniqueGroups = collect($getEmployee)->groupBy($request['report_group'],true);
+                $format = $request['report_group'];
             }
 
             $unit = unit_by_id();
