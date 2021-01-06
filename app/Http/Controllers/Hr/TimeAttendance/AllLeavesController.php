@@ -19,32 +19,57 @@ use Illuminate\Http\Request;
 
 class AllLeavesController extends Controller
 {
-   public function allLeaves()
+   public function allLeaves(Request $request)
    {
-        $unit=Unit::pluck('hr_unit_name');
-        #--------------------------------------------------------#
-   	    return view('hr/timeattendance/all_leaves', compact('unit'));
+        $unit = Unit::pluck('hr_unit_name');
+        $month = $request->month??date('Y-m');
+        $date = Carbon::parse($month);
+        $now = Carbon::now();
+        if($date->diffInMonths($now) <= 6 ){
+            $max = Carbon::now();
+        }else{
+            $max = $date->addMonths(6);
+        }
+
+        $months = [];
+        $months[date('Y-m')] = 'Current';
+        for ($i=1; $i <= 12 ; $i++) { 
+            $months[$max->format('Y-m')] = $max->format('M, y');
+            $max = $max->subMonth(1);
+        }
+
+        
+
+        
+
+   	    return view('hr/timeattendance/all_leaves', compact('unit','month','months'));
    }
-   public function allLeavesData()
+
+   public function allLeavesData(Request $request)
    {
-      #-----------------------------------------------------------#
+
+        $month = $request->month??date('Y-m');
+      
         $data = DB::table('hr_leave AS l')
             ->select([
                'l.id',
                'l.leave_ass_id',
                'b.as_name',
                'b.as_oracle_code',
+               'b.as_unit_id',
                'l.leave_type',
                'l.leave_status',
                'l.leave_from',
                'l.leave_to',
                'l.created_at',
-               'u.hr_unit_name',
+               'u.hr_unit_short_name as hr_unit_name',
                DB::raw("(DATEDIFF(leave_to, leave_from)+1 ) AS days")
             ])
             ->leftJoin('hr_as_basic_info AS b', 'l.leave_ass_id', '=', 'b.associate_id')
             ->leftJoin('hr_unit AS u', 'b.as_unit_id', '=', 'u.hr_unit_id' )
             ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
+            ->whereIn('b.as_location', auth()->user()->location_permissions())
+            ->where('l.leave_from','like',$month.'%')
             ->orderBy('l.id','desc')
             ->get();
 
@@ -52,6 +77,12 @@ class AllLeavesController extends Controller
         if(auth()->user()->canAny(['Manage Leave','Leave Approve']) || auth()->user()->hasRole('Super Admin')){
             $perm = true;
         }
+
+        $sal = DB::table('salary_audit')
+                ->select(DB::raw("CONCAT(year,month,unit_id) AS audit"))
+                ->whereNotNull('hr_audit')
+                ->pluck('audit')->toArray();
+
 
         return DataTables::of($data)
             ->addColumn('leave_duration', function ($data) {
@@ -64,59 +95,20 @@ class AllLeavesController extends Controller
              }
              return $leave_duration;
             })
-            ->addColumn('leave_status', function ($data) {
-               if ($data->leave_status == 1)
-                  return  "<span class='label label-success label-xs'> Approved
-                    </span>";
-               else if ($data->leave_status == 2)
-                  return  "<span  class='label label-danger label-xs'> Declined
-                    </span>";
-               else
-                  return  "<span class='label label-primary label-xs' style='width: 70px;'>Applied
-                    </span>";
-            })
-            ->addColumn('action', function ($data) use ($perm) {
-                  if($perm){
+            ->addColumn('action', function ($data) use ($perm,$sal) {
+                $le = date('Ym',strtotime($data->leave_from)).$data->as_unit_id;
+                if($perm && !in_array($le,$sal)){
                     if(date('Y-m-d',strtotime($data->created_at)) >= date('Y-m').'-01' && date('Y-m-d',strtotime($data->created_at)) <= date('Y-m-d')){
-                      return "<a href=".url('hr/timeattendance/leave_delete/'.$data->id)." class=\"btn btn-xs btn-danger btn-round\" onclick=\"return confirm('Are you sure you want to delete this item?');\" data-toggle=\"tooltip\" title=\"Delete\">
+                      return "<a href=".url('hr/timeattendance/leave_delete/'.$data->id)." class=\"btn btn-sm btn-danger btn-round\" onclick=\"return confirm('Are you sure you want to delete this item?');\" data-toggle=\"tooltip\" title=\"Delete\">
 
                               <i class=\"ace-icon fa fa-trash bigger-120\"></i> 
 
                           </a>";
-                    }
-                    return '';
-                    return "<div class=\"btn-group\">
-
-                        <a href=\"#\" class=\"btn btn-xs btn-success\" data-toggle=\"tooltip\" title=\"View\">
-
-                            <i class=\"ace-icon fa fa-eye bigger-120\"></i>
-
-                        </a>
-
-                    </div>";
-                  }else{
-                    return "<div class=\"btn-group\">
-
-                        <a href=".url('hr/timeattendance/leave_approve/'.$data->id)." class=\"btn btn-xs btn-success btn-round\" data-toggle=\"tooltip\" title=\"View\">
-
-                            <i class=\"ace-icon fa fa-eye bigger-120\"></i>
-
-                        </a>
-                        <a href=".url('hr/timeattendance/leave_edit/'.$data->id)." class=\"btn btn-xs btn-info btn-round \" data-toggle=\"tooltip\" title=\"Edit\">
-
-                            <i class=\"ace-icon fa fa-edit bigger-110\"></i>
-
-                        </a>
-                        <a href=".url('hr/timeattendance/leave_delete/'.$data->id)." class=\"btn btn-xs btn-danger btn-round\" onclick=\"return confirm('Are you sure you want to delete this item?');\" data-toggle=\"tooltip\" title=\"Delete\">
-
-                            <i class=\"ace-icon fa fa-trash bigger-120\"></i>
-
-                        </a>
-
-                    </div>";
+                     }
                   }
+                  return '';
             })
-            ->rawColumns(['serial_no','leave_status','action'])
+            ->rawColumns(['serial_no','action'])
             ->make(true);
    }
 

@@ -65,13 +65,16 @@
                     <form class="" role="form" id="activityReport" > 
                         <div class="panel">
                             <div class="panel-heading">
-                                <h6>Monthly Salary Audit</h6>
+                                <h6>
+                                  Monthly Salary Audit
+                                  <a class="btn btn-primary pull-right" href="{{ url('hr/operation/salary-generate') }}"><i class="fa fa-eye"></i> Salary Process</a>
+                                </h6>
                             </div>
                             <div class="panel-body">
                                 <div class="row">
                                     <div class="col-3">
                                         <div class="form-group has-float-label select-search-group">
-                                            <select name="unit" class="form-control capitalize select-search" id="unit">
+                                            <select class="form-control capitalize select-search" disabled>
                                                 <option selected="" value="">Choose...</option>
                                                 @foreach($unitList as $key => $value)
                                                 <option value="{{ $key }}" @if($input['unit'] == $key) selected @endif>{{ $value }}</option>
@@ -79,6 +82,7 @@
                                             </select>
                                           <label for="unit">Unit</label>
                                         </div>
+                                        <input type="hidden" name="unit" value="{{ $input['unit']}}" id="unit">
                                         <div class="form-group has-float-label select-search-group">
                                             <select name="location" class="form-control capitalize select-search" id="location">
                                                 <option selected="" value="">Choose Location...</option>
@@ -159,7 +163,7 @@
                                         
                                         <input type="hidden" id="reportformat" name="report_format" value="{{ $reFor }}">
                                         <input type="hidden" id="reportGroup" name="report_group" value="{{ $reGro }}">
-                                        
+                                        <input type="hidden" name="audit" value="{{ $input['audit']}}">
                                     </div>
                                     <div class="col-3">
                                         
@@ -538,7 +542,82 @@
       });
      
   });
+  $(document).on('click', '.audit-pass, .audit-fail', function(event) {
+      let id = $(this).data('ids');
+      let associateId = $(this).data('eaids');
+      let name = $(this).data('enames');
+      let designation = $(this).data('edesigns');
+      let yearMonth = $(this).data('yearmonths');
+      let status = $(this).data('status');
+      let comment = '';
+      if(status == '2'){
+        comment = $("#cancle-"+id).val();
+      }
 
+      $.ajax({
+         url : "{{ url('hr/operation/salary-individual-audit') }}",
+         type: 'post',
+         headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+          },
+         data: {
+           as_id: id,
+           month_year: yearMonth,
+           status: status,
+           comment: comment
+         },
+         success: function(data)
+         {
+            $.notify(data.message, data.type);
+            if(data.type === 'success'){
+              let auditCount = $("#auditCount").html();
+              $('#auditCount').html(parseInt(auditCount) + parseInt(data.count));
+              if(status == '1'){
+                $("#row-"+id).removeClass('table-danger').addClass('table-success');
+                var msgpop = '<div class="arrow" style="top: 37px;"></div><h3 class="popover-header"> Audited By - '+'{{auth()->user()->name}}'+' </h3><div class="popover-body"> Audited Pass </div>';
+              }else{
+                $("#row-"+id).removeClass('table-success').addClass('table-danger');
+                var msgpop = '<div class="arrow" style="top: 37px;"></div><h3 class="popover-header"> Audited By - '+'{{auth()->user()->name}}'+' </h3><div class="popover-body"> '+comment+' </div>';
+                $(".cancleAuditPopover").hide();
+              }
+
+              $("#popover-"+id).html(msgpop);
+            }
+         },
+         error: function(reject)
+         {
+           $.notify(data.message, data.type);
+         }
+      });
+  });
+  
+    $(document).on("click", ".associate-right", function(e) {
+        $(".auditpopover").hide();
+        $(this).parent().find('.auditpopover').toggle(100);
+    });
+
+    $(document).on("click", ".audit-fail-btn", function(e) {
+        $(".cancleAuditPopover").hide();
+        $(this).parent().find('.cancleAuditPopover').toggle(100);
+        var ids = $(this).parent().find('.cancleAuditPopover').attr('id');
+        var idsplit = ids.split('-');
+        setTimeout(function() { $("#cancle-"+idsplit[1]).focus() }, 500);
+    });
+
+    $(document).mouseup(function(e) 
+    {
+        var auditpopover = $(".auditpopover");
+        var cancleAuditPopover = $(".cancleAuditPopover");
+        if (!auditpopover.is(e.target) && auditpopover.has(e.target).length === 0) 
+        {
+            auditpopover.hide();
+        }
+        if (!cancleAuditPopover.is(e.target) && cancleAuditPopover.has(e.target).length === 0) 
+        {
+            cancleAuditPopover.hide();
+        }
+    });
+  
 </script>
 @endpush
 @endsection

@@ -114,7 +114,7 @@
 					<table class="table table-bordered table-hover table-head table-responsive" border="1">
 						<thead>
 							@if(count($employees) > 0)
-			                <tr>
+			                <tr class="table-title">
 			                	@php
 									if($format == 'as_line_id'){
 										$head = 'Line';
@@ -260,7 +260,7 @@
 							$head = '';
 						}
 					@endphp
-					<table class="table table-bordered table-hover table-head" border="1">
+					<table class="table table-bordered table-hover table-head " border="1">
 						<thead>
 							<tr style="text-align: center;">
 								<th>Sl</th>

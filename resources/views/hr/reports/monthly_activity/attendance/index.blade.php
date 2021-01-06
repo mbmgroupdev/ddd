@@ -373,6 +373,7 @@
              d.max_sal       = $("#max_sal").val();
              d.employee_status = $("#employee_status").val();
              d.shift_roaster_status = $("#shift_roaster_status").val();
+             d.location = $("#location").val();
 
            },
            type: "get",

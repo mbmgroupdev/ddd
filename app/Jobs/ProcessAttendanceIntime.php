@@ -139,16 +139,22 @@ class ProcessAttendanceIntime implements ShouldQueue
                     'late_status' => $late
                 ]);
 
-                
-                if($month == date('m')){
-                    $totalDay = date('d');
-                }else{
-                    $totalDay = Carbon::parse($yearMonth)->daysInMonth;
+                $queuesal = 'salarygenerate';
+                if($this->unitId == 2){
+                    $queuesal = 'ceilsalarygenerate';
                 }
-                /*$queue = (new ProcessUnitWiseSalary($this->tableName, $month, $year, $getEmployee->as_id, $totalDay))
-                        ->onQueue('salarygenerate')
-                        ->delay(Carbon::now()->addSeconds(2));
-                        dispatch($queue); */
+                if($day_of_date == 31){
+                    if($month == date('m')){
+                        $totalDay = date('d');
+                    }else{
+                        $totalDay = Carbon::parse($yearMonth)->daysInMonth;
+                    }
+                    $queue = (new ProcessUnitWiseSalary($this->tableName, $month, $year, $getEmployee->as_id, $totalDay))
+                            ->onQueue($queuesal)
+                            ->delay(Carbon::now()->addSeconds(2));
+                            dispatch($queue);
+                }
+
             }
         }
             

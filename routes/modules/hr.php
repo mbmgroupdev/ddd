@@ -453,6 +453,7 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 	Route::get('hr/operation/employee-wise-salary-sheet', 'Hr\Operation\SalaryProcessController@employeeWise');
 	Route::get('hr/operation/unit-wise-salary-sheet', 'Hr\Operation\SalaryProcessController@unitWise');
 	Route::get('hr/operation/salary-generate', 'Hr\Operation\SalaryProcessController@generate');
+	Route::get('hr/reports/salary-fail-audit-history/{id}', 'Hr\Operation\SalaryProcessController@failHistory');
 
 	Route::get('hr/operation/unit-wise-pay-slip', 'Hr\Reports\PayslipController@unitWise');
 	//Raw Punch Data
@@ -461,8 +462,8 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 	// tiffin-dinner operation
 	Route::get('hr/operation/tiffin-dinner', 'Hr\Operation\BillOperationController@index');
 	Route::get('hr/operation/filter-wise-tiffin-dinner-bill-sheet', 'Hr\Operation\BillOperationController@filterWise');
-	Route::get('hr/operation/review-tiffin-dinner-bill', 'Hr\Operation\BillOperationController@review');
-	Route::get('hr/operation/pay-tiffin-dinner-bill', 'Hr\Operation\BillOperationController@pay');
+	Route::post('hr/operation/review-tiffin-dinner-bill', 'Hr\Operation\BillOperationController@review');
+	Route::post('hr/operation/pay-tiffin-dinner-bill', 'Hr\Operation\BillOperationController@pay');
 
 	//---------Hr/ Payroll-----------//
 	Route::get('hr/payroll/bank-sheet', 'Hr\Payroll\BankSheetController@index');
@@ -1145,6 +1146,7 @@ Route::get('hr/setup/retirement/get_employee_details', 'Hr\Setup\RetirementPolic
 	// monthly salary audit 
 	Route::get('hr/monthly-salary-audit', 'Hr\Reports\MonthlyActivityReportController@salaryAudit');
 	Route::post('hr/operation/salary-audit', 'Hr\Operation\SalaryProcessController@salaryAuditStatus');
+	Route::post('hr/operation/salary-individual-audit', 'Hr\Operation\SalaryProcessController@individualAudit');
 
 	// monthly report
 	Route::get('hr/reports/monthly-salary', 'Hr\Reports\MonthlyActivityReportController@salary');

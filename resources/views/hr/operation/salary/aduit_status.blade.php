@@ -196,7 +196,7 @@
             @if($history->status == 1)
             <li class="d-flex mb-4 align-items-center">
              <div class="user-img img-fluid">
-                 <a href="#" class="iq-bg-success">
+                 <a href="#" class="iq-bg-success" @if($history->stage == 2) onClick="selectedGroup({{$history->id}})" data-toggle="tooltip" data-dismiss="modal" data-placement="top" title="" data-original-title="Audit History" @endif>
                     <i class="las f-18 la-check-circle"></i>
                  </a>
               </div>
@@ -225,17 +225,17 @@
             @else
             <li class="d-flex mb-4 align-items-center">
              <div class="user-img img-fluid">
-                 <a href="#" class="iq-bg-danger">
+                 <a href="#" class="iq-bg-danger" @if($history->stage == 2) onClick="selectedGroup({{$history->id}})" data-toggle="tooltip" data-dismiss="modal" data-placement="top" title="" data-original-title="Audit History" @endif>
                     <i class="las f-18 la-times-circle"></i>
                  </a>
               </div>
-             <div class="media-support-info ml-3">
+              <div class="media-support-info ml-3">
                 <h6>
                   @if($history->stage == 1)
                   HR
                   @elseif($history->stage == 2)
                   Audit
-                  @elseif($history->stage == 3)\
+                  @elseif($history->stage == 3)
                   Accounts
                   @elseif($history->stage == 2)
                   Management

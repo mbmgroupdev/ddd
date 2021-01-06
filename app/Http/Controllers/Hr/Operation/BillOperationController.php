@@ -127,7 +127,7 @@ class BillOperationController extends Controller
             $unitDataSet = $getBillList->toArray();
             $unitList = array_column($unitDataSet, 'as_unit_id');
             $uniqueUnit = array_unique($unitList);
-            $getBillDataSet = array_chunk($unitDataSet, 25, true);
+            $getBillDataSet = array_chunk($unitDataSet, 23, true);
             $pageHead['totalBill'] = $totalAmount;
             $pageHead['totalEmployees'] = $totalEmployees;
             // dd($getBillDataSet);
@@ -157,6 +157,9 @@ class BillOperationController extends Controller
             ->whereIn('emp.as_unit_id', auth()->user()->unit_permissions())
             ->whereIn('emp.as_location', auth()->user()->location_permissions())
             ->where('s.pay_status', 0)
+            ->when(!empty($input['bill_type']), function ($query) use($input){
+               return $query->where('s.bill_type', $input['bill_type']);
+            })
             ->whereIn('s.as_id', $input['pay_id']);
             $queryData->leftjoin(DB::raw('(' . $employeeDataSql. ') AS emp'), function($join) use ($employeeData) {
                 $join->on('emp.as_id','s.as_id')->addBinding($employeeData->getBindings());
@@ -181,11 +184,15 @@ class BillOperationController extends Controller
             $unitDataSet = $getBillList->toArray();
             $unitList = array_column($unitDataSet, 'as_unit_id');
             $uniqueUnit = array_unique($unitList);
-            $getBillDataSet = array_chunk($unitDataSet, 25, true);
+            $getBillDataSet = array_chunk($unitDataSet, 23, true);
             $pageHead['totalBill'] = $totalAmount;
             $pageHead['totalEmployees'] = $totalEmployees;
+
+            $department = department_by_id();
+            $subSection = subSection_by_id();
+            $area = area_by_id();
             // dd($getBillDataSet);
-            return view('hr.operation.bill.review', compact('getBillList', 'designation', 'section', 'uniqueUnit', 'input', 'getBillDataSet', 'getBillLists', 'pageHead'));
+            return view('hr.operation.bill.review', compact('getBillList', 'designation', 'section', 'uniqueUnit', 'input', 'getBillDataSet', 'getBillLists', 'pageHead', 'department', 'subSection', 'area'));
     	} catch (\Exception $e) {
     		return 'error';
     		$data['msg'] = $e->getMessage();
@@ -206,6 +213,9 @@ class BillOperationController extends Controller
 	        $queryData = DB::table('hr_bill')
 	        ->whereBetween('bill_date', [$input['from_date'],$input['to_date']])
             ->where('pay_status', 0)
+            ->when(!empty($input['bill_type']), function ($query) use($input){
+               return $query->where('bill_type', $input['bill_type']);
+            })
             ->whereIn('as_id', $input['pay_id'])
             ->update([
             	'pay_status' => 1

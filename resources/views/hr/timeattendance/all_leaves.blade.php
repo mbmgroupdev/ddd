@@ -7,13 +7,23 @@
       width: 40px !important;
     }
     #dataTables th:nth-child(5) select, #dataTables th:nth-child(2) input{
-      width: 80px !important;
+      width: 50px !important;
     }
     #dataTables th:nth-child(1) input{
       width: 100px !important;
     }
     #dataTables th:nth-child(8) select{
       width: 80px !important;
+    }
+    .nav-year {
+        font-size: 13px;
+        font-weight: bold;
+        color: #9c9c9c;
+        padding: 1px 10px;
+        border-radius: 10px;
+        margin: 0 2px;
+        background: #eff7f8;
+        display: inline-block;
     }
 </style>
 @endpush
@@ -29,15 +39,26 @@
                 <li>
                     <a href="#"> Time & Attendance </a>
                 </li>
-                <li class="active"> Leaves </li>
+                <li class="active"> Leaves : {{\Carbon\Carbon::parse($month)->format('F, Y')}}</li>
+                <li class="top-nav-btn">
+                    <a href="{{ url('hr/timeattendance/leave-entry')}}" class="pull-right btn btn-sm  btn-primary">Leave Entry</a>
+                </li>
             </ul><!-- /.breadcrumb -->
  
         </div>
 
         @include('inc/message')
         <div class="page-content"> 
-            <div class="panel panel-info">
-                <div class="panel-heading"><h6>All Leaves<a href="{{ url('hr/timeattendance/leave-entry')}}" class="pull-right btn  btn-primary">Leave Entry</a></h6></div> 
+            <div class="panel">
+            <div class="panel-body text-center p-2">
+                @foreach(array_reverse($months) as $k => $i)
+                    <a href="{{url('hr/timeattendance/all_leaves?month='.$k)}}" class="nav-year @if($k== $month) bg-primary text-white @endif" data-toggle="tooltip" data-placement="top" title="" data-original-title="Leave list of {{$i}}" >
+                        {{$i}}
+                    </a>
+                @endforeach
+            </div>
+        </div>
+            <div class="panel panel-info"> 
                 <div class="panel-body">
 
                     <table id="dataTables" class="table table-striped table-bordered" style="width: 100%; overflow-x: auto; display: block; ">
@@ -48,9 +69,8 @@
                                 <th width="20%">Name</th>
                                 <th width="20%">Unit</th>
                                 <th width="10%">Leave Type</th>
-                                <th width="20%">Leave Duration</th>
+                                <th width="20%">Duration</th>
                                 <th width="10%" style="text-align: center;"> Day(s)</th>
-                                <th width="10%">Leave Status</th>
                                 <th width="20%">Action</th>
                             </tr>
                         </thead>  
@@ -87,6 +107,9 @@ $(document).ready(function(){
         ajax: {
             url: '{!! url("hr/timeattendance/all_leaves_data") !!}',
             type: "POST",
+            data:{
+                month: '{{request()->get('month')??date('Y-m')}}'
+            },
             headers: {
                   'X-CSRF-TOKEN': '{{ csrf_token() }}'
             } 
@@ -166,7 +189,6 @@ $(document).ready(function(){
             { data: 'leave_type', name: 'leave_type' , orderable: false}, 
             { data: 'leave_duration', name: 'leave_duration' , orderable: false}, 
             { data: 'days', name: 'days' , orderable: false}, 
-            { data: 'leave_status', name: 'leave_status' , orderable: false}, 
             { data: 'action', name: 'action', orderable: false, searchable: false}
         ], 
         initComplete: function () {   

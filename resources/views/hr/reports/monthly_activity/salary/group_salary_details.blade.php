@@ -33,6 +33,77 @@
               .table thead th {
 			    vertical-align: inherit;
 			}
+			.associate-right{
+				cursor: pointer;
+				position: relative;
+			}
+			.associate-right a{
+				cursor: pointer;
+				color:#089bab;
+			}
+
+			/*right click*/
+			  .context-menu ul{ 
+			    z-index: 1000;
+			    position: absolute;
+			    overflow: hidden;
+			    border: 1px solid #CCC;
+			    white-space: nowrap;
+			    font-family: sans-serif;
+			    background: #FFF;
+			    color: #333;
+			    border-radius: 5px;
+			    padding: 0;
+			    box-shadow: 2px 4px 4px 0px;
+			}
+			.context-menu:before {
+			  content: "";
+			  position: absolute;
+			  border-color: rgba(194, 225, 245, 0);
+			  border: solid transparent;
+			  border-bottom-color: white;
+			  border-width: 11px;
+			  margin-left: -10px;
+			  top: -17px;
+    		  right: -21px;
+			  z-index: 1;
+			} 
+			.popover{
+				position: absolute;
+			    will-change: transform;
+			    width: 250px;
+			}
+			.popover-left{
+				transform: translate3d(80px, -20px, 0px);
+			    top: 0px;
+			    left: 0;
+			}
+			.popover-right{
+				transform: translate3d(-260px, -20px, 0px);
+			    top: 0px;
+			    right: 0;
+			}
+			.context-menu:after {
+			    content: "";
+			    position: absolute;
+			    right: -20px;
+    			top: -17px;
+			    width: 0;
+			    height: 0;
+			    border: solid transparent;
+			    border-width: 10px;
+			    border-bottom-color: #2B1A41;
+			    z-index: 0;
+			}
+			/* Each of the items in the list */
+			.context-menu ul li {
+			    padding: 8px 12px;
+			    cursor: pointer;
+			    list-style-type: none;
+			}
+			.context-menu ul li:hover {
+			    background-color: #DEF;
+			}
 			</style>
 			@php
 				$unit = unit_by_id();
@@ -124,6 +195,10 @@
 		                		Payment Type 
 		                			<b class="capitalize">: {{ $input['pay_status'] }}</b> <br>
 		                		@endif
+		                		@if(isset($input['audit']) && $input['audit'] == 'Audit')
+		                		Audited 
+		                			<b class="capitalize">: <count id="auditCount">{{count($auditedEmployee)}}</count> / {{ $totalEmployees }}</b> <br>
+		                		@endif
 		            		</td>
 		            	</tr>
 		            	
@@ -159,7 +234,9 @@
 		                    @endif
 		                    <th>Stamp Amount</th>
 		                    <th>Net Pay</th>
+		                    @if(isset($input['audit']) && $input['audit'] == 'Audit')
 		                    <th>&nbsp;</th>
+		                    @endif
 		                </tr>
 		            </thead>
 		            <tbody>
@@ -170,10 +247,41 @@
 			            		$designationName = $employee->hr_designation_name??'';
 		                        $otHour = numberToTimeClockFormat($employee->ot_hour);
 			            	@endphp
-			            	<tr>
+			            	<tr id="row-{{ $employee->as_id}}" class="@if(count($auditedEmployee) > 0 && isset($auditedEmployee[$employee->as_id])) {{ $auditedEmployee[$employee->as_id]['status'] == 1?'table-success':'table-danger'}}  @endif">
 			            		<td>{{ ++$i }}</td>
 				            	
-				            	<td><a href='{{ url("hr/operation/job_card?associate=$employee->associate_id&month_year=$month") }}' target="_blank">{{ $employee->associate_id }}</a></td>
+				            	<td class="associate-right">
+				            		<a class="" data-toggle="tooltip" data-placement="top" title="" data-original-title='Right Click Action'>{{ $employee->associate_id }}</a>
+
+				            		<div class="context-menu" id="context-menu-file-{{$employee->associate_id}}" style="display:none;position:absolute;z-index:1;">
+									    <ul>
+									      <li><a class="textblack" href='{{ url("hr/operation/job_card?associate=$employee->associate_id&month_year=$month") }}' target="_blank"><i class="lar la-id-card"></i> Job Card</a></li>           
+									      <li><a class="yearly-activity-single" data-ids="{{ $employee->as_id}}" data-eaids="{{ $employee->associate_id }}" data-enames="{{ $employee->as_name }}" data-edesigns="{{ $designationName }}" data-yearmonths="{{ $input['month'] }}" ><i class="las la-money-check-alt"></i> Salary Sheet</a></li>           
+									      {{-- <li><a onclick="copyDocuments('{{$employee->associate_id}}')"><i class="las la-copy"></i> Copy</a></li>  --}}
+									    </ul>
+									</div>
+
+									@if(isset($input['audit']) && $input['audit'] == 'Audit')
+									<div class="popover bs-popover-right auditpopover popover-left" role="tooltip" id="popover-{{$employee->as_id}}" x-placement="right" style="display:none;position:absolute;z-index:1;">
+										<div class="arrow" style="top: 37px;"></div>
+										@if(count($auditedEmployee) > 0 && isset($auditedEmployee[$employee->as_id]))
+											<h3 class="popover-header">Audited By - {{ $auditedEmployee[$employee->as_id]['user']->name??'' }}</h3>
+											
+											<div class="popover-body">
+												@if($auditedEmployee[$employee->as_id]['status'] == 2){{ $auditedEmployee[$employee->as_id]['comment']??'No Comment' }}
+												@else
+												Audited Pass
+												@endif
+											</div>
+										@else
+										<h3 class="popover-header"> &nbsp; </h3>
+										<div class="popover-body">
+											Not Audited!
+										</div>
+										@endif
+									</div>
+									@endif
+				            	</td>
 				            	<td>
 				            		<b>{{ $employee->as_name }}</b>
 				            	</td>
@@ -214,12 +322,30 @@
 				            			}else{
 				            				$totalNet = $employee->total_payable - $employee->tds;
 				            			}
+
 				            		@endphp
 				            		{{ bn_money($totalNet) }}
+
 				            	</td>
+				            	@if(isset($input['audit']) && $input['audit'] == 'Audit')
 				            	<td>
-				            		<button type="button" class="btn btn-primary btn-sm yearly-activity-single" data-ids="{{ $employee->as_id}}" data-eaids="{{ $employee->associate_id }}" data-enames="{{ $employee->as_name }}" data-edesigns="{{ $designationName }}" data-yearmonths="{{ $input['month'] }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Employee Salary Report' ><i class="fa fa-eye"></i></button>
+				            		<div class="action-section" style="position: relative">
+				            			{{-- <button type="button" class="btn btn-primary btn-sm yearly-activity-single" data-ids="{{ $employee->as_id}}" data-eaids="{{ $employee->associate_id }}" data-enames="{{ $employee->as_name }}" data-edesigns="{{ $designationName }}" data-yearmonths="{{ $input['month'] }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Employee Salary Report' ><i class="fa fa-eye"></i></button> --}}
+					            		<button type="button" class="btn btn-primary btn-sm audit-pass" data-status="1" data-ids="{{ $employee->as_id}}" data-eaids="{{ $employee->associate_id }}" data-enames="{{ $employee->as_name }}" data-edesigns="{{ $designationName }}" data-yearmonths="{{ $input['month'] }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='' style="font-size: 5px;"><i class="las la-check"></i></button>
+					            		<button type="button" class="btn btn-danger btn-sm audit-fail-btn" data-status="2" data-ids="{{ $employee->as_id}}" data-eaids="{{ $employee->associate_id }}" data-enames="{{ $employee->as_name }}" data-edesigns="{{ $designationName }}" data-yearmonths="{{ $input['month'] }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='' style="font-size: 5px;"><i class="las la-times"></i></button>
+					            		<div class="popover bs-popover-left cancleAuditPopover popover-right" role="tooltip" id="popover-{{$employee->as_id}}" x-placement="left" style="display:none;position:absolute;z-index:1;">
+											<div class="arrow" style="top: 37px;"></div>
+											<h3 class="popover-header"> {{ $employee->as_name }} </h3>
+											<div class="popover-body">
+												<textarea id="cancle-{{ $employee->as_id}}" class="form-control cancle-textarea" ></textarea>
+											</div>
+											<div class="popover-footer">
+												<button type="button" class="btn btn-success btn-sm audit-fail" data-status="2" data-ids="{{ $employee->as_id}}" data-eaids="{{ $employee->associate_id }}" data-enames="{{ $employee->as_name }}" data-edesigns="{{ $designationName }}" data-yearmonths="{{ $input['month'] }}" style="margin-left: 20px; margin-bottom: 4px; font-size: 12px;">Save</button>
+											</div>
+										</div>
+				            		</div>
 				            	</td>
+				            	@endif
 			            	</tr>
 			            	
 			            @endforeach
@@ -269,6 +395,7 @@
 		    </div>
 		</div>
 		{{--  --}}
+		 
 	</div>
 </div>
 
@@ -282,7 +409,7 @@
     detailsheight = $(".item_details_dialog").css("min-height", "115px");
     var months    = ['','January','February','March','April','May','June','July','August','September','October','November','December'];
     $(document).on('click','.yearly-activity-single',function(){
-    	console.log('e')
+    	// console.log('e')
     	$("#employee-salary-single").html(loaderModal);
         let id = $(this).data('ids');
         let associateId = $(this).data('eaids');
@@ -351,4 +478,32 @@
         mywindow.print();
         mywindow.close();
     }
+    function copyDocuments(text) {
+		var copyText = document.getElementById("emp-"+text);
+	  	// copyText.select();
+	  	document.execCommand("copy");
+	  	alert("Copied the text: " + copyText.innerHTML);
+    }
+    $(function () {
+	  $('[data-toggle="tooltip"]').tooltip()
+	})
+    $(document).on("contextmenu", ".associate-right", function(e) {
+	      // Show contextmenu
+	      $(".context-menu").hide();
+	      $(this).parent().find('.context-menu').toggle(100).css({
+	        display:"block",
+	          left: "70px"
+	      });
+	        
+	      // disable default context menu
+	      return false;
+	  });
+
+	  // Hide context menu
+	  $(document).bind('contextmenu click',function(){
+	      $(".context-menu").hide();
+	  });
+
+	  
+    
 </script>

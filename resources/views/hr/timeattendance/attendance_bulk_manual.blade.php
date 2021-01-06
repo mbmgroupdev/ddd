@@ -247,10 +247,10 @@
                                                     <input type="hidden" name="this_shift_break[{{$data['att_id']}}]" value="{{$data['shift_break']}}">
                                                     <input type="hidden" name="this_shift_night[{{$data['att_id']}}]" value="{{$data['shift_night']}}">
                                                     <input type="hidden" name="this_bill_eligible[{{$data['att_id']}}]" value="{{$data['bill_eligible']}}">
-                                                    <input class="intime manual form-control" type="text" name="intime[{{$data['att_id']}}]" value="{{!empty($data['in_time'])?date("H:i", strtotime($data['in_time'])):null}}"   placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}} autocomplete="off">
+                                                    <input class="intime manual form-control" type="text" name="intime[{{$data['att_id']}}]" value="{{!empty($data['in_time'])?date("H:i:s", strtotime($data['in_time'])):null}}"   placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}} autocomplete="off">
                                                 </td>
                                                 <td>
-                                                    <input type="text" class="outtime manual form-control" name="outtime[{{$data['att_id']}}]" value="{{!empty($data['out_time'])?date("H:i", strtotime($data['out_time'])):null}}"  placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}} autocomplete="off">
+                                                    <input type="text" class="outtime manual form-control" name="outtime[{{$data['att_id']}}]" value="{{!empty($data['out_time'])?date("H:i:s", strtotime($data['out_time'])):null}}"  placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}} autocomplete="off">
                                                 </td>
                                             @else
                                                 <td>

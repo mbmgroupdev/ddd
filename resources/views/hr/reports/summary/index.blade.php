@@ -30,6 +30,12 @@
       padding: 15px 15px;
       padding-bottom: 8px;
     }
+    #right_modal_lg .table-responsive{
+        display: initial !important;
+    }
+    #right_modal_lg .table-title{
+        display: none;
+    }
 
 </style>
 @endpush
