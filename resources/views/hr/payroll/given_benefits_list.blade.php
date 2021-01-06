@@ -36,14 +36,11 @@
                                 <th>Associate ID</th>
                                 <th>Name</th>
                                 <th>Unit</th>
-                                <th>Description</th>
-                                <th>Earn Amount</th>
+                                <th>Type</th>
+                                <th>Earn leave Amount</th>
                                 <th>Service Benefits</th>
-                                <th>Subsistence Allowance</th>
-                                <th>Notice Pay</th>                        
-                                <th>Termination Benefits</th>   
-                                <th>Death Benefits</th>
                                 <th>Total Amount</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                     
@@ -64,8 +61,8 @@ $(document).ready(function(){
          '3' :[@foreach($unitList as $e) <?php echo "'$e'," ?> @endforeach]
     };
 
-    var exportColName = ['Sl.','Associate ID','Name','Unit','Description','Earn Amount','Service Benefits', 'Subsistence Allowance', 'Notice Pay','Termination Benefits','Death Benefits','Total Amount'];
-    var exportCol = [0,1,2,3,5,6,7,8,9,10,11];
+    var exportColName = ['Sl.','Associate ID','Name','Unit','Type','Earn Leave Amount','Service Benefits', 'Total Amount'];
+    var exportCol = [1,2,3,5,6,7];
 
     var dt = $('#dataTables').DataTable({
         order: [], //reset auto order
@@ -191,11 +188,8 @@ $(document).ready(function(){
             { data: 'benefit_on',  name: 'benefit_on' }, 
             { data: 'earn_leave_amount', name: 'earn_leave_amount' }, 
             { data: 'service_benefits', name: 'service_benefits' }, 
-            { data: 'subsistance_allowance', name: 'subsistance_allowance' },
-            { data: 'notice_pay', name: 'notice_pay' },
-            { data: 'termination_benefits', name: 'termination_benefits' },
-            { data: 'death_benefits', name: 'death_benefits' },
-            { data: 'total_amount', name: 'total_amount' }
+            { data: 'total_amount', name: 'total_amount' },
+            { data: 'action', name: 'action' }
         ], 
         initComplete: function () {   
             var api =  this.api();

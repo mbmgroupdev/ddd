@@ -104,10 +104,13 @@
                                             </div>
                                             
                                             
-
+                                            <div class="form-group has-float-label ">
+                                                <input type="text" name="emp_adv_info_nid" placeholder="National ID card no" class="form-control" value="{{ $advance->emp_adv_info_nid }}" />
+                                                <label  for="emp_adv_info_nid"> National ID </label>
+                                            </div>
                                             <div class="form-group has-float-label">
-                                                <input type="text" name="emp_adv_info_passport" placeholder="NID/Passport No" class="form-control" value="{{ $advance->emp_adv_info_passport }}" />
-                                                <label  for="emp_adv_info_passport"> NID/Passport No </label>
+                                                <input type="text" name="emp_adv_info_passport" placeholder="Passport No" class="form-control" value="{{ $advance->emp_adv_info_passport }}" />
+                                                <label  for="emp_adv_info_passport"> Passport No </label>
                                             </div>
                                              <div class="form-group has-float-label hide">
                                                 <input name="emp_adv_info_bank_name" type="text" id="bank_acc_name" placeholder="Mobile Banking/Bank Name " class="form-control" value="{{$advance->emp_adv_info_bank_name}}"  />

@@ -27,57 +27,7 @@
             <div class="panel-body">
                 <div class="row">
                     <div class="col-sm-3" style="border-right:1px solid #d1d1d1;">        
-                        <div class="user-details-block" style="padding-top: 0;">
-                            <div class="user-profile text-center mt-0 " >
-                                <img id="avatar" class="avatar-130 img-fluid" src="{{ $employee->as_pic }} " >
-                            </div>
-                            <div class="text-center mt-3">
-                                <h4><b id="name">{{ $employee->as_name }}</b></h4>
-                                <p class="mb-0" id="designation">
-                                {{ $employee->hr_designation_name }}, {{$employee->hr_department_name}}</p>
-                                <p class="mb-0" id="designation">
-                                {{$employee->hr_unit_name}}</p>
-                            </div>
-                             <table style="width: 100%;" border="0">
-                                 <tr>
-                                     <td><i class="field-title">Oracle ID</i></td>
-                                     <td class="field-data">: {{ $employee->as_oracle_code }}</td>
-                                 </tr>
-                                 <tr>
-                                     <td><i class="field-title">Associate ID</i></td>
-                                     <td class="field-data">: {{ $employee->associate_id }}</td>
-                                 </tr>
-                                 <tr>
-                                     <td><i class="field-title">Date of Join</i></td>
-                                     <td class="field-data">: {{ $employee->as_doj->format('Y-m-d') }}</td>
-                                 </tr>
-                                 <tr>
-                                     <td><i class="field-title">Age</i></td>
-                                     <td class="field-data">: {{ $employee->as_dob->age }} Years</td>
-                                 </tr>
-                                 <tr>
-                                     <td><i class="field-title">Husband Name</i></td>
-                                     <td class="field-data">: {{ $leave->husband_name }}</td>
-                                 </tr>
-                                 <tr>
-                                     <td><i class="field-title">Husband Occupation</i></td>
-                                     <td class="field-data">: {{ $leave->husband_occupasion }}</td>
-                                 </tr>
-                                 <tr>
-                                     <td><i class="field-title">Husband Age</i></td>
-                                     <td class="field-data">: {{ $leave->husband_age }}</td>
-                                 </tr>
-                                 <tr>
-                                     <td><i class="field-title">Total Child</i> <span class="field-data">: {{ ($leave->no_of_son + $leave->no_of_daughter) }}</span></td>
-                                     <td><i class="field-title">Last Child Age</i> <span class="field-data">: {{ $leave->last_child_age }} </span></td>
-                                 </tr>
-                             </table>
-                             
-                             <p>
-                                <i class="las la-file-prescription f-18 text-success" ></i> 
-                                <a href="{{ asset($leave->usg_report) }}" style="    vertical-align: text-bottom;">view USG report</a>
-                             </p>
-                        </div>
+                        @include('hr.common.maternity-leave-card')
                     </div>
                     <div class="col-sm-9" >
                         <div class="leave- d-flex justify-content-center">
@@ -87,7 +37,9 @@
                                   <h6><a href="{{url('hr/operation/maternity-medical-process/'.$leave->id)}}">Initial Checkup </a></h6>
                                   <p id="line" class="mb-0">
                                       @if($tabs['initial_checkup']) 
-                                        {{$leave->medical->checkup_date}}
+                                        @if($leave->medical->checkup_date)
+                                        {{date('d-m-Y',strtotime($leave->medical->checkup_date))}}
+                                        @endif
                                       @else
                                         ----------
                                       @endif
@@ -101,7 +53,9 @@
                                   <h6><a href="{{url('hr/operation/maternity-medical-process/'.$leave->id)}}">Routine Checkup </a></h6>
                                   <p id="line" class="mb-0">
                                       @if($tabs['routine_checkup']) 
-                                        {{$leave->medical->record->last()->checkup_date}}
+                                        @if($leave->medical->record->last()->checkup_date)
+                                        {{date('d-m-Y',strtotime($leave->medical->record->last()->checkup_date))}}
+                                        @endif
                                       @else
                                         ----------
                                       @endif
@@ -287,6 +241,8 @@
         </div>
     </div>
 </div>
+<div>
+@include('hr.operation.maternity.maternity-modal')
 @push('js')
 <script type="text/javascript">
     $("#approval-form").submit(function(e){

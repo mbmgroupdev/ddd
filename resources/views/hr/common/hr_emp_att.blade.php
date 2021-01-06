@@ -80,7 +80,7 @@
                             @php $associate_id = $employee['associate_id']; @endphp
                             <td><a href="{{url('hr/recruitment/employee/show/'.$associate_id)}}"><img height="30" src="{{ $employee['image'] }}" class='small-image min-img-file'></a></td>
                             <td>{{ $employee['oracle_code'] }}</td>
-                            <td><a href='{{ url("hr/operation/job_card?associate=$associate_id&month_year=") }}' target="_blank">{{ $associate_id }}</a></td>
+                            <td><a href='{{ url("hr/operation/job_card?associate=$associate_id&month_year=".date('Y-m',strtotime($query['date']))) }}' target="_blank">{{ $associate_id }}</a></td>
                             <td>
                                 <b>{{ $employee['name'] }}</b>
                             </td>

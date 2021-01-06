@@ -238,6 +238,7 @@ return [
         // custom
         'Custom'  => App\Helpers\Custom::class,
         'EmployeeHelper'  => App\Helpers\EmployeeHelper::class,
+        'BnConvert'  => App\Helpers\BnConvert::class,
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
 
     ],

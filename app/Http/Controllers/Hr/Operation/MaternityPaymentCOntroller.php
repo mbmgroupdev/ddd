@@ -16,6 +16,7 @@ use App\Models\Hr\MaternityNominee;
 use App\Models\Hr\MaternityPayment;
 use App\Models\Hr\SalaryAdjustMaster;
 use App\Models\Hr\SalaryAdjustDetails;
+use App\Helpers\EmployeeHelper;
 use Carbon\Carbon;
 use DB,Response,DataTables,Validator, Cache;
 
@@ -77,6 +78,7 @@ class MaternityPaymentController extends Controller
 
 		return view('hr.operation.maternity.maternity_report', compact('appoxleave','month','appoxbacklist'));
 	}
+	
 	public function listData()
 	{
 		$data = DB::table('hr_maternity_leave as l')
@@ -128,6 +130,16 @@ class MaternityPaymentController extends Controller
     	}
     	else
         {
+        	// update leave application
+        	if($request->leave_id){
+        		if($this->update($request) == 'success'){
+        			return back()->with('success', 'Leave Application updated Successfully');
+        		}else{
+        			return back()->with('error', 'Leave Application not found!');
+        		}
+        	}
+
+        	// check maternity exist
         	$check = MaternityLeave::where(['associate_id' => $request->associate, 'status' => 0])->first();
         	if($check){
         		return back()
@@ -160,7 +172,7 @@ class MaternityPaymentController extends Controller
          		$application->save();
 
          		DB::commit();
-         		log_file_write("Materny leave application for ".$request->associate_id, $application->id);
+         		log_file_write("Maternity leave application for ".$request->associate_id, $application->id);
 
             	return redirect('hr/operation/maternity-leave/'.$application->id)->with('success', 'Maternity leave application saved succesfully and proceeded to doctor for checkup!');
             }
@@ -168,9 +180,39 @@ class MaternityPaymentController extends Controller
             	DB::rollback();
             	$bug = $e->getMessage();
             	return redirect()->back()->with('error',$bug);
-          }
+          	}
 
     	}
+	}
+
+	public function update($request)
+	{
+ 		$application = MaternityLeave::findOrFail($request->leave_id);
+ 		$application->applied_date = $request->applied_date;
+ 		$application->edd = $request->edd;
+ 		$application->no_of_son = $request->no_of_son;
+ 		$application->no_of_daughter = $request->no_of_daughter;
+ 		$application->last_child_age = $request->last_child_age;
+ 		$application->husband_name = $request->husband_name;
+ 		$application->husband_age = $request->husband_age;
+ 		$application->husband_occupasion = $request->husband_occupasion;
+
+		if($request->hasFile('usg_report')){
+            $file = $request->file('usg_report');
+            $filename = uniqid() . '.' . $file->getClientOriginalExtension();
+            $dir  = '/assets/files/maternity/';
+            $file->move( public_path($dir) , $filename );
+            $usg_report = $dir.$filename;
+
+	 		$application->usg_report = $usg_report ;
+        }
+
+ 		$application->save();
+
+ 		log_file_write("Maternity leave application updated for ".$request->associate_id, $application->id);
+
+ 		return 'success';
+
 	}
 
 	public function process($id, Request $request)
@@ -508,9 +550,9 @@ class MaternityPaymentController extends Controller
 				$totalcalc['total_leave'] = $total_leave;
 				$totalcalc['ben_day'] = $ben_day;
 				$totalcalc['first_pay_day'] = $first_pay_day;
-				$totalcalc['first_pay'] = round((($totalcalc['per_wages']*$total_leave) + ($totalcalc['per_benefits']*$first_pay_day)),2);
-				$totalcalc['second_pay'] = round(($totalcalc['per_wages']*56),2);
-				$totalcalc['total_pay'] = round(($totalcalc['first_pay'] + $totalcalc['second_pay']),2);
+				$totalcalc['first_pay'] = ceil((($totalcalc['per_wages']*$total_leave) + ($totalcalc['per_benefits']*$first_pay_day)));
+				$totalcalc['second_pay'] = ceil(($totalcalc['per_wages']*56));
+				$totalcalc['total_pay'] = ceil(($totalcalc['first_pay'] + $totalcalc['second_pay']));
 
 				// insert into tabel
 				$payment = new MaternityPayment();
@@ -528,8 +570,8 @@ class MaternityPaymentController extends Controller
 
 			}else{
 
-				$totalcalc['total_pay'] = round(($totalcalc['per_wages']*112),2);
-				$totalcalc['first_pay'] = round(($totalcalc['total_pay']/2),2);
+				$totalcalc['total_pay'] = ceil(($totalcalc['per_wages']*112));
+				$totalcalc['first_pay'] = ceil(($totalcalc['total_pay']/2));
 				$totalcalc['second_pay'] = $totalcalc['first_pay'];
 
 				$payment = new MaternityPayment();
@@ -577,6 +619,13 @@ class MaternityPaymentController extends Controller
 	            	'leave_updated_by' => auth()->user()->associate_id
 	            ]);
 
+	            
+	            # remove absent record
+	            Absent::where('associate_id',$leave->associate_id)
+	            ->where('date','>=',$request->leave_from)
+	            ->where('date','>=',$request->leave_to)
+	            ->delete();
+
 				# store nominee information
 
 				$nominee = new MaternityNominee();
@@ -598,14 +647,22 @@ class MaternityPaymentController extends Controller
 				$nominee->save();
 
 				$leave->status = 'Processing';
+				
 				$employee = get_employee_by_id($leave->associate_id);
+				$salary_date = Carbon::parse($request->leave_from)->subDays(1);
+				$salary = EmployeeHelper::processPartialSalary($employee, $salary_date, 6);
 				$view = $this->calculateMaternityPayment($leave, $employee, $request);
+
+
+				$view .= view('hr.common.partial_salary_sheet', compact('salary','employee' ))->render();
 
 
 			}
 		}
 		return response(['view' => $view]);
 	}
+
+	
 
 	public function getMaternityEmployees(Request $request){
 		
@@ -692,7 +749,8 @@ class MaternityPaymentController extends Controller
 
 	}
 
-	public function saveMaternityDisburse(Request $request){
+	public function saveMaternityDisburse(Request $request)
+	{
 
 		try{
 				$m = (int) date('m', strtotime($request->from));

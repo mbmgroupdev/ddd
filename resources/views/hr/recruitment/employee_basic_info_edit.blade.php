@@ -133,8 +133,8 @@
 
                         </div>
                         <div class="col-sm-4">
-                            <div class="form-group has-required has-float-label">
-                                <input name="as_oracle_code" type="text" id="as_oracle_code" placeholder="Oracle Code" class="form-control" required="required" value="{{ $employee->as_oracle_code }}" required-optional="true" />
+                            <div class="form-group  has-float-label">
+                                <input name="as_oracle_code" type="text" id="as_oracle_code" placeholder="Oracle Code" class="form-control"  value="{{ $employee->as_oracle_code }}"  />
                                 <label  for="as_oracle_code"> Oracle Code </label>
                             </div>
                             <div class="form-group has-required has-float-label">

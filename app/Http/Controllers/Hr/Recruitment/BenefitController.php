@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Hr\Recruitment;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Jobs\ProcessUnitWiseSalary;
 use App\Models\Hr\Benefits;
 use App\Models\Hr\Designation;
 use App\Models\Hr\SalaryStructure;
@@ -18,8 +19,8 @@ use App\Models\Hr\OtherBenefits;
 use App\Models\Hr\OtherBenefitAssign;
 use App\Models\Hr\SalaryAdjustMaster;
 use App\Models\Hr\SalaryAdjustDetails;
+use Carbon\Carbon;
 use Validator,DB, DataTables, ACL,Auth;
-
 class BenefitController extends Controller
 {
     public function benefits(Request $request)
@@ -87,6 +88,31 @@ class BenefitController extends Controller
 
             if ($benefits->save())
             {
+                // process salary
+                $emp = DB::table('hr_as_basic_info')->where('associate_id',$request->ben_as_id)->first();
+                $tableName = get_att_table($emp->as_unit_id);
+
+                $queue = (new ProcessUnitWiseSalary($tableName, date('m'), date('Y'), $emp->as_id, date('d')))
+                        ->onQueue('salarygenerate')
+                        ->delay(Carbon::now()->addSeconds(2));
+                        dispatch($queue);
+
+                // update previous month also
+                $yearMonth = date("Y-m-d", strtotime("-1 months"));
+                $lock['month'] = date('m', strtotime($yearMonth));
+                $lock['year'] = date('Y', strtotime($yearMonth));
+                $lock['unit_id'] = $emp->as_unit_id;
+                $lockActivity = monthly_activity_close($lock);
+                
+                if($lockActivity  == 0){
+                    
+                    $queue = (new ProcessUnitWiseSalary($tableName, $lock['month'], $lock['year'] , $emp->as_id, date('t', strtotime($yearMonth))))
+                            ->onQueue('salarygenerate')
+                            ->delay(Carbon::now()->addSeconds(2));
+                            dispatch($queue);
+                }
+
+               
                 log_file_write("Employee benefits updated successfully", $benefits->ben_id);
 
                 return redirect('hr/payroll/employee-benefit?associate_id='.$request->ben_as_id)
@@ -107,7 +133,7 @@ class BenefitController extends Controller
         }
     }
 
-
+ 
     public function benefitList()
     {
         
@@ -425,348 +451,7 @@ class BenefitController extends Controller
         return response()->json($result);
     }
 
-    public function incrementList()
-    {
-        return view('hr/payroll/increment_list');
-    }
-
-    public function incrementListData()
-    {
-        $data= DB::table('hr_increment AS inc')
-                    ->where('status', 0)
-                    ->select([
-                        'inc.id',
-                        'inc.associate_id',
-                        'b.as_name',
-                        'inc.increment_type',
-                        'inc.increment_amount',
-                        'inc.amount_type',
-                        'inc.eligible_date',
-                        'inc.effective_date',
-                        'c.increment_type AS inc_type_name',
-                    ])
-                    ->leftJoin('hr_as_basic_info AS b', 'b.associate_id', 'inc.associate_id')
-                    ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
-                    ->whereIn('b.as_location', auth()->user()->location_permissions())
-                    ->leftJoin('hr_increment_type AS c', 'c.id', 'inc.increment_type' )
-                    ->orderBy('inc.effective_date','desc')
-                    ->get();
-
-        $perm = check_permission('Manage Increment');
-
-        return DataTables::of($data)
-            ->addIndexColumn()
-            ->addColumn('action', function ($data) use ($perm) {
-                if($perm){
-
-                    return "<div class=\"btn-group\">
-                        <a type=\"button\" href=".url('hr/payroll/increment_edit/'.$data->id)." class=\"btn btn-xs btn-primary\"><i class=\"fa fa-pencil\"></i></a>
-                    </div>";
-                }else{
-                    return '';
-                }
-            })
-            ->editColumn('effective_date', function($data){
-                return date('Y-m-d', strtotime($data->effective_date));
-            })
-            ->rawColumns(['action'])
-            ->make(true);  
-                             
-    }
-
-
     
-
-    public function showIncrementForm()
-    {
-        // ACL::check(["permission" => "hr_payroll_benefit_list"]);
-        #-----------------------------------------------------------#
-        $unitList = Unit::whereIn('hr_unit_id', auth()->user()->unit_permissions())
-            ->pluck('hr_unit_name', 'hr_unit_id');
-        $employeeTypes  = EmpType::where('hr_emp_type_status', '1')->pluck('hr_emp_type_name', 'emp_type_id');
-        $typeList= IncrementType::pluck('increment_type', 'id');
-
-        /*$incrementList= DB::table('hr_increment AS inc')
-                            ->where('status', 0)
-                            ->select([
-                                'inc.id',
-                                'inc.associate_id',
-                                'b.as_name',
-                                'inc.increment_type',
-                                'inc.increment_amount',
-                                'inc.amount_type',
-                                'inc.eligible_date',
-                                'inc.effective_date',
-                                'c.increment_type AS inc_type_name',
-                            ])
-                            ->leftJoin('hr_as_basic_info AS b', 'b.associate_id', 'inc.associate_id')
-                            ->leftJoin('hr_increment_type AS c', 'c.id', 'inc.increment_type' )
-                            ->orderBy('inc.id','desc')
-                            ->get();*/
-
-        //Arear Salary List----
-        /*$associate_ids = DB::table('hr_salary_adjust_master as b')
-                                ->groupBy('b.associate_id')
-                                ->pluck('b.associate_id')
-                                ->toArray();*/
-        // dd($associate_ids);
-        /*foreach ($associate_ids as $key => $ass) {
-            $data = DB::table('hr_salary_adjust_master as b')->where('b.associate_id', $ass)
-                    ->select([
-                        'b.month',
-                        'b.associate_id',
-                        'b.year',
-                        'c.amount',
-                        'c.status',
-                        'd.as_name',
-                        'd.as_contact',
-                        'e.hr_unit_name',
-                        'f.hr_department_name',
-                    ])
-                    ->leftJoin('hr_salary_adjust_details as c', 'c.salary_adjust_master_id', 'b.id')
-                    ->leftJoin('hr_as_basic_info as d','d.associate_id', 'b.associate_id')
-                    ->leftJoin('hr_unit as e','e.hr_unit_id', 'd.as_unit_id')
-                    ->leftJoin('hr_department as f','f.hr_department_id', 'd.as_department_id')
-                    ->where('c.type', 3)
-                    ->get();
-            $arrear_data[$key] = $data;
-        }*/
-
-
-        // dd($arrear_data);
-
-        return view('hr/payroll/increment', compact('unitList','employeeTypes', 'typeList'));
-    }
-
-    public function storeIncrement(Request $request)
-    {
-        $created_by= Auth::user()->associate_id;
-
-        if(empty($request->associate_id) || !is_array($request->associate_id))
-        {
-            return back()
-                ->withInput()
-                ->with('error', 'Please select at least one associate.');
-        }
-        
-        // Declare and define two dates 
-        $date1 = strtotime($request->applied_date);  
-        $date2 = strtotime($request->effective_date);  
-        //extract years
-        $year1 = date('Y', $date1);
-        // $year2 = date('Y', $date2);
-        $year2 = date('Y');
-        //extract month
-        $month1 = date('m', $date1);
-        // $month2 = date('m', $date2);
-        $month2 = date('m');
-        //month difference
-        $month_diff = (($year2 - $year1) * 12) + ($month2 - $month1);
-
-        // dd($request->applied_date, $request->effective_date,"Difference: ".$month_diff.' Months ');
-
-
-
-        for($i=0; $i<sizeof($request->associate_id); $i++)
-        {
-            $salary= DB::table('hr_benefits')
-                            ->where('ben_as_id', $request->associate_id[$i])
-                            ->pluck('ben_current_salary')
-                            ->first();
-
-            $doj= DB::table('hr_as_basic_info')
-                    ->where('associate_id',$request->associate_id[$i] )
-                    ->pluck('as_doj')
-                    ->first();
-            $eligible_at = date("Y-m-d", strtotime("$doj + 1 year"));
-            // $eligible_at = $request->elligible_date;        
-
-            $increment= new Increment();
-            $increment->associate_id = $request->associate_id[$i] ;
-            $increment->current_salary = $salary;
-            $increment->increment_type = $request->increment_type;
-            $increment->increment_amount = $request->increment_amount ;
-            $increment->amount_type = $request->amount_type ;
-            $increment->applied_date = $request->applied_date ;
-            $increment->eligible_date = $eligible_at ;
-            $increment->effective_date = $request->effective_date ;
-            $increment->status = 0 ;
-            $increment->created_by = $created_by;
-            $increment->created_at = date('Y-m-d H:i:s') ;
-            $increment->save();
-
-            log_file_write("Increment Entry Saved", $increment->id);
-
-
-            //Keeping the not given increment amount---- SalaryAdjustMaster, SalaryAdjustDetails
-             $basic = DB::table('hr_benefits')
-                            ->where('ben_as_id', $request->associate_id[$i])
-                            ->pluck('ben_basic')
-                            ->first();
-             if($request->amount_type == 1){
-                    $_amount = $request->increment_amount;
-                }
-             else{
-                    $_amount = ($basic/100)*$increment->increment_amount;
-                }
-
-             $y = (int)$year1;
-             $m = (int)$month1;
-
-             for($j=0; $j<$month_diff; $j++ ){
-                    //-----------master data insert
-                        $master = new SalaryAdjustMaster();
-                        $master->associate_id = $request->associate_id[$i];
-                        if($m > 12){
-                            $m=1;
-                            $y+=1;
-                            $master->month    = $m;
-                            $master->year     = $y;
-                            $m+=1;
-                        }
-                        else{
-                            $master->month    = $m;
-                            $master->year     = $y;
-                            $m+=1;
-                        }
-                        
-                        $master->save();
-
-
-                    //-----------details insert
-                        $detail = new SalaryAdjustDetails();
-                        $detail->salary_adjust_master_id = $master->id;
-                        $detail->date                    = date('Y-m-d');
-                        $detail->amount                  = $_amount;
-                        $detail->type                    = 3;
-                        $detail->save();
-                    
-             }   
-            //-----------------------------------------------------------------------------
-        }
-
-
-        return back()
-            ->with('success', "Increment Saved Successfully!");
-    }
-
-    //Edit Increment
-    public function editIncrement($id){
-
-        $unitList = Unit::whereIn('hr_unit_id', auth()->user()->unit_permissions())
-            ->pluck('hr_unit_name', 'hr_unit_id');
-        $employeeTypes  = EmpType::where('hr_emp_type_status', '1')->pluck('hr_emp_type_name', 'emp_type_id');
-        $typeList= IncrementType::pluck('increment_type', 'id');
-        $increment= DB::table('hr_increment AS inc')
-                        ->where('id', $id)
-                        ->select([
-                            'inc.*',
-                            'b.as_emp_type_id',
-                            'b.as_unit_id'
-                        ])
-                        ->leftJoin('hr_as_basic_info AS b', 'b.associate_id', 'inc.associate_id')
-                        ->first();
-        return view('hr/payroll/increment_edit', compact('unitList', 'employeeTypes', 'typeList', 'increment'));
-    }
-
-    //Update Increment
-    public function updateIncrement(Request $request){
-
-        Increment::where('id', $request->increment_id)
-                    ->update([
-                          "increment_type"      => $request->increment_type,
-                          "applied_date"        => $request->applied_date,
-                          "effective_date"      => $request->effective_date,
-                          "increment_amount"    => $request->increment_amount,
-                          "amount_type"         => $request->amount_type
-                    ]);
-
-        log_file_write("Increment Updated", $request->increment_id);
-        return back()
-            ->with('success', "Increment updated Successfully!");
-    }
-
-    //Increment corn job
-    public function incrementJobs(){
-
-        $today= date('Y-m-d');
-        $todays_increment= DB::table('hr_increment')
-                ->where('effective_date', '<=', $today)
-                ->where('status', 0)
-                ->limit(10)
-                ->get();
-
-        $salary_structure= DB::table('hr_salary_structure AS s')
-                                ->where('status', 1)
-                                ->select('s.*')
-                                ->orderBy('id', 'DESC')
-                                ->first();
-
-        if(!empty($todays_increment) && !empty($salary_structure)){
-
-            foreach ($todays_increment as $key => $increment) {
-
-                if($increment->amount_type ==1)
-                {
-                    $ben_current_salary= $increment->current_salary+ $increment->increment_amount;
-                }
-                else{
-                    $ben_current_salary= $increment->current_salary+ (($increment->current_salary/100)*$increment->increment_amount);
-                }
-
-                $ben_medical= $salary_structure->medical;
-                $ben_transport= $salary_structure->transport;
-                $ben_food= $salary_structure->food;
-
-                $ben_basic= (($ben_current_salary-($salary_structure->medical+$salary_structure->transport+$salary_structure->food))/$salary_structure->basic);
-                //$ben_basic= (($ben_current_salary/100)*$salary_structure->basic);
-                $ben_house_rent= $ben_current_salary - ($ben_basic+$salary_structure->medical+$salary_structure->transport+$salary_structure->food);
-                
-
-                $bank= DB::table('hr_benefits')->where('ben_as_id', $increment->associate_id)
-                            ->where('ben_status', 1)
-                            ->first();
-
-                //paid in bank
-                if(!empty($bank)){
-                    if($bank->ben_bank_amount>= $ben_current_salary ){
-                        $bank_paid= $ben_current_salary;
-                        $cash_paid= 0;
-                    }
-                    else{
-                        $bank_paid= $bank->ben_bank_amount;
-                        $cash_paid= $ben_current_salary-$bank->ben_bank_amount;
-                    }
-                }
-                else{
-                    $bank_paid= $ben_current_salary;
-                        $cash_paid= 0;
-                }
-
-
-                Benefits::where('ben_as_id', $increment->associate_id)
-                    ->update([
-                        'ben_cash_amount' => $cash_paid,
-                        'ben_bank_amount' => $bank_paid,
-                        'ben_current_salary' => $ben_current_salary,
-                        'ben_basic' => $ben_basic,
-                        'ben_house_rent' => $ben_house_rent,
-                        'ben_medical' => $ben_medical,
-                        'ben_transport' => $ben_transport,
-                        'ben_food' => $ben_food
-                        ]);
-
-                $id = Benefits::where('ben_as_id', $increment->associate_id)->value('ben_id');
-                log_file_write("Jobs Benefits Updated", $id );
-
-                Increment::where('associate_id', $increment->associate_id)
-                            ->where('status', 0)
-                            ->update([
-                                'status' => 1
-                            ]);
-            }
-        }
-    }
 
     # Associate Unit by Floor List
     public function getAssociates(Request $request)

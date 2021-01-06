@@ -72,6 +72,9 @@
                                         border-bottom: 1px dotted #777;
                                         flex-grow: 1;
                                     }
+                                    p{
+                                        margin: 5px;padding:0;
+                                    }
                                 </style>
                                 <?php
                                 date_default_timezone_set('Asia/Dhaka');
@@ -86,7 +89,7 @@
 
 
                                 <p>১ । প্রতিষ্ঠানের নামঃ&nbsp;{{ (!empty($info->hr_unit_name_bn)?$info->hr_unit_name_bn:null) }}</p>
-                                <p><br/>২ । প্রতিষ্ঠানের ঠিকানাঃ&nbsp;{{ (!empty($info->hr_unit_address_bn)?$info->hr_unit_address_bn:null) }}</p>
+                                <p>২ । প্রতিষ্ঠানের ঠিকানাঃ&nbsp;{{ (!empty($info->hr_unit_address_bn)?$info->hr_unit_address_bn:null) }}</p>
                                 <p class="d-flex">
                                     <font style="width:250px">৩ । কর্মকর্তা/কর্মচারী/শ্রমিকের নাম ও ঠিকানাঃ &nbsp;</font>
                                     <font class="bordered">
@@ -104,7 +107,7 @@
                                     </font>লিঙ্গঃ<font style="width:36%;border-bottom:1px dotted #999;flex-grow: 1">&nbsp;{{ ((!empty($info->as_gender) && $info->as_gender=="Male")?"পুরুষ":"মহিলা") }}
                                     </font>
                                 </p>
-                                <br/>
+                                
                                 <p class="d-flex">
                                     <font style="width:150px">
                                     ৪ । পিতা/মাতা/{{ ((!empty($info->as_gender) && $info->as_gender=="Male")?"স্ত্রীর":"স্বামীর") }}  নামঃ 
@@ -113,7 +116,7 @@
                                     <font class="bordered">{{ (!empty($info->hr_bn_father_name)?$info->hr_bn_father_name:null) }}/{{ (!empty($info->hr_bn_mother_name)?$info->hr_bn_mother_name:null) }}/{{ (!empty($info->hr_bn_spouse_name)?$info->hr_bn_spouse_name:null) }}
                                     </font>
                                 </p>
-                                <br/>
+                                
                                 <p >
                                     <font style="width:25%">
                                     ৫ । জন্ম তারিখঃ</font>&nbsp;
@@ -130,12 +133,12 @@
                                         {{ (!empty($info->as_dob)?str_replace($en,$bn, date("Y", strtotime($info->as_dob))):null) }}&nbsp;
                                     </font>
                                 </p>
-                                <p><br/>
+                                <p>
                                     <font style="width:19%;display:inline-block">৬ । সনাক্তকরণ চিন্হ (যদি থাকে)</font>
                                     <font style="width:76%;border-bottom:1px dotted #999; display:inline-block">&nbsp;
                                     </font>
                                 </p>
-                                <br/> 
+                                
                                 <p class="d-flex">
                                     <font style="width:14%;display:inline-block">৭ । স্থায়ী ঠিকানাঃ</font>
                                     গ্রামঃ<font style="width:40%;border-bottom:1px dotted #999; display:inline-block">&nbsp;
@@ -145,7 +148,7 @@
                                         {{ (!empty($info->hr_bn_permanent_po)?$info->hr_bn_permanent_po:null) }}
                                     </font>
                                 </p>
-                                <br>
+                                
                                 <p class="d-flex">
                                     <font style="width:14%;display:inline-block">&nbsp;</font>
                                     থানাঃ<font style="width:40%;border-bottom:1px dotted #999; display:inline-block">&nbsp;
@@ -155,14 +158,14 @@
                                         {{ (!empty($info->permanent_district_bn)?$info->permanent_district_bn:null) }}
                                     </font>
                                 </p> 
-                                <br/>
+                                
                                 <p class="d-flex">
                                     <font style="width:18%;display:inline-block">৮ । চাকরিতে নিযুক্তির তারিখঃ</font>
                                     <font class="bordered">
                                         {{ (!empty($info->as_doj)?str_replace($en,$bn, date("d F, Y", strtotime($info->as_doj))):null) }}&nbsp;
                                     </font>
                                 </p>
-                                <br>
+                            
                                 <p class="d-flex">
                                     <font style="width:10%;display:inline-block">৯ । পদের নামঃ</font>
                                     <font class="bordered">
@@ -191,49 +194,40 @@
                                             <td align="center" colspan="2">(৪)</td>
                                         </tr>
                                         <tr>
-                                            <td align="center"></td>
-                                            <td align="center"></td>
-                                            <td align="center"></td>
+                                            <td align="center"  rowspan="2" style="height: 80px"></td>
+                                            <td align="center"  rowspan="2"></td>
+                                            <td align="center"  rowspan="2"></td>
                                             <td align="center" width="15%">জমাখাত</td>
                                             <td align="center" width="15%">অংশ</td> 
                                         </tr> 
                                         <tr>
-                                            <td align="center"></td>
-                                            <td align="center"></td>
-                                            <td align="center"></td>
                                             <td align="center">বকেয়া মজুরি </td>
                                             <td align="center"></td> 
                                         </tr>
                                         <tr>
-                                            <td align="center"></td>
-                                            <td align="center"></td>
-                                            <td align="center"></td>
+                                            <td align="center" rowspan="2" style="height: 80px"></td>
+                                            <td align="center" rowspan="2"></td>
+                                            <td align="center" rowspan="2"></td>
                                             <td align="center">প্রভিডেন্ট ফান্ড </td>
                                             <td align="center"></td> 
                                         </tr>
                                         <tr>
-                                            <td align="center"></td>
-                                            <td align="center"></td>
-                                            <td align="center"></td>
                                             <td align="center">বীমা</td>
                                             <td align="center"></td> 
                                         </tr>
                                         <tr>
-                                            <td align="center"></td>
-                                            <td align="center"></td>
-                                            <td align="center"></td>
+                                            <td align="center" rowspan="2" style="height: 80px"></td>
+                                            <td align="center" rowspan="2"></td>
+                                            <td align="center" rowspan="2"></td>
                                             <td align="center">দুর্ঘটনার ক্ষতিপূরণ</td>
                                             <td align="center"></td> 
                                         </tr>
                                         <tr>
-                                            <td align="center"></td>
-                                            <td align="center"></td>
-                                            <td align="center"></td>
                                             <td align="center">লভ্যাংশ</td>
                                             <td align="center"></td> 
                                         </tr>
                                         <tr>
-                                            <td align="center"></td>
+                                            <td align="center" style="height: 80px;"></td>
                                             <td align="center"></td>
                                             <td align="center"></td>
                                             <td align="center">অন্যান্য</td>
@@ -245,26 +239,38 @@
                                     </tbody>
                                 </table>
 
-                                <p style="margin:20px auto;text-align:justify;">প্রত্যয়ন করিতেছি যে, আমার উপস্থিতিতে জনাব/জনাবা <font style="width:160px;border-bottom:1px dotted #999; display:inline-block">{{ (!empty($info->hr_bn_associate_name)?$info->hr_bn_associate_name:null) }}&nbsp;</font> লিপিবদ্ধ বিবরণসমূহ পাঠ করিবার পর উক্ত ঘোষণা সাক্ষর করিয়াছেন। </p>
+                                <p style="margin:20px auto;text-align:justify;">প্রত্যয়ন করিতেছি যে, আমার উপস্থিতিতে জনাব/জনাবা <font style="width:160px;border-bottom:1px dotted #999; display:inline-block"></font> লিপিবদ্ধ বিবরণসমূহ পাঠ করিবার পর উক্ত ঘোষণা সাক্ষর করিয়াছেন। </p>
 
+                                <div style="display: flex;justify-content: space-between;">
+                                    <div style="width: 50%">
+                                        <p style="text-align:left;">
+                                            <br><br><br>
+                                            <font style="width:100%;border-top:1px dotted #999; display:inline-block;padding-top:10px">তারিখ সহ মনোনীত ব্যক্তিগণের স্বাক্ষর অথবা টিপসই <br/>
+                                            (কর্মকর্তা/কর্মচারী//শ্রমিক কর্তৃক সত্যায়িত ছবি)</font> <br>
+                                            <div style="width:120px;height: 120px;border:1px solid;"></div> 
+                                        </p> 
+                                        
+                                    </div>
+                                    <div style="width: 50%">
+                                        <p style="text-align:right;">
+                                            <br/>
+                                            <font style="width:50%;border-bottom:1px dotted #999; display:inline-block">&nbsp;</font><br/><br/><br>
+                                            <font style="width:50%;display:inline-block;text-align:left">মনোনয়ন প্রদানকারী কর্মকর্তা/কর্মচারী/শ্রমিকের স্বাক্ষর, টিপসই ও তারিখ</font><br/>
+                                        </p>
+                                        <p style="text-align:right;">
+                                            <br><br><br>
+                                            <font style="width:50%;border-bottom:1px dotted #999; display:inline-block">&nbsp;</font><br/><br/>
+                                            <font style="width:50%;display:inline-block;text-align:left">মালিকের বা প্রধিকারপ্রাপ্ত কর্মকর্তার স্বাক্ষর ও তারিখ</font><br/>
+                                            <font style="width:50%;border-bottom:1px dotted #999; display:inline-block">&nbsp;</font>
+                                        </p>
+                                        
+                                    </div>
+                                </div>
+                                
 
-                                <p style="text-align:right;">
-                                    <br/>
-                                    <font style="width:30%;border-bottom:1px dotted #999; display:inline-block">&nbsp;</font><br/><br/>
-                                    <font style="width:30%;display:inline-block;text-align:left">মনোনয়ন প্রদানকারী কর্মকর্তা/কর্মচারী/শ্রমিকের স্বাক্ষর, টিপসই ও তারিখ</font><br/>
-                                    <font style="width:30%;border-bottom:1px dotted #999; display:inline-block">&nbsp;</font>
-                                </p>
+                                        
 
-                                <p style="text-align:left;">
-                                    <font style="width:30%;border-top:1px dotted #999; display:inline-block;padding-top:10px">তারিখ সহ মনোনীত ব্যক্তিগণের স্বাক্ষর অথবা টিপসই <br/>
-                                    (কর্মকর্তা/কর্মচারী//শ্রমিক কর্তৃক সত্যায়িত ছবি)</font> 
-                                </p> 
-
-                                <p style="text-align:right;">
-                                    <font style="width:30%;border-bottom:1px dotted #999; display:inline-block">&nbsp;</font><br/><br/>
-                                    <font style="width:30%;display:inline-block;text-align:left">মালিকের বা প্রধিকারপ্রাপ্ত কর্মকর্তার স্বাক্ষর ও তারিখ</font><br/>
-                                    <font style="width:30%;border-bottom:1px dotted #999; display:inline-block">&nbsp;</font>
-                                </p>
+                                
                             </div>
                             </div>
                         </div>

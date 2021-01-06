@@ -506,13 +506,15 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 	//Increment
 	Route::get('hr/payroll/increment', 'Hr\Payroll\IncrementController@index');
 	Route::get('hr/payroll/increment-eligible', 'Hr\Payroll\IncrementController@getEligibleList');
+	Route::get('hr/payroll/increment-employeewise', 'Hr\Payroll\IncrementController@getEmployeeSpecialList');
+	Route::post('hr/payroll/increment-action', 'Hr\Payroll\IncrementController@incrementAction');
 	//Route::get('hr/payroll/increment', 'Hr\Recruitment\BenefitController@showIncrementForm');
-	Route::get('hr/payroll/increment-list', 'Hr\Recruitment\BenefitController@incrementList');
-	Route::get('hr/payroll/increment-list-data', 'Hr\Recruitment\BenefitController@incrementListData');
-	Route::get('hr/payroll/get_associate', 'Hr\Recruitment\BenefitController@getAssociates')->middleware(['permission:Manage Increment']);
-	Route::post('hr/payroll/increment', 'Hr\Recruitment\BenefitController@storeIncrement')->middleware(['permission:Manage Increment']);
-	Route::get('hr/payroll/increment_edit/{id}', 'Hr\Recruitment\BenefitController@editIncrement')->middleware(['permission:Manage Increment']);
-	Route::post('hr/payroll/increment_update', 'Hr\Recruitment\BenefitController@updateIncrement')->middleware(['permission:Manage Increment']);
+	Route::get('hr/payroll/increment-list', 'Hr\Payroll\IncrementController@incrementList');
+	Route::get('hr/payroll/increment-list-data', 'Hr\Payroll\IncrementController@incrementListData');
+	Route::get('hr/payroll/get_associate', 'Hr\Payroll\IncrementController@getAssociates')->middleware(['permission:Manage Increment']);
+	Route::post('hr/payroll/increment', 'Hr\Payroll\IncrementController@storeIncrement')->middleware(['permission:Manage Increment']);
+	Route::get('hr/payroll/increment_edit/{id}', 'Hr\Payroll\IncrementController@editIncrement')->middleware(['permission:Manage Increment']);
+	Route::post('hr/payroll/increment_update', 'Hr\Payroll\IncrementController@updateIncrement')->middleware(['permission:Manage Increment']);
 
 	//arear salary
 	Route::get('hr/payroll/arear_salary_disburse/{associate_id}', 'Hr\Recruitment\BenefitController@arearSalaryGive');
@@ -590,6 +592,7 @@ Route::get('hr/payroll/salary', 'Hr\Payroll\SalaryController@view');
 	});
 
 	Route::get('hr/recruitment/worker/migrate/{worker_id}', 'Hr\Recruitment\RecruitController@migrate');
+	Route::get('hr/recruitment/worker/remove/{worker_id}', 'Hr\Recruitment\RecruitController@destroy');
 
 	// Employee
 	Route::group(['middleware' => 'permission:Employee List'], function(){
@@ -1080,6 +1083,7 @@ Route::get('hr/setup/retirement/get_employee_details', 'Hr\Setup\RetirementPolic
 	#----------  Reports By Mati-----------#
 	//Salary/Wages Increment Status
 	Route::get('hr/recruitment/increment_report', 'Hr\Reports\IncrementReportController@incrementReport');
+	
 	Route::get('hr/recruitment/nominee', 'Hr\Reports\NomineeController@showForm')->middleware(['permission:Nominee']);
 	Route::get('hr/reports/leave_log', 'Hr\Reports\LeaveLogController@showForm')->middleware(['permission:Leave Log']);
 	Route::get('hr/reports/leave_check', 'Hr\Reports\LeaveLogController@checkDueLeave');
@@ -1466,6 +1470,7 @@ Route::get('/hr/reports/monthly-mmr-report', 'Hr\ReportController@monthlyMMR');
 
 Route::get('hr/operation/test', 'Hr\Operation\VoucherController@test');
 Route::get('hr/test', 'TestController@test');
+Route::get('hr/reports/monthly-salary-sheet', 'TestController@getMonthlySalary');
 Route::get('hr/reports/employee-daily-attendance', 'TestController@exportReport');
 
 // test route
@@ -1475,4 +1480,13 @@ Route::get('hr/check-report', 'TestController@check');
 Route::group(['prefix' => 'hr/reports/summary','namespace' => 'Hr\Reports'], function(){
 		Route::get('/', 'SummaryReportController@index');
 		Route::get('/report', 'SummaryReportController@attendanceReport');
+		Route::get('/excel', 'SummaryReportController@excel');
+});
+
+// holiday duty payment
+Route::group(['prefix' => 'hr/operation/holiday-duty','namespace' => 'Hr\Operation'], function(){
+
+	Route::get('/','HolidayDutyController@index');
+	Route::get('/date','HolidayDutyController@getData');
+
 });

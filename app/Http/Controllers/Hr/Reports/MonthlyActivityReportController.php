@@ -102,7 +102,12 @@ class MonthlyActivityReportController extends Controller
                return $query->where('emp.as_location',$input['location']);
             })
             ->when(!empty($input['employee_status']), function ($query) use($input){
-               return $query->where('s.emp_status',$input['employee_status']);
+                if($input['employee_status'] == 25){
+                    return $query->whereIn('s.emp_status', [2,5]);
+                }else{
+                   return $query->where('s.emp_status', $input['employee_status']);
+
+                }
             })
             ->when(!empty($input['pay_status']), function ($query) use($input){
                 if($input['pay_status'] == "cash"){
@@ -340,6 +345,7 @@ class MonthlyActivityReportController extends Controller
                 return $query->whereIn('s.emp_status', [2,5]);
             }else{
                return $query->where('s.emp_status', $input['employee_status']);
+
             }
         })
         ->when(!empty($input['area']), function ($query) use($input){
@@ -456,7 +462,12 @@ class MonthlyActivityReportController extends Controller
                return $query->where('emp.as_location',$input['location']);
             })
             ->when(!empty($input['employee_status']), function ($query) use($input){
-               return $query->where('s.emp_status',$input['employee_status']);
+                if($input['employee_status'] == 25){
+                    return $query->whereIn('s.emp_status', [2,5]);
+                }else{
+                   return $query->where('s.emp_status', $input['employee_status']);
+
+                }
             })
             ->when(!empty($input['pay_status']), function ($query) use($input){
                 if($input['pay_status'] == "cash"){

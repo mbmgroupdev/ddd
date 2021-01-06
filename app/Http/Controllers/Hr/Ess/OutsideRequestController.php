@@ -48,7 +48,6 @@ class OutsideRequestController extends Controller
     		DB::beginTransaction();
     		try {
 
-        // dd($request->all());
     			$out= new Outsides();
 
     			$out->as_id = auth()->user()->associate_id;

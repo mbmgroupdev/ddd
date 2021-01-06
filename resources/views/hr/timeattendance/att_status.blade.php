@@ -179,7 +179,7 @@ $(document).ready(function() {
                   getdata: val
                 },
                 success: function(response){
-                    // console.log(response);
+                    console.log(response);
                     if(response.status == 'success'){
                         cur = parseFloat(parseFloat(cur) + parseFloat(per)).toFixed(2);
                         if(cur<100){

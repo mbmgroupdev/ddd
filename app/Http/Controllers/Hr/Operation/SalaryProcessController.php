@@ -91,7 +91,14 @@ class SalaryProcessController extends Controller
             ->when(!empty($input['location']), function ($query) use($input){
                return $query->where('emp.as_location',$input['location']);
             })
-            ->where('s.emp_status', $input['employee_status'])
+            ->when(!empty($input['employee_status']), function ($query) use($input){
+                if($input['employee_status'] == 25){
+                    return $query->whereIn('s.emp_status', [2,5]);
+                }else{
+                   return $query->where('s.emp_status', $input['employee_status']);
+
+                }
+            })
             ->when(!empty($input['area']), function ($query) use($input){
                return $query->where('emp.as_area_id',$input['area']);
             })
@@ -142,6 +149,7 @@ class SalaryProcessController extends Controller
             $queryData->leftjoin(DB::raw('(' . $employeeBanDataSql. ') AS bemp'), function($join) use ($employeeBanData) {
                 $join->on('bemp.hr_bn_associate_id','emp.associate_id')->addBinding($employeeBanData->getBindings());
             });
+
                 
             $queryData->select('s.*', 'emp.as_doj','emp.associate_id', 'emp.as_ot', 'emp.as_designation_id', 'emp.as_section_id', 'emp.as_location', 'bemp.hr_bn_associate_name', 'emp.as_oracle_code', 'emp.as_unit_id',DB::raw('s.ot_hour * s.ot_rate as ot_amount'));
             $getSalaryList = $queryData->orderBy('emp.as_oracle_sl', 'asc')->get();

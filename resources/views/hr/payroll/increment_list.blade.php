@@ -1,4 +1,4 @@
-@extends('hr.layout')
+@extends('hr.layout') 
 @section('title', 'Increment')
 @section('main-content')
 @push('css')
@@ -9,6 +9,20 @@
 
         /*.form-group {overflow: hidden;}*/
         table.header-fixed1 tbody {max-height: 240px;  overflow-y: scroll;}
+        table th:nth-child(2) input{
+            width: 80px!important;
+        }
+        .nav-year{
+            font-size: 14px;
+            font-weight: bold;
+            color: #706f6f;
+            padding: 0 10px;
+            border-right: 1px solid #706f6f;
+        }
+        .nav-year:last-child{
+            border: 0;
+        }
+
 
     </style>
 @endpush
@@ -30,25 +44,16 @@
 			</ul><!-- /.breadcrumb --> 
 		</div>
         @php
-            $nextyear = null;
             $year = request()->get('year')??date('Y');
-            $prevyear = $year-1;
-            if($year < date('Y')){
-                $nextyear = $year+1;
-            }
+
         @endphp
         <div class="panel">
             <div class="panel-body text-center p-2">
-                <a href="{{url('hr/payroll/increment-list?year='.$prevyear)}}" class="btn" data-toggle="tooltip" data-placement="top" title="" data-original-title="Previous Year Report" >
-                  <i class="las la-chevron-left f-16"></i>
-                </a>
-
-                <b class="f-16" id="result-head">Increment List: {{ $year }} </b>
-                @if($nextyear != null)
-                <a href="{{url('hr/payroll/increment-list?year='.$nextyear)}}" class="btn" data-toggle="tooltip" data-placement="top" title="" data-original-title="Next Year Report" >
-                  <i class="las la-chevron-right f-16"></i>
-                </a>
-                @endif
+                @foreach(range(date('Y')-12, date('Y')) as $i)
+                    <a href="{{url('hr/payroll/increment-list?year='.$i)}}" class="nav-year @if($i == $year) text-primary @endif" data-toggle="tooltip" data-placement="top" title="" data-original-title="Yearly Report" >
+                        {{$i}}
+                    </a>
+                @endforeach
             </div>
         </div>
 
@@ -62,8 +67,11 @@
                                 <th>Sl.</th>
                                 <th>Associate ID</th>
                                 <th>Name</th>
+                                <th>Oracle ID</th>
+                                <th>Designation</th>
                                 <th>Inc. Type</th>
                                 <th>Inc. Amount</th>
+                                <th>Applied Date</th>
                                 <th>Effective Date</th>
                                 <th>Action</th>
                             </tr>
@@ -76,15 +84,59 @@
 		</div><!-- /.page-content -->
 	</div>
 </div>
+<div id="increment_letter_bn" style="display: none;">
+    @include('hr.common.increment_letter_bn')
+</div>
+<div id="increment_letter_en" style="display: none;">
+    @include('hr.common.increment_letter_en')
+</div>
 @push('js')
 <script type="text/javascript"> 
+function printLetter(letter)
+{ 
+    $('#bn_letter_name').text(letter.name);
+    $('#bn_letter_designation').text(letter.designation);
+    $('#bn_letter_id').text(letter.associate_id);
+    $('#bn_letter_section').text(letter.section);
+    $('#bn_prev_salary').text(letter.salary);
+    $('#bn_incr').text(letter.inc);
+    $('#bn_present_salary').text(letter.new_salary);
+    $('#bn_effective_date').text(letter.effective_date);
+    var myWindow=window.open('','','width=800,height=800');
+    myWindow.document.write('<html><head></head><body style="font-size:10px;">');
+    myWindow.document.write(document.getElementById('increment_letter_bn').innerHTML);
+    myWindow.document.write('</body></html>');
+    myWindow.focus();
+    myWindow.print();
+    myWindow.close();
+}
+
+function printEnLetter(letter)
+{ 
+    $('#letter_name').text(letter.name);
+    $('#letter_title').text(letter.title);
+    $('#letter_doj').text(letter.doj);
+    $('#letter_designation').text(letter.prev_desg);
+    $('#letter_id').text(letter.associate_id);
+    $('#letter_department').text(letter.department);
+    $('#en_prev_desg').text(letter.prev_desg);
+    $('#en_curr_desg').text(letter.curr_desg);
+    $('#en_effective_date').text(letter.effective_date);
+    var myWindow=window.open('','','width=800,height=800');
+    myWindow.document.write('<html><head></head><body style="font-size:10px;">');
+    myWindow.document.write(document.getElementById('increment_letter_en').innerHTML);
+    myWindow.document.write('</body></html>');
+    myWindow.focus();
+    myWindow.print();
+    myWindow.close();
+}
 $(document).ready(function(){
     var totalempcount = 0;
     var totalemp = 0;
     var searchable = [1,2];
     var selectable = []; //use 4,5,6,7,8,9,10,11,....and * for all
     var dropdownList = {};
-    var exportColName = ['Sl.','Associate ID','Name','Increment Type','Increment Amount'];
+    var exportColName = ['Sl.','Associate ID','Name','Oracle Code','Designation','Increment Type','Increment Amount','Applied Date','Effective Date'];
         var exportCol = [0,1,2,3,4,5];
     var dt =  $('#dataTables').DataTable({
            order: [], //reset auto order
@@ -100,7 +152,7 @@ $(document).ready(function(){
             },
             pagingType: "full_numbers",
             ajax: {
-                url: '{!! url("hr/payroll/increment-list-data") !!}',
+                url: '{!! url("hr/payroll/increment-list-data?year=".$year) !!}',
                 type: "get",
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
@@ -156,8 +208,11 @@ $(document).ready(function(){
                 { data: 'DT_RowIndex', name: 'DT_RowIndex' },
                 { data: 'associate_id',  name: 'associate_id' },
                 { data: 'as_name', name: 'as_name'},
+                { data: 'as_oracle_code', name: 'as_oracle_code'},
+                { data: 'designation', name: 'designation'},
                 { data: 'increment_type', name: 'increment_type'},
                 { data: 'increment_amount',  name: 'increment_amount' },
+                { data: 'applied_date',  name: 'applied_date' },
                 { data: 'effective_date',  name: 'effective_date' },
                 { data: 'action',  name: 'action' }
             ],

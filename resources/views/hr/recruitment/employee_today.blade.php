@@ -103,6 +103,7 @@
 								<th id="floor">Floor</th>
 								<th id="line">Line</th>
 								<th>Department</th>
+								<th>DOJ</th>
 								<th>Gender</th>
 								<th>OT Status</th>
 							</tr>
@@ -120,16 +121,16 @@
 $(document).ready(function()
 {
 	
-		var searchable = [2,3,4,5,6];
-		var selectable = [7,8,9,10,11,12]; 
+		var searchable = [2,3,4,5,6,11];
+		var selectable = [7,8,9,10,12,13]; 
 
 		var dropdownList = {
 			'7' :[@foreach($employeeTypes as $emp) <?php echo "'$emp'," ?> @endforeach],
 			'8' :[@foreach($floorList as $floor) <?php echo "'$floor'," ?> @endforeach],
 			'9' :[@foreach($lineList as $e) <?php echo "'$e'," ?> @endforeach],
 			'10' :[@foreach($departmentList as $e) <?php echo "'$e'," ?> @endforeach],
-			'11':['Female','Male'],
-			'12':['OT','Non OT']
+			'12':['Female','Male'],
+			'13':['OT','Non OT']
 		};
 
 		$("#unit").change(function(){
@@ -154,8 +155,8 @@ $(document).ready(function()
 		
 
 		
-		var exportColName = ['Sl.','','Associate ID','Name','Designation','Oracle ID','RFID', 'Employee Type', 'Floor','Line','Department','Gender','OT Status'];
-      	var exportCol = [0,2,3,4,5,6,7,8,9,10,11,12];
+		var exportColName = ['Sl.','','Associate ID','Name','Designation','Oracle ID','RFID', 'Employee Type', 'Floor','Line','Department','DOJ','Gender','OT Status'];
+      	var exportCol = [0,2,3,4,5,6,7,8,9,10,11,12,13];
 
 	    var dt = $('#dataTables').DataTable({
 
@@ -202,6 +203,7 @@ $(document).ready(function()
 
 
 		        {data:'hr_department_name',  name: 'hr_department_name', orderable: false},
+		        {data:'as_doj',  name: 'as_doj', orderable: true},
 
 		        {data:'as_gender', name: 'as_gender', orderable: false,},
 		        {data:'as_ot', name: 'as_ot', orderable: false}

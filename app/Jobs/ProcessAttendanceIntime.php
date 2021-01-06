@@ -154,7 +154,7 @@ class ProcessAttendanceIntime implements ShouldQueue
                             ->delay(Carbon::now()->addSeconds(2));
                             dispatch($queue);
                 }
-                 
+
             }
         }
             

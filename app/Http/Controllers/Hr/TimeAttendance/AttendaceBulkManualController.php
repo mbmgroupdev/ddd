@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Hr\TimeAttendance;
 use App\Helpers\EmployeeHelper;
 use App\Http\Controllers\Controller;
 use App\Jobs\ProcessUnitWiseSalary;
-use App\Models\Employee;
 use App\Models\Hr\Absent;
 use App\Models\Hr\Attendace;
 use App\Models\Hr\AttendaceManual;
 use App\Models\Hr\Bills;
+use App\Models\Employee;
 use App\Models\Hr\HolidayRoaster;
 use App\Models\Hr\HrLateCount;
 use App\Models\Hr\Leave;
@@ -714,6 +714,7 @@ class AttendaceBulkManualController extends Controller
             $attendance[$i]['overtime_time']    = null;
             $attendance[$i]['present_status']   ="A";
             $attendance[$i]['attPlusOT'] = null;
+            $attendance[$i]['holiday']   = null;
 
             //check leave first
             $leaveCheck = Leave::where('leave_ass_id', $associate)
@@ -746,12 +747,14 @@ class AttendaceBulkManualController extends Controller
                       }
                       else if($holidayCheck->hr_yhp_open_status == 0){
                         $attendance[$i]['present_status'] = $holidayCheck->hr_yhp_comments;
+                        $attendance[$i]['holiday'] = 1;
                       }
                     }
                   }
                 } else {
                   if($holidayRoaster->remarks == 'Holiday') {
                     $attendance[$i]['present_status'] = "Day Off";
+                    $attendance[$i]['holiday'] = 1;
                     if($holidayRoaster->comment != null) {
                       $attendance[$i]['present_status'] .= ' - '.$holidayRoaster->comment;
                     }
