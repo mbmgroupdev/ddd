@@ -36,6 +36,10 @@
     #right_modal_lg .table-title{
         display: none;
     }
+    .generate-drawer{
+        color:#089bab !important;
+        font-weight: bold;
+    }
 
 </style>
 @endpush
@@ -152,18 +156,7 @@
                                     <div class="col-4">
                                       
                                         <div class="form-group has-float-label has-required select-search-group">
-                                            <?php
-                                                $reportType = [
-                                                    'ot'=>'OT', 
-                                                    'working_hour' => 'Working Hour'
-                                                ];
-                                                if(auth()->user()->can('End of Job Benefits')){
-                                                   $reportType['left_resign'] = 'Left & Resign';
-                                                }
-                                                if(auth()->user()->can('Manage Employee')){
-                                                   $reportType['recruitment'] = 'Recruitment';
-                                                }
-                                            ?>
+                                            
                                             {{ Form::select('report_type', $reportType, null, ['placeholder'=>'Select Report Type ', 'class'=>'form-control capitalize select-search', 'id'=>'reportType']) }}
                                             <label for="reportType">Report Type</label>
                                         </div>
@@ -255,25 +248,7 @@
                     </div>
                     <div class="iq-card-body no-padding" id="print-area">
                       <style type="text/css">
-                          .table{
-                            width: 100%;
-                          }
-                          a{text-decoration: none;}
-                          .table-bordered {
-                              border-collapse: collapse;
-                          }
-                          .table-bordered th,
-                          .table-bordered td {
-                            border: 1px solid #777 !important;
-                            padding:5px;
-                          }
-                          .no-border td, .no-border th{
-                            border:0 !important;
-                            vertical-align: top;
-                          }
-                          .f-16 th, .f-16 td, .f-16 td b{
-                            font-size: 16px !important;
-                          }
+                          .table{width: 100%;}a{text-decoration: none;}.table-bordered {border-collapse: collapse;}.table-bordered th,.table-bordered td {border: 1px solid #777 !important;padding:5px;}.no-border td, .no-border th{border:0 !important;vertical-align: top;}.f-16 th,.f-16 td, .f-16 td b{font-size: 16px !important;}
                       </style>
                       <div class="result-data" id="result-data">
                         
@@ -292,7 +267,7 @@
     <div class="modal-dialog modal-lg right-modal-width" role="document" > 
         <div class="modal-content">
             <div class="modal-header">
-                <a class="view prev_btn" data-toggle="tooltip" data-dismiss="modal" data-placement="top" title="" data-original-title="Back to Report">
+                <a class="view " data-toggle="tooltip" data-dismiss="modal" data-placement="top" title="" data-original-title="Back to Report">
                     <i class="las la-chevron-left"></i>
                 </a>
                 <h5 class="modal-title right-modal-title text-center" id="modal-title-right"> &nbsp; </h5>
@@ -301,6 +276,7 @@
                 </button>
             </div>
             <div class="modal-body">
+                <button class="btn btn-sm btn-primary modal-print" onclick="printDiv('content-result')" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report"><i class="las la-print"></i> </button>
                 <div class="modal-content-result" id="content-result">
           
                 </div>
@@ -318,6 +294,9 @@
     function printDiv(divName)
     { 
         var myWindow=window.open('','','width=800,height=800');
+        myWindow.document.write('<html><head><title></title>');
+        myWindow.document.write('<style>h4{font-size: 9pt;}div,p,td,span,strong,th,b{line-height: 110%;padding: 0;margin: 0;font-size: 8pt;}p{padding: 0;margin: 0;}@import url(https://fonts.googleapis.com/css?family=Poppins:200,200i,300,400,500,600,700,800,900&amp;display=swap);body {font-family: Poppins,sans-serif;}.table{width: 100%;}a{text-decoration: none;}.table-bordered {border-collapse: collapse;}.table-bordered th,.table-bordered td {border: 1px solid #777 !important;padding:5px;}.no-border td, .no-border th{border:0 !important;vertical-align: top;}.f-16 th,.f-16 td, .f-16 td b{font-size: 16px !important;}</style>');
+        myWindow.document.write('</head><body>');
         myWindow.document.write(document.getElementById(divName).innerHTML); 
         myWindow.document.close();
         myWindow.focus();
@@ -329,6 +308,7 @@
         $('#activityReport').on('submit', function(e) {
           e.preventDefault();
           activityProcess();
+          console.log('ac');
         });
         $(".next_btn").click(function(event) {
           var date = $('input[name="date"]').val();
@@ -338,6 +318,7 @@
           var head = type+' - '+dateAfter;
           $("#result-head").html(head);
           activityProcess();
+          console.log('nb');
         });
 
         $(".prev_btn").click(function(event) {
@@ -348,6 +329,7 @@
           var head = type+' - '+dateBefore;
           $("#result-head").html(head);
           activityProcess();
+          console.log('pb');
         });
         $(".grid_view, .list_view").click(function() {
           var value = $(this).attr('id');
@@ -355,12 +337,14 @@
           $("#reportformat").val(value);
           $('input[name="employee"]').val('');
           activityProcess();
+          console.log('lv');
         });
           
         $("#reportGroupHead").on("change", function(){
           var group = $(this).val();
           $("#reportGroup").val(group);
           activityProcess();
+          console.log('rh');
         });
 
         function activityProcess() {
@@ -557,7 +541,7 @@
     $(document).on('click','.generate-drawer', function(){
         var urldata = $(this).data('url'),
             body = $(this).data('body');
-        $("#modal-title-right").html(' '+body+' Salary Details');
+        $("#modal-title-right").html(body);
         $('#right_modal_lg').modal('show');
         $("#content-result").html(loaderModal);
         $.ajax({

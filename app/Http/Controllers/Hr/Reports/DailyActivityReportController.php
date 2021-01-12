@@ -234,6 +234,10 @@ class DailyActivityReportController extends Controller
                 return $this->getatttoken($request, $input);
             }
 
+            if($input['report_type'] == 'two_day_att'){
+                return $this->twoDayAtt($request, $input);
+            }
+
             $getEmployee = array();
             $data = array();
             $format = $request['report_group'];
@@ -462,6 +466,63 @@ class DailyActivityReportController extends Controller
             return $bug;
             return 'error';
         }
+    }
+
+    public function twoDayAtt($input,$request)
+    {
+        $unit = unit_by_id();
+        $location = location_by_id();
+        $line = line_by_id();
+        $floor = floor_by_id();
+        $department = department_by_id();
+        $designation = designation_by_id();
+        $section = section_by_id();
+        $subSection = subSection_by_id();
+        $area = area_by_id();
+        
+        $getEmployeeArray = DB::table('hr_as_basic_info as emp')
+            ->select('emp.as_id', 'emp.as_gender', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_contact', 'emp.as_section_id')
+            ->whereIn('emp.as_unit_id', auth()->user()->unit_permissions())
+            ->whereIn('emp.as_location', auth()->user()->location_permissions())
+            ->when(!empty($input['unit']), function ($query) use($input){
+                if($input['unit'] == 145){
+                    return $query->whereIn('emp.as_unit_id',[1, 4, 5]);
+                }else{
+                    return $query->where('emp.as_unit_id',$input['unit']);
+                }
+            })
+            ->when(!empty($input['location']), function ($query) use($input){
+               return $query->where('emp.as_location',$input['location']);
+            })
+            ->when(!empty($input['area']), function ($query) use($input){
+               return $query->where('emp.as_area_id',$input['area']);
+            })
+            ->when(!empty($input['department']), function ($query) use($input){
+               return $query->where('emp.as_department_id',$input['department']);
+            })
+            ->when(!empty($input['line_id']), function ($query) use($input){
+               return $query->where('emp.as_line_id', $input['line_id']);
+            })
+            ->when(!empty($input['floor_id']), function ($query) use($input){
+               return $query->where('emp.as_floor_id',$input['floor_id']);
+            })
+            ->when($request['otnonot']!=null, function ($query) use($input){
+               return $query->where('emp.as_ot',$input['otnonot']);
+            })
+            ->when(!empty($input['section']), function ($query) use($input){
+               return $query->where('emp.as_section_id', $input['section']);
+            })
+            ->when(!empty($input['subSection']), function ($query) use($input){
+               return $query->where('emp.as_subsection_id', $input['subSection']);
+            })
+            ->get();
+
+            $associates = $getEmployeeArray->groupBy($request['report_group'], true);
+
+
+           dd($associates);
+
+
     }
 
 

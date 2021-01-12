@@ -15,7 +15,7 @@
 		            <h2 style="margin:4px 10px; font-weight: bold; text-align: center;">OT @if($input['report_format'] == 0) Details @else Summary @endif Report </h2>
 		            <table class="table no-border f-16">
 		            	<tr>
-		            		<td style="text-align: left;width: 33.33%">
+		            		<td style="text-align: left;width: 30%">
 	            			@if($input['unit'] != null)
 	            				Unit <b>: {{ $input['unit'] == 145?'MBM + MBF + MBM 2':$unit[$input['unit']]['hr_unit_name'] }}</b> <br>
 		        			@endif
@@ -35,7 +35,7 @@
 		                			<b>: {{ $section[$input['section']]['hr_section_name'] }}</b>
 		                		@endif
 		            		</td>
-		            		<td style="text-align: center;width: 33.33%">
+		            		<td style="text-align: center;width: 45%">
 
 		            			Date <b>: {{ $input['from_date']}} to {{ $input['to_date']}} </b> <br>
 		            			@if($input['otnonot'] != null)
@@ -49,7 +49,7 @@
 	                			Total OT Amount: <b>{{ bn_money(number_format($totalOtAmount,2, '.', ''))}}</b>
 		                		
 		            		</td>
-		            		<td style="text-align: right;width: 33.33%">
+		            		<td style="text-align: right;width: 25%">
 		            			@if($input['subSection'] != null)
 		            			Sub-section <b>: {{ $subSection[$input['subSection']]['hr_subsec_name'] }}</b><br>
 		            			@endif
@@ -272,7 +272,7 @@
 								@endif
 								@if($format == 'as_line_id')<th> Unit </th> <th> Floor </th>@endif
 								<th> {{ $head }} {{ $format != 'ot_hour'?'Name':'' }}</th>
-								<th>No. Of Employee</th>
+								<th style="text-align: center;">Employee</th>
 								<th>Total OT Hour</th>
 								<th>Total OT Amount</th>
 							</tr>
@@ -329,11 +329,26 @@
 												$exPar = '&selected='.$unit[$group]['hr_unit_id']??'';
 											}
 										}elseif($format == 'as_line_id'){
-											$body = $line[$group]['hr_line_name']??'';
-											$exPar = '&selected='.$line[$group]['hr_line_id']??'';
+											if(isset($line[$group])){
+												$body = $line[$group]['hr_line_name']??'';
+												$exPar = '&selected='.$line[$group]['hr_line_id']??'';
+											}else{
+												$body = '-';
+												$exPar = '&selected=null';
+											}
 										}elseif($format == 'as_floor_id'){
-											$body = $floor[$group]['hr_floor_name']??'';
-											$exPar = '&selected='.$floor[$group]['hr_floor_name']??'';
+											if(isset($floor[$group])){
+
+												$body = $floor[$group]['hr_floor_name']??'';
+												if($input['unit'] == 145){
+													$uid = $floor[$group]['hr_floor_unit_id'];	
+													$body .= '('.$unit[$uid]['hr_unit_short_name'].')';
+												}
+												$exPar = '&selected='.$floor[$group]['hr_floor_id']??'';
+											}else{
+												$body = '-';
+												$exPar = '&selected=null';
+											}
 										}elseif($format == 'as_department_id'){
 											$body = $department[$group]['hr_department_name']??'';
 											$exPar = '&selected='.$department[$group]['hr_department_id']??'';
@@ -344,7 +359,7 @@
 											$depId = $section[$group]['hr_section_department_id']??'';
 											$seDeName = $department[$depId]['hr_department_name']??'';
 											$seName = $section[$group]['hr_section_name']??'';
-											$body = $seDeName.' - '.$seName;
+											$body = $seName;
 											$exPar = '&selected='.$section[$group]['hr_section_id']??'';
 										}elseif($format == 'as_subsection_id'){
 											$body = $subSection[$group]['hr_subsec_name']??'';
@@ -359,21 +374,22 @@
 									@endphp
 
 
-									<a class="generate-drawer" data-url="{{($urldata.$exPar)}}" data-body="{{ $body }}" id="{{$exPar}}" class="select-group"> 
+									<a class="generate-drawer" data-url="{{($urldata.$exPar)}}" data-body="{{ ($head.' : '.$body
+									) }}" id="{{$exPar}}" class="select-group"> 
 										{{ ($body == null)?'N/A':$body }} 
 									</a>
 								</td>
-								<td style="text-align: right">
+								<td style="text-align: center;">
 									{{ $employee->total }}
 								</td>
-								<td style="text-align: right">
+								<td style="text-align: right;padding-right:5px; ">
 									@php 
 									$sumOT = numberToTimeClockFormat(round($employee->groupOt,2)); 
 									@endphp
 
 									{{$sumOT}}
 								</td>
-								<td style="text-align: right">{{ bn_money(number_format($employee->ot_amount,2, '.', '')) }}</td>
+								<td style="text-align: right;padding-right:5px;">{{ bn_money(number_format($employee->ot_amount,2, '.', '')) }}</td>
 							</tr>
 							@endforeach
 							<tr style="font-weight: bold;">
@@ -388,9 +404,9 @@
 								>
 									Total
 								</td>
-								<td style="text-align: right;">{{$totalEmployees}}</td>
-								<td style="text-align: right;">{{$totalValue}}</td>
-								<td style="text-align: right;">{{bn_money(number_format($totalOtAmount,2, '.', ''))}}</td>
+								<td style="text-align: center;">{{$totalEmployees}}</td>
+								<td style="text-align: right;padding-right:5px;">{{$totalValue}}</td>
+								<td style="text-align: right;padding-right:5px;">{{bn_money(number_format($totalOtAmount,2, '.', ''))}}</td>
 							</tr>
 							
 							@else

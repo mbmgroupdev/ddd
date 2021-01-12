@@ -180,9 +180,9 @@ class IDGenerator extends Controller
     protected function checkExistsList()
     {
         $data = DB::table('hr_as_basic_info') 
-            ->where('as_department_id', $this->department)
-            ->whereBetween('temp_id', [$this->min, $this->max-1])
-            ->orderBy('temp_id', 'desc');
+                //->where('as_department_id', $this->department)
+                ->whereBetween('temp_id', [$this->min, $this->max])
+                ->orderBy('temp_id', 'desc');
 
         if ($data->exists())
         {

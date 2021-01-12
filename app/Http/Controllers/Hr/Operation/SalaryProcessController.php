@@ -52,8 +52,16 @@ class SalaryProcessController extends Controller
             if($audit == 0){
                 return view('hr.operation.salary.salary_status', compact('salaryStatus', 'input'));
             }*/
+            if(!in_array($input['unit'], [14,145])){
+                $getUnit = Unit::getUnitNameBangla($input['unit']);
+            }else if($input['unit'] == 145){
+                $getUnit = 'MBM + MFW +SRT';
+            }else if($input['unit'] == 14){
+                $getUnit = 'MBM + MFW';
+            }else if($input['unit'] == 15){
+                $getUnit = 'MBM + SRT';
+            }
 
-            $getUnit = Unit::getUnitNameBangla($input['unit']);
             $info = [];
             if(isset($input['area'])){
                 $info['area'] = Area::where('hr_area_id',$input['area'])->first()->hr_area_name_bn??'';
@@ -86,7 +94,20 @@ class SalaryProcessController extends Controller
             ->whereBetween('s.gross', [$input['min_sal'], $input['max_sal']])
             ->whereNotIn('s.as_id', config('base.ignore_salary'))
             ->when(!empty($input['unit']), function ($query) use($input){
-               return $query->where('emp.as_unit_id',$input['unit']);
+                if(!in_array($input['unit'], [14,145])){
+                    return $query->where('emp.as_unit_id',$input['unit']);
+                }else{
+                    if($input['unit'] == 14)
+                        $unit = [1,4];
+                    else if($input['unit'] == 145)
+                        $unit = [1,4,5];
+                    else if($input['unit'] == 15)
+                        $unit = [1,5];
+                    else
+                        $unit = [];
+
+                    return $query->whereIn('emp.as_unit_id',$unit);
+                }
             })
             ->when(!empty($input['location']), function ($query) use($input){
                return $query->where('emp.as_location',$input['location']);

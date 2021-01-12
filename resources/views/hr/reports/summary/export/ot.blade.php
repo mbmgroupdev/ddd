@@ -112,8 +112,8 @@
 			             $i = 0; $month = date('Y-m',strtotime($input['from_date'])); 
 			             $totalOt=0; $totalPay = 0;
 			            @endphp
-			            @if(count($getEmployee) > 0)
-			            @foreach($getEmployee as $employee)
+			            @if(count($employees) > 0)
+			            @foreach($employees as $employee)
 			            	@php
 			            		$designationName = $designation[$employee->as_designation_id]['hr_designation_name']??'';
 			            		
@@ -361,3 +361,4 @@
 
 	</div>
 </div>
+

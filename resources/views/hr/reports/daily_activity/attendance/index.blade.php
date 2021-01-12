@@ -147,7 +147,7 @@
                                       
                                         <div class="form-group has-float-label select-search-group">
                                             <?php
-                                               if(auth()->user()->can('Attendance Operation') || auth()->user()->can('Attendance Upload')){
+                                               if(auth()->user()->can('Attendance Report') || auth()->user()->can('Attendance Report')){
                                                    $reportType = [
                                                         'absent'=>'Absent', 
                                                         'before_absent_after_present'=>'Present After Being Absent', 
@@ -158,9 +158,10 @@
                                                 $reportType['ot'] = 'Over Time';
                                                 $reportType['working_hour'] = 'Working Hour';
 
-                                                if(auth()->user()->can('Attendance Operation') || auth()->user()->can('Attendance Upload')){
+                                                if(auth()->user()->can('Attendance Report') || auth()->user()->can('Attendance Upload')){
                                                     $reportType['late'] = 'Late';
                                                     $reportType['missing_token'] = 'Punch Missing Token';
+                                                    {{-- $reportType['two_day_att'] = 'Two Day Attendance'; --}}
                                                 }
                                             ?>
                                             {{ Form::select('report_type', $reportType, null, ['placeholder'=>'Select Report Type ', 'class'=>'form-control capitalize select-search', 'id'=>'reportType']) }}
