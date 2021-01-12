@@ -37,6 +37,32 @@ class Station extends Model
     	->first();
     }
 
+    public static function checkDateWiseLineExists($startDate, $asId, $lineId)
+    {
+        return Station::
+        where('associate_id', $asId)
+        ->where('start_date', $startDate)
+        ->where('changed_line', $lineId)
+        ->first();
+    }
+
+    public static function checkDateRangeWiseStartDateExistsLine($asId, $startDate, $endDate, $lineId)
+    {
+        return Station::
+        where('associate_id', $asId)
+        ->whereBetween('start_date',array($startDate, $endDate))
+        ->where('changed_line', $lineId)
+        ->first();
+    }
+    public static function checkDateRangeWiseEndDateExistsLine($asId, $startDate, $endDate, $lineId)
+    {
+        return Station::
+        where('associate_id', $asId)
+        ->whereBetween('end_date',array($startDate, $endDate))
+        ->where('changed_line', $lineId)
+        ->first();
+    }
+
     public function floor()
     {
         return $this->belongsTo('App\Models\Hr\Floor', 'changed_floor', 'hr_floor_id');

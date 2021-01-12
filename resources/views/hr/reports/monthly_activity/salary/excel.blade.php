@@ -70,6 +70,11 @@
                                 <th style=" font-weight: bold; font-size:13px;">Name</th>
                                 <th style=" font-weight: bold; font-size:13px;">Designation</th>
                                 <th style=" font-weight: bold; font-size:13px;">Department</th>
+                                <th style=" font-weight: bold; font-size:13px;">DOJ</th>
+                                <th style=" font-weight: bold; font-size:13px;">Gross</th>
+                                <th style=" font-weight: bold; font-size:13px;">Basic</th>
+                                <th style=" font-weight: bold; font-size:13px;">House Rent</th>
+                                <th style=" font-weight: bold; font-size:13px;">Other Part</th>
                                 <th style=" font-weight: bold; font-size:13px;">Present</th>
                                 <th style=" font-weight: bold; font-size:13px;">Absent</th>
                                 <th style=" font-weight: bold; font-size:13px;">OT Hour</th>
@@ -107,6 +112,11 @@
                                     <td>{{ $designationName }}</td>
 
                                     <td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
+                                    <td>{{ date('m/d/Y', strtotime($employee->as_doj)) }}</td>
+                                    <td>{{ $employee->gross }}</td>
+                                    <td>{{ $employee->basic }}</td>
+                                    <td>{{ $employee->house }}</td>
+                                    <td>{{ ($employee->medical + $employee->transport + $employee->food) }}</td>
                                     <td>{{ $employee->present }}</td>
                                     <td>{{ $employee->absent }}</td>
                                     <td><b>{{ number_format($otHour,2) }}</b></td>
@@ -162,6 +172,11 @@
                                     </td>
                                     <td>{{ $designationName }}</td>
                                     <td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
+                                    <td>{{ date('m/d/Y', strtotime($employee->as_doj)) }}</td>
+                                    <td>{{ $employee->gross }}</td>
+                                    <td>{{ $employee->basic }}</td>
+                                    <td>{{ $employee->house }}</td>
+                                    <td>{{ ($employee->medical + $employee->transport + $employee->food) }}</td>
                                     <td>{{ $employee->present }}</td>
                                     <td>{{ $employee->absent }}</td>
                                     <td><b>{{ number_format($otHour,2) }}</b></td>

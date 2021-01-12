@@ -487,23 +487,5 @@
     $(function () {
 	  $('[data-toggle="tooltip"]').tooltip()
 	})
-    $(document).on("contextmenu", ".associate-right", function(e) {
-	      // Show contextmenu
-	      $(".context-menu").hide();
-	      $(this).parent().find('.context-menu').toggle(100).css({
-	        display:"block",
-	          left: "70px"
-	      });
-	        
-	      // disable default context menu
-	      return false;
-	  });
-
-	  // Hide context menu
-	  $(document).bind('contextmenu click',function(){
-	      $(".context-menu").hide();
-	  });
-
-	  
     
 </script>

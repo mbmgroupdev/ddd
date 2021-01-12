@@ -58,10 +58,11 @@ class ProcessEmployeeAbsent implements ShouldQueue
             ->pluck('as_id')
             ->toArray();  
         }
-        
+        $getYearMonth = [];
         foreach($this->dates as $date){
             $year = Carbon::parse($date)->format('Y');
             $month = Carbon::parse($date)->format('m');
+            $getYearMonth[] = $year.'-'.$month;
             $getData = DB::table($this->tableName)
             ->select('as_id')
             ->where('in_date', $date)
@@ -75,13 +76,11 @@ class ProcessEmployeeAbsent implements ShouldQueue
                     $eligible = 1;
                     $shiftFlag = 0;
 
-                    
                     // check rejoin date for maternity/left employee
                     if($getEmployee->as_status_date != null){
                         $sDate = $getEmployee->as_status_date;
                         $sYear = Carbon::parse($sDate)->format('Y');
                         $sMonth = Carbon::parse($sDate)->format('m');
-
 
                         if($sYear == $year && $month == $sMonth){
                             if($date < $sDate){
@@ -144,18 +143,18 @@ class ProcessEmployeeAbsent implements ShouldQueue
 
                                 if($getLeave == '' && $getAbsent == ''){
                                     $status = $this->absentCreate($getEmployee->associate_id, $getEmployee->as_unit_id, $date);
-                                    if($status == 'success'){ 
-                                        $yearMonth = $year.'-'.$month; 
-                                        if($month == date('m')){
-                                            $totalDay = date('d');
-                                        }else{
-                                            $totalDay = Carbon::parse($yearMonth)->daysInMonth;
-                                        }
-                                        $queue = (new ProcessUnitWiseSalary($this->tableName, $month, $year, $getEmployee->as_id, $totalDay))
-                                                ->onQueue('salarygenerate')
-                                                ->delay(Carbon::now()->addSeconds(2));
-                                                dispatch($queue);
-                                    }
+                                    // if($status == 'success'){ 
+                                    //     $yearMonth = $year.'-'.$month; 
+                                    //     if($month == date('m')){
+                                    //         $totalDay = date('d');
+                                    //     }else{
+                                    //         $totalDay = Carbon::parse($yearMonth)->daysInMonth;
+                                    //     }
+                                    //     $queue = (new ProcessUnitWiseSalary($this->tableName, $month, $year, $getEmployee->as_id, $totalDay))
+                                    //             ->onQueue('salarygenerate')
+                                    //             ->delay(Carbon::now()->addSeconds(2));
+                                    //             dispatch($queue);
+                                    // }
                                 }
                             }
                         } 
@@ -163,6 +162,32 @@ class ProcessEmployeeAbsent implements ShouldQueue
 
                 }
             }
+        }
+
+        // active employee salary generate
+        $getYearMonth = array_unique($getYearMonth);
+        foreach ($getYearMonth as $yearMonthV) {
+            $vYear = Carbon::parse($yearMonthV)->format('Y');
+            $vMonth = Carbon::parse($yearMonthV)->format('m');
+
+            if($vMonth == date('m')){
+                $totalDay = date('d');
+            }else{
+                $totalDay = Carbon::parse($yearMonthV)->daysInMonth;
+            }
+
+            foreach ($getEmp as $emp) {
+                $queuesal = 'salarygenerate';
+                if($this->unitId == 2){
+                    $queuesal = 'ceilsalarygenerate';
+                }
+
+                $queue = (new ProcessUnitWiseSalary($this->tableName, $vMonth, $vYear, $emp, $totalDay))
+                ->onQueue($queuesal)
+                ->delay(Carbon::now()->addSeconds(10));
+                dispatch($queue);
+            }
+
         }
 
         // update cache

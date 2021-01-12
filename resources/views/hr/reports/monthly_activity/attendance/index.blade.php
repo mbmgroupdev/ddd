@@ -21,9 +21,9 @@
       width: 120px !important;
     }
     #dataTables th:nth-child(7) input{
-      width: 62px !important;
+      width: 100px !important;
     }
-    #dataTables th:nth-child(8) input, #dataTables th:nth-child(9) input{
+    #dataTables th:nth-child(8) input, #dataTables th:nth-child(9) input, #dataTables th:nth-child(10) input{
       width: 62px !important;
     }
     #dataTables th:nth-child(11){
@@ -204,7 +204,7 @@
                     <div class="table d-table hide">
                       <div class="iq-card">
                         <div class="iq-card-body">
-                          <table id="dataTables" class="table table-striped table-bordered table-head table-responsive w-100" style="">
+                          <table id="dataTables" class="table table-striped table-bordered table-head w-100" style="display: block;overflow-x: auto;width: 100%;">
                              <thead>
                                 <tr>
                                    <th>Sl.</th>
@@ -213,6 +213,7 @@
                                    <th>Associate ID</th>
                                    <th>Name</th>
                                    <th>Designation</th>
+                                   <th>Department</th>
                                    <th>Present</th>
                                    <th>Absent</th>
                                    <th>Leave</th>
@@ -312,6 +313,7 @@
             });
         });
 
+        var searchable = [2,3,4,5,6,7,8,9];
         $('#section').on("change", function(){
            $.ajax({
              url : "{{ url('hr/setup/getSubSectionListBySectionID') }}",
@@ -334,12 +336,11 @@
            });
         });
 
-        var searchable = [2,3,4,5,6,7,8];
         var selectable = []; //use 4,5,6,7,8,9,10,11,....and * for all
         var dropdownList = {};
 
-        var exportColName = ['Sl.','','Oracle ID','Associate ID','Name','Designation', 'Present', 'Absent', 'Leave', 'Holiday', 'OT Hour', 'Total Day'];
-        var exportCol = [2,3,4,5,6,7,8,9, 10];
+        var exportColName = ['Sl.','','Oracle ID','Associate ID','Name','Designation', 'Department', 'Present', 'Absent', 'Leave', 'Holiday', 'OT Hour', 'Total Day'];
+        var exportCol = [2,3,4,5,6,7,8,9, 10,11,12];
 
         var dTable =  $('#dataTables').DataTable({
 
@@ -485,6 +486,7 @@
            { data: 'associate_id',  name: 'associate_id' },
            { data: 'as_name', name: 'as_name' },
            { data: 'hr_designation_name', name: 'hr_designation_name' },
+           { data: 'hr_department_name', name: 'hr_department_name' },
            { data: 'present', name: 'present' },
            { data: 'absent', name: 'absent' },
            { data: 'leave', name: 'leave' },
