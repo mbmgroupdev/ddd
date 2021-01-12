@@ -131,13 +131,13 @@
                                         <tr>
                                             <th class="sticky-th" ><input type="checkbox" id="checkAll"/></th>
                                             <th class="sticky-th">Image</th>
-                                            <th class="sticky-th">Associate ID</th>
-                                            <th class="sticky-th">Oracle ID</th>
+                                            <th class="sticky-th">
+                                                Associate ID <br>& Oracle ID</th>
                                             <th class="sticky-th">Name</th>
                                             <th class="sticky-th">Current Shift</th>
                                         </tr>
                                          <tr>
-                                            <th class="sticky-th" colspan="6" id="user_filter" style="top: 40px;"></th>
+                                            <th class="sticky-th" colspan="5" id="user_filter" style="top: 40px;"></th>
                                         </tr>
                                         
                                     </thead>
@@ -190,7 +190,7 @@
                         <hr>
                         <div class="change-section">
                             <div class="panel panel-warning">
-                                <div class="panel-heading"><h6>Shift Wise Employee Status (<span id="shiftListCurrentDate">{{date('Y-m-d')}}</span>)</h6></div>
+                                <div class="panel-heading pl-0"><h6>Shift Wise Employee Status (<span id="shiftListCurrentDate">{{date('Y-m-d')}}</span>)</h6></div>
                                 <div class="panel-body p-0">
                                     <table id="" class="table table-striped table-bordered">
                                         <thead>
@@ -199,13 +199,13 @@
                                                 <th>Start Time</th>
                                                 <th>Break Time</th>
                                                 <th>Out Time</th>
-                                                <th>Default (No. Employee)</th>
-                                                <th>Changed (No. Employee)</th>
+                                                <th>Default</th>
+                                                <th>Changed</th>
                                             </tr>
                                         </thead>
                                         <tbody id="shifttablerow">
                                             <tr>
-                                                <td colspan="6" class="text-center">No Unit Select</td>
+                                                <td colspan="6" class="text-center">No Unit Selected</td>
                                             </tr>
                                         </tbody>
                                     </table> 

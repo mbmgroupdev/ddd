@@ -28,6 +28,12 @@
             border-radius: 10px !important;
             -webkit-border-radius: 10px !important;
         }
+        span.f-16 {
+            font-size: 14px;
+            position: absolute;
+            top: 12px;
+            left: 70px;
+        }
         #content-result .panel .panel-body .loader-p{
             margin-top: 20% !important;
         } 
@@ -47,7 +53,7 @@
                 <li>
                     <a href="#">Operation</a>
                 </li>
-                <li class="active"> Monthly Salary Generate</li>
+                <li class="active"> Monthly Salary Process</li>
             </ul>
         </div>
 
@@ -78,7 +84,7 @@
                                     </div> 
                                     <div class="col-3">
                                         <div class="form-group">
-                                          <button onclick="generate()" class="btn btn-primary nextBtn btn-lg pull-right" type="button" id="unitFromBtn"><i class="fa fa-save"></i> Generate</button>
+                                          <button onclick="generate()" class="btn btn-primary nextBtn btn-lg pull-right" type="button" id="unitFromBtn"><i class="fa fa-save"></i> Process</button>
                                         </div>
                                     </div>  
                                 </div>

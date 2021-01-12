@@ -11,7 +11,6 @@ class OperationLoadEmployeeController extends Controller
     public function getShiftEmployee(Request $request)
     {
     	$input = $request->all();
-    	// return $input;
     	try {
             
 	        if($request->searchDate != null) {
@@ -30,9 +29,9 @@ class OperationLoadEmployeeController extends Controller
     		->when(!empty($input['area']), function ($query) use($input){
                return $query->where('emp.as_area_id',$input['area']);
             })
-            ->when(!empty($input['shift']), function ($query) use($input){
+            /*->when(!empty($input['shift']), function ($query) use($input){
                return $query->where('emp.as_shift_id',$input['shift']);
-            })
+            })*/
             ->when(!empty($input['department']), function ($query) use($input){
                return $query->where('emp.as_department_id',$input['department']);
             })
@@ -61,26 +60,45 @@ class OperationLoadEmployeeController extends Controller
             ->whereIn('shift_roaster_user_id', $employees)
             ->get()->keyBy('shift_roaster_user_id')->toArray();
 
+            // combined array
+
             $data['filter'] = "<input type=\"text\" id=\"AssociateSearch\" placeholder=\"Search an Associate\" autocomplete=\"off\" class=\"form-control\"/>";
 	        $data['result'] = "";
 
 	        $data['shiftRosterCount'] = [];
 	        $data['shiftDefaultCount'] = [];
-	        // $data['shiftRosterCount2'] = [];
 	        $data['total'] = 0;
 	        $today = 'day_'.$day;
-	        // dd($todayShift[55]->$today??'');
+
 	        foreach($getEmployee as $employee)
         	{
         		$checkShift = $todayShift[$employee->as_id]??'';
         		if(($checkShift != '') && ($todayShift[$employee->as_id]->$today != '')){
-        			$shiftCode = $todayShift[$employee->as_id]->$today.' - Change';
+
+        			$shiftCode = $todayShift[$employee->as_id]->$today;
+                    $shiftstatus = $shiftCode.' - <span class="text-success">Change</span>';
         		}else{
-        			$shiftCode = $employee->as_shift_id.' - Default';
+        			$shiftCode = $employee->as_shift_id;
+                    $shiftstatus = $shiftCode.' - Default';
         		}
-                $image = emp_profile_picture($employee);
-        		$data['total'] += 1;
-                $data['result'].= "<tr class='add'><td><input type='checkbox' value='$employee->associate_id' name='assigned[$employee->as_id]'/></td><td><span class=\"lbl\"> <img src='".$image."' class='small-image' style='height:40px;width:auto'> </span></td><td><span class=\"lbl\"> $employee->associate_id</span></td><td>$employee->as_oracle_code </td><td>$employee->as_name </td><td>$shiftCode </td></tr>";
+
+
+                if($input['shift'] == '' || $input['shift'] == $shiftCode){
+
+                    $image = emp_profile_picture($employee);
+            		$data['total'] += 1;
+                    $data['result'].= "
+                            <tr class='add'>
+                                <td>
+                                    <input type='checkbox' value='$employee->associate_id' name='assigned[$employee->as_id]'/>
+                                    </td>
+                                <td>
+                                    <span class=\"lbl\"> 
+                                        <img src='".$image."' class='small-image' style='height:40px;width:auto'> 
+                                    </span>
+                                </td>
+                                <td><b> $employee->associate_id </b><br>$employee->as_oracle_code</td><td>$employee->as_name </td><td>$shiftstatus </td></tr>";
+                }
         	}
 
             return $data;

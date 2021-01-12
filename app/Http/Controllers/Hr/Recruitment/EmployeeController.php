@@ -228,7 +228,8 @@ class EmployeeController extends Controller
 
     public function getTodayData(Request $request)
     {
-        
+        $first_date = date('Y-m-01');
+        $last_date = Carbon::parse($first_date)->endOfMonth()->toDateString();
         $data = DB::table('hr_as_basic_info AS b')
             ->select([
                 DB::raw('b.as_id AS serial_no'),
@@ -243,6 +244,7 @@ class EmployeeController extends Controller
                 'dg.hr_designation_position',
                 'b.as_gender',
                 'b.as_ot',
+                'b.as_doj',
                 'b.as_status',
                 'b.as_oracle_code',
                 'b.as_rfid_code'
@@ -269,7 +271,8 @@ class EmployeeController extends Controller
             ->whereNotIn('as_id', auth()->user()->management_permissions())
             ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
             ->whereIn('b.as_location', auth()->user()->location_permissions())
-            ->whereMonth('b.as_doj',date('m'))
+            ->where('b.as_doj', '>=', $first_date)
+            ->where('b.as_doj', '<=', $last_date)
             ->orderBy('dg.hr_designation_position','ASC')
             ->get();
 
@@ -1686,38 +1689,35 @@ class EmployeeController extends Controller
         $line   = $request->line;
         $doj_from = $request->doj_from;
         $doj_to = $request->doj_to;
+        $associate_id = $request->associate_id;
         #-----------------------------------------------------------
-        $employees = Employee::where(function($q) use($type, $unit, $floor, $line, $doj_from, $doj_to) {
-                if (!empty($type))
-                {
+        $employees = Employee::where(function($q) use($type, $unit, $floor, $line, $doj_from, $doj_to,$associate_id) {
+                if (!empty($type)){
                     $q->where('as_emp_type_id', $type);
                 }
-                if (!empty($unit))
-                {
+                if (!empty($unit)){
                     $q->where('as_unit_id', $unit);
                 }
-                if (!empty($floor))
-                {
+                if (!empty($floor)){
                     $q->where('as_floor_id', $floor);
                 }
-                if (!empty($line))
-                {
+                if (!empty($line)){
                     $q->where('as_line_id', $line);
                 }
-                if (!empty($doj_from) )
-                {
+                if (!empty($doj_from) ){
                     $q->where('as_doj', '>=', $doj_from);
                 }
-                if (!empty($doj_to))
-                {
+                if (!empty($doj_to)){
                     $q->where('as_doj', '<=', $doj_to);
+                }
+                if (!empty($associate_id)){
+                    $q->whereIn('associate_id', $associate_id);
                 }
             })
             ->whereIn('as_unit_id', auth()->user()->unit_permissions())
             ->whereIn('as_location', auth()->user()->location_permissions())
             ->where('as_status', 1)
             ->get();
-
 
         // show user id
         $data['result'] = null;

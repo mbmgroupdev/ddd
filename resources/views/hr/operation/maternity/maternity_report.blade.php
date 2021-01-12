@@ -188,4 +188,5 @@
         </div>
     </div>
 </div>
+@include('hr.operation.maternity.maternity-modal')
 @endsection

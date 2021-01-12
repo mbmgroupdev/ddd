@@ -24,7 +24,6 @@
 		<div class="page-content"> 
             @include('inc/message')
             <div class="panel panel-info">
-                {{-- <div class="panel-heading"><h6>Yearly Holiday Planner<a href="{{ url('hr/operation/yearly_holidays')}}" class="pull-right btn btn-sm btn-success"><i class="fa fa-list"></i> Holiday list</a></h6></div>  --}}
                     <div class="panel-body">
 
                         <div class="row">
@@ -219,8 +218,8 @@ $(document).ready(function() {
         months['October']   = 9; 
         months['November']  = 10; 
         months['December']  = 11;  
-        var month = months[(($("#month").val())?($("#month").val()):"January")];
-        var year  = (($("#year").val())?($("#year").val()):date('Y'));
+        var month = months[(($("#month").val())?($("#month").val()):'{{date("m")}}')];
+        var year  = (($("#year").val())?($("#year").val()):'{{date("Y")}}');
         var firstDay = new Date(year, month, 1);
         var lastDay = new Date(year, month+1, 0); 
 

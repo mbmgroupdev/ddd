@@ -77,13 +77,15 @@ class ProcessUnitWiseSalary implements ShouldQueue
                 $empdojDay = date('d', strtotime($getEmployee->as_doj));
 
                 $totalDay = $this->totalDay;
+                $today = $yearMonth.'-01';
+                $firstDateMonth = Carbon::parse($today)->startOfMonth()->toDateString();
                 if($empdojMonth == $yearMonth){
                     $totalDay = $this->totalDay - ((int) $empdojDay-1);
+                    $firstDateMonth = $getEmployee->as_doj;
                 }
 
                 if($getBenefit != null){
-                    $today = $yearMonth.'-01';
-                    $firstDateMonth = Carbon::parse($today)->startOfMonth()->toDateString();
+                    
                     if($getEmployee->as_status_date != null){
                         $sDate = $getEmployee->as_status_date;
                         $sYearMonth = Carbon::parse($sDate)->format('Y-m');

@@ -13,23 +13,24 @@
         $lock['unit_id'] = $info->as_unit_id;
         $lockActivity = monthly_activity_close($lock);
 
-            $associate = $request->associate;
-            
-            $user  = auth()->user();
-            $yearMonth = $request->month_year; 
+        $associate = $request->associate;
+        
+        $user  = auth()->user();
+        $yearMonth = $request->month_year; 
 
-            $flagStatus = 0;
-            $asStatus = emp_status_name($info->as_status);
-            $statusDate = $info->as_status_date;
-            if($statusDate != null && $info->as_status != 1){
-                $statusMonth = date('Ym', strtotime($info->as_status_date));
-                $requestMonth = date('Ym', strtotime($yearMonth));
-              
-                if($requestMonth > $statusMonth){
-                    $flagStatus = 1;
-                }
+        $flagStatus = 0;
+        $asStatus = emp_status_name($info->as_status);
+        $statusDate = $info->as_status_date;
+        if($statusDate != null && $info->as_status != 1){
+            $statusMonth = date('Ym', strtotime($info->as_status_date));
+            $requestMonth = date('Ym', strtotime($yearMonth));
+          
+            if($requestMonth > $statusMonth){
+                $flagStatus = 1;
             }
-        @endphp
+        }
+
+    @endphp
 
    
         <div class="result-data" id="result-data">
@@ -83,6 +84,7 @@
                     
                     @if($flagStatus == 0)
                     @foreach($attendance as $value)
+
                     <tr>
                         <td>
                             {{ $value['date'] }}
@@ -94,6 +96,7 @@
                             @if($leftExist)
                                 @if($value['date'] == $info->as_status_date)
                                     @php
+
                                         $flag = '';
                                         if($info->as_status === 0) {
                                             $flag = 'Delete';
@@ -163,6 +166,7 @@
                         @if($info->as_ot==1)
 
                             {{numberToTimeClockFormat($info->ot_hour)}}
+                            
 
                             <input type="hidden" id="ot" value="0">
                         @endif

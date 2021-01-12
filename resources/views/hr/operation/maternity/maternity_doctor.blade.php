@@ -1,6 +1,9 @@
-\@extends('hr.layout')
+@extends('hr.layout')
 @section('title', 'Maternity Leave Application')
 @section('main-content')
+<style type="text/css">
+    .custom-switch.custom-switch-icon label .switch-icon-left, .custom-switch.custom-switch-icon label .switch-icon-right, .custom-switch.custom-switch-text label .switch-icon-left, .custom-switch.custom-switch-text label .switch-icon-right { top:0;}
+</style>
 <div class="main-content">
     <div class="main-content-inner">
         <div class="breadcrumbs ace-save-state" id="breadcrumbs">
@@ -28,74 +31,20 @@
                 <div class="row">
                     
                     <div class="col-sm-3">        
-                        <div class="user-details-block" style="padding-top: 0.5rem;">
-                            <div class="user-profile text-center mt-0">
-                                <img id="avatar" class="avatar-130 img-fluid" src="{{ $employee->as_pic }} " >
-                            </div>
-                            <div class="text-center mt-3">
-                                <h4><b id="name">{{ $employee->as_name }}</b></h4>
-                                <p class="mb-0" id="designation">
-                                {{ $employee->hr_designation_name }}, {{$employee->hr_department_name}}</p>
-                                <p class="mb-0" id="designation">
-                                {{$employee->hr_unit_name}}</p>
-                            </div>
-                             <table style="width: 100%;" border="0">
-                                 <tr>
-                                     <td><i class="field-title">Oracle ID</i></td>
-                                     <td class="field-data">: {{ $employee->as_oracle_code }}</td>
-                                 </tr>
-                                 <tr>
-                                     <td><i class="field-title">Associate ID</i></td>
-                                     <td class="field-data">: {{ $employee->associate_id }}</td>
-                                 </tr>
-                                 <tr>
-                                     <td><i class="field-title">Date of Join</i></td>
-                                     <td class="field-data">: {{ $employee->as_doj->format('Y-m-d') }}</td>
-                                 </tr>
-                                 <tr>
-                                     <td><i class="field-title">Age</i></td>
-                                     <td class="field-data">: 
-                                        @if($employee->as_dob)
-                                        {{ $employee->as_dob->age }} Years
-                                        @endif
-                                    </td>
-                                 </tr>
-                                 <tr>
-                                     <td><i class="field-title">Husband Name</i></td>
-                                     <td class="field-data">: {{ $leave->husband_name }}</td>
-                                 </tr>
-                                 <tr>
-                                     <td><i class="field-title">Husband Occupation</i></td>
-                                     <td class="field-data">: {{ $leave->husband_occupasion }}</td>
-                                 </tr>
-                                 <tr>
-                                     <td><i class="field-title">Husband Age</i></td>
-                                     <td class="field-data">: {{ $leave->husband_age }}</td>
-                                 </tr>
-                                 <tr>
-                                     <td><i class="field-title">Total Child</i> <span class="field-data">: {{ ($leave->no_of_son + $leave->no_of_daughter) }}</span></td>
-                                     <td><i class="field-title">Last Child Age</i> <span class="field-data">: {{ $leave->last_child_age }} </span></td>
-                                 </tr>
-                             </table>
-                             
-                             <p>
-                                <i class="las la-file-prescription f-18 text-success" ></i> 
-                                <a href="{{ asset($leave->usg_report) }}" style="    vertical-align: text-bottom;">view USG report</a>
-                             </p>
+                        @include('hr.common.maternity-leave-card')
 
-                             @if($leave->medical)
-                                @if(count($leave->medical->record) > 0)
-                                    <a href="{{url('hr/operation/maternity-leave/doctors-clearence/'.$leave->id)}}" class="btn btn-primary w-100">
-                                        @if($leave->doctors_clearence)
-                                            View
-                                        @else
-                                            Doctors
-                                        @endif
-                                        Clearence
-                                    </a>
-                                @endif
-                             @endif
-                        </div>
+                         @if($leave->medical)
+                            @if(count($leave->medical->record) > 0)
+                                <a href="{{url('hr/operation/maternity-leave/doctors-clearence/'.$leave->id)}}" class="btn btn-primary w-100">
+                                    @if($leave->doctors_clearence)
+                                        View
+                                    @else
+                                        Doctors
+                                    @endif
+                                    Clearence
+                                </a>
+                            @endif
+                         @endif
                     </div>
                     <div class="col-sm-9">
                         <div id="accordion" class="accordion-style panel-group">
@@ -488,6 +437,7 @@
         </div>
     </div>
 </div>
+@include('hr.operation.maternity.maternity-modal')
 @push('js')
     <script type="text/javascript">
         function opendiv(id, e){

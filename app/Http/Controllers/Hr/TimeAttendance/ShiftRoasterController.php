@@ -1393,7 +1393,7 @@ class ShiftRoasterController extends Controller
                   ");
             foreach ($shifts as  $value)
             {
-                $list .= "<option value=\"$value->hr_shift_id\">$value->hr_shift_name</option>";
+                $list .= "<option value=\"$value->hr_shift_name\">$value->hr_shift_name</option>";
             }
         }
         return $list;
@@ -1455,12 +1455,12 @@ class ShiftRoasterController extends Controller
                 if(isset($shifts[$key])){
 
                     $value = $shifts[$key];
-                    $cBreak = $hours = intdiv($value->hr_shift_break_time, 60).':'. ($value->hr_shift_break_time % 60);
+                    /*$cBreak = $hours = intdiv($value->hr_shift_break_time, 60).':'. ($value->hr_shift_break_time % 60);
                     $cBreak = strtotime(date("H:i", strtotime($cBreak)));
-                    $cShifEnd = strtotime(date("H:i", strtotime($value->hr_shift_end_time)));
+                    $cShifEnd = strtotime(date("H:i", strtotime($value->hr_shift_end_time)));*/
                     // $cBreak = ($value->hr_shift_break_time % 60);
-                    $minute = $cShifEnd + $cBreak;
-                    $shiftEndTime = gmdate("H:i:s",$minute);
+                    //$minute = $cShifEnd + $cBreak;
+                    $shiftEndTime = \Carbon\Carbon::parse($input['searchDate'].' '.$value->hr_shift_end_time)->addMinutes($value->hr_shift_break_time)->format('H:i:s'); //gmdate("H:i:s",$minute);
                     
                     $defaultEmployee = 0;
                     if(isset($sft['default'])){

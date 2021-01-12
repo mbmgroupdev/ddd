@@ -128,14 +128,31 @@
                                             </select>
                                             <label for="line_id">Line</label>
                                         </div>
-                                        <div class="form-group has-float-label select-search-group">
-                                            <select name="otnonot" class="form-control capitalize select-search" id="otnonot" >
-                                                <option selected="" value="">Choose...</option>
-                                                <option value="0">Non-OT</option>
-                                                <option value="1">OT</option>
-                                            </select>
-                                            <label for="otnonot">OT/Non-OT</label>
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <div class="form-group has-float-label select-search-group">
+                                                    <select name="otnonot" class="form-control capitalize select-search" id="otnonot" >
+                                                        <option selected="" value="">Choose...</option>
+                                                        <option value="0">Non-OT</option>
+                                                        <option value="1">OT</option>
+                                                    </select>
+                                                    <label for="otnonot">OT/Non-OT</label>
+                                                </div>
+                                                
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="form-group has-float-label select-search-group">
+                                                    <select name="shift_roaster_status" class="form-control capitalize select-search" id="shift_roaster_status" >
+                                                        <option selected value="">Choose...</option>
+                                                        <option value="1">Roaster</option>
+                                                        <option value="0">Shift</option>
+                                                    </select>
+                                                    <label for="shift_roaster_status">Shift/Roaster</label>
+                                                </div>
+                                                
+                                            </div>
                                         </div>
+                                                
                                         
                                         
                                     </div>
@@ -297,6 +314,28 @@
         });
 
         var searchable = [2,3,4,5,6,7,8,9];
+        $('#section').on("change", function(){
+           $.ajax({
+             url : "{{ url('hr/setup/getSubSectionListBySectionID') }}",
+             type: 'get',
+             data: {
+               area_id: $("#area").val(),
+               department_id: $("#department").val(),
+               section_id: $(this).val()
+             },
+             success: function(data)
+             {
+                $('#subSection').removeAttr('disabled');
+                
+                $("#subSection").html(data);
+             },
+             error: function(reject)
+             {
+               console.log(reject);
+             }
+           });
+        });
+
         var selectable = []; //use 4,5,6,7,8,9,10,11,....and * for all
         var dropdownList = {};
 
@@ -334,6 +373,7 @@
              d.min_sal       = $("#min_sal").val();
              d.max_sal       = $("#max_sal").val();
              d.employee_status = $("#employee_status").val();
+             d.shift_roaster_status = $("#shift_roaster_status").val();
              d.location = $("#location").val();
 
            },

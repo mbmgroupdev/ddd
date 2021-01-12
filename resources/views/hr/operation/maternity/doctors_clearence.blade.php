@@ -28,46 +28,9 @@
                 <div class="row">
                     
                     <div class="col-sm-3">        
-                        <div class="user-details-block" style="padding-top: 0.5rem;">
-                            <div class="user-profile text-center mt-0">
-                                <img id="avatar" class="avatar-130 img-fluid" src="{{ $employee->as_pic }} " >
-                            </div>
-                            <div class="text-center mt-3">
-                                <h4><b id="name">{{ $employee->as_name }}</b></h4>
-                                <p class="mb-0" id="designation">
-                                {{ $employee->hr_designation_name }}, {{$employee->hr_department_name}}</p>
-                                <p class="mb-0" id="designation">
-                                {{$employee->hr_unit_name}}</p>
-                            </div>
-                             <table style="width: 100%;" border="0">
-                                 <tr>
-                                     <td><i class="field-title">Oracle ID</i></td>
-                                     <td class="field-data">: {{ $employee->as_oracle_code }}</td>
-                                 </tr>
-                                 <tr>
-                                     <td><i class="field-title">Associate ID</i></td>
-                                     <td class="field-data">: {{ $employee->associate_id }}</td>
-                                 </tr>
-                                 <tr>
-                                     <td><i class="field-title">Husband Name</i></td>
-                                     <td class="field-data">: {{ $leave->husband_name }}</td>
-                                 </tr>
-                                 <tr>
-                                     <td><i class="field-title">Husband Occupation</i></td>
-                                     <td class="field-data">: {{ $leave->husband_occupasion }}</td>
-                                 </tr>
-                                 <tr>
-                                     <td><i class="field-title">Husband Age</i></td>
-                                     <td class="field-data">: {{ $leave->husband_age }}</td>
-                                 </tr>
-                                 <tr>
-                                     <td><i class="field-title">Total Child</i> <span class="field-data">: {{ ($leave->no_of_son + $leave->no_of_daughter) }}</span></td>
-                                     <td><i class="field-title">Last Child Age</i> <span class="field-data">: {{ $leave->last_child_age }} </span></td>
-                                 </tr>
-                             </table>
-                             <br>
-                             <a href="{{url('hr/operation/maternity-leave/'.$leave->id)}}" class="btn btn-primary w-100"> View Status </a>
-                        </div>
+                        @include('hr.common.maternity-leave-card')
+                        <a href="{{url('hr/operation/maternity-leave/'.$leave->id)}}" class="btn btn-primary w-100"> View Status </a>
+                        
                     </div>
                     <div class="col-sm-9">
                         <h3 class="border-left-heading"> Doctor's Clearence </h3>
@@ -87,7 +50,7 @@
                                     </div>
                                     <div class="col-sm-3">
                                         <div class="form-group has-required has-float-label">
-                                            <input id="leave_from_suggestion" type="date" name="leave_from_suggestion" class="form-control" required  value="{{\Carbon\Carbon::create($leave->medical->edd)->subMonths(2)->format('Y-m-d')}}">
+                                            <input id="leave_from_suggestion" type="date" name="leave_from_suggestion" class="form-control" required  value="{{\Carbon\Carbon::create($leave->medical->edd)->subDays(56)->format('Y-m-d')}}">
                                             <label for="leave_from_suggestion">Leave From</label>
                                         </div>
                                         
@@ -110,11 +73,12 @@
         </div>
     </div>
 </div>
+@include('hr.operation.maternity.maternity-modal')
 <script type="text/javascript">
     $(document).on('change', '#edd', function(){
-        var d = new Date($(this).val());
-        d.setMonth(d.getMonth() - 2);
-        $('#leave_from_suggestion').val(JSON.stringify(new Date(d)).slice(1,11));
+        var v = new Date($(this).val());
+        var d = new Date( v - 56 * 24 * 60 * 60 * 1000);
+        $('#leave_from_suggestion').val(JSON.stringify(d).slice(1,11));
     });
 </script>
 @endsection

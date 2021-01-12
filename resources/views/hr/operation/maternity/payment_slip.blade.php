@@ -28,7 +28,7 @@
         <table border="0" style="width: 100%;">
             <tr>
                 <th colspan="2" style="text-align: left;">মাতৃত্ব কল্যাণ সুবিধার হিসাব - </th>
-                <th style="text-align: right;">তারিখঃ {{str_replace($en, $bn, date('d-m-Y'))}}</th>
+                <th style="text-align: right;">তারিখঃ {{str_replace($en, $bn, date('d-m-Y'))}} ইং</th>
             </tr>
             <tr>
                 <td>কর্মকর্তা/করমচারীর নাম </td>
@@ -53,21 +53,21 @@
             </tr>
             <tr>
                 <td>যোগদানের তারিখ</td>
-                <td>{{str_replace($en, $bn, $employee->as_doj->format('Y-m-d'))}}</td>
+                <td>{{str_replace($en, $bn, $employee->as_doj->format('d-m-Y'))}} ইং</td>
                 <td></td>
             </tr>
             <tr>
                 <td>মোট মজুরী</td>
-                <td>{{str_replace($en, $bn, $employee->ben_current_salary)}}</td>
+                <td>{{eng_to_bn(bn_money($employee->ben_current_salary))}}</td>
                 <td></td>
             </tr>
             <tr>
                 <td>সন্তান প্রসবের সম্ভাব্য তারিখ</td>
-                <td colspan="2">{{str_replace($en, $bn, $leave->edd)}} </td>
+                <td colspan="2">{{str_replace($en, $bn, date('d-m-Y', strtotime($leave->edd)))}} ইং </td>
             </tr>
             <tr>
                 <td>ছুটির তারিখ</td>
-                <td colspan="2">{{str_replace($en, $bn, $leave->leave_from->format('Y-m-d'))}} তারিখ থেকে {{str_replace($en, $bn, $leave->leave_to->format('Y-m-d'))}} পর্যন্ত</td>
+                <td colspan="2">১১২ দিন &nbsp; &nbsp; {{str_replace($en, $bn, $leave->leave_from->format('d-m-Y'))}} তারিখ থেকে {{str_replace($en, $bn, $leave->leave_to->format('d-m-Y'))}} পর্যন্ত</td>
             </tr>
             
         </table>
@@ -97,12 +97,12 @@
                     <td>{{str_replace($en, $bn, $sal->present)}}</td>
                     <td>{{str_replace($en, $bn, $sal->absent)}}</td>
                     <td>{{str_replace($en, $bn, $sal->leave)}}</td>
-                    <td style="text-align: right;">{{str_replace($en, $bn, $sal->salary_payable)}}</td>
-                    <td style="text-align: right;">{{str_replace($en, $bn, $sal->attendance_bonus)}}</td>
-                    <td style="text-align: right;"> {{str_replace($en, $bn, $sal->ot_payment)}}</td>
-                    <td style="text-align: right;">{{str_replace($en, $bn, $sal->leave_adjust)}}</td>
-                    <td style="text-align: right;">{{str_replace($en, $bn, 0)}}</td>
-                    <td style="text-align: right;">{{str_replace($en, $bn, $sal->total_payable)}}</td>
+                    <td style="text-align: right;">{{eng_to_bn(bn_money($sal->salary_payable))}}</td>
+                    <td style="text-align: right;">{{eng_to_bn(bn_money($sal->attendance_bonus))}}</td>
+                    <td style="text-align: right;"> {{eng_to_bn(bn_money($sal->ot_payment))}}</td>
+                    <td style="text-align: right;">{{eng_to_bn(bn_money($sal->leave_adjust))}}</td>
+                    <td style="text-align: right;">{{eng_to_bn(0)}}</td>
+                    <td style="text-align: right;">{{eng_to_bn(bn_money($sal->total_payable))}}</td>
                 </tr>
                 @else
                     <tr>
@@ -124,12 +124,12 @@
                 <td>{{str_replace($en, $bn, $totalcalc['present'])}}</td>
                 <td>{{str_replace($en, $bn, $totalcalc['absent'])}}</td>
                 <td>{{str_replace($en, $bn, $totalcalc['leave'])}}</td>
-                <td style="text-align: right;">{{str_replace($en, $bn, $totalcalc['salary_payable'])}}</td>
-                <td style="text-align: right;">{{str_replace($en, $bn, $totalcalc['attendance_bonus'])}}</td>
-                <td style="text-align: right;">{{str_replace($en, $bn, $totalcalc['ot_payment'])}}</td>
-                <td style="text-align: right;">{{str_replace($en, $bn, $totalcalc['leave_adjust'])}}</td>
+                <td style="text-align: right;">{{eng_to_bn(bn_money($totalcalc['salary_payable']))}}</td>
+                <td style="text-align: right;">{{eng_to_bn(bn_money($totalcalc['attendance_bonus']))}}</td>
+                <td style="text-align: right;">{{eng_to_bn(bn_money($totalcalc['ot_payment']))}}</td>
+                <td style="text-align: right;">{{eng_to_bn(bn_money($totalcalc['leave_adjust']))}}</td>
                 <td style="text-align: right;">{{str_replace($en, $bn, 0)}}</td>
-                <td style="text-align: right;">{{str_replace($en, $bn, $totalcalc['total'])}}</td>
+                <td style="text-align: right;">{{eng_to_bn(bn_money($totalcalc['total']))}}</td>
             </tr>
         </table>
         <br><br><br>
@@ -152,64 +152,64 @@
                 </tr>
                 <tr>
                     <td style="width: 30%;">০১ (এক) দিনের গড় মজুরী</td>
-                    <td>= {{str_replace($en, $bn, $totalcalc['per_wages'])}} টাকা</td>
+                    <td>= {{eng_to_bn(bn_money($totalcalc['per_wages']))}} টাকা</td>
                 </tr>
                 <tr>
                     <td style="width: 30%;"> {{eng_to_bn($totalcalc['total_leave'])}} দিনের মোট মজুরী</td>
-                    <td>= {{str_replace($en, $bn, $totalcalc['first_pay'])}} টাকা</td>
+                    <td>= {{eng_to_bn(bn_money($totalcalc['first_pay']))}} টাকা</td>
                 </tr>
                 <tr>
                     <td style="width: 30%;">বিনা বেতনে ছুটি</td>
-                    <td>= {{str_replace($en, $bn, $totalcalc['first_pay'])}} টাকা</td>
+                    <td>= {{eng_to_bn(bn_money($totalcalc['first_pay']))}} টাকা</td>
                 </tr>
                 <tr>
                     <td style="width: 30%;">মোট মজুরী</td>
-                    <td>= {{str_replace($en, $bn, $totalcalc['second_pay'])}} টাকা</td>
+                    <td>= {{eng_to_bn(bn_money($totalcalc['second_pay']))}} টাকা</td>
                 </tr>
                 <tr>
                     <td style="width: 30%;">বাড়ি ভাড়া</td>
-                    <td>= {{str_replace($en, $bn, $totalcalc['total_pay'])}} টাকা</td>
+                    <td>= {{eng_to_bn(bn_money($totalcalc['total_pay']))}} টাকা</td>
                 </tr>
                 <tr>
                     <td style="width: 30%;">যাতায়াত, চিকিৎসা ও খাদ্য ভাতা</td>
-                    <td>= {{str_replace($en, $bn, $totalcalc['first_pay'])}} টাকা</td>
+                    <td>= {{eng_to_bn(bn_money($totalcalc['first_pay']))}} টাকা</td>
                 </tr>
                 <tr>
                     <td style="width: 30%;">বাড়ি ভাড়া + যাতায়াত, চিকিৎসা ও খাদ্য ভাতা</td>
-                    <td>= {{str_replace($en, $bn, $totalcalc['first_pay'])}} টাকা</td>
+                    <td>= {{eng_to_bn(bn_money($totalcalc['first_pay']))}} টাকা</td>
                 </tr>
                 <tr>
                     <td style="width: 30%;">০১ দিনের বাড়ি ভাড়া + যাতায়াত, চিকিৎসা ও খাদ্য ভাতা</td>
-                    <td>= {{str_replace($en, $bn, $totalcalc['first_pay'])}} টাকা</td>
+                    <td>= {{eng_to_bn(bn_money($totalcalc['first_pay']))}} টাকা</td>
                 </tr>
                 <tr>
                     <td style="width: 30%;">{{eng_to_bn($totalcalc['ben_day'])}} দিনের বাড়ি ভাড়া + যাতায়াত, চিকিৎসা ও খাদ্য ভাতা</td>
-                    <td>= {{str_replace($en, $bn, $totalcalc['first_pay'])}} টাকা</td>
+                    <td>= {{eng_to_bn(bn_money($totalcalc['first_pay']))}} টাকা</td>
                 </tr>
                 <tr>
                     <td style="width: 30%;">{{eng_to_bn($totalcalc['total_leave'])}} দিনের ছুটির টাকা</td>
-                    <td>= {{str_replace($en, $bn, $totalcalc['first_pay'])}} টাকা</td>
+                    <td>= {{eng_to_bn(bn_money($totalcalc['first_pay']))}} টাকা</td>
                 </tr>
                 <tr>
                     <td style="width: 30%;">{{eng_to_bn($totalcalc['ben_day'])}} দিনের বিনা বেতনে ছুটির টাকা</td>
-                    <td>= {{str_replace($en, $bn, $totalcalc['first_pay'])}} টাকা</td>
+                    <td>= {{eng_to_bn(bn_money($totalcalc['first_pay']))}} টাকা</td>
                 </tr>
                 <tr>
                     <td style="width: 30%;">
                         ১ম কিস্তির টাকা
-                        <br> ({{eng_to_bn($totalcalc['total_leave'])}} দিনের ছুটির টাকা +  {{eng_to_bn($totalcalc['first_pay_day'])}} দিনের বিনা বেতনে ছুটির টাকা) 
+                        <br> ({{eng_to_bn($totalcalc['total_leave'])}} দিনের ছুটির টাকা +  {{eng_to_bn(bn_money($totalcalc['first_pay_day']))}} দিনের বিনা বেতনে ছুটির টাকা) 
                     </td>
-                    <td>= {{str_replace($en, $bn, $totalcalc['second_pay'])}} টাকা</td>
+                    <td>= {{eng_to_bn(bn_money($totalcalc['second_pay']))}} টাকা</td>
                 </tr>
                 <tr>
                     <td style="width: 30%;">২য় কিস্তির টাকা
                         <br> ৫৬ দিনের বিনা বেতনে ছুটির টাকা) 
                     </td>
-                    <td>= {{str_replace($en, $bn, $totalcalc['second_pay'])}} টাকা</td>
+                    <td>= {{eng_to_bn(bn_money($totalcalc['second_pay']))}} টাকা</td>
                 </tr>
                 <tr>
                     <td style="width: 30%;">মোট প্রদেয়</td>
-                    <td>= {{str_replace($en, $bn, $totalcalc['total_pay'])}} টাকা</td>
+                    <td>= {{eng_to_bn(bn_money($totalcalc['total_pay']))}} টাকা</td>
                 </tr>
                 
             </table >
@@ -217,27 +217,38 @@
             <table style="border: none; " width="100%" cellpadding="3" width="100%">
                 <tr>
                     <th style="width: 30%;">০১ (এক) দিনের গড় মজুরী</th>
-                    <td>= তিন মাসের মোট প্রাপ্ত টাকা / (ভাগ) তিন মাসের মোট উপস্থিতি</td>
+                    <th style="width: 5%;">=</th>
+                    <td colspan="2"> তিন মাসের মোট প্রাপ্ত টাকা / (ভাগ) তিন মাসের মোট উপস্থিতি</td>
                 </tr>
                 <tr>
                     <td style="width: 30%;">০১ (এক) দিনের গড় মজুরী</td>
-                    <td>= {{str_replace($en, $bn, $totalcalc['per_wages'])}} টাকা</td>
+                    <td>=</td>
+                    <td style="text-align: right;"> {{eng_to_bn(bn_money($totalcalc['per_wages']))}} টাকা</td>
+                    <td style="width: 30%"></td>
                 </tr>
                 <tr>
                     <td style="width: 30%;">৫৬ দিনের মোট মজুরী</td>
-                    <td>= {{str_replace($en, $bn, $totalcalc['first_pay'])}} টাকা</td>
+                    <td>=</td>
+                    <td style="text-align: right;"> {{eng_to_bn(bn_money($totalcalc['first_pay']))}} টাকা</td>
+                    <td></td>
                 </tr>
                 <tr>
                     <td style="width: 30%;">১ম কিস্তির টাকা</td>
-                    <td>= {{str_replace($en, $bn, $totalcalc['first_pay'])}} টাকা</td>
+                    <td>=</td>
+                    <td style="text-align: right;"> {{eng_to_bn(bn_money($totalcalc['first_pay']))}} টাকা</td>
+                    <td></td>
                 </tr>
                 <tr>
                     <td style="width: 30%;">২য় কিস্তির টাকা</td>
-                    <td>= {{str_replace($en, $bn, $totalcalc['second_pay'])}} টাকা</td>
+                    <td>=</td>
+                    <td style="text-align: right;"> {{eng_to_bn(bn_money($totalcalc['second_pay']))}} টাকা</td>
+                    <td></td>
                 </tr>
                 <tr>
                     <td style="width: 30%;">মোট প্রদেয়</td>
-                    <td>= {{str_replace($en, $bn, $totalcalc['total_pay'])}} টাকা</td>
+                    <td>=</td>
+                    <td style="text-align: right;"> {{eng_to_bn(bn_money($totalcalc['total_pay']))}} টাকা</td>
+                    <td></td>
                 </tr>
                 
             </table >

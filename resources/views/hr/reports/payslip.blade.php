@@ -120,6 +120,13 @@
                             </select>
                             <label for="floor">Floor</label>
                         </div>
+                        <div class="form-group has-float-label select-search-group">
+                            <?php
+                              $payType = ['all'=>'All', 'cash'=>'Cash', 'rocket'=>'Rocket', 'bKash'=>'bKash', 'dbbl'=>'Duch-Bangla Bank Limited.'];
+                            ?>
+                            {{ Form::select('pay_status', $payType, 'all', ['placeholder'=>'Select Payment Type', 'class'=>'form-control capitalize select-search', 'id'=>'paymentType']) }}
+                            <label for="paymentType">Payment Type</label>
+                        </div>
                         
                     </div> 
                     <div class="col-3">

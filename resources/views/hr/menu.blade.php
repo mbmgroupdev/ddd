@@ -394,6 +394,9 @@
             @if($user->can('Employee Attendance Excel') || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'employee-daily-attendance') active @endif"><a href="{{ url('hr/reports/employee-daily-attendance') }}"><i class="las la-calendar-alt"></i>Employee  Excel</a></li>
             @endif
+            @if($user->id == 17)
+            <li class="@if($segment3 == 'monthly-salary-sheet') active @endif"><a href="{{ url('hr/reports/monthly-salary-sheet') }}"><i class="las la-calendar-alt"></i>Salary  Excel</a></li>
+            @endif
          </ul>
       </li>
       @endif

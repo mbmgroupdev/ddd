@@ -217,7 +217,7 @@
                 <h6 class="capitalize">- {{ $history->user['name'] }}</h6>
                 @if($history->comment != null)
                 <span class="mb-0">
-                <blockquote>{{ $history->comment }}</blockquote>
+                <blockquote style="padding: 0 5px;">{{ $history->comment }}</blockquote>
                 </span>
                 @endif
              </div>
@@ -245,7 +245,7 @@
                 <h6 class="capitalize">- {{ $history->user['name'] }}</h6>
                 @if($history->comment != null)
                 <span class="mb-0">
-                <blockquote>{{ $history->comment }}</blockquote>
+                <blockquote style="padding: 0 5px;">{{ $history->comment }}</blockquote>
                 </span>
                 @endif
              </div>

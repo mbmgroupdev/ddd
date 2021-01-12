@@ -356,15 +356,23 @@ class AttendanceFileProcessController extends Controller
             ->first();
             if($last_punch){
                 if((($shift_start_begin >= $last_punch->in_time || $last_punch->in_time >= $shift_start_end)  && $last_punch->in_time != null) || $last_punch->remarks == 'DSI'){
-                    DB::table($tableName)->where('id', $last_punch->id)->update([
-                            'in_time' => null, 'ot_hour' => 0, 'late_status' => 0]);
+                    if($last_punch->out_time != null){   
+                        DB::table($tableName)->where('id', $last_punch->id)->update([
+                                'in_time' => null, 'ot_hour' => 0, 'late_status' => 0]);
+                    }else{
+                        DB::table($tableName)->where('id', $last_punch->id)->delete();
+                    }
                     $last_punch = DB::table($tableName)->where('id', $last_punch->id)->first();
 
 
                 }
                 if(($shift_end_begin >= $last_punch->out_time || $last_punch->out_time >= $shift_end_end ) && $last_punch->out_time != null){
-                    DB::table($tableName)->where('id', $last_punch->id)->update([
+                    if($last_punch->in_time != null){ 
+                        DB::table($tableName)->where('id', $last_punch->id)->update([
                             'out_time' => null, 'ot_hour' => 0]);
+                    }else{
+                        DB::table($tableName)->where('id', $last_punch->id)->delete();
+                    }
                     $last_punch = DB::table($tableName)->where('id', $last_punch->id)->first();
 
                 }
@@ -593,15 +601,25 @@ class AttendanceFileProcessController extends Controller
 
                 if($last_punch){
                     if((($shift_start_begin_new >= $last_punch->in_time || $last_punch->in_time >= $shift_start_end_new)  && $last_punch->in_time != null) || $last_punch->remarks == 'DSI'){
-                        DB::table($tableName)->where('id', $last_punch->id)->update([
+                        if($last_punch->out_time != null){ 
+                            DB::table($tableName)->where('id', $last_punch->id)->update([
                                 'in_time' => null, 'ot_hour' => 0, 'late_status' => 0]);
+                        }else{
+                            DB::table($tableName)->where('id', $last_punch->id)->delete();
+                        }
+
                         $last_punch = DB::table($tableName)->where('id', $last_punch->id)->first();
 
 
                     }
                     if(($shift_end_begin_new >= $last_punch->out_time || $last_punch->out_time >= $shift_end_end_new ) && $last_punch->out_time != null){
-                        DB::table($tableName)->where('id', $last_punch->id)->update([
+                        if($last_punch->in_time != null){ 
+                            DB::table($tableName)->where('id', $last_punch->id)->update([
                                 'out_time' => null, 'ot_hour' => 0]);
+                        }else{
+                            DB::table($tableName)->where('id', $last_punch->id)->delete();
+                        }
+
                         $last_punch = DB::table($tableName)->where('id', $last_punch->id)->first();
 
                     }

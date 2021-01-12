@@ -82,13 +82,24 @@
                                         $bn = array('০', '১', '২', '৩',  '৪', '৫', '৬', '৭', '৮', '৯');
                                         $date = str_replace($en, $bn, date('Y-m-d H:i:s'));
                                         ?>
+                                        <style type="text/css">
+                                            p{margin: 0;padding: 0}
+                                        </style>
                                         <p>
                                         <center><b style="font-size: 14px;">চাকুরীর আবেদনপত্র </b></center>
                                         <center><u style="font-size: 13px">JOB APPLICATION </u> </center>
-                                        <p style="font-size: 12px;">বরাবর,</p>
-                                        <p style="font-size: 12px;">ব্যবস্থাপনা পরিচালক</p>
-                                        <p style="font-size: 12px;">{{ (!empty($info->hr_unit_name_bn )?$info->hr_unit_name_bn:null) }}</p>
-                                        <p style="font-size: 12px;">{{ (!empty($info->hr_unit_address_bn)?$info->hr_unit_address_bn:null) }}</p>
+                                        <div style="display:flex;justify-content: space-between;">
+                                            <div style="width: 70%;">
+                                                <p style="font-size: 12px;">বরাবর,</p>
+                                                <p style="font-size: 12px;">ব্যবস্থাপনা পরিচালক</p>
+                                                <p style="font-size: 12px;">{{ (!empty($info->hr_unit_name_bn )?$info->hr_unit_name_bn:null) }}</p>
+                                                <p style="font-size: 12px;">{{ (!empty($info->hr_unit_address_bn)?$info->hr_unit_address_bn:null) }}</p>
+                                            </div>
+                                            <div style="width: 30%;">
+                                                <div style="width: 100px;height:110px;border:1px solid;margin-left: auto; "></div>
+                                            </div>
+                                        </div>
+                                        
                                         <p style="font-size: 12px;"><u> <b>বিষয়ঃ {{ $info->hr_designation_name_bn }} পদে চাকুরীর জন্য আবেদন</b></u></p>
                                         <p style="font-size: 12px;"><u> <b> Sub: Application for the post of {{ (!empty($info->hr_designation_name )?$info->hr_designation_name:null) }}</b></u></p>
                                         <table style="border: none; font-size: 12px;" width="100%" cellpadding="3">
@@ -191,7 +202,7 @@
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td style="border: none;" width="290px"><br>
+                                                <td style="border: none;" width="290px"><br><br><br>
                                                     আপনার বিশ্বস্ত
                                                 </td>
                                             </tr>

@@ -8,22 +8,25 @@
       width: 120px !important;
     }
     #recruit th:nth-child(3) input{
-      width: 120px !important;
-    }
-    #recruit th:nth-child(4) input{
-      width: 120px !important;
-    }
-    #recruit th:nth-child(5) input{
       width: 60px !important;
     }
+    #recruit th:nth-child(4) input{
+      width: 60px !important;
+    }
+    #recruit th:nth-child(5) input{
+      width: 120px !important;
+    }
     #recruit th:nth-child(6) input{
-      width: 70px !important;
+      width: 60px !important;
     }
     #recruit th:nth-child(7) input{
+      width: 70px !important;
+    }
+    #recruit th:nth-child(8) input{
       width:80px !important;
     }
 
-    #recruit th:nth-child(8) input{
+    #recruit th:nth-child(9) input{
       width: 70px !important;
     }
     
@@ -59,6 +62,7 @@
                         <th width="5%">Sl</th>
                         <th>Name</th>
                         <th>Employee Type</th>
+                        <th>Oracle ID</th>
                         <th>Designation</th>
                         <th width="5%">Unit</th>
                         <th>Area</th>
@@ -79,7 +83,7 @@
    <script type="text/javascript">
    $(document).ready(function(){ 
       var searchable = [1,2,3,4,5,6,7];
-      var exportColName = ['SL','Employee Type','Designation','Unit', 'Area', 'Name','Contact','DOJ'];
+      var exportColName = ['SL','Employee Type','Oracle ID','Designation','Unit', 'Area', 'Name','Contact','DOJ'];
       var exportCol = [0,1,2,3,4,5,6,7];
       var dt = $('#recruit').DataTable({
           order: [], //reset auto order
@@ -172,6 +176,7 @@
                {data: 'DT_RowIndex', name: 'DT_RowIndex'}, 
                {data: 'worker_name', name: 'worker_name'}, 
                {data: 'hr_emp_type_name', name: 'hr_emp_type_name'}, 
+               {data: 'as_oracle_code', name: 'as_oracle_code'}, 
                {data: 'hr_designation_name', name: 'hr_designation_name'}, 
                {data: 'hr_unit_short_name', name: 'hr_unit_short_name'}, 
                {data: 'hr_area_name', name: 'hr_area_name'}, 

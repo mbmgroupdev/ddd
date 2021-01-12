@@ -433,6 +433,8 @@ if(!function_exists('emp_status_name')){
             $name = 'left';
         } else if($status == 6) {
             $name = 'maternity';
+        } else if($status == 25){
+            $name = 'Left & Resign';
         }
         return $name;
     }
@@ -898,6 +900,21 @@ if(!function_exists('unit_list')){
             ->orderBy('hr_unit_name', 'desc')
             ->pluck('hr_unit_name', 'hr_unit_id');
         });      
+
+    }
+}
+
+if(!function_exists('permitted_unit_short')){
+    function permitted_unit_short()
+    {
+        $unit = unit_by_id();
+        $auth_unit = auth()->user()->unit_permissions();
+        $untiList = [];
+        foreach($auth_unit as $key => $u) {
+            $untiList[$u] = $unit[$u]['hr_unit_short_name']??'';
+        }  
+
+        return $untiList;   
 
     }
 }

@@ -63,7 +63,11 @@
                                     date_default_timezone_set('Asia/Dhaka');
                                     $en = array('0','1','2','3','4','5','6','7','8','9');
                                     $bn = array('০', '১', '২', '৩',  '৪', '৫', '৬', '৭', '৮', '৯');
-                                    $date = str_replace($en, $bn, $info->as_doj);
+                                    $date = '';
+                                    if(isset($info->as_doj)){
+                                        $date = str_replace($en, $bn, $info->as_doj);
+
+                                    }
                                     ?>
                                     <style type="text/css" media="print">
                                         
@@ -137,8 +141,8 @@
                                             <td>: টাকা {{ (!empty($info->ben_food)?str_replace($en, $bn, $info->ben_food):null) }}/=</td>
                                         </tr>
                                         <tr>
-                                            <td>ঙ) যাতায়াত ভাতা(Conveyance Allowance)</td>
-                                            <td>: টাকা {{ (!empty($info->ben_transport)?str_replace($en, $bn, $info->ben_transport):null) }}/=</td>
+                                            <td style="border-bottom: 1px solid;">ঙ) যাতায়াত ভাতা(Conveyance Allowance)</td>
+                                            <td style="border-bottom: 1px solid;">: টাকা {{ (!empty($info->ben_transport)?str_replace($en, $bn, $info->ben_transport):null) }}/=</td>
                                         </tr>
                                         <tr>
                                             <td>সর্বমোট বেতন( Monthly Gross Salary )</td>
@@ -196,15 +200,24 @@
                                     <p>১১।  কর্তৃপক্ষ আপনাকে প্রয়োজনবোধে এই প্রতিষ্ঠানের যে কোন বিভাগে অথবা বাংলাদেশে অবস্থিত যে কোন কারখানায়/অফিসে বদলি করিতে পারিবেন।</p>
                                     <p>১২। গোপনীয়তা রক্ষার নীতি <b>(Non-Disclosure Policy)</b>ঃ প্রতিষ্ঠানের স্বার্থে সকল প্রকার তথ্য গোপন রাখিতে হইবে।</p>
                                     <p>১৩।  কোম্পানীর যাবতীয় নিয়ম-কানুন পরিবর্তনযোগ্য ( যাহা দেশের প্রচলিত আইনের পরিপন্থি নহে) এবং আপনি পরিবর্তীত নিয়ম কানুন সর্বদা মানিয়া চলিতে বাধ্য থাকিবেন। </p><br><br><br>
-                                    <p>ধন্যবাদান্তে</p>
-                                    <p>সংশ্লিষ্ট ব্যবস্থাপক</p>
+                                    <div style="display: flex;justify-content: space-between;">
+                                        <div style="width: 50%">
+                                            <p>ধন্যবাদান্তে</p>
+                                            <p>সংশ্লিষ্ট ব্যবস্থাপক</p>
+                                        </div>
+                                        <div style="width: 50%;text-align: right">
+                                            ----------------<br>
+                                            কারখানা কর্তৃপক্ষ
+                                        </div>
+                                    </div>
+                                    
                                     <br><br>
                                     <p>&nbsp; &nbsp;অনুলিপিঃ</p>
                                     <p>&nbsp; &nbsp;১। হিসাব বিভাগ।</p>
                                     <p>&nbsp; &nbsp;২। ব্যক্তিগত নথি।</p>
                                     <p>আমি অত্র নিয়োগপত্র পাঠ করিয়া এবং ইহাতে বর্ণিত শর্তাদি সম্পূর্ণরুপে অবগত হইয়া এই নিয়োগপত্রের ১ কপি গ্রহণ করিয়া স্বাক্ষর করিলাম।</p>
                                     <p>&nbsp;</p><br>
-                                    <p style="text-align: right;">&nbsp;কর্মকর্তা/কর্মচারীর স্বক্ষর&nbsp; &nbsp; &nbsp; &nbsp;</p>
+                                    <p style="text-align: right;">&nbsp;শ্রমিকের স্বক্ষর&nbsp; &nbsp; &nbsp; &nbsp;</p>
                                     </p>
                                 </div>
                             </div>

@@ -100,6 +100,10 @@ class PayslipController extends Controller
             // employee info
             $employeeData = DB::table('hr_as_basic_info');
             $employeeDataSql = $employeeData->toSql();
+
+            // employee benefit sql binding
+            $benefitData = DB::table('hr_benefits');
+            $benefitData_sql = $benefitData->toSql();
             // employee bangla info
             $employeeBanData = DB::table('hr_employee_bengali');
             $employeeBanDataSql = $employeeBanData->toSql();
@@ -117,7 +121,7 @@ class PayslipController extends Controller
             ->when(!empty($input['location']), function ($query) use($input){
                return $query->where('emp.as_location',$input['location']);
             })
-            ->where('emp.as_status', $input['employee_status'])
+            ->where('s.emp_status', $input['employee_status'])
             ->when(!empty($input['area']), function ($query) use($input){
                return $query->where('emp.as_area_id',$input['area']);
             })
@@ -133,6 +137,13 @@ class PayslipController extends Controller
             // ->when(!empty($input['otnonot']), function ($query) use($input){
             //    return $query->where('emp.as_ot',$input['otnonot']);
             // })
+            ->when(!empty($input['pay_status']), function ($query) use($input){
+                if($input['pay_status'] == "cash"){
+                    return $query->where('ben.ben_cash_amount', '>', 0);
+                }elseif($input['pay_status'] != 'cash' && $input['pay_status'] != 'all'){
+                    return $query->where('ben.bank_name',$input['pay_status']);
+                }
+            })
             ->when(!empty($input['section']), function ($query) use($input){
                return $query->where('emp.as_section_id', $input['section']);
             })
@@ -151,6 +162,9 @@ class PayslipController extends Controller
             }
             $queryData->leftjoin(DB::raw('(' . $employeeDataSql. ') AS emp'), function($join) use ($employeeData) {
                 $join->on('emp.associate_id','s.as_id')->addBinding($employeeData->getBindings());
+            });
+            $queryData->leftjoin(DB::raw('(' . $benefitData_sql. ') AS ben'), function($join) use ($benefitData) {
+                $join->on('ben.ben_as_id','emp.associate_id')->addBinding($benefitData->getBindings());
             });
 
             $queryData->leftjoin(DB::raw('(' . $employeeBanDataSql. ') AS bemp'), function($join) use ($employeeBanData) {

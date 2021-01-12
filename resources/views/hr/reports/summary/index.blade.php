@@ -30,6 +30,12 @@
       padding: 15px 15px;
       padding-bottom: 8px;
     }
+    #right_modal_lg .table-responsive{
+        display: initial !important;
+    }
+    #right_modal_lg .table-title{
+        display: none;
+    }
 
 </style>
 @endpush
@@ -140,14 +146,23 @@
                                             </select>
                                             <label for="otnonot">OT/Non-OT</label>
                                         </div>
-                                        <input type="hidden" id="reportformat" name="report_format" value="0">
+                                        <input type="hidden" id="reportformat" name="report_format" value="1">
                                         <input type="hidden" id="reportGroup" name="report_group" value="as_subsection_id">
                                     </div>
                                     <div class="col-4">
                                       
                                         <div class="form-group has-float-label has-required select-search-group">
                                             <?php
-                                                $reportType = ['ot'=>'OT', 'working_hour' => 'Working Hour'];
+                                                $reportType = [
+                                                    'ot'=>'OT', 
+                                                    'working_hour' => 'Working Hour'
+                                                ];
+                                                if(auth()->user()->can('End of Job Benefits')){
+                                                   $reportType['left_resign'] = 'Left & Resign';
+                                                }
+                                                if(auth()->user()->can('Manage Employee')){
+                                                   $reportType['recruitment'] = 'Recruitment';
+                                                }
                                             ?>
                                             {{ Form::select('report_type', $reportType, null, ['placeholder'=>'Select Report Type ', 'class'=>'form-control capitalize select-search', 'id'=>'reportType']) }}
                                             <label for="reportType">Report Type</label>
@@ -272,9 +287,34 @@
     </div>
 </div>
 @include('hr.reports.daily_activity.attendance.employee_activity_modal')
+
+<div class="modal right fade" id="right_modal_lg" tabindex="-1" role="dialog" aria-labelledby="right_modal_lg">
+    <div class="modal-dialog modal-lg right-modal-width" role="document" > 
+        <div class="modal-content">
+            <div class="modal-header">
+                <a class="view prev_btn" data-toggle="tooltip" data-dismiss="modal" data-placement="top" title="" data-original-title="Back to Report">
+                    <i class="las la-chevron-left"></i>
+                </a>
+                <h5 class="modal-title right-modal-title text-center" id="modal-title-right"> &nbsp; </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-content-result" id="content-result">
+          
+                </div>
+            </div>
+      
+        </div>
+    </div>
+</div>
+
 @push('js')
 <script src="{{ asset('assets/js/moment.min.js')}}"></script>
 <script type="text/javascript">
+    var loaderModal = '<div class="panel"><div class="panel-body"><p style="text-align:center;margin:10px;" class="loader-p"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>';
+
     function printDiv(divName)
     { 
         var myWindow=window.open('','','width=800,height=800');
@@ -368,11 +408,13 @@
                 data: form.serialize(), // serializes the form's elements.
                 success: function(response)
                 {
+                    console.log('recieved');
                   $(".next_btn").attr('disabled', false);
                   $(".prev_btn").attr('disabled', false);
                   // console.log(response);
                   if(response !== 'error'){
                     $("#result-data").html(response);
+                    console.log('replaced');
                   }else{
                     // console.log(response);
                     $("#result-data").html('');
@@ -510,6 +552,29 @@
 
 
        
+    });
+
+    $(document).on('click','.generate-drawer', function(){
+        var urldata = $(this).data('url'),
+            body = $(this).data('body');
+        $("#modal-title-right").html(' '+body+' Salary Details');
+        $('#right_modal_lg').modal('show');
+        $("#content-result").html(loaderModal);
+        $.ajax({
+            url: '{{ url('hr/reports/summary/report') }}?'+urldata+'&report_format=0',
+            type: "GET",
+            success: function(response){
+                // console.log(response);
+                if(response !== 'error'){
+                    setTimeout(function(){
+                        $("#content-result").html(response);
+                    }, 1000);
+                }else{
+                    console.log(response);
+                }
+            }
+        });
+
     });
     
     
