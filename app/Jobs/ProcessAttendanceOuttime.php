@@ -148,18 +148,17 @@ class ProcessAttendanceOuttime implements ShouldQueue
                 if($this->unitId == 2){
                     $queuesal = 'ceilsalarygenerate';
                 }
-                if($day_of_date == 31){
-                    $yearMonth = $year.'-'.$month; 
-                    if($month == date('m')){
-                        $totalDay = date('d');
-                    }else{
-                        $totalDay = Carbon::parse($yearMonth)->daysInMonth;
-                    }
-                    $queue = (new ProcessUnitWiseSalary($this->tableName, $month, $year, $getEmployee->as_id, $totalDay))
-                            ->onQueue($queuesal)
-                            ->delay(Carbon::now()->addSeconds(2));
-                            dispatch($queue);
+                
+                $yearMonth = $year.'-'.$month; 
+                if($month == date('m')){
+                    $totalDay = date('d');
+                }else{
+                    $totalDay = Carbon::parse($yearMonth)->daysInMonth;
                 }
+                $queue = (new ProcessUnitWiseSalary($this->tableName, $month, $year, $getEmployee->as_id, $totalDay))
+                        ->onQueue($queuesal)
+                        ->delay(Carbon::now()->addSeconds(2));
+                        dispatch($queue);
                 
             }
         }

@@ -86,17 +86,11 @@ Route::get('hr/associate-info', 'Hr\Operation\LocationChangeController@getUnit')
 Route::get('hr/reports/salary-sheet-custom-individual-search', 'Hr\Reports\SalarySheetCustomController@individualSearch');
 Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMode\BmodeSalarySheetController@individualSearch');
 
-
-
-
 	Route::get('hr/over-time-report-chart', 'Hr\DashboardController@overTimeChart');
 	Route::get('hr/unit-wise-employee-summary', 'Hr\DashboardController@unitWiseEmpSummary');
 	Route::get('hr/attendance-chart', 'Hr\DashboardController@attendanceChart');
 
-
-	//user dashboard demo
-
-	//---------Time and Attendence-----------//
+	//---------Time and Attendance-----------//
 
 	Route::group(['prefix' => 'hr/search/','namespace' => 'Hr\Search', 'middleware' => ['permission:Query']], function(){
 
@@ -190,6 +184,7 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 
 
 		// Line Change Query
+		
 		Route::get('hr_line_search', 'LineSearchController@hrLineSearch');
 		Route::get('hr_line_search_unit', 'LineSearchController@hrLineSearchUnit');
 		Route::get('hr_line_search_floor', 'LineSearchController@hrLineSearchFloor');
@@ -332,12 +327,15 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 	Route::post('hr/timeattendance/shift_roaster_data', 'Hr\TimeAttendance\ShiftRoasterController@getRoasterData');
 	Route::get('hr/timeattendance/get_floor_by_unit', 'Hr\TimeAttendance\ShiftRoasterController@getFloorByUnit');
 
-	//added on 19-10-2019.........
+	
 	Route::get('hr/shift_roaster/ajax_get_sfhift_details', 'Hr\Setup\ShiftController@getShiftTimes');
 	//----------------------------
 
 	// Station Card
-
+	Route::get('hr/operation/unit-wise-line-floor', 'Hr\TimeAttendance\StationController@getLineFloor');
+	Route::get('hr/operation/date-wise-line-floor', 'Hr\TimeAttendance\StationController@dateLineFloor');
+	Route::get('hr/operation/line-change-get-employee', 'Hr\TimeAttendance\StationController@lineGetEmployee');
+	Route::post('hr/operation/ajax-line-changes', 'Hr\TimeAttendance\StationController@ajaxLineChange');
 	Route::get("hr/timeattendance/station_card", "Hr\TimeAttendance\StationController@showList");
 	Route::get("hr/timeattendance/station_card_data", "Hr\TimeAttendance\StationController@listData");
 	Route::get("hr/operation/line-change", "Hr\TimeAttendance\StationController@showForm")->middleware(['permission:Station Card']);
@@ -386,6 +384,8 @@ Route::get('hr/reports/salary-sheet-custom-individual-search-buyer', 'Hr\BuyerMo
 	Route::post('hr/timeattendance/leave_approve/approve_reject', 'Hr\TimeAttendance\AllLeavesController@leaveStatus')->middleware(['permission:Leave Approve']);
 	// shift roster assign section
 	Route::post('/hr/operation/shift_roster_assign_action', 'Hr\Operation\ShiftRosterController@assignMulti');
+	Route::post('hr/operation/single-date-shift-change', 'Hr\Operation\ShiftRosterController@singleDateAssign');
+
 	// holiday roster assign
 	Route::post('hr/operation/holiday_roster_assign_action', 'Hr\Operation\HolidayRosterController@assignMulti');
 

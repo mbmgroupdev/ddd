@@ -382,9 +382,10 @@
 									<th rowspan="2"> {{ $head }} Name</th>
 									<th colspan="3">No. of Employee</th>
 									<th rowspan="2">OT Hour</th>
-									
-									<th colspan="5">Salary Amount (BDT)</th>
-									<th colspan="5">Bank & Cash (BDT)</th>
+									<th rowspan="2">Payable Salary</th>
+									<th colspan="5">Salary segmentation (BDT)</th>
+									<th rowspan="2">Net Pay Amount</th>
+									<th colspan="3">Cash & Bank (BDT)</th>
 								</tr>
 								<tr class="text-center">
 									<th>Non OT</th>
@@ -393,17 +394,15 @@
 									<th>Salary</th>
 									<th>Wages</th>
 									<th>OT Amount</th>
+									<th>Food Deduct</th>
 									<th>stamp</th>
-									<th>Total</th>
 									<th>Cash</th>
-									<th>Stamp</th>
 									<th>Bank</th>
 									<th>Tax</th>
-									<th>Total</th>
 								</tr>
 							</thead>
 							<tbody>
-								@php $i=0; $tNonOt = 0; $tOt = 0; $totalOtSalary =0; $totalNonOtSalary =0; $totalGroupSalary = 0; @endphp
+								@php $i=0; $tNonOt = 0; $tOt = 0; $totalOtSalary =0; $totalNonOtSalary =0; $totalGroupSalary = 0; $totalFoodDeduct = 0; $totalGroupPay = 0; @endphp
 								@if(count($getEmployee) > 0)
 								@foreach($getEmployee as $employee)
 								@php 
@@ -416,7 +415,13 @@
 									$totalNonOtSalary += $nonOtSalary;
 									$totalOtSalary += $otSalary;
 									$totalGroupStampSalary = $employee->groupTotal+$employee->groupStamp;
+									
 									$totalGroupSalary += $totalGroupStampSalary;
+									
+									$foodAmount = $employee->foodDeduct??0;
+									$totalFoodDeduct += $foodAmount;	
+									
+									$totalGroupPay += $employee->groupTotal
 								@endphp
 								<tr>
 									<td>{{ ++$i }}</td>
@@ -458,6 +463,7 @@
 									<td style="text-align: center;">
 										{{ $employee->nonot }}
 									</td>
+
 									<td style="text-align: center;">
 										{{ $employee->ot }}
 									</td>
@@ -468,7 +474,9 @@
 									<td class="text-right">
 										{{ numberToTimeClockFormat($employee->groupOt) }}
 									</td>
-
+									<td class="text-right">
+										{{ bn_money(round($employee->groupTotal+$employee->groupStamp+$foodAmount)) }}
+									</td>
 									<td class="text-right">
 										{{ bn_money(round($nonOtSalary)) }}
 									</td>
@@ -478,19 +486,20 @@
 									<td class="text-right">
 										{{ bn_money(round($employee->groupOtAmount)) }}
 									</td>
+									
+									<td class="text-right">{{ bn_money(round($foodAmount))}}</td>
+									
 									<td class="text-right">
 										{{ bn_money(round($employee->groupStamp)) }}
 									</td>
-									<td class="text-right">
-										{{ bn_money(round($employee->groupTotal+$employee->groupStamp)) }}
+									<td class="text-right" style="font-weight: bold">
+										{{ bn_money(round($employee->groupTotal)) }}
 									</td>
 
 									<td class="text-right">
 										{{ bn_money(round($employee->groupCashSalary)) }}
 									</td>
-									<td class="text-right">
-										{{ bn_money(round($employee->groupStamp)) }}
-									</td>
+									
 									<td class="text-right">
 										{{ bn_money(round($employee->groupBankSalary)) }}
 									</td>
@@ -498,9 +507,6 @@
 										{{ bn_money(round($employee->groupTds)) }}
 									</td>
 									
-									<td class="text-right">
-										{{ bn_money(round($employee->groupTotal+$employee->groupStamp)) }}
-									</td>
 								</tr>
 								@endforeach
 								<tr>
@@ -510,25 +516,22 @@
 									<td class="text-center fwb">{{ $tOt }}</td>
 									<td class="text-center fwb">{{ $totalEmployees }}</td>
 									<td class="text-right fwb">{{ numberToTimeClockFormat(round($totalOtHour,2)) }}</td>
-									<td class="text-right fwb">{{ bn_money(round($totalNonOtSalary,2)) }}</td>
-									<td class="text-right fwb">{{ bn_money(round($totalOtSalary,2)) }}</td>
-									<td class="text-right fwb">{{ bn_money(round($totalOTAmount,2)) }}</td>
-									<td class="text-right fwb">{{ bn_money(round($totalStamp,2)) }}</td>
-									<td class="text-right fwb">{{ bn_money(round($totalGroupSalary,2)) }}</td>
-									<td class="text-right fwb">{{ bn_money(round($totalCashSalary,2)) }}</td>
-									<td class="text-right fwb">{{ bn_money(round($totalStamp,2)) }}</td>
-									<td class="text-right fwb">{{ bn_money(round($totalBankSalary,2)) }}</td>
-									<td class="text-right fwb">{{ bn_money(round($totalTax,2)) }}</td>
-									<td class="text-right fwb">{{ bn_money(round($totalGroupSalary,2)) }}</td>
+									<td class="text-right fwb">{{ bn_money(round($totalGroupPay + $totalStamp + $totalFoodDeduct)) }}</td>
+									<td class="text-right fwb">{{ bn_money(round($totalNonOtSalary)) }}</td>
+									<td class="text-right fwb">{{ bn_money(round($totalOtSalary)) }}</td>
+									<td class="text-right fwb">{{ bn_money(round($totalOTAmount)) }}</td>
+									
+									<td class="text-right fwb">{{ bn_money(round($totalFoodDeduct)) }}</td>
+									
+									<td class="text-right fwb">{{ bn_money(round($totalStamp)) }}</td>
+									
+									<td class="text-right fwb" style="font-weight: bold">{{ bn_money(round($totalGroupPay)) }}</td>
+									<td class="text-right fwb">{{ bn_money(round($totalCashSalary)) }}</td>
+									<td class="text-right fwb">{{ bn_money(round($totalBankSalary)) }}</td>
+									<td class="text-right fwb">{{ bn_money(round($totalTax)) }}</td>
 									
 								</tr>
-								<tr>
-									<td colspan="6" class="text-right fwb"> Salary Payable <br>
-										<span class="red">* Without stamp</span></td>
-									<td colspan="3" class="text-center fwb">{{ bn_money(round(($totalNonOtSalary + $totalOtSalary + $totalOTAmount))) }}</td>
-									<td colspan="7"></td>
-
-								</tr>
+								
 								@else
 								<tr>
 					            	<td colspan="14" class="text-center">No Data Found!</td>

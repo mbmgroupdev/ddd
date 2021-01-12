@@ -23,13 +23,14 @@ class AttendaceBulkManualController extends Controller
     public function bulkManual(Request $request)
     {
         try {
+            // return $resquest->all();
             if($request->associate != null && $request->month != null){
                 $check['month'] = date('m', strtotime($request->month));
                 $check['year'] = date('Y', strtotime($request->month));
                 $check['unit_id'] = Employee::where('associate_id', $request->associate)->select('as_unit_id')->pluck('as_unit_id');
                 $checkL = monthly_activity_close($check);
                 if($checkL == 1){
-                    toastr()->error('Attendace Modification Lock');
+                    toastr()->error('Attendance Modification Lock');
                     return back();
                 }
             }else{
@@ -40,7 +41,25 @@ class AttendaceBulkManualController extends Controller
             $info = array();
             $joinExist = array();
             $leftExist = array();
+            $shifts = [];
+            // return $check['unit_id'];
             if($request->month <= date('Y-m')){
+                $unit = $check['unit_id'][0]??0;
+
+                $shifts = DB::select("SELECT
+                    s1.hr_shift_id,
+                    s1.hr_shift_name,
+                    s1.hr_shift_code,
+                    s1.hr_shift_start_time,
+                    s1.hr_shift_end_time,
+                    s1.hr_shift_break_time
+                    FROM hr_shift s1
+                    LEFT JOIN hr_shift s2
+                    ON (s1.hr_shift_unit_id = s2.hr_shift_unit_id AND s1.hr_shift_name = s2.hr_shift_name AND s1.hr_shift_id < s2.hr_shift_id)
+                    LEFT JOIN hr_unit AS u
+                    ON u.hr_unit_id = s1.hr_shift_unit_id
+                    WHERE s2.hr_shift_id IS NULL AND s1.hr_shift_unit_id= $unit
+                  ");
 
                 $result = $this->empAttendanceByMonth($request);
                 $attendance = $result['attendance'];
@@ -50,7 +69,7 @@ class AttendaceBulkManualController extends Controller
             }else{
                 $info = 'No result found yet!';
             }
-            return view("hr/timeattendance/attendance_bulk_manual",compact('attendance','info', 'joinExist', 'leftExist'));
+            return view("hr/timeattendance/attendance_bulk_manual",compact('attendance','info', 'joinExist', 'leftExist', 'shifts'));
         } catch(\Exception $e) {
             return $e->getMessage();
         }
@@ -160,6 +179,7 @@ class AttendaceBulkManualController extends Controller
                         $insert['remarks'] = 'BM';
                         $insert['as_id'] = $request->ass_id;
                         $insert['hr_shift_code'] = $request->new_shift_code[$key];
+                        $insert['line_id'] = $request->new_line[$key];
                         $insert['updated_by'] = auth()->user()->associate_id;
 
                         $intime = $request->new_intime[$key];
@@ -314,6 +334,7 @@ class AttendaceBulkManualController extends Controller
                             $event['ot_new'] = 'Non OT';
                         }
 
+                        $update['line_id'] = $request->old_line[$key];
                         $update['hr_shift_code'] = $request->this_shift_code[$key];
                         $update['updated_by'] = auth()->user()->associate_id;
 
@@ -523,7 +544,7 @@ class AttendaceBulkManualController extends Controller
             // sent to queue for salary calculation
             $year = date('Y', strtotime($request->month));
             $month = date('m', strtotime($request->month));
-            //dd($year);exit;
+            // dd($year);exit;
             $yearMonth = $year.'-'.$month;
             if($month == date('m')){
                 $totalDay = date('d');
@@ -709,6 +730,7 @@ class AttendaceBulkManualController extends Controller
             $attendance[$i]['date']         = $thisDay;
             $attendance[$i]['floor'] = !empty($lineFloorInfo->changed_floor)?($getFloor[$lineFloorInfo->changed_floor]['hr_floor_name']??''):$floor;
             $attendance[$i]['line'] = !empty($lineFloorInfo->changed_line)?($getLine[$lineFloorInfo->changed_line]['hr_line_name']??''):$line;
+            $attendance[$i]['line_id'] = !empty($lineFloorInfo->changed_line)?$lineFloorInfo->changed_line:$info->as_line_id;
             $attendance[$i]['outside']      = null;
             $attendance[$i]['outside_msg']  = null;
             $attendance[$i]['overtime_time']    = null;

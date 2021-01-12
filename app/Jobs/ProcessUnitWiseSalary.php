@@ -59,7 +59,14 @@ class ProcessUnitWiseSalary implements ShouldQueue
         $partial = 0;
         try {
             if($getEmployee != null && date('Y-m', strtotime($getEmployee->as_doj)) <= $yearMonth){
-
+                // check lock month
+                $checkL['month'] = $month;
+                $checkL['year'] = $year;
+                $checkL['unit_id'] = $getEmployee->as_unit_id;
+                $checkLock = monthly_activity_close($checkL);
+                if($checkLock == 1){
+                    return 'error';
+                }
                 //  get benefit employee associate id wise
                 $getBenefit = Benefits::
                 where('ben_as_id', $getEmployee->associate_id)
@@ -454,6 +461,7 @@ class ProcessUnitWiseSalary implements ShouldQueue
                     }
                 }
             }
+            return 'success';
 
         } catch (\Exception $e) {
             /*$bug = $e->errorInfo[1];

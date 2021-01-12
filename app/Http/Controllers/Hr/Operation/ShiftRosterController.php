@@ -81,4 +81,51 @@ class ShiftRosterController extends Controller
     		return $data;
     	}
     }
+
+    public function singleDateAssign(Request $request)
+    {
+        $input = $request->all();
+        $data['type'] = 'error';
+        try {
+            $year = date('Y', strtotime($input['date']));
+            $month = date('n', strtotime($input['date']));
+            $day= date('j', strtotime($input['date']));
+            $day= "day_".$day;
+            $employee = Employee::getEmployeeAssociateIdWise($input['associateid']);
+            $shift = Shift::getCheckUniqueUnitIdShiftName($employee->as_unit_id, $input['shift']);
+            if($shift != null){
+                $shiftEndTime = $shift->hr_shift_end_time;
+                $shifttime2 = intdiv($shift->hr_shift_break_time, 60).':'. ($shift->hr_shift_break_time % 60);
+
+                $secsShift = strtotime($shifttime2)-strtotime("00:00:00");
+                $hrShiftEnd = date("H:i",strtotime($shiftEndTime)+$secsShift); 
+                $shift->startout = date('H:i', strtotime($shift->hr_shift_start_time)).' - '.$hrShiftEnd;
+                $data['shift'] = $shift;
+                // return $shift;
+                $roster = ShiftRoaster::where('shift_roaster_user_id', $input['as_id'])
+                ->where('shift_roaster_year', $year)
+                ->where('shift_roaster_month', $month)
+                ->first();
+                if($roster != null){
+                    $roster->update([$day => $input['shift']]);
+                    $getId = $roster->shift_roaster_id;
+                }else{
+                    $getId = ShiftRoaster::create([
+                        'shift_roaster_associate_id' => $input['associateid'],
+                        'shift_roaster_user_id' => $input['as_id'],
+                        'shift_roaster_year' => $year,
+                        'shift_roaster_month' => $month,
+                        $day => $input['shift']
+                    ])->shift_roaster_id;
+                }
+                log_file_write("Shift Roster Day Wise Updated", $getId);
+            }
+            $data['type'] = 'success';
+            $data['msg'] = 'Successfully Change Shift';
+            return $data;
+        } catch (\Exception $e) {
+            $data['msg'] = $e->getMessage();
+            return $data;
+        }
+    }
 }
