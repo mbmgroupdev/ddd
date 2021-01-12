@@ -123,9 +123,12 @@
                                             <h4><b id="user-name">Selected User</b></h4>
                                             <p class="mb-0" id="designation">
                                                 Associate ID: ----------</p>
-                                            <p class="mb-0" id="designation">
+                                            <p class="mb-0" id="oracle">
                                                 Oracle ID: ----------</p>
-                                             
+                                            <p class="mb-0" id="unit">
+                                                Unit: ----------</p>
+                                            <p class="mb-0" id="doj">
+                                                Date of Join: ----------</p>
                                           </div>
                                     </div>
                                 </div>

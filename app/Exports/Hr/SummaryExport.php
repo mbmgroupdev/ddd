@@ -20,6 +20,16 @@ class SummaryExport implements FromView, WithHeadingRow
     
     public function view(): View
     {
+        $unit = unit_by_id();
+        $location = location_by_id();
+        $line = line_by_id();
+        $floor = floor_by_id();
+        $department = department_by_id();
+        $designation = designation_by_id();
+        $section = section_by_id();
+        $subSection = subSection_by_id();
+        $area = area_by_id();
+
     	$input = $this->data;
     	$input['area']       = isset($input['area'])?$input['area']:'';
         $input['otnonot']    = isset($input['otnonot'])?$input['otnonot']:'';
@@ -48,7 +58,7 @@ class SummaryExport implements FromView, WithHeadingRow
 
         $tableName = get_att_table($input['unit']).' AS a';
 
-        if($input['report_type'] == 'ot' || $input['report_type'] == 'working_hour' || $input['report_type'] == 'late'){
+        if($input['report_type'] == 'ot' || $input['report_type'] == 'working_hour' || $input['report_type'] == 'late' || $input['report_type'] == 'ot_levis'){
             
             $attData = DB::table($tableName)
                         ->where('a.in_date','>=', $input['from_date'])
@@ -108,9 +118,17 @@ class SummaryExport implements FromView, WithHeadingRow
         })
         ->when(!empty($input['subSection']), function ($query) use($input){
            return $query->where('emp.as_subsection_id', $input['subSection']);
+        })
+        ->when(!empty($input['selected']), function ($query) use($input){
+            if($input['selected'] == 'null'){
+                return $query->whereNull('emp.'.$input['report_group']);
+            }else{
+                return $query->where('emp.'.$input['report_group'], $input['selected']);
+            }
         });
 
-        if($input['report_type'] == 'ot' || $input['report_type'] == 'working_hour'){
+
+        if($input['report_type'] == 'ot' || $input['report_type'] == 'working_hour' || $input['report_type'] == 'ot_levis'){
             $attData->leftjoin(DB::raw('(' . $employeeData_sql. ') AS emp'), function($join) use ($employeeData) {
                 $join->on('a.as_id', '=', 'emp.as_id')->addBinding($employeeData->getBindings());
             });
@@ -134,11 +152,49 @@ class SummaryExport implements FromView, WithHeadingRow
                 $totalValue =  array_sum(array_column($attData->get()->toArray(),'groupOt'));
                 $totalAmount = ceil(array_sum(array_column($attData->get()->toArray(),'ot_amount')));
             }else{
-                $attData->select('emp.as_id', 'emp.as_gender', 'emp.as_shift_id', 'emp.as_oracle_code', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_contact', 'emp.as_section_id','emp.as_subsection_id', DB::raw('sum(a.ot_hour) as ot_hour'), DB::raw('sum(a.ot_hour*(bn.ben_basic/104)) as ot_amount'),DB::raw('count(  a.in_date) as days'))->orderBy('a.ot_hour','desc')->groupBy('emp.as_id');
+                $attData->select('emp.as_id', 'emp.as_gender', 'emp.as_unit_id','emp.as_shift_id', 'emp.as_oracle_code', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_contact', 'emp.as_section_id','emp.as_subsection_id', DB::raw('sum(a.ot_hour) as ot_hour'), DB::raw('sum(a.ot_hour*(bn.ben_basic/104)) as ot_amount'),DB::raw('count(  a.in_date) as days'))->orderBy('a.ot_hour','desc')->groupBy('emp.as_id');
                 $totalValue = array_sum(array_column($attData->get()->toArray(),'ot_hour'));
                 $totalAmount = ceil(array_sum(array_column($attData->get()->toArray(),'ot_amount')));
-                
             }
+                
+        }else if($input['report_type'] == 'ot_levis'){
+            $attData->select('emp.as_id', 'emp.as_gender', 'emp.as_unit_id', 'emp.as_shift_id', 'emp.as_oracle_code', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_contact', 'emp.as_section_id','emp.as_subsection_id', 
+                DB::raw('sum(a.ot_hour) as ot_hour'), 
+                DB::raw('count(  a.in_date) as days'),
+                DB::raw('
+                    (CASE 
+                        WHEN sum(a.ot_hour) > 100 THEN "100" 
+                        WHEN sum(a.ot_hour) >= 91 THEN "91-100" 
+                        WHEN sum(a.ot_hour) >= 81 THEN "81-90" 
+                        WHEN sum(a.ot_hour) >= 71 THEN "71-80" 
+                        WHEN sum(a.ot_hour) >= 53 THEN "53-60" 
+                        WHEN sum(a.ot_hour) >= 0 THEN "0-52" 
+                    END) AS r'
+                )
+            )->orderBy('a.ot_hour','desc')
+            ->where('emp.as_ot',1)
+            ->groupBy('emp.as_id');
+
+            $data = $attData->get();
+
+            if(isset($input['filter']) && $input['filter'] != null){
+                $data = $data->filter(function ($item) use ($input) {
+                    return $item->r == $input['filter'];
+                });
+            }
+
+            $totalEmployees = count($data);
+
+
+            
+                
+            $uniqueGroups = $data->groupBy($input['report_group'], true);
+
+
+            return view('hr.reports.summary.export.ot_levis', compact('uniqueGroups', 'format', 'input', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area','totalEmployees'));
+                
+
+
         }else if($input['report_type'] == 'working_hour'){
             $attData->leftjoin(DB::raw('(' . $shiftDataSql. ') AS s'), function($join) use ($shiftData) {
                 $join->on('a.hr_shift_code', '=', 's.hr_shift_code')->addBinding($shiftData->getBindings());
@@ -151,7 +207,7 @@ class SummaryExport implements FromView, WithHeadingRow
                 
                 $totalValue = array_sum(array_column($attData->get()->toArray(),'groupHourDuration'))/60;
             }else{
-                $attData->select('emp.as_id', 'emp.as_gender', 'emp.as_shift_id', 'emp.as_oracle_code', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_contact', 'emp.as_section_id','emp.as_subsection_id', 's.hr_shift_break_time', DB::raw('sum(a.ot_hour) as ot_hour'),DB::raw('count(  a.in_date) as days'))->groupBy('a.as_id');
+                $attData->select('emp.as_id', 'emp.as_gender','emp.as_unit_id', 'emp.as_shift_id', 'emp.as_oracle_code', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_contact', 'emp.as_section_id','emp.as_subsection_id', 's.hr_shift_break_time', DB::raw('sum(a.ot_hour) as ot_hour'),DB::raw('count(  a.in_date) as days'))->groupBy('a.as_id');
                 $attData->addSelect(DB::raw('sum(TIMESTAMPDIFF(minute, in_time, out_time) - s.hr_shift_break_time) as hourDuration'));
                 
                 $totalValue = array_sum(array_column($attData->get()->toArray(),'hourDuration'))/60;
@@ -212,22 +268,16 @@ class SummaryExport implements FromView, WithHeadingRow
         }
 
         if($format != null && count($getEmployee) > 0 && $input['report_format'] == 0){
-            $uniqueGroups = collect($getEmployee)->groupBy($request['report_group'],true);
-            $format = $request['report_group'];
+            $uniqueGroups = collect($getEmployee)->groupBy($input['report_group'],true);
+            $format = $input['report_group'];
         }
 
-        $unit = unit_by_id();
-        $location = location_by_id();
-        $line = line_by_id();
-        $floor = floor_by_id();
-        $department = department_by_id();
-        $designation = designation_by_id();
-        $section = section_by_id();
-        $subSection = subSection_by_id();
-        $area = area_by_id();
+        
+
+        
 
 
-        // dd($uniqueGroups);
+        
         if($input['report_type'] == 'ot'){
             return view('hr.reports.summary.export.ot', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees','totalValue','totalAmount', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area'));
         }else if($input['report_type'] == 'working_hour'){

@@ -645,10 +645,10 @@ class EmployeeHelper
             }
         }
 
-        $leaveAdjust = ceil((float)$leaveAdjust);
+        $leaveAdjust = round($leaveAdjust, 2);
         
         // get salary payable calculation
-        $salaryPayable = ceil(((($perDayGross*$total_day) - ($getAbsentDeduct + ($deductCost)))));
+        $salaryPayable = round(((($perDayGross*$total_day) - ($getAbsentDeduct + ($deductCost)))), 2);
         $ot = ($overtime_rate*$overtimes);
 
         $totalPayable = ceil((float)($salaryPayable + $ot + $deductSalaryAdd  + $productionBonus + $leaveAdjust));

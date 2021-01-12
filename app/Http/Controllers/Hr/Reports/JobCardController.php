@@ -275,7 +275,7 @@ class JobCardController extends Controller
           }
         }
 
-        if($attendance[$i]['present_status'] == 'A'){
+        if($attendance[$i]['present_status'] == 'A' || $attendance[$i]['present_status'] == 'Weekend(General) - A'){
           $absent++;
         }
 

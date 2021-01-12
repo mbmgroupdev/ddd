@@ -159,13 +159,12 @@ class LeaveApplicationController extends Controller
                         SUM(CASE WHEN leave_type = 'Casual' THEN DATEDIFF(leave_to, leave_from)+1 END) AS casual,
                         SUM(CASE WHEN leave_type = 'Earned' THEN DATEDIFF(leave_to, leave_from)+1 END) AS earned,
                         SUM(CASE WHEN leave_type = 'Sick' THEN DATEDIFF(leave_to, leave_from)+1 END) AS sick,
-                        SUM(CASE WHEN leave_type = 'Maternity' THEN DATEDIFF(leave_to, leave_from)+1 END) AS maternity,
                         SUM(CASE WHEN leave_type = 'Special' THEN DATEDIFF(leave_to, leave_from)+1 END) AS special,
                         SUM(DATEDIFF(leave_to, leave_from)+1) AS total
                     ")
                 )
                 ->where('leave_status', '1')
-                ->where(DB::raw("YEAR(leave_from)"),date('Y'))
+                ->where(DB::raw("YEAR(leave_from)"), date('Y'))
                 ->where("leave_ass_id", $request->associate_id)
                 ->first();
 

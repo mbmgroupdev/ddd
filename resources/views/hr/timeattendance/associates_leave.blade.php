@@ -1,4 +1,5 @@
 <style>.text-bold{font-weight:bold;font-size:14px;}</style>
+@php $unit = unit_by_id() @endphp
 <div class="col-sm-5">
     <div class="user-details-block benefit-employee">
         <div class="user-profile text-center mt-0">
@@ -8,9 +9,12 @@
             <h4><b id="user-name">{{$info->as_name}} </b></h4>
             <p class="mb-0" id="designation">
                 Associate ID: {{$info->associate_id}} </p>
-            <p class="mb-0" id="designation">
+            <p class="mb-0" >
                 Oracle ID: {{$info->as_oracle_code}} </p>
-             
+            <p class="mb-0" >
+                  Unit: {{$unit[$info->as_unit_id]['hr_unit_name']}} </p>
+            <p class="mb-0" >
+                  Date of Join: {{$info->as_doj->format('d-m-Y')}} </p>
           </div>
     </div>
 </div>
