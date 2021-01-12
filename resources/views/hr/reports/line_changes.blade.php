@@ -131,7 +131,7 @@
                               @csrf
                               <input type="hidden" name="station_id" id="sId" value="">
                               <div class="form-group has-float-label">
-                                <input type="datetime-local" name="end_date" id="end_date"  class="datetimepicker form-control" placeholder="End Date" value="{{ date('Y-m-d') }}T{{ date('H:i')}}">
+                                <input type="date" name="end_date" id="end_date"  class="datetimepicker form-control" placeholder="End Date" value="{{ date('Y-m-d') }}">
                                 <label for="shift_id">End Date </label>
                               </div> 
                               <div class="form-group">

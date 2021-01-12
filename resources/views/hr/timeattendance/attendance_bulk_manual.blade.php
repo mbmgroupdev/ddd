@@ -19,6 +19,84 @@
             color: blue;
             cursor: pointer;
         }
+        .context-menu ul{ 
+            z-index: 1000;
+            position: absolute;
+            overflow: hidden;
+            border: 1px solid #CCC;
+            white-space: nowrap;
+            font-family: sans-serif;
+            background: #FFF;
+            color: #333;
+            border-radius: 5px;
+            padding: 0;
+            box-shadow: 2px 4px 4px 0px;
+        }
+        .context-menu:before {
+          content: "";
+          position: absolute;
+          border-color: rgba(194, 225, 245, 0);
+          border: solid transparent;
+          border-bottom-color: white;
+          border-width: 11px;
+          margin-left: -10px;
+          top: -17px;
+          right: -21px;
+          z-index: 1;
+        } 
+        .popover{
+            position: absolute;
+            will-change: transform;
+            width: 250px;
+            box-shadow: 2px 1px 6px 0px;
+        }
+        .popover-body{
+            padding:0px 5px;
+        }
+        .popover-left{
+            transform: translate3d(-258px, -38px, 0px);
+            top: 0px;
+            left: 0;
+        }
+        .popover-right{
+            transform: translate3d(-260px, -20px, 0px);
+            top: 0px;
+            right: 0;
+        }
+        .context-menu:after {
+            content: "";
+            position: absolute;
+            right: -20px;
+            top: -17px;
+            width: 0;
+            height: 0;
+            border: solid transparent;
+            border-width: 10px;
+            border-bottom-color: #2B1A41;
+            z-index: 0;
+        }
+        /* Each of the items in the list */
+        .context-menu ul li {
+            padding: 8px 12px;
+            cursor: pointer;
+            list-style-type: none;
+        }
+        .context-menu ul li:hover {
+            background-color: #DEF;
+        }
+        .popover-close{
+            float: right;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            padding: 3px 7px;
+        }
+        .popover-close:hover{
+            background: #ccc;
+            color: #fff;
+        }
+        .highlight {
+            background-color: #ffff99;
+        }
     </style>
 @endpush
 <div class="main-content">
@@ -104,10 +182,10 @@
 
                         @endphp
                         <div id="html-2-pdfwrapper" class="col-sm-12" style="margin:10px auto;">
-                            {{-- <div class="page-header" style="border-bottom:2px double #666">
+                            <div class="page-header" style="border-bottom:2px double #666">
                                 <h4 style="margin:4px 10px">{{ $info->unit }}</h4>
                                 <h5 style="margin:4px 10px">For the month of {{ request()->month }} </h5>
-                            </div> --}}
+                            </div>
                             <form class="form-horizontal" role="form" method="post" action="{{ url('hr/timeattendance/attendance_bulk_store')  }}" enctype="multipart/form-data">
                                 {{ csrf_field() }}
                                 <table class="table" style="width:100%;border:1px solid #ccc;margin-bottom:0;font-size:14px;text-align:left"  cellpadding="5">
@@ -150,7 +228,7 @@
 
                                     <tbody>
                                         @foreach($attendance as $data)
-                                        <tr>
+                                        <tr id="row-{{$data['date']}}">
                                           <td class="startdate">
                                             {{ $data['date'] }}
                                             @if($joinExist)
@@ -188,6 +266,7 @@
                                                 @endif
                                                 
                                                 <input type="hidden" name="status[{{$data['date']}}]" value="{{ $data['present_status'] }}">
+                                                <input type="hidden" id="oldshift-{{ $data['date'] }}" value="{{ $data['shift_id'] }}">
                                                 @php
                                                     if (strpos($data['in_time'], ':') !== false) {
                                                         list($one,$two,$three) = array_pad(explode(':',$data['in_time']),3,0);
@@ -213,20 +292,49 @@
                                                 @endif
                                             </td>
                                             <td>{{ $data['floor'] }}</td>
-                                            <td>{{ $data['line'] }}</td>
                                             <td>
-                                                <a class="shift_link" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{ $data['shift_id']}}" >{{ date('H:i', strtotime($data['shift_start'])) }}
-                                                - 
-                                                @php
-                                                    
-                                                    $time = $data['shift_end'];
-                                                    $time2 = intdiv($data['shift_break'], 60).':'. ($data['shift_break'] % 60);
+                                                {{ $data['line'] }}
+                                            </td>
+                                            <td>
+                                                <div style="position: relative;">
+                                                    <a class="shift_link" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{ $data['shift_id']}}" id="shiftclick-{{$data['date']}}">{{ date('H:i', strtotime($data['shift_start'])) }}
+                                                    - 
+                                                    @php
+                                                        
+                                                        $time = $data['shift_end'];
+                                                        $time2 = intdiv($data['shift_break'], 60).':'. ($data['shift_break'] % 60);
 
-                                                    $secs = strtotime($time2)-strtotime("00:00:00");
-                                                    $result = date("H:i",strtotime($time)+$secs);
-                                                @endphp
-                                                {{ $result }}</a>
+                                                        $secs = strtotime($time2)-strtotime("00:00:00");
+                                                        $result = date("H:i",strtotime($time)+$secs);
+                                                    @endphp
+                                                    {{ $result }}</a>
+                                                    <div class="popover bs-popover-left shiftchange popover-left" role="tooltip" id="popover-{{$data['date']}}" x-placement="left" style="display:none;position:absolute;z-index:1;">
+                                                        <div class="arrow" style="top: 37px;"></div>
+                                                        <h3 class="popover-header"> {{$data['date']}} <i class="fa fa-close popover-close"></i></h3>
+                                                        <div class="popover-body">
+                                                            <br>
+                                                            <div class="form-group has-float-label has-required select-search-group">
+                                                              <select class="form-control capitalize select-search" id="shift-{{$data['date']}}">
+                                                                 
+                                                                 @foreach($shifts as $shift)
+                                                                 @php
+                                                                    $shiftEndTime = $shift->hr_shift_end_time;
+                                                                    $shifttime2 = intdiv($shift->hr_shift_break_time, 60).':'. ($shift->hr_shift_break_time % 60);
 
+                                                                    $secsShift = strtotime($shifttime2)-strtotime("00:00:00");
+                                                                    $hrShiftEnd = date("H:i",strtotime($shiftEndTime)+$secsShift); 
+                                                                 @endphp
+                                                                 <option value="{{ $shift->hr_shift_name }}" @if($shift->hr_shift_name == $data['shift_id']) selected @endif>{{ $shift->hr_shift_name }} ({{ date('H:i', strtotime($shift->hr_shift_start_time)) }} - {{ $hrShiftEnd }})</option>
+                                                                 @endforeach
+                                                              </select>
+                                                              <label for="shift-{{$data['date']}}">Shift</label>
+                                                           </div>
+                                                        </div>
+                                                        <div class="popover-footer">
+                                                            <button type="button" class="btn btn-outline-success btn-sm shift-change-btn" data-status="2" data-eaids="{{ Request::get('associate') }}" data-yearmonth="{{ Request::get('month') }}" data-asid="{{ $info->as_id }}" data-date="{{ $data['date'] }}" style="font-size: 13px; margin-left: 7px; margin-bottom: 8px;"><i class="fa fa-save"></i> Change</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </td>
                                             
 
@@ -238,35 +346,37 @@
                                             @endphp
                                             @if($data['att_id'] != null)
                                                 <td>
-                                                    <input type="hidden" name="old_status[{{$data['att_id']}}]" value="{{ $data['present_status'] }}">
-                                                    <input type="hidden" name="old_date[{{$data['att_id']}}]" value="{{$data['date']}}">
-                                                    <input type="hidden" name="this_shift_code[{{$data['att_id']}}]" value="{{$data['shift_code']}}">
-                                                    <input type="hidden" name="this_shift_id[{{$data['att_id']}}]" value="{{$data['shift_id']}}">
-                                                    <input type="hidden" name="this_shift_start[{{$data['att_id']}}]" value="{{$data['shift_start']}}">
-                                                    <input type="hidden" name="this_shift_end[{{$data['att_id']}}]" value="{{$data['shift_end']}}">
-                                                    <input type="hidden" name="this_shift_break[{{$data['att_id']}}]" value="{{$data['shift_break']}}">
-                                                    <input type="hidden" name="this_shift_night[{{$data['att_id']}}]" value="{{$data['shift_night']}}">
-                                                    <input type="hidden" name="this_bill_eligible[{{$data['att_id']}}]" value="{{$data['bill_eligible']}}">
-                                                    <input class="intime manual form-control" type="text" name="intime[{{$data['att_id']}}]" value="{{!empty($data['in_time'])?date("H:i:s", strtotime($data['in_time'])):null}}"   placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}} autocomplete="off">
+                                                    <input type="hidden" name="old_line[{{$data['att_id']}}]" value="{{ $data['line_id'] }}" >
+                                                    <input type="hidden" name="old_status[{{$data['att_id']}}]" value="{{ $data['present_status'] }}" >
+                                                    <input type="hidden" name="old_date[{{$data['att_id']}}]" value="{{$data['date']}}" >
+                                                    <input type="hidden" name="this_shift_code[{{$data['att_id']}}]" value="{{$data['shift_code']}}" id="shiftcode-{{ $data['date'] }}">
+                                                    <input type="hidden" name="this_shift_id[{{$data['att_id']}}]" value="{{$data['shift_id']}}" id="shiftname-{{ $data['date'] }}">
+                                                    <input type="hidden" name="this_shift_start[{{$data['att_id']}}]" value="{{$data['shift_start']}}" id="shiftstart-{{ $data['date'] }}">
+                                                    <input type="hidden" name="this_shift_end[{{$data['att_id']}}]" value="{{$data['shift_end']}}" id="shiftend-{{ $data['date'] }}">
+                                                    <input type="hidden" name="this_shift_break[{{$data['att_id']}}]" value="{{$data['shift_break']}}" id="shiftbreak-{{ $data['date'] }}">
+                                                    <input type="hidden" name="this_shift_night[{{$data['att_id']}}]" value="{{$data['shift_night']}}" id="shiftnight-{{ $data['date'] }}">
+                                                    <input type="hidden" name="this_bill_eligible[{{$data['att_id']}}]" value="{{$data['bill_eligible']}}" id="billeligible-{{ $data['date'] }}">
+                                                    <input class="intime manual form-control" type="text" name="intime[{{$data['att_id']}}]" id="punchintime-{{ $data['date'] }}" value="{{!empty($data['in_time'])?date("H:i:s", strtotime($data['in_time'])):null}}"   placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}} autocomplete="off">
                                                 </td>
                                                 <td>
-                                                    <input type="text" class="outtime manual form-control" name="outtime[{{$data['att_id']}}]" value="{{!empty($data['out_time'])?date("H:i:s", strtotime($data['out_time'])):null}}"  placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}} autocomplete="off">
+                                                    <input type="text" class="outtime manual form-control" name="outtime[{{$data['att_id']}}]" id="punchouttime-{{ $data['date'] }}" value="{{!empty($data['out_time'])?date("H:i:s", strtotime($data['out_time'])):null}}"  placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}} autocomplete="off">
                                                 </td>
                                             @else
                                                 <td>
+                                                    <input type="hidden" name="new_line[]" value="{{ $data['line_id'] }}">
                                                     <input type="hidden" name="new_date[]" value="{{$data['date']}}">
-                                                    <input type="hidden" name="new_shift_id[]" value="{{$data['shift_id']}}">
-                                                    <input type="hidden" name="new_shift_code[]" value="{{$data['shift_code']}}">
-                                                    <input type="hidden" name="new_shift_start[]" value="{{$data['shift_start']}}">
-                                                    <input type="hidden" name="new_shift_end[]" value="{{$data['shift_end']}}">
-                                                    <input type="hidden" name="new_shift_break[]" value="{{$data['shift_break']}}">
-                                                    <input type="hidden" name="new_shift_night[]" value="{{$data['shift_night']}}">
-                                                    <input type="hidden" name="new_bill_eligible[]" value="{{$data['bill_eligible']}}">
+                                                    <input type="hidden" name="new_shift_id[]" value="{{$data['shift_id']}}" id="shiftname-{{ $data['date'] }}">
+                                                    <input type="hidden" name="new_shift_code[]" value="{{$data['shift_code']}}" id="shiftcode-{{$data['date']}}">
+                                                    <input type="hidden" name="new_shift_start[]" value="{{$data['shift_start']}}" id="shiftstart-{{$data['date']}}">
+                                                    <input type="hidden" name="new_shift_end[]" value="{{$data['shift_end']}}" id="shiftend-{{$data['date']}}">
+                                                    <input type="hidden" name="new_shift_break[]" value="{{$data['shift_break']}}" id="shiftbreak-{{$data['date']}}">
+                                                    <input type="hidden" name="new_shift_night[]" value="{{$data['shift_night']}}" id="shiftnight-{{$data['date']}}">
+                                                    <input type="hidden" name="new_bill_eligible[]" value="{{$data['bill_eligible']}}" id="billeligible-{{$data['date']}}">
 
-                                                    <input class="intime manual form-control" type="text" name="new_intime[]" value=""   placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}} autocomplete="off">
+                                                    <input class="intime manual form-control" id="punchintime-{{ $data['date'] }}" type="text" name="new_intime[]" value=""  placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}} autocomplete="off">
                                                 </td>
                                                 <td>
-                                                    <input type="text" class="outtime manual form-control" name="new_outtime[]" value="" placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}} autocomplete="off">
+                                                    <input type="text" class="outtime manual form-control" name="new_outtime[]" id="punchouttime-{{ $data['date'] }}" value="" placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}} autocomplete="off">
                                                 </td>
                                             @endif
                                             <td> 
@@ -403,39 +513,105 @@
         }
      });
 });
-    $('.intime,.outtime').datetimepicker({
-      format:'HH:mm:ss',
-      allowInputToggle: false
+$('.intime,.outtime').datetimepicker({
+  format:'HH:mm:ss',
+  allowInputToggle: false
+});
+// input focus select all element
+$(function () {
+    var focusedElement;
+    $(document).on('focus', 'input', function () {
+        if (focusedElement == this) return;
+        focusedElement = this;
+        setTimeout(function () { focusedElement.select(); }, 100);
     });
-    // input focus select all element
-    $(function () {
-        var focusedElement;
-        $(document).on('focus', 'input', function () {
-            if (focusedElement == this) return;
-            focusedElement = this;
-            setTimeout(function () { focusedElement.select(); }, 100);
+});
+/*$(document).ready(function () {
+
+  $('input').keyup(function (e) {
+    e.preventDefault();
+    if (e.which == 39) { // right arrow
+      $(this).closest('td').next().find('input').focus();
+
+    } else if (e.which == 37) { // left arrow
+      $(this).closest('td').prev().find('input').focus();
+
+    } else if (e.which == 40) { // down arrow
+      $(this).closest('tr').next().find('td:eq(' + $(this).closest('td').index() + ')').find('input').focus();
+
+    } else if (e.which == 38) { // up arrow
+      $(this).closest('tr').prev().find('td:eq(' + $(this).closest('td').index() + ')').find('input').focus();
+    }
+  });
+
+
+});*/
+$(document).on("click", ".shift_link", function(e) {
+    $(".shiftchange").hide();
+    $(this).parent().find('.shiftchange').toggle(100);
+});
+
+$(document).on("click", ".popover-close", function(e) {
+    $(".shiftchange").hide();
+});
+$(document).on('click', '.shift-change-btn', function(event) {
+    let date = $(this).data('date');
+    let associate = $(this).data('eaids');
+    let asid = $(this).data('asid');
+    let oldshift = $("#oldshift-"+date).val();
+    let shift = $("#shift-"+date).val();
+    let yearmonth = $(this).data('yearmonth');
+    if(shift === oldshift){
+        $.notify('This Shift Already Assign', 'error');
+        setTimeout(function () { $('.popover-close').click(); }, 100);
+        
+        $('.app-loader').hide();
+    }else{
+        $('.app-loader').show();
+        $.ajax({
+            url : "{{ url('hr/operation/single-date-shift-change') }}",
+            type: 'post',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            },
+            data: {
+               as_id: asid,
+               date: date,
+               shift: shift,
+               associateid: associate
+            },
+            success: function(data)
+            {
+                console.log(data)
+                $('.app-loader').hide();
+                $.notify(data.msg, data.type);
+                if(data.type === 'success'){
+                    var shiftData = data.shift;
+                    $("#oldshift-"+date).val(shiftData.hr_shift_name);
+                    $("#shiftname-"+date).val(shiftData.hr_shift_name);
+                    $("#shiftcode-"+date).val(shiftData.hr_shift_code);
+                    $("#shiftstart-"+date).val(shiftData.hr_shift_start_time);
+                    $("#shiftend-"+date).val(shiftData.hr_shift_end_time);
+                    $("#shiftbreak-"+date).val(shiftData.hr_shift_break_time);
+                    $("#shiftnight-"+date).val(shiftData.hr_shift_night_flag);
+                    $("#billeligible-"+date).val(shiftData.bill_eligible);
+                    $("#shiftclick-"+date).html(shiftData.startout);
+                    $("#shiftclick-"+date).attr('data-original-title', shiftData.hr_shift_name);
+                    setTimeout(function() {
+                        $("#row-"+date).addClass('highlight');
+                        $(".shiftchange").hide();
+                        $("#punchintime-"+date).focus();
+                    }, 200);
+                }
+            },
+            error: function(reject)
+            {
+               $.notify(reject, 'error');
+            }
         });
-    });
-    /*$(document).ready(function () {
-
-      $('input').keyup(function (e) {
-        e.preventDefault();
-        if (e.which == 39) { // right arrow
-          $(this).closest('td').next().find('input').focus();
-
-        } else if (e.which == 37) { // left arrow
-          $(this).closest('td').prev().find('input').focus();
-
-        } else if (e.which == 40) { // down arrow
-          $(this).closest('tr').next().find('td:eq(' + $(this).closest('td').index() + ')').find('input').focus();
-
-        } else if (e.which == 38) { // up arrow
-          $(this).closest('tr').prev().find('td:eq(' + $(this).closest('td').index() + ')').find('input').focus();
-        }
-      });
-
-
-    });*/
+    }
+});
+    
 </script>
 @endpush
 @endsection

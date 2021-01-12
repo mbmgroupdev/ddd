@@ -357,7 +357,7 @@ class SalaryProcessController extends Controller
                     $audit = SalaryAudit::findOrFail($salaryAuditStatus->id);
                     $audit->delete();
                     // audit individual
-                    SalaryIndividualAudit::getSalaryIndividualAuditMonthWiseDelete($aduit);
+                    // SalaryIndividualAudit::getSalaryIndividualAuditMonthWiseDelete($aduit);
                 }
             }else{
                 if($input['status'] == 1){
