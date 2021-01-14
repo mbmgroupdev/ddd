@@ -23,6 +23,35 @@ class AttendaceBulkManualController extends Controller
     public function bulkManual(Request $request)
     {
         try {
+            $getAtt = DB::table('hr_attendance_mbm')
+            ->where('as_id', 10682)
+            ->where('in_date', 'like', '2021-01-06%')
+            ->first();
+            $shift = DB::table('hr_shift')
+            ->where('hr_shift_code', $getAtt->hr_shift_code)
+            ->first();
+            $indate = $getAtt->in_date;
+            if($shift->hr_shift_night_flag == 1){
+                $indate = date('Y-m-d', strtotime($getAtt->out_time));
+            }
+            if($shift->hr_shift_night_flag == 0){
+                $shiftOuttime = date('Y-m-d', strtotime($getAtt->in_date)).' '.$shift->hr_shift_end_time;
+            }else{
+                $shiftOuttime = date('Y-m-d', strtotime($getAtt->out_time)).' '.$shift->hr_shift_end_time;
+            }
+            $shiftBreak = $shift->hr_shift_break_time;
+            $date2 = strtotime($getAtt->out_time);
+            $date1 = strtotime($shiftOuttime);
+            $diff = (($date2 - ($date1 + ($shiftBreak*60))))/3600;
+            $rep = 1;
+            $diff = $diff/7;
+            $shiftUpdateBreak = $shiftBreak * ((int)$diff + $rep);
+            // dd($shift, (int)$diff + $rep, $getAtt->out_time, $shiftOuttime, $shiftBreak, $shiftUpdateBreak);
+            $shiftElig = strtotime($indate.' '.$shift->bill_eligible);
+            $outtime = strtotime($getAtt->out_time);
+            // $shiftElig = ($indate.' '.$shift->bill_eligible);
+            // $outtime = ($getAtt->out_time);
+            // dd($shiftElig, $outtime);
             // return $resquest->all();
             if($request->associate != null && $request->month != null){
                 $check['month'] = date('m', strtotime($request->month));
@@ -267,8 +296,14 @@ class AttendaceBulkManualController extends Controller
                             $insert['in_date'] = date('Y-m-d', strtotime($insert['in_time']));
                             DB::table($tableName)->insert($insert);
 
-                            if($outtime != null){
-                                if(strtotime(date("H:i", strtotime($insert['out_time']))) > strtotime(date("H:i", strtotime($billEligible)))){
+                            if($outtime != null && $billEligible != null){
+                                $pindate = $insert['in_date'];
+                                if($nightFlag == 1){
+                                    $pindate = Carbon::createFromFormat('Y-m-d', $pindate);
+                                    $pindate = $pindate->copy()->addDays(1);
+                                }
+                                $shiftElig = strtotime($pindate.' '.$billEligible);
+                                if(strtotime($insert['out_time']) > $shiftElig){
 
                                     $bill = EmployeeHelper::dailyBillCalculation($info->as_ot, $info->as_unit_id, $insert['in_date'], $insert['as_id'], $nightFlag, $info->as_designation_id);
                                 }else{
@@ -474,8 +509,15 @@ class AttendaceBulkManualController extends Controller
                                 $update['ot_hour'] = 0;
                             }
                             
-                            if($outtime != null){
-                                if(strtotime(date("H:i", strtotime($update['out_time']))) > strtotime(date("H:i", strtotime($billEligible)))){
+                            if($outtime != null && $billEligible != null){
+                                $pindate = $Att->in_date;
+                                if($nightFlag == 1){
+                                    $pindate = Carbon::createFromFormat('Y-m-d', $pindate);
+                                    $pindate = $pindate->copy()->addDays(1);
+                                }
+                                $shiftElig = strtotime($pindate.' '.$billEligible);
+
+                                if(strtotime($update['out_time']) > $shiftElig){
 
                                     $bill = EmployeeHelper::dailyBillCalculation($info->as_ot, $info->as_unit_id, $Att->in_date, $info->as_id, $nightFlag, $info->as_designation_id);
                                 }else{

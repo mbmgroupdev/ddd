@@ -50,8 +50,8 @@ class ProcessAttendanceFile implements ShouldQueue
     {
         $getEmpAtt = DB::table($this->tableName)->where('id', $this->tId)->first();
         if($getEmpAtt != null){
-            $getEmployee = Employee::with('shift')
-                ->where('as_id', $getEmpAtt->as_id)
+            $getEmployee = Employee::
+                where('as_id', $getEmpAtt->as_id)
                 ->first();
             if($getEmployee != null && $getEmployee->shift != null){
                 $today = Carbon::parse($getEmpAtt->in_date)->format('Y-m-d');
@@ -111,7 +111,14 @@ class ProcessAttendanceFile implements ShouldQueue
 
                 // bill calculation
                 if($getEmpAtt->out_time != null && $this->billEligible != null){
-                    if($cOut > strtotime(date("H:i", strtotime($this->billEligible)))){
+                    $indate = $getEmpAtt->in_date;
+                    if($this->shiftNightFlag == 1){
+                        $indate = Carbon::createFromFormat('Y-m-d', $indate);
+                        $indate = $indate->copy()->addDays(1);
+                    }
+                    $shiftElig = strtotime($indate.' '.$this->billEligible);
+
+                    if(strtotime($getEmpAtt->out_time) > $shiftElig){
                         $bill = EmployeeHelper::dailyBillCalculation($getEmployee->as_ot, $getEmployee->as_unit_id, $getEmpAtt->in_date, $getEmpAtt->as_id, $this->shiftNightFlag, $getEmployee->as_designation_id);
                     }else{
                         $getBill = Bills::where('as_id', $getEmpAtt->as_id)->where('bill_date', $getEmpAtt->in_date)->first();

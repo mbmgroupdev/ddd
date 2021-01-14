@@ -47,11 +47,18 @@ class MedicalInfoController extends Controller
         else{
             //-----------Signature upload--------------//
             $med_signature = null;
+            $directory = 'assets/images/employee/med_info/'.date("Y").'/'.date("m").'/'.date("d").'/';
+            //If the directory doesn't already exists.
+            if(!is_dir($directory)){
+                //Create our directory.
+                mkdir($directory, 755, true);
+            }
             if($request->hasFile('med_signature'))
             {
                 $file = $request->file('med_signature');
                 $filename = uniqid() . '.' . $file->getClientOriginalExtension();
-                $med_signature = '/assets/images/employee/med_info/' . $filename;
+                
+                $med_signature = '/'.$directory . $filename;
                 Image::make($file)->save(public_path( $med_signature ) );
             }
             $med_auth_signature = null;
@@ -59,7 +66,7 @@ class MedicalInfoController extends Controller
             {
                 $file = $request->file('med_auth_signature');
                 $filename = uniqid() . '.' . $file->getClientOriginalExtension();
-                $med_auth_signature = '/assets/images/employee/med_info/' . $filename;
+                $med_auth_signature = '/'.$directory . $filename;
                 Image::make($file)->save(public_path( $med_auth_signature ) );
             }
             $med_doct_signature = null;
@@ -67,7 +74,7 @@ class MedicalInfoController extends Controller
             {
                 $file = $request->file('med_doct_signature');
                 $filename = uniqid() . '.' . $file->getClientOriginalExtension();
-                $med_doct_signature = '/assets/images/employee/med_info/' . $filename;
+                $med_doct_signature = '/'.$directory . $filename;
                 Image::make($file)->save(public_path( $med_doct_signature ) );
             }
 
@@ -186,45 +193,51 @@ class MedicalInfoController extends Controller
                     ->with('error', 'Please fillup all required fileds!.');
         }
         else{
+            $directory = 'assets/images/employee/med_info/'.date("Y").'/'.date("m").'/'.date("d").'/';
+            //If the directory doesn't already exists.
+            if(!is_dir($directory)){
+                //Create our directory.
+                mkdir($directory, 755, true);
+            }
             $check= DB::table('hr_med_info')->where('hr_med_info.med_id', '=', $request->med_id)->first();
             //-----------Signature upload--------------//
             if(!empty($request->med_signature)){
-            $med_signature = $request->med_signature;
-            if($request->hasFile('med_signature'))
-            {
-                $file = $request->file('med_signature');
-                $filename = uniqid() . '.' . $file->getClientOriginalExtension();
-                $med_signature = '/assets/images/employee/med_info/' . $filename;
-                Image::make($file)->save(public_path( $med_signature ) );
-            }
+                $med_signature = $request->med_signature;
+                if($request->hasFile('med_signature'))
+                {
+                    $file = $request->file('med_signature');
+                    $filename = uniqid() . '.' . $file->getClientOriginalExtension();
+                    $med_signature = '/'.$directory . $filename;
+                    Image::make($file)->save(public_path( $med_signature ) );
+                }
             }
             else{
                  $med_signature =$check->med_signature;
             }
 
             if(!empty($request->med_auth_signature)){
-            $med_auth_signature = $request->med_auth_signature;
-            if($request->hasFile('med_auth_signature'))
-            {
-                $file = $request->file('med_auth_signature');
-                $filename = uniqid() . '.' . $file->getClientOriginalExtension();
-                $med_auth_signature = '/assets/images/employee/med_info/' . $filename;
-                Image::make($file)->save(public_path( $med_auth_signature ) );
-            }
+                $med_auth_signature = $request->med_auth_signature;
+                if($request->hasFile('med_auth_signature'))
+                {
+                    $file = $request->file('med_auth_signature');
+                    $filename = uniqid() . '.' . $file->getClientOriginalExtension();
+                    $med_auth_signature = '/'.$directory . $filename;
+                    Image::make($file)->save(public_path( $med_auth_signature ) );
+                }
             }
             else{
                  $med_auth_signature =$check->med_auth_signature;
             }
 
             if(!empty($request->med_doct_signature)){
-            $med_doct_signature =  $request->med_doct_signature;
-            if($request->hasFile('med_doct_signature'))
-            {
-                $file = $request->file('med_doct_signature');
-                $filename = uniqid() . '.' . $file->getClientOriginalExtension();
-                $med_doct_signature = '/assets/images/employee/med_info/' . $filename;
-                Image::make($file)->save(public_path( $med_doct_signature ) );
-            }
+                $med_doct_signature =  $request->med_doct_signature;
+                if($request->hasFile('med_doct_signature'))
+                {
+                    $file = $request->file('med_doct_signature');
+                    $filename = uniqid() . '.' . $file->getClientOriginalExtension();
+                    $med_doct_signature = '/'.$directory . $filename;
+                    Image::make($file)->save(public_path( $med_doct_signature ) );
+                }
             }
             else{
                  $med_doct_signature =$check->med_doct_signature;

@@ -395,6 +395,11 @@ class ProcessUnitWiseSalary implements ShouldQueue
                         $salary = [
                             'as_id' => $getEmployee->associate_id,
                             'ot_status' => $getEmployee->as_ot,
+                            'unit_id' => $getEmployee->as_unit_id,
+                            'designation_id' => $getEmployee->as_designation_id,
+                            'sub_section_id' => $getEmployee->as_subsection_id,
+                            'location_id' => $getEmployee->as_location,
+                            'pay_type' => $getBenefit->bank_name,
                             'month' => $month,
                             'year'  => $year,
                             'gross' => $getBenefit->ben_current_salary,
@@ -429,6 +434,11 @@ class ProcessUnitWiseSalary implements ShouldQueue
                     }else{
                         $salary = [
                             'ot_status' => $getEmployee->as_ot,
+                            'unit_id' => $getEmployee->as_unit_id,
+                            'designation_id' => $getEmployee->as_designation_id,
+                            'sub_section_id' => $getEmployee->as_subsection_id,
+                            'location_id' => $getEmployee->as_location,
+                            'pay_type' => $getBenefit->bank_name,
                             'gross' => $getBenefit->ben_current_salary,
                             'basic' => $getBenefit->ben_basic,
                             'house' => $getBenefit->ben_house_rent,

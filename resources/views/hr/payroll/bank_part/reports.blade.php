@@ -80,8 +80,8 @@
 				            			$tds = $tds + $employee->tds;
 				            		@endphp
 				            	</td>
-				            	<td>{{ $unit[$employee->as_unit_id]['hr_unit_short_name'] }}</td>
-				            	<td>{{ $location[$employee->as_location]['hr_location_short_name'] }}</td>
+				            	<td>{{ $unit[$employee->unit_id]['hr_unit_short_name']??'' }}</td>
+				            	<td>{{ $location[$employee->location_id]['hr_location_short_name']??'' }}</td>
 			            	</tr>
 			            @endforeach
 			            	<tr>

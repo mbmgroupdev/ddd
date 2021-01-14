@@ -62,11 +62,26 @@ class EmployeeHelper
 			    	}
 			    }
 
+			    $checkBillHour = (strtotime($outtimePunch) - strtotime($shiftIntime))/3600;
+			    $breakCount = 0;
+			    $breakDiff = 0;
+			    if($checkBillHour > 6){
+			    	$breakCount = 1;
+			    }
+
+			    if(!in_array($eUnit, [1,4,5])){
+			    	$otDiff = ((strtotime($outtimePunch) - (strtotime($shiftOuttime) + ($shiftBreak*60))))/3600;
+			    	if($otDiff > 0){
+						$breakDiff = $otDiff/(6+($shiftBreak/60)); // 6 hour before start break eligible
+					}
+			    }
+
+			    $shiftBreak = $shiftBreak * ((int)$breakDiff + $breakCount);
 
 			    $otCheck = HolidayRoaster::getHolidayYearMonthAsIdDateWiseRemark($year, $month, $eAsId, $today, 'OT');
-			    if($otCheck != null && (date('H:i:s', strtotime($shiftIntime)) < date('H:i:s', strtotime('09:00:00')) && date('H:i:s', strtotime($outTimeEx[1])) < date('H:i:s', strtotime('13:30:00')))){
-			    	$shiftBreak = 0;
-			    }
+			    // if($otCheck != null && (date('H:i:s', strtotime($shiftIntime)) < date('H:i:s', strtotime('09:00:00')) && date('H:i:s', strtotime($outTimeEx[1])) < date('H:i:s', strtotime('13:30:00')))){
+			    // 	$shiftBreak = 0;
+			    // }
 
 			    if($otCheck == null && $eSRStatus == 0){
 			      $otCheck = YearlyHolyDay::getCheckUnitDayWiseHolidayStatus($eUnit, $today, 2);
@@ -86,7 +101,7 @@ class EmployeeHelper
 			    	$date1 = $shiftOuttime;
 			    }
 				$date2 = $outtimePunch;
-				$diff = (($date2 - ($date1 + ($shiftBreak*60))))/3600;
+				$diff = ($date2 - ($date1 + ($shiftBreak*60)))/3600;
 				if($diff < 0){
 					$diff = 0;
 				}
