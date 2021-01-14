@@ -35,7 +35,7 @@
 		                		@endif
 		            		</td>
 		            		<td>
-		            			Absent Date <b>: {{ $input['date']??'' }}</b><br><br>
+		            			 Date <b>: {{ $input['date']??'' }}</b><br><br>
 		            			@if($input['otnonot'] != null)
 		                			<b> OT </b> 
 		                			<b>: @if($input['otnonot'] == 0) No @else Yes @endif </b> <br>
