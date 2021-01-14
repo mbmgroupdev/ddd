@@ -15,7 +15,7 @@
 		            <h2 style="margin:4px 10px; font-weight: bold; text-align: center;">Recruitment @if($input['report_format'] == 0) Details @else Summary @endif Report </h2>
 		            <table class="table no-border f-16">
 		            	<tr>
-		            		<td style="text-align: left;width: 33.33%">
+		            		<td style="text-align: left;width: 30%">
 	            			@if($input['unit'] != null)
 	            				Unit <b>: {{ $input['unit'] == 145?'MBM + MBF + MBM 2':$unit[$input['unit']]['hr_unit_name'] }}</b> <br>
 		        			@endif
@@ -35,7 +35,7 @@
 		                			<b>: {{ $section[$input['section']]['hr_section_name'] }}</b>
 		                		@endif
 		            		</td>
-		            		<td style="text-align: center;width: 33.33%">
+		            		<td style="text-align: center;width: 45%">
 
 		            			Date <b>: {{ $input['from_date']}} to {{ $input['to_date']}} </b> <br>
 		            			@if($input['otnonot'] != null)
@@ -46,7 +46,7 @@
 	                			<b>: {{ $totalEmployees }}</b>
 		                		
 		            		</td>
-		            		<td style="text-align: right;width: 33.33%">
+		            		<td style="text-align: right;width: 25%">
 		            			@if($input['subSection'] != null)
 		            			Sub-section <b>: {{ $subSection[$input['subSection']]['hr_subsec_name'] }}</b><br>
 		            			@endif
@@ -223,7 +223,7 @@
 							$head = '';
 						}
 					@endphp
-					<table class="table table-bordered table-hover table-head table-responsive" border="1">
+					<table class="table table-bordered table-hover table-head " border="1">
 						<thead>
 							<tr style="text-align: center;">
 								<th>Sl</th>
@@ -280,26 +280,56 @@
 										if($format == 'as_unit_id'){
 											if($group == 145){
 												$body = 'MBM + MBF + MBM 2';
+												$exPar = '&selected=145';
 											}else{
 												$body = $unit[$group]['hr_unit_name']??'';
+												$exPar = '&selected='.$unit[$group]['hr_unit_id']??'';
 											}
 										}elseif($format == 'as_line_id'){
-											$body = $line[$group]['hr_line_name']??'';
+
+											if(isset($line[$group])){
+												$body = $line[$group]['hr_line_name']??'';
+												$exPar = '&selected='.$line[$group]['hr_line_id']??'';
+											}else{
+												$body = '-';
+												$exPar = '&selected=null';
+											}
 										}elseif($format == 'as_floor_id'){
-											$body = $floor[$group]['hr_floor_name']??'';
+											if(isset($floor[$group])){
+
+												$body = $floor[$group]['hr_floor_name']??'';
+												if($input['unit'] == 145){
+													$uid = $floor[$group]['hr_floor_unit_id'];	
+													$body .= '('.$unit[$uid]['hr_unit_short_name'].')';
+												}
+												$exPar = '&selected='.$floor[$group]['hr_floor_id']??'';
+											}else{
+												$body = '-';
+												$exPar = '&selected=null';
+											}
 										}elseif($format == 'as_department_id'){
 											$body = $department[$group]['hr_department_name']??'';
-										}elseif($format == 'as_section_id'){
-											$body = $section[$group]['hr_section_name']??'N/A';
-										}elseif($format == 'as_subsection_id'){
-											$body = $subSection[$group]['hr_subsec_name']??'';
+											$exPar = '&selected='.$department[$group]['hr_department_id']??'';
 										}elseif($format == 'as_designation_id'){
 											$body = $designation[$group]['hr_designation_name']??'';
+											$exPar = '&selected='.$designation[$group]['hr_designation_id']??'';
+										}elseif($format == 'as_section_id'){
+											$depId = $section[$group]['hr_section_department_id']??'';
+											$seDeName = $department[$depId]['hr_department_name']??'';
+											$seName = $section[$group]['hr_section_name']??'';
+											$body = $seName;
+											$exPar = '&selected='.$section[$group]['hr_section_id']??'';
+										}elseif($format == 'as_subsection_id'){
+											$body = $subSection[$group]['hr_subsec_name']??'';
+											$exPar = '&selected='.$subSection[$group]['hr_subsec_id']??'';
 										}else{
 											$body = 'N/A';
 										}
 									@endphp
-									{{ ($body == null)?'N/A':$body }}
+									<a class="generate-drawer" data-url="{{($urldata.$exPar)}}" data-body="{{ ($head.' : '.$body
+									) }}" id="{{$exPar}}" class="select-group"> 
+										{{ ($body == null)?'N/A':$body }} 
+									</a>
 								</td>
 								<td style="text-align: center;">
 									{{ $employee->total }}

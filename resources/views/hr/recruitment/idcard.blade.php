@@ -78,11 +78,16 @@
                                     <label for="as_id">Employees</label>
                                 </div>
 							</div>
-							<div class="col-sm-6">
-	    						{{ Form::radio('type', 'en',true, ['id'=>'en']) }}  
-								<label for="en">English</label>
-	    						{{ Form::radio('type', 'bn', false, ['id'=>'bn']) }}
-								<label for="bn">Bengali</label>  
+							
+							
+							
+							<div class="col-sm-4">
+								<div class="form-group">
+									<select id="print-layout" class="form-control">
+										<option value="landscape" selected>Landscape</option>
+										<option value="portrait">Portrait</option>
+									</select>
+								</div>
 								<br>
 								<div class="btn-group">
 	                                <button type="submit" class="btn btn-primary " type="button">
@@ -90,7 +95,20 @@
 	                                </button> 
 									
 	                            </div>
+								
 							</div>
+							<div class="col-sm-6 ">
+	    						{{ Form::radio('type', 'en',true, ['id'=>'en']) }}  
+								<label for="en">English</label> <br>
+	    						{{ Form::radio('type', 'bn', false, ['id'=>'bn']) }}
+								<label for="bn">Bengali</label>
+
+								
+							</div>
+							
+
+								
+
 						</div>
 					</div>
 
@@ -305,10 +323,11 @@ $(document).ready(function(){
 
 function printContent(el)
 {
+	var layout = $('#print-layout').val();
 	var data = document.getElementById(el).innerHTML;
 	var mywindow = window.open('', 'ID CARD', 'height=400,width=800');
 	mywindow.document.write('<html><head><title></title>');
-	mywindow.document.write('<style>@page {size: landscape; color: color;} </style>');
+	mywindow.document.write('<style>@page {size: '+layout+'; color: color;} </style>');
 	mywindow.document.write('</head><body >');
 	mywindow.document.write(data);
 	mywindow.focus();

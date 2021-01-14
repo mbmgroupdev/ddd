@@ -1442,4 +1442,18 @@ class TestController extends Controller
             $holiday = DB::table('holiday_roaster')
         }
     }
+
+    public function getAttFile($date)
+    {
+        $outdate = Carbon::parse($date)->subDays(1)->toDateString();
+        $outtime = DB::table('hr_attendance_mbm as a')
+                    ->select('a.out_time','b.as_rfid_code')
+                    ->leftJoin('hr_as_basic_info as b', 'a.as_id', 'b.as_id')
+                    ->where('a.out_time', 'like', $outdate.'%')
+                    ->get();
+        
+        foreach ($outtime as $key => $val) {
+            
+        }
+    }
 }

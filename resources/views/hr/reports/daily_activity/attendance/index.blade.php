@@ -30,6 +30,16 @@
       padding: 15px 15px;
       padding-bottom: 8px;
     }
+    #right_modal_lg .table-responsive{
+        display: initial !important;
+    }
+    #right_modal_lg .table-title{
+        display: none;
+    }
+    .generate-drawer{
+        color:#089bab !important;
+        font-weight: bold;
+    }
 
 </style>
 @endpush
@@ -147,7 +157,7 @@
                                       
                                         <div class="form-group has-float-label select-search-group">
                                             <?php
-                                               if(auth()->user()->can('Attendance Operation') || auth()->user()->can('Attendance Upload')){
+                                               if(auth()->user()->can('Attendance Report') || auth()->user()->can('Attendance Report')){
                                                    $reportType = [
                                                         'absent'=>'Absent', 
                                                         'before_absent_after_present'=>'Present After Being Absent', 
@@ -158,9 +168,10 @@
                                                 $reportType['ot'] = 'Over Time';
                                                 $reportType['working_hour'] = 'Working Hour';
 
-                                                if(auth()->user()->can('Attendance Operation') || auth()->user()->can('Attendance Upload')){
+                                                if(auth()->user()->can('Attendance Report') || auth()->user()->can('Attendance Upload')){
                                                     $reportType['late'] = 'Late';
                                                     $reportType['missing_token'] = 'Punch Missing Token';
+                                                    $reportType['two_day_att'] = 'Two Day Attendance'; 
                                                 }
                                             ?>
                                             {{ Form::select('report_type', $reportType, null, ['placeholder'=>'Select Report Type ', 'class'=>'form-control capitalize select-search', 'id'=>'reportType']) }}
@@ -301,18 +312,45 @@
     </div>
 </div>
 @include('hr.reports.daily_activity.attendance.employee_activity_modal')
+<div class="modal right fade" id="right_modal_lg" tabindex="-1" role="dialog" aria-labelledby="right_modal_lg">
+    <div class="modal-dialog modal-lg right-modal-width" role="document" > 
+        <div class="modal-content">
+            <div class="modal-header">
+                <a class="view " data-toggle="tooltip" data-dismiss="modal" data-placement="top" title="" data-original-title="Back to Report">
+                    <i class="las la-chevron-left"></i>
+                </a>
+                <h5 class="modal-title right-modal-title text-center" id="modal-title-right"> &nbsp; </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <button class="btn btn-sm btn-primary modal-print" onclick="printDiv('content-result')" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report"><i class="las la-print"></i> </button>
+                <div class="modal-content-result" id="content-result">
+          
+                </div>
+            </div>
+      
+        </div>
+    </div>
+</div>
+
 @push('js')
 <script src="{{ asset('assets/js/moment.min.js')}}"></script>
 <script type="text/javascript">
     function printDiv(divName)
     { 
         var myWindow=window.open('','','width=800,height=800');
+        myWindow.document.write('<html><head><title></title>');
+        myWindow.document.write('<style>h4{font-size: 8pt;}div,p,td,span,strong,th,b{line-height: 110%;padding: 0;margin: 0;font-size: 7pt;}p{padding: 0;margin: 0;}@import url(https://fonts.googleapis.com/css?family=Poppins:200,200i,300,400,500,600,700,800,900&amp;display=swap);body {font-family: Poppins,sans-serif;}.table{width: 100%;}a{text-decoration: none;}.table-bordered {border-collapse: collapse;}.table-bordered th,.table-bordered td {border: 1px solid #777 !important;padding:5px;}.no-border td, .no-border th{border:0 !important;vertical-align: top;}.f-16 th,.f-16 td, .f-16 td b{font-size: 16px !important;}</style>');
+        myWindow.document.write('</head><body>');
         myWindow.document.write(document.getElementById(divName).innerHTML); 
         myWindow.document.close();
         myWindow.focus();
         myWindow.print();
         myWindow.close();
     }
+
     $(document).ready(function(){   
         var loader = '<div class="panel"><div class="panel-body"><p style="text-align:center;margin:100px;"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>';
         $('#activityReport').on('submit', function(e) {
@@ -352,7 +390,8 @@
           activityProcess();
         });
 
-        function activityProcess() {
+        function activityProcess() 
+        {
           $("#result-section").show();
           $("#result-data").html(loader);
           $("#single-employee-search").hide();
@@ -566,6 +605,31 @@
         $('#reportFormat').on("change", function(){
           $('input[name="employee"]').val('');
         });
+
+
+        $(document).on('click','.generate-drawer', function(){
+        var urldata = $(this).data('url'),
+            body = $(this).data('body');
+        $("#modal-title-right").html(body);
+        $('#right_modal_lg').modal('show');
+        $("#content-result").html(loaderModal);
+        console.log(urldata);
+        $.ajax({
+            url: '{{ url('hr/reports/daily-attendance-activity-report') }}?'+urldata+'&report_format=0',
+            type: "GET",
+            success: function(response){
+                // console.log(response);
+                if(response !== 'error'){
+                    setTimeout(function(){
+                        $("#content-result").html(response);
+                    }, 1000);
+                }else{
+                    console.log(response);
+                }
+            }
+        });
+
+    });
 
 
 

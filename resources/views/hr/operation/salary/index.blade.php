@@ -123,10 +123,17 @@
                                             <div class="col-3">
                                                 <div class="form-group has-float-label select-search-group">
                                                     <select name="unit" class="form-control capitalize select-search" id="unit" >
+
                                                         <option selected="" value="">Choose...</option>
+                                                        @if(array_intersect(auth()->user()->unit_permissions(), [1,4,5]))
+                                                            <option value="145">MBM + MFW + SRT</option>
+                                                            <option value="14">MBM + MFW </option>
+                                                            <option value="15">MBM + SRT </option>
+                                                        @endif
                                                         @foreach($unitList as $key => $value)
                                                         <option value="{{ $key }}">{{ $value }}</option>
                                                         @endforeach
+                                                        
                                                     </select>
                                                   <label for="unit">Unit</label>
                                                 </div>

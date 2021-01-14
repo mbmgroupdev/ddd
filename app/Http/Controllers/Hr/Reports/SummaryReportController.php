@@ -20,16 +20,31 @@ class SummaryReportController extends Controller
 	public function index(Request $request)
 	{
 		$unitList  = Unit::where('hr_unit_status', '1')
-        ->whereIn('hr_unit_id', auth()->user()->unit_permissions())
-        ->orderBy('hr_unit_name', 'desc')
-        ->pluck('hr_unit_name', 'hr_unit_id');
+            ->whereIn('hr_unit_id', auth()->user()->unit_permissions())
+            ->orderBy('hr_unit_name', 'desc')
+            ->pluck('hr_unit_name', 'hr_unit_id');
         $locationList  = Location::where('hr_location_status', '1')
-        ->whereIn('hr_location_id', auth()->user()->location_permissions())
-        ->orderBy('hr_location_name', 'desc')
-        ->pluck('hr_location_name', 'hr_location_id');
+            ->whereIn('hr_location_id', auth()->user()->location_permissions())
+            ->orderBy('hr_location_name', 'desc')
+            ->pluck('hr_location_name', 'hr_location_id');
         $areaList  = DB::table('hr_area')->where('hr_area_status', '1')->pluck('hr_area_name', 'hr_area_id');
 
-        return view('hr/reports/summary/index', compact('unitList','areaList','locationList'));
+        $reportType = [
+            'ot'=>'OT', 
+            'working_hour' => 'Working Hour'
+        ];
+        if(array_intersect(auth()->user()->unit_permissions(), [1,4,5])){
+           $reportType['ot_levis'] = 'OT (Levis format)';
+        }
+        if(auth()->user()->can('End of Job Benefits')){
+           $reportType['left_resign'] = 'Left & Resign';
+        }
+
+        if(auth()->user()->can('Manage Employee')){
+           $reportType['recruitment'] = 'Recruitment';
+        }
+
+        return view('hr/reports/summary/index', compact('unitList','areaList','locationList','reportType'));
 	}
 
     public function attendanceReport(Request $request)
@@ -37,6 +52,16 @@ class SummaryReportController extends Controller
         $input = $request->all();
         try {
             
+            $unit = unit_by_id();
+            $location = location_by_id();
+            $line = line_by_id();
+            $floor = floor_by_id();
+            $department = department_by_id();
+            $designation = designation_by_id();
+            $section = section_by_id();
+            $subSection = subSection_by_id();
+            $area = area_by_id();
+
             $input['area']       = isset($request['area'])?$request['area']:'';
             $input['location']       = isset($request['location'])?$request['location']:'';
             $input['otnonot']    = isset($request['otnonot'])?$request['otnonot']:'';
@@ -45,6 +70,8 @@ class SummaryReportController extends Controller
             $input['floor_id']   = isset($request['floor_id'])?$request['floor_id']:'';
             $input['section']    = isset($request['section'])?$request['section']:'';
             $input['subSection'] = isset($request['subSection'])?$request['subSection']:'';
+
+            $format = $request['report_group']??'';
 
          
             $getEmployee = array();
@@ -64,7 +91,7 @@ class SummaryReportController extends Controller
 
             $tableName = get_att_table($request['unit']).' AS a';
 
-            if($input['report_type'] == 'ot' || $input['report_type'] == 'working_hour' || $input['report_type'] == 'late'){
+            if($input['report_type'] == 'ot' || $input['report_type'] == 'working_hour' || $input['report_type'] == 'late' || $input['report_type'] == 'ot_levis'){
                 
                 $attData = DB::table($tableName)
                             ->where('a.in_date','>=', $input['from_date'])
@@ -130,12 +157,16 @@ class SummaryReportController extends Controller
                return $query->where('emp.as_subsection_id', $input['subSection']);
             })
             ->when(!empty($input['selected']), function ($query) use($input){
-               return $query->where('emp.'.$input['report_group'], $input['selected']);
+                if($input['selected'] == 'null'){
+                    return $query->whereNull('emp.'.$input['report_group']);
+                }else{
+                    return $query->where('emp.'.$input['report_group'], $input['selected']);
+                }
             });
 
             // if non basic table then join basic
 
-            if($input['report_type'] == 'ot' || $input['report_type'] == 'working_hour'){
+            if($input['report_type'] == 'ot' || $input['report_type'] == 'working_hour' || $input['report_type'] == 'ot_levis'){
                 $attData->leftjoin(DB::raw('(' . $employeeData_sql. ') AS emp'), function($join) use ($employeeData) {
                     $join->on('a.as_id', '=', 'emp.as_id')->addBinding($employeeData->getBindings());
                 });
@@ -167,6 +198,44 @@ class SummaryReportController extends Controller
                 }
                 
                 $totalValue = numberToTimeClockFormat($totalOtHour);
+
+            }else if($input['report_type'] == 'ot_levis'){
+                $attData->select('emp.as_id', 'emp.as_gender', 'emp.as_unit_id', 'emp.as_shift_id', 'emp.as_oracle_code', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_contact', 'emp.as_section_id','emp.as_subsection_id', 
+                    DB::raw('sum(a.ot_hour) as ot_hour'), 
+                    DB::raw('count(  a.in_date) as days'),
+                    DB::raw('
+                        (CASE 
+                            WHEN sum(a.ot_hour) > 100 THEN "100" 
+                            WHEN sum(a.ot_hour) >= 91 THEN "91-100" 
+                            WHEN sum(a.ot_hour) >= 81 THEN "81-90" 
+                            WHEN sum(a.ot_hour) >= 71 THEN "71-80" 
+                            WHEN sum(a.ot_hour) >= 53 THEN "53-60" 
+                            WHEN sum(a.ot_hour) >= 0 THEN "0-52" 
+                        END) AS r'
+                    )
+                )->orderBy('a.ot_hour','desc')
+                ->where('emp.as_ot',1)
+                ->groupBy('emp.as_id');
+
+                $data = $attData->get();
+
+                if(isset($request['filter']) && $request['filter'] != null){
+                    $data = $data->filter(function ($item) use ($request) {
+                        return $item->r == $request['filter'];
+                    });
+                }
+
+                $totalEmployees = count($data);
+
+
+                
+                    
+                $uniqueGroups = $data->groupBy($input['report_group'], true);
+
+
+                return view('hr.reports.summary.ot_levis_52', compact('uniqueGroups', 'format', 'input', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area','totalEmployees'));
+                
+
 
             }else if($input['report_type'] == 'working_hour'){
                 $attData->leftjoin(DB::raw('(' . $shiftDataSql. ') AS s'), function($join) use ($shiftData) {
@@ -227,6 +296,7 @@ class SummaryReportController extends Controller
             if($input['report_group'] == 'as_subsection_id'){
                 $attData->orderBy('emp.as_section_id', 'asc');
             } 
+
             $getEmployee = $attData->get();
 
 
@@ -246,20 +316,10 @@ class SummaryReportController extends Controller
 
             if($format != null && count($getEmployee) > 0 && $input['report_format'] == 0){
                 $uniqueGroups = collect($getEmployee)->groupBy($request['report_group'],true);
-                $format = $request['report_group'];
+                
             }
 
-            $unit = unit_by_id();
-            $location = location_by_id();
-            $line = line_by_id();
-            $floor = floor_by_id();
-            $department = department_by_id();
-            $designation = designation_by_id();
-            $section = section_by_id();
-            $subSection = subSection_by_id();
-            $area = area_by_id();
-
-            // dd($uniqueGroups);
+           
             if($input['report_type'] == 'ot'){
                 return view('hr.reports.summary.ot_summary', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees','totalValue', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area','totalOtAmount'));
             }else if($input['report_type'] == 'working_hour'){
@@ -277,11 +337,7 @@ class SummaryReportController extends Controller
     }
 
 
-    public function getEmployees(Request $request)
-    {
-
-    }
-
+    
 
 
 
@@ -290,7 +346,7 @@ class SummaryReportController extends Controller
         $input = $request->all();
         $filename = 'Summary Report ';
 
-        if($input['report_type'] == 'ot'){
+        if($input['report_type'] == 'ot' || $input['report_type'] == 'ot_levis'){
             $filename = 'Over Time Report ';
         }else if($input['report_type'] == 'working_hour'){
             $filename = 'Working Hour Report ';
