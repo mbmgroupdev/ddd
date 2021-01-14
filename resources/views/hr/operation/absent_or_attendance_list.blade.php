@@ -17,6 +17,15 @@
                 <li class="active"> Attendance Consecutive</li>
             </ul>
         </div>
+        @php
+            $mbmFlag = 0;
+            $mbmAll = [1,4,5];
+            $permission = auth()->user()->unit_permissions();
+            $checkUnit = array_intersect($mbmAll,$permission);
+            if(count($checkUnit) > 2){
+              $mbmFlag = 1;
+            }
+        @endphp
 
         <div class="page-content"> 
             <div class="row">
@@ -27,17 +36,20 @@
                             <div class="panel-body pb-0">
                                 <div class="row">
                                       <div class="col-3">
-                                        <div class="form-group has-float-label has-required select-search-group">
-                                            <select name="unit" class="form-control capitalize select-search" id="unit" required="">
+                                        <div class="form-group has-required has-float-label  select-search-group">
+                                            <select name="unit" class="form-control capitalize select-search" id="unit" required>
                                                 <option selected="" value="">Choose...</option>
+                                                @if($mbmFlag == 1)
+                                                    <option value="145">MBM + MBF + MBM 2</option>
+                                                @endif
                                                 @foreach($unitList as $key => $value)
-                                                <option value="{{ $key }}">{{ $value }}</option>
+                                                    <option value="{{ $key }}">{{ $value }}</option>
                                                 @endforeach
                                             </select>
                                           <label for="unit">Unit</label>
                                         </div>
-                                        <div class="form-group has-float-label has-required select-search-group">
-                                            <select name="area" class="form-control capitalize select-search" id="area" required="">
+                                        <div class="form-group has-float-label  select-search-group">
+                                            <select name="area" class="form-control capitalize select-search" id="area">
                                                 <option selected="" value="">Choose...</option>
                                                 @foreach($areaList as $key => $value)
                                                 <option value="{{ $key }}">{{ $value }}</option>
@@ -157,8 +169,8 @@
                                   <th>Sl.</th>
                                   <th>Picture</th>
                                   <th>Associate ID</th>
-                                  {{-- <th>Unit</th> --}}
                                   <th>Name</th>
+                                  <th>DOJ</th>
                                   <th>Contact</th>
                                   <th width="10%">Section</th>
                                   <th width="10%">Designation</th>
@@ -283,6 +295,53 @@
         });
 
     });
+
+    /* custom all row export*/
+    function allExport(e, dt, button, config) 
+    {
+        var self = this;
+        var oldStart = dt.settings()[0]._iDisplayStart;
+        dt.one('preXhr', function (e, s, data) {
+            // Just this once, load all data from the server...
+            data.start = 0;
+            data.length = 2147483647;
+            dt.one('preDraw', function (e, settings) {
+                // Call the original action function
+                if (button[0].className.indexOf('buttons-copy') >= 0) {
+                    $.fn.dataTable.ext.buttons.copyHtml5.action.call(self, e, dt, button, config);
+                } else if (button[0].className.indexOf('buttons-excel') >= 0) {
+                    $.fn.dataTable.ext.buttons.excelHtml5.available(dt, config) ?
+                        $.fn.dataTable.ext.buttons.excelHtml5.action.call(self, e, dt, button, config) :
+                        $.fn.dataTable.ext.buttons.excelFlash.action.call(self, e, dt, button, config);
+                } else if (button[0].className.indexOf('buttons-csv') >= 0) {
+                    $.fn.dataTable.ext.buttons.csvHtml5.available(dt, config) ?
+                        $.fn.dataTable.ext.buttons.csvHtml5.action.call(self, e, dt, button, config) :
+                        $.fn.dataTable.ext.buttons.csvFlash.action.call(self, e, dt, button, config);
+                } else if (button[0].className.indexOf('buttons-pdf') >= 0) {
+                    $.fn.dataTable.ext.buttons.pdfHtml5.available(dt, config) ?
+                        $.fn.dataTable.ext.buttons.pdfHtml5.action.call(self, e, dt, button, config) :
+                        $.fn.dataTable.ext.buttons.pdfFlash.action.call(self, e, dt, button, config);
+                } else if (button[0].className.indexOf('buttons-print') >= 0) {
+                    $.fn.dataTable.ext.buttons.print.action(e, dt, button, config);
+                }
+                dt.one('preXhr', function (e, s, data) {
+                    // DataTables thinks the first item displayed is index 0, but we're not drawing that.
+                    // Set the property to what it was before exporting.
+                    settings._iDisplayStart = oldStart;
+                    data.start = oldStart;
+                });
+                // Reload the grid with the original page. Otherwise, API functions like table.cell(this) don't work properly.
+                setTimeout(dt.ajax.reload, 0);
+                // Prevent rendering of the full data to the DOM
+                return false;
+            });
+        });
+        // Requery the server with the new one-time export settings
+        dt.ajax.reload();
+    };
+
+    var exportColName = ['Sl.','','Associate ID','Name','DOJ','Contact','Section','Designation','Dates','Total',''];
+    var exportCol = [2,3,4,5,6,7,8,9];
     var searchable = [2,5,6,7,8];
     // var selectable = []; //use 4,5,6,7,8,9,10,11,....and * for all
     var dropdownList = {};
@@ -334,22 +393,43 @@
           extend: 'csv',
           className: 'btn-sm btn-success',
           exportOptions: {
-            columns: ':visible'
-          }
+              columns: exportCol,
+              format: {
+                  header: function ( data, columnIdx ) {
+                      return exportColName[columnIdx];
+                  }
+              }
+          },
+          "action": allExport,
+          messageTop: ''
         },
         {
           extend: 'excel',
           className: 'btn-sm btn-warning',
           exportOptions: {
-            columns: ':visible'
-          }
+              columns: exportCol,
+              format: {
+                  header: function ( data, columnIdx ) {
+                      return exportColName[columnIdx];
+                  }
+              }
+          },
+          "action": allExport,
+          messageTop: ''
         },
         {
           extend: 'pdf',
           className: 'btn-sm btn-primary',
           exportOptions: {
-            columns: ':visible'
-          }
+              columns: exportCol,
+              format: {
+                  header: function ( data, columnIdx ) {
+                      return exportColName[columnIdx];
+                  }
+              }
+          },
+          "action": allExport,
+          messageTop: ''
         },
         {
 
@@ -393,9 +473,15 @@
           },
           messageBottom: null,
           exportOptions: {
-            columns: [0,1,3,4,5,6,7,8],
-            stripHtml: false
+              columns: exportCol,
+              stripHtml: false,
+              format: {
+                  header: function ( data, columnIdx ) {
+                      return exportColName[columnIdx];
+                  }
+              }
           },
+          "action": allExport
         }
       ],
 
@@ -405,6 +491,7 @@
         { data: 'associate_id',  name: 'associate_id' },
         // { data: 'hr_unit_name',  name: 'hr_unit_name' },
         { data: 'as_name', name: 'as_name' },
+        { data: 'as_doj', name: 'as_doj' },
         { data: 'cell', name: 'cell' },
         { data: 'section', name: 'section' },
         { data: 'hr_designation_name', name: 'hr_designation_name' },
@@ -484,10 +571,8 @@
         var condition = $("#condition").val();
       },100);
 
-      if(to == "" || from == "" || unit == "")
-      {
-        //alert("Please Select Following Field");
-
+      if(to == "" || from == "" || unit == ""){
+            $.notify('Please select unit and report date','error');
       }
       else{
         $(".d-table").removeClass('hide');

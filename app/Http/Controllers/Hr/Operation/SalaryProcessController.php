@@ -94,7 +94,7 @@ class SalaryProcessController extends Controller
             ->whereBetween('s.gross', [$input['min_sal'], $input['max_sal']])
             ->whereNotIn('s.as_id', config('base.ignore_salary'))
             ->when(!empty($input['unit']), function ($query) use($input){
-                if(!in_array($input['unit'], [14,145])){
+                if(!in_array($input['unit'], [14,145,15])){
                     return $query->where('emp.as_unit_id',$input['unit']);
                 }else{
                     if($input['unit'] == 14)
