@@ -584,7 +584,7 @@ class EmployeeHelper
         $dateCount = cal_days_in_month(CAL_GREGORIAN, $month, $year);
 
         //get add absent deduct calculation
-        $perDayBasic = round(($employee->ben_basic /  $dateCount),2);
+        $perDayBasic = round(($employee->ben_basic / 30),2);
         $perDayGross = round(($employee->ben_current_salary /  $dateCount),2);
         $getAbsentDeduct = $getAbsent * $perDayBasic;
 
@@ -628,7 +628,9 @@ class EmployeeHelper
             'stamp' => 0,
             'pay_status' => 1,
             'bank_payable' => 0,
-            'tds' => 0
+            'tds' => 0,
+            'created_by' => auth()->id()
+            
         ];
         
         
@@ -674,9 +676,11 @@ class EmployeeHelper
         $salary['per_day_basic'] = $perDayBasic;
         $salary['per_day_gross'] = $perDayGross;
         $salary['salary_date'] = $total_day;
+        $salary['disburse_date'] = null;
         
 
         return $salary;
     }
+
 
 }
