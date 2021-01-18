@@ -218,8 +218,7 @@ class DailyActivityReportController extends Controller
     public function attendanceReport(Request $request)
     {
         $input = $request->all();
-        // dd($input);
-        // return $input;
+        
         try {
             $input['area']       = isset($request['area'])?$request['area']:'';
             $input['otnonot']    = isset($request['otnonot'])?$request['otnonot']:'';
@@ -471,6 +470,8 @@ class DailyActivityReportController extends Controller
 
     public function twoDayAtt($input,$request)
     {
+
+
         $date[0] = $request['date'];
         $date[1] = \Carbon\Carbon::parse($request['date'])->subDays(1)->toDateString();
         $unit = unit_by_id();
@@ -482,9 +483,10 @@ class DailyActivityReportController extends Controller
         $section = section_by_id();
         $subSection = subSection_by_id();
         $area = area_by_id();
+        $short_designation = shortdesignation_by_id();
         
         $getEmployee = DB::table('hr_as_basic_info')
-            ->select('as_id', 'as_gender', 'associate_id', 'as_line_id', 'as_designation_id','as_oracle_code', 'as_department_id', 'as_floor_id', 'as_pic', 'as_name', 'as_contact', 'as_section_id')
+            ->select('as_id', 'as_gender', 'associate_id', 'as_line_id', 'as_designation_id','as_oracle_code', 'as_department_id', 'as_floor_id', 'as_pic', 'as_name', 'as_contact', 'as_section_id','as_subsection_id')
             ->whereIn('as_unit_id', auth()->user()->unit_permissions())
             ->whereIn('as_location', auth()->user()->location_permissions())
             ->when(!empty($input['unit']), function ($query) use($input){
@@ -526,6 +528,7 @@ class DailyActivityReportController extends Controller
                 }
             })
             ->where('as_status', 1)
+            ->orderBy('as_oracle_sl', 'ASC')
             ->get();
 
 
@@ -637,7 +640,7 @@ class DailyActivityReportController extends Controller
 
 
 
-        return view('hr.reports.daily_activity.attendance.two_day_att', compact('uniqueGroups', 'getEmployee', 'input', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area','pr','ab','lv','do','format','date'));
+        return view('hr.reports.daily_activity.attendance.two_day_att', compact('uniqueGroups', 'getEmployee', 'input', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area','pr','ab','lv','do','format','date','short_designation'));
 
     }
 

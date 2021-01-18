@@ -109,7 +109,7 @@ class BenefitsCalculationController extends Controller
 
                         $salary['salary_date'] = $salary['present'] + $salary['leave'] + $salary['absent'] + $salary['holiday'];
                         
-                        $salary['per_day_basic'] = round(($salary['basic']/$dateCount),2);
+                        $salary['per_day_basic'] = round(($salary['basic']/30),2);
                         $salary['per_day_gross'] = round(($salary['gross']/$dateCount),2);
 
                         
@@ -170,8 +170,6 @@ class BenefitsCalculationController extends Controller
     	}catch(\Exception $e){
     		return $e->getMessage();
     	}
-    	
-
     }
 
     public function getEmpJobcard($request)
@@ -190,12 +188,6 @@ class BenefitsCalculationController extends Controller
                 return $value;
             }
         });
-
-
-
-
-        
-        
 
         if(empty($filtered)){
             $last_key = 0;
@@ -276,10 +268,11 @@ class BenefitsCalculationController extends Controller
 
                     // remove current month salary
                     DB::table('hr_monthly_salary')
-                        ->where('month',date('m'))
+                        ->where('month', date('m'))
                         ->where('year', date('Y'))
                         ->where('as_id', $employee->associate_id)
                         ->delete();
+
                     $salary_page = '<div class="text-center alert alert-primary"><p class="iq-alert-text">Salary of this employee already recorded in active salary sheet!</p></div>';
                 }
 
@@ -404,6 +397,7 @@ class BenefitsCalculationController extends Controller
         $data->death_reason             = $request->death_reason; 
         $data->death_benefits           = round($death_benefit??0,2);
         $data->status_date              = $request->status_date;
+        $data->salary_date              = Carbon::parse($request->status_date)->subDay();
         $data->earned_leave             = $earned_leave??0;
         $data->created_by               = auth()->user()->id;
         $data->save();

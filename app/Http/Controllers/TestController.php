@@ -56,7 +56,7 @@ class TestController extends Controller
     {
 
         
-        return $this->makeAbsent();
+        return $this->setSalaryDate();
         return $this->testMail();
         
         return '';
@@ -1439,7 +1439,7 @@ class TestController extends Controller
                    ->whereIn('in_date', $dates)
                    ->pluck('in_date');
 
-            $holiday = DB::table('holiday_roaster')
+            $holiday = DB::table('holiday_roaster');
         }
     }
 
@@ -1455,5 +1455,18 @@ class TestController extends Controller
         foreach ($outtime as $key => $val) {
             
         }
+    }
+
+    public function setSalaryDate()
+    {
+        $data = DB::table('hr_monthly_salary')->whereIn('emp_status',[2,3,4,5,6,7])->get();
+
+        foreach ($data as $key => $v) {
+            $date = date('Y-m-d', strtotime($v->year.'-'.$v->month.'-'.($v->present+$v->absent+$v->holiday+$v->leave)));
+            DB::table('hr_all_given_benefits')->where('associate_id', $v->as_id)->update([
+                'salary_date' => $date
+            ]);
+        }
+
     }
 }

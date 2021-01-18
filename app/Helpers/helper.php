@@ -871,6 +871,31 @@ if(!function_exists('designation_by_id')){
     }
 }
 
+if(!function_exists('shortdesignation_by_id')){
+    function shortdesignation_by_id()
+    {
+       return  Cache::remember('shortdesignation', 10000000, function () {
+            $ds = Designation::pluck('hr_designation_name','hr_designation_id')->toArray();
+            return collect($ds)->map(function($item){
+                $ai = explode(" ", $item);
+                $txt = '';
+                if(count($ai) > 1)
+                    foreach ($ai as $key => $val) {
+                        if(ctype_alpha(substr($val,0,1)))
+                            $txt .= substr($val,0,1);
+                        else
+                            $txt .= substr($val,1,2);
+                    }
+                else 
+                    $txt = substr($ai[0],0,3);
+
+                return $txt;
+            });
+        });      
+
+    }
+}
+
 if(!function_exists('shift_by_code')){
     function shift_by_code()
     {

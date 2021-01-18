@@ -7,14 +7,16 @@
             </button>
         </div>
         <div class="d-flex justify-content-between">
-            @if($salary['disburse_date'] == null)
-            <div class="has-float-label">
-                <input style="height: 30px;line-height: 30px;" type="date" class="form-control" name="print-date" id="print-date">
-                <label>Payment Date</label>
-            </div> 
-            <div class="ml-2">
-                {{-- <button class="btn btn-sm btn-primary">Pay</button> --}}
-            </div>
+            @if(isset($salary['disburse_date']))
+                @if($salary['disburse_date'] == null || $salary['disburse_date'] == '0000-00-00')
+                <div class="has-float-label">
+                    <input style="height: 30px;line-height: 30px;" type="date" class="form-control" name="print-date" id="print-date">
+                    <label>Payment Date</label>
+                </div> 
+                <div class="ml-2">
+                    {{-- <button class="btn btn-sm btn-primary">Pay</button> --}}
+                </div>
+                @endif
             @endif
         </div>
     </div>
@@ -50,10 +52,10 @@
                     <th colspan="2" style="width:70%;text-align: left;" > আংশিক মজুরীর বিবরণী - </th>
                     <th style="width:30%; text-align: right;font-weight: bold;">
                         তারিখঃ 
-                        @if($salary['disburse_date'] == null)
-                            <span id="new-date">{{str_replace($en, $bn, date('d-m-Y'))}}</span>
-                        @else
+                        @if($salary['disburse_date'] && $salary['disburse_date'] != '0000-00-00')
                             {{str_replace($en, $bn, date('d-m-Y', strtotime($salary['disburse_date'])))}}
+                        @else
+                            <span id="new-date"> {{str_replace($en, $bn, date('d-m-Y'))}} </span>
                         @endif
                         ইং
                     </th>
@@ -175,7 +177,7 @@
 
                 <tr>
                     <td>{{num_to_bn_month($salary['month'])}}, {{eng_to_bn($salary['year'])}} এর অতিরিক্ত</td>
-                    <td>{{eng_to_bn($salary['ot_hour']??0)}}</td>
+                    <td>{{eng_to_bn(numberToTimeClockFormat($salary['ot_hour']))}}</td>
                     <td>{{eng_to_bn($salary['ot_rate']??0)}}</td>
                     <td style="text-align: right;">{{eng_to_bn(bn_money($ot))}}</td>
                 </tr>
