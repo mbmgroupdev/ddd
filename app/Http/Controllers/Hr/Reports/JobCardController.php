@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Employee;
 use App\Models\Hr\HolidayRoaster;
 use App\Models\Hr\Leave;
+use App\Models\Hr\Unit;
 use Illuminate\Http\Request;
 use PDF,DB;
 
@@ -14,6 +15,11 @@ class JobCardController extends Controller
 
   public function jobCard(Request $request)
   {
+    $unitList  = Unit::where('hr_unit_status', '1')
+      ->whereIn('hr_unit_id', auth()->user()->unit_permissions())
+      ->pluck('hr_unit_name', 'hr_unit_id');
+
+    $areaList  = DB::table('hr_area')->where('hr_area_status', '1')->pluck('hr_area_name', 'hr_area_id');
     if ($request->get('pdf') == true) {
       $result = $this->empAttendanceByMonth($request);
       $attendance = $result['attendance'];
@@ -23,18 +29,36 @@ class JobCardController extends Controller
       return $pdf->download('Job_Card_Report_'.date('d_F_Y').'.pdf');
     } elseif($request->associate != null && $request->month_year != null){
       $result = $this->empAttendanceByMonth($request);
-      // dd($result);
+
+      if($result != null){
+        $attendance = $result['attendance'];
+        $info = $result['info'];
+        $joinExist = $result['joinExist'];
+        $leftExist = $result['leftExist'];
+        return view("hr/reports/job_card",compact('attendance','info','joinExist','leftExist', 'unitList', 'areaList'));
+      }else{
+        toastr()->error('This Month Job Card Not Found!');
+        return back();
+      }
+      
+    }else{
+      return view("hr/reports/job_card", compact('unitList', 'areaList'));
+    }
+    return view("hr/reports/job_card", compact('unitList', 'areaList'));
+  }
+  public function jobCardPartial(Request $request)
+  {
+    $result = $this->empAttendanceByMonth($request);
+    if($result != null){
       $attendance = $result['attendance'];
       $info = $result['info'];
       $joinExist = $result['joinExist'];
       $leftExist = $result['leftExist'];
-      return view("hr/reports/job_card",compact('attendance','info','joinExist','leftExist'));
+      return view("hr/reports/job_card_partial",compact('attendance','info','joinExist','leftExist'))->render();
     }else{
-      return view("hr/reports/job_card");
+      return "<h3 class='text-center'>This Month Job Card Not Found!</h3>";
     }
-    return view("hr/reports/job_card");
   }
-
   public  function empAttendanceByMonth($request)
   {
     //if (!empty(request()->associate) && !empty(request()->month) && !empty(request()->year)) {
@@ -51,8 +75,20 @@ class JobCardController extends Controller
     $year  = $request->year;
     #------------------------------------------------------
     // ASSOCIATE INFORMATION
+    $flag = 0;
     $fetchUser = DB::table("hr_as_basic_info AS b")
-                  ->where("b.associate_id", $associate);
+    ->select('b.as_designation_id', 'b.as_unit_id', 'b.as_location', 'b.as_floor_id', 'b.as_line_id', 'b.as_shift_id', 'b.as_department_id', 'b.as_section_id', 'b.as_subsection_id', 'b.as_doj', 'b.as_id', 'b.as_name', 'b.as_gender', 'b.as_ot', 'b.associate_id', 'b.as_status_date', 'b.as_status', 'b.shift_roaster_status', 'b.as_oracle_code');
+    if(strtotime(date('Y-m')) > strtotime($request->month_year)){
+      $flag = 1;
+      $fetchUser->where("s.as_id", $associate)->where('s.month', $month)->where('s.year', $year);
+      $fetchUser->join('hr_monthly_salary AS s', 'b.associate_id', 's.as_id')
+      ->leftJoin('hr_subsection AS subsec', 's.sub_section_id', 'subsec.hr_subsec_id')
+      ->addSelect('s.unit_id', 's.designation_id', 's.sub_section_id', 'subsec.hr_subsec_department_id', 'subsec.hr_subsec_section_id');
+    }elseif(strtotime(date('Y-m')) == strtotime($request->month_year)){
+      $fetchUser->where("b.associate_id", $associate);
+    }else{
+      return '';
+    }
     //check user exists
     if($fetchUser->exists()) {
       $info = $fetchUser->first();
@@ -65,6 +101,14 @@ class JobCardController extends Controller
       $info->unit = $getUnit[$info->as_unit_id]['hr_unit_name'];
       $info->section = $getSection[$info->as_section_id]['hr_section_name']??'';
       $info->designation = $getDesignation[$info->as_designation_id]['hr_designation_name']??'';
+      $info->pre_section = '';
+      $info->pre_designation = '';
+      if($flag == 1 && $info->designation_id != $info->as_designation_id){
+        $info->pre_designation = $getDesignation[$info->designation_id]['hr_designation_name']??'';
+      }
+      if($flag == 1 && $info->as_section_id != $info->hr_subsec_section_id){
+        $info->pre_designation = $getSection[$info->hr_subsec_section_id]['hr_section_name']??'';
+      }
       $date       = ($year."-".$month."-"."01");
       $startDay   = date('Y-m-d', strtotime($date));
       $endDay     = date('Y-m-t', strtotime($date));

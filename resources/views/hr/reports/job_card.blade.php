@@ -34,40 +34,163 @@
         <li class="active"> Job Card</li>
       </ul><!-- /.breadcrumb -->
     </div>
-
-    <div class="page-content">
-        <div class="row">
-            <div class="col">
-                <form role="form" method="get" action="{{ url('hr/operation/job_card') }}" class="attendanceReport" id="attendanceReport">
-                    <div class="panel">
-                        
-                        <div class="panel-body">
-                            <div class="row">
-                                <div class="col-4">
-                                    <div class="form-group has-float-label has-required select-search-group">
-                                        {{ Form::select('associate', [Request::get('associate') => Request::get('associate')], Request::get('associate'), ['placeholder'=>'Select Associate\'s ID', 'id'=>'associate', 'class'=> 'allassociates no-select col-xs-12','style', 'required'=>'required']) }}
-                                        <label  for="associate"> Associate's ID </label>
+    <div class="iq-accordion career-style mat-style  ">
+        <div class="iq-card iq-accordion-block mb-3 {{ Request::get('unit') == null?'accordion-active':'' }}">
+            <div class="active-mat clearfix">
+              <div class="container-fluid">
+                 <div class="row">
+                    <div class="col-sm-12"><a class="accordion-title"><span class="header-title" style="line-height:1.8;border-radius: 50%;"> Employee Wise </span> </a></div>
+                 </div>
+              </div>
+            </div>
+            <div class="accordion-details">
+                <div class="row">
+                    <div class="col">
+                      <form role="form" method="get" action="{{ url('hr/operation/job_card') }}" class="attendanceReport" id="attendanceReportEmp">
+                        <div class="panel" style="margin-bottom: 0;">
+                            
+                            <div class="panel-body" style="padding-bottom: 5px;">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="form-group has-float-label has-required select-search-group">
+                                            {{ Form::select('associate', [Request::get('associate') => Request::get('associate')], Request::get('associate'), ['placeholder'=>'Select Associate\'s ID', 'id'=>'associate', 'class'=> 'allassociates no-select col-xs-12','style', 'required'=>'required']) }}
+                                            <label  for="associate"> Associate's ID </label>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-2">
-                                    <div class="form-group has-float-label has-required select-search-group">
-                                        <input type="month" class="form-control" id="month" name="month_year" placeholder=" Month-Year"required="required" value="{{ (request()->month_year?request()->month_year:date('Y-m') )}}"autocomplete="off" />
-                                        <label  for="year"> Month </label>
+                                    <div class="col-2">
+                                        <div class="form-group has-float-label has-required select-search-group">
+                                            <input type="month" class="form-control" id="month" name="month_year" placeholder=" Month-Year"required="required" value="{{ (request()->month_year?request()->month_year:date('Y-m') )}}"autocomplete="off" />
+                                            <label  for="year"> Month </label>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-6">
-                                    <button type="submit" class="btn btn-primary btn-sm activityReportBtn"><i class="fa fa-save"></i> Generate</button>
-                                    
+                                    <div class="col-6">
+                                        <button type="submit" class="btn btn-primary btn-sm activityReportBtn"><i class="fa fa-save"></i> Generate</button>
+                                        
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </form>
-                <!-- PAGE CONTENT ENDS -->
-            </div>
-            <!-- /.col -->
+                    </form>
+                  </div>
+              </div>
+           </div>
         </div>
-        <div class="row">
+        {{-- <div class="iq-card iq-accordion-block mb-3 {{ Request::get('unit') != null?'accordion-active':'' }}">
+           <div class="active-mat clearfix">
+              <div class="container-fluid">
+                 <div class="row">
+                    <div class="col-sm-12"><a class="accordion-title"><span class="header-title" style="line-height:1.8;border-radius: 50%;"> Unit Wise </span> </a></div>
+                 </div>
+              </div>
+           </div>
+           <div class="accordion-details">
+              <div class="row1">
+                <div class="col-12"> 
+                    <div class="panel mb-0">
+                        
+                        <div class="panel-body pb-0">
+                            <form role="form" method="get" action="{{ url('hr/operation/job_card') }}" class="attendanceReport" id="attendanceReport">
+                                <div class="row">
+                                  <div class="col-3">
+                                    <div class="form-group has-float-label has-required select-search-group">
+                                        
+                                        <select name="unit" class="form-control capitalize select-search" id="unit" required="">
+                                            <option selected="" value="">Choose...</option>
+                                            
+                                            @foreach($unitList as $key => $value)
+                                            <option value="{{ $key }}">{{ $value }}</option>
+                                            @endforeach
+                                        </select>
+                                      <label for="unit">Unit</label>
+                                    </div>
+                                    <div class="form-group has-float-label  select-search-group">
+                                        <select name="area" class="form-control capitalize select-search" id="area">
+                                            <option selected="" value="">Choose...</option>
+                                            @foreach($areaList as $key => $value)
+                                            <option value="{{ $key }}">{{ $value }}</option>
+                                            @endforeach
+                                        </select>
+                                        <label for="area">Area</label>
+                                    </div>
+                                    <div class="form-group has-float-label select-search-group">
+                                        <select name="department" class="form-control capitalize select-search" id="department" disabled>
+                                            <option selected="" value="">Choose...</option>
+                                        </select>
+                                        <label for="department">Department</label>
+                                    </div>
+                                  </div>
+                                  <div class="col-3">
+                                    
+                                    <div class="form-group has-float-label select-search-group">
+                                        <select name="section" class="form-control capitalize select-search " id="section" disabled>
+                                            <option selected="" value="">Choose...</option>
+                                        </select>
+                                        <label for="section">Section</label>
+                                    </div>
+                                    <div class="form-group has-float-label select-search-group">
+                                        <select name="subSection" class="form-control capitalize select-search" id="subSection" disabled>
+                                            <option selected="" value="">Choose...</option> 
+                                        </select>
+                                        <label for="subSection">Sub Section</label>
+                                    </div>
+                                    <div class="form-group has-float-label select-search-group">
+                                        <select name="floor_id" class="form-control capitalize select-search" id="floor_id" disabled >
+                                            <option selected="" value="">Choose...</option>
+                                        </select>
+                                        <label for="floor_id">Floor</label>
+                                    </div>
+                                  </div> 
+                                  <div class="col-3">
+                                    
+                                    <div class="form-group has-float-label select-search-group">
+                                        <select name="line_id" class="form-control capitalize select-search" id="line_id" disabled >
+                                            <option selected="" value="">Choose...</option>
+                                        </select>
+                                        <label for="line_id">Line</label>
+                                    </div>
+                                    <div class="form-group has-float-label select-search-group">
+                                        <select name="as_ot" class="form-control capitalize select-search" id="as_ot"  >
+                                            <option selected="" value="">Choose...</option>
+                                            <option  value="1">OT</option>
+                                            <option  value="0">Non OT</option>
+                                        </select>
+                                        <label for="as_ot">OT</label>
+                                    </div>
+                                  </div>  
+                                  <div class="col-3">
+                                    <div class="form-group has-float-label has-required">
+                                      <input type="month" class="report_date datepicker form-control" id="month" name="month" placeholder="Y-m" required="required" value="{{ date('Y-m') }}" autocomplete="off" />
+                                      <label for="month">Month</label>
+                                    </div>
+                                    <div class="form-group has-float-label has-required select-search-group">
+                                        <?php
+                                          $status = ['1'=>'Active','25' => 'Left & Resign','2'=>'Resign','3'=>'Terminate','4'=>'Suspend','5'=>'Left', '6'=>'Maternity'];
+                                        ?>
+                                        {{ Form::select('employee_status', $status, 1, ['placeholder'=>'Select Employee Status ', 'class'=>'form-control capitalize select-search', 'id'=>'estatus', 'required']) }}
+                                        <label for="estatus">Status</label>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                      <button class="btn btn-primary nextBtn btn-lg pull-right" type="submit" id="attendanceReport"><i class="fa fa-save"></i> Generate</button>
+                                    </div>
+                                  </div>
+                                  
+                                  
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- PAGE CONTENT ENDS -->
+                </div>
+                <!-- /.col -->
+            </div>
+           </div>
+        </div> --}}
+        
+    </div>
+    <div class="page-content">
+        
+        <div class="row1">
             @if(isset($info))
             <div class="panel w-100">
                 <div class="panel-body">
@@ -113,6 +236,7 @@
                                             $nextUrl = url("hr/operation/job_card?associate=$associate&month_year=$nextMonth");
                                             $user  = auth()->user();
                                         @endphp
+                                        
                                         @if($user->can('Attendance Operation') || $user->hasRole('Super Admin'))
                                         <a href="{{ $prevUrl }}" class="btn view prev_btn" data-toggle="tooltip" data-placement="top" title="" data-original-title="Previous Month Job Card" >
                                           <i class="las la-chevron-left"></i>
@@ -120,7 +244,7 @@
                                         @endif
                                         <b class="f-16" id="result-head">{{ request()->month_year }} </b>
                                         @if($user->can('Attendance Operation') || $user->hasRole('Super Admin'))
-                                        @if($month < $thisMonth)
+                                        @if(strtotime(date('Y-m')) >= strtotime($nextMonth))
                                         <a href="{{ $nextUrl }}" class="btn view next_btn" data-toggle="tooltip" data-placement="top" title="" data-original-title="Next Month Job Card" >
                                           <i class="las la-chevron-right"></i>
                                         </a>
@@ -180,8 +304,8 @@
                                                 </th>
                                                 <th>
                                                     <p style="margin:0;padding:4px 10px"><strong>Oracle ID </strong>: {{ $info->as_oracle_code }} </p>
-                                                   <p style="margin:0;padding:4px 10px"><strong>Section </strong>: {{ $info->section }} </p>
-                                                   <p style="margin:0;padding:4px 10px"><strong>Designation </strong>: {{ $info->designation }} </p>
+                                                   <p style="margin:0;padding:4px 10px"><strong>Section </strong>: {{ $info->section }} <span>@if($info->pre_section != null) - Previous: {{ $pre_section }} @endif</span> </p>
+                                                   <p style="margin:0;padding:4px 10px"><strong>Designation </strong>: {{ $info->designation }} <span>@if($info->pre_designation != null) - Previous: {{ $pre_designation }} @endif</span></p>
                                                 </th>
                                                 <th>
                                                    <p style="margin:0;padding:4px 10px"><strong>Total Present </strong>: <b >{{ $info->present }}</b> </p>

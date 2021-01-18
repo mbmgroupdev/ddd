@@ -38,6 +38,7 @@
     div.dataTables_wrapper div.dataTables_processing {
       top: 10% !important;
     }
+    
   </style>
 @endpush
 @section('main-content')
@@ -232,6 +233,7 @@
         </div><!-- /.page-content -->
     </div>
 </div>
+@include('common.right-modal')
 @push('js')
 <!-- Datepicker Css -->
 

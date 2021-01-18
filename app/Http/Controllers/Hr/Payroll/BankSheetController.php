@@ -49,8 +49,8 @@ class BankSheetController extends Controller
 
             $queryData = DB::table('hr_monthly_salary AS s')
             ->whereNotIn('s.as_id', config('base.ignore_salary'))
-            ->whereIn('s.unit_id', auth()->user()->unit_permissions())
-            ->whereIn('s.location_id', auth()->user()->location_permissions());
+            ->whereIn('emp.as_unit_id', auth()->user()->unit_permissions())
+            ->whereIn('emp.as_location', auth()->user()->location_permissions());
             if(count($input['unit']) > 0){
             	$queryData->whereIn('s.unit_id', $input['unit']);
             }

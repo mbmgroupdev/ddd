@@ -1,10 +1,3 @@
-/*
-Template: XRay - Responsive Bootstrap 4 Admin Dashboard Template
-Author: iqonicthemes.in
-Design and Developed by: iqonicthemes.in
-NOTE: This file contains the styling for responsive Template.
-*/
-
 /*----------------------------------------------
 Index Of Script
 ------------------------------------------------
@@ -276,8 +269,10 @@ Index Of Script
         Page faq
         -----------------------------------------------------------------------*/
         jQuery('.iq-accordion .iq-accordion-block .accordion-details').hide();
-        jQuery('.faq-style .iq-accordion-block:first').addClass('accordion-active').children().slideDown('slow');
-        jQuery('.mat-style .iq-accordion-block:last').addClass('accordion-active').children().slideDown('slow');
+        // jQuery('.faq-style .iq-accordion-block:first').addClass('accordion-active').children().slideDown('slow');
+        // jQuery('.mat-style .iq-accordion-block:last').addClass('accordion-active').children().slideDown('slow');
+        jQuery('.accordion-active').children().slideDown('slow');
+
         jQuery(document).on("click", '.iq-accordion .iq-accordion-block', function() {
             if (jQuery(this).children('div.accordion-details ').is(':hidden')) {
                 jQuery('.iq-accordion .iq-accordion-block').removeClass('accordion-active').children('div.accordion-details ').slideUp('slow');
