@@ -35,6 +35,7 @@ class SalaryProcessController extends Controller
         $input['subSection'] = $input['subSection']??'';
         $input['month'] = date('m', strtotime($input['month_year']));
         $input['year'] = date('Y', strtotime($input['month_year']));
+        // dd($input);
         // return $input;
         try {
             /*$audit = 1;
@@ -82,9 +83,13 @@ class SalaryProcessController extends Controller
             $employeeData = DB::table('hr_as_basic_info');
             $employeeDataSql = $employeeData->toSql();
             
-            // employee bangla info
+            // employee bang la info
             $employeeBanData = DB::table('hr_employee_bengali');
             $employeeBanDataSql = $employeeBanData->toSql();
+
+            // employee sub section sql binding
+            $subSectionData = DB::table('hr_subsection');
+            $subSectionDataSql = $subSectionData->toSql();
 
             $queryData = DB::table('hr_monthly_salary as s')
             ->whereIn('emp.as_unit_id', auth()->user()->unit_permissions())
@@ -95,7 +100,7 @@ class SalaryProcessController extends Controller
             ->whereNotIn('s.as_id', config('base.ignore_salary'))
             ->when(!empty($input['unit']), function ($query) use($input){
                 if(!in_array($input['unit'], [14,145,15])){
-                    return $query->where('emp.as_unit_id',$input['unit']);
+                    return $query->where('s.unit_id',$input['unit']);
                 }else{
                     if($input['unit'] == 14)
                         $unit = [1,4];
@@ -106,11 +111,11 @@ class SalaryProcessController extends Controller
                     else
                         $unit = [];
 
-                    return $query->whereIn('emp.as_unit_id',$unit);
+                    return $query->whereIn('s.unit_id',$unit);
                 }
             })
             ->when(!empty($input['location']), function ($query) use($input){
-               return $query->where('emp.as_location',$input['location']);
+               return $query->where('s.location_id',$input['location']);
             })
             ->when(!empty($input['employee_status']), function ($query) use($input){
                 if($input['employee_status'] == 25){
@@ -121,10 +126,10 @@ class SalaryProcessController extends Controller
                 }
             })
             ->when(!empty($input['area']), function ($query) use($input){
-               return $query->where('emp.as_area_id',$input['area']);
+               return $query->where('subsec.hr_subsec_area_id',$input['area']);
             })
             ->when(!empty($input['department']), function ($query) use($input){
-               return $query->where('emp.as_department_id',$input['department']);
+               return $query->where('subsec.hr_subsec_department_id',$input['department']);
             })
             ->when(!empty($input['line']), function ($query) use($input){
                return $query->where('emp.as_line_id', $input['line']);
@@ -133,10 +138,10 @@ class SalaryProcessController extends Controller
                return $query->where('emp.as_floor_id',$input['floor']);
             })
             ->when(!empty($input['section']), function ($query) use($input){
-               return $query->where('emp.as_section_id', $input['section']);
+               return $query->where('subsec.hr_subsec_section_id', $input['section']);
             })
             ->when(!empty($input['subSection']), function ($query) use($input){
-               return $query->where('emp.as_subsection_id', $input['subSection']);
+               return $query->where('s.sub_section_id', $input['subSection']);
             });
             if(isset($input['otnonot']) && $input['otnonot'] != null){
                 $queryData->where('s.ot_status',$input['otnonot']);
@@ -151,18 +156,21 @@ class SalaryProcessController extends Controller
             $queryData->leftjoin(DB::raw('(' . $employeeDataSql. ') AS emp'), function($join) use ($employeeData) {
                 $join->on('emp.associate_id','s.as_id')->addBinding($employeeData->getBindings());
             });
+            $queryData->leftjoin(DB::raw('(' . $subSectionDataSql. ') AS subsec'), function($join) use ($subSectionData) {
+                $join->on('subsec.hr_subsec_id','emp.as_subsection_id')->addBinding($subSectionData->getBindings());
+            });
             
             if(!empty($input['pay_status'])){
                 // employee benefit sql binding
                 $benefitData = DB::table('hr_benefits');
                 $benefitData_sql = $benefitData->toSql();
                 $queryData->leftjoin(DB::raw('(' . $benefitData_sql. ') AS ben'), function($join) use ($benefitData) {
-                    $join->on('ben.ben_as_id','emp.associate_id')->addBinding($benefitData->getBindings());
+                    $join->on('ben.ben_as_id','s.as_id')->addBinding($benefitData->getBindings());
                 });
                 if($input['pay_status'] == "cash"){
-                    $queryData->where('ben.ben_cash_amount', '>', 0);
-                }elseif($input['pay_status'] != 'cash'){
-                    $queryData->where('ben.bank_name',$input['pay_status']);
+                    $queryData->where('s.cash_payable', '>', 0);
+                }elseif($input['pay_status'] != 'all'){
+                    $queryData->where('s.pay_type',$input['pay_status']);
                 }
             }
             
@@ -172,8 +180,9 @@ class SalaryProcessController extends Controller
             });
 
                 
-            $queryData->select('s.*', 'emp.as_doj','emp.associate_id', 'emp.as_ot', 'emp.as_designation_id', 'emp.as_section_id', 'emp.as_location', 'bemp.hr_bn_associate_name', 'emp.as_oracle_code', 'emp.as_unit_id',DB::raw('s.ot_hour * s.ot_rate as ot_amount'));
+            $queryData->select('s.*', 'emp.as_doj','s.as_id AS associate_id', 's.unit_id AS as_unit_id','s.location_id AS as_location', 's.designation_id AS as_designation_id', 's.ot_status AS as_ot', 'emp.as_section_id', 's.location_id', 'bemp.hr_bn_associate_name', 'emp.as_oracle_code',DB::raw('s.ot_hour * s.ot_rate as ot_amount'), 'subsec.hr_subsec_area_id AS as_area_id', 'subsec.hr_subsec_department_id AS as_department_id', 'subsec.hr_subsec_section_id AS as_section_id');
             $getSalaryList = $queryData->orderBy('emp.as_oracle_sl', 'asc')->get();
+            // dd($getSalaryList);
             $totalSalary = round($getSalaryList->sum("total_payable"));
             $totalCashSalary = round($getSalaryList->sum("cash_payable"));
             $totalBankSalary = round($getSalaryList->sum("bank_payable"));
@@ -184,6 +193,7 @@ class SalaryProcessController extends Controller
             $totalEmployees = count($getSalaryList);
             // return $totalEmployees;
             $employeeAssociates = collect($getSalaryList)->pluck('associate_id')->toArray();
+
             // salary adjust
             $salaryAddDeduct = DB::table('hr_salary_add_deduct')
                 ->where('year', $input['year'])
@@ -198,10 +208,10 @@ class SalaryProcessController extends Controller
             $locationDataSet = $getSalaryList->toArray();
             // return $locationDataSet;
             if($input['unit'] != null){
-                $locationList = array_column($locationDataSet, 'as_location');
+                $locationList = array_column($locationDataSet, 'location_id');
                 $uniqueLocation = array_unique($locationList);
             }elseif($input['unit'] == null){
-                $locationList = array_column($locationDataSet, 'as_unit_id');
+                $locationList = array_column($locationDataSet, 'unit_id');
                 $uniqueLocation = array_unique($locationList);
             }
             
@@ -224,10 +234,12 @@ class SalaryProcessController extends Controller
             $pageHead = (object)$pageHead;
             if($input['unit'] == null){
                 
-                return view('hr.operation.salary.load_salary_sheet_unit', compact('uniqueLocation', 'getSalaryList', 'pageHead','locationDataSet', 'info', 'salaryAddDeduct', 'designation', 'getSection', 'input'));
+                $view =  view('hr.operation.salary.load_salary_sheet_unit', compact('uniqueLocation', 'getSalaryList', 'pageHead','locationDataSet', 'info', 'salaryAddDeduct', 'designation', 'getSection', 'input'))->render();
             }else{
-                return view('hr.operation.salary.load_salary_sheet', compact('uniqueLocation', 'getSalaryList', 'pageHead','locationDataSet', 'info', 'salaryAddDeduct', 'designation', 'getSection', 'input'));
+                $view = view('hr.operation.salary.load_salary_sheet', compact('uniqueLocation', 'getSalaryList', 'pageHead','locationDataSet', 'info', 'salaryAddDeduct', 'designation', 'getSection', 'input'))->render();
             }
+
+            return response(['view' => $view]);
         } catch (\Exception $e) {
             $bug = $e->getMessage();
             return $bug;
@@ -268,6 +280,10 @@ class SalaryProcessController extends Controller
             $employeeBanData = DB::table('hr_employee_bengali');
             $employeeBanDataSql = $employeeBanData->toSql();
 
+            // employee sub section sql binding
+            $subSectionData = DB::table('hr_subsection');
+            $subSectionDataSql = $subSectionData->toSql();
+
             $queryData = DB::table('hr_monthly_salary as s')
             ->where('s.year', $input['year'])
             ->where('s.month', $input['month'])
@@ -280,8 +296,11 @@ class SalaryProcessController extends Controller
             $queryData->leftjoin(DB::raw('(' . $employeeBanDataSql. ') AS bemp'), function($join) use ($employeeBanData) {
                 $join->on('bemp.hr_bn_associate_id','emp.associate_id')->addBinding($employeeBanData->getBindings());
             });
+            $queryData->leftjoin(DB::raw('(' . $subSectionDataSql. ') AS subsec'), function($join) use ($subSectionData) {
+                $join->on('subsec.hr_subsec_id','emp.as_subsection_id')->addBinding($subSectionData->getBindings());
+            });
                 
-            $getSalaryList = $queryData->select('s.*', 'emp.as_doj', 'emp.as_ot','emp.as_oracle_code', 'emp.as_designation_id', 'emp.as_section_id', 'emp.as_location','emp.as_unit_id', 'bemp.hr_bn_associate_name')->get();
+            $getSalaryList = $queryData->select('s.*', 'emp.as_doj', 's.ot_status AS as_ot','emp.as_oracle_code', 's.designation_id AS as_designation_id', 'emp.as_location','s.unit_id AS as_unit_id', 'bemp.hr_bn_associate_name', 'subsec.hr_subsec_area_id AS as_area_id', 'subsec.hr_subsec_department_id AS as_department_id', 'subsec.hr_subsec_section_id AS as_section_id')->get();
             // dd($getSalaryList);
             $employeeAssociates = $queryData->select('emp.associate_id')->pluck('emp.associate_id')->toArray();
             // salary adjust

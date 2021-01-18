@@ -25,11 +25,11 @@
             </div>
             <div class="content_list_section">
                 @if($input['report_format'] == 0)
-                    @foreach($uniqueGroups as $group)
+                    @foreach($uniqueGroupEmp as $group => $employees)
                     
                     <table class="table table-bordered table-hover table-head" style="width:100%;border:1px solid #ccc;margin-bottom:0;font-size:14px;text-align:left" border="1" cellpadding="5">
                         <thead style="font-weight: bold; font-size:14px; text-align: center;">
-                            @if(count($getEmployee) > 0)
+                            @if(count($employees) > 0)
                             <tr>
                                 @php
                                     if($format == 'as_unit_id'){
@@ -94,8 +94,8 @@
                         </thead>
                         <tbody>
                         @php $i = 0; $otHourSum=0; $salarySum=0; $month = $input['month']; @endphp
-                        @if(count($getEmployee) > 0)
-                            @foreach($getEmployee as $employee)
+                        @if(count($employees) > 0)
+                            @foreach($employees as $employee)
                                 @php
                                     $designationName = $employee->hr_designation_name??'';
                                     $otHour = ($employee->ot_hour);
