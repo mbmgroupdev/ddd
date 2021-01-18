@@ -81,6 +81,10 @@ class MonthlyActivityReportController extends Controller
             $designationData = DB::table('hr_designation');
             $designationData_sql = $designationData->toSql();
 
+            // employee sub section sql binding
+            $subSectionData = DB::table('hr_subsection');
+            $subSectionDataSql = $subSectionData->toSql();
+
             $getEmployee = array();
             $format = $request['report_group'];
             $uniqueGroups = ['all'];
@@ -90,16 +94,16 @@ class MonthlyActivityReportController extends Controller
             ->whereIn('emp.as_unit_id', auth()->user()->unit_permissions())
             ->whereIn('emp.as_location', auth()->user()->location_permissions());
             if($input['report_format'] == 0 && !empty($input['employee'])){
-                $queryData->where('emp.associate_id', 'LIKE', '%'.$input['employee'] .'%');
+                $queryData->where('s.as_id', 'LIKE', '%'.$input['employee'] .'%');
             }
             $queryData->where('s.year', $year)
             ->where('s.month', $month)
             ->whereBetween('s.gross', [$input['min_sal'], $input['max_sal']])
             ->when(!empty($input['unit']), function ($query) use($input){
-               return $query->where('emp.as_unit_id',$input['unit']);
+               return $query->where('s.unit_id',$input['unit']);
             })
             ->when(!empty($input['location']), function ($query) use($input){
-               return $query->where('emp.as_location',$input['location']);
+               return $query->where('s.location_id',$input['location']);
             })
             ->when(!empty($input['employee_status']), function ($query) use($input){
                 if($input['employee_status'] == 25){
@@ -110,17 +114,22 @@ class MonthlyActivityReportController extends Controller
                 }
             })
             ->when(!empty($input['pay_status']), function ($query) use($input){
-                if($input['pay_status'] == "cash"){
-                    return $query->where('s.pay_status', 1);
-                }elseif($input['pay_status'] != 'cash' && $input['pay_status'] != 'all'){
-                    return $query->where('s.pay_status', 1)->where('ben.bank_name',$input['pay_status']);
+                // if($input['pay_status'] == "cash"){
+                //     return $query->where('s.pay_status', 1);
+                // }elseif($input['pay_status'] != 'cash' && $input['pay_status'] != 'all'){
+                //     return $query->where('s.pay_status', 1)->where('ben.bank_name',$input['pay_status']);
+                // }
+                if($input['pay_status'] == 'cash'){
+                    return $query->where('s.cash_payable', '>', 0);
+                }elseif($input['pay_status'] != 'all'){
+                    return $query->where('s.pay_type', $input['pay_status']);
                 }
             })
             ->when(!empty($input['area']), function ($query) use($input){
-               return $query->where('emp.as_area_id',$input['area']);
+               return $query->where('subsec.hr_subsec_area_id',$input['area']);
             })
             ->when(!empty($input['department']), function ($query) use($input){
-               return $query->where('emp.as_department_id',$input['department']);
+               return $query->where('subsec.hr_subsec_department_id',$input['department']);
             })
             ->when(!empty($input['line_id']), function ($query) use($input){
                return $query->where('emp.as_line_id', $input['line_id']);
@@ -132,10 +141,10 @@ class MonthlyActivityReportController extends Controller
                return $query->where('s.ot_status',$input['otnonot']);
             })
             ->when(!empty($input['section']), function ($query) use($input){
-               return $query->where('emp.as_section_id', $input['section']);
+               return $query->where('subsec.hr_subsec_section_id', $input['section']);
             })
             ->when(!empty($input['subSection']), function ($query) use($input){
-               return $query->where('emp.as_subsection_id', $input['subSection']);
+               return $query->where('s.sub_section_id', $input['subSection']);
             })
             ->orderBy('emp.as_department_id', 'ASC');
             $queryData->leftjoin(DB::raw('(' . $employeeData_sql. ') AS emp'), function($join) use ($employeeData) {
@@ -145,7 +154,10 @@ class MonthlyActivityReportController extends Controller
                 $join->on('ben.ben_as_id','emp.associate_id')->addBinding($benefitData->getBindings());
             });
             $queryData->leftjoin(DB::raw('(' . $designationData_sql. ') AS deg'), function($join) use ($designationData) {
-                $join->on('deg.hr_designation_id','emp.as_designation_id')->addBinding($designationData->getBindings());
+                $join->on('deg.hr_designation_id','s.designation_id')->addBinding($designationData->getBindings());
+            });
+            $queryData->leftjoin(DB::raw('(' . $subSectionDataSql. ') AS subsec'), function($join) use ($subSectionData) {
+                $join->on('subsec.hr_subsec_id','s.sub_section_id')->addBinding($subSectionData->getBindings());
             });
             // salary add deduct
             $addDeductData = DB::table('hr_salary_add_deduct');
@@ -153,14 +165,32 @@ class MonthlyActivityReportController extends Controller
             $queryData->leftjoin(DB::raw('(' . $addDeductDataSql. ') AS deduct'), function($join) use ($addDeductData) {
                 $join->on('s.salary_add_deduct_id','deduct.id')->addBinding($addDeductData->getBindings());
             });
-
+            
             if($input['report_format'] == 1 && $input['report_group'] != null){
-                $queryData->select('emp.'.$input['report_group'], DB::raw('count(*) as total'), DB::raw('sum(total_payable) as groupTotal'),DB::raw('
-                    COUNT(CASE WHEN s.ot_status = 1 THEN s.ot_status END) AS ot, 
-                    COUNT(CASE WHEN s.ot_status = 0 THEN s.ot_status END) AS nonot'),
-                DB::raw('sum(salary_payable) as groupSalary'), DB::raw('sum(cash_payable) as groupCashSalary'),DB::raw('sum(stamp) as groupStamp'),DB::raw('sum(tds) as groupTds'), DB::raw('sum(bank_payable) as groupBankSalary'), DB::raw('sum(ot_hour) as groupOt'), DB::raw('sum(ot_hour * ot_rate) as groupOtAmount'),DB::raw("SUM(IF(ot_status=0,total_payable,0)) AS totalNonOt"),DB::raw("SUM(deduct.food_deduct) AS foodDeduct"))->groupBy('emp.'.$input['report_group']);
+                $queryData->select(DB::raw('count(*) as total'), DB::raw('sum(total_payable) as groupTotal'),DB::raw('COUNT(CASE WHEN s.ot_status = 1 THEN s.ot_status END) AS ot, COUNT(CASE WHEN s.ot_status = 0 THEN s.ot_status END) AS nonot'),
+                DB::raw('sum(salary_payable) as groupSalary'), DB::raw('sum(cash_payable) as groupCashSalary'),DB::raw('sum(stamp) as groupStamp'),DB::raw('sum(tds) as groupTds'), DB::raw('sum(bank_payable) as groupBankSalary'), DB::raw('sum(ot_hour) as groupOt'), DB::raw('sum(ot_hour * ot_rate) as groupOtAmount'),DB::raw("SUM(IF(ot_status=0,total_payable,0)) AS totalNonOt"),DB::raw("SUM(deduct.food_deduct) AS foodDeduct"));
+                if($input['report_group'] == 'as_unit_id'){
+                    $queryData->addSelect('s.unit_id AS as_unit_id');
+                    $queryData->groupBy('s.unit_id');
+                }elseif($input['report_group'] == 'as_designation_id'){
+                    $queryData->addSelect('s.designation_id AS as_designation_id');
+                    $queryData->groupBy('s.designation_id');
+                }elseif($input['report_group'] == 'as_subsection_id'){
+                    $queryData->addSelect('s.sub_section_id AS as_subsection_id');
+                    $queryData->groupBy('s.sub_section_id');
+                }elseif($input['report_group'] == 'as_department_id'){
+                    $queryData->addSelect('subsec.hr_subsec_department_id AS as_department_id');
+                    $queryData->groupBy('subsec.hr_subsec_department_id');
+                }elseif($input['report_group'] == 'as_section_id'){
+                    $queryData->addSelect('subsec.hr_subsec_section_id AS as_section_id');
+                    $queryData->groupBy('subsec.hr_subsec_section_id');
+                }else{
+                    $queryData->addSelect('emp.'.$input['report_group']);
+                    $queryData->groupBy('emp.'.$input['report_group']);
+                }
             }else{
-                $queryData->select('deg.hr_designation_position','deg.hr_designation_name', 'ben.bank_name','ben.bank_no', 'ben.ben_tds_amount','emp.as_id','emp.as_gender', 'emp.as_oracle_code', 'emp.associate_id', 'emp.as_unit_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_section_id', 's.present', 's.absent', 's.ot_hour', 's.ot_rate', 's.total_payable','s.salary_payable', 's.bank_payable', 's.cash_payable', 's.tds', 's.stamp', 's.pay_status');
+                $queryData->select('s.unit_id AS as_unit_id','s.as_id AS associate_id', 's.designation_id AS as_designation_id','subsec.hr_subsec_area_id AS as_area_id', 'subsec.hr_subsec_department_id AS as_department_id', 'subsec.hr_subsec_section_id AS as_section_id', 's.sub_section_id AS as_subsection_id', 's.pay_type AS bank_name');
+                $queryData->addSelect('deg.hr_designation_position','deg.hr_designation_name', 'ben.bank_no','emp.as_id','emp.as_gender', 'emp.as_oracle_code', 'emp.as_line_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 's.present', 's.absent', 's.ot_hour', 's.ot_rate', 's.total_payable','s.salary_payable', 's.bank_payable', 's.cash_payable', 's.tds', 's.stamp', 's.pay_status');
                 $totalSalary = round($queryData->sum("s.total_payable"));
                 $totalCashSalary = round($queryData->sum("s.cash_payable"));
                 $totalBankSalary = round($queryData->sum("s.bank_payable"));
@@ -194,12 +224,19 @@ class MonthlyActivityReportController extends Controller
                     $format = '';
                 }
             }
+            $uniqueGroupEmp = [];
+            if($format != null && count($getEmployee) > 0 && $input['report_format'] == 0){
+                $uniqueGroupEmp = collect($getEmployee)->groupBy($request['report_group'],true);
+                
+            }
+            // dd($uniqueGroupEmp);
             if($input['pay_status'] == null){
 
-                return view('hr.reports.monthly_activity.salary.report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalSalary', 'totalEmployees', 'totalOtHour','totalOTAmount', 'totalCashSalary', 'totalBankSalary', 'totalTax', 'totalStamp'));
+                $view = view('hr.reports.monthly_activity.salary.report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalSalary', 'totalEmployees', 'totalOtHour','totalOTAmount', 'totalCashSalary', 'totalBankSalary', 'totalTax', 'totalStamp'))->render();
             }else{
-                return view('hr.reports.monthly_activity.salary.report_payment_wise', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalSalary', 'totalEmployees', 'totalOtHour','totalOTAmount', 'totalCashSalary', 'totalBankSalary', 'totalTax', 'totalStamp'));
+                $view = view('hr.reports.monthly_activity.salary.report_payment_wise', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalSalary', 'totalEmployees', 'totalOtHour','totalOTAmount', 'totalCashSalary', 'totalBankSalary', 'totalTax', 'totalStamp', 'uniqueGroupEmp'))->render();
             }
+            return $view;
         } catch (\Exception $e) {
             return $e->getMessage();
             return 'error';
@@ -333,6 +370,9 @@ class MonthlyActivityReportController extends Controller
         // employee basic sql binding
         $designationData = DB::table('hr_designation');
         $designationData_sql = $designationData->toSql();
+        // employee sub section sql binding
+        $subSectionData = DB::table('hr_subsection');
+        $subSectionDataSql = $subSectionData->toSql();
 
         $queryData = DB::table('hr_monthly_salary AS s')
         ->whereIn('emp.as_unit_id', auth()->user()->unit_permissions())
@@ -341,10 +381,10 @@ class MonthlyActivityReportController extends Controller
         ->where('s.month', $month)
         ->whereBetween('s.gross', [$input['min_sal'], $input['max_sal']])
         ->when(!empty($input['unit']), function ($query) use($input){
-           return $query->where('emp.as_unit_id',$input['unit']);
+           return $query->where('s.unit_id',$input['unit']);
         })
         ->when(!empty($input['location']), function ($query) use($input){
-           return $query->where('emp.as_location',$input['location']);
+           return $query->where('s.location_id',$input['location']);
         })
         ->when(!empty($input['employee_status']), function ($query) use($input){
             if($input['employee_status'] == 25){
@@ -355,10 +395,10 @@ class MonthlyActivityReportController extends Controller
             }
         })
         ->when(!empty($input['area']), function ($query) use($input){
-           return $query->where('emp.as_area_id',$input['area']);
+           return $query->where('subsec.hr_subsec_area_id',$input['area']);
         })
         ->when(!empty($input['department']), function ($query) use($input){
-           return $query->where('emp.as_department_id',$input['department']);
+           return $query->where('subsec.hr_subsec_department_id',$input['department']);
         })
         ->when(!empty($input['line_id']), function ($query) use($input){
            return $query->where('emp.as_line_id', $input['line_id']);
@@ -366,14 +406,15 @@ class MonthlyActivityReportController extends Controller
         ->when(!empty($input['floor_id']), function ($query) use($input){
            return $query->where('emp.as_floor_id',$input['floor_id']);
         })
-        ->when($request['otnonot']!=null, function ($query) use($input){
-           return $query->where('emp.as_ot',$input['otnonot']);
-        })
         ->when(!empty($input['section']), function ($query) use($input){
-           return $query->where('emp.as_section_id', $input['section']);
+           return $query->where('subsec.hr_subsec_section_id', $input['section']);
         })
         ->when(!empty($input['subSection']), function ($query) use($input){
-           return $query->where('emp.as_subsection_id', $input['subSection']);
+           return $query->where('s.sub_section_id', $input['subSection']);
+        })
+        
+        ->when($request['otnonot']!=null, function ($query) use($input){
+           return $query->where('s.ot_status',$input['otnonot']);
         })
         ->when(!empty($input['shift_roaster_status']), function ($query) use($input){
            return $query->where('emp.shift_roaster_status', $input['shift_roaster_status']);
@@ -383,6 +424,9 @@ class MonthlyActivityReportController extends Controller
         });
         $queryData->leftjoin(DB::raw('(' . $designationData_sql. ') AS deg'), function($join) use ($designationData) {
             $join->on('deg.hr_designation_id','emp.as_designation_id')->addBinding($designationData->getBindings());
+        });
+        $queryData->leftjoin(DB::raw('(' . $subSectionDataSql. ') AS subsec'), function($join) use ($subSectionData) {
+            $join->on('subsec.hr_subsec_id','emp.as_subsection_id')->addBinding($subSectionData->getBindings());
         });
         $data = $queryData->orderBy('deg.hr_designation_position', 'asc')->get();
 
@@ -397,16 +441,17 @@ class MonthlyActivityReportController extends Controller
             ->addColumn('associate_id', function($data) use ($input){
                 $month = $input['month'];
                 $jobCard = url("hr/operation/job_card?associate=$data->associate_id&month_year=$month");
-                return '<a href="'.$jobCard.'" target="_blank">'.$data->associate_id.'</a>';
+                // return '<a href="'.$jobCard.'" target="_blank">'.$data->associate_id.'</a>';
+                return '<a class="job_card" data-name="'.$data->as_name.'" data-associate="'.$data->associate_id.'" data-month-year="'.$month.'" data-toggle="tooltip" data-placement="top" title="" data-original-title="Job Card">'.$data->associate_id.'</a>';
             })
             ->addColumn('as_name', function($data){
                 return $data->as_name;
             })
             ->addColumn('hr_designation_name', function($data) use ($getDesignation){
-                return $getDesignation[$data->as_designation_id]['hr_designation_name']??'';
+                return $getDesignation[$data->designation_id]['hr_designation_name']??'';
             })
             ->addColumn('hr_department_name', function($data) use ($getDepartment){
-                return $getDepartment[$data->as_department_id]['hr_department_name']??'';
+                return $getDepartment[$data->hr_subsec_department_id]['hr_department_name']??'';
             })
             ->addColumn('ot_hour', function($data){
                 return numberToTimeClockFormat($data->ot_hour);

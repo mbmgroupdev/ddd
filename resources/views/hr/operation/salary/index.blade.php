@@ -56,7 +56,7 @@
 
         <div class="page-content"> 
             <div class="iq-accordion career-style mat-style  ">
-                <div class="iq-card iq-accordion-block accordion-active">
+                <div class="iq-card iq-accordion-block">
                    <div class="active-mat clearfix">
                       <div class="container-fluid">
                          <div class="row">
@@ -104,7 +104,7 @@
                       </div>
                    </div>
                 </div>
-                <div class="iq-card iq-accordion-block  ">
+                <div class="iq-card iq-accordion-block accordion-active">
                    <div class="active-mat clearfix">
                       <div class="container-fluid">
                          <div class="row">
@@ -540,18 +540,20 @@
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
                 },
                 data: form.serialize(), // serializes the form's elements.
+                dataType: "json",
                 success: function(response)
                 {
-                    if(response !== 'error'){
-                        $('#setFlug').val(1); 
-                        processbar('success');
-                        setTimeout(() => {
-                            $("#result-show").html(response);
-                        }, 1000);
-                    }else{
-                        $('#setFlug').val(2); 
-                        processbar('error');
-                    }
+                  // console.log(response);
+                  if(response.view !== 'error'){
+                      $('#setFlug').val(1); 
+                      processbar('success');
+                      setTimeout(() => {
+                          $("#result-show").html(response.view);
+                      }, 1000);
+                  }else{
+                      $('#setFlug').val(2); 
+                      processbar('error');
+                  }
                 },
                 error: function (reject) {
                     processbar('error');

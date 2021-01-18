@@ -93,7 +93,13 @@ class EmployeeController extends Controller
             {
                 $file = $request->file('as_pic');
                 $filename = uniqid() . '.' . $file->getClientOriginalExtension();
-                $as_pic = '/assets/images/employee/' . $filename;
+                $directory = 'assets/images/employee/'.date("Y").'/'.date("m").'/'.date("d").'/';
+                //If the directory doesn't already exists.
+                if(!is_dir($directory)){
+                    //Create our directory.
+                    mkdir($directory, 755, true);
+                }
+                $as_pic = '/'.$directory . $filename;
                 Image::make($file)->resize(180, 200)->save(public_path( $as_pic ) );
             }
 
@@ -1475,7 +1481,7 @@ class EmployeeController extends Controller
                     ->with('error', 'Please fillup all required fields!');
         }
         $input = $request->all();
-        $employeeOldStatus = Employee::select('as_status')->where('as_id', $input['as_id'])->pluck('as_status')->first();
+        $employeeOldStatus = Employee::select('as_status', 'as_pic')->where('as_id', $input['as_id'])->first();
        
         DB::beginTransaction();
         
@@ -1487,11 +1493,21 @@ class EmployeeController extends Controller
             {
                 $file = $request->file('as_pic');
                 $filename = uniqid() . '.' . $file->getClientOriginalExtension();
-                $as_pic = '/assets/images/employee/' . $filename;
+                $directory = 'assets/images/employee/'.date("Y").'/'.date("m").'/'.date("d").'/';
+                //If the directory doesn't already exists.
+                if(!is_dir($directory)){
+                    //Create our directory.
+                    mkdir($directory, 755, true);
+                }
+
+                $as_pic = '/'.$directory . $filename;
                 Image::make($file)->resize(800, null, function ($constraint) {
                                         $constraint->aspectRatio();
                                     })
                                    ->save(public_path( $as_pic ) );
+                if($employeeOldStatus->as_pic != null && file_exists($employeeOldStatus->as_pic)){
+                    unlink($employeeOldStatus->as_pic);
+                }
             }
             //getting previous designation
             $prev_dsg= Employee::where('as_id', $request->as_id)->pluck('as_designation_id')->first();

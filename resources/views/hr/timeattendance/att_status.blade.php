@@ -179,7 +179,7 @@ $(document).ready(function() {
                   getdata: val
                 },
                 success: function(response){
-                    console.log(response);
+                    // console.log(response);
                     if(response.status == 'success'){
                         cur = parseFloat(parseFloat(cur) + parseFloat(per)).toFixed(2);
                         if(cur<100){
@@ -204,9 +204,11 @@ $(document).ready(function() {
                             if(unit != 1001){
                                 absentCheck(unit, fileDate);
                             }
+                            setTimeout(function () {
                             // console.log('complete');
-                            $("#progressbar-box").hide();
-                            $("#top-msg").html('<div class="alert alert-success "><span class="alert-icon"><i class="fa fa-check"></i></span><div class="notification-info"><h5 class="">'+unitName+' Attendance file is processed.</h5><a href="'+url+'/hr/timeattendance/attendance-upload" class="btn btn-warning btn-xs"> <i class="fa fa-reply-all"></i> Back</a></div></div>');
+                                $("#progressbar-box").hide();
+                                $("#top-msg").html('<div class="alert alert-success "><span class="alert-icon"><i class="fa fa-check"></i></span><div class="notification-info"><h5 class="">'+unitName+' Attendance file is processed.</h5><a href="'+url+'/hr/timeattendance/attendance-upload" class="btn btn-warning btn-xs"> <i class="fa fa-reply-all"></i> Back</a></div></div>');
+                            }, 2000);
                             
                         }
                     }else{

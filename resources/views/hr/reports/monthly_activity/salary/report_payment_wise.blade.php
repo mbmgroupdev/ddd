@@ -160,11 +160,11 @@
 
 			<div class="content_list_section">
 				@if($input['report_format'] == 0)
-					@foreach($uniqueGroups as $group)
+					<table class="table table-bordered table-hover table-head" style="width:100%;border:0 !important;margin-bottom:0;font-size:14px;text-align:left" border="1" cellpadding="5">
+					@foreach($uniqueGroupEmp as $group => $employees)
 					
-					<table class="table table-bordered table-hover table-head" style="width:100%;border:1px solid #ccc;margin-bottom:0;font-size:14px;text-align:left" border="1" cellpadding="5">
 						<thead>
-							@if(count($getEmployee) > 0)
+							@if(count($employees) > 0)
 			                <tr>
 			                	@php
 									if($format == 'as_unit_id'){
@@ -224,118 +224,118 @@
 			            </thead>
 			            <tbody>
 			            @php $i = 0; $otHourSum=0; $salarySum=0; $month = $input['month']; @endphp
-			            @if(count($getEmployee) > 0)
-				            @foreach($getEmployee as $employee)
+			            @if(count($employees) > 0)
+				            @foreach($employees as $employee)
 				            	@php
 				            		$designationName = $employee->hr_designation_name??'';
 			                        $otHour = numberToTimeClockFormat($employee->ot_hour);
 				            	@endphp
 				            	@if($head == '')
-				            	<tr>
-				            		<td>{{ ++$i }}</td>
-					            	
-					            	<td><a href='{{ url("hr/operation/job_card?associate=$employee->associate_id&month_year=$month") }}' target="_blank">{{ $employee->associate_id }}</a></td>
-					            	<td>
-					            		<b>{{ $employee->as_name }}</b>
-					            	</td>
-					            	<td>{{ $designationName }}</td>
+					            	<tr>
+					            		<td>{{ ++$i }}</td>
+						            	
+						            	<td><a href='{{ url("hr/operation/job_card?associate=$employee->associate_id&month_year=$month") }}' target="_blank">{{ $employee->associate_id }}</a></td>
+						            	<td>
+						            		<b>{{ $employee->as_name }}</b>
+						            	</td>
+						            	<td>{{ $designationName }}</td>
 
-					            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
-					            	<td>{{ $employee->present }}</td>
-					            	<td>{{ $employee->absent }}</td>
-					            	<td><b>{{ $otHour }}</b></td>
-					            	<td>
-					            		@if($employee->pay_status == 1)
-					            			Cash
-					            		@elseif($employee->pay_status == 2)
-					            		<b>{{ $employee->bank_name }}</b>
-					            		<b>{{ $employee->bank_no }}</b>
-					            		@else
-					            		Bank & Cash
-					            		<b>{{ $employee->bank_no }}</b>
-					            		@endif
-					            	</td>
-					            	<td>
-					            		@php $totalPay = $employee->total_payable + $employee->stamp; @endphp
-					            		{{ bn_money($totalPay) }}
-					            	</td>	
-					            	@if($input['pay_status'] == 'all' || ($input['pay_status'] != 'cash' && $input['pay_status'] != null))
-					            	<td>{{ bn_money($employee->bank_payable) }}</td>
-					            	<td>{{ bn_money($employee->tds) }}</td>
-					            	@endif
-					            	@if($input['pay_status'] == 'all' || $input['pay_status'] == 'cash')
-					            	<td>{{ bn_money($employee->cash_payable + $employee->stamp) }}</td>
-					            	@endif
-					            	<td>{{ bn_money($employee->stamp) }}</td>
-					            	
-					            	<td>
-					            		@php
-					            			if($input['pay_status'] == 'cash'){
-					            				$totalNet = $employee->cash_payable;
-					            			}else{
-					            				$totalNet = $employee->total_payable - $employee->tds;
-					            			}
-					            		@endphp
-					            		{{ bn_money($totalNet) }}
-					            	</td>
-					            	<td>
-					            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-yearmonth="{{ $input['month'] }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Employee Salary Report' ><i class="fa fa-eye"></i></button>
-					            	</td>
-				            	</tr>
+						            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
+						            	<td>{{ $employee->present }}</td>
+						            	<td>{{ $employee->absent }}</td>
+						            	<td><b>{{ $otHour }}</b></td>
+						            	<td>
+						            		@if($employee->pay_status == 1)
+						            			Cash
+						            		@elseif($employee->pay_status == 2)
+						            		<b>{{ $employee->bank_name }}</b>
+						            		<b>{{ $employee->bank_no }}</b>
+						            		@else
+						            		Bank & Cash
+						            		<b>{{ $employee->bank_no }}</b>
+						            		@endif
+						            	</td>
+						            	<td>
+						            		@php $totalPay = $employee->total_payable + $employee->stamp; @endphp
+						            		{{ bn_money($totalPay) }}
+						            	</td>	
+						            	@if($input['pay_status'] == 'all' || ($input['pay_status'] != 'cash' && $input['pay_status'] != null))
+						            	<td>{{ bn_money($employee->bank_payable) }}</td>
+						            	<td>{{ bn_money($employee->tds) }}</td>
+						            	@endif
+						            	@if($input['pay_status'] == 'all' || $input['pay_status'] == 'cash')
+						            	<td>{{ bn_money($employee->cash_payable + $employee->stamp) }}</td>
+						            	@endif
+						            	<td>{{ bn_money($employee->stamp) }}</td>
+						            	
+						            	<td>
+						            		@php
+						            			if($input['pay_status'] == 'cash'){
+						            				$totalNet = $employee->cash_payable;
+						            			}else{
+						            				$totalNet = $employee->total_payable - $employee->tds;
+						            			}
+						            		@endphp
+						            		{{ bn_money($totalNet) }}
+						            	</td>
+						            	<td>
+						            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-yearmonth="{{ $input['month'] }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Employee Salary Report' ><i class="fa fa-eye"></i></button>
+						            	</td>
+					            	</tr>
 				            	@else
-				            	@if($group == $employee->$format)
-				            	<tr>
-				            		<td>{{ ++$i }}</td>
-					            	
-					            	<td><a href='{{ url("hr/operation/job_card?associate=$employee->associate_id&month_year=$month") }}' target="_blank">{{ $employee->associate_id }}</a></td>
-					            	<td>
-					            		<b>{{ $employee->as_name }}</b>
-					            	</td>
-					            	<td>{{ $designationName }}</td>
-					            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
-					            	<td>{{ $employee->present }}</td>
-					            	<td>{{ $employee->absent }}</td>
-					            	<td><b>{{ $otHour }}</b></td>
-					            	<td>
-					            		@if($employee->pay_status == 1)
-					            			Cash
-					            		@elseif($employee->pay_status == 2)
-					            		<b class="uppercase">{{ $employee->bank_name }}</b>
-					            		<br>
-					            		<b>{{ $employee->bank_no }}</b>
-					            		@else
-					            		<b class="uppercase">{{ $employee->bank_name }}</b> & Cash
-					            		<br>
-					            		<b>{{ $employee->bank_no }}</b>
-					            		@endif
-					            	</td>
-					            	<td>
-					            		@php $totalPay = $employee->total_payable + $employee->stamp; @endphp
-					            		{{ bn_money($totalPay) }}
-					            	</td>	
-					            	@if($input['pay_status'] == 'all' || ($input['pay_status'] != 'cash' && $input['pay_status'] != null))
-					            	<td>{{ bn_money($employee->bank_payable) }}</td>
-					            	<td>{{ bn_money($employee->tds) }}</td>
-					            	@endif
-					            	@if($input['pay_status'] == 'all' || $input['pay_status'] == 'cash')
-					            	<td>{{ bn_money($employee->cash_payable) }}</td>
-					            	@endif
-					            	<td>{{ bn_money($employee->stamp) }}</td>
-					            	<td>
-					            		@php
-					            			if($input['pay_status'] == 'cash'){
-					            				$totalNet = $employee->cash_payable;
-					            			}else{
-					            				$totalNet = $employee->total_payable - $employee->tds;
-					            			}
-					            		@endphp
-					            		{{ bn_money($totalNet) }}
-					            	</td>
-					            	<td>
-					            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-yearmonth="{{ $input['month'] }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Employee Salary Report' ><i class="fa fa-eye"></i></button>
-					            	</td>
-				            	</tr>
-				            	@endif
+				            	
+					            	<tr>
+					            		<td>{{ ++$i }}</td>
+						            	
+						            	<td><a href='{{ url("hr/operation/job_card?associate=$employee->associate_id&month_year=$month") }}' target="_blank">{{ $employee->associate_id }}</a></td>
+						            	<td>
+						            		<b>{{ $employee->as_name }}</b>
+						            	</td>
+						            	<td>{{ $designationName }}</td>
+						            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
+						            	<td>{{ $employee->present }}</td>
+						            	<td>{{ $employee->absent }}</td>
+						            	<td><b>{{ $otHour }}</b></td>
+						            	<td>
+						            		@if($employee->pay_status == 1)
+						            			Cash
+						            		@elseif($employee->pay_status == 2)
+						            		<b class="uppercase">{{ $employee->bank_name }}</b>
+						            		<br>
+						            		<b>{{ $employee->bank_no }}</b>
+						            		@else
+						            		<b class="uppercase">{{ $employee->bank_name }}</b> & Cash
+						            		<br>
+						            		<b>{{ $employee->bank_no }}</b>
+						            		@endif
+						            	</td>
+						            	<td>
+						            		@php $totalPay = $employee->total_payable + $employee->stamp; @endphp
+						            		{{ bn_money($totalPay) }}
+						            	</td>	
+						            	@if($input['pay_status'] == 'all' || ($input['pay_status'] != 'cash' && $input['pay_status'] != null))
+						            	<td>{{ bn_money($employee->bank_payable) }}</td>
+						            	<td>{{ bn_money($employee->tds) }}</td>
+						            	@endif
+						            	@if($input['pay_status'] == 'all' || $input['pay_status'] == 'cash')
+						            	<td>{{ bn_money($employee->cash_payable) }}</td>
+						            	@endif
+						            	<td>{{ bn_money($employee->stamp) }}</td>
+						            	<td>
+						            		@php
+						            			if($input['pay_status'] == 'cash'){
+						            				$totalNet = $employee->cash_payable;
+						            			}else{
+						            				$totalNet = $employee->total_payable - $employee->tds;
+						            			}
+						            		@endphp
+						            		{{ bn_money($totalNet) }}
+						            	</td>
+						            	<td>
+						            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-yearmonth="{{ $input['month'] }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Employee Salary Report' ><i class="fa fa-eye"></i></button>
+						            	</td>
+					            	</tr>
+				            	
 				            	@endif
 				            @endforeach
 			            @else
@@ -349,10 +349,11 @@
 				            	@endif
 				            </tr>
 			            @endif
+			            	<tr style="border:0 !important;"><td colspan="16" style="border: 0 !important;height: 20px;"></td> </tr>
 			            </tbody>
 			            
-					</table>
 					@endforeach
+				</table>
 				@elseif(($input['report_format'] == 1 && $format != null))
 					@php
 						if($format == 'as_unit_id'){

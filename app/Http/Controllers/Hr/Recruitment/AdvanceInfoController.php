@@ -376,38 +376,39 @@ class AdvanceInfoController extends Controller
                     ->withInput()
                     ->with('error', 'Please fillup all required fileds correctly!.');
         }
-        else{
+        DB::beginTransaction();
+        try {
 
             $check= DB::table('hr_as_adv_info')->where('hr_as_adv_info.emp_adv_info_id','=', $request->emp_adv_info_id)->first();
 
             if(!empty($request->emp_adv_info_birth_cer)){
-            $emp_adv_info_birth_cer = $request->emp_adv_info_birth_cer;
-            if($request->hasFile('emp_adv_info_birth_cer')){
-                $file = $request->file('emp_adv_info_birth_cer');
-                $emp_adv_info_birth_cer = $this->saveResizedFile($file);
-            }
+                $emp_adv_info_birth_cer = $request->emp_adv_info_birth_cer;
+                if($request->hasFile('emp_adv_info_birth_cer')){
+                    $file = $request->file('emp_adv_info_birth_cer');
+                    $emp_adv_info_birth_cer = $this->saveResizedFile($file);
+                }
             }
             else{
                 $emp_adv_info_birth_cer = $check->emp_adv_info_birth_cer;
             }
 
             if(!empty($request->emp_adv_info_city_corp_cer)){
-            $emp_adv_info_city_corp_cer = $request->emp_adv_info_city_corp_cer;
-            if($request->hasFile('emp_adv_info_city_corp_cer')){
-                $file = $request->file('emp_adv_info_city_corp_cer');
-                $emp_adv_info_city_corp_cer = $this->saveResizedFile($file);
-            }
+                $emp_adv_info_city_corp_cer = $request->emp_adv_info_city_corp_cer;
+                if($request->hasFile('emp_adv_info_city_corp_cer')){
+                    $file = $request->file('emp_adv_info_city_corp_cer');
+                    $emp_adv_info_city_corp_cer = $this->saveResizedFile($file);
+                }
             }
             else{
                 $emp_adv_info_city_corp_cer = $check->emp_adv_info_city_corp_cer;
             }
 
             if(!empty($request->emp_adv_info_police_veri)){
-            $emp_adv_info_police_veri = $request->emp_adv_info_police_veri;
-            if($request->hasFile('emp_adv_info_police_veri')){
-                $file = $request->file('emp_adv_info_police_veri');
-                $emp_adv_info_police_veri = $this->saveResizedFile($file);
-            }
+                $emp_adv_info_police_veri = $request->emp_adv_info_police_veri;
+                if($request->hasFile('emp_adv_info_police_veri')){
+                    $file = $request->file('emp_adv_info_police_veri');
+                    $emp_adv_info_police_veri = $this->saveResizedFile($file);
+                }
             }
             else{
                 $emp_adv_info_police_veri = $check->emp_adv_info_police_veri;
@@ -415,11 +416,11 @@ class AdvanceInfoController extends Controller
 
 
             if(!empty($request->emp_adv_info_job_app)){
-            $emp_adv_info_job_app = $request->emp_adv_info_job_app;
-            if($request->hasFile('emp_adv_info_job_app')){
-                $file = $request->file('emp_adv_info_job_app');
-                $emp_adv_info_job_app = $this->saveResizedFile($file);
-            }
+                $emp_adv_info_job_app = $request->emp_adv_info_job_app;
+                if($request->hasFile('emp_adv_info_job_app')){
+                    $file = $request->file('emp_adv_info_job_app');
+                    $emp_adv_info_job_app = $this->saveResizedFile($file);
+                }
             }
             else{
                 $emp_adv_info_job_app = $check->emp_adv_info_job_app;
@@ -427,44 +428,44 @@ class AdvanceInfoController extends Controller
 
 
             if(!empty($request->emp_adv_info_cv)){
-            $emp_adv_info_cv =$request->emp_adv_info_cv;
-            if($request->hasFile('emp_adv_info_cv')){
-                $file = $request->file('emp_adv_info_cv');
-                $emp_adv_info_cv = $this->saveResizedFile($file);
-            }
+                $emp_adv_info_cv =$request->emp_adv_info_cv;
+                if($request->hasFile('emp_adv_info_cv')){
+                    $file = $request->file('emp_adv_info_cv');
+                    $emp_adv_info_cv = $this->saveResizedFile($file);
+                }
             }
             else{
                 $emp_adv_info_cv = $check->emp_adv_info_cv;
             }
 
             if(!empty($request->emp_adv_info_finger_print)){
-            $emp_adv_info_finger_print = $request->emp_adv_info_finger_print;
-            if($request->hasFile('emp_adv_info_finger_print')){
-                $file = $request->file('emp_adv_info_finger_print');
-                $emp_adv_info_finger_print = $this->saveResizedFile($file);
-            }
+                $emp_adv_info_finger_print = $request->emp_adv_info_finger_print;
+                if($request->hasFile('emp_adv_info_finger_print')){
+                    $file = $request->file('emp_adv_info_finger_print');
+                    $emp_adv_info_finger_print = $this->saveResizedFile($file);
+                }
             }
             else{
                 $emp_adv_info_finger_print = $check->emp_adv_info_finger_print;
             }
 
             if(!empty($request->emp_adv_info_signature)){
-            $emp_adv_info_signature = $request->emp_adv_info_signature;
-            if($request->hasFile('emp_adv_info_signature')){
-                $file = $request->file('emp_adv_info_signature');
-                $emp_adv_info_signature = $this->saveResizedFile($file);
-            }
+                $emp_adv_info_signature = $request->emp_adv_info_signature;
+                if($request->hasFile('emp_adv_info_signature')){
+                    $file = $request->file('emp_adv_info_signature');
+                    $emp_adv_info_signature = $this->saveResizedFile($file);
+                }
             }
             else{
                 $emp_adv_info_signature = $check->emp_adv_info_signature;
             }
 
             if(!empty($request->emp_adv_info_auth_sig)){
-            $emp_adv_info_auth_sig = $request->emp_adv_info_auth_sig;
-            if($request->hasFile('emp_adv_info_auth_sig')){
-                $file = $request->file('emp_adv_info_auth_sig');
-                $emp_adv_info_auth_sig = $this->saveResizedFile($file);
-            }
+                $emp_adv_info_auth_sig = $request->emp_adv_info_auth_sig;
+                if($request->hasFile('emp_adv_info_auth_sig')){
+                    $file = $request->file('emp_adv_info_auth_sig');
+                    $emp_adv_info_auth_sig = $this->saveResizedFile($file);
+                }
             }
             else{
                 $emp_adv_info_auth_sig = $check->emp_adv_info_auth_sig;
@@ -476,6 +477,7 @@ class AdvanceInfoController extends Controller
                 'emp_adv_info_birth_cer'     => $emp_adv_info_birth_cer ,
                 'emp_adv_info_city_corp_cer' => $emp_adv_info_city_corp_cer ,
                 'emp_adv_info_police_veri'   => $emp_adv_info_police_veri ,
+                'emp_adv_info_nid'           => $request->emp_adv_info_nid ,
                 'emp_adv_info_passport'      => $request->emp_adv_info_passport ,
                 'emp_adv_info_refer_name'    => $request->emp_adv_info_refer_name ,
                 'emp_adv_info_refer_contact' => $request->emp_adv_info_refer_contact ,
@@ -508,35 +510,29 @@ class AdvanceInfoController extends Controller
                 'emp_adv_info_auth_sig'      => $emp_adv_info_auth_sig
             ]);
 
-            $id = DB::table('hr_as_adv_info')->where('hr_as_adv_info.emp_adv_info_as_id', '=', $request->emp_adv_info_as_id)->value('emp_adv_info_id');
-            if ($id){
             //Nominee
             if (sizeof($request->emp_adv_info_nom_name) > 0){
                 Nominee::where('nom_as_id',$request->emp_adv_info_as_id)->delete(); // delete existing nominee then insert new
                 for($i=0;$i<sizeof($request->emp_adv_info_nom_name);$i++){
-                    Nominee::insert([
-                        'nom_as_id' => $request->emp_adv_info_as_id,
-                        'nom_name' => $request->emp_adv_info_nom_name[$i],
-                        'nom_relation' => $request->emp_adv_info_nom_relation[$i],
-                        'nom_ben' => $request->emp_adv_info_nom_per[$i]
-                    ]);
-                    $nid = DB::getPdo()->lastInsertId();
-                    $this->logFileWrite("Nominee Entry Saved", $nid);
+                    if($request->emp_adv_info_nom_name[$i] != null){
+                         Nominee::insert([
+                            'nom_as_id' => $request->emp_adv_info_as_id,
+                            'nom_name' => $request->emp_adv_info_nom_name[$i],
+                            'nom_relation' => $request->emp_adv_info_nom_relation[$i],
+                            'nom_ben' => $request->emp_adv_info_nom_per[$i]
+                        ]);
+                        $nid = DB::getPdo()->lastInsertId();
+                        $this->logFileWrite("Nominee Entry Saved", $nid);
+                   }
                 }
             }
-
-            $this->logFileWrite("Advanced Information Stored", $id);
-
-            return back()
-                    ->with('success', 'Saved Successful.');
-            }
-            else{
-                return back()
-                    ->withInput()->with('error', 'Please try again.');
-            }
-
-            return redirect()->intended('hr/recruitment/operation/advance_info_list')
-                    ->with('success','Advance Information Updated Successfully');
+            $this->logFileWrite("Advance Info Updated Successfully", $request->emp_adv_info_as_id);
+            DB::commit();
+            return back()->with('success','Advance Information Updated Successfully');
+        } catch (\Exception $e) {
+            DB::rollback();
+            $bug = $e->getMessage();
+            return back()->with('error', $bug);
         }
 
     }

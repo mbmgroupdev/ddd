@@ -644,7 +644,7 @@ Route::get('hr/payroll/salary', 'Hr\Payroll\SalaryController@view');
 		Route::get('hr/recruitment/education_history','Hr\Recruitment\AdvanceInfoController@educationHistory');
 	});
 
-	//Benefitfs
+	//Benefits
 	Route::group(['middleware' => 'permission:Manage Employee|Assign Benifit'], function(){
 		Route::get('hr/payroll/employee-benefit','Hr\Recruitment\BenefitController@benefits');
 		Route::post('hr/recruitment/operation/benefits','Hr\Recruitment\BenefitController@benefitStore');
@@ -1072,6 +1072,7 @@ Route::get('hr/setup/retirement/get_employee_details', 'Hr\Setup\RetirementPolic
 
 	// JOB CARD
 	Route::get('hr/operation/job_card', 'Hr\Reports\JobCardController@jobCard')->middleware(['permission:Job Card']);
+	Route::get('hr/operation/partial_job_card', 'Hr\Reports\JobCardController@jobCardPartial')->middleware(['permission:Job Card']);
 
 
 	//EMPLOYEE

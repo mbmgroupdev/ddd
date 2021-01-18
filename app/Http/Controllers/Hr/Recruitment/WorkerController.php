@@ -409,7 +409,13 @@ class WorkerController extends Controller
             {
                 $file = $request->file('worker_doctor_signature');
                 $filename = uniqid() . '.' . $file->getClientOriginalExtension();
-                $worker_doctor_signature = '/assets/images/employee/med_info/' . $filename;
+                $directory = 'assets/images/employee/med_info/'.date("Y").'/'.date("m").'/'.date("d").'/';
+                //If the directory doesn't already exists.
+                if(!is_dir($directory)){
+                    //Create our directory.
+                    mkdir($directory, 755, true);
+                }
+                $worker_doctor_signature = '/'.$directory . $filename;
                 Image::make($file)->save(public_path( $worker_doctor_signature ) );
             }
             else
