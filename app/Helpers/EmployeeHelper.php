@@ -697,5 +697,56 @@ class EmployeeHelper
         return $salary;
     }
 
+    public static function getHolidayDate($getEmployee, $startDate, $endEnd)
+    {
+    	$dates = [];
+    	if($getEmployee != null){
+    		$empdoj = $getEmployee['as_doj'];
+    		if($getEmployee['shift_roaster_status'] == 1){
+	            // check holiday roaster employee
+	            $getHoliday = HolidayRoaster::where('as_id', $getEmployee['associate_id'])
+	            ->where('date','>=', $startDate)
+	            ->where('date','<=', $endEnd)
+	            ->where('remarks', 'Holiday')
+	            ->pluck('date');
+	            if(count($getHoliday) > 0){
+	            	if(count($dates) > 0){
+		            	array_push($dates, $getHoliday->toArray());
+		            }
+	            }
+	            
+	        }else{
+	            // check holiday roaster employee
+	            $rosterHolidayCount = HolidayRoaster::where('as_id', $getEmployee['associate_id'])
+	            ->where('date','>=', $startDate)
+	            ->where('date','<=', $endEnd)
+	            ->where('remarks', 'Holiday')
+	            ->pluck('date');
+
+	            if(count($rosterHolidayCount) > 0){
+	            	if(count($dates) > 0){
+		            	array_push($dates, $rosterHolidayCount->toArray());
+		            }
+	            }
+
+	            $getHoliday = YearlyHolyDay::
+                where('hr_yhp_unit', $getEmployee['as_unit_id'])
+                ->where('hr_yhp_dates_of_holidays','>=', $startDate)
+                ->where('hr_yhp_dates_of_holidays','<=', $endEnd)
+                ->where('hr_yhp_open_status', 0)
+                ->pluck('hr_yhp_dates_of_holidays');
+                if(count($getHoliday) > 0){
+	            	if(count($dates) > 0){
+		            	array_push($dates, $getHoliday->toArray());
+		            }
+	            }
+	            
+	        }
+    	}
+
+    	return array_unique($getHoliday->toArray());
+
+    }
+
 
 }

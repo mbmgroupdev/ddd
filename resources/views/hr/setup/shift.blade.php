@@ -33,7 +33,7 @@
 
         <div class="page-content"> 
             <div class="iq-accordion career-style mat-style  ">
-                <div class="iq-card iq-accordion-block accordion-active">
+                <div class="iq-card iq-accordion-block ">
                    <div class="active-mat clearfix">
                       <div class="container-fluid">
                          <div class="row">
@@ -116,7 +116,7 @@
                       </div>
                    </div>
                 </div>
-                <div class="iq-card iq-accordion-block  ">
+                <div class="iq-card iq-accordion-block accordion-active">
                    <div class="active-mat clearfix">
                       <div class="container-fluid">
                          <div class="row">

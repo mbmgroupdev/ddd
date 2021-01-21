@@ -72,7 +72,8 @@ class WarningNoticeController extends Controller
             ->addColumn('associate_id', function($data) use ($input){
             	$month = $input['month_year'];
             	$jobCard = url("hr/operation/job_card?associate=$data->associate_id&month_year=$month");
-            	return '<a href="'.$jobCard.'" target="_blank">'.$data->associate_id.'</a>';
+            	// return '<a href="'.$jobCard.'" target="_blank">'.$data->associate_id.'</a>';
+                return '<a class="job_card" data-name="'.$data->employee['as_name'].'" data-associate="'.$data->associate_id.'" data-month-year="'.$month.'" data-toggle="tooltip" data-placement="top" title="" data-original-title="Job Card">'.$data->associate_id.'</a>';
             })
             ->addColumn('hr_unit_name', function($data) use ($getUnit){
             	return $getUnit[$data->employee['as_unit_id']]['hr_unit_short_name']??'';
@@ -101,7 +102,7 @@ class WarningNoticeController extends Controller
     {
     	$data['type'] = 'error';
     	$input = $request->all();
-    	// return $input;
+        
     	try {
     		$check['associate'] = $input['associate_id'];
     		$check['month_year'] = $input['month_year'];
@@ -118,6 +119,8 @@ class WarningNoticeController extends Controller
     		$data['start_date'] = eng_to_bn(date('d-m-Y', strtotime($input['start_date'])));
     		$data['first_response'] = eng_to_bn($input['first_response']);
     		$data['first_manager'] = $this->employeeBanglaName($input['first_manager']);
+            $getDesignation = Employee::with('designation')->where('associate_id', $input['first_manager'])->first();
+            $data['first_manager_deg'] = $getDesignation->designation['hr_designation_name_bn']??'';
     		return $data;
     	} catch (\Exception $e) {
     		$bug = $e->getMessage();
@@ -149,6 +152,8 @@ class WarningNoticeController extends Controller
     		$data['start_date'] = eng_to_bn(date('d-m-Y', strtotime($notice->start_date)));
     		$data['second_response'] = eng_to_bn($input['second_response']);
     		$data['second_manager'] = $this->employeeBanglaName($input['second_manager']);
+            $getDesignation = Employee::with('designation')->where('associate_id', $input['second_manager'])->first();
+            $data['second_manager_deg'] = $getDesignation->designation['hr_designation_name_bn']??'';
     		return $data;
     	} catch (\Exception $e) {
     		$bug = $e->getMessage();
@@ -182,6 +187,8 @@ class WarningNoticeController extends Controller
     		$data['first_response'] = eng_to_bn($notice->first_response);
     		$data['second_response'] = eng_to_bn($notice->second_response);
     		$data['third_manager'] = $this->employeeBanglaName($input['third_manager']);
+            $getDesignation = Employee::with('designation')->where('associate_id', $input['third_manager'])->first();
+            $data['third_manager_deg'] = $getDesignation->designation['hr_designation_name_bn']??'';
     		return $data;
     	} catch (\Exception $e) {
     		$bug = $e->getMessage();

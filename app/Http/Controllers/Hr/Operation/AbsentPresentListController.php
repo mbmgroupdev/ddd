@@ -2,43 +2,36 @@
 
 namespace App\Http\Controllers\Hr\Operation;
 
-use Illuminate\Http\Request;
+use App\Helpers\Attendance2;
+use App\Helpers\EmployeeHelper;
 use App\Http\Controllers\Controller;
+use App\Jobs\BuyerManualAttandenceProcess;
 use App\Jobs\ProcessAttendanceInOutTime;
 use App\Jobs\ProcessAttendanceIntime;
-use App\Jobs\BuyerManualAttandenceProcess;
-use App\Models\Hr\Shift;
 use App\Models\Employee;
-use App\Models\Hr\Unit;
 use App\Models\Hr\Benefits;
-use App\Helpers\Attendance2;
+use App\Models\Hr\Shift;
+use App\Models\Hr\Unit;
 use Carbon\Carbon;
 use DataTables, DB, Auth, ACL;
+use Illuminate\Http\Request;
 
 class AbsentPresentListController extends Controller
 {
   public function absentPresentIndex()
   {
-
     #-----------------------------------------------------------#
     $unitList  = Unit::where('hr_unit_status', '1')
     ->whereIn('hr_unit_id', auth()->user()->unit_permissions())
     ->pluck('hr_unit_name', 'hr_unit_id');
     $floorList= [];
     $lineList= [];
-
     $areaList  = DB::table('hr_area')->where('hr_area_status', '1')->pluck('hr_area_name', 'hr_area_id');
-
     $deptList= [];
-
     $sectionList= [];
-
     $subSectionList= [];
-
-    $data['salaryMin']      = Benefits::getSalaryRangeMin();
-    $data['salaryMax']      = Benefits::getSalaryRangeMax();
-
-
+    $data['salaryMin'] = Benefits::getSalaryRangeMin();
+    $data['salaryMax'] = Benefits::getSalaryRangeMax();
     return view('hr/operation/absent_or_attendance_list', compact('unitList','floorList','lineList','areaList','deptList','sectionList','subSectionList', 'data'));
 }
 
@@ -236,10 +229,39 @@ public function getEmpAttGetData($request)
 }
 return $data;
 }
+// function find_missing($numeros) {
+//       $numeros = array_filter(array_unique($numeros), function ($v) { return $v >= 0; });
+//       // return $numeros;
+//       // sort($numeros);
+//       for ($i = 1; $i < count($numeros); $i++) {
+//           if ($numeros[$i] != $numeros[$i-1] + 1) {
+//               return $numeros[$i-1] + 1;
+//           }
+//       }
+//       // all numbers consecutive
+//       return false;
+//   }
+
+  function find_missing($numeros) {
+      $numeros = array_filter(array_unique($numeros), function ($v) { return $v >= 0; });
+      sort($numeros);
+      for ($i = 1; $i < count($numeros); $i++) {
+        $d1   = date_create( $numeros[$i-1]);
+        $d2   = date_create($numeros[$i]);
+        $diff = date_diff($d1,$d2);
+
+        if ($diff->days != 1) {
+            return date('Y-m-d', strtotime($numeros[$i-1] . ' +1 day'));
+        }
+      }
+      // all numbers consecutive
+      return false;
+  }
 
 
 public function getAbsentData($request)
 {
+    // return $request;
 
     $areaid       = isset($request['area'])?$request['area']:'';
     $departmentid = isset($request['department'])?$request['department']:'';
@@ -249,13 +271,13 @@ public function getAbsentData($request)
     $subSection   = isset($request['subSection'])?$request['subSection']:'';
     $min_salary   = (double)(isset($request['min_salary'])?$request['min_salary']:'');
     $max_salary   = (double)(isset($request['max_salary'])?$request['max_salary']:'');
-      // dd($min_salary, $max_salary);exit;
+    // dd($min_salary, $max_salary);exit;
     $getEmployee = DB::table('hr_as_basic_info')
     ->where( function($q) use ($request){
         if($request['unit'] == 145){
             return $q->whereIn('as_unit_id',[1,4,5]);
         }else{
-           return $q->where('as_unit_id',$request['unit']);
+            return $q->where('as_unit_id',$request['unit']);
         }
     });
     $employeeToSql = $getEmployee->toSql();
@@ -266,78 +288,103 @@ public function getAbsentData($request)
         if($request['unit'] == 145){
             return $q->whereIn('hr_unit',[1,4,5]);
         }else{
-           return $q->where('hr_unit',$request['unit']);
+            return $q->where('hr_unit',$request['unit']);
         }
     })
     ->whereBetween('date',array($request['report_from'],$request['report_to']))
     ->when(!empty($areaid), function ($query) use($areaid){
-    return $query->where('b.as_area_id',$areaid);
+      return $query->where('b.as_area_id',$areaid);
     })
     ->when(!empty($departmentid), function ($query) use($departmentid){
-    return $query->where('b.as_department_id',$departmentid);
+      return $query->where('b.as_department_id',$departmentid);
     })
     ->when(!empty($lineid), function ($query) use($lineid){
-    return $query->where('b.as_line_id', $lineid);
+      return $query->where('b.as_line_id', $lineid);
     })
     ->when(!empty($florid), function ($query) use($florid){
-    return $query->where('b.as_floor_id',$florid);
+      return $query->where('b.as_floor_id',$florid);
     })
     ->when(!empty($section), function ($query) use($section){
-    return $query->where('b.as_section_id', $section);
+      return $query->where('b.as_section_id', $section);
     })
     ->when(!empty($subSection), function ($query) use($subSection){
-    return $query->where('b.as_subsection_id', $subSection);
+      return $query->where('b.as_subsection_id', $subSection);
     })
     ->when(!empty($min_salary), function ($query) use($min_salary){
-    return $query->where('hr_benefits.ben_current_salary','>=', $min_salary);
+      return $query->where('hr_benefits.ben_current_salary','>=', $min_salary);
     })
     ->when(!empty($max_salary), function ($query) use($max_salary){
-    return $query->where('hr_benefits.ben_current_salary','<=', $max_salary);
+      return $query->where('hr_benefits.ben_current_salary','<=', $max_salary);
     })
     ->leftjoin(DB::raw('(' . $employeeToSql. ') AS b'), function($join) use ($getEmployee) {
-    $join->on('hr_absent.associate_id', '=', 'b.associate_id')->addBinding($getEmployee->getBindings());
+      $join->on('hr_absent.associate_id', '=', 'b.associate_id')->addBinding($getEmployee->getBindings());
     })
     ->where('b.as_status', 1)
     ->leftJoin("hr_benefits", "hr_benefits.ben_as_id", "b.associate_id")
     ->orderBy('date','DESC')
     ->get()->groupBy('associate_id');
-
     
-      // dd('Absent Data', $absentData);exit;
+    $employeeAbsent = $absentData->map(function($item){
+      return array_column($item->toArray(), 'date');
+    });
+
+    $employeeBasic = $absentData->map(function($item){
+      $item = $item->first();
+      $empData = [];
+      $empData['associate_id'] = $item->associate_id;
+      $empData['shift_roaster_status'] = $item->shift_roaster_status;
+      $empData['as_unit_id'] = $item->as_unit_id;
+      $empData['as_doj'] = $item->as_doj;
+      return $empData;
+    });
 
     $data = [];
     $i = 0;
     foreach ($absentData as $key => $absent) {
-        $dates = '';
-        $firstDate = '';
-        $d = new Shift; // creating a blank object
-        $d->absent_count = count($absent);
-        $ck = 0;
-        if(count($absent) > 9){
-            foreach ($absent as $key => $abs) {
-              $ck++;
-              $dt=explode('-', $abs->date);
-              $firstDate = $abs->date;
-              
-              $dates .= $dt[2].'/'.$dt[1];
-              if($ck < sizeof($absent)){ $dates .= ', '; }
+      $dates = '';
+      $firstDate = '';
+      $d = new Shift; // creating a blank object
+      $d->absent_count = count($absent);
+      $ck = 0;
+      if(count($absent) >= $request['consecutive_day']){
+        $employeeBasicData = $employeeBasic[$key];
+        $arr = $employeeAbsent[$key];
+        sort($arr);
+        $holiday = EmployeeHelper::getHolidayDate($employeeBasicData, $arr[0], end($arr));
 
-              $d->associate_id 		= $abs->associate_id;
-              $d->as_unit_id   		= $abs->as_unit_id;
-              $d->as_name           = $abs->as_name;
-              $d->as_doj     		= $abs->as_doj;
-              $d->cell     			  = $abs->as_contact;
-              $d->section     		= $getSection[$abs->as_section_id]['hr_section_name']??'';
-              $d->as_pic      		= $abs->as_pic;
-              $d->as_gender    		= $abs->as_gender;
-              $d->hr_designation_name = $getDesignation[$abs->as_designation_id]['hr_designation_name']??'';
-              //$d->hr_unit_name      	= $abs->hr_unit_short_name;
-          }
-          $d->first_date = $firstDate;
-          $d->dates         = $dates;
+        if(count($holiday) > 0){
+          $arr = array_merge($arr, $holiday);
+        }
+        $m = $this->find_missing($arr);
+        if($m !== false){
+          continue;
+        }
+        
+        foreach ($absent as $key => $abs) {
+
+          $ck++;
+          $dt=explode('-', $abs->date);
+          $firstDate = $abs->date;
           
+          $dates .= $dt[2].'/'.$dt[1];
+          if($ck < sizeof($absent)){ $dates .= ', '; }
 
-           $data[$i] = $d; 
+          $d->associate_id 		    = $abs->associate_id;
+          $d->as_unit_id   		    = $abs->as_unit_id;
+          $d->as_name             = $abs->as_name;
+          $d->as_doj     		      = $abs->as_doj;
+          $d->cell     			      = $abs->as_contact;
+          $d->section     		    = $getSection[$abs->as_section_id]['hr_section_name']??'';
+          $d->as_pic      		    = $abs->as_pic;
+          $d->as_gender    		    = $abs->as_gender;
+          $d->hr_designation_name = $getDesignation[$abs->as_designation_id]['hr_designation_name']??'';
+          //$d->hr_unit_name      = $abs->hr_unit_short_name;
+        }
+
+        $d->first_date = $firstDate;
+        $d->dates         = $dates;
+      
+        $data[$i] = $d; 
       }
 
       $i++;
@@ -352,22 +399,23 @@ public function getAbsentData($request)
 public function attendanceReportData(Request $request){
 
   $input = $request->all();
-      #-----------------------------------------------------------#
+
   $data = [];
   $type = $request->type;
   if($type == 'Absent'){
     $data = $this->getAbsentData($request->all());
-}elseif($type == 'Intime-Outtime Empty'){
-  $results = $this->getEmpAttGetData($request->all());
-          // dd($results[0]);
-  $asids = array_unique(array_column($results,'associate_id'),SORT_REGULAR);
-  foreach ($asids as $k=>$asid) {
-    $dates_in_miss  = '';
-    $dates_out_miss = '';
-    $count_in_miss = 0;
-    $count_out_miss = 0;
-    $rs = new Shift;
-    foreach ($results as $d) {
+
+  }elseif($type == 'Intime-Outtime Empty'){
+    $results = $this->getEmpAttGetData($request->all());
+            // dd($results[0]);
+    $asids = array_unique(array_column($results,'associate_id'),SORT_REGULAR);
+    foreach ($asids as $k=>$asid) {
+      $dates_in_miss  = '';
+      $dates_out_miss = '';
+      $count_in_miss = 0;
+      $count_out_miss = 0;
+      $rs = new Shift;
+      foreach ($results as $d) {
         if( $d->status == 'Present' && $d->out_time == ''){
             if($asid == $d->associate_id){
               if($d->out_time == ''){
@@ -410,9 +458,9 @@ public function attendanceReportData(Request $request){
         $rs->dates         = 'In-Time-Empty: '.$dates_in_miss.'<br/>'.'Out-Time-Empty: '.$dates_out_miss.'';
 
         $data[$k] = $rs;
+      }
     }
-}
-}
+  }
 }
 
 }elseif ($type == 'Present(Intime Empty)') {
@@ -446,9 +494,9 @@ public function attendanceReportData(Request $request){
             $data[$k] = $rs;
             $count++;
         }
+      }
     }
-}
-}
+  }
 
 }elseif ($type == 'Present(Outtime Empty)') {
     $results = $this->getEmpAttGetData($request->all());
@@ -623,9 +671,9 @@ elseif ($type == 'Present') {
             $data[$k] = $rs;
             $count++;
         }
+      }
     }
-}
-}
+  }
 }
 else{
     $results = $this->getEmpAttGetData($request->all());

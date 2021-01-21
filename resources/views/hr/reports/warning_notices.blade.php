@@ -93,6 +93,7 @@
         </div><!-- /.page-content -->
     </div>
 </div>
+@include('common.right-modal')
 @push('js')
 <script src="{{ asset('assets/js/moment.min.js')}}"></script>
 <script type="text/javascript">
