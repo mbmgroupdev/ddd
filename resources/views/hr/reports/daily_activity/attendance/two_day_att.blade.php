@@ -177,7 +177,9 @@
 					            	</a>
 					            </td>
 				            	<td>
-				            		<span class="font-weight-bold">{{ $employee->as_name }}</span>
+				            		<span class="font-weight-bold">
+				            			{{ substr($employee->as_name,0,20) }}
+				            		</span>
 				            	</td>
 				            	<td style="cursor:pointer;" data-toggle="tooltip" data-placement="top"  data-original-title="{{$designation[$employee->as_designation_id]['hr_designation_name']??'' }}">{{ $short_designation[$employee->as_designation_id]??'' }}</td>
 				            	<td style="text-align: center;">

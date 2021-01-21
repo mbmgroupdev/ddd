@@ -422,52 +422,45 @@ class BenefitsCalculationController extends Controller
 
     public function getGivenBenefitData(Request $request)
     {
+        $benefitType = [
+            '2' => 'Resign',
+            '3' => 'Termination',
+            '4' => 'Dismiss',
+            '5' => 'Left',
+            '7' => 'Death',
+            '8' => 'Retirement'
+        ];
         $data = DB::table('hr_all_given_benefits as b')
-                        ->select([
-                            'b.*',
-                            'c.as_name',
-                            'd.hr_unit_short_name as unit_name'
-                        ])
-                        ->leftJoin('hr_as_basic_info as c', 'c.associate_id', 'b.associate_id')
-                        ->leftJoin('hr_unit as d', 'd.hr_unit_id', 'c.as_unit_id')
-                        ->whereIn('c.as_unit_id', auth()->user()->unit_permissions())
-                        ->whereIn('c.as_location', auth()->user()->location_permissions())
-                        ->orderBy('b.id', 'DESC')
-                        ->get();
+                ->select([
+                    'b.*',
+                    'c.as_name',
+                    'd.hr_unit_short_name as unit_name',
+                    DB::raw('b.earn_leave_amount + b.service_benefits + b.subsistance_allowance + b.notice_pay + b.termination_benefits + b.death_benefits as total_amount')
+                ])
+                ->leftJoin('hr_as_basic_info as c', 'c.associate_id', 'b.associate_id')
+                ->leftJoin('hr_unit as d', 'd.hr_unit_id', 'c.as_unit_id')
+                ->whereIn('c.as_unit_id', auth()->user()->unit_permissions())
+                ->whereIn('c.as_location', auth()->user()->location_permissions())
+                ->orderBy('b.id', 'DESC')
+                ->get();
 
         // dd($data);exit;
         return DataTables::of($data)->addIndexColumn()
-                ->editColumn('benefit_on', function($data){
-                    if($data->benefit_on == '2'){
-                        return 'Resign';
-                    }else if($data->benefit_on == '5'){
-                        return 'Left';
-                    }
-                    else if($data->benefit_on == '4'){
-                        return 'Dismiss';
-                    }
-                    else if($data->benefit_on == '3'){
-                        return 'Termination';
-                    }
-                    else if($data->benefit_on == '7'){
-                        return 'Death';
-                    }else if($data->benefit_on == '8'){
-                        return 'Retirement';
-                    }
-                })
-                ->addColumn('total_amount', function($data){
-                    return $data->earn_leave_amount+
-                            $data->service_benefits+
-                            $data->subsistance_allowance+
-                            $data->notice_pay+
-                            $data->termination_benefits+
-                            $data->death_benefits;
+                ->editColumn('benefit_on', function($data) use ($benefitType){
+                    return $benefitType[$data->benefit_on];
                 })
                 ->addColumn('action', function($data){
-                    return "<a href=".url('hr/payroll/benefits?associate='.$data->associate_id)." class=\"btn btn-sm btn-primary\" data-toggle=\"tooltip\" title=\"View\" style=\"margin-top:1px;\">
-                        <i class=\" fa fa-eye bigger-120\"></i>";
+                    $btn = "<div class='text-nowrap'>";
+                    
+                    $btn .= "<a href=".url('hr/payroll/benefits?associate='.$data->associate_id)." class='btn btn-sm btn-primary' data-toggle='tooltip' title='View' style='margin-top:1px;'>
+                        <i class=' fa fa-eye bigger-120'></i></a> ";
+                    $btn .= "<a class='btn btn-sm btn-danger rollback'  data-associate='".$data->associate_id."' data-toggle='tooltip' title='Rollback Data' style='margin-top:1px;'><i class='fa fa-undo'></i></a> ";
+
+                    $btn .= "</div>";
+
+                    return $btn;
                 })
-                ->rawColumns(['benefit_on','total_amount','action'])
+                ->rawColumns(['benefit_on','action'])
                 ->toJson();
     }
 
