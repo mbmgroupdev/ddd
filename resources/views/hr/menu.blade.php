@@ -385,7 +385,7 @@
             {{-- <li><a href="{{ url('') }}"><i class="las la-chart-area"></i>Promotion Report</a></li> --}}
             @endif
             
-            @if($user->can('Yearly Leave Log') || $user->hasRole('Super Admin'))
+            @if($user->can('Leave Log') || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'leave_log') active @endif"><a href="{{ url('hr/reports/leave_log') }}"><i class="las la-calendar-alt"></i>Yearly Leave Log</a></li>
             @endif
             @if($user->can('Event History') || $user->hasRole('Super Admin'))
