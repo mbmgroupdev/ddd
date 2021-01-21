@@ -57,15 +57,15 @@
                                             </select>
                                             <label for="area">Area</label>
                                         </div>
-                                        
-                                      </div>
-                                      <div class="col-3">
                                         <div class="form-group has-float-label select-search-group">
                                             <select name="department" class="form-control capitalize select-search" id="department" disabled>
                                                 <option selected="" value="">Choose...</option>
                                             </select>
                                             <label for="department">Department</label>
                                         </div>
+                                      </div>
+                                      <div class="col-3">
+                                        
                                         <div class="form-group has-float-label select-search-group">
                                             <select name="section" class="form-control capitalize select-search " id="section" disabled>
                                                 <option selected="" value="">Choose...</option>
@@ -78,14 +78,15 @@
                                             </select>
                                             <label for="subSection">Sub Section</label>
                                         </div>
-                                      </div> 
-                                      <div class="col-3">
                                         <div class="form-group has-float-label select-search-group">
                                             <select name="floor_id" class="form-control capitalize select-search" id="floor_id" disabled >
                                                 <option selected="" value="">Choose...</option>
                                             </select>
                                             <label for="floor_id">Floor</label>
                                         </div>
+                                      </div> 
+                                      <div class="col-3">
+                                        
                                         <div class="form-group has-float-label select-search-group">
                                             <select name="line_id" class="form-control capitalize select-search" id="line_id" disabled >
                                                 <option selected="" value="">Choose...</option>
@@ -110,7 +111,10 @@
                                             </div>
                                           </div>
                                         </div>
-                                        
+                                        <div class="form-group has-float-label has-required">
+                                          <input type="number" class="form-control" id="consecutive_day" name="consecutive_day" placeholder="Consecutive Day" required="required" value="10" autocomplete="off" />
+                                          <label for="consecutive_day">Consecutive Day</label>
+                                        </div>
                                       </div>  
                                       <div class="col-3">
                                         <div class="form-group has-float-label has-required select-search-group">
@@ -137,15 +141,11 @@
                                           </div>
                                         </div>
                                         
-                                        
                                         <div class="form-group">
                                           <button class="btn btn-primary nextBtn btn-lg pull-right" type="submit" id="attendanceReport"><i class="fa fa-save"></i> Generate</button>
                                         </div>
                                       </div>
-                                      
-                                      
                                 </div>
-                                
                             </div>
                         </div>
                         <div class="single-employee-search" id="single-employee-search" style="display: none;">
@@ -379,6 +379,7 @@
           d.condition = $("#condition").val(),
           d.min_salary = $("#min_salary").val(),
           d.max_salary = $("#max_salary").val()
+          d.consecutive_day = $("#consecutive_day").val()
 
         },
         type: "get",

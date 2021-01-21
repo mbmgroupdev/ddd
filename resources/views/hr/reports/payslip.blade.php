@@ -441,7 +441,17 @@ $(document).ready(function(){
 
     }
 
-   
+    function printPayslip(divName)
+    {
+        var myWindow=window.open('','PRINT','width=800,height=800');
+        myWindow.document.write('<html><head></head><body>');
+        myWindow.document.write(document.getElementById(divName).innerHTML);
+        myWindow.document.write('</body></html>');
+        myWindow.document.close();
+        myWindow.focus();
+        myWindow.print();
+        myWindow.close();
+    }
 
 
     function attLocation(loc){

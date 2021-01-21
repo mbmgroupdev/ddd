@@ -281,44 +281,8 @@
                                                  
                                                 </div>
                                             </div>
-                                            <div class="user-action-content">
-                                                <form action="{{ url('hr/employee-status-update')}}" method="post">
-                                                    @csrf
-                                                    <input type="hidden" name="associate_id" value="{{ $info->associate_id }}">
-                                                    <div class="form-group row">
-                                                        <label for="status" class="col-sm-2"> Status </label>
-                                                        <div class="radio col-sm-10">
-                                                            <label>
-                                                                <input id="active_status" class="ace" name="as_status" @if($info->as_status == 1) checked @endif type="radio" value="1">
-                                                                <span class="lbl"> Active</span>
-                                                            </label>
-                                                            
-                                                            <label>
-                                                                <input class="ace" name="as_status" type="radio" value="3" @if($info->as_status == 3) checked @endif>
-                                                                <span class="lbl"> Terminate</span>
-                                                            </label>
-                                                            <label>
-                                                                <input class="ace" name="as_status" type="radio" value="4" @if($info->as_status == 4) checked @endif>
-                                                                <span class="lbl"> Suspend</span>
-                                                            </label>
-                                                             <label>
-                                                                <input class="ace" name="as_status" type="radio" value="5" @if($info->as_status == 5) checked @endif>
-                                                                <span class="lbl"> Left</span>
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group has-required has-float-label">
-                                                        <input type="date" name="as_status_date" id="as_status_date" placeholder=" Date of Status" class="form-control datepicker" required="required" autocomplete="off" value="{{ date('Y-m-d')}}">
-                                                        <label for="as_status_date"> Date of Status </label>
-                                                    </div>
-                                                    <div class="form-group has-float-label">
-                                                        <textarea name="as_remarks" id="as_remarks" class="form-control" rows="1"></textarea>
-                                                        <label for="as_remarks"> Remarks </label>           
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <button class="btn btn-success"><i class="fa fa-save"></i> Confirm</button>
-                                                    </div>
-                                                </form>
+                                            <div class="user-action-content1">
+                                                <a class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="" data-original-title="If you can Left this employee then click button" href='{{ url("hr/payroll/benefits?associate=$info->associate_id")}}' target="_blank"><i class="las la-user-times"></i> Left</a>
                                             </div>  
                                         </div>
                                     </div>
@@ -382,7 +346,7 @@
                                     <br>
                                     <br>
                                     <b id="firsrtManagerName"> ( {{ $firstManagerBan }} )</b>
-                                    <p>ব্যবস্থাপক-মানব সম্পদ প্রশাসন ও কমপ্লাইন্স</p>
+                                    <p id="firsrtManagerDeg"></p>
                                     <br>
                                     <p>অনুলিপিঃ </p>
                                     <p><small>১। মাননীয় ব্যবস্থাপনা পরিচালক মহোদয় (সদয় অবগণ)</small></p>
@@ -433,7 +397,7 @@
                                     <br>
                                     <br>
                                     <b id="secondManagerName"> ( {{ $secondManagerBan }} )</b>
-                                    <p>ব্যবস্থাপক-মানব সম্পদ প্রশাসন ও কমপ্লাইন্স</p>
+                                    <p id="secondManagerDeg"></p>
                                     <br>
                                     <p>অনুলিপিঃ </p>
                                     <p><small>১। মাননীয় ব্যবস্থাপনা পরিচালক মহোদয় (সদয় অবগণ),</small></p>
@@ -485,7 +449,7 @@
                                     <br>
                                     <br>
                                     <b id="thirdManagerName"></b>
-                                    <p>ব্যবস্থাপক-মানব সম্পদ প্রশাসন ও কমপ্লাইন্স</p>
+                                    <p id="thirdManagerDeg"></p>
                                     <br>
                                     <p>অনুলিপিঃ </p>
                                     <p><small>১। মাননীয় ব্যবস্থাপনা পরিচালক মহোদয় (সদয় অবগণ),</small></p>
@@ -592,7 +556,7 @@
                 },
                 success: function(response)
                 {
-                    // console.log(response);
+                    console.log(response);
                     if(response.type === 'success'){
                         $(".report-print-section").removeClass('hide');
                         $(".second-step-content").removeClass('hide');
@@ -600,6 +564,7 @@
                         $("#step_three").hide();
                         $("#step_one").show();
                         $("#firsrtManagerName").html('( '+response.first_manager+' )');
+                        $("#firsrtManagerDeg").html('( '+response.first_manager_deg+' )');
                         $("#firstResDay").html(response.first_response);
                         $("#firstAbsentDate").html(response.start_date);
                         $("#firstIssueDate").html(response.issue_date);
@@ -666,6 +631,7 @@
                         $("#step_three").hide();
                         $("#step_one").hide();
                         $("#secondManagerName").html('( '+response.second_manager+' )');
+                        $("#secondManagerDeg").html('( '+response.second_manager_deg+' )');
                         $("#secondResDay").html(response.second_response);
                         $("#sfirstAbsentDate").html(response.start_date);
                         $("#sfirstIssueDate").html(response.issue_date);
@@ -734,6 +700,7 @@
                         $("#tsecondResDay").html(response.second_response);
                         $("#thirdIssueDate").html(response.third_issue_date);
                         $("#thirdManagerName").html('( '+response.third_manager+' )');
+                        $("#thirdManagerDeg").html('( '+response.third_manager_deg+' )');
                         $('html, body').animate({
                             scrollTop: $(".report-section").offset().top
                         }, 2000);

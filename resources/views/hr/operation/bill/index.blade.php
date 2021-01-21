@@ -104,7 +104,7 @@
                       </div>
                    </div>
                 </div> --}}
-                <div class="iq-card iq-accordion-block  ">
+                <div class="iq-card iq-accordion-block accordion-active ">
                    <div class="active-mat clearfix">
                       <div class="container-fluid">
                          <div class="row">

@@ -31,7 +31,9 @@ class SalaryExport implements FromView, WithHeadingRow
         $input['floor_id']   = isset($input['floor_id'])?$input['floor_id']:'';
         $input['section']    = isset($input['section'])?$input['section']:'';
         $input['subSection'] = isset($input['subSection'])?$input['subSection']:'';
-
+        if(isset($input['selected'])){
+            $input['report_format'] = 0;
+        }
         // employee basic sql binding
         $employeeData = DB::table('hr_as_basic_info');
         $employeeData_sql = $employeeData->toSql();
