@@ -14,6 +14,9 @@
                     <a href="#">Payroll</a>
                 </li>
                 <li class="active">End of Job Benefit List</li>
+                <li class="top-nav-btn">
+                    <a href="{{url('hr/payroll/benefits')}}" class="btn btn-sm btn-primary  pull-right" >End of Job Benefit</a>
+                </li>
             </ul><!-- /.breadcrumb -->
  
         </div>
@@ -21,15 +24,9 @@
         @include('inc/message')
         <div class="page-content"> 
             <div class="panel panel-info">
-                <div class="panel-heading">
-                    <h6>
-                        Benefit List
-                        <a href="{{url('hr/payroll/benefits')}}" class="btn btn-primary  pull-right" >End of Job Benefit</a>
-                    </h6>
-                </div> 
                 <div class="panel-body">
 
-                    <table id="dataTables" class="table table-striped table-bordered" style="display:block;overflow-x: scroll;width: 100%;">
+                    <table id="dataTables" class="table table-striped table-bordered table-responsive" style="display:block;overflow-x: scroll;width: 100%;">
                         <thead>
                             <tr>
                                 <th>Sl. No</th>
@@ -37,6 +34,7 @@
                                 <th>Name</th>
                                 <th>Unit</th>
                                 <th>Type</th>
+                                <th>Date</th>
                                 <th>Earn leave Amount</th>
                                 <th>Service Benefits</th>
                                 <th>Total Amount</th>
@@ -49,10 +47,11 @@
                 </div>
             </div>
 
-        </div><!-- /.page-content -->
+        </div>
     </div>
 </div>
 @push('js')
+<script type="text/javascript" src="{{asset('assets/js/sweetalert2.min.js')}}"></script>
 <script type="text/javascript">
 $(document).ready(function(){ 
     var searchable = [1,2];
@@ -61,8 +60,8 @@ $(document).ready(function(){
          '3' :[@foreach($unitList as $e) <?php echo "'$e'," ?> @endforeach]
     };
 
-    var exportColName = ['Sl.','Associate ID','Name','Unit','Type','Earn Leave Amount','Service Benefits', 'Total Amount'];
-    var exportCol = [1,2,3,5,6,7];
+    var exportColName = ['Sl.','Associate ID','Name','Unit','Type','Date','Earn Leave Amount','Service Benefits', 'Total Amount'];
+    var exportCol = [1,2,3,4,5,6,7,89];
 
     var dt = $('#dataTables').DataTable({
         order: [], //reset auto order
@@ -186,6 +185,7 @@ $(document).ready(function(){
             { data: 'as_name', name: 'as_name' }, 
             { data: 'unit_name',  name: 'unit_name' }, 
             { data: 'benefit_on',  name: 'benefit_on' }, 
+            { data: 'status_date',  name: 'status_date' }, 
             { data: 'earn_leave_amount', name: 'earn_leave_amount' }, 
             { data: 'service_benefits', name: 'service_benefits' }, 
             { data: 'total_amount', name: 'total_amount' },
@@ -234,6 +234,54 @@ $(document).ready(function(){
             });
         }   
     }); 
+
+
+    $(document).on('click','.rollback', function(){
+        var associate_id = $(this).data('associate');
+
+        swal({
+            title: associate_id,
+            text: "Rollback! Are you sure?",
+            icon: "warning",
+            buttons: ['Cancel','Continue'],
+            dangerMode: true,
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+
+                $.ajax({
+                    url: '{{ url('hr/payroll/benefit-rollback') }}',
+                    type: "POST",
+                    data: {
+                        associate_id : associate_id,
+                        _token : $("[name=csrf-token]").val()
+                    },
+                    success: function(response){
+                        
+                    },
+                    error: function(reject)
+                    {
+                       console.log('k');
+                    }
+                });
+                
+            } else {
+                swal("Your imaginary file is safe!");
+            }
+        })
+        .then(results => {
+        })
+        .catch(err => {
+            if (err) {
+                console.log(err);
+                swal("Oh noes!", "The AJAX request failed!", "error");
+            } else {
+                swal.stopLoading();
+                swal.close();
+            }
+        });
+
+    });
 });
 </script>
 @endpush
