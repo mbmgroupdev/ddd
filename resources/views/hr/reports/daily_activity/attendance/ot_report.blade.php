@@ -1,9 +1,11 @@
 <div class="panel">
 	<div class="panel-body">
+		@php
+			$urldata = http_build_query($input) . "\n";
+			$jsonUrl = json_encode($urldata);
+		@endphp
 		@if($input['report_format'] == 0)
-			@php
-				$urldata = http_build_query($input) . "\n";
-			@endphp
+
 			<a href='{{ url("hr/reports/activity-report-excle?$urldata")}}' target="_blank" class="btn btn-sm btn-info hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download" style="position: absolute; top: 15px; left: 65px;"><i class="fa fa-file-excel-o"></i></a>
 		@endif
 		<div class="report_section" id="report_section">
@@ -110,11 +112,11 @@
 			</div>
 			<div class="content_list_section">
 				@if($input['report_format'] == 0)
-					@foreach($uniqueGroups as $group)
+					<table class="table table-bordered table-hover table-head" style="width:100%;border:0 !important;margin-bottom:0;font-size:14px;text-align:left" border="1" cellpadding="5">
+					@foreach($uniqueGroupEmp as $group => $employees)
 					
-					<table class="table table-bordered table-hover table-head" border="1">
 						<thead>
-							@if(count($getEmployee) > 0)
+							@if(count($employees) > 0)
 			                <tr>
 			                	@php
 									if($format == 'as_line_id'){
@@ -169,93 +171,92 @@
 			                </tr>
 			            </thead>
 			            <tbody>
-			            @php
-			             $i = 0; $month = date('Y-m',strtotime($input['date'])); $totalOt=0;
-			            @endphp
-			            @if(count($getEmployee) > 0)
-			            @foreach($getEmployee as $employee)
-			            	@php
-			            		$designationName = $designation[$employee->as_designation_id]['hr_designation_name']??'';
-			            		
-			                    $otHour = numberToTimeClockFormat($employee->ot_hour);
+				            @php
+				             $i = 0; $month = date('Y-m',strtotime($input['date'])); $totalOt=0;
+				            @endphp
+				            @if(count($employees) > 0)
+					            @foreach($employees as $employee)
+					            	@php
+					            		$designationName = $designation[$employee->as_designation_id]['hr_designation_name']??'';
+					            		
+					                    $otHour = numberToTimeClockFormat($employee->ot_hour);
 
-			            	@endphp
-			            	@if($head == '')
-			            	<tr>
-			            		<td>{{ ++$i }}</td>
-				            	{{-- <td><img src="{{ emp_profile_picture($employee) }}" class='small-image' style="height: 40px; width: auto;"></td> --}}
-				            	<td><a href='{{ url("hr/operation/job_card?associate=$employee->associate_id&month_year=$month") }}' target="_blank">{{ $employee->associate_id }}</a></td>
-				            	<td>
-				            		<b>{{ $employee->as_name }}</b>
-				            		<p>{{ $employee->as_contact }}</p>
-				            	</td>
-				            	<td>{{ $employee->as_oracle_code }}</td>
-				            	<td>{{ $designation[$employee->as_designation_id]['hr_designation_name']??'' }}</td>
-				            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
-				            	<td>{{ $section[$employee->as_section_id]['hr_section_name']??'' }}</td>
-				            	<td>{{ $subSection[$employee->as_subsection_id]['hr_subsec_name']??'' }}</td>
-				            	<td>{{ $floor[$employee->as_floor_id]['hr_floor_name']??'' }}</td>
-				            	<td>{{ $line[$employee->as_line_id]['hr_line_name']??'' }}</td>
-				            	<td>{{ date('H:i:s', strtotime($employee->in_time)) }}</td>
-				            	<td>{{ date('H:i:s', strtotime($employee->out_time)) }}</td>
-				            	<td>{{ $otHour }}</td>
-				            	<td>
-				            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Yearly Activity Report' ><i class="fa fa-eye"></i></button>
-				            	</td>
-			            	</tr>
-			            	@php $totalOt += $employee->ot_hour; @endphp
-			            	@else
-				            	@if($group == $employee->$format)
+					            	@endphp
+					            	@if($head == '')
+					            	<tr>
+					            		<td>{{ ++$i }}</td>
+						            	{{-- <td><img src="{{ emp_profile_picture($employee) }}" class='small-image' style="height: 40px; width: auto;"></td> --}}
+						            	<td>
+						            		{{-- <a href='{{ url("hr/operation/job_card?associate=$employee->associate_id&month_year=$month") }}' target="_blank">{{ $employee->associate_id }}</a> --}}
+						            		<a class="job_card" data-name="{{ $employee->as_name }}" data-associate="{{ $employee->associate_id }}" data-month-year="{{ $month }}" data-toggle="tooltip" data-placement="top" title="" data-original-title="Job Card">{{ $employee->associate_id }}</a>
+						            	</td>
+						            	<td>
+						            		<b>{{ $employee->as_name }}</b>
+						            		<p>{{ $employee->as_contact }}</p>
+						            	</td>
+						            	<td>{{ $employee->as_oracle_code }}</td>
+						            	<td>{{ $designation[$employee->as_designation_id]['hr_designation_name']??'' }}</td>
+						            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
+						            	<td>{{ $section[$employee->as_section_id]['hr_section_name']??'' }}</td>
+						            	<td>{{ $subSection[$employee->as_subsection_id]['hr_subsec_name']??'' }}</td>
+						            	<td>{{ $floor[$employee->as_floor_id]['hr_floor_name']??'' }}</td>
+						            	<td>{{ $line[$employee->as_line_id]['hr_line_name']??'' }}</td>
+						            	<td>{{ date('H:i:s', strtotime($employee->in_time)) }}</td>
+						            	<td>{{ date('H:i:s', strtotime($employee->out_time)) }}</td>
+						            	<td>{{ $otHour }}</td>
+						            	<td>
+						            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Yearly Activity Report' ><i class="fa fa-eye"></i></button>
+						            	</td>
+					            	</tr>
+					            	@php $totalOt += $employee->ot_hour; @endphp
+					            	@else
+						            	@if($group == $employee->$format)
+						            	<tr>
+						            		<td>{{ ++$i }}</td>
+							            	{{-- <td><img src="{{ emp_profile_picture($employee) }}" class='small-image' style="height: 40px; width: auto;"></td> --}}
+							            	<td>
+							            		<a class="job_card" data-name="{{ $employee->as_name }}" data-associate="{{ $employee->associate_id }}" data-month-year="{{ $month }}" data-toggle="tooltip" data-placement="top" title="" data-original-title="Job Card">{{ $employee->associate_id }}</a>
+							            	</td>
+							            	<td>
+							            		<b>{{ $employee->as_name }}</b>
+							            		<p>{{ $employee->as_contact }}</p>
+							            	</td>
+							            	<td>{{ $employee->as_oracle_code }}</td>
+							            	<td>{{ $designation[$employee->as_designation_id]['hr_designation_name']??'' }}</td>
+							            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
+							            	<td>{{ $section[$employee->as_section_id]['hr_section_name']??'' }}</td>
+							            	<td>{{ $subSection[$employee->as_subsection_id]['hr_subsec_name']??'' }}</td>
+							            	<td>{{ $floor[$employee->as_floor_id]['hr_floor_name']??'' }}</td>
+							            	<td>{{ $line[$employee->as_line_id]['hr_line_name']??'' }}</td>
+							            	<td>{{ date('H:i:s', strtotime($employee->in_time)) }}</td>
+							            	<td>{{ date('H:i:s', strtotime($employee->out_time)) }}</td>
+							            	<td>{{ $otHour }}</td>
+							            	<td>
+							            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Yearly Activity Report' ><i class="fa fa-eye"></i></button>
+							            	</td>
+						            	</tr>
+						            	@php $totalOt += $employee->ot_hour; @endphp
+						            	@endif
+					            	@endif
+					            @endforeach
+				            	
 				            	<tr>
-				            		<td>{{ ++$i }}</td>
-					            	{{-- <td><img src="{{ emp_profile_picture($employee) }}" class='small-image' style="height: 40px; width: auto;"></td> --}}
-					            	<td><a href='{{ url("hr/operation/job_card?associate=$employee->associate_id&month_year=$month") }}' target="_blank">{{ $employee->associate_id }}</a></td>
-					            	<td>
-					            		<b>{{ $employee->as_name }}</b>
-					            		<p>{{ $employee->as_contact }}</p>
-					            	</td>
-					            	<td>{{ $employee->as_oracle_code }}</td>
-					            	<td>{{ $designation[$employee->as_designation_id]['hr_designation_name']??'' }}</td>
-					            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
-					            	<td>{{ $section[$employee->as_section_id]['hr_section_name']??'' }}</td>
-					            	<td>{{ $subSection[$employee->as_subsection_id]['hr_subsec_name']??'' }}</td>
-					            	<td>{{ $floor[$employee->as_floor_id]['hr_floor_name']??'' }}</td>
-					            	<td>{{ $line[$employee->as_line_id]['hr_line_name']??'' }}</td>
-					            	<td>{{ date('H:i:s', strtotime($employee->in_time)) }}</td>
-					            	<td>{{ date('H:i:s', strtotime($employee->out_time)) }}</td>
-					            	<td>{{ $otHour }}</td>
-					            	<td>
-					            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Yearly Activity Report' ><i class="fa fa-eye"></i></button>
-					            	</td>
+				            		<td colspan="10"></td>
+				            		<td colspan="2"><b>Total OT Hour</b></td>
+				            		<td colspan="2"><b>
+				            			{{ numberToTimeClockFormat($totalOt) }}
+				            		</b></td>
 				            	</tr>
-				            	@php $totalOt += $employee->ot_hour; @endphp
-				            	@endif
-			            	@endif
-			            @endforeach
-			            	{{-- <tr>
-			            		<td colspan="10"></td>
-			            		<td colspan="2"><b>Total Employee</b></td>
-			            		<td colspan="2"><b>{{ $i }}</b></td>
-			            	</tr> --}}
-			            	<tr>
-			            		<td colspan="10"></td>
-			            		<td colspan="2"><b>Total OT Hour</b></td>
-			            		<td colspan="2"><b>
-			            			@php
-			            			
-				                    $otHourE = numberToTimeClockFormat($totalOt);
-				                    echo $otHourE;
-			            			@endphp
-			            		</b></td>
-			            	</tr>
-			            @else
-				            <tr>
-				            	<td colspan="14" class="text-center">No OT Employee Found!</td>
-				            </tr>
-			            @endif
+				            @else
+					            <tr>
+					            	<td colspan="14" class="text-center">No OT Employee Found!</td>
+					            </tr>
+				            @endif
+				            <tr style="border:0 !important;"><td colspan="14" style="border: 0 !important;height: 20px;"></td> </tr>
 			            </tbody>
-					</table>
+					
 					@endforeach
+					</table>
 				@elseif(($input['report_format'] == 1 && $format != null))
 					@php
 						if($format == 'as_unit_id'){
@@ -282,6 +283,12 @@
 						<thead>
 							<tr>
 								<th>Sl</th>
+								@if($format == 'as_floor_id' || $format == 'as_line_id')
+								<th>Unit</th>
+								@endif
+								@if($format == 'as_line_id')
+								<th>Floor</th>
+								@endif
 								@if($format == 'as_section_id' || $format == 'as_subsection_id')
 								<th>Department Name</th>
 								@endif
@@ -298,8 +305,59 @@
 							@if(count($getEmployee) > 0)
 							@foreach($getEmployee as $employee)
 							@php $group = $employee->$format; @endphp
-							<tr>
+							@php
+								if($format == 'as_unit_id'){
+									if($group == 145){
+										$body = 'MBM + MBF + MBM 2';
+									}else{
+										$body = $unit[$group]['hr_unit_name']??'';
+									}
+									$exPar = '&selected='.($unit[$group]['hr_unit_id']??'');
+								}elseif($format == 'as_line_id'){
+									$body = $line[$group]['hr_line_name']??'';
+									$exPar = '&selected='.($line[$group]['hr_line_id']??'');
+								}elseif($format == 'as_floor_id'){
+									$body = $floor[$group]['hr_floor_name']??'';
+									$exPar = '&selected='.($floor[$group]['hr_floor_id']??'');
+								}elseif($format == 'as_department_id'){
+									$body = $department[$group]['hr_department_name']??'';
+									$exPar = '&selected='.$department[$group]['hr_department_id']??'';
+								}elseif($format == 'as_section_id'){
+									$body = $section[$group]['hr_section_name']??'N/A';
+									$exPar = '&selected='.$section[$group]['hr_section_id']??'';
+								}elseif($format == 'as_subsection_id'){
+									$body = $subSection[$group]['hr_subsec_name']??'';
+									$exPar = '&selected='.$subSection[$group]['hr_subsec_id']??'';
+								}elseif($format == 'as_designation_id'){
+									$body = $designation[$group]['hr_designation_name']??'';
+									$exPar = '&selected='.$designation[$group]['hr_designation_id']??'';
+								}elseif($format == 'ot_hour'){
+									
+				                    $otHourBody = numberToTimeClockFormat($group);
+									$body = $otHourBody??'N/A';
+									$exPar = '&selected='.number_format($group,3)??'';
+								}else{
+									$body = 'N/A';
+								}
+							@endphp
+							<tr class="cursor-pointer" onClick="selectedGroup(this.id, '{{ $body }}', {{ $jsonUrl }})" data-body="{{ $body }}" id="{{$exPar}}" data-url="{{ $jsonUrl }}" class="select-group">
 								<td>{{ ++$i }}</td>
+								@if($format == 'as_floor_id' || $format == 'as_line_id')
+								<td>
+									@if($format == 'as_floor_id')
+										@php $unitIdfl = $floor[$group]['hr_floor_unit_id']??''; @endphp
+									@else
+										@php $unitIdfl = $line[$group]['hr_line_unit_id']??''; @endphp
+									@endif
+									{{ $unitIdfl != ''?($unit[$unitIdfl]['hr_unit_name']??''):'' }}
+								</td>
+								@endif
+								@if($format == 'as_line_id')
+								<td>
+									@php $lineFloorId = $line[$group]['hr_line_floor_id']??''; @endphp
+									{{ $lineFloorId != ''?($floor[$lineFloorId]['hr_floor_name']??''):'' }}
+								</td>
+								@endif
 								@if($format == 'as_section_id' || $format == 'as_subsection_id')
 								<td>
 									@php
@@ -321,44 +379,14 @@
 								</td>
 								@endif
 								<td>
-									@php
-										if($format == 'as_unit_id'){
-											if($group == 145){
-												$body = 'MBM + MBF + MBM 2';
-											}else{
-												$body = $unit[$group]['hr_unit_name']??'';
-											}
-										}elseif($format == 'as_line_id'){
-											$body = $line[$group]['hr_line_name']??'';
-										}elseif($format == 'as_floor_id'){
-											$body = $floor[$group]['hr_floor_name']??'';
-										}elseif($format == 'as_department_id'){
-											$body = $department[$group]['hr_department_name']??'';
-										}elseif($format == 'as_section_id'){
-											$body = $section[$group]['hr_section_name']??'N/A';
-										}elseif($format == 'as_subsection_id'){
-											$body = $subSection[$group]['hr_subsec_name']??'';
-										}elseif($format == 'as_designation_id'){
-											$body = $designation[$group]['hr_designation_name']??'';
-										}elseif($format == 'ot_hour'){
-											
-						                    $otHourBody = numberToTimeClockFormat($group);
-											$body = $otHourBody??'N/A';
-										}else{
-											$body = 'N/A';
-										}
-									@endphp
+									
 									{{ ($body == null)?'N/A':$body }}
 								</td>
 								<td>
 									{{ $employee->total }}
 								</td>
 								<td>
-									@php 
-									$sumOT = numberToTimeClockFormat(round($employee->groupOt,2)); 
-									@endphp
-
-									{{$sumOT}}
+									{{ numberToTimeClockFormat(round($employee->groupOt,2)) }}
 								</td>
 							</tr>
 							@endforeach
