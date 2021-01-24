@@ -36,6 +36,7 @@
 		            		</td>
 		            		<td style="width: 33%;text-align: center;">
 		            			 Date <b>: {{ $input['date']??'' }}</b><br>
+		            			 Employee <b>: {{ count($avail_as) }}</b><br>
 		            			@if($input['otnonot'] != null)
 		                			<b> OT </b> 
 		                			<b>: @if($input['otnonot'] == 0) No @else Yes @endif </b> <br>
@@ -140,7 +141,7 @@
 							@endphp
 		                	@if($head != '')
 		                    <th colspan="1">{{ $head }}</th>
-		                    <th colspan="3">{{ $body }} {{ $date[0] }}</th>
+		                    <th colspan="3" ><div style="display:flex;justify-content: space-between;"><span>{{ $body }}</span> <span>{{ $date[0] }}</span></div></th>
 		                    <th colspan="3" style="text-align: center;">{{ $date[1] }}</th>
 		                    @endif
 		                </tr>
@@ -245,7 +246,7 @@
 					@endforeach
 			</div>
 			@elseif(($input['report_format'] == 1 && $format != null))
-			<div class="content_list_section" style="column-count: 2;">
+			<div class="content_list_section" >
 				@php
 					if($format == 'as_unit_id'){
 						$head = 'Unit';

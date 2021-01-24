@@ -1420,3 +1420,12 @@ Route::group(['prefix' => 'hr/operation/holiday-duty','namespace' => 'Hr\Operati
 	Route::get('/date','HolidayDutyController@getData');
 
 });
+
+
+
+
+// Buyer Mode 
+Route::group(['prefix' => 'hr/buyer','namespace' => 'Hr\Buyer'], function(){
+	Route::get('/','BuyerModeController@generate');
+	Route::post('/generate','BuyerModeController@generate');
+});

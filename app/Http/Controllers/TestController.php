@@ -35,28 +35,53 @@ class TestController extends Controller
     public function jobcardupdate()
     {
         $data = DB::table('hr_attendance_ceil')
-            ->where('in_date','2020-11-15')
+            ->where('in_date','2021-01-03')
             ->get();
 
         foreach ($data as $key => $v) 
         {
 
+            if($v->in_time && $v->out_time){
 
-            $queue = (new ProcessAttendanceInOutTime('hr_attendance_ceil', $v->id, 2))
-                    ->delay(Carbon::now()->addSeconds(2));
-                    dispatch($queue);
+                $queue = (new ProcessAttendanceInOutTime('hr_attendance_ceil', $v->id, 2))
+                        ->delay(Carbon::now()->addSeconds(2));
+                        dispatch($queue);
+            }
             
         }
         return 'success 30';
 
     } 
 
+    public function updateSalary()
+    {
+        $in = DB::table('hr_as_basic_info as b')
+                ->leftJoin('hr_benefits as bn','bn.ben_as_id', 'b.associate_id')
+                ->where('as_unit_id', 2)
+                ->where('as_location', 7)
+                ->get();
+
+        foreach ($in as $k => $val) {
+            # code...
+            DB::table('hr_monthly_salary')
+                ->where('as_id', $val->associate_id)
+                ->update([
+                    'unit_id' => $val->as_unit_id,
+                    'designation_id' => $val->as_designation_id,
+                    'sub_section_id' => $val->as_subsection_id,
+                    'location_id' => $val->as_location,
+                    'pay_type' => $val->bank_name
+                ]);
+        }
+        return 'done';
+    }
+
 
     public function test()
     {
 
         
-        return $this->setSalaryDate();
+        return $this->jobcardupdate();
         return $this->testMail();
         
         return '';
@@ -632,7 +657,8 @@ class TestController extends Controller
 
 
     }
-     public function exportReport(Request $request)
+
+    public function exportReport(Request $request)
     {
 
         if(isset($request->date)){
@@ -641,9 +667,17 @@ class TestController extends Controller
                      ->leftJoin('hr_benefits as c','b.associate_id','c.ben_as_id')
                      ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
                     ->whereIn('b.as_location', auth()->user()->location_permissions())
-                    ->where('b.as_status',1)
-                    ->where('b.as_doj' , '<=', $date)
-                    ->get();
+                    ->where(function($q) use ($date){
+                        $q->where(function($qa) use ($date){
+                            $qa->where('b.as_status',1);
+                            $qa->where('b.as_doj' , '<=', $date);
+                        });
+                        $q->orWhere(function($qa) use ($date){
+                            $qa->whereIn('b.as_status',[2,3,4,5,6,7,8]);
+                            $qa->where('b.as_status_date' , '>', $date);
+                        });
+
+                    })->get();
 
             $data = collect($data)->keyBy('associate_id');
             $units = auth()->user()->unit_permissions();
@@ -700,6 +734,8 @@ class TestController extends Controller
                             $excel[$a->associate_id]['Out Time'] = date('H.i', strtotime($a->out_time));
                         }
                     }
+                    $excel[$a->associate_id]['AsStatus'] = $a->as_status;
+                    $excel[$a->associate_id]['AsStatusDate'] = $a->as_status_date;
                 }
                 
                 
@@ -763,7 +799,9 @@ class TestController extends Controller
                     'OT Hour' => '',
                     'Date' => $date,
                     'In Time' =>  '',
-                    'Out Time' => ''
+                    'Out Time' => '',
+                    'AsStatus' => $a->as_status,
+                        'AsStatusDate' => $a->as_status_date
 
                 );
             }
@@ -791,7 +829,9 @@ class TestController extends Controller
                     'OT Hour' => '',
                     'Date' => $date,
                     'In Time' =>  '',
-                    'Out Time' => ''
+                    'Out Time' => '',
+                    'AsStatus' => $a->as_status,
+                        'AsStatusDate' => $a->as_status_date
                 );
             }
 
@@ -818,7 +858,9 @@ class TestController extends Controller
                     'OT Hour' => '',
                     'Date' => $date,
                     'In Time' =>  '',
-                    'Out Time' => ''
+                    'Out Time' => '',
+                    'AsStatus' => $a->as_status,
+                        'AsStatusDate' => $a->as_status_date
                 );
             }
 
@@ -842,12 +884,15 @@ class TestController extends Controller
                         'Sub Section' => $subsection[$a->as_subsection_id]['hr_subsec_name']??'',
                         'Unit' => $unit[$a->as_unit_id]['hr_unit_short_name']??'',
                         'OT/NONOT' => $a->as_ot == 1?'OT':'NonOT',
-                        'Status' => '',
+                        'Status' => $a->as_status.' '.$a->as_status_date,
                         'Late' => '',
                         'OT Hour' => '',
                         'Date' => $date,
                         'In Time' =>  '',
-                        'Out Time' => ''
+                        'Out Time' => '',
+                        'AsStatus' => $a->as_status,
+                        'AsStatusDate' => $a->as_status_date
+
                     );
                 }
             }
