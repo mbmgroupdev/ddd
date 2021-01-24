@@ -22,7 +22,7 @@
   <div class="modal-dialog modal-lg right-modal-width" role="document" > 
     <div class="modal-content">
       <div class="modal-header">
-        <a class="view prev_btn" data-toggle="tooltip" data-dismiss="modal" data-placement="top" title="" data-original-title="Back to Report">
+        <a class="view prev_btn-job" data-toggle="tooltip" data-dismiss="modal" data-placement="top" title="" data-original-title="Back to Report">
       <i class="las la-chevron-left"></i>
     </a>
         <h5 class="modal-title right-modal-title text-center" id="modal-title-right"> &nbsp; </h5>
@@ -43,13 +43,14 @@
 @push('js')
   <script>
     var loader = '<div class="panel"><div class="panel-body"><p style="text-align:center;margin:100px;"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>';
+    var loaderContent = '<div class="animationLoading"><div id="container-loader"><div id="one"></div><div id="two"></div><div id="three"></div></div><div id="four"></div><div id="five"></div><div id="six"></div></div>';
     $(document).on('click', '.job_card', function() {
       var name = $(this).data('name');
       var associate = $(this).data('associate');
       var yearMonth = $(this).data('month-year');
       $("#modal-title-right").html(' Job Card - '+name);
       $('#right_modal_jobcard').modal('show');
-      $("#content-result").html(loader);
+      $("#content-result").html(loaderContent);
       $.ajax({
             url: "{{ url('hr/operation/partial_job_card') }}",
             data: {

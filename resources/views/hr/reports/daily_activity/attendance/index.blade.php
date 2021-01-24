@@ -40,7 +40,9 @@
         color:#089bab !important;
         font-weight: bold;
     }
-
+    .cursor-pointer{
+        cursor: pointer;
+    }
 </style>
 @endpush
 <div class="main-content">
@@ -150,8 +152,8 @@
                                             </select>
                                             <label for="otnonot">OT/Non-OT</label>
                                         </div>
-                                        <input type="hidden" id="reportformat" name="report_format" value="0">
-                                        <input type="hidden" id="reportGroup" name="report_group" value="as_line_id">
+                                        <input type="hidden" id="reportformat" name="report_format" value="1">
+                                        <input type="hidden" id="reportGroup" name="report_group" value="as_section_id">
                                     </div>
                                     <div class="col-3">
                                       
@@ -311,7 +313,7 @@
         </div><!-- /.page-content -->
     </div>
 </div>
-@include('hr.reports.daily_activity.attendance.employee_activity_modal')
+
 <div class="modal right fade" id="right_modal_lg" tabindex="-1" role="dialog" aria-labelledby="right_modal_lg">
     <div class="modal-dialog modal-lg right-modal-width" role="document" > 
         <div class="modal-content">
@@ -319,14 +321,14 @@
                 <a class="view " data-toggle="tooltip" data-dismiss="modal" data-placement="top" title="" data-original-title="Back to Report">
                     <i class="las la-chevron-left"></i>
                 </a>
-                <h5 class="modal-title right-modal-title text-center" id="modal-title-right"> &nbsp; </h5>
+                <h5 class="modal-title right-modal-title text-center" id="modal-title-right-extra"> &nbsp; </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <button class="btn btn-sm btn-primary modal-print" onclick="printDiv('content-result')" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report"><i class="las la-print"></i> </button>
-                <div class="modal-content-result" id="content-result">
+                <button class="btn btn-sm btn-primary modal-print" onclick="printDiv('content-result-extra')" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report"><i class="las la-print"></i> </button>
+                <div class="modal-content-result-extra" id="content-result-extra">
           
                 </div>
             </div>
@@ -334,274 +336,276 @@
         </div>
     </div>
 </div>
-
+@include('common.right-modal')
+@include('hr.reports.daily_activity.attendance.employee_activity_modal')
 @push('js')
 <script src="{{ asset('assets/js/moment.min.js')}}"></script>
 <script type="text/javascript">
 
-    $(document).ready(function(){   
-        var loader = '<div class="panel"><div class="panel-body"><p style="text-align:center;margin:100px;"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>';
-        $('#activityReport').on('submit', function(e) {
-          e.preventDefault();
-          activityProcess();
-        });
-        $(".next_btn").click(function(event) {
-          var date = $('input[name="date"]').val();
-          var type = $('select[name="report_type"]').val();
-          var dateAfter = moment(date).add(1 , 'day').format("YYYY-MM-DD");
-          $('input[name="date"]').val(dateAfter);
-          var head = type+' - '+dateAfter;
-          $("#result-head").html(head);
-          activityProcess();
-        });
+$(document).ready(function(){   
+    var loader = '<div class="panel"><div class="panel-body"><p style="text-align:center;margin:100px;"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>';
+    var loaderContent = '<div class="animationLoading"><div id="container-loader"><div id="one"></div><div id="two"></div><div id="three"></div></div><div id="four"></div><div id="five"></div><div id="six"></div></div>';
+    $('#activityReport').on('submit', function(e) {
+      e.preventDefault();
+      activityProcess();
+    });
+    $(".next_btn").click(function(event) {
+      var date = $('input[name="date"]').val();
+      var type = $('select[name="report_type"]').val();
+      var dateAfter = moment(date).add(1 , 'day').format("YYYY-MM-DD");
+      $('input[name="date"]').val(dateAfter);
+      var head = type+' - '+dateAfter;
+      $("#result-head").html(head);
+      activityProcess();
+    });
 
-        $(".prev_btn").click(function(event) {
-          var date = $('input[name="date"]').val();
-          var type = $('select[name="report_type"]').val();
-          var dateBefore = moment(date).subtract(1 , 'day').format("YYYY-MM-DD");
-          $('input[name="date"]').val(dateBefore);
-          var head = type+' - '+dateBefore;
-          $("#result-head").html(head);
-          activityProcess();
-        });
-        $(".grid_view, .list_view").click(function() {
-          var value = $(this).attr('id');
-          // console.log(value);
-          $("#reportformat").val(value);
-          $('input[name="employee"]').val('');
-          activityProcess();
-        });
-          
-        $("#reportGroupHead").on("change", function(){
-          var group = $(this).val();
-          $("#reportGroup").val(group);
-          activityProcess();
-        });
+    $(".prev_btn").click(function(event) {
+      var date = $('input[name="date"]').val();
+      var type = $('select[name="report_type"]').val();
+      var dateBefore = moment(date).subtract(1 , 'day').format("YYYY-MM-DD");
+      $('input[name="date"]').val(dateBefore);
+      var head = type+' - '+dateBefore;
+      $("#result-head").html(head);
+      activityProcess();
+    });
+    $(".grid_view, .list_view").click(function() {
+      var value = $(this).attr('id');
+      // console.log(value);
+      $("#reportformat").val(value);
+      $('input[name="employee"]').val('');
+      activityProcess();
+    });
+      
+    $("#reportGroupHead").on("change", function(){
+      var group = $(this).val();
+      $("#reportGroup").val(group);
+      activityProcess();
+    });
 
-        function activityProcess() 
-        {
-          $("#result-section").show();
-          $("#result-data").html(loader);
-          $("#single-employee-search").hide();
-          
-          var unit = $('select[name="unit"]').val();
-          var location = $('select[name="location"]').val();
-          var area = $('select[name="area"]').val();
-          var date = $('input[name="date"]').val();
-          var format = $('input[name="report_format"]').val();
-          var type = $('select[name="report_type"]').val();
-          // console.log(type);
-          if(type === 'before_absent_after_present'){
-            $("#head-arrow").hide();
-          }else{
-            $("#head-arrow").show();
-          }
-          var form = $("#activityReport");
-          var flag = 0;
-          if(unit === '' || date === '' || type === ''){
-            flag = 1;
-            $.notify('Select required field', 'error');
-          }
-          
-          if(flag === 0){
-            $(".next_btn").attr('disabled', true);
-            $(".prev_btn").attr('disabled', true);
-            $('html, body').animate({
-                scrollTop: $("#result-data").offset().top
-            }, 2000);
-            if(type == 'attendance'){
-              url = '{{ url("hr/reports/daily-present-absent-activity-report") }}';
-            }else{
-              url = '{{ url("hr/reports/daily-attendance-activity-report") }}';
-            }
-            var head = type+' - '+date;
-            $("#result-head").html(head);
-            
-            $.ajax({
-                type: "GET",
-                url: url,
-                data: form.serialize(), // serializes the form's elements.
-                success: function(response)
-                {
-                  $(".next_btn").attr('disabled', false);
-                  $(".prev_btn").attr('disabled', false);
-                  // console.log(response);
-                  if(response !== 'error'){
-                    $("#result-data").html(response);
-                  }else{
-                    // console.log(response);
-                    $("#result-data").html('');
-                  }
-
-                  if(format == 0 && response !== 'error'){
-                    $("#single-employee-search").show();
-                    $('.list_view').addClass('active').attr('disabled', true);
-                    $('.grid_view').removeClass('active').attr('disabled', false);
-                  }else{
-                    $("#single-employee-search").hide();
-                    $('.grid_view').addClass('active').attr('disabled', true);
-                    $('.list_view').removeClass('active').attr('disabled', false);
-                  }
-                },
-                error: function (reject) {
-                  console.log(reject);
-                }
-            });
-
-          }else{
-            console.log('required');
-            $("#result-data").html('');
-          }
+    function activityProcess() 
+    {
+      $("#result-section").show();
+      $("#result-data").html(loaderContent);
+      $("#single-employee-search").hide();
+      
+      var unit = $('select[name="unit"]').val();
+      var location = $('select[name="location"]').val();
+      var area = $('select[name="area"]').val();
+      var date = $('input[name="date"]').val();
+      var format = $('input[name="report_format"]').val();
+      var type = $('select[name="report_type"]').val();
+      // console.log(type);
+      if(type === 'before_absent_after_present'){
+        $("#head-arrow").hide();
+      }else{
+        $("#head-arrow").show();
+      }
+      var form = $("#activityReport");
+      var flag = 0;
+      if(unit === '' || date === '' || type === ''){
+        flag = 1;
+        $.notify('Select required field', 'error');
+      }
+      
+      if(flag === 0){
+        $(".next_btn").attr('disabled', true);
+        $(".prev_btn").attr('disabled', true);
+        $('html, body').animate({
+            scrollTop: $("#result-data").offset().top
+        }, 2000);
+        if(type == 'attendance'){
+          url = '{{ url("hr/reports/daily-present-absent-activity-report") }}';
+        }else{
+          url = '{{ url("hr/reports/daily-attendance-activity-report") }}';
         }
-        $('#excel').click(function(){
-          var url='data:application/vnd.ms-excel,' + encodeURIComponent($('#report_section').html())
-          location.href=url;
-          return false;
-        });
-        // change from data action
-        $('#present_date').on('change', function() {
-          var before = 1 ;
-          var dateBefore = moment($(this).val()).subtract(before , 'day');
-          var dateBefore = dateBefore.format("YYYY-MM-DD");
-          var absentDate = $('#absent_date').val();
-          if(dateBefore !== '') {
-            $('#absent_date').val(dateBefore);
-          }
-        });
-        // change unit
-        $('#unit').on("change", function(){
-            $.ajax({
-                url : "{{ url('hr/attendance/floor_by_unit') }}",
-                type: 'get',
-                data: {unit : $(this).val()},
-                success: function(data)
-                {
-                    $('#floor_id').removeAttr('disabled');
-                    
-                    $("#floor_id").html(data);
-                },
-                error: function(reject)
-                {
-                   console.log(reject);
-                }
-            });
+        var head = type+' - '+date;
+        $("#result-head").html(head);
+        
+        $.ajax({
+            type: "GET",
+            url: url,
+            data: form.serialize(), // serializes the form's elements.
+            success: function(response)
+            {
+              $(".next_btn").attr('disabled', false);
+              $(".prev_btn").attr('disabled', false);
+              // console.log(response);
+              if(response !== 'error'){
+                $("#result-data").html(response);
+              }else{
+                // console.log(response);
+                $("#result-data").html('');
+              }
 
-            //Load Line List By Unit ID
-            $.ajax({
-               url : "{{ url('hr/reports/line_by_unit') }}",
-               type: 'get',
-               data: {unit : $(this).val()},
-               success: function(data)
-               {
-                    $('#line_id').removeAttr('disabled');
-                    $("#line_id").html(data);
-               },
-               error: function(reject)
-               {
-                 console.log(reject);
-               }
-            });
-        });
-        //Load Department List By Area ID
-        $('#area').on("change", function(){
-            $.ajax({
-               url : "{{ url('hr/setup/getDepartmentListByAreaID') }}",
-               type: 'get',
-               data: {area_id : $(this).val()},
-               success: function(data)
-               {
-                    $('#department').removeAttr('disabled');
-                    
-                    $("#department").html(data);
-               },
-               error: function(reject)
-               {
-                 console.log(reject);
-               }
-            });
+              if(format == 0 && response !== 'error'){
+                $("#single-employee-search").show();
+                $('.list_view').addClass('active').attr('disabled', true);
+                $('.grid_view').removeClass('active').attr('disabled', false);
+              }else{
+                $("#single-employee-search").hide();
+                $('.grid_view').addClass('active').attr('disabled', true);
+                $('.list_view').removeClass('active').attr('disabled', false);
+              }
+            },
+            error: function (reject) {
+              console.log(reject);
+            }
         });
 
-        //Load Section List By department ID
-        $('#department').on("change", function(){
-            $.ajax({
-               url : "{{ url('hr/setup/getSectionListByDepartmentID') }}",
-               type: 'get',
-               data: {area_id: $("#area").val(), department_id: $(this).val()},
-               success: function(data)
-               {
-                    $('#section').removeAttr('disabled');
-                    
-                    $("#section").html(data);
-               },
-               error: function(reject)
-               {
-                 console.log(reject);
-               }
-            });
-        });
-        //Load Sub Section List by Section
-        $('#section').on("change", function(){
-           $.ajax({
-             url : "{{ url('hr/setup/getSubSectionListBySectionID') }}",
-             type: 'get',
-             data: {
-               area_id: $("#area").val(),
-               department_id: $("#department").val(),
-               section_id: $(this).val()
-             },
-             success: function(data)
-             {
-                $('#subSection').removeAttr('disabled');
+      }else{
+        console.log('required');
+        $("#result-data").html('');
+      }
+    }
+    $('#excel').click(function(){
+      var url='data:application/vnd.ms-excel,' + encodeURIComponent($('#report_section').html())
+      location.href=url;
+      return false;
+    });
+    // change from data action
+    $('#present_date').on('change', function() {
+      var before = 1 ;
+      var dateBefore = moment($(this).val()).subtract(before , 'day');
+      var dateBefore = dateBefore.format("YYYY-MM-DD");
+      var absentDate = $('#absent_date').val();
+      if(dateBefore !== '') {
+        $('#absent_date').val(dateBefore);
+      }
+    });
+    // change unit
+    $('#unit').on("change", function(){
+        $.ajax({
+            url : "{{ url('hr/attendance/floor_by_unit') }}",
+            type: 'get',
+            data: {unit : $(this).val()},
+            success: function(data)
+            {
+                $('#floor_id').removeAttr('disabled');
                 
-                $("#subSection").html(data);
-             },
-             error: function(reject)
-             {
+                $("#floor_id").html(data);
+            },
+            error: function(reject)
+            {
                console.log(reject);
-             }
-           });
-        });
-        //Report type
-        $('#reportType').on("change", function(){
-          var type = $(this).val();
-          // console.log(type);
-          $('input[name="employee"]').val('');
-          if(type == 'ot'){
-            $('#reportGroupHead').append('<option value="ot_hour">OT Hour</option>');
-            $('#reportGroupHead').val('ot_hour');
-            $('#reportGroup').val('ot_hour');
-          }else{
-            $("#reportGroupHead option[value='ot_hour']").remove();
-            $('#reportGroupHead').val('as_section_id');
-            $('#reportGroup').val('as_section_id');
-
-          }
-          var date = "{{ date('Y-m-d') }}";
-          if(type == 'ot' || type == 'working_hour'|| type == 'in_out_missing'){
-            date = "{{ date('Y-m-d', strtotime('-1 day')) }}";
-          }
-          $("#report-date").val(date);
-          if(type === 'before_absent_after_present'){
-            $("#single-date").hide();
-            $("#double-date").show();
-          }else{
-            $("#single-date").show();
-            $("#double-date").hide();
-          }
+            }
         });
 
-        $('#reportFormat').on("change", function(){
-          $('input[name="employee"]').val('');
+        //Load Line List By Unit ID
+        $.ajax({
+           url : "{{ url('hr/reports/line_by_unit') }}",
+           type: 'get',
+           data: {unit : $(this).val()},
+           success: function(data)
+           {
+                $('#line_id').removeAttr('disabled');
+                $("#line_id").html(data);
+           },
+           error: function(reject)
+           {
+             console.log(reject);
+           }
         });
+    });
+    //Load Department List By Area ID
+    $('#area').on("change", function(){
+        $.ajax({
+           url : "{{ url('hr/setup/getDepartmentListByAreaID') }}",
+           type: 'get',
+           data: {area_id : $(this).val()},
+           success: function(data)
+           {
+                $('#department').removeAttr('disabled');
+                
+                $("#department").html(data);
+           },
+           error: function(reject)
+           {
+             console.log(reject);
+           }
+        });
+    });
+
+    //Load Section List By department ID
+    $('#department').on("change", function(){
+        $.ajax({
+           url : "{{ url('hr/setup/getSectionListByDepartmentID') }}",
+           type: 'get',
+           data: {area_id: $("#area").val(), department_id: $(this).val()},
+           success: function(data)
+           {
+                $('#section').removeAttr('disabled');
+                
+                $("#section").html(data);
+           },
+           error: function(reject)
+           {
+             console.log(reject);
+           }
+        });
+    });
+    //Load Sub Section List by Section
+    $('#section').on("change", function(){
+       $.ajax({
+         url : "{{ url('hr/setup/getSubSectionListBySectionID') }}",
+         type: 'get',
+         data: {
+           area_id: $("#area").val(),
+           department_id: $("#department").val(),
+           section_id: $(this).val()
+         },
+         success: function(data)
+         {
+            $('#subSection').removeAttr('disabled');
+            
+            $("#subSection").html(data);
+         },
+         error: function(reject)
+         {
+           console.log(reject);
+         }
+       });
+    });
+    //Report type
+    $('#reportType').on("change", function(){
+      var type = $(this).val();
+      // console.log(type);
+      $('input[name="employee"]').val('');
+      if(type == 'ot'){
+        $('#reportGroupHead').append('<option value="ot_hour">OT Hour</option>');
+        $('#reportGroupHead').val('ot_hour');
+        $('#reportGroup').val('ot_hour');
+      }else{
+        $("#reportGroupHead option[value='ot_hour']").remove();
+        $('#reportGroupHead').val('as_section_id');
+        $('#reportGroup').val('as_section_id');
+
+      }
+      var date = "{{ date('Y-m-d') }}";
+      if(type == 'ot' || type == 'working_hour'|| type == 'in_out_missing'){
+        date = "{{ date('Y-m-d', strtotime('-1 day')) }}";
+      }
+      $("#report-date").val(date);
+      if(type === 'before_absent_after_present'){
+        $("#single-date").hide();
+        $("#double-date").show();
+      }else{
+        $("#single-date").show();
+        $("#double-date").hide();
+      }
+    });
+
+    $('#reportFormat').on("change", function(){
+      $('input[name="employee"]').val('');
+    });
 
 
-        $(document).on('click','.generate-drawer', function(){
+    $(document).on('click','.generate-drawer', function(){
         var urldata = $(this).data('url'),
             body = $(this).data('body');
-        $("#modal-title-right").html(body);
+        $("#modal-title-right-extra").html(body);
         $('#right_modal_lg').modal('show');
-        $("#content-result").html(loaderModal);
-        console.log(urldata);
+        $("#content-result-extra").html(loaderContent);
+        // console.log(urldata);
         $.ajax({
             url: '{{ url('hr/reports/daily-attendance-activity-report') }}?'+urldata+'&report_format=0',
             type: "GET",
@@ -609,7 +613,7 @@
                 // console.log(response);
                 if(response !== 'error'){
                     setTimeout(function(){
-                        $("#content-result").html(response);
+                        $("#content-result-extra").html(response);
                     }, 1000);
                 }else{
                     console.log(response);
@@ -618,23 +622,43 @@
         });
 
     });
-
-    function printDiv(divName)
-    {
-        var myWindow=window.open('','','width=800,height=800');
-        myWindow.document.write('<html><head><title></title>');
-        myWindow.document.write('<style>h4{font-size: 8pt;}div,p,td,span,strong,th,b{line-height: 110%;padding: 0;margin: 0;font-size: 7pt;}p{padding: 0;margin: 0;}@import url(https://fonts.googleapis.com/css?family=Poppins:200,200i,300,400,500,600,700,800,900&amp;display=swap);body {font-family: Poppins,sans-serif;}.table{width: 100%;}a{text-decoration: none;}.table-bordered {border-collapse: collapse;}.table-bordered th,.table-bordered td {border: 1px solid #777 !important;padding:5px;}.no-border td, .no-border th{border:0 !important;vertical-align: top;}.f-16 th,.f-16 td, .f-16 td b{font-size: 16px !important;}</style>');
-        myWindow.document.write('</head><body>');
-        myWindow.document.write(document.getElementById(divName).innerHTML);
-        myWindow.document.close();
-        myWindow.focus();
-        myWindow.print();
-        myWindow.close();
-    }            
-
        
 });
-    
+function selectedGroup(e, body, inputUrl){
+    var part = e;
+    var urldata = inputUrl+part;
+    $("#modal-title-right-extra").html(' '+body+' Report Details');
+    $('#right_modal_lg').modal('show');
+    $("#content-result-extra").html(loaderContent);
+    $.ajax({
+        url: '{{ url('hr/reports/daily-attendance-activity-report') }}?'+urldata+'&report_format=0',
+        type: "GET",
+        success: function(response){
+            // console.log(response);
+            if(response !== 'error'){
+                setTimeout(function(){
+                    $("#content-result-extra").html(response);
+                }, 1000);
+            }else{
+                console.log(response);
+            }
+        }
+    });
+
+}
+
+function printDiv(divName)
+{
+    var myWindow=window.open('','','width=800,height=800');
+    myWindow.document.write('<html><head><title></title>');
+    myWindow.document.write('<style>h4{font-size: 8pt;}div,p,td,span,strong,th,b{line-height: 110%;padding: 0;margin: 0;font-size: 7pt;}p{padding: 0;margin: 0;}@import url(https://fonts.googleapis.com/css?family=Poppins:200,200i,300,400,500,600,700,800,900&amp;display=swap);body {font-family: Poppins,sans-serif;}.table{width: 100%;}a{text-decoration: none;}.table-bordered {border-collapse: collapse;}.table-bordered th,.table-bordered td {border: 1px solid #777 !important;padding:5px;}.no-border td, .no-border th{border:0 !important;vertical-align: top;}.f-16 th,.f-16 td, .f-16 td b{font-size: 16px !important;}</style>');
+    myWindow.document.write('</head><body>');
+    myWindow.document.write(document.getElementById(divName).innerHTML);
+    myWindow.document.close();
+    myWindow.focus();
+    myWindow.print();
+    myWindow.close();
+} 
     
 </script>
 @endpush

@@ -255,7 +255,11 @@
 
 				            		<div class="context-menu" id="context-menu-file-{{$employee->associate_id}}" style="display:none;position:absolute;z-index:1;">
 									    <ul>
-									      <li><a class="textblack" href='{{ url("hr/operation/job_card?associate=$employee->associate_id&month_year=$month") }}' target="_blank"><i class="lar la-id-card"></i> Job Card</a></li>           
+									      <li>
+									      	{{-- <a class="textblack" href='{{ url("hr/operation/job_card?associate=$employee->associate_id&month_year=$month") }}' target="_blank" ><i class="lar la-id-card"></i> Job Card</a> --}}
+									      	<a class="textblack job_card" data-name="{{ $employee->as_name }}" data-associate="{{ $employee->associate_id }}" data-month-year="{{ $month }}"><i class="lar la-id-card"></i> Job Card</a>
+									      	
+									      </li>           
 									      <li><a class="yearly-activity-single" data-ids="{{ $employee->as_id}}" data-eaids="{{ $employee->associate_id }}" data-enames="{{ $employee->as_name }}" data-edesigns="{{ $designationName }}" data-yearmonths="{{ $input['month'] }}" ><i class="las la-money-check-alt"></i> Salary Sheet</a></li>           
 									      {{-- <li><a onclick="copyDocuments('{{$employee->associate_id}}')"><i class="las la-copy"></i> Copy</a></li>  --}}
 									    </ul>

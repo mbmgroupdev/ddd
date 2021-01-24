@@ -108,9 +108,11 @@
                 url: '/hr/reports/employee-yearly-activity-report',
                 type: "GET",
                 data: {
-                    as_id: associate
+                    as_id: associate,
+                    year: year
                 },
                 success: function(response){
+                    console.log(response);
                     if(response !== 'error'){
                       setTimeout(function(){
                         $("#result-data").html(response);

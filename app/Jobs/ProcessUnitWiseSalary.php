@@ -133,10 +133,23 @@ class ProcessUnitWiseSalary implements ShouldQueue
                         $getPresentOT->present = 0;
                     }
 
-                    if(!isset($getPresentOT->ot)){
-                        $getPresentOT->ot = 0;
+                    if(!isset($getPresentOT)){
+                        $presentOt = 0;
+                    }else{
+                        $presentOt = $getPresentOT->ot;
                     }
-                    
+
+                    $diffExplode = explode('.', $presentOt);
+                    $minutes = (isset($diffExplode[1]) ? $diffExplode[1] : 0);
+                    $minutes = floatval('0.'.$minutes);
+                    if($minutes > 0 && $minutes != 1){
+                        $min = (int)round($minutes*60);
+                        $minOT = min_to_ot();
+                        $minutes = $minOT[$min]??0;
+                    }
+
+                    $presentOt = $diffExplode[0]+$minutes;
+
                     $lateCount = $getPresentOT->late??0;
                     $halfCount = $getPresentOT->halfday??0;
 
@@ -153,10 +166,10 @@ class ProcessUnitWiseSalary implements ShouldQueue
                     $otDayCount = 0;
                     $totalOt = count($rosterOTCount);
                     // return $rosterOTCount;
-                    foreach ($rosterOTCount as $ot) {
+                    foreach ($rosterOTCount as $otc) {
                         $checkAtt = DB::table($this->tableName)
                         ->where('as_id', $getEmployee->as_id)
-                        ->where('in_date', $ot->date)
+                        ->where('in_date', $otc->date)
                         ->first();
                         if($checkAtt != null){
                             $otDayCount += 1;
@@ -362,7 +375,7 @@ class ProcessUnitWiseSalary implements ShouldQueue
                         $salaryPayable = $getBenefit->ben_current_salary - ($getAbsentDeduct + $getHalfDeduct + $deductCost + $stamp);
                     }
 
-                    $ot = ((float)($overtime_rate) * ($getPresentOT->ot));
+                    $ot = ((float)($overtime_rate) * ($presentOt));
                     
                     $totalPayable = ceil((float)($salaryPayable + $ot + $deductSalaryAdd + $attBonus + $productionBonus + $leaveAdjust));
 
@@ -418,7 +431,7 @@ class ProcessUnitWiseSalary implements ShouldQueue
                             'salary_add_deduct_id' => $deductId,
                             'salary_payable' => $salaryPayable,
                             'ot_rate' => $overtime_rate,
-                            'ot_hour' => $getPresentOT->ot,
+                            'ot_hour' => $presentOt,
                             'attendance_bonus' => $attBonus,
                             'production_bonus' => $productionBonus,
                             'leave_adjust' => $leaveAdjust,
@@ -455,7 +468,7 @@ class ProcessUnitWiseSalary implements ShouldQueue
                             'salary_add_deduct_id' => $deductId,
                             'salary_payable' => $salaryPayable,
                             'ot_rate' => $overtime_rate,
-                            'ot_hour' => $getPresentOT->ot,
+                            'ot_hour' => $presentOt,
                             'attendance_bonus' => $attBonus,
                             'production_bonus' => $productionBonus,
                             'leave_adjust' => $leaveAdjust,

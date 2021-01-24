@@ -218,7 +218,7 @@ class DailyActivityReportController extends Controller
     public function attendanceReport(Request $request)
     {
         $input = $request->all();
-        
+        // return $input;
         try {
             $input['area']       = isset($request['area'])?$request['area']:'';
             $input['otnonot']    = isset($request['otnonot'])?$request['otnonot']:'';
@@ -320,8 +320,19 @@ class DailyActivityReportController extends Controller
             })
             ->when(!empty($input['subSection']), function ($query) use($input){
                return $query->where('emp.as_subsection_id', $input['subSection']);
+            })
+            ->when(!empty($input['selected']), function ($query) use($input){
+                if($input['selected'] == 'null'){
+                    return $query->whereNull($input['report_group']);
+                }else{
+                    if($input['report_group'] == 'ot_hour'){
+                        return $query->where($input['report_group'], 'LIKE', $input['selected']);
+                    }else{
+                        return $query->where($input['report_group'], $input['selected']);
+                    }
+                }
             });
-
+            
             if($input['report_type'] == 'ot' || $input['report_type'] == 'working_hour' || $input['report_type'] == 'late' || $input['report_type'] == 'before_absent_after_present' || $input['report_type'] == 'in_out_missing'){
                 $attData->leftjoin(DB::raw('(' . $employeeData_sql. ') AS emp'), function($join) use ($employeeData) {
                     $join->on('a.as_id', '=', 'emp.as_id')->addBinding($employeeData->getBindings());
@@ -444,22 +455,33 @@ class DailyActivityReportController extends Controller
             $section = section_by_id();
             $subSection = subSection_by_id();
             $area = area_by_id();
+            $uniqueGroupEmp = [];
 
-            // dd($uniqueGroups);
+            if($format != null && count($getEmployee) > 0 && $input['report_format'] == 0){
+                if($request['report_group'] == 'ot_hour'){
+                    $uniqueGroupEmp = collect($getEmployee)->groupBy(function ($item) {
+                            return (string) $item->ot_hour;
+                    },true);
+                }else{
+                    $uniqueGroupEmp = collect($getEmployee)->groupBy($request['report_group'],true);
+                }
+
+            }
+
             if($input['report_type'] == 'ot'){
-                return view('hr.reports.daily_activity.attendance.ot_report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees','totalValue', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area'));
+                return view('hr.reports.daily_activity.attendance.ot_report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees','totalValue', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area', 'uniqueGroupEmp'));
             }elseif($input['report_type'] == 'in_out_missing'){
-                return view('hr.reports.daily_activity.attendance.in_out_mis_report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area'));
+                return view('hr.reports.daily_activity.attendance.in_out_mis_report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area', 'uniqueGroupEmp'));
             }elseif($input['report_type'] == 'absent'){
-                return view('hr.reports.daily_activity.attendance.absent_report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area', 'absentShift'));
+                return view('hr.reports.daily_activity.attendance.absent_report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area', 'absentShift', 'uniqueGroupEmp'));
             }elseif($input['report_type'] == 'leave'){
-                return view('hr.reports.daily_activity.attendance.leave_report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area'));
+                return view('hr.reports.daily_activity.attendance.leave_report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area', 'uniqueGroupEmp'));
             }elseif($input['report_type'] == 'working_hour'){
-                return view('hr.reports.daily_activity.attendance.working_hour_report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees', 'totalValue', 'totalAvgHour', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area'));
+                return view('hr.reports.daily_activity.attendance.working_hour_report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees', 'totalValue', 'totalAvgHour', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area', 'uniqueGroupEmp'));
             }elseif($input['report_type'] == 'late'){
-                return view('hr.reports.daily_activity.attendance.late_report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area'));
+                return view('hr.reports.daily_activity.attendance.late_report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area', 'uniqueGroupEmp'));
             }elseif($input['report_type'] == 'before_absent_after_present'){
-                return view('hr.reports.daily_activity.attendance.before_after_report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area'));
+                return view('hr.reports.daily_activity.attendance.before_after_report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area', 'uniqueGroupEmp'));
             }
         } catch (\Exception $e) {
             $bug = $e->getMessage();
@@ -810,6 +832,17 @@ class DailyActivityReportController extends Controller
             })
             ->when(!empty($input['subSection']), function ($query) use($input){
                return $query->where('emp.as_subsection_id', $input['subSection']);
+            })
+            ->when(!empty($input['selected']), function ($query) use($input){
+                if($input['selected'] == 'null'){
+                    return $query->whereNull($input['report_group']);
+                }else{
+                    if($input['report_group'] == 'ot_hour'){
+                        return $query->where($input['report_group'], 'LIKE', $input['selected']);
+                    }else{
+                        return $query->where($input['report_group'], $input['selected']);
+                    }
+                }
             });
 
             if($input['report_type'] == 'ot' || $input['report_type'] == 'working_hour' || $input['report_type'] == 'late' || $input['report_type'] == 'before_absent_after_present'){
