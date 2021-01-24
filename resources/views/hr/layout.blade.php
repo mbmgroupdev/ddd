@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/all.css') }}" media='screen,print'>
     @stack('css')
     {{-- Custom CSS --}}
-    <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}" media='screen,print'>
+    <link rel="stylesheet" href="{{ asset('assets/css/custom.css?v=1.1') }}" media='screen,print'>
     <!-- Responsive CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/responsive.css') }}" media='screen,print'>
     <script src="{{ asset('js/app.js') }}"></script>
