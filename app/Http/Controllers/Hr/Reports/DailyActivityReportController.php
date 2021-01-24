@@ -543,10 +543,12 @@ class DailyActivityReportController extends Controller
                return $query->where('as_subsection_id', $input['subSection']);
             })
             ->when(!empty($input['selected']), function ($query) use($input){
-                if($input['selected'] == 'null'){
-                    return $query->whereNull($input['report_group']);
-                }else{
-                    return $query->where($input['report_group'], $input['selected']);
+                if($input['report_group'] != 'as_line_id' && $input['report_group'] != 'as_floor_id'){
+                    if($input['selected'] == 'null'){
+                        return $query->whereNull($input['report_group']);
+                    }else{
+                        return $query->where($input['report_group'], $input['selected']);
+                    }
                 }
             })
             ->where('as_status', 1)
@@ -556,7 +558,7 @@ class DailyActivityReportController extends Controller
 
 
         $avail = $getEmployee->pluck('associate_id');
-        $avail_as = $getEmployee->pluck('as_id');
+        
 
 
         // modify data with current line & floor
@@ -584,7 +586,13 @@ class DailyActivityReportController extends Controller
             });
         }
 
+        if(!empty($input['selected']) && ($input['report_group'] == 'as_line_id' || $input['report_group'] == 'as_floor_id')){
+            $getEmployee = $getEmployee->filter(function($arr) use ($input){
+                return $arr->{$input['report_group']} == $input['selected'];
+            })->values();
+        }
 
+        $avail_as = $getEmployee->pluck('as_id');
 
         $uniqueGroups = $getEmployee->groupBy($request['report_group'], true);
 
@@ -662,9 +670,11 @@ class DailyActivityReportController extends Controller
 
 
 
-        return view('hr.reports.daily_activity.attendance.two_day_att', compact('uniqueGroups', 'getEmployee', 'input', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area','pr','ab','lv','do','format','date','short_designation'));
+        return view('hr.reports.daily_activity.attendance.two_day_att', compact('uniqueGroups', 'getEmployee', 'input', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area','pr','ab','lv','do','format','date','short_designation','avail_as'));
 
     }
+
+   
 
 
     public function getatttoken($input,$request)
