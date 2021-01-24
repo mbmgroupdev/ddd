@@ -309,6 +309,7 @@
         </div><!-- /.page-content -->
     </div>
 </div>
+@include('common.right-modal')
 @push('js')
 <script src="{{ asset('assets/js/moment.min.js')}}"></script>
 <script type="text/javascript">
@@ -318,7 +319,7 @@
         salaryProcess();
       @endif 
       var loader = '<div class="panel"><div class="panel-body"><p style="text-align:center;margin:100px;"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>';
-
+      var loaderContent = '<div class="animationLoading"><div id="container-loader"><div id="one"></div><div id="two"></div><div id="three"></div></div><div id="four"></div><div id="five"></div><div id="six"></div></div>';
       $('#activityReport').on('submit', function(e) {
         e.preventDefault();
         salaryProcess();
@@ -338,7 +339,7 @@
         });
       function salaryProcess(){
         // console.log(loader)
-        $("#result-data").html(loader);
+        $("#result-data").html(loaderContent);
         $("#single-employee-search").hide();
         var unit = $('select[name="unit"]').val();
         var area = $('select[name="area"]').val();

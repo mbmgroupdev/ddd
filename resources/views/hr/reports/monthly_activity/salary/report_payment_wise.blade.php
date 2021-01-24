@@ -36,7 +36,7 @@
               .table thead th {
 			    vertical-align: inherit;
 				}
-				#content-result .panel .panel-body .loader-p{
+				.content-result .panel .panel-body .loader-p{
 					margin-top: 20% !important;
 				} 
 				.modal-h3{
@@ -234,7 +234,11 @@
 					            	<tr>
 					            		<td>{{ ++$i }}</td>
 						            	
-						            	<td><a href='{{ url("hr/operation/job_card?associate=$employee->associate_id&month_year=$month") }}' target="_blank">{{ $employee->associate_id }}</a></td>
+						            	<td>
+						            		{{-- <a href='{{ url("hr/operation/job_card?associate=$employee->associate_id&month_year=$month") }}' target="_blank">{{ $employee->associate_id }}</a> --}}
+						            		
+						            		<a class="job_card" data-name="{{ $employee->as_name }}" data-associate="{{ $employee->associate_id }}" data-month-year="{{ $month }}" data-toggle="tooltip" data-placement="top" title="" data-original-title="Job Card">{{ $employee->associate_id }}</a>
+						            	</td>
 						            	<td>
 						            		<b>{{ $employee->as_name }}</b>
 						            	</td>
@@ -287,7 +291,9 @@
 					            	<tr>
 					            		<td>{{ ++$i }}</td>
 						            	
-						            	<td><a href='{{ url("hr/operation/job_card?associate=$employee->associate_id&month_year=$month") }}' target="_blank">{{ $employee->associate_id }}</a></td>
+						            	<td>
+						            		<a class="job_card" data-name="{{ $employee->as_name }}" data-associate="{{ $employee->associate_id }}" data-month-year="{{ $month }}" data-toggle="tooltip" data-placement="top" title="" data-original-title="Job Card">{{ $employee->associate_id }}</a>
+						            	</td>
 						            	<td>
 						            		<b>{{ $employee->as_name }}</b>
 						            	</td>
@@ -675,20 +681,20 @@
 	</div>
 </div>
 
-<div class="modal right fade" id="right_modal_lg" tabindex="-1" role="dialog" aria-labelledby="right_modal_lg">
+<div class="modal right fade" id="right_modal_lg-group" tabindex="-1" role="dialog" aria-labelledby="right_modal_lg-group">
   <div class="modal-dialog modal-lg right-modal-width" role="document" > 
     <div class="modal-content">
       <div class="modal-header">
       	<a class="view prev_btn" data-toggle="tooltip" data-dismiss="modal" data-placement="top" title="" data-original-title="Back to Report">
 			<i class="las la-chevron-left"></i>
 		</a>
-        <h5 class="modal-title right-modal-title text-center" id="modal-title-right"> &nbsp; </h5>
+        <h5 class="modal-title right-modal-title text-center" id="modal-title-right-group"> &nbsp; </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        <div class="modal-content-result" id="content-result">
+        <div class="modal-content-result content-result" id="content-result-group">
         	
         </div>
       </div>
@@ -699,6 +705,7 @@
 
 <script type="text/javascript">
     var loaderModal = '<div class="panel"><div class="panel-body"><p style="text-align:center;margin:10px;" class="loader-p"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>';
+    var loaderContent = '<div class="animationLoading"><div id="container-loader"><div id="one"></div><div id="two"></div><div id="three"></div></div><div id="four"></div><div id="five"></div><div id="six"></div></div>';
     $(".overlay-modal, .item_details_dialog").css("opacity", 0);
     /*Remove inline styles*/
     $(".overlay-modal, .item_details_dialog").removeAttr("style");
@@ -762,9 +769,9 @@
     	var part = e;
     	var input = @json($urldata);
     	var pareUrl = input+part;
-    	$("#modal-title-right").html(' '+body+' Salary Details');
-    	$('#right_modal_lg').modal('show');
-    	$("#content-result").html(loaderModal);
+    	$("#modal-title-right-group").html(' '+body+' Salary Details');
+    	$('#right_modal_lg-group').modal('show');
+    	$("#content-result-group").html(loaderContent);
     	$.ajax({
             url: '/hr/reports/group-salary-sheet-details?'+pareUrl,
             data: {
@@ -775,7 +782,7 @@
             	// console.log(response);
                 if(response !== 'error'){
                 	setTimeout(function(){
-                		$("#content-result").html(response);
+                		$("#content-result-group").html(response);
                 	}, 1000);
                 }else{
                 	console.log(response);

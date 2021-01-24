@@ -33,6 +33,7 @@
     .modal-h3{
       line-height: 15px !important;
     }
+    
   </style>
 @endpush
 <div class="main-content">
@@ -255,11 +256,13 @@
         </div><!-- /.page-content -->
     </div>
 </div>
+@include('common.right-modal')
 @push('js')
 <script src="{{ asset('assets/js/moment.min.js')}}"></script>
 <script type="text/javascript">
     $(document).ready(function(){   
         var loader = '<div class="panel"><div class="panel-body"><p style="text-align:center;margin:100px;"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>';
+        var loaderContent = '<div class="animationLoading"><div id="container-loader"><div id="one"></div><div id="two"></div><div id="three"></div></div><div id="four"></div><div id="five"></div><div id="six"></div></div>';
         $('#activityReport').on('submit', function(e) {
           e.preventDefault();
           salaryProcess();
@@ -281,7 +284,7 @@
           // console.log(loader)
           $("#result-section").show();
           $("#result-section-btn").show();
-          $("#result-data").html(loader);
+          $("#result-data").html(loaderContent);
           $("#single-employee-search").hide();
           var unit = $('select[name="unit"]').val();
           var location = $('select[name="location"]').val();
@@ -294,10 +297,10 @@
           if(month === '' || stauts === ''){
             flag = 1;
           }
-          /*if(unit === '' && location === ''){
-            flag = 1;
-            $.notify('Select One Unit Or Location', 'error');
-          }*/
+          // if(unit === '' && location === ''){
+          //   flag = 1;
+          //   $.notify('Select One Unit Or Location', 'error');
+          // }
           if(flag === 0){
             $('html, body').animate({
                 scrollTop: $("#result-data").offset().top

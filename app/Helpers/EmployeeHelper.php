@@ -115,8 +115,14 @@ class EmployeeHelper
 			    else if($minutes >= 0.75) $minutes = 1;
 			    else $minutes = 0;
 			    
+			    if($minutes > 0 && $minutes != 1){
+			    	$min = (int)round($minutes*60);
+			    	$minOT = min_to_ot();
+			    	$minutes = $minOT[$min]??0;
+			    }
+
 			    $overtimes = $diffExplode[0]+$minutes;
-			    $overtimes = number_format((float)$overtimes, 2, '.', '');
+			    $overtimes = number_format((float)$overtimes, 3, '.', '');
 		    }
 		    return $overtimes;
 		}
@@ -546,7 +552,19 @@ class EmployeeHelper
                 ->first();
 
         $late = $att->late??0;
-        $overtimes = $att->ot_hour??0; 
+        $overtimes = $att->ot_hour??0;
+
+        $diffExplode = explode('.', $overtimes);
+        $minutes = (isset($diffExplode[1]) ? $diffExplode[1] : 0);
+        $minutes = floatval('0.'.$minutes);
+        if($minutes > 0 && $minutes != 1){
+            $min = (int)round($minutes*60);
+            $minOT = min_to_ot();
+            $minutes = $minOT[$min]??0;
+        }
+
+        $overtimes = $diffExplode[0]+$minutes;
+        
         $present = $att->present??0;
 
         $getSalary = DB::table('hr_monthly_salary')

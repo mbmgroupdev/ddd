@@ -13,7 +13,8 @@
            			<thead>
            				<tr>
            					<th>Month</th>
-           					<th>Absent</th>
+           					<th>Present</th>
+                    <th>Absent</th>
            					<th>Late</th>
            					<th>Leave</th>
            					<th>Holiday</th>
@@ -24,7 +25,8 @@
 						@foreach($getData as $data)
 						<tr>
 							<td>{{ date("F", mktime(0, 0, 0, $data->month, 1)) }}</td>
-							<td>{{ $data->absent }}</td>
+							<td>{{ $data->present }}</td>
+              <td>{{ $data->absent }}</td>
 							<td>{{ $data->late_count }}</td>
 							<td>{{ $data->leave }}</td>
 							<td>{{ $data->holiday }}</td>
