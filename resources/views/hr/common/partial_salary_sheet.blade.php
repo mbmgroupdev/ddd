@@ -7,8 +7,8 @@
             </button>
         </div>
         <div class="d-flex justify-content-between">
-            @if(isset($salary['disburse_date']))
-                @if($salary['disburse_date'] == null || $salary['disburse_date'] == '0000-00-00')
+                @if($salary['disburse_date'] && $salary['disburse_date'] != '0000-00-00')
+                @else
                 <div class="has-float-label">
                     <input style="height: 30px;line-height: 30px;" type="date" class="form-control" name="print-date" id="print-date">
                     <label>Payment Date</label>
@@ -17,7 +17,6 @@
                     {{-- <button class="btn btn-sm btn-primary">Pay</button> --}}
                 </div>
                 @endif
-            @endif
         </div>
     </div>
 
