@@ -220,6 +220,8 @@ class DailyActivityReportController extends Controller
         $input = $request->all();
         // return $input;
         try {
+            ini_set('zlib.output_compression', 1);
+
             $input['area']       = isset($request['area'])?$request['area']:'';
             $input['otnonot']    = isset($request['otnonot'])?$request['otnonot']:'';
             $input['department'] = isset($request['department'])?$request['department']:'';
@@ -236,6 +238,10 @@ class DailyActivityReportController extends Controller
 
             if($input['report_type'] == 'two_day_att'){
                 return $this->twoDayAtt($input,$request);
+            }
+
+            if($input['report_type'] == 'att_statistics'){
+                return $this->attStatistics($input,$request);
             }
 
             $getEmployee = array();
@@ -588,7 +594,11 @@ class DailyActivityReportController extends Controller
 
         if(!empty($input['selected']) && ($input['report_group'] == 'as_line_id' || $input['report_group'] == 'as_floor_id')){
             $getEmployee = $getEmployee->filter(function($arr) use ($input){
-                return $arr->{$input['report_group']} == $input['selected'];
+                if($input['selected'] == 'null'){
+                    return $arr->{$input['report_group']} == '';
+                }else{
+                    return $arr->{$input['report_group']} == $input['selected'];
+                }
             })->values();
         }
 
@@ -668,10 +678,176 @@ class DailyActivityReportController extends Controller
                 });
         }
 
+        ini_set('zlib.output_compression', 1);
+
+        return view('hr.reports.daily_activity.attendance.two_day_att', compact('uniqueGroups', 'getEmployee', 'input', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area','pr','ab','lv','do','format','date','short_designation','avail_as'))->render();
+
+    }
+
+    public function attStatistics($input,$request)
+    {
+        $date = $request['date'];
+        $unit = unit_by_id();
+        $location = location_by_id();
+        $line = line_by_id();
+        $floor = floor_by_id();
+        $department = department_by_id();
+        $designation = designation_by_id();
+        $section = section_by_id();
+        $subSection = subSection_by_id();
+        $area = area_by_id();
+        
+        $getEmployee = DB::table('hr_as_basic_info')
+            ->select('as_id', 'as_gender', 'associate_id', 'as_line_id', 'as_unit_id','as_designation_id','as_oracle_code', 'as_department_id', 'as_floor_id', 'as_pic', 'as_name', 'as_contact', 'as_section_id','as_subsection_id')
+            ->whereIn('as_unit_id', auth()->user()->unit_permissions())
+            ->whereIn('as_location', auth()->user()->location_permissions())
+            ->when(!empty($input['unit']), function ($query) use($input){
+                if($input['unit'] == 145){
+                    return $query->whereIn('as_unit_id',[1, 4, 5]);
+                }else{
+                    return $query->where('as_unit_id',$input['unit']);
+                }
+            })
+            ->when(!empty($input['location']), function ($query) use($input){
+               return $query->where('as_location',$input['location']);
+            })
+            ->when(!empty($input['area']), function ($query) use($input){
+               return $query->where('as_area_id',$input['area']);
+            })
+            ->when(!empty($input['department']), function ($query) use($input){
+               return $query->where('as_department_id',$input['department']);
+            })
+            ->when(!empty($input['line_id']), function ($query) use($input){
+               return $query->where('as_line_id', $input['line_id']);
+            })
+            ->when(!empty($input['floor_id']), function ($query) use($input){
+               return $query->where('as_floor_id',$input['floor_id']);
+            })
+            ->when($request['otnonot']!=null, function ($query) use($input){
+               return $query->where('as_ot',$input['otnonot']);
+            })
+            ->when(!empty($input['section']), function ($query) use($input){
+               return $query->where('as_section_id', $input['section']);
+            })
+            ->when(!empty($input['subSection']), function ($query) use($input){
+               return $query->where('as_subsection_id', $input['subSection']);
+            })
+            ->when(!empty($input['selected']), function ($query) use($input){
+                if($input['report_group'] != 'as_line_id' && $input['report_group'] != 'as_floor_id'){
+                    if($input['selected'] == 'null'){
+                        return $query->whereNull($input['report_group']);
+                    }else{
+                        return $query->where($input['report_group'], $input['selected']);
+                    }
+                }
+            })
+            ->where(function($q) use ($date){
+                $q->where(function($qa) use ($date){
+                    $qa->where('as_status',1);
+                    $qa->where('as_doj' , '<=', $date);
+                });
+                $q->orWhere(function($qa) use ($date){
+                    $qa->whereIn('as_status',[2,3,4,5,6,7,8]);
+                    $qa->where('as_status_date' , '>', $date);
+                });
+
+            })
+            ->orderBy('temp_id', 'ASC')
+            ->get();
 
 
-        return view('hr.reports.daily_activity.attendance.two_day_att', compact('uniqueGroups', 'getEmployee', 'input', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area','pr','ab','lv','do','format','date','short_designation','avail_as'));
 
+        $avail = $getEmployee->pluck('associate_id');
+        
+
+
+        // modify data with current line & floor
+        $lineInfo = DB::table('hr_station')
+                    ->select('associate_id','changed_floor','changed_line')
+                    ->whereIn('associate_id',$avail)
+                    ->whereDate('start_date','<=',$date)
+                    ->where(function ($q) use($date) {
+                      $q->whereDate('end_date', '>=', $date);
+                      $q->orWhereNull('end_date');
+                    })
+                    ->get()->keyBy('associate_id');
+
+        if(count($lineInfo) > 0){
+            $getEmployee = $getEmployee->map(function ($arr) use ($lineInfo) {
+                $as_id = $arr->associate_id;
+                if(isset($lineInfo[$as_id])){
+                    $arr->df_line_id = $arr->as_line_id;
+                    $arr->df_floor_id = $arr->as_floor_id;
+                    $arr->as_line_id = $lineInfo[$as_id]->changed_line;
+                    $arr->as_floor_id = $lineInfo[$as_id]->changed_floor;
+
+                }
+                return $arr;
+            });
+        }
+
+        if(!empty($input['selected']) && ($input['report_group'] == 'as_line_id' || $input['report_group'] == 'as_floor_id')){
+            $getEmployee = $getEmployee->filter(function($arr) use ($input){
+                return $arr->{$input['report_group']} == $input['selected'];
+            })->values();
+        }
+
+        $avail_as = $getEmployee->pluck('as_id');
+        $avail = $getEmployee->pluck('associate_id');
+
+        $uniqueGroups = $getEmployee->groupBy($request['report_group'], true);
+
+        $format = $request['report_group'];
+
+        $table = get_att_table($input['unit']);
+
+        $pr = DB::table($table.' AS a')
+                ->select('a.*','b.associate_id')
+                ->leftjoin('hr_as_basic_info as b','b.as_id','a.as_id')
+                ->where('a.in_date', $date)
+                ->whereIn('a.as_id', $avail_as)
+                ->orderBy('temp_id', 'ASC')
+                ->get()->keyBy('associate_id');
+
+        $pr_emps = collect($pr)->pluck('associate_id');
+
+        $ab = DB::table('hr_absent AS a')
+                ->where('date', $date)
+                ->whereIn('associate_id', $avail)
+                ->get()->keyBy('associate_id');
+
+        $ab_emps = collect($ab)->pluck('associate_id');
+
+        $lv = DB::table('hr_leave')
+                ->whereIn('leave_ass_id', $avail)
+                ->where('leave_from', "<=", $date)
+                ->where('leave_to', ">=", $date)
+                ->get()->keyBy('leave_ass_id');
+
+        $lv_emps = collect($lv)->pluck('leave_ass_id');
+
+        $do = DB::table('holiday_roaster')
+                ->where('date', $date)
+                ->whereIn('as_id', $avail)
+                ->where('remarks', 'Holiday')
+                ->get()->keyBy('as_id');
+
+        $do_emps = collect($do)->pluck('as_id');
+
+        $count = [];
+        if($input['report_format'] == 1 && $input['report_group'] != null){
+            foreach($uniqueGroups as $key => $item) {
+                $emp = collect($item)->pluck('associate_id');
+                $count[$key]['total'] = count($emp);
+                $count[$key]['present'] = count($emp->intersect($pr_emps));
+                $count[$key]['leave'] = count($emp->intersect($lv_emps));
+                $count[$key]['holiday'] = count($emp->intersect($do_emps));
+                $count[$key]['absent'] = count($emp) - $count[$key]['present'] - $count[$key]['leave'] - $count[$key]['holiday'];
+                
+            }
+        }
+
+        return view('hr.reports.daily_activity.attendance.att_statistics', compact('uniqueGroups', 'getEmployee', 'input', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area','pr','ab','lv','do','format','date','avail_as','count'));
     }
 
    

@@ -161,6 +161,7 @@
                                             <?php
                                                if(auth()->user()->can('Attendance Report') || auth()->user()->can('Attendance Report')){
                                                    $reportType = [
+                                                        'att_statistics'=>'Attendance Statistics', 
                                                         'absent'=>'Absent', 
                                                         'before_absent_after_present'=>'Present After Being Absent', 
                                                         'in_out_missing'=>'In/Out Missing',
