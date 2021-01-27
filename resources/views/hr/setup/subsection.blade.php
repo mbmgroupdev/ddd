@@ -108,7 +108,7 @@
                         <div class="tab-pane fade active show" id="active" role="tabpanel" aria-labelledby="active-tab">
                          
                             <div class="table-responsive">
-                                <table id="global-datatable" class="table table-striped table-bordered" style="display: block;width: 100%;">
+                                <table id="global-datatable1" class="table table-striped table-bordered" style="display: block;width: 100%;">
                                     <thead>
                                         <tr>
                                             <th style="width: 10%;">Area Name</th>
@@ -181,6 +181,28 @@
 @push('js')
 <script type="text/javascript">
 $(document).ready(function(){
+
+    $('#global-datatable1').DataTable({
+        dom: "lBftrip",
+        buttons: [ {
+                  extend: 'excel', 
+                  className: 'btn btn-sm btn-warning',
+                  title: 'Subsection list',
+                  header: true,
+                  footer: false,
+                  exportOptions: {
+                      columns: [0,1,2,3,4],
+                      /*format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }*/
+                  },
+                  //"action": allExport,
+                  messageTop: ''
+              }
+        ]
+    })
     //Load Department List
     var area    = $("#hr_subsec_area_id");
     var department = $("#hr_subsec_department_id");

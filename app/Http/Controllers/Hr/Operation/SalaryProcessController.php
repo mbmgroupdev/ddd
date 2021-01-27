@@ -29,6 +29,7 @@ class SalaryProcessController extends Controller
     }
     public function unitWise(Request $request)
     {
+
         $input = $request->all();
         $input['department'] = $input['department']??'';
         $input['section'] = $input['section']??'';
@@ -53,6 +54,9 @@ class SalaryProcessController extends Controller
             if($audit == 0){
                 return view('hr.operation.salary.salary_status', compact('salaryStatus', 'input'));
             }*/
+            ini_set('zlib.output_compression', 1);
+
+            
             if(!in_array($input['unit'], [14,145])){
                 $getUnit = Unit::getUnitNameBangla($input['unit']);
             }else if($input['unit'] == 145){

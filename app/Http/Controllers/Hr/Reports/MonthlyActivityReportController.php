@@ -39,6 +39,7 @@ class MonthlyActivityReportController extends Controller
     {
         $input = $request->all();
         try {
+            ini_set('zlib.output_compression', 1);
             $yearMonth = explode('-', $input['month']);
             $month = $yearMonth[1];
             $year = $yearMonth[0];

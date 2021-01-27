@@ -52,6 +52,7 @@ class SummaryReportController extends Controller
         $input = $request->all();
         try {
             
+            ini_set('zlib.output_compression', 1);
             $unit = unit_by_id();
             $location = location_by_id();
             $line = line_by_id();
