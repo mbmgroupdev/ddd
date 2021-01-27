@@ -75,7 +75,7 @@ class BankSheetController extends Controller
             });
 
             $queryData->leftjoin(DB::raw('(' . $subSectionDataSql. ') AS subsec'), function($join) use ($subSectionData) {
-                $join->on('subsec.hr_subsec_id','emp.as_subsection_id')->addBinding($subSectionData->getBindings());
+                $join->on('subsec.hr_subsec_id','s.sub_section_id')->addBinding($subSectionData->getBindings());
             });
 
             $queryData->select('ben.bank_no','emp.as_id', 'emp.as_oracle_code', 'emp.as_pic', 'emp.as_name', 's.as_id AS associate_id', 's.total_payable', 's.bank_payable', 's.tds', 's.pay_status', 's.pay_type', 's.sub_section_id', 's.unit_id', 's.location_id', 's.designation_id', 'subsec.hr_subsec_area_id AS area_id', 'subsec.hr_subsec_department_id AS department_id', 'subsec.hr_subsec_section_id AS section_id');

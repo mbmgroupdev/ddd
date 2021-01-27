@@ -191,18 +191,12 @@ class MonthlyActivityReportController extends Controller
                 }
             }else{
                 $queryData->select('s.unit_id AS as_unit_id','s.as_id AS associate_id', 's.designation_id AS as_designation_id','subsec.hr_subsec_area_id AS as_area_id', 'subsec.hr_subsec_department_id AS as_department_id', 'subsec.hr_subsec_section_id AS as_section_id', 's.sub_section_id AS as_subsection_id', 's.pay_type AS bank_name');
-                $queryData->addSelect('deg.hr_designation_position','deg.hr_designation_name', 'ben.bank_no','emp.as_id','emp.as_gender', 'emp.as_oracle_code', 'emp.as_line_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 's.present', 's.absent', 's.ot_hour', 's.ot_rate', 's.total_payable','s.salary_payable', 's.bank_payable', 's.cash_payable', 's.tds', 's.stamp', 's.pay_status');
-                $totalSalary = round($queryData->sum("s.total_payable"));
-                $totalCashSalary = round($queryData->sum("s.cash_payable"));
-                $totalBankSalary = round($queryData->sum("s.bank_payable"));
-                $totalStamp = round($queryData->sum("s.stamp"));
-                $totalTax = round($queryData->sum("s.tds"));
-                $totalOtHour = ($queryData->sum("s.ot_hour"));
-                $totalOTAmount = round($queryData->sum(DB::raw('s.ot_hour * s.ot_rate')));
+                $queryData->addSelect('deg.hr_designation_position','deg.hr_designation_name', 'ben.bank_no','emp.as_id','emp.as_gender', 'emp.as_oracle_code', 'emp.as_line_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 's.present', 's.absent', 's.ot_hour', 's.ot_rate', 's.total_payable','s.salary_payable', 's.bank_payable', 's.cash_payable', 's.tds', 's.stamp', 's.pay_status',DB::raw('(ot_hour * ot_rate) as otAmount'));
+                
             }
 
             $getEmployee = $queryData->orderBy('deg.hr_designation_position', 'asc')->get();
-            // dd($getEmployee);
+
             if($input['report_format'] == 1 && $input['report_group'] != null){
                 $totalSalary = round(array_sum(array_column($getEmployee->toArray(),'groupTotal')));
                 $totalCashSalary = round(array_sum(array_column($getEmployee->toArray(),'groupCashSalary')));
@@ -213,9 +207,18 @@ class MonthlyActivityReportController extends Controller
                 $totalOtHour = array_sum(array_column($getEmployee->toArray(),'groupOt'));
                 $totalOTAmount = round(array_sum(array_column($getEmployee->toArray(),'groupOtAmount')));
             }else{
+                $datas = collect($getEmployee);
+                $totalSalary = round($datas->sum("total_payable"));
+                $totalCashSalary = round($datas->sum("cash_payable"));
+                $totalBankSalary = round($datas->sum("bank_payable"));
+                $totalStamp = round($datas->sum("stamp"));
+                $totalTax = round($datas->sum("tds"));
+                $totalOtHour = ($datas->sum("ot_hour"));
+                $totalOTAmount = round($datas->sum('otAmount'));
+
                 $totalEmployees = count($getEmployee);
             }
-            
+
             if($format != null && count($getEmployee) > 0 && $input['report_format'] == 0){
                 $getEmployeeArray = $getEmployee->toArray();
                 $formatBy = array_column($getEmployeeArray, $request['report_group']);
@@ -427,7 +430,7 @@ class MonthlyActivityReportController extends Controller
             $join->on('deg.hr_designation_id','emp.as_designation_id')->addBinding($designationData->getBindings());
         });
         $queryData->leftjoin(DB::raw('(' . $subSectionDataSql. ') AS subsec'), function($join) use ($subSectionData) {
-            $join->on('subsec.hr_subsec_id','emp.as_subsection_id')->addBinding($subSectionData->getBindings());
+            $join->on('subsec.hr_subsec_id','s.sub_section_id')->addBinding($subSectionData->getBindings());
         });
         $data = $queryData->orderBy('deg.hr_designation_position', 'asc')->get();
 
@@ -436,17 +439,15 @@ class MonthlyActivityReportController extends Controller
             ->addColumn('pic', function($data){
                 return '<img src="'.emp_profile_picture($data).'" class="small-image min-img-file">';
             })
-            ->addColumn('oracle_id', function($data){
-                return $data->as_oracle_code;
-            })
+           
             ->addColumn('associate_id', function($data) use ($input){
                 $month = $input['month'];
                 $jobCard = url("hr/operation/job_card?associate=$data->associate_id&month_year=$month");
                 // return '<a href="'.$jobCard.'" target="_blank">'.$data->associate_id.'</a>';
-                return '<a class="job_card" data-name="'.$data->as_name.'" data-associate="'.$data->associate_id.'" data-month-year="'.$month.'" data-toggle="tooltip" data-placement="top" title="" data-original-title="Job Card">'.$data->associate_id.'</a>';
+                return '<a class="job_card" data-name="'.$data->as_name.'" data-associate="'.$data->associate_id.'" data-month-year="'.$month.'" data-toggle="tooltip" data-placement="top" title="" data-original-title="Job Card">'.$data->associate_id.'</a> <br> '.$data->as_oracle_code;
             })
             ->addColumn('as_name', function($data){
-                return $data->as_name;
+                return $data->as_name.'<br>'.$data->as_contact;
             })
             ->addColumn('hr_designation_name', function($data) use ($getDesignation){
                 return $getDesignation[$data->designation_id]['hr_designation_name']??'';
@@ -460,7 +461,7 @@ class MonthlyActivityReportController extends Controller
             ->addColumn('total_day', function($data){
                 return ($data->present + $data->holiday + $data->leave);
             })
-            ->rawColumns(['DT_RowIndex', 'pic', 'oracle_id', 'associate_id', 'as_name', 'hr_designation_name', 'hr_department_name', 'present', 'absent', 'leave', 'holiday', 'ot_hour', 'total_day'])
+            ->rawColumns(['DT_RowIndex', 'pic', 'associate_id', 'as_name', 'hr_designation_name', 'hr_department_name', 'present', 'absent', 'leave', 'holiday', 'ot_hour', 'total_day'])
             ->make(true);
     }
 

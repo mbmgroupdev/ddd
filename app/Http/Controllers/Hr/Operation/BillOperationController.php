@@ -37,8 +37,9 @@ class BillOperationController extends Controller
     	$input['department'] = $input['department']??'';
     	$input['section'] = $input['section']??'';
     	$input['subSection'] = $input['subSection']??'';
+        $input['area'] = $input['area']??'';
+        $input['location'] = $input['location']??'';
     	try {
-    		// return $input;
     		// employee info
     		$employeeData = DB::table('hr_as_basic_info');
 	        $employeeDataSql = $employeeData->toSql();
@@ -52,6 +53,9 @@ class BillOperationController extends Controller
             ->whereIn('emp.as_unit_id', auth()->user()->unit_permissions())
             ->whereIn('emp.as_location', auth()->user()->location_permissions())
 
+            ->when(!empty($input['as_id']), function ($query) use($input){
+                return $query->whereIn('emp.associate_id', $input['as_id']);
+            })
             ->when(!empty($input['unit']), function ($query) use($input){
                 if($input['unit'] == 145){
                     return $query->whereIn('emp.as_unit_id',[1, 4, 5]);
@@ -106,8 +110,16 @@ class BillOperationController extends Controller
             $totalEmployees = count($getBillLists);
 
             // attendance info
-            
-            $tableName = get_att_table($request['unit']);
+            if(!empty($input['as_id'])){
+                $unitId = 1;
+                if(count($getBillList) > 0){
+                    $unitId = $getBillList[0]->as_unit_id;
+                }
+                $tableName = get_att_table($unitId);
+            }else{
+                $tableName = get_att_table($request['unit']);
+            }
+
             $attData = DB::table($tableName)
             ->select('in_date','as_id', 'in_time', 'out_time')
             ->whereIn('as_id',$employeeKey)

@@ -379,7 +379,7 @@
                                                     <input type="text" class="outtime manual form-control" name="new_outtime[]" id="punchouttime-{{ $data['date'] }}" value="" placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}} autocomplete="off">
                                                 </td>
                                             @endif
-                                            <td> 
+                                            <td id="punchot-{{ $data['date'] }}"> 
                                                 @if($info->as_ot==1)
                                                     {{ numberToTimeClockFormat($data['overtime_time']) }} 
                                                 @endif
@@ -393,7 +393,7 @@
                                                 <th>{{ $info->present }}</th>
                                                 <th colspan="4"></th>
                                                 <th style="text-align:right">Total OT</th>
-                                                <th>
+                                                <th id="totalOtHour">
                                                     @if($info->as_ot==1)
                                                         <input type="hidden" id="ot" value="{{ $info->ot_hour }}">
                                                         {{ numberToTimeClockFormat($info->ot_hour) }}
@@ -582,7 +582,7 @@ $(document).on('click', '.shift-change-btn', function(event) {
             },
             success: function(data)
             {
-                console.log(data)
+                // console.log(data)
                 $('.app-loader').hide();
                 $.notify(data.msg, data.type);
                 if(data.type === 'success'){
@@ -597,10 +597,19 @@ $(document).on('click', '.shift-change-btn', function(event) {
                     $("#billeligible-"+date).val(shiftData.bill_eligible);
                     $("#shiftclick-"+date).html(shiftData.startout);
                     $("#shiftclick-"+date).attr('data-original-title', shiftData.hr_shift_name);
+                    if(data.value !== ''){
+                        $("#punchintime-"+date).val(data.value.in_time);
+                        $("#punchouttime-"+date).val(data.value.out_time);
+                        $("#punchot-"+date).html(data.value.ot_hour);
+                        $("#totalOtHour").html(data.value.totalOt);
+                    }else{
+                        console.log('no record');
+                    }
+
                     setTimeout(function() {
                         $("#row-"+date).addClass('highlight');
                         $(".shiftchange").hide();
-                        $("#punchintime-"+date).focus();
+                        //$("#punchintime-"+date).focus();
                     }, 200);
                 }
             },

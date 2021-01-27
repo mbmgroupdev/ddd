@@ -168,7 +168,7 @@
                                                         'leave'=>'Leave'
                                                     ];
                                                 }
-                                                $reportType['ot'] = 'Over Time';
+                                                $reportType['ot'] = 'Overtime(OT)';
                                                 $reportType['working_hour'] = 'Working Hour';
 
                                                 if(auth()->user()->can('Attendance Report') || auth()->user()->can('Attendance Upload')){

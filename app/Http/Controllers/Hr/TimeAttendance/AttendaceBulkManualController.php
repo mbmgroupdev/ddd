@@ -23,7 +23,7 @@ class AttendaceBulkManualController extends Controller
     public function bulkManual(Request $request)
     {
         try {
-            
+ 
             if($request->associate != null && $request->month != null){
                 $check['month'] = date('m', strtotime($request->month));
                 $check['year'] = date('Y', strtotime($request->month));

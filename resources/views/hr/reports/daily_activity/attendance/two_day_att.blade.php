@@ -169,7 +169,7 @@
 			            	@endphp
 			            	<tr>
 				            	<td>
-				            		<a href='{{ url("hr/operation/job_card?associate=$employee->associate_id&month_year=$month") }}' target="_blank">
+				            		<a class="job_card" data-name="{{ $employee->as_name }}" data-associate="{{ $employee->associate_id }}" data-month-year="{{ $month }}" data-toggle="tooltip" data-placement="top" title="" data-original-title="Job Card">
 				            			@if($employee->as_oracle_code != null)
 				            				{{ $employee->as_oracle_code }}
 				            			@else
@@ -270,6 +270,12 @@
 					<thead>
 						<tr>
 							<th>Sl</th>
+							@if($format == 'as_floor_id' || $format == 'as_line_id')
+							<th>Unit</th>
+							@endif
+							@if($format == 'as_line_id')
+							<th>Floor</th>
+							@endif
 							@if($format == 'as_section_id' || $format == 'as_subsection_id')
 							<th>Department Name</th>
 							@endif
@@ -286,6 +292,22 @@
 						@foreach($uniqueGroups as $group => $employee)
 						<tr>
 							<td>{{ ++$i }}</td>
+							@if($format == 'as_floor_id' || $format == 'as_line_id')
+							<td>
+								@if($format == 'as_floor_id')
+									@php $unitIdfl = $floor[$group]['hr_floor_unit_id']??''; @endphp
+								@else
+									@php $unitIdfl = $line[$group]['hr_line_unit_id']??''; @endphp
+								@endif
+								{{ $unitIdfl != ''?($unit[$unitIdfl]['hr_unit_name']??''):'' }}
+							</td>
+							@endif
+							@if($format == 'as_line_id')
+							<td>
+								@php $lineFloorId = $line[$group]['hr_line_floor_id']??''; @endphp
+								{{ $lineFloorId != ''?($floor[$lineFloorId]['hr_floor_name']??''):'' }}
+							</td>
+							@endif
 							@if($format == 'as_section_id' || $format == 'as_subsection_id')
 							<td>
 								@php
