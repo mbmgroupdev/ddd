@@ -12,7 +12,7 @@
       width: 65px !important;
     }
     #dataTables th:nth-child(4) input{
-      width: 70px !important;
+      width: 120px !important;
     }
     #dataTables th:nth-child(5) input{
       width: 120px !important;
@@ -210,9 +210,8 @@
                                 <tr>
                                    <th>Sl.</th>
                                    <th>Photo</th>
-                                   <th>Oracle ID</th>
-                                   <th>Associate ID</th>
-                                   <th>Name</th>
+                                   <th>ID</th>
+                                   <th>Name & phone</th>
                                    <th>Designation</th>
                                    <th>Department</th>
                                    <th>Present</th>
@@ -341,8 +340,8 @@
         var selectable = []; //use 4,5,6,7,8,9,10,11,....and * for all
         var dropdownList = {};
 
-        var exportColName = ['Sl.','','Oracle ID','Associate ID','Name','Designation', 'Department', 'Present', 'Absent', 'Leave', 'Holiday', 'OT Hour', 'Total Day'];
-        var exportCol = [2,3,4,5,6,7,8,9, 10,11,12];
+        var exportColName = ['Sl.','','ID','Name','Designation', 'Department', 'Present', 'Absent', 'Leave', 'Holiday', 'OT Hour', 'Total Day'];
+        var exportCol = [2,3,4,5,6,7,8,9, 10,11];
 
         var dTable =  $('#dataTables').DataTable({
 
@@ -484,7 +483,6 @@
          columns: [
            { data: 'DT_RowIndex', name: 'DT_RowIndex' },
            { data: 'pic', name: 'pic' },
-           { data: 'oracle_id',  name: 'oracle_id' },
            { data: 'associate_id',  name: 'associate_id' },
            { data: 'as_name', name: 'as_name' },
            { data: 'hr_designation_name', name: 'hr_designation_name' },

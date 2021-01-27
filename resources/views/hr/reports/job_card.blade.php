@@ -318,13 +318,13 @@
                                         <table class="table" style="width:100%;border:1px solid #ccc;font-size:13px;display: block;overflow-x: auto;white-space: nowrap;"  cellpadding="2" cellspacing="0" border="1" align="center">
                                             <thead>
                                                 <tr>
-                                                    <th width="20%">Date</th>
+                                                    <th width="10%">Date</th>
                                                     <th width="20%">Attendance Status</th>
-                                                    <th width="20%">Floor</th>
-                                                    <th width="20%">Line</th>
-                                                    <th width="30%">In Time</th>
-                                                    <th width="30%">Out Time</th>
-                                                    <th width="30%">OT Hour</th>
+                                                    <th width="10%">Floor</th>
+                                                    <th width="10%">Line</th>
+                                                    <th width="10%">In Time</th>
+                                                    <th width="10%">Out Time</th>
+                                                    <th width="10%">OT Hour</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
