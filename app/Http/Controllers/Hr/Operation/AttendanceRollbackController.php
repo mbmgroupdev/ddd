@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Hr\Operation;
 
+use App\Helpers\EmployeeHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Hr\Absent;
-use Illuminate\Http\Request;
 use DB;
+use Illuminate\Http\Request;
 class AttendanceRollbackController extends Controller
 {
     public function index()
@@ -80,5 +81,18 @@ class AttendanceRollbackController extends Controller
     		$bug = $e->getMessage();
     		return redirect()->back()->with('error', $bug);
     	}
+    }
+
+    public function attUndo(Request $request)
+    {
+        try {
+            $input = $request->all();
+            if($input['as_id'] != null && $input['date'] != null){
+                EmployeeHelper::attendanceReCalculation($input['as_id'], $input['date']);
+            }
+            return 'success';
+        } catch (\Exception $e) {
+            return 'error';
+        }
     }
 }

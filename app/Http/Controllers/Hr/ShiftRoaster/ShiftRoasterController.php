@@ -81,6 +81,15 @@ class ShiftRoasterController extends Controller
                 $modifyFlag = 1;
               }
             }
+
+            if($type == 'General'){
+              $getStatus = EmployeeHelper::employeeDayStatusCheckActionAbsent($associate_id, $selectedDate);
+              if($getStatus == 'success'){
+                $modifyFlag = 1;
+              }
+            }
+
+            $getEmployee = Employee::getEmployeeAssIdWiseSelectedField($associate_id, ['as_id', 'as_unit_id']);
             // if type OT then employee attendance OT count change
             if($type == 'OT' || $type == 'General'){
               // check exists attendance
@@ -88,10 +97,14 @@ class ShiftRoasterController extends Controller
               if($getStatus == 'success'){
                 $modifyFlag = 1;
               }
+
+              // re check attendance
+              $history = EmployeeHelper::attendanceReCalculation($getEmployee->as_id, $selectedDate);
+
             }
 
             if($modifyFlag == 1){
-              $getEmployee = Employee::getEmployeeAssIdWiseSelectedField($associate_id, ['as_id', 'as_unit_id']);
+              
               $tableName = Custom::unitWiseAttendanceTableName($getEmployee->as_unit_id);
               if($month == date('m')){
                 $totalDay = date('d');

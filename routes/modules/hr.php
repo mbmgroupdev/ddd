@@ -1379,6 +1379,9 @@ Route::get("hr/operation/attendance-rollback-get-date", "Hr\Operation\Attendance
 Route::get("hr/operation/attendance-rollback", "Hr\Operation\AttendanceRollbackController@index");
 Route::post("hr/operation/attendance-rollback", "Hr\Operation\AttendanceRollbackController@process");
 
+// attendance undo
+Route::post('hr/operation/attendance-undo', 'Hr\Operation\AttendanceRollbackController@attUndo');
+
 //system setting routes
 Route::get('hr/setup/default_system_setting','Hr\Setup\SystemSettingController@showForm');
 Route::post('hr/setup/default_system_setting_save','Hr\Setup\SystemSettingController@saveForm');

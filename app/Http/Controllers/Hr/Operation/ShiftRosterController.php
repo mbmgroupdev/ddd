@@ -34,43 +34,53 @@ class ShiftRosterController extends Controller
                 $emp = DB::table('hr_as_basic_info')
                         ->where('associate_id',$ass_id)
                         ->first();
-                $att_table = get_att_table($emp->as_unit_id);
-                for($j=$input['start_day']; $j<=$input['end_day']; $j++)
-                {
-                    $day= "day_".$j;
-                    $roster = ShiftRoaster::where('shift_roaster_associate_id', $ass_id)
-                    ->where('shift_roaster_year', $year)
-                    ->where('shift_roaster_month', $month)
-                    ->first();
+                // check lock month
+                $checkL['month'] = $month;
+                $checkL['year'] = $year;
+                $checkL['unit_id'] = $emp->as_unit_id;
+                $checkLock = monthly_activity_close($checkL);
+                if($checkLock == 0){
+                    $att_table = get_att_table($emp->as_unit_id);
+                    for($j=$input['start_day']; $j<=$input['end_day']; $j++)
+                    {
+                        $day= "day_".$j;
+                        $roster = ShiftRoaster::where('shift_roaster_associate_id', $ass_id)
+                        ->where('shift_roaster_year', $year)
+                        ->where('shift_roaster_month', $month)
+                        ->first();
 
-                    
-                    if($roster != null){
-                        $roster->update([$day => $shift]);
-                        $getId = $roster->shift_roaster_id;
-                    }else{
-                    	$getBasic = Employee::getEmployeeAssociateIdWise($ass_id);
-                        $getId = ShiftRoaster::create([
-                            'shift_roaster_associate_id' => $ass_id,
-                            'shift_roaster_user_id' => $getBasic->as_id,
-                            'shift_roaster_year' => $year,
-                            'shift_roaster_month' => $month,
-                            $day => $shift
-                        ])->shift_roaster_id;
+                        
+                        if($roster != null){
+                            $roster->update([$day => $shift]);
+                            $getId = $roster->shift_roaster_id;
+                        }else{
+                            $getBasic = Employee::getEmployeeAssociateIdWise($ass_id);
+                            $getId = ShiftRoaster::create([
+                                'shift_roaster_associate_id' => $ass_id,
+                                'shift_roaster_user_id' => $getBasic->as_id,
+                                'shift_roaster_year' => $year,
+                                'shift_roaster_month' => $month,
+                                $day => $shift
+                            ])->shift_roaster_id;
 
-                    }
-                    $date = date('Y-m-d', strtotime($m.'-'.$j));
-                    if($date <= date('Y-m-d')){
-                        $att = DB::table($att_table)->where('as_id',$emp->as_id)->where('in_date',$date)->first();
-                        if($att){
-
-                            $queue = (new ProcessAttendanceOuttime($att_table, $att->id, $emp->as_unit_id))
-                                ->delay(Carbon::now()->addSeconds(2));
-                                dispatch($queue);
                         }
-                    }
 
-                    log_file_write("Shift Roster Day Wise Updated", $getId);
+                        $date = date('Y-m-d', strtotime($m.'-'.$j));
+                        EmployeeHelper::attendanceReCalculation($emp->as_id, $date);
+                        // if($date <= date('Y-m-d')){
+                        //     $att = DB::table($att_table)->where('as_id',$emp->as_id)->where('in_date',$date)->whereNotNull('out_time')->whereNotNull('in_time')->where('remarks', '!=', 'DSI')->first();
+                        //     if($att){
+
+                        //         $queue = (new ProcessAttendanceOuttime($att_table, $att->id, $emp->as_unit_id))
+                        //             ->delay(Carbon::now()->addSeconds(2));
+                        //             dispatch($queue);
+                        //     }
+                        // }
+
+                        log_file_write("Shift Roster Day Wise Updated", $getId);
+                    }
                 }
+                
             }
             DB::commit();
             $data['type'] = 'success';

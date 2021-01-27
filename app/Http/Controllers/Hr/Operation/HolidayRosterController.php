@@ -107,10 +107,17 @@ class HolidayRosterController extends Controller
 				            	if($type == 'Holiday'){
 				              		$getStatus = EmployeeHelper::employeeAttendanceAbsentDelete($associate_id, $selectedDate);
 				            	}
+
+				            	if($type == 'General'){
+					              $getStatus = EmployeeHelper::employeeDayStatusCheckActionAbsent($associate_id, $selectedDate);
+					              
+					            }
 				            	// if type OT then employee attendance OT count change
 					            if($type == 'OT' || $type == 'General'){
 					              	// check exists attendance
 					              	$getStatus = EmployeeHelper::employeeAttendanceOTUpdate($associate_id, $selectedDate);
+					              	// re check attendance
+              						$history = EmployeeHelper::attendanceReCalculation($getEmployee->as_id, $selectedDate);
 					            }
 					              	
 				              	$tableName = get_att_table($getEmployee->as_unit_id);
