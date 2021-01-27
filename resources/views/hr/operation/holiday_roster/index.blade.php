@@ -453,7 +453,7 @@ $(document).ready(function(){
                 },
                 success: function(response)
                 {
-                    // console.log(response.message);
+                    console.log(response.message);
                     for (i = 0; i < response.message.length; i++) {
                         $.notify(response.message[i], response.type);
                     }

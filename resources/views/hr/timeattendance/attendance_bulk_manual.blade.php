@@ -290,6 +290,10 @@
                                                 @if($data['outside'] != null)
                                                 <span style="height: auto;float:right;cursor:pointer;" class="label label-success pull-right" data-tooltip="{{$data['outside_msg']}}" data-tooltip-location="top">{{$data['outside']}}</span>
                                                 @endif
+
+                                                @if($data['present_status'] == 'A' || $data['present_status'] == 'Weekend(General) - A')
+                                                <a class="attendance-rollback btn btn-sm btn-primary pull-right text-white" data-toggle="tooltip" data-placement="top" title="" data-original-title="Attendance reload" data-date="{{ $data['date'] }}" data-asid="{{ $info->as_id }}"><i class="fa fa-undo"></i></a>
+                                                @endif
                                             </td>
                                             <td>{{ $data['floor'] }}</td>
                                             <td>
@@ -619,6 +623,36 @@ $(document).on('click', '.shift-change-btn', function(event) {
             }
         });
     }
+});
+
+$(document).on('click', '.attendance-rollback', function(event) {
+    let date = $(this).data('date');
+    let asId = $(this).data('asid');
+    $('.app-loader').show();
+    $.ajax({
+        url : "{{ url('hr/operation/attendance-undo') }}",
+        type: 'post',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+        },
+        data: {
+           as_id: asId,
+           date: date
+        },
+        success: function(data)
+        {
+            // console.log(data)
+            $('.app-loader').hide();
+            $.notify("Successfully Undo", 'success');
+            if(data === 'success'){
+                window.location.reload();
+            }
+        },
+        error: function(reject)
+        {
+           $.notify(reject, 'error');
+        }
+    });
 });
     
 </script>

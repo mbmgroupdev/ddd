@@ -242,6 +242,40 @@ class EmployeeHelper
 		}
 	}
 
+	public static function employeeDayStatusCheckActionAbsent($associateId, $date)
+	{
+		try {
+			$getEmployee = Employee::getEmployeeAssociateIdWise($associateId);
+			$flag = 1;
+			$getLeave = Leave::getDateStatusWiseEmployeeLeaveCheck($associateId, $date, 1);
+			if($getLeave == null){
+				$flag = 0;
+			}
+			$tableName = get_att_table($getEmployee->as_unit_id);
+			$getAttendance = DB::table($tableName)
+			->where('as_id', $getEmployee->as_id)
+			->where('in_date', $date)
+			->first();
+			if($getAttendance == null){
+				$flag = 0;
+			}
+
+			if($flag == 0){
+				DB::table('hr_absent')
+	            ->insert([
+	                'associate_id' => $getEmployee->associate_id,
+	                'hr_unit'  => $getEmployee->as_unit_id,
+	                'date'  => $date
+	            ]);
+			}
+
+			return 'success';
+		} catch (\Exception $e) {
+			$bug = $e->getMessage();
+			return $bug;
+		}
+	}
+
 	public static function employeeStatusDateWiseAbsentDelete($associateId, $date)
 	{
 		try {

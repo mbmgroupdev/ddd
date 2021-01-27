@@ -1081,11 +1081,21 @@ if(!function_exists('min_to_ot')){
                $min[$k] = round($v/60, 3);
            }
            return $min;
-        });      
-
- 
-
+        });
     }
+}
+
+// all dates between two dates
+function displayBetweenTwoDates($date1, $date2, $format = 'Y-m-d' ) {
+    $dates = array();
+    $current = strtotime($date1);
+    $date2 = strtotime($date2);
+    $stepVal = '+1 day';
+    while( $current <= $date2 ) {
+        $dates[] = date($format, $current);
+        $current = strtotime($stepVal, $current);
+    }
+    return $dates;
 }
 
 
