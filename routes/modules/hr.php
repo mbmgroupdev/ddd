@@ -1426,6 +1426,8 @@ Route::group(['prefix' => 'hr/operation/holiday-duty','namespace' => 'Hr\Operati
 
 // Buyer Mode 
 Route::group(['prefix' => 'hr/buyer','namespace' => 'Hr\Buyer'], function(){
-	Route::get('/','BuyerModeController@generate');
+	Route::get('/','BuyerModeController@index');
 	Route::post('/generate','BuyerModeController@generate');
+	Route::get('/sync/{id}','BuyerModeController@syncIndex');
+	Route::post('/sync/{id}','BuyerModeController@sync');
 });
