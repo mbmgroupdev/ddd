@@ -56,7 +56,7 @@
 
         <div class="page-content"> 
             <div class="iq-accordion career-style mat-style  ">
-                {{-- <div class="iq-card iq-accordion-block accordion-active">
+                <div class="iq-card iq-accordion-block">
                    <div class="active-mat clearfix">
                       <div class="container-fluid">
                          <div class="row">
@@ -67,32 +67,47 @@
                    <div class="accordion-details">
                       <div class="row1">
                           <div class="col-12">
-                              <form class="" role="form" id="employeeWiseSalary">
+                              <form class="" role="form" id="employeeWiseBill">
                                   <div class="panel">
                                         <div class="panel-body">
                                             <div class="row">
-                                                <div class="col-sm-6">
+                                                <div class="col-sm-3">
                                                     <div class="form-group has-float-label has-required select-search-group">
                                                         {{ Form::select('as_id[]', [],'', ['id'=>'as_id', 'class'=> 'allassociates form-control select-search no-select', 'multiple'=>"multiple",'style', 'data-validation'=>'required']) }}
                                                         <label for="as_id">Employees</label>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-2">
-                                                  <div class="form-group has-float-label select-search-group">
-                                                    <select name="formattype" class="form-control capitalize select-search" id="formattype" >
-                                                        <option value="0" selected>Single</option>
-                                                        <option value="1">Combine</option>
-                                                    </select>
-                                                    <label for="formattype">Format</label>
-                                                  </div>
-                                                </div>
-                                                <div class="col-sm-2">
                                                     <div class="form-group has-float-label has-required">
-                                                      <input type="month" class="report_date form-control" id="emp-month" name="emp_month_year" placeholder=" Month-Year"required="required" value="{{ date('Y-m', strtotime('-1 month')) }}"autocomplete="off" />
-                                                      <label for="emp-month">Month</label>
+                                                        <input type="date" class="report_date datepicker form-control" id="associate_from_date" name="from_date" placeholder="Y-m-d" required="required" value="{{ date('Y-m-d') }}" autocomplete="off" />
+                                                        <label for="associate_from_date">From Date</label>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-2">
+                                                    <div class="form-group has-float-label has-required">
+                                                        <input type="date" class="report_date datepicker form-control" id="associate_to_date" name="to_date" placeholder="Y-m-d" required="required" value="{{ date('Y-m-d') }}" autocomplete="off" />
+                                                        <label for="associate_to_date">To Date</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                  <div class="form-group has-float-label select-search-group">
+                                                    <?php
+                                                      $status = ['0'=>'Unpaid','1'=>'Paid'];
+                                                    ?>
+                                                    {{ Form::select('pay_status', $status, 0, ['placeholder'=>'Select Payable Status ', 'class'=>'form-control capitalize select-search', 'id'=>'associate_pay_status']) }}
+                                                    <label for="associate_pay_status">Payable Status</label>
+                                                  </div>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                  <div class="form-group has-float-label select-search-group">
+                                                    <?php
+                                                      $billType = ['1'=>'Tiffin','2'=>'Dinner'];
+                                                    ?>
+                                                    {{ Form::select('bill_type', $billType, 0, ['placeholder'=>'Select Payable Status ', 'class'=>'form-control capitalize select-search', 'id'=>'associate_bill_type']) }}
+                                                    <label for="associate_bill_type">Bill Type</label>
+                                                  </div>
+                                                </div>
+                                                <div class="col-sm-1 no-padding">
                                                     <button onclick="individual()" type="button" class="btn btn-primary btn-sm" id="individualBtn"><i class="fa fa-save"></i> Generate</button>
                                                     
                                                 </div>
@@ -103,7 +118,7 @@
                           </div>
                       </div>
                    </div>
-                </div> --}}
+                </div>
                 <div class="iq-card iq-accordion-block accordion-active ">
                    <div class="active-mat clearfix">
                       <div class="container-fluid">
@@ -457,30 +472,32 @@
 
     //individual salary sheet
     function individual() {
-        var form = $("#employeeWiseSalary");
+        var form = $("#employeeWiseBill");
         var employee = $("#as_id").val();
-        var month = $("#emp-month").val();
+        var from_date = $("#associate_from_date").val();
+        var to_date = $("#associate_to_date").val();
         
-        if(employee.length > 0 && month !== ''){
-            $('.app-loader').show()
+        if(employee.length > 0 && from_date !== '' && to_date !== ''){
+            
             $("#result-process-bar").show();
             $('#setFlug').val(0);
             processbar(0);
             $.ajax({
                 type: "get",
-                url: '{{ url("hr/operation/employee-wise-salary-sheet")}}',
+                url: '{{ url("hr/operation/filter-wise-tiffin-dinner-bill-sheet")}}',
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
                 },
                 data: form.serialize(), // serializes the form's elements.
                 success: function(response)
                 {
+                  // console.log(response);
                     if(response !== 'error'){
                         setTimeout(() => {
                             $('#setFlug').val(1); 
                             processbar('success');
                             $("#result-show").html(response);
-                            $('.app-loader').hide();
+                            
                         }, 1000);
                     }else{
                         $('#setFlug').val(2); 

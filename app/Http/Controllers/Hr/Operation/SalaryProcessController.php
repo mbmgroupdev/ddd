@@ -157,7 +157,7 @@ class SalaryProcessController extends Controller
                 $join->on('emp.associate_id','s.as_id')->addBinding($employeeData->getBindings());
             });
             $queryData->leftjoin(DB::raw('(' . $subSectionDataSql. ') AS subsec'), function($join) use ($subSectionData) {
-                $join->on('subsec.hr_subsec_id','emp.as_subsection_id')->addBinding($subSectionData->getBindings());
+                $join->on('subsec.hr_subsec_id','s.sub_section_id')->addBinding($subSectionData->getBindings());
             });
             
             if(!empty($input['pay_status'])){

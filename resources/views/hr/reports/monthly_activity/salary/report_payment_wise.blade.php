@@ -160,7 +160,7 @@
 
 			<div class="content_list_section">
 				@if($input['report_format'] == 0)
-					<table class="table table-bordered table-hover table-head" style="width:100%;border:0 !important;margin-bottom:0;font-size:14px;text-align:left" border="1" cellpadding="5">
+					<table class="table table-bordered table-hover table-head table-responsive" style="width:100%;border:0 !important;margin-bottom:0;font-size:14px;text-align:left" border="1" cellpadding="5">
 					@foreach($uniqueGroupEmp as $group => $employees)
 					
 						<thead>

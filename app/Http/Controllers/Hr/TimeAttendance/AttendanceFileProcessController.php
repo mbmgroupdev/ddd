@@ -6,11 +6,13 @@ use App\Helpers\Custom;
 use App\Helpers\EmployeeHelper;
 use App\Http\Controllers\Controller;
 use App\Jobs\ProcessAttendanceFile;
+use App\Jobs\ProcessAttendanceHistory;
 use App\Jobs\ProcessAttendanceIntime;
 use App\Jobs\ProcessAttendanceOuttime;
 use App\Jobs\ProcessEmployeeAbsent;
 use App\Jobs\ProcessUnitWiseSalary;
 use App\Models\Employee;
+use App\Models\Hr\AttendanceHistory;
 use App\Models\Hr\Bills;
 use App\Models\Hr\HolidayRoaster;
 use App\Models\Hr\YearlyHolyDay;
@@ -67,6 +69,8 @@ class AttendanceFileProcessController extends Controller
         $msg = array();
         $input = $request->all();
         $unit = $input['unit'];
+        $totalRow = count($input['getdata']) - 1;
+        $rowData = [];
         try {
             foreach($input['getdata'] as $key => $value) {
                 $lineData = $value;
@@ -138,18 +142,43 @@ class AttendanceFileProcessController extends Controller
 
                 //get Employee Information from as_basic_info table according to the RFID
                 if(strlen($rfid)>0){
+                    // if($unit == 3 && $input['device'] == 2){
+                    //     $as_info = Employee::
+                    //     where('as_id', $asId)
+                    //     ->where('as_status', 1)
+                    //     ->first();
+                    // }else{
+                    //     $as_info = Employee::
+                    //     where('as_rfid_code', $rfid)
+                    //     ->where('as_status', 1)
+                    //     ->first();
+                    // }
+
+                    // attendance history record
                     if($unit == 3 && $input['device'] == 2){
-                        $as_info = Employee::
-                        where('as_id', $asId)
-                        ->where('as_status', 1)
+                        $as_info = Employee::where('as_id', $asId)
+                        ->where('as_status', '!=', 0)
                         ->first();
                     }else{
-                        $as_info = Employee::
-                        where('as_rfid_code', $rfid)
-                        ->where('as_status', 1)
+                        $as_info = Employee::where('as_rfid_code', $rfid)
+                        ->where('as_status', '!=', 0)
                         ->first();
                     }
-
+                    $attHis = [];
+                    if(!empty($as_info) && $checktime != null){
+                        $recordDate = date("Y-m-d", strtotime($checktime));
+                        $attHis['as_id'] = $as_info->as_id;
+                        $attHis['unit_id'] = $as_info->as_unit_id;
+                        $attHis['att_date'] = $recordDate;
+                        $attHis['raw_data'] = $checktime;
+                        $rowData[] = $attHis;
+                        if($totalRow == $key && count($rowData) > 0){
+                            $queueH = (new ProcessAttendanceHistory($rowData))
+                            ->delay(Carbon::now()->addSeconds(15));
+                            dispatch($queueH);
+                        }
+                        
+                    }
                     
                     if(!empty($as_info) && strlen($rfid)>0 && $checktime != null && $as_info->as_status == 1){
                         // check other unit ot employee

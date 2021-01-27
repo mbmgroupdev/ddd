@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\Hr\Operation;
 
+use App\Helpers\EmployeeHelper;
 use App\Http\Controllers\Controller;
+use App\Jobs\ProcessAttendanceOuttime;
 use App\Models\Employee;
 use App\Models\Hr\Shift;
 use App\Models\Hr\ShiftRoaster;
-use Illuminate\Http\Request;
-use App\Jobs\ProcessAttendanceOuttime;
 use Carbon\Carbon;
 use DB;
+use Illuminate\Http\Request;
 
 class ShiftRosterController extends Controller
 {
@@ -119,6 +120,8 @@ class ShiftRosterController extends Controller
                     ])->shift_roaster_id;
                 }
                 log_file_write("Shift Roster Day Wise Updated", $getId);
+
+                $data['value'] = EmployeeHelper::attendanceReCalculation($input['as_id'], $input['date']);
             }
             $data['type'] = 'success';
             $data['msg'] = 'Successfully Change Shift';
