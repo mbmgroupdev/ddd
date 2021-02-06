@@ -202,10 +202,10 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <div class="table d-table hide">
+                    <div class="table d-table1 hide">
                       <div class="iq-card">
                         <div class="iq-card-body">
-                          <table id="dataTables" class="table table-striped table-bordered table-head w-100" style="display: block;overflow-x: auto;width: 100%;">
+                          <table id="dataTables" class="table table-striped table-bordered table-head w-100 table-responsive" style="display: block;overflow-x: auto;width: 100%;">
                              <thead>
                                 <tr>
                                    <th>Sl.</th>
@@ -348,7 +348,7 @@
          order: [], //reset auto order
          lengthMenu: [[25, 50, 100, -1], [25, 50, 100, "All"]],
          processing: true,
-         responsive: false,
+         responsive: true,
          serverSide: true,
          cache: false,
          language: {
@@ -553,7 +553,7 @@
           }
           else{
             
-            $(".d-table").removeClass('hide');
+            $(".d-table1").removeClass('hide');
             dTable.draw();
           }
        });

@@ -258,6 +258,14 @@ Route::get('/hr/timeattendance/attendance_process_wise', 'Hr\TimeAttendance\Atte
 Route::get('hr/timeattendance/attendance_bulk_manual', 'Hr\TimeAttendance\AttendaceBulkManualController@bulkManual');
 Route::post('hr/timeattendance/attendance_bulk_store', 'Hr\TimeAttendance\AttendaceBulkManualController@bulkManualStore');
 
+// attendance raw file process
+Route::get('hr/operation/attendance-raw-file', 'Hr\Operation\AttendanceRawFileController@index');
+Route::post('hr/operation/attendance-raw-file', 'Hr\Operation\AttendanceRawFileController@store');
+
+Route::get('hr/operation/undeclared-employee', 'Hr\Operation\UndeclaredEmployeeController@index');
+Route::get('hr/operation/undeclared-employee-data', 'Hr\Operation\UndeclaredEmployeeController@getData');
+Route::post('hr/operation/undeclared-employee-operation', 'Hr\Operation\HolidayRosterController@undecrlarEmployee');
+
 //attendance new process
 Route::post('/hr/timeattendance/attendance_manual/import', 'Hr\TimeAttendance\AttendanceFileProcessController@importFile');
 Route::post('/hr/timeattendance/attendance_process_wise_data', 'Hr\TimeAttendance\AttendanceFileProcessController@attFileProcess');
@@ -439,6 +447,7 @@ Route::get('hr/operation/tiffin-dinner', 'Hr\Operation\BillOperationController@i
 Route::get('hr/operation/filter-wise-tiffin-dinner-bill-sheet', 'Hr\Operation\BillOperationController@filterWise');
 Route::post('hr/operation/review-tiffin-dinner-bill', 'Hr\Operation\BillOperationController@review');
 Route::post('hr/operation/pay-tiffin-dinner-bill', 'Hr\Operation\BillOperationController@pay');
+Route::post('hr/operation/pay-tiffin-dinner-bill-excel', 'Hr\Operation\BillOperationController@excel');
 
 //---------Hr/ Payroll-----------//
 Route::get('hr/payroll/bank-sheet', 'Hr\Payroll\BankSheetController@index');
@@ -500,6 +509,7 @@ Route::post('hr/payroll/promotion_update', 'Hr\Recruitment\BenefitController@upd
 Route::get('hr/payroll/promotion-associate-search', 'Hr\Recruitment\BenefitController@searchPromotedAssociate')->middleware(['permission:Manage Promotion']);
 Route::get('hr/payroll/promotion-associate-info', 'Hr\Recruitment\BenefitController@promotedAssociateInfo')->middleware(['permission:Manage Promotion']);
 Route::get('hr/payroll/benefit/{associate_id}', 'Hr\Recruitment\BenefitController@showAssociateBenefit');
+Route::post('hr/payroll/benefit-rollback', 'Hr\Recruitment\BenefitController@empRollback');
 
 Route::get('hr/payroll/promotion-list', 'Hr\Recruitment\BenefitController@promotionList');
 Route::get('hr/payroll/promotion-list-data', 'Hr\Recruitment\BenefitController@promotionListData');
@@ -1029,7 +1039,7 @@ Route::post('hr/reports/filetag/search', 'Hr\Reports\FileTagController@fileTagSe
 
 // JOB CARD
 Route::get('hr/operation/job_card', 'Hr\Reports\JobCardController@jobCard')->middleware(['permission:Job Card']);
-Route::get('hr/operation/partial_job_card', 'Hr\Reports\JobCardController@jobCardPartial')->middleware(['permission:Job Card']);
+Route::get('hr/operation/partial_job_card', 'Hr\Reports\JobCardController@jobCardPartial');
 
 
 //EMPLOYEE
@@ -1082,7 +1092,7 @@ Route::get('hr/reports/get-daily-att-excel', 'Hr\Reports\AttendanceReportControl
 Route::get('hr/reports/before-absent-after-present', 'Hr\Reports\DailyActivityReportController@beforeAfterStatus');
 Route::get('hr/reports/before-absent-after-present-report', 'Hr\Reports\DailyActivityReportController@beforeAfterReport');
 
-// yearly acitvity
+// yearly activity
 Route::get('hr/reports/employee-yearly-activity', 'Hr\Reports\DailyActivityReportController@employeeActivity');
 Route::get('hr/reports/employee-yearly-activity-report', 'Hr\Reports\DailyActivityReportController@employeeActivityReport');
 Route::get('hr/reports/employee-yearly-activity-report-modal', 'Hr\Reports\DailyActivityReportController@employeeActivityReportModal');
@@ -1401,6 +1411,9 @@ Route::post('hr/operation/partial-salary/disburse', 'Hr\Operation\VoucherControl
 
 Route::get('/hr/reports/monthly-ot-report', 'Hr\ReportController@monthlyOT');
 Route::get('/hr/reports/monthly-mmr-report', 'Hr\ReportController@monthlyMMR');
+
+// monthly analytics
+Route::get('hr/reports/monthly-analytics', 'Hr\Reports\AnalyticsController@index');
 
 Route::get('hr/operation/test', 'Hr\Operation\VoucherController@test');
 Route::get('hr/test', 'TestController@test');

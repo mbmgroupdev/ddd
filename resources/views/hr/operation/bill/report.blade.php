@@ -26,7 +26,13 @@
         .flex-chunk:last-child{
             margin-right: 0px;border-right: 0px solid;padding-right: 0px;
         }
-        
+        .modal-footer {
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+            overflow: hidden;
+            background: #fff;
+        }
     </style>
     @php
         $locations = location_by_id();
@@ -44,6 +50,9 @@
         <input type="hidden" value="{{ $input['section'] }}" name="section">
         <input type="hidden" value="{{ $input['department'] }}" name="department">
         <input type="hidden" value="{{ $input['area']}}" name="area">
+        <input type="hidden" value="{{ $input['date_type']}}" name="date_type">
+        <input type="hidden" value="{{ $input['month_year']}}" name="month_year">
+        <input type="hidden" value="{{ $input['pay_status']}}" name="pay_status">
         @csrf
         @foreach($uniqueUnit as $key=>$unit)
             @php
@@ -83,7 +92,11 @@
                                         @endif 
                                         বিল
                                         <br/>
+                                        @if($input['date_type'] == 'range')
                                         তারিখ: {{ Custom::engToBnConvert($fromDate) }} থেকে {{ Custom::engToBnConvert($toDate) }}
+                                        @elseif($input['date_type'] == 'month')
+                                        মাসঃ {{ date_to_bn_month($input['month_year']) }}
+                                        @endif
                                         
                                     </h5>
                                 </td>
@@ -318,36 +331,37 @@
     </form>
     
 </div>
-{{-- modal --}}
-<div class="item_details_section">
-    <div class="overlay-modal overlay-modal-details" style="margin-left: 0px; display: none;">
-      <div class="item_details_dialog show_item_details_modal" style="min-height: 115px;">
-        <div class="fade-box-details fade-box">
-          <div class="inner_gray clearfix">
-            <div class="inner_gray_text text-center" id="heading">
-             <h3 class="no_margin text-white">টিফিন / ডিনার বিল বিতরণ</h3>   
-            </div>
-            <div class="inner_gray_close_button">
-              <a class="cancel_details item_modal_close" role="button" rel='tooltip' data-tooltip-location='left' data-tooltip="Close Modal">Close</a>
-            </div>
-          </div>
 
-          <div class="inner_body" id="modal-details-content" style="display: none">
-            <div class="inner_body_content" id="body_result_section">
-               
-            </div>
-            <div class="inner_buttons">
-              <a class="cancel_modal_button cancel_details btn btn-sm btn-danger" role="button"> Cancel </a>
-              <button class="okay_modal_button btn btn-sm btn-primary hidden-print" onclick="printDiv('bill-review-print')" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report"><i class="las la-print"></i> </button>
-              <button class="okay_modal_button confirm-disbursed" id="confirm-disbursed" type="submit" tabindex="0">
-                Confirm & Pay
-              </button>
-             
-            </div>
-          </div>
+<div class="modal right fade" id="right_modal_lg-group" tabindex="-1" role="dialog" aria-labelledby="right_modal_lg-group">
+  <div class="modal-dialog modal-lg right-modal-width" role="document" > 
+    <div class="modal-content">
+      <div class="modal-header">
+        <a class="view prev_btn" data-toggle="tooltip" data-dismiss="modal" data-placement="top" title="" data-original-title="Back to Report">
+            <i class="las la-chevron-left"></i>
+        </a>
+        <h5 class="modal-title right-modal-title text-center" id="modal-title-right-group"> টিফিন / ডিনার বিল বিতরণ </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-content-result content-result" id="body_result_section">
+            
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="inner_buttons">
+          <a class=" prev_btn btn btn-outline-danger btn-sm" data-toggle="tooltip" data-dismiss="modal"><i class="las la-times"></i> Cancel </a>
+          <button class=" btn btn-sm btn-outline-primary hidden-print" onclick="printDiv('bill-review-print')" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report"><i class="las la-print"></i> Print</button>
+          <button class=" btn btn-sm btn-outline-primary hidden-print" id="confirm-excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Report"><i class="las la-file-excel"></i> Excel</button>
+          <button class=" btn btn-sm btn-outline-success confirm-disbursed" id="confirm-disbursed" type="submit" tabindex="0">
+           <i class="las la-check"></i> Confirm & Pay
+          </button>
+         
         </div>
       </div>
     </div>
+  </div>
 </div>
 <script type="text/javascript">
     function printDiv(divName)
@@ -360,20 +374,13 @@
         myWindow.close();
     }
 
-    $(".overlay-modal, .item_details_dialog").css("opacity", 0);
-    /*Remove inline styles*/
-    $(".overlay-modal, .item_details_dialog").removeAttr("style");
-    /*Set min height to 90px after  has been set*/
-    detailsheight = $(".item_details_dialog").css("min-height", "115px");
-
+    
     $('#billReport').on('submit', function(e) {
         e.preventDefault();
-        $("#body_result_section").html('<div class="panel"><div class="panel-body"><p style="text-align:center;margin:100px;"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>');
+        $("#body_result_section").html('<div class="animationLoading"><div id="container-loader"><div id="one"></div><div id="two"></div><div id="three"></div></div><div id="four"></div><div id="five"></div><div id="six"></div></div>');
         var form = $("#billReport");
         
-        /*Show the dialog overlay-modal*/
-        $(".overlay-modal-details").show();
-        $(".inner_body").show();
+        $('#right_modal_lg-group').modal('show');
         // ajax call
         $.ajax({
             url: '{{ url("/hr/operation/review-tiffin-dinner-bill")}}',
@@ -392,16 +399,6 @@
                 }
             }
         });
-        /*Animate Dialog*/
-        $(".show_item_details_modal").css("width", "225").animate({
-          "opacity" : 1,
-          height : detailsheight,
-          width : "80%"
-        }, 600, function() {
-          /*When animation is done show inside content*/
-          $(".fade-box").show();
-        });
-        // 
         
     });
 
@@ -414,7 +411,7 @@
             type: "POST",
             data: form.serialize(),
             success: function(response){
-                console.log(response)
+                // console.log(response)
                 if(response.type === 'error'){
                     $("#confirm-disbursed").show();
                 }else{
@@ -427,14 +424,25 @@
         
     });
 
-    $(".cancel_details").click(function() {
-        $(".overlay-modal-details, .show_item_details_modal").fadeOut("slow", function() {
-          /*Remove inline styles*/
+    $('#confirm-excel').on('click', function(e) {
+        $("#confirm-disbursed").hide();
+        var form = $("#billReport");
+        // ajax call
+        $.ajax({
+            url: '{{ url("/hr/operation/pay-tiffin-dinner-bill-excel")}}',
+            type: "POST",
+            data: form.serialize(),
+            success: function(response){
+                console.log(response)
+                $("#confirm-disbursed").show();
 
-          $(".overlay-modal, .item_details_dialog").removeAttr("style");
-          $('body').css('overflow', 'unset');
+                //$.notify(response.msg, response.type);
+            }
         });
+        
     });
+
+    
     $('#checkAll').click(function(){
         var checked =$(this).prop('checked');
         var selectemp = 0;

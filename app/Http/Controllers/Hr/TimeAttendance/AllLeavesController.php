@@ -99,13 +99,13 @@ class AllLeavesController extends Controller
             ->addColumn('action', function ($data) use ($perm,$sal) {
                 $le = date('Ym',strtotime($data->leave_from)).$data->as_unit_id;
                 if($perm && !in_array($le,$sal)){
-                    if(date('Y-m-d',strtotime($data->created_at)) >= date('Y-m').'-01' && date('Y-m-d',strtotime($data->created_at)) <= date('Y-m-d')){
+                    
                       return "<a href=".url('hr/timeattendance/leave_delete/'.$data->id)." class=\"btn btn-sm btn-danger btn-round\" onclick=\"return confirm('Are you sure you want to delete this item?');\" data-toggle=\"tooltip\" title=\"Delete\">
 
                               <i class=\"ace-icon fa fa-trash bigger-120\"></i> 
 
                           </a>";
-                     }
+                     
                   }
                   return '';
             })

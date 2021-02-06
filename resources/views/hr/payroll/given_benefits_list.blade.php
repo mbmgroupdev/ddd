@@ -238,42 +238,57 @@ $(document).ready(function(){
 
     $(document).on('click','.rollback', function(){
         var associate_id = $(this).data('associate');
-
+        var name = $(this).data('name');
         swal({
-            title: associate_id,
+            title: name+' - '+associate_id,
             text: "Rollback! Are you sure?",
             icon: "warning",
             buttons: ['Cancel','Continue'],
             dangerMode: true,
+            closeModal: false
         })
         .then((willDelete) => {
-            if (willDelete) {
-
-                $.ajax({
-                    url: '{{ url('hr/payroll/benefit-rollback') }}',
-                    type: "POST",
-                    data: {
-                        associate_id : associate_id,
-                        _token : $("[name=csrf-token]").val()
-                    },
-                    success: function(response){
-                        
-                    },
-                    error: function(reject)
-                    {
-                       console.log('k');
+          $("#app_loader").show();
+          if (willDelete) {
+              $.ajax({
+                  url: '{{ url('hr/payroll/benefit-rollback') }}',
+                  type: "POST",
+                  headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                  },
+                  data: {
+                      associate_id : associate_id
+                  },
+                  success: function(response){
+                    console.log(response);
+                    $("#app_loader").hide();
+                    if(response === 'success'){
+                      swal({
+                          title: "Done!",
+                          text: name+" Now Active",
+                          type: "success"
+                      });
+                      window.location ='{{ url('hr/payroll/benefits?associate=') }}'+associate_id;
+                      
+                    }else{
+                      swal("Error", "Something Wrong, Please try again", "error");
                     }
-                });
-                
-            } else {
-                swal("Your imaginary file is safe!");
-            }
+                  },
+                  error: function(reject)
+                  {
+                     console.log('k');
+                  }
+              });
+              
+          } else {
+              swal("Done!", "Your imaginary file is safe!", "success");
+          }
         })
         .then(results => {
+          
         })
         .catch(err => {
             if (err) {
-                console.log(err);
                 swal("Oh noes!", "The AJAX request failed!", "error");
             } else {
                 swal.stopLoading();

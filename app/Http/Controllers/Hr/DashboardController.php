@@ -3,17 +3,17 @@
 namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\Controller;
+use App\Models\Employee;
+use App\Models\Hr\AttAQL;
+use App\Models\Hr\AttCEIL;
+use App\Models\Hr\AttMBM;
+use App\Models\Hr\AttendanceUndeclared;
+use App\Models\Hr\HrMonthlySalary;
+use App\Models\Hr\Unit;
+use Cache, DB;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-
-use App\Models\Hr\Unit;
-use App\Models\Employee;
-use App\Models\Hr\HrMonthlySalary;
-use App\Models\Hr\AttMBM;
-use App\Models\Hr\AttCEIL;
-use App\Models\Hr\AttAQL;
-use Carbon\Carbon;
-use Cache, DB;
 
 class DashboardController extends Controller
 {
@@ -22,15 +22,25 @@ class DashboardController extends Controller
 
     public function index()
     {
-
         $permitted_associate = auth()->user()->permitted_associate()->toArray();
         $permitted_asid      = auth()->user()->permitted_asid()->toArray();
         $att_chart = $this->att_data($permitted_asid );
         $ot_chart = $this->ot_data($permitted_associate);
         $salary_chart = $this->salary_data($permitted_associate);
         $today_att_chart = $this->today_att($permitted_associate);
-
-        return view('hr.dashboard.index', compact('ot_chart','salary_chart','att_chart','today_att_chart'));
+        $getHolidayRecord = AttendanceUndeclared::with('employee')
+        ->whereIn('as_id', auth()->user()->permitted_asid())
+        ->where('punch_date', date('Y-m-d'))
+        ->where('type', 1)
+        ->where('flag', 0)
+        ->limit(10)->get();
+        $getLeaveRecord = AttendanceUndeclared::with('employee')
+        ->whereIn('as_id', auth()->user()->permitted_asid())
+        ->where('punch_date', date('Y-m-d'))
+        ->where('type', 2)
+        ->where('flag', 0)
+        ->limit(10)->get();
+        return view('hr.dashboard.index', compact('ot_chart','salary_chart','att_chart','today_att_chart', 'getHolidayRecord', 'getLeaveRecord'));
     }
 
     public function att_data($per_id)

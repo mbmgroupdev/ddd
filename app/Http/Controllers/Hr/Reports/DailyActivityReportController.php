@@ -261,7 +261,7 @@ class DailyActivityReportController extends Controller
 
             $tableName = get_att_table($request['unit']).' AS a';
 
-            if($input['report_type'] == 'ot' || $input['report_type'] == 'working_hour' || $input['report_type'] == 'late' || $input['report_type'] == 'in_out_missing'){
+            if($input['report_type'] == 'ot' || $input['report_type'] == 'present' || $input['report_type'] == 'working_hour' || $input['report_type'] == 'late' || $input['report_type'] == 'in_out_missing'){
                 
                 $attData = DB::table($tableName)
                 ->where('a.in_date', $request['date']);
@@ -339,7 +339,7 @@ class DailyActivityReportController extends Controller
                 }
             });
             
-            if($input['report_type'] == 'ot' || $input['report_type'] == 'working_hour' || $input['report_type'] == 'late' || $input['report_type'] == 'before_absent_after_present' || $input['report_type'] == 'in_out_missing'){
+            if($input['report_type'] == 'ot' || $input['report_type'] == 'present' || $input['report_type'] == 'working_hour' || $input['report_type'] == 'late' || $input['report_type'] == 'before_absent_after_present' || $input['report_type'] == 'in_out_missing'){
                 $attData->leftjoin(DB::raw('(' . $employeeData_sql. ') AS emp'), function($join) use ($employeeData) {
                     $join->on('a.as_id', '=', 'emp.as_id')->addBinding($employeeData->getBindings());
                 });
@@ -416,7 +416,7 @@ class DailyActivityReportController extends Controller
                         $attData->addSelect('l.leave_type');
                     }
 
-                    if($input['report_type'] == 'in_out_missing'){
+                    if($input['report_type'] == 'in_out_missing' || $input['report_type'] == 'present' || $input['report_type'] == 'late'){
                         $attData->addSelect('a.in_time', 'a.out_time', 'a.remarks');
                     }
                 }
@@ -430,7 +430,7 @@ class DailyActivityReportController extends Controller
                 $attData->orderBy('emp.as_section_id', 'asc');
             } 
             $getEmployee = $attData->get();
-            // dd($getEmployee);
+            
             if($input['report_format'] == 1 && $input['report_group'] != null){
                 $totalEmployees = array_sum(array_column($getEmployee->toArray(),'total'));
             }else{
@@ -484,7 +484,7 @@ class DailyActivityReportController extends Controller
                 return view('hr.reports.daily_activity.attendance.leave_report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area', 'uniqueGroupEmp'));
             }elseif($input['report_type'] == 'working_hour'){
                 return view('hr.reports.daily_activity.attendance.working_hour_report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees', 'totalValue', 'totalAvgHour', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area', 'uniqueGroupEmp'));
-            }elseif($input['report_type'] == 'late'){
+            }elseif($input['report_type'] == 'late' || $input['report_type'] == 'present'){
                 return view('hr.reports.daily_activity.attendance.late_report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area', 'uniqueGroupEmp'));
             }elseif($input['report_type'] == 'before_absent_after_present'){
                 return view('hr.reports.daily_activity.attendance.before_after_report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area', 'uniqueGroupEmp'));
@@ -952,7 +952,7 @@ class DailyActivityReportController extends Controller
                 $shiftDataSql = $shiftData->toSql();
             }
             $tableName = get_att_table($input['unit']).' AS a';
-            if($input['report_type'] == 'ot' || $input['report_type'] == 'working_hour' || $input['report_type'] == 'late'){
+            if($input['report_type'] == 'ot' || $input['report_type'] == 'working_hour' || $input['report_type'] == 'late' || $input['report_type'] == 'present'){
                 
                 $attData = DB::table($tableName)
                 ->where('a.in_date', $input['date']);
@@ -1021,7 +1021,7 @@ class DailyActivityReportController extends Controller
                 }
             });
 
-            if($input['report_type'] == 'ot' || $input['report_type'] == 'working_hour' || $input['report_type'] == 'late' || $input['report_type'] == 'before_absent_after_present'){
+            if($input['report_type'] == 'ot' || $input['report_type'] == 'working_hour' || $input['report_type'] == 'present' || $input['report_type'] == 'late' || $input['report_type'] == 'before_absent_after_present'){
                 $attData->leftjoin(DB::raw('(' . $employeeData_sql. ') AS emp'), function($join) use ($employeeData) {
                     $join->on('a.as_id', '=', 'emp.as_id')->addBinding($employeeData->getBindings());
                 });
@@ -1084,6 +1084,9 @@ class DailyActivityReportController extends Controller
                     if($input['report_type'] == 'leave'){
                         $attData->addSelect('l.leave_type');
                     }
+                    if($input['report_type'] == 'in_out_missing' || $input['report_type'] == 'present' || $input['report_type'] == 'late'){
+                        $attData->addSelect('a.in_time', 'a.out_time', 'a.remarks');
+                    }
                 }
             }
                 
@@ -1123,7 +1126,7 @@ class DailyActivityReportController extends Controller
                     'Line' => $line[$value->as_line_id]['hr_line_name']??''
 
                 );
-                if($input['report_type'] == 'ot' || $input['report_type'] == 'working_hour' || $input['report_type'] == 'late'){
+                if($input['report_type'] == 'ot' || $input['report_type'] == 'working_hour' || $input['report_type'] == 'late' || $input['report_type'] == 'present'){
                     $dataValue['In Time'] = ($value->in_time != null?date('H:i:s', strtotime($value->in_time)):'');
                     $dataValue['Out Time'] = ($value->out_time != null?date('H:i:s', strtotime($value->out_time)):'');
                 }

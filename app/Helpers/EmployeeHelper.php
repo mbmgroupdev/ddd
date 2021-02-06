@@ -1172,6 +1172,9 @@ class EmployeeHelper
 		                $otAllow = 86400 - $totalShiftDiffNew; //86400 = 24 hour
 		                // $otAllow = 46000 - ($shift_break_time*60);// 13- hour 00 minute 00 second
 		                $shift_end_end_new = $shift_out_time_new->copy()->addSeconds($otAllow);
+		                if($checkHolidayFlag == 1){
+		                	$shift_end_end_new = $shift_end_end_new->copy()->addHours(6);
+		                }
 		                
 		                //check time
 		                $check_time = Carbon::createFromFormat('Y-m-d H:i:s', $checktime);
@@ -1202,7 +1205,6 @@ class EmployeeHelper
 		                    }
 		                }
 		                if($shift_end_begin_new <= $check_time && $check_time <= $shift_end_end_new){
-
 		                    if(!empty($last_punch)){
 		                        $punchId = $last_punch->id;
 		                        // $checkOutTimeFlag = 0;
@@ -1232,7 +1234,7 @@ class EmployeeHelper
 		                            }
 		                        }
 		                    }else{
-		                        if(!empty($shift_code_new)){
+		                        if(!empty($shift_code_new) && $checkHolidayFlag == 0 && $checkLeaveFlag == 0){
 		                            $defaultInTime = date("Y-m-d H:i:s", strtotime($shift_start));
 		                            $punchId = DB::table($tableName)
 		                            ->insertGetId([
@@ -1247,13 +1249,21 @@ class EmployeeHelper
 		                            ]);
 		                        }
 		                    }
+		                }elseif(!empty($last_punch) && $check_time <= $shift_end_end_new && ($checkHolidayFlag == 1 || $checkLeaveFlag == 1)){
+		                	$punchId = $last_punch->id;
+		                    DB::table($tableName)
+		                    ->where('id', $last_punch->id)
+		                    ->where('as_id', $as_info->as_id)
+		                    ->update([
+		                        'out_time' => $checktime,
+		                        'out_unit' => $unit
+		                    ]);
 		                }
 
 		            }
 	            }
 
 	            // get data
-
 		    	$getAtt = DB::table($tableName)
 		    	->select('id','as_id', 'in_time', 'out_time', 'ot_hour', 'hr_shift_code')
 		    	->where('as_id', $asId)
