@@ -15,6 +15,11 @@ class JobCardController extends Controller
 
   public function jobCard(Request $request)
   {
+
+        if(auth()->user()->hasRole('Buyer Mode')){
+            return redirect('hrm/operation/job_card');
+        }
+
     $unitList  = Unit::where('hr_unit_status', '1')
       ->whereIn('hr_unit_id', auth()->user()->unit_permissions())
       ->pluck('hr_unit_name', 'hr_unit_id');
@@ -29,7 +34,6 @@ class JobCardController extends Controller
       return $pdf->download('Job_Card_Report_'.date('d_F_Y').'.pdf');
     } elseif($request->associate != null && $request->month_year != null){
       $result = $this->empAttendanceByMonth($request);
-
       if($result != null){
         $attendance = $result['attendance'];
         $info = $result['info'];
@@ -61,6 +65,8 @@ class JobCardController extends Controller
   }
   public  function empAttendanceByMonth($request)
   {
+
+
     //if (!empty(request()->associate) && !empty(request()->month) && !empty(request()->year)) {
     $total_attend   = 0;
     $total_overtime = 0;
@@ -78,19 +84,23 @@ class JobCardController extends Controller
     $flag = 0;
     $fetchUser = DB::table("hr_as_basic_info AS b")
     ->select('b.as_designation_id', 'b.as_unit_id', 'b.as_location', 'b.as_floor_id', 'b.as_line_id', 'b.as_shift_id', 'b.as_department_id', 'b.as_section_id', 'b.as_subsection_id', 'b.as_doj', 'b.as_id', 'b.as_name', 'b.as_gender', 'b.as_ot', 'b.associate_id', 'b.as_status_date', 'b.as_status', 'b.shift_roaster_status', 'b.as_oracle_code');
-    if(strtotime(date('Y-m')) > strtotime($request->month_year)){
+    /*if(strtotime(date('Y-m')) > strtotime($request->month_year)){
       $flag = 1;
       $fetchUser->where("s.as_id", $associate)->where('s.month', $month)->where('s.year', $year);
       $fetchUser->join('hr_monthly_salary AS s', 'b.associate_id', 's.as_id')
       ->leftJoin('hr_subsection AS subsec', 's.sub_section_id', 'subsec.hr_subsec_id')
       ->addSelect('s.unit_id', 's.designation_id', 's.sub_section_id', 'subsec.hr_subsec_department_id', 'subsec.hr_subsec_section_id');
-    }elseif(strtotime(date('Y-m')) == strtotime($request->month_year)){
+    }*///elseif(strtotime(date('Y-m')) == strtotime($request->month_year)){
       $fetchUser->where("b.associate_id", $associate);
-    }else{
-      return '';
-    }
+    //}else{
+      //return '';
+    //}
+
+      //return $fetchUser->exists();
+
     //check user exists
     if($fetchUser->exists()) {
+
       $info = $fetchUser->first();
       $getUnit = unit_by_id();
       $getLine = line_by_id();
@@ -336,6 +346,8 @@ class JobCardController extends Controller
       
       return $result;
     }
+
+    
   }
 
   public function hoursToseconds($inHour)
