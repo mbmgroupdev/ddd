@@ -1428,6 +1428,16 @@ Route::group(['prefix' => 'hr/operation/holiday-duty','namespace' => 'Hr\Operati
 Route::group(['prefix' => 'hr/buyer','namespace' => 'Hr\Buyer'], function(){
 	Route::get('/','BuyerModeController@index');
 	Route::post('/generate','BuyerModeController@generate');
+	Route::post('/holidays/{id}','BuyerModeController@holidays');
 	Route::get('/sync/{id}','BuyerModeController@syncIndex');
 	Route::post('/sync/{id}','BuyerModeController@sync');
+	Route::post('/salary-process/{id}','BuyerModeController@processSalary');
+});
+
+Route::group(['prefix' => 'hrm','namespace' => 'Hr\Buyer'], function(){
+	Route::get('operation/job_card','BuyerJobCardController@index');
+	Route::get('timeattendance/attendance_bulk_manual','BuyerJobCardController@edit');
+	Route::get('operation/salary-sheet', 'BuyerSalaryController@index');
+	Route::get('operation/unit-wise-salary-sheet', 'BuyerSalaryController@unitwise');
+	Route::get('operation/employee-wise-salary-sheet', 'BuyerSalaryController@employeeWise');
 });

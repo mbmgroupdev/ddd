@@ -233,6 +233,8 @@ class Employee extends Model
     {
         return Employee::
         where('associate_id', 'LIKE', '%'. $value .'%')
+        ->whereIn('as_unit_id', auth()->user()->unit_permissions())
+        ->whereIn('as_location', auth()->user()->location_permissions())
         ->orWhere('as_name', 'LIKE', '%'. $value . '%')
         ->orWhere('as_oracle_code', 'LIKE', '%'. $value . '%')
         ->paginate(10);
@@ -242,6 +244,8 @@ class Employee extends Model
     {
         return DB::table('hr_as_basic_info')
         ->select('as_name', 'associate_id')
+        ->whereIn('as_unit_id', auth()->user()->unit_permissions())
+        ->whereIn('as_location', auth()->user()->location_permissions())
         ->where('associate_id', 'LIKE', '%'. $value .'%')
         ->orWhere('as_name', 'LIKE', '%'. $value . '%')
         ->orWhere('as_oracle_code', 'LIKE', '%'. $value . '%')
@@ -252,6 +256,8 @@ class Employee extends Model
     public static function getEmployeeShiftIdWise($shiftId, $unitId)
     {
         return Employee::select('as_id')
+        ->whereIn('as_unit_id', auth()->user()->unit_permissions())
+        ->whereIn('as_location', auth()->user()->location_permissions())
         ->where('as_shift_id', $shiftId)
         ->where('as_unit_id', $unitId)
         ->get();

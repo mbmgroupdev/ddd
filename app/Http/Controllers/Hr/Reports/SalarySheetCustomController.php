@@ -31,6 +31,9 @@ class SalarySheetCustomController extends Controller
 
     public function index()
     {
+        if(auth()->user()->hasRole('Buyer Mode')){
+            return redirect('hrm/operation/salary-sheet');
+        }
         /*$value = 100;
         // encrypt process
         $encrypt = encryptStringValue($value);

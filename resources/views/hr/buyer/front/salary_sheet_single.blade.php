@@ -195,14 +195,10 @@
                             <span style ="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=
                             </span>
                             <span style="text-align: right;width: 30%; float: right;  white-space: wrap;"><font style="color:hotpink">
-                                @if(array_key_exists($salary->as_id, $salaryAddDeduct))
                                     @php
-                                        $advDeduct = $salaryAddDeduct[$salary->as_id]->advp_deduct??'0.00';
+                                        $advDeduct = $salary->adv_deduct??'0.00';
                                     @endphp
                                     {{ Custom::engToBnConvert(number_format($advDeduct, 2)) }}
-                                @else
-                                    {{ Custom::engToBnConvert('0.00') }}
-                                @endif
                                 
                             </font>
                             </span>
@@ -222,11 +218,8 @@
                             <span style ="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=
                             </span>
                             <span style="text-align: right;width: 30%; float: right;  white-space: wrap;"><font style="color:hotpink">
-                                @if(array_key_exists($salary->as_id, $salaryAddDeduct))
-                                    {{ Custom::engToBnConvert($salaryAddDeduct[$salary->as_id]->cg_deduct??'0.0') }}
-                                @else
-                                    {{ Custom::engToBnConvert('0.00') }}
-                                @endif
+                                    {{ Custom::engToBnConvert($salary->cg_deduct??'0.0') }}
+                              
                             </font>
                             </span>
                         </p>
@@ -238,11 +231,7 @@
                                 <span style ="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=
                                 </span>
                                 <span style="text-align: right;width: 30%; float: right;  white-space: wrap;"><font style="color:hotpink">
-                                    @if(array_key_exists($salary->as_id, $salaryAddDeduct))
-                                    {{ Custom::engToBnConvert(number_format($salaryAddDeduct[$salary->as_id]->food_deduct,2)??'0.0') }}
-                                    @else
-                                        {{ Custom::engToBnConvert('0.00') }}
-                                    @endif
+                                    {{ Custom::engToBnConvert(number_format($salary->food_deduct,2)??'0.0') }}
                                   
                                 </font>
                                 </span>
@@ -254,11 +243,7 @@
                             <span style ="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=
                             </span>
                             <span style="text-align: right;width: 30%; float: right;  white-space: wrap;"><font style="color:hotpink">
-                                @if(array_key_exists($salary->as_id, $salaryAddDeduct))
-                                    {{ Custom::engToBnConvert(number_format($salaryAddDeduct[$salary->as_id]->others_deduct,2)??'0.0') }}
-                                @else
-                                    {{ Custom::engToBnConvert('0.00') }}
-                                @endif
+                                    {{ Custom::engToBnConvert(number_format($salary->others_deduct,2)??'0.0') }}
                             </font>
                             </span>
 
@@ -278,7 +263,7 @@
                               <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">বেতন/মজুরী </span>
                               <span style="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=</span>
                               <span style="text-align: right;width: 30%; float: right;  white-space: wrap;">
-                                    <font style="color:hotpink"> {{ Custom::engToBnConvert(number_format($salary->salary_payable,2)) }}</font>
+                                    <font style="color:hotpink"> {{ Custom::engToBnConvert(number_format($salary->salary_payable??0,2)) }}</font>
                              </span>
                         </p>
                         <p style="margin:0;padding:0">
@@ -332,11 +317,7 @@
                             </span>
                             <span style="text-align: right;width: 30%; float: right;  white-space: wrap;">
                                 <font style="color:hotpink">
-                                @if(array_key_exists($salary->as_id, $salaryAddDeduct))
-                                    {{ Custom::engToBnConvert(number_format($salaryAddDeduct[$salary->as_id]->salary_add,2)??'0.0') }}
-                                @else
-                                    {{ Custom::engToBnConvert('0.00') }}
-                                @endif
+                                    {{ Custom::engToBnConvert(number_format($salary->salary_add,2)??'0.0') }}
                             </font>
                             </span>
 
@@ -386,15 +367,6 @@
                         @endif
                     </td>
                     <td></td>
-                    {{-- <td class="disburse-button" id="{{ $j }}-{{ $salary->as_id }}">
-                        @if($salary->disburse_date == null)
-                            <a data-id="{{ $j }}-{{ $salary->as_id }}" class="btn btn-primary btn-sm disbursed_salary text-white" data-eaid="{{ $salary->as_id }}" data-date="{{ $pageHead->for_date }}" data-month="{{ $pageHead->month }}" data-year="{{ $pageHead->year }}" data-name="{{ $salary->hr_bn_associate_name }}" data-post="{{ $designation[$salary->as_designation_id]['hr_designation_name_bn']}}"  rel='tooltip' data-tooltip-location='top' data-tooltip='বেতন প্রদান করুন' > হয় নি </a>
-                        @else
-                            হ্যাঁ 
-                            <br>
-                            <b>{{ Custom::engToBnConvert($salary->disburse_date) }}</b>
-                        @endif
-                    </td> --}}
                 </tr>
             </tbody>
             <tfoot>
