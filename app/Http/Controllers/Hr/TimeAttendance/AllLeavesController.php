@@ -2,12 +2,13 @@
 namespace App\Http\Controllers\Hr\TimeAttendance;
 
 use App\Helpers\Custom;
+use App\Helpers\EmployeeHelper;
 use App\Http\Controllers\Controller;
 use App\Jobs\ProcessMonthlySalary;
 use App\Jobs\ProcessUnitWiseSalary;
+use App\Models\Employee;
 use App\Models\Hr\Absent;
 use App\Models\Hr\Benefits;
-use App\Models\Employee;
 use App\Models\Hr\Leave;
 use App\Models\Hr\LeaveApproval;
 use App\Models\Hr\SalaryAdjustDetails;
@@ -477,8 +478,40 @@ class AllLeavesController extends Controller
 
     ##Delete..
     public function deleteLeave($id){
-      DB::table('hr_leave')->where('id', $id)->delete();
-      return back()->with('success', 'Leave Deleted');
+      try {
+        $getLeave = DB::table('hr_leave')->where('id', $id)->first();
+
+        if($getLeave != null){
+          $getEmployee = Employee::getEmployeeAssIdWiseSelectedField($getLeave->leave_ass_id, ['as_id', 'as_unit_id']);
+          // check salary lock
+          $checkL['month'] = date('m', strtotime($getLeave->leave_from));
+          $checkL['year'] = date('Y', strtotime($getLeave->leave_from));
+          $checkL['unit_id'] = $getEmployee->as_unit_id;
+          $lock = monthly_activity_close($checkL);
+          if($lock == 0){
+            $dates = displayBetweenTwoDates($getLeave->leave_from, $getLeave->leave_to);
+          
+            if(count($dates) > 0){
+              foreach ($dates as $key => $date) {
+                $history = EmployeeHelper::attendanceReCalculation($getEmployee->as_id, $date);
+              }
+            }
+
+            DB::table('hr_leave')->where('id', $id)->delete();
+            return back()->with('success', 'Leave Deleted');
+          }else{
+            $msg = "Salary Lock, This Operation not accepted";
+          }
+          
+        }else{
+          $msg = "Something Wrong, Please try again";
+        }
+
+        return back()->with('error', $msg);
+      } catch (\Exception $e) {
+        return back()->with('error', $e->getMessage());
+      }
+      
     }
 
     public function leaveStatus(Request $request)
