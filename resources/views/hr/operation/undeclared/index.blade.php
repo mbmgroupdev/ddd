@@ -1,5 +1,5 @@
 @extends('hr.layout')
-@section('title', 'Daily Attendance')
+@section('title', 'Daily Attendance Undeclared')
 
 @section('main-content')
 @push('css')
@@ -54,9 +54,9 @@
                     <a href="#">Human Resource</a>
                 </li>
                 <li>
-                    <a href="#">Reports</a>
+                    <a href="#">Operation</a>
                 </li>
-                <li class="active"> Daily Attendance Report</li>
+                <li class="active"> Daily Attendance Undeclared</li>
             </ul>
         </div>
 
@@ -78,8 +78,7 @@
                                 <div class="row">
                                     <div class="col-3">
                                         <div class="form-group has-float-label has-required select-search-group">
-                                            <select name="unit" class="form-control capitalize select-search" id="unit"required >
-                                                <option selected="" value="">Choose...</option>
+                                            <select name="unit" class="form-control capitalize select-search" id="unit" required >
                                                 @if($mbmFlag == 1)
                                                 <option value="145">MBM + MBF + MBM 2</option>
                                                 @endif
@@ -152,70 +151,32 @@
                                             </select>
                                             <label for="otnonot">OT/Non-OT</label>
                                         </div>
-                                        <input type="hidden" id="reportformat" name="report_format" value="1">
+                                        <input type="hidden" id="reportformat" name="report_format" value="0">
                                         <input type="hidden" id="reportGroup" name="report_group" value="as_section_id">
                                     </div>
                                     <div class="col-3">
                                       
                                         <div class="form-group has-float-label select-search-group">
                                             <?php
-                                                if(auth()->user()->hasRole('Planning')){
-                                                    $reportType = [
-                                                        'att_statistics'=>'Attendance Statistics',
-                                                        'absent'=>'Absent',
-                                                        'ot'=>'Overtime(OT)',
-                                                        'working_hour'=>'Working Hour'
-                                                    ];
-                                                }else{
-                                                    if(auth()->user()->can('Attendance Report') || auth()->user()->can('Attendance Report')){
-                                                       $reportType = [
-                                                            'att_statistics'=>'Attendance Statistics', 
-                                                            'present'=>'Present', 
-                                                            'absent'=>'Absent', 
-                                                            'before_absent_after_present'=>'Present After Being Absent', 
-                                                            'in_out_missing'=>'In/Out Missing',
-                                                            'leave'=>'Leave'
-                                                        ];
-                                                    }
-                                                    $reportType['ot'] = 'Overtime(OT)';
-                                                    $reportType['working_hour'] = 'Working Hour';
-
-                                                    if(auth()->user()->can('Attendance Report') || auth()->user()->can('Attendance Upload')){
-                                                        $reportType['late'] = 'Late';
-                                                        $reportType['missing_token'] = 'Punch Missing Token';
-                                                        $reportType['two_day_att'] = 'Two Day Attendance'; 
-                                                    }
-                                                }
+                                                $reportType = [
+                                                    '1'=>'Holiday',
+                                                    '2'=>'Leave'
+                                                ];
                                                 
                                             ?>
-                                            {{ Form::select('report_type', $reportType, null, ['placeholder'=>'Select Report Type ', 'class'=>'form-control capitalize select-search', 'id'=>'reportType']) }}
+                                            {{ Form::select('report_type', $reportType, Request::get('report_type')??1, ['placeholder'=>'Select Report Type ', 'class'=>'form-control capitalize select-search', 'id'=>'reportType', 'required']) }}
                                             <label for="reportType">Report Type</label>
                                         </div>
                                         
                                         <div id="single-date">
                                           <div class="form-group has-float-label has-required">
-                                            <input type="date" class="report_date datepicker form-control" id="report-date" name="date" placeholder="Y-m-d" required="required" value="{{ date('Y-m-d') }}" autocomplete="off" />
+                                            <input type="date" class="report_date datepicker form-control" id="report-date" name="date" placeholder="Y-m-d" required="required" value="{{ Request::get('date')??date('Y-m-d') }}" autocomplete="off" />
                                             <label for="report-date">Date</label>
                                           </div>
                                         </div>
-                                        <div id="double-date" style="display: none">
-                                          <div class="row">
-                                            <div class="col pr-0">
-                                                <div class="form-group has-float-label has-required">
-                                                    <input type="date" class="report_date datepicker form-control" id="present_date" name="present_date" placeholder="Y-m-d" required="required" value="{{ date('Y-m-d') }}" autocomplete="off" />
-                                                    <label for="present_date">Present Date</label>
-                                                </div>
-                                            </div>
-                                            <div class="col">
-                                                <div class="form-group has-float-label has-required">
-                                                    <input type="date" class="report_date datepicker form-control" id="absent_date" name="absent_date" placeholder="Y-m-d" required="required" value="{{ date('Y-m-d', strtotime('-1 day')) }}" autocomplete="off" />
-                                                    <label for="absent_date">Absent Date</label>
-                                                </div>
-                                            </div>
-                                          </div>
-                                        </div>
+                                        
                                         <div class="form-group">
-                                          <button class="btn btn-primary nextBtn btn-lg pull-right" type="submit" ><i class="fa fa-save"></i> Generate</button>
+                                          <button class="btn btn-primary nextBtn btn-lg pull-right" type="submit" ><i class="fa fa-search"></i> Filter</button>
                                         </div>
                                     </div>   
                                 </div>
@@ -354,7 +315,10 @@
 <script src="{{ asset('assets/js/moment.min.js')}}"></script>
 <script type="text/javascript">
 
-$(document).ready(function(){   
+$(document).ready(function(){  
+    @if(Request::get('date') != null && Request::get('report_type') != null)
+        activityProcess();
+    @endif 
     var loader = '<div class="panel"><div class="panel-body"><p style="text-align:center;margin:100px;"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>';
     var loaderContent = '<div class="animationLoading"><div id="container-loader"><div id="one"></div><div id="two"></div><div id="three"></div></div><div id="four"></div><div id="five"></div><div id="six"></div></div>';
     $('#activityReport').on('submit', function(e) {
@@ -366,7 +330,7 @@ $(document).ready(function(){
       var type = $('select[name="report_type"]').val();
       var dateAfter = moment(date).add(1 , 'day').format("YYYY-MM-DD");
       $('input[name="date"]').val(dateAfter);
-      var head = type+' - '+dateAfter;
+      var head = dateAfter;
       $("#result-head").html(head);
       activityProcess();
     });
@@ -376,7 +340,7 @@ $(document).ready(function(){
       var type = $('select[name="report_type"]').val();
       var dateBefore = moment(date).subtract(1 , 'day').format("YYYY-MM-DD");
       $('input[name="date"]').val(dateBefore);
-      var head = type+' - '+dateBefore;
+      var head = dateBefore;
       $("#result-head").html(head);
       activityProcess();
     });
@@ -407,11 +371,7 @@ $(document).ready(function(){
       var format = $('input[name="report_format"]').val();
       var type = $('select[name="report_type"]').val();
       // console.log(type);
-      if(type === 'before_absent_after_present'){
-        $("#head-arrow").hide();
-      }else{
-        $("#head-arrow").show();
-      }
+      
       var form = $("#activityReport");
       var flag = 0;
       if(unit === '' || date === '' || type === ''){
@@ -425,12 +385,8 @@ $(document).ready(function(){
         $('html, body').animate({
             scrollTop: $("#result-data").offset().top
         }, 2000);
-        if(type == 'attendance'){
-          url = '{{ url("hr/reports/daily-present-absent-activity-report") }}';
-        }else{
-          url = '{{ url("hr/reports/daily-attendance-activity-report") }}';
-        }
-        var head = type+' - '+date;
+        url = '{{ url("hr/operation/undeclared-employee-data") }}';
+        var head = date;
         $("#result-head").html(head);
         
         $.ajax({
@@ -474,16 +430,7 @@ $(document).ready(function(){
       location.href=url;
       return false;
     });
-    // change from data action
-    $('#present_date').on('change', function() {
-      var before = 1 ;
-      var dateBefore = moment($(this).val()).subtract(before , 'day');
-      var dateBefore = dateBefore.format("YYYY-MM-DD");
-      var absentDate = $('#absent_date').val();
-      if(dateBefore !== '') {
-        $('#absent_date').val(dateBefore);
-      }
-    });
+    
     // change unit
     $('#unit').on("change", function(){
         $.ajax({
@@ -577,34 +524,7 @@ $(document).ready(function(){
          }
        });
     });
-    //Report type
-    $('#reportType').on("change", function(){
-      var type = $(this).val();
-      // console.log(type);
-      $('input[name="employee"]').val('');
-      if(type == 'ot'){
-        $('#reportGroupHead').append('<option value="ot_hour">OT Hour</option>');
-        $('#reportGroupHead').val('ot_hour');
-        $('#reportGroup').val('ot_hour');
-      }else{
-        $("#reportGroupHead option[value='ot_hour']").remove();
-        $('#reportGroupHead').val('as_section_id');
-        $('#reportGroup').val('as_section_id');
 
-      }
-      var date = "{{ date('Y-m-d') }}";
-      if(type == 'ot' || type == 'working_hour'|| type == 'in_out_missing'){
-        date = "{{ date('Y-m-d', strtotime('-1 day')) }}";
-      }
-      $("#report-date").val(date);
-      if(type === 'before_absent_after_present'){
-        $("#single-date").hide();
-        $("#double-date").show();
-      }else{
-        $("#single-date").show();
-        $("#double-date").hide();
-      }
-    });
 
     $('#reportFormat').on("change", function(){
       $('input[name="employee"]').val('');
@@ -619,7 +539,7 @@ $(document).ready(function(){
         $("#content-result-extra").html(loaderContent);
         // console.log(urldata);
         $.ajax({
-            url: '{{ url('hr/reports/daily-attendance-activity-report') }}?'+urldata+'&report_format=0',
+            url: '{{ url('hr/operation/undeclared-employee-data') }}?'+urldata+'&report_format=0',
             type: "GET",
             success: function(response){
                 // console.log(response);
@@ -643,7 +563,7 @@ function selectedGroup(e, body, inputUrl){
     $('#right_modal_lg').modal('show');
     $("#content-result-extra").html(loaderContent);
     $.ajax({
-        url: '{{ url('hr/reports/daily-attendance-activity-report') }}?'+urldata+'&report_format=0',
+        url: '{{ url('hr/operation/undeclared-employee-data') }}?'+urldata+'&report_format=0',
         type: "GET",
         success: function(response){
             // console.log(response);
@@ -659,7 +579,59 @@ function selectedGroup(e, body, inputUrl){
 
 }
 
+function checkAllGroup(val){
+    var id = $(val).attr('id')
+    if($(val).is(':checked')){
+        $('.selected-'+id).each(function() {
+            $(this).prop("checked", true);
+        });
+    }else{
+        $('.selected-'+id).each(function() {
+            $(this).prop("checked", false);
+        });
+    }
+}
 
+$(document).on('click', '.submit-btn', function(event) {
+    var form = $("#undeclaredReport");
+    var checkedBoxes = [];
+    $('input[type="checkbox"]:checked').each(function() {
+        if(this.value != "on")
+        {
+            checkedBoxes.push($(this).val());
+            // checkedIds.push($(this).data('id'));
+        }
+    });
+    if(checkedBoxes.length > 0){
+        $(".submit-btn").hide();
+        $(".app-loader").show();
+
+        // ajax call
+        $.ajax({
+            url: '{{ url("/hr/operation/undeclared-employee-operation")}}',
+            type: "POST",
+            headers: {
+              'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            },
+            data: form.serialize(),
+            success: function(response){
+                // console.log(response)
+                $.notify(response.message, response.type);
+
+                setTimeout(function(){
+                    $(".app-loader").hide();
+                });
+                if(response.type === 'error'){
+                    $(".submit-btn").show();
+                }else{
+                    window.location.reload();
+                }
+            }
+        });
+    }else{
+        $.notify('Please Select Employee', 'error');
+    }
+});
     
 </script>
 @endpush

@@ -2,24 +2,28 @@
 
 namespace App\Http\Controllers\Hr\Recruitment;
 
-use Illuminate\Http\Request;
+use App\Helpers\EmployeeHelper;
 use App\Http\Controllers\Controller;
 use App\Jobs\ProcessUnitWiseSalary;
+use App\Models\Employee;
 use App\Models\Hr\Benefits;
 use App\Models\Hr\Designation;
+use App\Models\Hr\EmpType;
+use App\Models\Hr\FixedSalary;
+use App\Models\Hr\HolidayRoaster;
+use App\Models\Hr\HrAllGivenBenefits;
+use App\Models\Hr\Increment;
+use App\Models\Hr\IncrementType;
+use App\Models\Hr\OtherBenefitAssign;
+use App\Models\Hr\OtherBenefits;
+use App\Models\Hr\Promotion;
+use App\Models\Hr\SalaryAdjustDetails;
+use App\Models\Hr\SalaryAdjustMaster;
 use App\Models\Hr\SalaryStructure;
 use App\Models\Hr\Unit;
-use App\Models\Hr\EmpType;
-use App\Models\Employee;
-use App\Models\Hr\Increment;
-use App\Models\Hr\Promotion;
-use App\Models\Hr\FixedSalary;
-use App\Models\Hr\IncrementType;
-use App\Models\Hr\OtherBenefits;
-use App\Models\Hr\OtherBenefitAssign;
-use App\Models\Hr\SalaryAdjustMaster;
-use App\Models\Hr\SalaryAdjustDetails;
+use App\Models\Hr\YearlyHolyDay;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Validator,DB, DataTables, ACL,Auth;
 class BenefitController extends Controller
 {
@@ -959,6 +963,64 @@ class BenefitController extends Controller
         $increments = Increment::where('associate_id', $request->associate_id)->orderBy('effective_date', 'DESC')->get();
 
         return view('hr/payroll/benefit', compact('info', 'benefit', 'promotions', 'increments'));
+    }
+
+    public function empRollback(Request $request)
+    {
+        $input = $request->all();
+        $data['type'] = 'error';
+        DB::beginTransaction();
+        try {
+            $getEmployee = Employee::getEmployeeAssIdWiseSelectedField($input['associate_id'], ['as_name','as_id', 'as_unit_id', 'associate_id', 'shift_roaster_status']);
+            if($getEmployee == null){
+                $data['msg'] = 'Employee Not Found!';
+                return $data;
+            }
+
+            // employee active
+            Employee::where('associate_id', $getEmployee->associate_id)->update([
+                'as_status' => 1,
+                'as_status_date' => null
+            ]);
+            // given benefit delete
+            $givenBenefit = HrAllGivenBenefits::where('associate_id', $getEmployee->associate_id)->delete();
+
+            // attendance roll back
+            $dates = displayBetweenTwoDates(date('Y-m').'-1', date('Y-m-d'));
+            $year = date('Y');
+            $month = date('m');
+            if(count($dates) > 0){
+              foreach ($dates as $key => $date) {
+                $checkHolidayFlag = 0;
+                // check holiday individual
+                $getHoliday = HolidayRoaster::getHolidayYearMonthAsIdDateWise($year, $month, $getEmployee->associate_id, $date);
+                if($getHoliday != null && $getHoliday->remarks == 'Holiday'){
+                    $checkHolidayFlag = 1;
+                }else if($getHoliday == null){
+                    if($getEmployee->shift_roaster_status == 0){
+                        $getYearlyHoliday = YearlyHolyDay::getCheckUnitDayWiseHoliday($getEmployee->as_unit_id, $date);
+                        
+                        if($getYearlyHoliday != null && $getYearlyHoliday->hr_yhp_open_status == 0){
+                            $checkHolidayFlag = 1;
+                            
+                        }
+                    }
+                }
+
+                if($checkHolidayFlag == 0){
+                    $history = EmployeeHelper::attendanceReCalculation($getEmployee->as_id, $date);
+                    $getStatus = EmployeeHelper::employeeDayStatusCheckActionAbsent($getEmployee->associate_id, $date);
+                }
+              }
+            }
+            log_file_write($getEmployee->as_name ." - rollback to active: ", $getEmployee->as_id);
+            DB::commit();
+            return 'success';
+        } catch (\Exception $e) {
+            DB::rollback();
+            $data['msg'] = $e->getMessage();
+            return $data;
+        }
     }
 
 }

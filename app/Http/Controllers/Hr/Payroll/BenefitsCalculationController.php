@@ -454,7 +454,7 @@ class BenefitsCalculationController extends Controller
                     
                     $btn .= "<a href=".url('hr/payroll/benefits?associate='.$data->associate_id)." class='btn btn-sm btn-primary' data-toggle='tooltip' title='View' style='margin-top:1px;'>
                         <i class=' fa fa-eye bigger-120'></i></a> ";
-                    $btn .= "<a class='btn btn-sm btn-danger rollback'  data-associate='".$data->associate_id."' data-toggle='tooltip' title='Rollback Data' style='margin-top:1px;'><i class='fa fa-undo'></i></a> ";
+                    $btn .= "<a class='btn btn-sm btn-danger rollback text-white'  data-associate='".$data->associate_id."' data-name='".$data->as_name."' data-toggle='tooltip' title='Rollback Data' style='margin-top:1px;'><i class='fa fa-undo'></i></a> ";
 
                     $btn .= "</div>";
 

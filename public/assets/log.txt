@@ -1,0 +1,11 @@
+2021-02-01 15:12:01 "20F025017D" User information updated 41
+2021-01-30 15:09:51 "12J020012C" Employee benefits updated successfully 3849
+2021-01-30 15:09:19 "12J020012C" Employee benefits updated successfully 3849
+2021-01-30 15:08:42 "20F025017D" Permission Assign Benifit assigned to 12J020012C 
+2021-01-30 15:08:36 "20F025017D" Permission Manage Employee revoked from 12J020012C 
+2021-01-30 15:08:34 "20F025017D" Permission Manage Employee assigned to 12J020012C 
+2021-01-30 15:05:54 "20F025017D" Permission Benefit List assigned to 12J020012C 
+2021-01-30 15:05:30 "20F025017D" Permission Assign Benefit assigned to 12J020012C 
+2021-01-28 19:04:32 "20F025017D" Shift Roster Day Wise Updated 14379
+2021-01-28 19:03:15 "20F025017D" Shift Roster Day Wise Updated 14379
+2021-01-28 18:22:51 "20F025017D" LIPI - rollback to active:  392

@@ -13,6 +13,7 @@ use App\Jobs\ProcessEmployeeAbsent;
 use App\Jobs\ProcessUnitWiseSalary;
 use App\Models\Employee;
 use App\Models\Hr\AttendanceHistory;
+use App\Models\Hr\AttendanceUndeclared;
 use App\Models\Hr\Bills;
 use App\Models\Hr\HolidayRoaster;
 use App\Models\Hr\YearlyHolyDay;
@@ -205,16 +206,18 @@ class AttendanceFileProcessController extends Controller
 
                          //dd($today);exit;
                         // leave check individual
+                        $checkLeaveFlag = 0;
                         $getLeave = DB::table('hr_leave')
                         ->where('leave_ass_id', $as_info->associate_id)
                         ->where('leave_from', '<=', $today)
                         ->where('leave_to', '>=', $today)
                         ->where('leave_status',1)
                         ->first();
-
+                        
                         if($getLeave != null){
-                            $msg[] = $value." - ".$today." Leave for this employee";
-                            continue;
+                            $checkLeaveFlag = 1;
+                            // $msg[] = $value." - ".$today." Leave for this employee";
+                            // continue;
                         }
                         $checkHolidayFlag = 0;
                         // check holiday individual
@@ -305,7 +308,7 @@ class AttendanceFileProcessController extends Controller
                         // return $checktime.' '.$shift_code.' '.$shift_start.' '.$shift_end;
                         if($shift_code != null && $shift_start != null && $shift_end !=null){
 
-                            $att = $this->attendanceCrud($checktime, $shift_start, $shift_end, $shift_break, $shift_code, $shift_name, $tableName, $as_info, $checkHolidayFlag, $unit, $day_of_date, $month, $year, $unitId, $nightFlag, $billEligible);
+                            $att = $this->attendanceCrud($checktime, $shift_start, $shift_end, $shift_break, $shift_code, $shift_name, $tableName, $as_info, $checkHolidayFlag, $unit, $day_of_date, $month, $year, $unitId, $nightFlag, $billEligible, $checkLeaveFlag);
                             
                             if($fileDate == ''){
                                 $fileDate[] = $today;
@@ -341,7 +344,7 @@ class AttendanceFileProcessController extends Controller
         }
     }
 
-    public function attendanceCrud($checktime, $shift_start_time, $shift_end_time, $shift_break_time, $shift_code, $shift_name, $tableName, $as_info, $checkHolidayFlag, $unit, $day_of_date, $month, $year, $unitId, $shift_night_flag, $billEligible)
+    public function attendanceCrud($checktime, $shift_start_time, $shift_end_time, $shift_break_time, $shift_code, $shift_name, $tableName, $as_info, $checkHolidayFlag, $unit, $day_of_date, $month, $year, $unitId, $shift_night_flag, $billEligible, $checkLeaveFlag)
     {
 
         try {
@@ -406,7 +409,7 @@ class AttendanceFileProcessController extends Controller
 
                 }
             }
-            if($shift_start_begin <= $check_time && $check_time <= $shift_start_end  && $checkHolidayFlag == 0){
+            if($shift_start_begin <= $check_time && $check_time <= $shift_start_end  && $checkHolidayFlag == 0 && $checkLeaveFlag == 0){
                 // $checkInTimeFlag = 0;
                 if(empty($last_punch)){
                     $punchId = DB::table($tableName)
@@ -455,7 +458,7 @@ class AttendanceFileProcessController extends Controller
                 }*/
 
             }
-            else if(($shift_end_begin <= $check_time) && ($check_time <= $shift_end_end)  && $checkHolidayFlag == 0){
+            else if(($shift_end_begin <= $check_time) && ($check_time <= $shift_end_end)  && $checkHolidayFlag == 0 && $checkLeaveFlag == 0){
                 if(!empty($last_punch)){
                     $punchId = $last_punch->id;
                     // $checkOutTimeFlag = 0;
@@ -624,6 +627,9 @@ class AttendanceFileProcessController extends Controller
                 $otAllow = 86400 - $totalShiftDiffNew; //86400 = 24 hour
                 // $otAllow = 46000 - ($shift_break_time*60);// 13- hour 00 minute 00 second
                 $shift_end_end_new = $shift_out_time_new->copy()->addSeconds($otAllow);
+                if($checkHolidayFlag == 1){
+                    $shift_end_end_new = $shift_end_end_new->copy()->addHours(6);
+                }
                 
                 //check time
                 $check_time = Carbon::createFromFormat('Y-m-d H:i:s', $checktime);
@@ -659,7 +665,7 @@ class AttendanceFileProcessController extends Controller
                         $punchId = $last_punch->id;
                         // $checkOutTimeFlag = 0;
                         if($last_punch->out_time == null){
-                            $hi = DB::table($tableName)
+                            DB::table($tableName)
                             ->where('id', $last_punch->id)
                             ->update([
                                 'out_time' => $checktime,
@@ -691,7 +697,7 @@ class AttendanceFileProcessController extends Controller
                         //     dispatch($queue);
                         // }
                     }else{
-                        if(!empty($shift_code_new)){
+                        if(!empty($shift_code_new) && $checkHolidayFlag == 0 && $checkLeaveFlag == 0){
                             $defaultInTime = date("Y-m-d H:i:s", strtotime($shift_start));
                             $punchId = DB::table($tableName)
                             ->insertGetId([
@@ -712,6 +718,15 @@ class AttendanceFileProcessController extends Controller
                             // dispatch($queue);
                         }
                     }
+                }elseif(!empty($last_punch) && $check_time <= $shift_end_end_new && ($checkHolidayFlag == 1 || $checkLeaveFlag == 1)){
+                    $punchId = $last_punch->id;
+                    DB::table($tableName)
+                    ->where('id', $last_punch->id)
+                    ->where('as_id', $as_info->as_id)
+                    ->update([
+                        'out_time' => $checktime,
+                        'out_unit' => $unit
+                    ]);
                 }
 
             }
@@ -736,6 +751,24 @@ class AttendanceFileProcessController extends Controller
                     ->delay(Carbon::now()->addSeconds(2));
                     dispatch($queue);
                 }
+            }else{
+                $attType = 0;
+                if($checkHolidayFlag == 1){
+                    $attType = 1; // 1 for holiday 
+                }elseif($checkLeaveFlag == 1){
+                    $attType = 2; // 2 for leave 
+                }
+
+                if($attType != 0){
+                    AttendanceUndeclared::insertOrIgnore([
+                        'as_id' => $as_info->as_id,
+                        'unit_id' => $as_info->as_unit_id,
+                        'punch_date' => date('Y-m-d', strtotime($checktime)),
+                        'punch_time' => date('H:i:s', strtotime($checktime)),
+                        'type' => $attType
+                    ]);
+                }
+
             }
             // extra calculation
             if($last_punch != null){

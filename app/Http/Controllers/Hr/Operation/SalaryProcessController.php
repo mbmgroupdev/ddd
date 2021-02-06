@@ -18,6 +18,7 @@ use App\Models\Hr\Section;
 use App\Models\Hr\Subsection;
 use App\Models\Hr\Unit;
 use Auth, DB;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -204,6 +205,15 @@ class SalaryProcessController extends Controller
                 ->where('month', $input['month'])
                 ->whereIn('associate_id', $employeeAssociates)
                 ->get()->keyBy('associate_id')->toArray();
+            $firstDateMonth = $input['year'].'-'.$input['month'].'-01';
+            $lastDateMonth = Carbon::parse($firstDateMonth)->endOfMonth()->toDateString();
+
+            $salaryIncrement = DB::table('hr_increment')
+            ->select('associate_id','increment_amount')
+            ->whereIn('associate_id', $employeeAssociates)
+            ->where('effective_date','>=',$firstDateMonth)
+            ->where('effective_date','<=', $lastDateMonth)
+            ->get()->keyBy('associate_id')->toArray();
             // employee designation
             $designation = designation_by_id();
             $getSection = section_by_id();
@@ -238,9 +248,9 @@ class SalaryProcessController extends Controller
             $pageHead = (object)$pageHead;
             if($input['unit'] == null){
                 
-                $view =  view('hr.operation.salary.load_salary_sheet_unit', compact('uniqueLocation', 'getSalaryList', 'pageHead','locationDataSet', 'info', 'salaryAddDeduct', 'designation', 'getSection', 'input'))->render();
+                $view =  view('hr.operation.salary.load_salary_sheet_unit', compact('uniqueLocation', 'getSalaryList', 'pageHead','locationDataSet', 'info', 'salaryAddDeduct', 'designation', 'getSection', 'input', 'salaryIncrement'))->render();
             }else{
-                $view = view('hr.operation.salary.load_salary_sheet', compact('uniqueLocation', 'getSalaryList', 'pageHead','locationDataSet', 'info', 'salaryAddDeduct', 'designation', 'getSection', 'input'))->render();
+                $view = view('hr.operation.salary.load_salary_sheet', compact('uniqueLocation', 'getSalaryList', 'pageHead','locationDataSet', 'info', 'salaryAddDeduct', 'designation', 'getSection', 'input', 'salaryIncrement'))->render();
             }
 
             return response(['view' => $view]);
@@ -313,6 +323,16 @@ class SalaryProcessController extends Controller
                 ->where('month', $input['month'])
                 ->whereIn('associate_id', $employeeAssociates)
                 ->get()->keyBy('associate_id')->toArray();
+            $firstDateMonth = $input['year'].'-'.$input['month'].'-01';
+            $lastDateMonth = Carbon::parse($firstDateMonth)->endOfMonth()->toDateString();
+
+            $salaryIncrement = DB::table('hr_increment')
+            ->select('associate_id','increment_amount')
+            ->whereIn('associate_id', $employeeAssociates)
+            ->where('effective_date','>=',$firstDateMonth)
+            ->where('effective_date','<=', $lastDateMonth)
+            ->get()->keyBy('associate_id')->toArray();
+
             // employee designation
             $designation = designation_by_id();
             $getSection = section_by_id();
@@ -337,7 +357,7 @@ class SalaryProcessController extends Controller
             }else{
                 $viewPage = 'hr.operation.salary.load_salary_sheet';
             }
-            return view($viewPage, compact('uniqueLocation', 'getSalaryList', 'pageHead','locationDataSet', 'info', 'salaryAddDeduct', 'designation', 'getSection', 'input'));
+            return view($viewPage, compact('uniqueLocation', 'getSalaryList', 'pageHead','locationDataSet', 'info', 'salaryAddDeduct', 'designation', 'getSection', 'input', 'salaryIncrement'));
         } catch (\Exception $e) {
             $bug = $e->getMessage();
             return $bug;

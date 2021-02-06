@@ -37,6 +37,9 @@
         .iq-accordion-block{
             padding: 10px 0;
         } 
+        .custom-control-label:after, .custom-control-label:before {
+            top: .50rem;
+        }
     </style>
 @endpush
 <div class="main-content">
@@ -77,6 +80,7 @@
                                                         <label for="as_id">Employees</label>
                                                     </div>
                                                 </div>
+
                                                 <div class="col-sm-2">
                                                     <div class="form-group has-float-label has-required">
                                                         <input type="date" class="report_date datepicker form-control" id="associate_from_date" name="from_date" placeholder="Y-m-d" required="required" value="{{ date('Y-m-d') }}" autocomplete="off" />
@@ -141,12 +145,11 @@
                                         $mbmFlag = 1;
                                       }
                                     @endphp
-                                    <div class="panel-body">
+                                    <div class="panel-body pb-0">
                                         <div class="row">
                                             <div class="col-3">
                                                 <div class="form-group has-float-label select-search-group">
                                                     <select name="unit" class="form-control capitalize select-search" id="unit" >
-                                                        <option selected="" value="">Choose...</option>
                                                         @if($mbmFlag == 1)
                                                         <option value="145">MBM + MBF + MBM 2</option>
                                                         @endif
@@ -174,9 +177,6 @@
                                                     </select>
                                                     <label for="area">Area</label>
                                                 </div>
-                                                
-                                            </div>
-                                            <div class="col-3">
                                                 <div class="form-group has-float-label select-search-group">
                                                     <select name="department" class="form-control capitalize select-search" id="department">
                                                         <option selected="" value="">Choose...</option>
@@ -186,6 +186,9 @@
                                                     </select>
                                                     <label for="department">Department</label>
                                                 </div>
+                                            </div>
+                                            <div class="col-3">
+                                                
                                                 <div class="form-group has-float-label select-search-group">
                                                     <select name="section" class="form-control capitalize select-search " id="section" disabled>
                                                         <option selected="" value="">Choose...</option>
@@ -198,9 +201,6 @@
                                                     </select>
                                                     <label for="subSection">Sub Section</label>
                                                 </div>
-                                                
-                                            </div> 
-                                            <div class="col-3">
                                                 <div class="form-group has-float-label select-search-group">
                                                     <select name="floor" class="form-control capitalize select-search" id="floor" disabled >
                                                         <option selected="" value="">Choose...</option>
@@ -213,6 +213,9 @@
                                                     </select>
                                                     <label for="line">Line</label>
                                                 </div>
+                                            </div> 
+                                            <div class="col-3">
+                                                
                                                 <div class="form-group has-float-label select-search-group">
                                                     <select name="otnonot" class="form-control capitalize select-search" id="otnonot" >
                                                         <option  value="">Choose...</option>
@@ -221,10 +224,6 @@
                                                     </select>
                                                     <label for="otnonot">OT/Non-OT</label>
                                                 </div>
-                                                
-                                            </div>
-                                            <div class="col-3">
-                                                
                                                 <div class="form-group has-float-label select-search-group">
                                                     <?php
                                                       $status = ['0'=>'Unpaid','1'=>'Paid'];
@@ -232,6 +231,16 @@
                                                     {{ Form::select('pay_status', $status, 0, ['placeholder'=>'Select Payable Status ', 'class'=>'form-control capitalize select-search', 'id'=>'pay_status']) }}
                                                     <label for="pay_status">Payable Status</label>
                                                 </div>
+                                                <div class="form-group has-float-label has-required select-search-group">
+                                                    <?php
+                                                      $status = ['1'=>'Active','2'=>'Resign','3'=>'Terminate','4'=>'Suspend','5'=>'Left', '6'=>'Maternity'];
+                                                    ?>
+                                                    {{ Form::select('as_status', $status, 1, ['placeholder'=>'Select Employee Status ', 'class'=>'form-control capitalize select-search', 'id'=>'estatus']) }}
+                                                    <label for="estatus">Status</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                
                                                 <div class="form-group has-float-label select-search-group">
                                                     <?php
                                                       $billType = ['1'=>'Tiffin','2'=>'Dinner'];
@@ -239,7 +248,28 @@
                                                     {{ Form::select('bill_type', $billType, 0, ['placeholder'=>'Select Payable Status ', 'class'=>'form-control capitalize select-search', 'id'=>'bill_type']) }}
                                                     <label for="bill_type">Bill Type</label>
                                                 </div>
-                                                <div class="row">
+                                                <div class="form-inline mb-3 mt-10">
+                                                    
+                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                       <input type="radio" id="form-range" name="date_type" class="date_type custom-control-input" value="range" checked="">
+                                                       <label class="custom-control-label cursor-pointer" for="form-range"> Range </label>
+                                                    </div>
+                                                    {{-- <div class="custom-control custom-radio custom-control-inline">
+                                                       <input type="radio" id="cash_amount" name="date_type" class="date_type custom-control-input" value="Cash">
+                                                       <label class="custom-control-label" for="cash_amount"> Date </label>
+                                                    </div> --}}
+                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                       <input type="radio" id="form-month" name="date_type" class="date_type custom-control-input" value="month" >
+                                                       <label class="custom-control-label cursor-pointer" for="form-month"> Month </label>
+                                                    </div>
+                                                </div>
+                                                <div id="month-form" style="display: none;">
+                                                    <div class="form-group has-float-label has-required">
+                                                      <input type="month" class="report_date form-control" id="month-year" name="month_year" placeholder=" Month-Year" value="{{ date('Y-m') }}"autocomplete="off" />
+                                                      <label for="month-year">Month</label>
+                                                    </div>
+                                                </div>
+                                                <div class="row" id="range-form">
                                                   <div class="col pr-0">
                                                       <div class="form-group has-float-label has-required">
                                                           <input type="date" class="report_date datepicker form-control" id="from_date" name="from_date" placeholder="Y-m-d" required="required" value="{{ date('Y-m-d') }}" autocomplete="off" />
@@ -254,7 +284,7 @@
                                                   </div>
                                                 </div>
                                                 <div class="form-group">
-                                                  <button onclick="multiple()" class="btn btn-primary nextBtn btn-lg pull-right" type="button" id="unitFromBtn"><i class="fa fa-save"></i> Generate</button>
+                                                  <button onclick="multiple()" class="btn btn-primary nextBtn btn-lg pull-right" type="button" id="unitFromBtn"><i class="fa fa-search"></i> Generate</button>
                                                 </div>
                                             </div>   
                                         </div>
@@ -346,6 +376,16 @@
             }
         });
         //month-Year validation end---------------
+    });
+    $(document).on('change','.date_type', function(){
+
+        if($(this).val() == 'month'){
+            $("#month-form").show();
+            $("#range-form").hide();
+        }else if($(this).val() == 'range'){
+            $("#month-form").hide();
+            $("#range-form").show();
+        }
     });
 </script>
 
@@ -530,7 +570,27 @@
         var department = $('select[name="department"]').val();
         var fromDate = $("#from_date").val();
         var toDate = $("#to_date").val();
-        if((unit !== '' || location !== '' || area !== '' || department !== '') && fromDate !== '' && toDate != ''){
+        var dateType = $('input[name="date_type"]').val();
+        var flag = 0;
+        var msg = '';
+        if(dateType == 'range'){
+            if(fromDate == '' && toDate == ''){
+                flag = 1;
+                msg = 'Date Range Not Null!';
+            }
+        }else if(dateType == 'month'){
+            if($("#month-year").val() == ''){
+                flag = 1;
+                msg = 'Month Not Null!';
+            }
+        }
+
+        if((unit === '' && location === '' && area === '' && department === '')){
+            flag = 1;
+            msg = 'Select Unit/Location/Area/Department';
+        }
+
+        if(flag === 0){
             $("#result-process-bar").show();
             $("#result-show").html(loader);
             $('#setFlug').val(0);
@@ -563,7 +623,7 @@
             });
         }else{
             $("#result-process-bar").hide();
-            $.notify("Select Unit/Location/Area/Department", 'error');
+            $.notify(msg, 'error');
             
         }
     }

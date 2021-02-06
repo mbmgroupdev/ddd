@@ -4,7 +4,7 @@
 
 @php $user = auth()->user(); @endphp
    @include('hr.common.employee_count')
-	<div class="row">
+  <div class="row">
       
       
       
@@ -74,7 +74,7 @@
          </div>
       </div>
       @endif
-
+      @php  $today = date('Y-m-d'); @endphp
       @if($user->can('Monthly OT') || $user->hasRole('Super Admin'))               
       <div class="col-md-6">
          <div class="panel iq-card-block iq-card-stretch iq-card-height">
@@ -87,6 +87,98 @@
          </div>
       </div>
       @endif
+      <div class="col-sm-6">
+        <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+          <div class="iq-card-header d-flex justify-content-between">
+             <div class="iq-header-title">
+                <h4 class="card-title">Holiday Employee Records </h4>
+             </div>
+             <div class="iq-card-header-toolbar d-flex align-items-center">
+                
+                <a href='{{ url("hr/operation/undeclared-employee?date=$today&report_type=1") }}' target="_blank" class="btn btn-sm btn-outline-primary"><i class="fa fa-list"></i> See All</a>
+             </div>
+          </div>
+          <div class="iq-card-body pt-0">
+             <div class="table-responsive">
+                <table class="table table-hover table-head">
+                   <thead>
+                      <tr>
+                         <th scope="col">Associate ID </th>
+                         <th scope="col">Name</th>
+                         <th scope="col">Date</th>
+                         <th scope="col">Time</th>
+                         <th scope="col"></th>
+
+                      </tr>
+                   </thead>
+                   <tbody>
+                      @if(count($getHolidayRecord) > 0)
+                      @foreach($getHolidayRecord as $record)
+                      @php $associateId = $record->employee['associate_id']; @endphp
+                        <tr>
+                          <td><a href='{{ url("hr/operation/holiday-roster?associate=$associateId")}}' target="_blank">{{ $record->employee['associate_id'] }}</a></td>
+                          <td>{{ $record->employee['as_name'] }}</td>
+                          <td>{{ $record->punch_date }}</td>
+                          <td>{{ (($record->punch_time != null && $record->punch_time != '00:00:00')?date('H:i:s', strtotime($record->punch_time)):'') }}</td>
+                          <td></td>
+                        </tr>
+                      @endforeach
+                      @else
+                      <tr>
+                        <td class="text-center" colspan="5">No Record Found!</td>
+                      </tr>
+                      @endif
+                   </tbody>
+                </table>
+             </div>
+          </div>
+       </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+          <div class="iq-card-header d-flex justify-content-between">
+             <div class="iq-header-title">
+                <h4 class="card-title">Leave Employee Records </h4>
+             </div>
+             <div class="iq-card-header-toolbar d-flex align-items-center">
+                <a href="" class="btn btn-sm btn-outline-primary"><i class="fa fa-list"></i> See All</a>
+             </div>
+          </div>
+          <div class="iq-card-body pt-0">
+             <div class="table-responsive">
+                <table class="table table-hover table-head">
+                   <thead>
+                      <tr>
+                         <th scope="col">Associate ID </th>
+                         <th scope="col">Name</th>
+                         <th scope="col">Date</th>
+                         <th scope="col"></th>
+
+                      </tr>
+                   </thead>
+                   <tbody>
+                      @if(count($getLeaveRecord) > 0)
+                      @foreach($getLeaveRecord as $record)
+                        <tr>
+                          <td>{{ $record->employee['associate_id'] }}</td>
+                          <td>{{ $record->employee['as_name'] }}</td>
+                          <td>{{ $record->punch_date }}</td>
+                          <td>{{ (($record->punch_time != null && $record->punch_time != '00:00:00')?date('H:i:s', strtotime($record->punch_time)):'') }}</td>
+                          <td></td>
+                        </tr>
+                      @endforeach
+                      @else
+                      <tr>
+                        <td class="text-center" colspan="5">No Record Found!</td>
+                      </tr>
+                      @endif
+                      
+                   </tbody>
+                </table>
+             </div>
+          </div>
+       </div>
+      </div>
 
       
    </div>
@@ -342,7 +434,7 @@
                  }];
 
                  var series = chart.series.push(new am4charts.PieSeries3D());
-                 series.colors.list = [am4core.color("#208207"), am4core.color("#089bab"), am4core.color("#f26361"),
+                 series.colors.list = [am4core.color("#089bab"), am4core.color("#208207"), am4core.color("#f45b5b"),
                      am4core.color("#FC9F5B")
                  ];
                  series.dataFields.value = "employee";

@@ -29,6 +29,9 @@ p.search-title{
 .pricing-box:hover{
     cursor: pointer;
 }
+.cursor-pointer{
+    cursor: pointer;
+}
 .text-att{
     text-align: center; padding: 5px;color:#fff;
 }
@@ -39,6 +42,12 @@ p.search-title{
 .field-data{
     font-weight: 600;
     color: #099faf;
+}
+.view i{
+  font-size: 25px;
+  border: 1px solid #000;
+  border-radius: 3px;
+  padding: 0px 3px;
 }
 .iq-accordion.career-style.mat-style .accordion-title:before, .iq-accordion.career-style.faq-style .accordion-title:before {
     position: absolute;
@@ -710,7 +719,7 @@ div.dataTables_wrapper div.dataTables_paginate{
 }
 .swal-modal {
   width: 410px !important;
-  height: 330px !important;
+  height: auto !important;
 }
 .hide{display: none !important;}
 .sticky-th {

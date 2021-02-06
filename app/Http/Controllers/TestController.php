@@ -1145,16 +1145,42 @@ class TestController extends Controller
     public function check()
     {
 
-        // $user = DB::table('hr_as_basic_info')->where('as_doj', '>=','2020-12-01')->get();
-        // $data = [];
-        // foreach ($user as $key => $e) {
-        //     $query[] = DB::table('holiday_roaster')
-        //                               ->where('as_id', $e->associate_id)
-        //                               ->whereDate('date','<',$e->as_doj)
-        //                               ->get()->toArray();
+        
+        $leave_array = [];
+            $absent_array = [];
+            for($i=1; $i<=31; $i++) {
+            $date = date('Y-m-d', strtotime('2021-01-'.$i));
+            $leave = DB::table('hr_leave AS l')
+                    ->where('l.leave_from', '<=', $date)
+                    ->where('l.leave_to',   '>=', $date)
+                    ->where('l.leave_status', '=', 1)
+                    ->leftJoin('hr_as_basic_info AS b', function($q){
+                        $q->on('b.associate_id', 'l.leave_ass_id');
+                    })
+                    ->pluck('b.as_id', 'b.associate_id');
+            $leave_array[] = $leave;
+            $absent_array[] = DB::table('holiday_roaster')
+                    ->whereDate('date', $date)
+                    ->whereIn('as_id', $leave)
+                    ->get()->toArray();
+            }
+            // return "done";
+            dump($leave_array,$absent_array);
+            dd('end');
+        
+    }
+    public function monthlycheck($value='')
+    {
+        $user = DB::table('hr_as_basic_info')->where('as_doj', '>=','2021-01-01')->get();
+        $data = [];
+        foreach ($user as $key => $e) {
+            $query[] = DB::table('holiday_roaster')
+                                      ->where('as_id', $e->associate_id)
+                                      ->whereDate('date','<',$e->as_doj)
+                                      ->get()->toArray();
             
-        // }
-        // dd($query);
+        }
+        dd($query);
         // $user = DB::table('hr_as_basic_info')->where('as_doj', '>=','2021-01-01')->get();
         //     $data = [];
         // foreach ($user as $key => $e) {
@@ -1416,9 +1442,7 @@ class TestController extends Controller
                 }
                 dump($leave_array,$absent_array);
                 dd('end');
-           
     }
-    
      public function getLeftEmployee()
     {
 

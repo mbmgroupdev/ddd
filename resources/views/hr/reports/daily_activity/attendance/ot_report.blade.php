@@ -398,6 +398,7 @@
 						</tbody>
 						
 					</table>
+				
 				@endif
 			</div>
 		</div>

@@ -174,7 +174,7 @@ $(document).ready(function(){
                 var column = this; 
                 var input = document.createElement("input"); 
                 input.setAttribute('placeholder', $(column.header()).text());
-                input.setAttribute('style', 'width: 110px; height:25px; border:1px solid whitesmoke;');
+                input.setAttribute('style', 'width: 90px; height:25px; border:1px solid whitesmoke;');
 
                 $(input).appendTo($(column.header()).empty())
                 .on('keyup', function (e) {

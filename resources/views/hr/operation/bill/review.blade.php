@@ -35,6 +35,9 @@
         <input type="hidden" value="{{ $input['from_date'] }}" name="from_date">
         <input type="hidden" value="{{ $input['to_date'] }}" name="to_date">
         <input type="hidden" value="{{ $input['bill_type']}}" name="bill_type">
+        <input type="hidden" value="{{ $input['date_type']}}" name="date_type">
+        <input type="hidden" value="{{ $input['month_year']}}" name="month_year">
+        <input type="hidden" value="{{ $input['pay_status']}}" name="pay_status">
         @foreach($uniqueUnit as $key=>$unit)
             @php
                 $pageKey = 0;
@@ -74,7 +77,12 @@
                                         বিল
                                         
                                         <br/>
+
+                                        @if($input['date_type'] == 'range')
                                         তারিখ: {{ Custom::engToBnConvert($fromDate) }} থেকে {{ Custom::engToBnConvert($toDate) }}
+                                        @elseif($input['date_type'] == 'month')
+                                        মাসঃ {{ date_to_bn_month($input['month_year']) }}
+                                        @endif
                                         
                                     </h5>
                                 </td>
@@ -103,6 +111,7 @@
                                     <th width="240">পদবি  ও গ্রেড</th>
                                     <th width="100">ইআরপি ও ওরাকল</th>
                                     <th>তারিখ</th>
+                                    <th>একাউন্ট নম্বর</th>
                                     <th width="80">দিন</th>
                                     <th width="120">মোট টাকার পরিমান</th>
                                     <th class="" width="120" >দস্তখত</th>
@@ -176,6 +185,9 @@
                                                 </div>
                                             </td>
                                             <td>
+                                                {{ $list->bank_no }}
+                                            </td>
+                                            <td>
                                                 <p style="margin:0;padding:0">
                                                     <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">মোট দিন
                                                     </span>
@@ -202,7 +214,7 @@
                                 @endforeach
                                 @if(count($lists) > 0)
                                 <tr>
-                                    <td colspan="6" style="text-align: right">মোট দেয় টাকার</td>
+                                    <td colspan="7" style="text-align: right">মোট দেয় টাকার</td>
                                     <td style="text-align: center;">{{ Custom::engToBnConvert(bn_money($total)) }}</td>
                                     <td></td>
                                 </tr>

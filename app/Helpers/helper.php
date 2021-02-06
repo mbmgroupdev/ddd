@@ -1068,6 +1068,9 @@ function numberToTimeClockFormat($number){
     if(empty($hour[0])){
         $hour[0] = 0;
     }
+    if($hour[1] == 60){
+        return ($hour[0]+1).':'.'00';
+    }
     return $hour[0].':'.$hour[1];
 }
 // min to hour
@@ -1075,7 +1078,7 @@ if(!function_exists('min_to_ot')){
     function min_to_ot()
     {
        return  Cache::rememberForever('min_to_ot', function () {
-           $range = range(0, 59);
+           $range = range(0, 60);
            $min = [];
            foreach ($range as $k => $v) {
                $min[$k] = round($v/60, 3);

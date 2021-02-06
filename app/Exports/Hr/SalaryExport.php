@@ -155,7 +155,7 @@ class SalaryExport implements FromView, WithHeadingRow
             }
         }else{
             $queryData->select('s.unit_id AS as_unit_id','s.as_id AS associate_id', 's.designation_id AS as_designation_id','subsec.hr_subsec_area_id AS as_area_id', 'subsec.hr_subsec_department_id AS as_department_id', 'subsec.hr_subsec_section_id AS as_section_id', 's.sub_section_id AS as_subsection_id', 's.pay_type AS bank_name');
-            $queryData->addSelect('deg.hr_designation_position','deg.hr_designation_name', 'ben.bank_no','emp.as_id','emp.as_gender', 'emp.as_oracle_code','emp.as_doj', 'emp.as_line_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 's.present', 's.absent', 's.ot_hour', 's.ot_rate', 's.total_payable','s.salary_payable', 's.bank_payable', 's.cash_payable', 's.tds', 's.stamp', 's.pay_status','s.gross', 's.basic', 's.house', 's.medical', 's.transport', 's.food');
+            $queryData->addSelect('deg.hr_designation_position','deg.hr_designation_name', 'ben.bank_no','emp.as_id','emp.as_gender', 'emp.as_oracle_code','emp.as_doj', 'emp.as_line_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 's.present', 's.absent', 's.ot_hour', 's.ot_rate', 's.attendance_bonus',  's.total_payable','s.salary_payable', 's.bank_payable', 's.cash_payable', 's.ot_status', 's.tds', 's.stamp', 's.pay_status','s.gross', 's.basic', 's.house', 's.medical', 's.transport', 's.food');
             $totalSalary = round($queryData->sum("s.total_payable"));
             $totalCashSalary = round($queryData->sum("s.cash_payable"));
             $totalBankSalary = round($queryData->sum("s.bank_payable"));

@@ -4,7 +4,10 @@
 				$urldata = http_build_query($input) . "\n";
 				$jsonUrl = json_encode($urldata);
 			@endphp
-			<a href='{{ url("hr/reports/summary/excel?$urldata")}}' target="_blank" class="btn btn-sm btn-info hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download" style="position: absolute; top: 15px; left: 65px;"><i class="fa fa-file-excel-o"></i></a>
+			{{-- <a href='{{ url("hr/reports/summary/excel?$urldata")}}' target="_blank" class="btn btn-sm btn-info hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download" style="position: absolute; top: 15px; left: 65px;"><i class="fa fa-file-excel-o"></i></a> --}}
+			@if($input['report_format'] == 0)
+				<a href='{{ url("hr/reports/activity-report-excle?$urldata")}}' target="_blank" class="btn btn-sm btn-info hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download" style="position: absolute; top: 15px; left: 65px;"><i class="fa fa-file-excel-o"></i></a>
+			@endif
 		<div class="report_section" id="report_section">
 			@php
 				$formatHead = explode('_',$format);
@@ -44,7 +47,7 @@
 		                			<b> OT </b> 
 		                			<b>: @if($input['otnonot'] == 0) No @else Yes @endif </b> <br>
 		                		@endif
-	                			Total Employe
+	                			Total Employee
 	                			<b>: </b>
 		                		
 		            		</td>
@@ -126,8 +129,8 @@
 			                    <th style="width:5%;">Floor</th>
 			                    <th style="width:5%;">Line</th>
 			                    <th style="width:5%;">Status</th>
-			                    <th style="width:5%;">Intime</th>
-			                    <th style="width:5%;">Outtime</th>
+			                    <th style="width:5%;">In time</th>
+			                    <th style="width:5%;">Out time</th>
 			                    <th style="width:5%;">OT Hour</th>
 			                </tr>
 			            </thead>

@@ -66,7 +66,7 @@
                                 $otHour = numberToTimeClockFormat($list->ot_hour);
                                 $ot = ((float)($list->ot_rate) * $list->ot_hour);
                                 $ot = number_format((float)$ot, 2, '.', '');
-                                $salaryAdd = ($list->salary_add_deduct_id == null) ? '0.00' : ($salaryAddDeduct[$list->as_id]['salary_add']);
+                                $salaryAdd = ($list->salary_add_deduct_id == null) ? '0.00' : ($salaryAddDeduct[$list->as_id]['salary_add']??'0.00');
                                 // $total = ($list->salary_payable + $ot + $list->attendance_bonus + $salaryAdd);
                                 $totalPayable = $totalPayable + $list->salary_payable;
                                 $attendanceBonus = $attendanceBonus + $list->attendance_bonus;
@@ -183,10 +183,10 @@
                                     @php
                                         $listdeduct = 0;
                                         if(($list->salary_add_deduct_id != null)){
-                                            $adv = $salaryAddDeduct[$list->as_id]['advp_deduct'];
-                                            $cg = $salaryAddDeduct[$list->as_id]['cg_product'];
-                                            $fd = $salaryAddDeduct[$list->as_id]['food_deduct'];
-                                            $other = $salaryAddDeduct[$list->as_id]['others_deduct'];
+                                            $adv = $salaryAddDeduct[$list->as_id]['advp_deduct']??0;
+                                            $cg = $salaryAddDeduct[$list->as_id]['cg_product']??0;
+                                            $fd = $salaryAddDeduct[$list->as_id]['food_deduct']??0;
+                                            $other = $salaryAddDeduct[$list->as_id]['others_deduct']??0;
 
                                             $listdeduct = $adv+$cg+$fd+$other;
                                         }

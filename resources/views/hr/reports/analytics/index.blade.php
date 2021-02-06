@@ -1,18 +1,15 @@
 @extends('hr.layout')
-@section('title', 'Summary Report')
+@section('title', 'Monthly Analytics Report')
 
 @section('main-content')
 @push('css')
-<style type="text/css">
+  <style>
     .single-employee-search {
       margin-top: 82px !important;
     }
     .view:hover, .view:hover{
       color: #ccc !important;
       
-    }
-    .grid_view{
-
     }
     .view i{
       font-size: 25px;
@@ -30,18 +27,11 @@
       padding: 15px 15px;
       padding-bottom: 8px;
     }
-    #right_modal_lg_drawer .table-responsive{
-        display: initial !important;
+    .modal-h3{
+      line-height: 15px !important;
     }
-    #right_modal_lg_drawer .table-title{
-        display: none;
-    }
-    .generate-drawer{
-        color:#089bab !important;
-        font-weight: bold;
-    }
-
-</style>
+    
+  </style>
 @endpush
 <div class="main-content">
     <div class="main-content-inner">
@@ -54,33 +44,22 @@
                 <li>
                     <a href="#">Reports</a>
                 </li>
-                <li class="active">Summary Report</li>
+                <li class="active"> Monthly Analytics Report</li>
             </ul>
         </div>
 
         <div class="page-content"> 
             <div class="row">
                 <div class="col-12">
-                    <form class="" role="form" id="activityReport" method="get" action=""> 
+                    <form class="" role="form" id="activityReport" method="get" action="#"> 
                         <div class="panel">
+
                             <div class="panel-body pb-0">
-                              @php
-                                $mbmFlag = 0;
-                                $mbmAll = [1,4,5];
-                                $permission = auth()->user()->unit_permissions();
-                                $checkUnit = array_intersect($mbmAll,$permission);
-                                if(count($checkUnit) > 2){
-                                  $mbmFlag = 1;
-                                }
-                              @endphp
                                 <div class="row">
                                     <div class="col-3">
-                                        <div class="form-group has-float-label has-required select-search-group">
-                                            <select name="unit" class="form-control capitalize select-search" id="unit"required >
+                                        <div class="form-group has-float-label select-search-group">
+                                            <select name="unit" class="form-control capitalize select-search" id="unit">
                                                 <option selected="" value="">Choose...</option>
-                                                @if($mbmFlag == 1)
-                                                <option value="145">MBM + MBF + MBM 2</option>
-                                                @endif
                                                 @foreach($unitList as $key => $value)
                                                 <option value="{{ $key }}">{{ $value }}</option>
                                                 @endforeach
@@ -89,7 +68,7 @@
                                         </div>
                                         <div class="form-group has-float-label select-search-group">
                                             <select name="location" class="form-control capitalize select-search" id="location">
-                                                <option selected="" value="">Choose...</option>
+                                                <option selected="" value="">Choose Location...</option>
                                                 @foreach($locationList as $key => $value)
                                                 <option value="{{ $key }}">{{ $value }}</option>
                                                 @endforeach
@@ -98,7 +77,7 @@
                                         </div>
                                         <div class="form-group has-float-label select-search-group">
                                             <select name="area" class="form-control capitalize select-search" id="area">
-                                                <option selected="" value="">Choose...</option>
+                                                <option selected="" value="">Choose Area...</option>
                                                 @foreach($areaList as $key => $value)
                                                 <option value="{{ $key }}">{{ $value }}</option>
                                                 @endforeach
@@ -108,37 +87,36 @@
                                         
                                     </div>
                                     <div class="col-3">
-                                        
                                         <div class="form-group has-float-label select-search-group">
                                             <select name="department" class="form-control capitalize select-search" id="department" disabled>
-                                                <option selected="" value="">Choose...</option>
+                                                <option selected="" value="">Choose Department...</option>
                                             </select>
                                             <label for="department">Department</label>
                                         </div>
                                         <div class="form-group has-float-label select-search-group">
                                             <select name="section" class="form-control capitalize select-search " id="section" disabled>
-                                                <option selected="" value="">Choose...</option>
+                                                <option selected="" value="">Choose Section...</option>
                                             </select>
                                             <label for="section">Section</label>
                                         </div>
                                         <div class="form-group has-float-label select-search-group">
                                             <select name="subSection" class="form-control capitalize select-search" id="subSection" disabled>
-                                                <option selected="" value="">Choose...</option> 
+                                                <option selected="" value="">Choose Sub Section...</option> 
                                             </select>
                                             <label for="subSection">Sub Section</label>
                                         </div>
                                         
                                     </div> 
-                                    <div class="col-2">
-                                      <div class="form-group has-float-label select-search-group">
+                                    <div class="col-3">
+                                        <div class="form-group has-float-label select-search-group">
                                             <select name="floor_id" class="form-control capitalize select-search" id="floor_id" disabled >
-                                                <option selected="" value="">Choose...</option>
+                                                <option selected="" value="">Choose Floor...</option>
                                             </select>
                                             <label for="floor_id">Floor</label>
                                         </div>
                                         <div class="form-group has-float-label select-search-group">
                                             <select name="line_id" class="form-control capitalize select-search" id="line_id" disabled >
-                                                <option selected="" value="">Choose...</option>
+                                                <option selected="" value="">Choose Line...</option>
                                             </select>
                                             <label for="line_id">Line</label>
                                         </div>
@@ -150,44 +128,39 @@
                                             </select>
                                             <label for="otnonot">OT/Non-OT</label>
                                         </div>
-                                        <input type="hidden" id="reportformat" name="report_format" value="1">
-                                        <input type="hidden" id="reportGroup" name="report_group" value="as_subsection_id">
+                                        
                                     </div>
-                                    <div class="col-4">
-                                      
-                                        <div class="form-group has-float-label has-required select-search-group">
-                                            
-                                            {{ Form::select('report_type', $reportType, null, ['placeholder'=>'Select Report Type ', 'class'=>'form-control capitalize select-search', 'id'=>'reportType']) }}
-                                            <label for="reportType">Report Type</label>
+                                    <div class="col-3">
+                                        
+                                        <div class="form-group has-float-label has-required">
+                                          <input type="month" class="report_date form-control" id="report-date" name="month" placeholder=" Month-Year"required="required" value="{{ date('Y-m', strtotime('-1 month')) }}"autocomplete="off" />
+                                          <label for="report-date">Month</label>
                                         </div>
-                                        
-                                        
-                                        <div id="double-date" >
-                                          <div class="row">
-                                            <div class="col pr-0">
-                                                <div class="form-group has-float-label has-required">
-                                                    <input type="date" class="report_date datepicker form-control" id="from_date" name="from_date" placeholder="Y-m-d" required="required" value="{{ date('Y-m-d') }}" autocomplete="off" />
-                                                    <label for="from_date">Date From</label>
-                                                </div>
+                                        <div class="row">
+                                          <div class="col-5 pr-0">
+                                            <div class="form-group has-float-label has-required">
+                                              <input type="number" class="report_date min_sal form-control" id="min_sal" name="min_sal" placeholder="Min Salary" required="required" value="{{ $salaryMin }}" min="{{ $salaryMin}}" max="{{ $salaryMax}}" autocomplete="off" />
+                                              <label for="min_sal">Range From</label>
                                             </div>
-                                            <div class="col">
-                                                <div class="form-group has-float-label has-required">
-                                                    <input type="date" class="report_date datepicker form-control" id="to_date" name="to_date" placeholder="Y-m-d" required="required" value="{{ date('Y-m-d') }}" autocomplete="off" />
-                                                    <label for="to_date">Date To</label>
-                                                </div>
+                                          </div>
+                                          <div class="col-1 p-0">
+                                            <div class="c1DHiF text-center">-</div>
+                                          </div>
+                                          <div class="col-6">
+                                            <div class="form-group has-float-label has-required">
+                                              <input type="number" class="report_date max_sal form-control" id="max_sal" name="max_sal" placeholder="Max Salary" required="required" value="{{ $salaryMax }}" min="{{ $salaryMin}}" max="{{ $salaryMax}}" autocomplete="off" />
+                                              <label for="max_sal">Range To</label>
                                             </div>
                                           </div>
                                         </div>
+                                        
                                         <div class="form-group">
                                           <button class="btn btn-primary nextBtn btn-lg pull-right" type="submit" ><i class="fa fa-save"></i> Generate</button>
                                         </div>
+                                        
                                     </div>   
                                 </div>
-                                {{-- <div class="row">
-                                    <div class="offset-8 col-4">
-                                        
-                                    </div>
-                                </div> --}}
+                               
                             </div>
                         </div>
                         <div class="single-employee-search" id="single-employee-search" style="display: none;">
@@ -196,24 +169,29 @@
                           </div>
                         </div>
                     </form>
+                    <!-- PAGE CONTENT ENDS -->
                 </div>
+                <!-- /.col -->
             </div>
             <div class="row">
                 <div class="col">
-                  <div class="iq-card" id="result-section" style="display: none">
+                  <div class="iq-card" id="result-section">
                     <div class="iq-card-header d-flex mb-0">
                        <div class="iq-header-title w-100">
                           <div class="row">
                             <div class="col-3">
-                              <h4 class="card-title capitalize inline">
-                                  <button class="btn btn-sm btn-primary hidden-print" onclick="printDiv('print-area')" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report"><i class="las la-print"></i> </button>
-                                  <button class="btn btn-sm btn-info hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download">
+                              <div id="result-section-btn" style="display: none;">
+                                <button class="btn btn-sm btn-primary hidden-print" onclick="printDiv('report_section')" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report"><i class="las la-print"></i> </button>
+                                <button class="btn btn-sm btn-info hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download">
                                   <i class="fa fa-file-excel-o"></i>
                                 </button>
-                                </h4>
+                              </div>
+                              
                             </div>
                             <div class="col-6 text-center">
-                              
+                              <h4 class="card-title capitalize inline">
+                                
+                              </h4>
                             </div>
                             <div class="col-3">
                               <div class="row">
@@ -221,9 +199,9 @@
                                   <div class="format">
                                     <div class="form-group has-float-label select-search-group mb-0">
                                         <?php
-                                            $type = ['as_unit_id'=>'Unit','as_designation_id'=>'Designation','as_line_id'=>'Line','as_floor_id'=>'Floor','as_department_id'=>'Department','as_section_id'=>'Section','as_subsection_id'=>'Sub Section'];
+                                            $type = ['as_unit_id'=>'Unit','as_line_id'=>'Line','as_floor_id'=>'Floor','as_department_id'=>'Department','as_designation_id'=>'Designation','as_section_id'=>'Section'];
                                         ?>
-                                        {{ Form::select('report_group_select', $type, 'as_subsection_id', ['class'=>'form-control capitalize', 'id'=>'reportGroupHead']) }}
+                                        {{ Form::select('report_group_select', $type, 'as_department_id', ['class'=>'form-control capitalize', 'id'=>'reportGroupHead']) }}
                                         <label for="reportGroupHead">Report Format</label>
                                     </div>
                                   </div>
@@ -241,15 +219,11 @@
                                 </div>
                               </div>
                               
-                              
                             </div>
                           </div>
                        </div>
                     </div>
-                    <div class="iq-card-body no-padding" id="print-area">
-                      <style type="text/css">
-                          .table{width: 100%;}a{text-decoration: none;}.table-bordered {border-collapse: collapse;}.table-bordered th,.table-bordered td {border: 1px solid #777 !important;padding:5px;}.no-border td, .no-border th{border:0 !important;vertical-align: top;}.f-16 th,.f-16 td, .f-16 td b{font-size: 16px !important;}
-                      </style>
+                    <div class="iq-card-body no-padding">
                       <div class="result-data" id="result-data">
                         
                       </div>
@@ -262,149 +236,67 @@
     </div>
 </div>
 @include('common.right-modal')
-@include('hr.reports.daily_activity.attendance.employee_activity_modal')
-
-<div class="modal right fade" id="right_modal_lg_drawer" tabindex="-1" role="dialog" aria-labelledby="right_modal_lg_drawer">
-    <div class="modal-dialog modal-lg right-modal-width" role="document" > 
-        <div class="modal-content">
-            <div class="modal-header">
-                <a class="view " data-toggle="tooltip" data-dismiss="modal" data-placement="top" title="" data-original-title="Back to Report">
-                    <i class="las la-chevron-left"></i>
-                </a>
-                <h5 class="modal-title right-modal-title text-center" id="modal-title-right-drawer"> &nbsp; </h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <button class="btn btn-sm btn-primary modal-print" onclick="printDiv('content-result-drawer')" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report"><i class="las la-print"></i> </button>
-                <div class="modal-content-result-drawer" id="content-result-drawer">
-          
-                </div>
-            </div>
-      
-        </div>
-    </div>
-</div>
-
 @push('js')
 <script src="{{ asset('assets/js/moment.min.js')}}"></script>
 <script type="text/javascript">
-    var loaderModal = '<div class="panel"><div class="panel-body"><p style="text-align:center;margin:10px;" class="loader-p"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>';
-
-    function printDiv(divName)
-    { 
-        var myWindow=window.open('','','width=800,height=800');
-        myWindow.document.write('<html><head><title></title>');
-        myWindow.document.write('<style>h4{font-size: 9pt;}div,p,td,span,strong,th,b{line-height: 110%;padding: 0;margin: 0;font-size: 8pt;}p{padding: 0;margin: 0;}@import url(https://fonts.googleapis.com/css?family=Poppins:200,200i,300,400,500,600,700,800,900&amp;display=swap);body {font-family: Poppins,sans-serif;}.table{width: 100%;}a{text-decoration: none;}.table-bordered {border-collapse: collapse;}.table-bordered th,.table-bordered td {border: 1px solid #777 !important;padding:5px;}.no-border td, .no-border th{border:0 !important;vertical-align: top;}.f-16 th,.f-16 td, .f-16 td b{font-size: 16px !important;}</style>');
-        myWindow.document.write('</head><body>');
-        myWindow.document.write(document.getElementById(divName).innerHTML); 
-        myWindow.document.close();
-        myWindow.focus();
-        myWindow.print();
-        myWindow.close();
-    }
     $(document).ready(function(){   
         var loader = '<div class="panel"><div class="panel-body"><p style="text-align:center;margin:100px;"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>';
+        var loaderContent = '<div class="animationLoading"><div id="container-loader"><div id="one"></div><div id="two"></div><div id="three"></div></div><div id="four"></div><div id="five"></div><div id="six"></div></div>';
         $('#activityReport').on('submit', function(e) {
           e.preventDefault();
-          activityProcess();
-          console.log('ac');
-        });
-        $(".next_btn").click(function(event) {
-          var date = $('input[name="date"]').val();
-          var type = $('select[name="report_type"]').val();
-          var dateAfter = moment(date).add(1 , 'day').format("YYYY-MM-DD");
-          $('input[name="date"]').val(dateAfter);
-          var head = type+' - '+dateAfter;
-          $("#result-head").html(head);
-          activityProcess();
-          console.log('nb');
-        });
-
-        $(".prev_btn").click(function(event) {
-          var date = $('input[name="date"]').val();
-          var type = $('select[name="report_type"]').val();
-          var dateBefore = moment(date).subtract(1 , 'day').format("YYYY-MM-DD");
-          $('input[name="date"]').val(dateBefore);
-          var head = type+' - '+dateBefore;
-          $("#result-head").html(head);
-          activityProcess();
-          console.log('pb');
+          salaryProcess();
         });
         $(".grid_view, .list_view").click(function() {
           var value = $(this).attr('id');
           // console.log(value);
           $("#reportformat").val(value);
           $('input[name="employee"]').val('');
-          activityProcess();
-          console.log('lv');
+          salaryProcess();
         });
           
         $("#reportGroupHead").on("change", function(){
           var group = $(this).val();
           $("#reportGroup").val(group);
-          activityProcess();
-          console.log('rh');
+          salaryProcess();
         });
-
-        function activityProcess() {
+        function salaryProcess(){
+          // console.log(loader)
           $("#result-section").show();
-          $("#result-data").html(loader);
+          $("#result-section-btn").show();
+          $("#result-data").html(loaderContent);
           $("#single-employee-search").hide();
-          
           var unit = $('select[name="unit"]').val();
           var location = $('select[name="location"]').val();
           var area = $('select[name="area"]').val();
-          var from_date = $('input[name="from_date"]').val();
-          var to_date = $('input[name="to_date"]').val();
+          var month = $('input[name="month"]').val();
+          var stauts = $('input[name="employee_status"]').val();
           var format = $('input[name="report_format"]').val();
-          var type = $('select[name="report_type"]').val();
-          // console.log(type);
-          if(type === 'before_absent_after_present'){
-            $("#head-arrow").hide();
-          }else{
-            $("#head-arrow").show();
-          }
           var form = $("#activityReport");
           var flag = 0;
-          if(unit === '' || from_date === '' || type === '' || to_date === ''){
+          if(month === '' || stauts === ''){
             flag = 1;
-            $.notify('Select required field', 'error');
           }
-          
+          // if(unit === '' && location === ''){
+          //   flag = 1;
+          //   $.notify('Select One Unit Or Location', 'error');
+          // }
           if(flag === 0){
-            $(".next_btn").attr('disabled', true);
-            $(".prev_btn").attr('disabled', true);
             $('html, body').animate({
                 scrollTop: $("#result-data").offset().top
             }, 2000);
-            if(type == 'attendance'){
-              url = '{{ url("hr/reports/daily-present-absent-activity-report") }}';
-            }else{
-              url = '{{ url('hr/reports/summary/report') }}';
-            }
-            //var head = type+' - '+date;
-            //$("#result-head").html(head);
-            
             $.ajax({
                 type: "GET",
-                url: url,
+                url: '{{ url("hr/reports/monthly-salary-report") }}',
                 data: form.serialize(), // serializes the form's elements.
                 success: function(response)
                 {
-                    console.log('recieved');
-                  $(".next_btn").attr('disabled', false);
-                  $(".prev_btn").attr('disabled', false);
                   // console.log(response);
                   if(response !== 'error'){
                     $("#result-data").html(response);
-                    console.log('replaced');
                   }else{
                     // console.log(response);
                     $("#result-data").html('');
                   }
-
                   if(format == 0 && response !== 'error'){
                     $("#single-employee-search").show();
                     $('.list_view').addClass('active').attr('disabled', true);
@@ -416,27 +308,19 @@
                   }
                 },
                 error: function (reject) {
-                  console.log(reject);
+                    console.log(reject);
                 }
             });
-
           }else{
             console.log('required');
             $("#result-data").html('');
           }
         }
-        $('#excel').click(function(){
-          var url='data:application/vnd.ms-excel,' + encodeURIComponent($('#report_section').html())
-          location.href=url;
-          return false;
-        });
-        // change from data action
-        $('#from_date').on('change', function() {
-          $('#to_date').attr('min',$('#from_date').val());
-          $('#to_date').val($('#from_date').val());
-        });
+        
         // change unit
         $('#unit').on("change", function(){
+            $('#floor_id').attr('disabled', true);
+            $('#line_id').attr('disabled', true);
             $.ajax({
                 url : "{{ url('hr/attendance/floor_by_unit') }}",
                 type: 'get',
@@ -468,6 +352,7 @@
                  console.log(reject);
                }
             });
+
         });
         //Load Department List By Area ID
         $('#area').on("change", function(){
@@ -528,41 +413,34 @@
              }
            });
         });
-        
 
         $('#reportFormat').on("change", function(){
           $('input[name="employee"]').val('');
         });
 
-
-
-       
-    });
-
-    $(document).on('click','.generate-drawer', function(){
-        var urldata = $(this).data('url'),
-            body = $(this).data('body');
-        $("#modal-title-right-drawer").html(body);
-        $('#right_modal_lg_drawer').modal('show');
-        $("#content-result-drawer").html(loaderModal);
-        $.ajax({
-            url: '{{ url('hr/reports/summary/report') }}?'+urldata+'&report_format=0',
-            type: "GET",
-            success: function(response){
-                // console.log(response);
-                if(response !== 'error'){
-                    setTimeout(function(){
-                        $("#content-result-drawer").html(response);
-                    }, 1000);
-                }else{
-                    console.log(response);
-                }
-            }
+        $('#excel').click(function(){
+          var url='data:application/vnd.ms-excel,' + encodeURIComponent($('#report_section').html())
+          location.href=url;
+          return false;
         });
-
     });
-    
-    
+    $(document).on("contextmenu", ".associate-right", function(e) {
+        // Show contextmenu
+        $(".context-menu").hide();
+        $(this).parent().find('.context-menu').toggle(100).css({
+          display:"block",
+            left: "70px"
+        });
+          
+        // disable default context menu
+        return false;
+    });
+
+    // Hide context menu
+    $(document).bind('contextmenu click',function(){
+        $(".context-menu").hide();
+    });
+
 </script>
 @endpush
 @endsection
