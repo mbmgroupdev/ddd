@@ -33,6 +33,7 @@
                                 <h3>{{$tem->template_name}}</h3>
                                 <span>{{$unit[$tem->hr_unit_id]}}</span><br>
                                 <span>OT Hour: {{numberToTimeClockFormat($tem->base_ot)}}</span>
+                                <span>User: {{$tem->table_alias.'@erp.com'}}</span>
                             </div>
                         </div>
                     </div>
@@ -45,10 +46,9 @@
                     <div class="iq-card-body">
                         <div class="iq-info-box d-flex align-items-center p-3">
                             <div class="info-image mr-3">
-                                <img src="images/page-img/30.png" class="img-fluid" alt="image-box">
                             </div>
                             <div class="info-text">
-                                <h3>No Template</h3>
+                                <h3>No Template found!</h3>
                                 <span></span>
                             </div>
                         </div>
@@ -90,8 +90,8 @@
                                             <label  for="hr_unit_id"> Unit ID </label>
                                         </div>
                                         <div class="form-group has-float-label has-required">
-                                            <input type="table_alias" class="form-control" id="table_alias" name="table_alias" placeholder="Enter Template Name" required="required" value="" autocomplete="off" />
-                                            <label  for="table_alias"> Table Alias </label>
+                                            <input type="table_alias" class="form-control" id="table_alias" name="table_alias" placeholder="Enter User Name" required="required" value="" autocomplete="off" />
+                                            <label  for="table_alias"> Username </label>
                                         </div>
                                         <div class="form-group has-float-label has-required">
                                             <input type="base_ot" class="form-control" id="base_ot" name="base_ot" placeholder="Enter Template Name" required="required" value="" autocomplete="off" />
@@ -144,7 +144,8 @@
             type: "POST",
             data : $('#buyerForm').serializeArray(),
             success: function(response){
-                console.log(response);
+                $.notify('Buyer mode created successfully!')
+                location.reload();
             }
         });
         
