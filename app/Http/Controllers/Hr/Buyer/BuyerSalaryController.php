@@ -314,11 +314,11 @@ class BuyerSalaryController extends Controller
             $pageHead['month']     = $input['month'];
             $pageHead['year']     = $input['year'];
             $pageHead = (object)$pageHead;
-            if($input['formattype'] == 0){
+            /*if($input['formattype'] == 0){*/
                 $viewPage = 'hr.buyer.front.salary_sheet_single';
-            }else{
+            /*}else{
                 $viewPage = 'hr.operation.salary.load_salary_sheet';
-            }
+            }*/
             return view($viewPage, compact('uniqueLocation', 'getSalaryList', 'pageHead','locationDataSet', 'info', 'salaryAddDeduct', 'designation', 'getSection', 'input'));
         } catch (\Exception $e) {
             $bug = $e->getMessage();
