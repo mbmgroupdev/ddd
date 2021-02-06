@@ -68,6 +68,7 @@
                                 <th style=" font-weight: bold; font-size:13px;">Oracle ID</th>
                                 <th style=" font-weight: bold; font-size:13px;">Associate ID</th>
                                 <th style=" font-weight: bold; font-size:13px;">Name</th>
+                                <th style=" font-weight: bold; font-size:13px;">OT Status</th>
                                 <th style=" font-weight: bold; font-size:13px;">Designation</th>
                                 <th style=" font-weight: bold; font-size:13px;">Department</th>
                                 <th style=" font-weight: bold; font-size:13px;">DOJ</th>
@@ -78,8 +79,9 @@
                                 <th style=" font-weight: bold; font-size:13px;">Present</th>
                                 <th style=" font-weight: bold; font-size:13px;">Absent</th>
                                 <th style=" font-weight: bold; font-size:13px;">OT Hour</th>
-                                <th style=" font-weight: bold; font-size:13px;">Payment Method</th>
-                                <th style=" font-weight: bold; font-size:13px;">Account No.</th>
+                                <th style=" font-weight: bold; font-size:13px;">OT Amount</th>
+                                
+                                <th style=" font-weight: bold; font-size:13px;">Attendance Bonus</th>
                                 <th style=" font-weight: bold; font-size:13px;">Payable Salary</th>
                                 @if($input['pay_status'] == 'all' || ($input['pay_status'] != 'cash' && $input['pay_status'] != null))
                                 <th style=" font-weight: bold; font-size:13px;">Bank Amount</th>
@@ -88,8 +90,11 @@
                                 @if($input['pay_status'] == 'all' || $input['pay_status'] == 'cash')
                                 <th style=" font-weight: bold; font-size:13px;">Cash Amount</th>
                                 @endif
+                                
                                 <th style=" font-weight: bold; font-size:13px;">Stamp Amount</th>
                                 <th style=" font-weight: bold; font-size:13px;">Net Pay</th>
+                                <th style=" font-weight: bold; font-size:13px;">Payment Method</th>
+                                <th style=" font-weight: bold; font-size:13px;">Account No.</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -99,6 +104,8 @@
                                 @php
                                     $designationName = $employee->hr_designation_name??'';
                                     $otHour = ($employee->ot_hour);
+                                    $otAmount = ((float)($employee->ot_rate) * $employee->ot_hour);
+                                    $otAmount = number_format((float)$otAmount, 2, '.', '');
                                 @endphp
                                 @if($head == '')
                                 <tr>
@@ -109,6 +116,7 @@
                                     <td>
                                         <b>{{ $employee->as_name }}</b>
                                     </td>
+                                    <td>{{ $employee->ot_status == 1?'OT':'Non OT'}}</td>
                                     <td>{{ $designationName }}</td>
 
                                     <td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
@@ -120,22 +128,9 @@
                                     <td>{{ $employee->present }}</td>
                                     <td>{{ $employee->absent }}</td>
                                     <td><b>{{ number_format($otHour,2) }}</b></td>
-                                    <td>
-                                        @if($employee->pay_status == 1)
-                                            Cash
-                                        @elseif($employee->pay_status == 2)
-                                            {{ $employee->bank_name }}
-                                        @else
-                                            {{ $employee->bank_name }} &amp; Cash
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if($employee->pay_status == 2)
-                                            <b>{{ $employee->bank_no }}</b>
-                                        @elseif($employee->pay_status == 3)
-                                            <b>{{ $employee->bank_no }}</b>
-                                        @endif
-                                    </td>
+                                    <td><b>{{ $otAmount }}</b></td>
+                                    
+                                    <td>{{ $employee->attendance_bonus }}</td>
                                     <td>
                                         @php $totalPay = $employee->total_payable + $employee->stamp; @endphp
                                         {{ ($totalPay) }}
@@ -159,27 +154,6 @@
                                         @endphp
                                         {{ ($totalNet) }}
                                     </td>
-                                    
-                                </tr>
-                                @else
-                                @if($group == $employee->$format)
-                                <tr>
-                                    <td>{{ ++$i }}</td>
-                                    <td>{{ $employee->as_oracle_code }}</td>
-                                    <td>{{ $employee->associate_id }}</td>
-                                    <td>
-                                        <b>{{ $employee->as_name }}</b>
-                                    </td>
-                                    <td>{{ $designationName }}</td>
-                                    <td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
-                                    <td>{{ date('m/d/Y', strtotime($employee->as_doj)) }}</td>
-                                    <td>{{ $employee->gross }}</td>
-                                    <td>{{ $employee->basic }}</td>
-                                    <td>{{ $employee->house }}</td>
-                                    <td>{{ ($employee->medical + $employee->transport + $employee->food) }}</td>
-                                    <td>{{ $employee->present }}</td>
-                                    <td>{{ $employee->absent }}</td>
-                                    <td><b>{{ number_format($otHour,2) }}</b></td>
                                     <td>
                                         @if($employee->pay_status == 1)
                                             Cash
@@ -196,6 +170,30 @@
                                             <b>{{ $employee->bank_no }}</b>
                                         @endif
                                     </td>
+                                </tr>
+                                @else
+                                @if($group == $employee->$format)
+                                <tr>
+                                    <td>{{ ++$i }}</td>
+                                    <td>{{ $employee->as_oracle_code }}</td>
+                                    <td>{{ $employee->associate_id }}</td>
+                                    <td>
+                                        <b>{{ $employee->as_name }}</b>
+                                    </td>
+                                    <td>{{ $employee->ot_status == 1?'OT':'Non OT'}}</td>
+                                    <td>{{ $designationName }}</td>
+                                    <td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
+                                    <td>{{ date('m/d/Y', strtotime($employee->as_doj)) }}</td>
+                                    <td>{{ $employee->gross }}</td>
+                                    <td>{{ $employee->basic }}</td>
+                                    <td>{{ $employee->house }}</td>
+                                    <td>{{ ($employee->medical + $employee->transport + $employee->food) }}</td>
+                                    <td>{{ $employee->present }}</td>
+                                    <td>{{ $employee->absent }}</td>
+                                    <td><b>{{ number_format($otHour,2) }}</b></td>
+                                    <td><b>{{ $otAmount }}</b></td>
+                                    
+                                    <td>{{ $employee->attendance_bonus }}</td>
                                     <td>
                                         @php $totalPay = $employee->total_payable + $employee->stamp; @endphp
                                         {{ ($totalPay) }}
@@ -218,7 +216,22 @@
                                         @endphp
                                         {{ ($totalNet) }}
                                     </td>
-                                    
+                                    <td>
+                                        @if($employee->pay_status == 1)
+                                            Cash
+                                        @elseif($employee->pay_status == 2)
+                                            {{ $employee->bank_name }}
+                                        @else
+                                            {{ $employee->bank_name }} &amp; Cash
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($employee->pay_status == 2)
+                                            <b>{{ $employee->bank_no }}</b>
+                                        @elseif($employee->pay_status == 3)
+                                            <b>{{ $employee->bank_no }}</b>
+                                        @endif
+                                    </td>
                                 </tr>
                                 @endif
                                 @endif

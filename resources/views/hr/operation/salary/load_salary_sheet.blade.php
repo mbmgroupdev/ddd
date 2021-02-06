@@ -202,6 +202,14 @@
                                             <td>
                                                 <p style="margin:0;padding:0;text-align: center;">
                                                     {{ Custom::engToBnConvert($list->gross) }}
+                                                    @if(isset($salaryIncrement[$list->as_id]) && $salaryIncrement[$list->as_id] != null)
+                                                       <br>
+
+                                                       <p style="font-size:11px;margin:0;padding:0;color:blueviolet">বর্ধিত বেতন:</p>
+                                                        <p style="font-size:11px;margin:0;padding:0;color:blueviolet">
+                                                            {{ Custom::engToBnConvert($salaryIncrement[$list->as_id]->increment_amount??'0.00') }}
+                                                        </p>
+                                                    @endif
                                                 </p>
                                             </td>
                                             <td>

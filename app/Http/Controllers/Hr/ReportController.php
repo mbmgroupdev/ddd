@@ -130,6 +130,7 @@ class ReportController extends Controller
             }
 
             $otdata[$i]['emp'] = $employee;
+            $otdata[$i]['date'] = $thisday;
             $otdata[$i]['ot_hour'] = $ot;
             $otdata[$i]['max'] = $maxOT;
             $otdata[$i]['avg'] = round($ot/($employee == 0?1:$employee),2);

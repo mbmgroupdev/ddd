@@ -114,10 +114,16 @@ class HolidayRosterController extends Controller
 					            }
 				            	// if type OT then employee attendance OT count change
 					            if($type == 'OT' || $type == 'General'){
+					            	// re check attendance
+              						$history = EmployeeHelper::attendanceReCalculation($getEmployee->as_id, $selectedDate);
 					              	// check exists attendance
 					              	$getStatus = EmployeeHelper::employeeAttendanceOTUpdate($associate_id, $selectedDate);
-					              	// re check attendance
-              						$history = EmployeeHelper::attendanceReCalculation($getEmployee->as_id, $selectedDate);
+					              	$undecr = DB::table('hr_attendance_undeclared')
+						              ->where('as_id', $getEmployee->as_id)
+						              ->where('punch_date', $selectedDate)
+						              ->update([
+						              	'flag' => 1
+						              ]);
 					            }
 					              	
 				              	$tableName = get_att_table($getEmployee->as_unit_id);
@@ -150,5 +156,35 @@ class HolidayRosterController extends Controller
 	        return "error";
 	    }
 
+    }
+
+    public function undecrlarEmployee(Request $request)
+    {
+    	$data['type'] = 'error';
+    	$input = $request->all();
+
+    	DB::beginTransaction();
+	    $results = array();
+	    try {
+	        $assignDates = !empty($input['assignDates']) ? explode(',', $input['assignDates']): '';
+
+	        foreach ($request->assigned as $associate_id) {
+
+	          	if($assignDates != ''){
+	            	$value = $this->employeeWiseRosterSave($associate_id, $assignDates, $request->type, $request->comment);
+	            	$results = array_merge($results, $value);
+	          	}
+
+	        }
+
+	        DB::commit();
+	        $data['type'] = 'success';
+	        $data['message'] = $results;
+	        return $data;
+	    } catch (Exception $e) {
+	        DB::rollback();
+	        $data['message'][] = $e->getMessage();
+	        return $data;
+	    }
     }
 }

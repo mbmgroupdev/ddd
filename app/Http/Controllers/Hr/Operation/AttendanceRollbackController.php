@@ -32,7 +32,7 @@ class AttendanceRollbackController extends Controller
             }
 
         } catch (\Exception $e) {
-            return response()->json(['type'=>'error','message'=>"Something wrong, plese try again"]);
+            return response()->json(['type'=>'error','message'=>"Something wrong, please try again"]);
         }
     }
 
@@ -88,7 +88,7 @@ class AttendanceRollbackController extends Controller
         try {
             $input = $request->all();
             if($input['as_id'] != null && $input['date'] != null){
-                EmployeeHelper::attendanceReCalculation($input['as_id'], $input['date']);
+                $data = EmployeeHelper::attendanceReCalculation($input['as_id'], $input['date']);
             }
             return 'success';
         } catch (\Exception $e) {

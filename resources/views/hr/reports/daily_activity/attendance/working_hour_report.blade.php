@@ -204,8 +204,8 @@
 					            	<td>{{ $subSection[$employee->as_subsection_id]['hr_subsec_name']??'' }}</td>
 					            	<td>{{ $floor[$employee->as_floor_id]['hr_floor_name']??'' }}</td>
 					            	<td>{{ $line[$employee->as_line_id]['hr_line_name']??'' }}</td>
-					            	<td>{{ date('H:i:s', strtotime($employee->in_time)) }}</td>
-					            	<td>{{ date('H:i:s', strtotime($employee->out_time)) }}</td>
+					            	<td>{{ ($employee->in_time != null && $employee->remarks != 'DSI') ? date('H:i:s', strtotime($employee->in_time)):'' }}</td>
+					            	<td>{{ $employee->out_time != null?date('H:i:s', strtotime($employee->out_time)):'' }}</td>
 					            	<td>{{ $employee->hr_shift_break_time }} min</td>
 					            	<td data-toggle="tooltip" data-placement="top" title="" data-original-title="{{$totalHour}}">{{ round($employee->hourDuration/60,2) }}</td>
 					            	
@@ -230,7 +230,7 @@
 						            	<td>{{ $subSection[$employee->as_subsection_id]['hr_subsec_name']??'' }}</td>
 						            	<td>{{ $floor[$employee->as_floor_id]['hr_floor_name']??'' }}</td>
 						            	<td>{{ $line[$employee->as_line_id]['hr_line_name']??'' }}</td>
-						            	<td>{{ $employee->in_time != null?date('H:i:s', strtotime($employee->in_time)):'' }}</td>
+						            	<td>{{ ($employee->in_time != null && $employee->remarks != 'DSI') ? date('H:i:s', strtotime($employee->in_time)):'' }}</td>
 						            	<td>{{ $employee->out_time != null?date('H:i:s', strtotime($employee->out_time)):'' }}</td>
 						            	<td>{{ $employee->hr_shift_break_time }} min</td>
 						            	<td data-toggle="tooltip" data-placement="top" title="" data-original-title="{{$totalHour}}">{{ round($employee->hourDuration/60,2) }}</td>

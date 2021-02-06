@@ -107,6 +107,7 @@
                         </p>
                         <p style="margin:0;padding:0;color:hotpink">
                            {{ $salmonth}}
+
                         </p>
                     </td>
                     <td>
@@ -129,6 +130,15 @@
                     <td>
                         <p style="margin:0;padding:0;text-align: center;">
                             {{ Custom::engToBnConvert($salary->gross) }}
+
+                           @if(isset($salaryIncrement[$salary->as_id]) && $salaryIncrement[$salary->as_id] != null)
+                               <br>
+
+                               <p style="font-size:11px;margin:0;padding:0;color:blueviolet">বর্ধিত বেতন:</p>
+                                <p style="font-size:11px;margin:0;padding:0;color:blueviolet">
+                                    {{ Custom::engToBnConvert($salaryIncrement[$salary->as_id]->increment_amount??'0.00') }}
+                                </p>
+                            @endif
                         </p>
                     </td>
                     <td>

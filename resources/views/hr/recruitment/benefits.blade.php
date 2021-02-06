@@ -47,8 +47,15 @@
                                     {{ Form::select('ben_as_id', [request()->get("associate_id") => request()->get("associate_id")], request()->get("associate_id"), ['placeholder'=>'Select Associate\'s ID', 'id'=>'ben_as_id', 'class'=> 'associates no-select form-control','required']) }} 
                                     <label for="ben_as_id"> Associate's ID  </label>
                                 </div>
+                                @php
+                                    if(auth()->user()->hasRole('Accounts') || auth()->user()->hasRole('Accounts Executive')){
+                                        $extra = 'readonly';
+                                    }else{
+                                        $extra = 'required';
+                                    }
+                                @endphp
                                 <div class="form-group has-float-label has-required ">
-                                    <input type="text" name="ben_joining_salary" id="ben_joining_salary" placeholder="Gross Salary(tk) As Per Joining Letter" class="form-control" required/>
+                                    <input type="text" name="ben_joining_salary" id="ben_joining_salary" placeholder="Gross Salary(tk) As Per Joining Letter" class="form-control" {{ $extra }}/>
                                     <label  for="ben_joining_salary"> Gross Salary  </label>
                                 </div> 
                                 <div class="row">

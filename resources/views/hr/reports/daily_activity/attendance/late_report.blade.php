@@ -6,12 +6,16 @@
 				$urldata = http_build_query($input) . "\n";
 				$jsonUrl = json_encode($urldata);
 			@endphp
-			
+
+			@if($input['report_format'] == 0)
+				
+				<a href='{{ url("hr/reports/activity-report-excle?$urldata")}}' target="_blank" class="btn btn-sm btn-info hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download" style="position: absolute; top: 15px; left: 65px;"><i class="fa fa-file-excel-o"></i></a>
+			@endif
 			<div class="top_summery_section">
 				@if($input['report_format'] == 0 || ($input['report_format'] == 1 && $format != null))
 				<div class="page-header">
-		            <h2 style="margin:4px 10px; font-weight: bold; text-align: center;">
-		            	Late @if($input['report_format'] == 0) Details @else Summary @endif Report 
+		            <h2 style="margin:4px 10px; font-weight: bold; text-align: center; text-transform: capitalize;">
+		            	{{ $input['report_type'] }} @if($input['report_format'] == 0) Details @else Summary @endif Report 
 		            </h2>
 		            <table class="table no-border f-16" border="0">
 		            	<tr>
@@ -38,12 +42,12 @@
 		            		<td>
 
 		                	</div>
-		            			Late Date <b>: {{ $input['date']}} </b> <br>
+		            			{{ $input['report_type'] }} Date <b>: {{ $input['date']}} </b> <br>
 		            			@if($input['otnonot'] != null)
 		                			<b> OT </b> 
 		                			<b>: @if($input['otnonot'] == 0) No @else Yes @endif </b> <br>
 		                		@endif
-		                		Late Employee
+		                		{{ $input['report_type'] }} Employee
 		                			<b>: {{ $totalEmployees }}</b>
 		                		
 		            		</td>
@@ -72,7 +76,7 @@
         			@php
         			$unitId = $input['unit'];
         			@endphp
-        			<h2>Late Employee Summary Report </h2>
+        			<h2 class="capitalize">{{ $input['report_type'] }} Employee Summary Report </h2>
         			<h4>Unit: {{ $unit[$input['unit']]['hr_unit_name'] }}</h4>
         			@if($input['area'] != null)
         			<h4>Area: {{ $area[$input['area']]['hr_area_name'] }}</h4>
@@ -99,8 +103,8 @@
         			@if($input['otnonot'] != null)
         			<h4>OT: Yes</h4>
         			@endif
-        			<h4>Late Date: {{ $input['date']}}</h4>
-        			<h4>Total Late Employee: <b>{{ $totalEmployees }}</b></h4>
+        			<h4 class="capitalize">{{ $input['report_type'] }} Date: {{ $input['date']}}</h4>
+        			<h4 class="capitalize">Total {{ $input['report_type'] }} Employee: <b>{{ $totalEmployees }}</b></h4>
 		            		
 		        </div>
 		        @endif
@@ -137,7 +141,7 @@
 								@endphp
 			                	@if($head != '')
 			                    <th colspan="2">{{ $head }}</th>
-			                    <th colspan="9">{{ $body }}</th>
+			                    <th colspan="11">{{ $body }}</th>
 			                    @endif
 			                </tr>
 			                @endif
@@ -153,6 +157,8 @@
 			                    <th>Sub Section</th>
 			                    <th>Floor</th>
 			                    <th>Line</th>
+			                    <th>In Time</th>
+			                    <th>Out Time</th>
 			                    <th>Action</th>
 			                </tr>
 			            </thead>
@@ -183,6 +189,8 @@
 				            	<td>{{ $subSection[$employee->as_subsection_id]['hr_subsec_name']??'' }}</td>
 				            	<td>{{ $floor[$employee->as_floor_id]['hr_floor_name']??'' }}</td>
 				            	<td>{{ $line[$employee->as_line_id]['hr_line_name']??'' }}</td>
+				            	<td>{{ ($employee->in_time != null && $employee->remarks != 'DSI') ? date('H:i:s', strtotime($employee->in_time)):'' }}</td>
+					            <td>{{ $employee->out_time != null?date('H:i:s', strtotime($employee->out_time)):'' }}</td>
 				            	<td>
 				            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-toggle="tooltip" data-placement="top" title="" data-original-title="Yearly Activity Report" ><i class="fa fa-eye"></i></button>
 				            		
@@ -207,6 +215,8 @@
 				            	<td>{{ $subSection[$employee->as_subsection_id]['hr_subsec_name']??'' }}</td>
 				            	<td>{{ $floor[$employee->as_floor_id]['hr_floor_name']??'' }}</td>
 				            	<td>{{ $line[$employee->as_line_id]['hr_line_name']??'' }}</td>
+				            	<td>{{ ($employee->in_time != null && $employee->remarks != 'DSI') ? date('H:i:s', strtotime($employee->in_time)):'' }}</td>
+					            <td>{{ $employee->out_time != null?date('H:i:s', strtotime($employee->out_time)):'' }}</td>
 				            	<td>
 				            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-toggle="tooltip" data-placement="top" title="" data-original-title="Yearly Activity Report" ><i class="fa fa-eye"></i></button>
 				            	</td>
@@ -216,7 +226,7 @@
 			            @endforeach
 			            @else
 				            <tr>
-				            	<td colspan="11" class="text-center">No Employee Found!</td>
+				            	<td colspan="13" class="text-center">No Employee Found!</td>
 				            </tr>
 			            @endif
 			            <tr style="border:0 !important;"><td colspan="14" style="border: 0 !important;height: 20px;"></td> </tr>

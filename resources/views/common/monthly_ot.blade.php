@@ -83,7 +83,7 @@
                             </tr>
                             @foreach($otdata as $key => $ot)
                                 <tr>
-                                    <td>{{$key}}</td>
+                                    <td>{{$ot['date']}}</td>
                                     <td style="text-align: center;">{{$ot['emp']}}</td>
                                     <td style="text-align: right;"> {{numberToTimeClockFormat($ot['ot_hour'])}}</td>
                                     <td style="text-align: center;"> {{numberToTimeClockFormat($ot['max'])}}</td>
