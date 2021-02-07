@@ -447,7 +447,7 @@ Route::get('hr/operation/tiffin-dinner', 'Hr\Operation\BillOperationController@i
 Route::get('hr/operation/filter-wise-tiffin-dinner-bill-sheet', 'Hr\Operation\BillOperationController@filterWise');
 Route::post('hr/operation/review-tiffin-dinner-bill', 'Hr\Operation\BillOperationController@review');
 Route::post('hr/operation/pay-tiffin-dinner-bill', 'Hr\Operation\BillOperationController@pay');
-Route::post('hr/operation/pay-tiffin-dinner-bill-excel', 'Hr\Operation\BillOperationController@excel');
+Route::get('hr/operation/pay-tiffin-dinner-bill-excel', 'Hr\Operation\BillOperationController@excel');
 
 //---------Hr/ Payroll-----------//
 Route::get('hr/payroll/bank-sheet', 'Hr\Payroll\BankSheetController@index');

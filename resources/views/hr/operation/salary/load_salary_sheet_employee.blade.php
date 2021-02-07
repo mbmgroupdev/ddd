@@ -112,7 +112,7 @@
                     </td>
                     <td>
                         <p style="font-size:14px;margin:0;padding:0;color:blueviolet">
-                            {{ $salary->associate_id }}
+                            {{ $salary->as_id }}
                         </p>
                         পূর্বের আইডিঃ 
                         <p style="font-size:11px;margin:0;padding:0;color:blueviolet">
@@ -123,7 +123,7 @@
                         </p>
                         @if(isset($designation[$salary->as_designation_id]))
                             @if($designation[$salary->as_designation_id]['hr_designation_grade'] > 0 || $designation[$salary->as_designation_id]['hr_designation_grade'] != null)
-                            <p style="margin:0;padding:0">গ্রেডঃ {{ eng_to_bn($designation[$salary->as_designation_id]['hr_designation_grade'])}}</p>
+                            <p style="margin:0;padding:0">গ্রেডঃ {{ eng_to_bn($designation[$salary->as_designation_id]['hr_designation_grade']??'')}}</p>
                             @endif
                         @endif
                     </td>
