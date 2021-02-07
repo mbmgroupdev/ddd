@@ -16,9 +16,9 @@ class JobCardController extends Controller
   public function jobCard(Request $request)
   {
 
-        if(auth()->user()->hasRole('Buyer Mode')){
-            return redirect('hrm/operation/job_card');
-        }
+    if(auth()->user()->hasRole('Buyer Mode')){
+        return redirect('hrm/operation/job_card');
+    }
 
     $unitList  = Unit::where('hr_unit_status', '1')
       ->whereIn('hr_unit_id', auth()->user()->unit_permissions())
@@ -84,17 +84,15 @@ class JobCardController extends Controller
     $flag = 0;
     $fetchUser = DB::table("hr_as_basic_info AS b")
     ->select('b.as_designation_id', 'b.as_unit_id', 'b.as_location', 'b.as_floor_id', 'b.as_line_id', 'b.as_shift_id', 'b.as_department_id', 'b.as_section_id', 'b.as_subsection_id', 'b.as_doj', 'b.as_id', 'b.as_name', 'b.as_gender', 'b.as_ot', 'b.associate_id', 'b.as_status_date', 'b.as_status', 'b.shift_roaster_status', 'b.as_oracle_code');
-    /*if(strtotime(date('Y-m')) > strtotime($request->month_year)){
+    if(strtotime(date('Y-m')) > strtotime($request->month_year)){
       $flag = 1;
       $fetchUser->where("s.as_id", $associate)->where('s.month', $month)->where('s.year', $year);
       $fetchUser->join('hr_monthly_salary AS s', 'b.associate_id', 's.as_id')
       ->leftJoin('hr_subsection AS subsec', 's.sub_section_id', 'subsec.hr_subsec_id')
       ->addSelect('s.unit_id', 's.designation_id', 's.sub_section_id', 'subsec.hr_subsec_department_id', 'subsec.hr_subsec_section_id');
-    }*///elseif(strtotime(date('Y-m')) == strtotime($request->month_year)){
+    }else{
       $fetchUser->where("b.associate_id", $associate);
-    //}else{
-      //return '';
-    //}
+    }
 
       //return $fetchUser->exists();
 
@@ -112,12 +110,16 @@ class JobCardController extends Controller
       $info->section = $getSection[$info->as_section_id]['hr_section_name']??'';
       $info->designation = $getDesignation[$info->as_designation_id]['hr_designation_name']??'';
       $info->pre_section = '';
+      $info->pre_unit = '';
       $info->pre_designation = '';
       if($flag == 1 && $info->designation_id != $info->as_designation_id){
         $info->pre_designation = $getDesignation[$info->designation_id]['hr_designation_name']??'';
       }
       if($flag == 1 && $info->as_section_id != $info->hr_subsec_section_id){
         $info->pre_designation = $getSection[$info->hr_subsec_section_id]['hr_section_name']??'';
+      }
+      if($flag == 1 && $info->as_unit_id != $info->unit_id){
+        $info->pre_unit = $getUnit[$info->unit_id]['hr_unit_name']??'';
       }
       $date       = ($year."-".$month."-"."01");
       $startDay   = date('Y-m-d', strtotime($date));

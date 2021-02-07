@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Hr\Operation;
 
+use App\Exports\Hr\BillExport;
 use App\Http\Controllers\Controller;
 use App\Models\Hr\Area;
 use App\Models\Hr\Department;
@@ -10,6 +11,7 @@ use App\Models\Hr\Unit;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class BillOperationController extends Controller
 {
@@ -40,7 +42,7 @@ class BillOperationController extends Controller
     	$input['subSection'] = $input['subSection']??'';
         $input['area'] = $input['area']??'';
         $input['location'] = $input['location']??'';
-        // return $input;
+
     	try {
             if($input['date_type'] == 'month'){
                 $input['from_date'] = $input['month_year'].'-01';
@@ -110,6 +112,21 @@ class BillOperationController extends Controller
             $queryData->leftjoin(DB::raw('(' . $employeeBanDataSql. ') AS bemp'), function($join) use ($employeeBanData) {
                 $join->on('bemp.hr_bn_associate_id','emp.associate_id')->addBinding($employeeBanData->getBindings());
             });
+            
+            if(isset($input['output']) && $input['output'] == 'excel'){
+                // employee benefit info
+                $benefitData = DB::table('hr_benefits');
+                $benefitData_sql = $benefitData->toSql();
+                $queryData->leftjoin(DB::raw('(' . $benefitData_sql. ') AS ben'), function($join) use ($benefitData) {
+                    $join->on('ben.ben_as_id','emp.associate_id')->addBinding($benefitData->getBindings());
+                });
+
+                $queryData->select('ben.bank_no','emp.as_name','emp.as_doj', 'emp.as_ot', 'emp.as_designation_id', 'emp.as_section_id', 'emp.as_location', 'emp.as_unit_id','emp.as_id','emp.associate_id', DB::raw('sum(amount) as totalAmount'), DB::raw('count(*) as totalDay'), DB::raw("SUM(IF(pay_status=0,1,0)) AS dueDay"), DB::raw("SUM(IF(pay_status=0,amount,0)) AS dueAmount"))->groupBy('emp.as_id');
+                $totalAmount =  array_sum(array_column($queryData->get()->toArray(),'dueAmount'));
+                $getBillList = $queryData->orderBy('emp.as_oracle_sl', 'asc')->get();
+                return Excel::download(new BillExport($getBillList, $input), 'bill.xlsx');
+
+            }
 	        $listData = clone $queryData;
 	        $queryData->select('emp.as_doj', 'emp.as_ot', 'emp.as_designation_id', 'emp.as_section_id', 'emp.as_location', 'bemp.hr_bn_associate_name', 'emp.as_oracle_code', 'emp.as_unit_id','emp.as_id','emp.associate_id', DB::raw('sum(amount) as totalAmount'), DB::raw('count(*) as totalDay'), DB::raw("SUM(IF(pay_status=0,1,0)) AS dueDay"), DB::raw("SUM(IF(pay_status=0,amount,0)) AS dueAmount"))->groupBy('emp.as_id');
 	        $getBillList = $queryData->orderBy('emp.as_oracle_sl', 'asc')->get();
@@ -253,6 +270,7 @@ class BillOperationController extends Controller
             })
             ->whereIn('as_id', $input['pay_id'])
             ->update([
+                'pay_date' => date('Y-m-d'),
             	'pay_status' => 1
             ]);
 
@@ -270,27 +288,9 @@ class BillOperationController extends Controller
     {
         $data['type'] = 'error';
         $input =$request->all();
+        return $input;
         try {
-            $employeeData = DB::table('hr_as_basic_info');
-            $employeeDataSql = $employeeData->toSql();
-
-            // employee benefit info
-            $benefitData = DB::table('hr_benefits');
-            $benefitData_sql = $benefitData->toSql();
-            $queryData = DB::table('hr_bill AS s')
-            ->whereBetween('s.bill_date', [$input['from_date'],$input['to_date']])
-            ->where('s.pay_status', $input['pay_status'])
-            ->when(!empty($input['bill_type']), function ($query) use($input){
-               return $query->where('s.bill_type', $input['bill_type']);
-            })
-            ->whereIn('s.as_id', $input['pay_id']);
-            $queryData->leftjoin(DB::raw('(' . $benefitData_sql. ') AS ben'), function($join) use ($benefitData) {
-                $join->on('ben.ben_as_id','emp.associate_id')->addBinding($benefitData->getBindings());
-            });
-
-            $queryData->select('ben.bank_no','emp.as_doj', 'emp.as_ot', 'emp.as_designation_id', 'emp.as_section_id', 'emp.as_location', 'emp.as_unit_id','emp.as_id','emp.associate_id', DB::raw('sum(amount) as totalAmount'), DB::raw('count(*) as totalDay'), DB::raw("SUM(IF(pay_status=0,1,0)) AS dueDay"), DB::raw("SUM(IF(pay_status=0,amount,0)) AS dueAmount"))->groupBy('emp.as_id');
-            $totalAmount =  array_sum(array_column($queryData->get()->toArray(),'dueAmount'));
-            $getBillList = $queryData->orderBy('emp.as_oracle_sl', 'asc')->get();
+            return Excel::download(new BillExport($input), 'bill.xlsx');
         } catch (\Exception $e) {
             $data['msg'] = $e->getMessage();
             return $data;
