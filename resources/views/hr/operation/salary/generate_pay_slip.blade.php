@@ -31,6 +31,7 @@
         $salmonth = date_to_bn_month($pageHead->for_date);
         $totalPayable = 0;
         $attendanceBonus = 0;
+        $j=1;
     @endphp
     
     @foreach($locationDataSet as $key => $lists)
@@ -58,7 +59,7 @@
                 
                 <div class="panel-body">
                     {{-- @foreach($locationDataSet as $pageKey=>$lists) --}}
-                    <?php $j=1;?>
+                    
                     @foreach($lists as $k=>$list)
                         @if( $list != null)
                             @php

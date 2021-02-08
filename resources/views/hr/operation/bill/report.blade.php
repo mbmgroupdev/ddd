@@ -1,5 +1,9 @@
 
 <button class="btn btn-sm btn-primary hidden-print" onclick="printDiv('bill-print')" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report"><i class="las la-print"></i> </button>
+@php
+    $urldata = http_build_query($input) . "\n";
+@endphp
+<a href='{{ url("hr/operation/filter-wise-tiffin-dinner-bill-sheet?$urldata&output=excel")}}' target="_blank" class="btn btn-sm btn-info hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download" style="position: absolute; top: 20px; left: 80px;"><i class="fa fa-file-excel-o"></i></a>
 <button class="btn btn-sm btn-outline-success pull-right hidden-print">
    Check All <input type="checkbox" id="checkAll"/>
 </button>
@@ -353,7 +357,7 @@
         <div class="inner_buttons">
           <a class=" prev_btn btn btn-outline-danger btn-sm" data-toggle="tooltip" data-dismiss="modal"><i class="las la-times"></i> Cancel </a>
           <button class=" btn btn-sm btn-outline-primary hidden-print" onclick="printDiv('bill-review-print')" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report"><i class="las la-print"></i> Print</button>
-          <button class=" btn btn-sm btn-outline-primary hidden-print" id="confirm-excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Report"><i class="las la-file-excel"></i> Excel</button>
+
           <button class=" btn btn-sm btn-outline-success confirm-disbursed" id="confirm-disbursed" type="submit" tabindex="0">
            <i class="las la-check"></i> Confirm & Pay
           </button>
@@ -419,24 +423,6 @@
                 }
 
                 $.notify(response.msg, response.type);
-            }
-        });
-        
-    });
-
-    $('#confirm-excel').on('click', function(e) {
-        $("#confirm-disbursed").hide();
-        var form = $("#billReport");
-        // ajax call
-        $.ajax({
-            url: '{{ url("/hr/operation/pay-tiffin-dinner-bill-excel")}}',
-            type: "POST",
-            data: form.serialize(),
-            success: function(response){
-                console.log(response)
-                $("#confirm-disbursed").show();
-
-                //$.notify(response.msg, response.type);
             }
         });
         

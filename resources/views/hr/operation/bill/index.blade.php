@@ -80,7 +80,8 @@
                                                         <label for="as_id">Employees</label>
                                                     </div>
                                                 </div>
-
+                                                <input type="radio" id="form-range" name="date_type" class="date_type custom-control-input" value="range" checked="">
+                                                <input type="hidden" class="report_date form-control" id="month-year" name="month_year" placeholder=" Month-Year" value="{{ date('Y-m') }}"autocomplete="off" />
                                                 <div class="col-sm-2">
                                                     <div class="form-group has-float-label has-required">
                                                         <input type="date" class="report_date datepicker form-control" id="associate_from_date" name="from_date" placeholder="Y-m-d" required="required" value="{{ date('Y-m-d') }}" autocomplete="off" />

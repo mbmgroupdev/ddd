@@ -290,9 +290,15 @@
                                     
                                     <div id="html-2-pdfwrapper" class="col-sm-12" style="margin:30px auto;">
                                         <div class="page-header" id="brand-head" style="border-bottom:2px double #666; text-align: center;">
-                                            <h3 style="margin:4px 10px">{{ $info->unit }}</h3>
+                                            <h3 style="margin:4px 10px">
+                                              @if($info->pre_unit != null)
+                                                {{ $info->pre_unit??'' }}
+                                              @else 
+                                                {{ $info->unit }}
+                                              @endif
+                                            </h3>
+                                            
                                             <h5 style="margin:4px 10px">Job Card Report</h5>
-
                                             <h5 style="margin:4px 10px">For the month of {{date('F, Y', strtotime(request()->month_year))}}</h5>
                                         </div>
                                         <table class="table" style="width:100%;border:1px solid #ccc;margin-bottom:0;font-size:14px;text-align:left"  cellpadding="5">
@@ -304,8 +310,8 @@
                                                 </th>
                                                 <th>
                                                     <p style="margin:0;padding:4px 10px"><strong>Oracle ID </strong>: {{ $info->as_oracle_code }} </p>
-                                                   <p style="margin:0;padding:4px 10px"><strong>Section </strong>: {{ $info->section }} <span>@if($info->pre_section != null) - Previous: {{ $pre_section??'' }} @endif</span> </p>
-                                                   <p style="margin:0;padding:4px 10px"><strong>Designation </strong>: {{ $info->designation }} <span>@if($info->pre_designation != null) - Previous: {{ $pre_designation??'' }} @endif</span></p>
+                                                   <p style="margin:0;padding:4px 10px"><strong>Section </strong>: {{ $info->section }} <span>@if($info->pre_section != null) - Previous: {{ $info->pre_section??'' }} @endif</span> </p>
+                                                   <p style="margin:0;padding:4px 10px"><strong>Designation </strong>: {{ $info->designation }} <span>@if($info->pre_designation != null) - Previous: {{ $info->pre_designation??'' }} @endif</span></p>
                                                 </th>
                                                 <th>
                                                    <p style="margin:0;padding:4px 10px"><strong>Total Present </strong>: <b >{{ $info->present }}</b> </p>
