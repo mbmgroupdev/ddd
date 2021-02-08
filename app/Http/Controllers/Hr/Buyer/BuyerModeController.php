@@ -437,6 +437,7 @@ class BuyerModeController extends Controller
 
     public function syncAtt($date, $buyer)
     {
+        $ignore_subsec = explode(',', $buyer->ignore_subsec);
         $shift = shift_by_code();
 
         $mappedshift = collect($shift)->map(function($item) use ($date, $buyer){
@@ -454,7 +455,7 @@ class BuyerModeController extends Controller
         # all active employees on that day
         $location = explode(',',$buyer->hr_location);
         $toDayEmps = DB::table('hr_as_basic_info')
-                    ->select('as_id','associate_id','shift_roaster_status','as_shift_id','as_line_id','as_unit_id','as_ot')
+                    ->select('as_id','associate_id','shift_roaster_status','as_shift_id','as_line_id','as_unit_id','as_ot','as_subsection_id')
                     ->where('as_unit_id', $buyer->hr_unit_id)
                     ->whereIn('as_location', $location)
                     ->whereNotIn('as_id', $ignore)
@@ -653,38 +654,45 @@ class BuyerModeController extends Controller
                 $ins[$w]['hr_shift_code']   = $a->hr_shift_code; // att shift
                 $ins[$w]['late_status']     = $a->late_status;
                 $ins[$w]['line_id']         = $a->line_id; // att line
-                
-                if(($a->in_time >= $shiftData['in_limit'] || $a->in_time == null)  && ($a->out_time <= $shiftData['out_limit'] || $a->out_time == null) ){
-                    // no changes needed
-                        $ins[$w]['in_time']     = $a->in_time;
+
+                // ignore subsection
+                if(in_array($emplist[$w]->as_subsection_id, $ignore_subsec)){
+                    $ins[$w]['in_time']     = $a->in_time;
+                    $ins[$w]['out_time']    = $a->out_time;
+                    $ins[$w]['ot_hour']     = $a->ot_hour;
+                }else{
+
+                    if(($a->in_time >= $shiftData['in_limit'] || $a->in_time == null)  && ($a->out_time <= $shiftData['out_limit'] || $a->out_time == null) ){
+                        // no changes needed
+                            $ins[$w]['in_time']     = $a->in_time;
+                            $ins[$w]['out_time']    = $a->out_time;
+                            $ins[$w]['ot_hour']     = $a->ot_hour;
+
+                    }else if($a->out_time > $shiftData['out_limit'] ){
+                        // only out time modify
+                        $ins[$w]['out_time'] = Carbon::parse($shiftData['out_limit'])->subSeconds(rand(0,839))->format('Y-m-d H:i:s');
+                        $ins[$w]['in_time'] = $a->in_time;
+
+                        if($a->in_time != null && $emplist[$w]->as_ot == 1){
+                            $ins[$w]['ot_hour'] = $buyer->base_ot;
+
+                        }else{
+                            $ins[$w]['ot_hour'] = 0;
+                        }
+
+
+                    }else if($a->in_time < $shiftData['in_limit']  ){
+                        // only intime modify
+                        $ins[$w]['in_time'] = Carbon::parse($shiftData['in_limit'])->addSeconds(rand(0,419))->format('Y-m-d H:i:s');
                         $ins[$w]['out_time']    = $a->out_time;
                         $ins[$w]['ot_hour']     = $a->ot_hour;
 
-                }else if($a->out_time > $shiftData['out_limit'] ){
-                    // only out time modify
-                    $ins[$w]['out_time'] = Carbon::parse($shiftData['out_limit'])->subSeconds(rand(0,839))->format('Y-m-d H:i:s');
-                    $ins[$w]['in_time'] = $a->in_time;
-
-                    if($a->in_time != null && $emplist[$w]->as_ot == 1){
-                        $ins[$w]['ot_hour'] = $buyer->base_ot;
-
-                    }else{
-                        $ins[$w]['ot_hour'] = 0;
                     }
 
-
-                }else if($a->in_time < $shiftData['in_limit']  ){
-                    // only intime modify
-                    $ins[$w]['in_time'] = Carbon::parse($shiftData['in_limit'])->addSeconds(rand(0,419))->format('Y-m-d H:i:s');
-                    $ins[$w]['out_time']    = $a->out_time;
-                    $ins[$w]['ot_hour']     = $a->ot_hour;
-
-                }
-
-                // if full day ot
-                if($ins[$w]['in_time'] != null && $ins[$w]['out_time'] != null && $ins[$w]['remarks'] == 'OT' && $emplist[$w]->as_ot == 1)
-                {
-                    $ins[$w]['ot_hour'] = $this->calculateOt(($date.' '.$shiftData['hr_shift_start_time']), $ins[$w]['out_time'], $shiftData['hr_shift_break_time']);
+                    // if full day ot
+                    if($ins[$w]['in_time'] != null && $ins[$w]['out_time'] != null && $ins[$w]['remarks'] == 'OT' && $emplist[$w]->as_ot == 1){
+                        $ins[$w]['ot_hour'] = $this->calculateOt(($date.' '.$shiftData['hr_shift_start_time']), $ins[$w]['out_time'], $shiftData['hr_shift_break_time']);
+                    }
                 }
             }else if(isset($leave[$w])){
                 // if leave exist

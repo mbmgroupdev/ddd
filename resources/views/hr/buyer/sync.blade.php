@@ -186,6 +186,11 @@
                             @foreach($date_array as $key => $dates)
                                 <div class="col-sm-6">
                                     <table style="width: 100%" border="0">
+                                        <tr>
+                                            <td>Date</td>
+                                            <td>Synced</td>
+                                            <td></td>
+                                        </tr>
                                         @foreach($dates as $k => $d)
                                             <tr @if($d > date('Y-m-d')) disabled class="text-muted" @endif style="border-bottom: 1px solid #d1d1d1;">
                                                 <td>

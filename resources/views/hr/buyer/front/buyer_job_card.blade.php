@@ -155,11 +155,17 @@
                             $line_id = $val->line_id;
                             $line_name = '';
                             $floor_name = '';
-                            if($line_id){
-                                $floor_id = $line[$val->line_id]->hr_line_floor_id;
-                                $line_name = $line[$val->line_id]->hr_line_name;
-                                if($floor_id){
-                                    $floor_name = $floor[$floor_id]->hr_floor_name;
+                            if($line_id != null){
+                                if(isset($line[$val->line_id])){
+                                    $floor_id = $line[$val->line_id]['hr_line_floor_id'];
+                                    $line_name = $line[$val->line_id]['hr_line_name'];
+
+                                }
+                                if($floor_id != null){
+                                    if(isset($floor[$floor_id])){
+                                        $floor_name = $floor[$floor_id]['hr_floor_name'];
+
+                                    }
                                 }
                             }
 

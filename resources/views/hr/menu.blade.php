@@ -451,7 +451,7 @@
       @endif
       
       @if(auth()->user()->canany(['Library Setup','Salary Structure Setup','Designation Setup','Bonus Type Setup','Attendance Bonus Config','Late Count Setup','Library Setup','Buyer Mode']) || $user->hasRole('Super Admin'))
-      <li class="@if($segment2 == 'setup') active @endif">
+      <li class="@if($segment2 == 'setup' || $segment2 == 'buyer') active @endif">
          <a href="#settings" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="las la-cog"></i><span>Settings</span><i class="las la-angle-right iq-arrow-right"></i></a>
          <ul id="settings" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
             @if($user->can('Library Setup') || $user->hasRole('Super Admin'))
@@ -480,6 +480,9 @@
             @endif
             @if($user->can('Loan Setup') || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'loan_type') active @endif"><a  href="{{ url('hr/setup/loan_type') }}"><i class="las la-comment-dollar"></i>Loan</a></li>
+            @endif
+            @if($user->can('Buyer Mode') || $user->hasRole('Super Admin'))
+            <li class="@if($segment2 == 'buyer') active @endif"><a  href="{{ url('hr/buyer') }}"><i class="las la-comment-dollar"></i>Buyer Mode</a></li>
             @endif
          </ul>
       </li>
