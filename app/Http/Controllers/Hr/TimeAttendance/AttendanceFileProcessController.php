@@ -172,6 +172,7 @@ class AttendanceFileProcessController extends Controller
                         $attHis['unit_id'] = $as_info->as_unit_id;
                         $attHis['att_date'] = $recordDate;
                         $attHis['raw_data'] = $checktime;
+                        $attHis['unit'] = $unit;
                         $rowData[] = $attHis;
                         if($totalRow == $key && count($rowData) > 0){
                             $queueH = (new ProcessAttendanceHistory($rowData))

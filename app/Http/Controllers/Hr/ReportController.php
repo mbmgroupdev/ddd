@@ -141,7 +141,7 @@ class ReportController extends Controller
             );
         }
 
-        return view('common.monthly_ot', compact('chart_data','otdata'));
+        return view('common.monthly_ot', compact('chart_data','otdata', 'month'));
 
     }
 

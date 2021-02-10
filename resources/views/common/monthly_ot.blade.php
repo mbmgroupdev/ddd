@@ -83,10 +83,14 @@
                             </tr>
                             @foreach($otdata as $key => $ot)
                                 <tr>
+                                    @php
+                                        $year = date('Y', strtotime($month));
+                                        $date = date('Y-m-d', strtotime($ot['date'].' '.$year));
+                                    @endphp
                                     <td>{{$ot['date']}}</td>
                                     <td style="text-align: center;">{{$ot['emp']}}</td>
                                     <td style="text-align: right;"> {{numberToTimeClockFormat($ot['ot_hour'])}}</td>
-                                    <td style="text-align: center;"> {{numberToTimeClockFormat($ot['max'])}}</td>
+                                    <td style="text-align: center;"><a target="_blank" href='{{ url("hr/reports/daily-attendance-activity?report_type=ot&date=$date")}}'> {{numberToTimeClockFormat($ot['max'])}}</a></td>
                                     <td style="text-align: center;"> {{numberToTimeClockFormat($ot['avg'])}}</td>
                                 </tr>
                             @endforeach
@@ -106,22 +110,7 @@
 
 <script src="{{ asset('assets/js/animated.js') }}"></script>
 <script>
-    function printDiv(divName)
-    {   
-        
-
-        var mywindow=window.open('','','width=800,height=800');
-        
-        mywindow.document.write('<html><head><title>Print Contents</title>');
-        mywindow.document.write('</head><body>');
-        mywindow.document.write(document.getElementById(divName).innerHTML);
-        mywindow.document.write('</body></html>');
-
-        mywindow.document.close();  
-        mywindow.focus();           
-        mywindow.print();
-        mywindow.close();
-    }
+    
     if (jQuery('#mmr-compare').length) {
     am4core.ready(function() {
 

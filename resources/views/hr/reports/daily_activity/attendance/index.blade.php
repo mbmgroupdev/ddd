@@ -79,7 +79,6 @@
                                     <div class="col-3">
                                         <div class="form-group has-float-label has-required select-search-group">
                                             <select name="unit" class="form-control capitalize select-search" id="unit"required >
-                                                <option selected="" value="">Choose...</option>
                                                 @if($mbmFlag == 1)
                                                 <option value="145">MBM + MBF + MBM 2</option>
                                                 @endif
@@ -188,13 +187,13 @@
                                                 }
                                                 
                                             ?>
-                                            {{ Form::select('report_type', $reportType, null, ['placeholder'=>'Select Report Type ', 'class'=>'form-control capitalize select-search', 'id'=>'reportType']) }}
+                                            {{ Form::select('report_type', $reportType, Request::get('report_type')??null, ['placeholder'=>'Select Report Type ', 'class'=>'form-control capitalize select-search', 'id'=>'reportType']) }}
                                             <label for="reportType">Report Type</label>
                                         </div>
                                         
                                         <div id="single-date">
                                           <div class="form-group has-float-label has-required">
-                                            <input type="date" class="report_date datepicker form-control" id="report-date" name="date" placeholder="Y-m-d" required="required" value="{{ date('Y-m-d') }}" autocomplete="off" />
+                                            <input type="date" class="report_date datepicker form-control" id="report-date" name="date" placeholder="Y-m-d" required="required" value="{{ Request::get('date')??date('Y-m-d') }}" autocomplete="off" />
                                             <label for="report-date">Date</label>
                                           </div>
                                         </div>
@@ -354,7 +353,15 @@
 <script src="{{ asset('assets/js/moment.min.js')}}"></script>
 <script type="text/javascript">
 
-$(document).ready(function(){   
+$(document).ready(function(){  
+    @if(Request::get('report_type') != null && Request::get('date') != null)
+        @if(Request::get('report_type') == 'ot')
+            $('#reportGroupHead').append('<option value="ot_hour">OT Hour</option>');
+            $('#reportGroupHead').val('ot_hour');
+            $('#reportGroup').val('ot_hour');
+        @endif 
+        activityProcess();
+    @endif
     var loader = '<div class="panel"><div class="panel-body"><p style="text-align:center;margin:100px;"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>';
     var loaderContent = '<div class="animationLoading"><div id="container-loader"><div id="one"></div><div id="two"></div><div id="three"></div></div><div id="four"></div><div id="five"></div><div id="six"></div></div>';
     $('#activityReport').on('submit', function(e) {
@@ -659,6 +666,18 @@ function selectedGroup(e, body, inputUrl){
 
 }
 
+function printDiv(divName)
+{
+    var myWindow=window.open('','','width=800,height=800');
+    myWindow.document.write('<html><head><title></title>');
+    myWindow.document.write('<style>h4{font-size: 8pt;}div,p,td,span,strong,th,b{line-height: 110%;padding: 0;margin: 0;font-size: 7pt;}p{padding: 0;margin: 0;}@import url(https://fonts.googleapis.com/css?family=Poppins:200,200i,300,400,500,600,700,800,900&amp;display=swap);body {font-family: Poppins,sans-serif;}.table{width: 100%;}a{text-decoration: none;}.table-bordered {border-collapse: collapse;}.table-bordered th,.table-bordered td {border: 1px solid #777 !important;padding:5px;}.no-border td, .no-border th{border:0 !important;vertical-align: top;}.f-16 th,.f-16 td, .f-16 td b{font-size: 16px !important;}</style>');
+    myWindow.document.write('</head><body>');
+    myWindow.document.write(document.getElementById(divName).innerHTML);
+    myWindow.document.close();
+    myWindow.focus();
+    myWindow.print();
+    myWindow.close();
+} 
 
     
 </script>
