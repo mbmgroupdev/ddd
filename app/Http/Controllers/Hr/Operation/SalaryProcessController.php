@@ -67,6 +67,9 @@ class SalaryProcessController extends Controller
             }else if($input['unit'] == 15){
                 $getUnit = 'MBM + SRT';
             }
+            
+
+            $ignore = 0;
 
             $info = [];
             if(isset($input['area'])){
@@ -79,11 +82,15 @@ class SalaryProcessController extends Controller
                 $info['department'] = Department::where('hr_department_id',$input['department'])->first()->hr_department_name_bn??'';
             }
             if(isset($input['section'])){
+                $ignore = 1;
                 $info['section'] = Section::where('hr_section_id',$input['section'])->first()->hr_section_name_bn??'';
             }
             if(isset($input['subSection'])){
                 $info['sub_sec'] = Subsection::where('hr_subsec_id',$input['subSection'])->first()->hr_subsec_name_bn??'';
             }
+            
+
+
             // employee info
             $employeeData = DB::table('hr_as_basic_info');
             $employeeDataSql = $employeeData->toSql();
@@ -148,6 +155,12 @@ class SalaryProcessController extends Controller
             ->when(!empty($input['subSection']), function ($query) use($input){
                return $query->where('s.sub_section_id', $input['subSection']);
             });
+            if($ignore == 1){
+                $queryData->where( function ($q) use ($ignore){
+                    return  $q->where('emp.as_line_id','!=', 324)
+                        ->orWhereNull('emp.as_line_id');
+                });
+            }
             if(isset($input['otnonot']) && $input['otnonot'] != null){
                 $queryData->where('s.ot_status',$input['otnonot']);
             }
@@ -166,7 +179,7 @@ class SalaryProcessController extends Controller
             });
             
             if(!empty($input['pay_status'])){
-                // employee benefit sql binding
+                // employee benefit sql binding 
                 $benefitData = DB::table('hr_benefits');
                 $benefitData_sql = $benefitData->toSql();
                 $queryData->leftjoin(DB::raw('(' . $benefitData_sql. ') AS ben'), function($join) use ($benefitData) {

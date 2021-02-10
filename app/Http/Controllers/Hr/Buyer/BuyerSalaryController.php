@@ -63,7 +63,12 @@ class BuyerSalaryController extends Controller
         
         try {
             ini_set('zlib.output_compression', 1);
+            // ignore line
+            $ignore = 1;
 
+            if(isset($input['line'])){
+                if($input['line'] == 324) $ignore = 0;
+            }
             $info = [];
             if(isset($input['area'])){
                 $info['area'] = Area::where('hr_area_id',$input['area'])->first()->hr_area_name_bn??'';
@@ -144,6 +149,12 @@ class BuyerSalaryController extends Controller
             ->when(!empty($input['subSection']), function ($query) use($input){
                return $query->where('s.subsection_id', $input['subSection']);
             });
+            if($ignore == 1){
+                $queryData->where( function ($q) use ($ignore){
+                    return  $q->where('emp.as_line_id','!=', 324)
+                        ->orWhereNull('emp.as_line_id');
+                });
+            }
             if(isset($input['otnonot']) && $input['otnonot'] != null){
                 $queryData->where('s.ot_status',$input['otnonot']);
             }

@@ -107,8 +107,8 @@ class ProcessBuyerSalary implements ShouldQueue
                                     $maxDay = date('d', strtotime($salary_date));
                                     $end_date = $salary_date;
                                     $partial = 1;
-                                }else if($getEmployee->as_status == 1 && $getEmployee->as_status_date != null){
-                                    $maxDay = $maxDay - ((date('d', strtotime($getEmployee->as_status_date))) + 1);
+                                }else if($getEmployee->as_status == 1){
+                                    $maxDay = $maxDay - (date('d', strtotime($getEmployee->as_status_date))) + 1;
 
                                     $start_date = $getEmployee->as_status_date;
                                     $partial = 1;
@@ -346,7 +346,6 @@ class ProcessBuyerSalary implements ShouldQueue
                             DB::table($this->salaryTable)->insert($salary);
                         }
                         
-                        DB::table('error')->insert(['msg' => $as_id.' '.$present]);
                     }
 
                 }

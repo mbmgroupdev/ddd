@@ -108,8 +108,10 @@ class SummaryReportController extends Controller
 
                 $attData = DB::table('hr_as_basic_info AS emp')
                             ->where('emp.as_doj','>=', $input['from_date'])
-                            ->where('emp.as_doj','<=', $input['to_date'])
-                            ->where('emp.as_status',1);
+                            ->where('emp.as_doj','<=', $input['to_date']);
+                            if(isset($request['as_status'])){
+                                ->where('emp.as_status', 1);
+                            }
 
             }else if($input['report_type'] == 'absent'){
                 $attData = DB::table('hr_absent AS a')
