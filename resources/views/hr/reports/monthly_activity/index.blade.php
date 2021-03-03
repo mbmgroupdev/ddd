@@ -310,6 +310,7 @@
                 data: form.serialize(), // serializes the form's elements.
                 success: function(response)
                 {
+                  console.log(response);
                   $(".next_btn").attr('disabled', false);
                   $(".prev_btn").attr('disabled', false);
                   // console.log(response);

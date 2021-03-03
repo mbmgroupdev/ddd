@@ -466,7 +466,7 @@
                                                 @endif
                                             </td>
                                             <td></td>
-                                            {{-- <td class="disburse-button" id="{{ $j }}-{{ $list->as_id }}">
+                                            <td class="disburse-button" id="{{ $j }}-{{ $list->as_id }}">
                                                 @if($list->disburse_date == null)
                                                     <a data-id="{{ $j }}-{{ $list->as_id }}" class="btn btn-primary btn-sm disbursed_salary text-white" data-eaid="{{ $list->as_id }}" data-date="{{ $pageHead->for_date }}" data-month="{{ $pageHead->month }}" data-year="{{ $pageHead->year }}" data-name="{{ $list->hr_bn_associate_name }}" data-post="{{ $designation[$list->as_designation_id]['hr_designation_name_bn']}}"  rel='tooltip' data-tooltip-location='top' data-tooltip='বেতন প্রদান করুন' > হয় নি </a>
                                                 @else
@@ -474,7 +474,7 @@
                                                     <br>
                                                     <b>{{ Custom::engToBnConvert($list->disburse_date) }}</b>
                                                 @endif
-                                            </td> --}}
+                                            </td>
                                         </tr>
                                         <?php $j++; ?>
                                     @endif

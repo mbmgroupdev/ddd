@@ -66,6 +66,8 @@
                         </strong>
                     </p>
                     @endif
+                    <span style="border: 1px solid;padding: 2px 10px; 
+                                        @if($buyer->base_ot == 2) border-radius:20px;@endif ">-</span>
                     
                 </td>
             </tr>

@@ -63,17 +63,18 @@
                               <div class="row">
                                 <div class="col-sm-6">
                                   <div class="form-group has-float-label select-search-group">
-                                      <select name="unit[]" class="form-control capitalize select-search" id="unit" multiple placeholder="Choose Unit..." required>
+                                      <select name="unit[]" class="form-control capitalize select-search" id="unit" multiple placeholder="Choose Unit..." required style="height: 50px;">
                                           @foreach($unitList as $key => $value)
                                           <option value="{{ $key }}">{{ $value }}</option>
                                           @endforeach
                                       </select>
                                     <label for="unit">Unit</label>
                                   </div>
+                                   
                                 </div>
                                 <div class="col-sm-6">
                                   <div class="row">
-                                    <div class="col">
+                                    <div class="col-sm-7">
                                       <div class="form-group has-float-label select-search-group">
                                           <select name="location[]" class="form-control capitalize select-search" id="location" multiple placeholder="Choose Unit...">
                                               @foreach($locationList as $key => $value)
@@ -82,6 +83,22 @@
                                           </select>
                                         <label for="location">Location</label>
                                       </div>
+                                    </div>
+                                    <div class="col-sm-5">
+                                        <div class="row">
+                                            <div class="col-sm-6 ">
+                                                <div class="form-group has-float-label has-required">
+                                                  <input type="text" class="report_date min_sal form-control" id="min_sal" name="min_sal" placeholder="Min Salary" required="required" value="0" min="0" max="300000" autocomplete="off" />
+                                                  <label for="min_sal">Range From</label>
+                                                </div>
+                                              </div>
+                                              <div class="col-sm-6">
+                                                <div class="form-group has-float-label has-required">
+                                                  <input type="text" class="report_date max_sal form-control" id="max_sal" name="max_sal" placeholder="Max Salary" required="required" value="300000" min="0" max="300000" autocomplete="off" />
+                                                  <label for="max_sal">Range To</label>
+                                                </div>
+                                              </div>
+                                        </div>
                                     </div>
                                   </div>
                                   <div class="row">

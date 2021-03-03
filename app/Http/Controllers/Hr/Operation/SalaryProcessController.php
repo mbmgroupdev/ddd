@@ -68,8 +68,16 @@ class SalaryProcessController extends Controller
                 $getUnit = 'MBM + SRT';
             }
             
+            // ignore line
+            $ignore = 1;
 
-            $ignore = 0;
+            if($input['unit'] != null && $input['department'] == ''  && $input['section'] == ''){
+                $ignore = 0;
+            }
+
+            if(isset($input['line'])){
+                if($input['line'] == 324) $ignore = 0;
+            }
 
             $info = [];
             if(isset($input['area'])){
@@ -82,15 +90,11 @@ class SalaryProcessController extends Controller
                 $info['department'] = Department::where('hr_department_id',$input['department'])->first()->hr_department_name_bn??'';
             }
             if(isset($input['section'])){
-                $ignore = 1;
                 $info['section'] = Section::where('hr_section_id',$input['section'])->first()->hr_section_name_bn??'';
             }
             if(isset($input['subSection'])){
                 $info['sub_sec'] = Subsection::where('hr_subsec_id',$input['subSection'])->first()->hr_subsec_name_bn??'';
             }
-            
-
-
             // employee info
             $employeeData = DB::table('hr_as_basic_info');
             $employeeDataSql = $employeeData->toSql();
@@ -140,6 +144,7 @@ class SalaryProcessController extends Controller
             ->when(!empty($input['area']), function ($query) use($input){
                return $query->where('subsec.hr_subsec_area_id',$input['area']);
             })
+            
             ->when(!empty($input['department']), function ($query) use($input){
                return $query->where('subsec.hr_subsec_department_id',$input['department']);
             })
@@ -161,6 +166,7 @@ class SalaryProcessController extends Controller
                         ->orWhereNull('emp.as_line_id');
                 });
             }
+            
             if(isset($input['otnonot']) && $input['otnonot'] != null){
                 $queryData->where('s.ot_status',$input['otnonot']);
             }
@@ -179,7 +185,7 @@ class SalaryProcessController extends Controller
             });
             
             if(!empty($input['pay_status'])){
-                // employee benefit sql binding 
+                // employee benefit sql binding
                 $benefitData = DB::table('hr_benefits');
                 $benefitData_sql = $benefitData->toSql();
                 $queryData->leftjoin(DB::raw('(' . $benefitData_sql. ') AS ben'), function($join) use ($benefitData) {
@@ -196,6 +202,9 @@ class SalaryProcessController extends Controller
             $queryData->leftjoin(DB::raw('(' . $employeeBanDataSql. ') AS bemp'), function($join) use ($employeeBanData) {
                 $join->on('bemp.hr_bn_associate_id','emp.associate_id')->addBinding($employeeBanData->getBindings());
             });
+            /*if($ignore == 1){
+                $queryData->whereNotIn('emp.as_line_id',[324])->orWhereNull('emp.as_line_id');
+            }*/
 
                 
             $queryData->select('s.*', 'emp.as_doj','s.as_id AS associate_id', 's.unit_id AS as_unit_id','s.location_id AS as_location', 's.designation_id AS as_designation_id', 's.ot_status AS as_ot', 'emp.as_section_id', 's.location_id', 'bemp.hr_bn_associate_name', 'emp.as_oracle_code',DB::raw('s.ot_hour * s.ot_rate as ot_amount'), 'subsec.hr_subsec_area_id AS as_area_id', 'subsec.hr_subsec_department_id AS as_department_id', 'subsec.hr_subsec_section_id AS as_section_id');

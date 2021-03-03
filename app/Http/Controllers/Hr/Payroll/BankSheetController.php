@@ -61,6 +61,8 @@ class BankSheetController extends Controller
             ->where('s.emp_status', 1)
             ->where('s.month', $month)
             ->where('s.bank_payable', '>', 0)
+            ->where('s.gross', '>=', $input['min_sal'])
+            ->where('s.gross', '<=', $input['max_sal'])
             ->when(!empty($input['pay_status']), function ($query) use($input){
                 return $query->where('s.pay_type',$input['pay_status']);
             })

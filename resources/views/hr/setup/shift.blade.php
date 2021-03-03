@@ -9,6 +9,7 @@
         .iq-accordion.career-style .iq-accordion-block {
             margin-bottom: 15px;
         }
+        .select2-container--default .select2-selection--multiple {height: 85px;}
     </style>
 @endpush
 @section('main-content')
@@ -57,6 +58,7 @@
                                             </div>
                                             <div class="col-sm-9 pl-0">
                                                 <div class="row">
+                                                    
                                                     <div class="col-sm-3">
                                                 
                                                         <div class="form-group has-required has-float-label">
@@ -89,17 +91,45 @@
                                                             <input type="text" id="hr_shift_out_time" name="hr_shift_out_time" required="required" class="time form-control" disabled="disabled" value="{{ old('hr_shift_out_time')}}" />
                                                             <label  for="hr_shift_out_time">Out Time</label>
                                                         </div>
+
                                                     </div>
                                                     <div class="col-sm-3 pl-0">
                                                         <div class="form-group has-float-label">
                                                             <input type="text" id="bill_eligible" name="bill_eligible" class="time form-control" onClick="this.select();" value="{{ old('bill_eligible') ?? '00:00:00' }}" />
                                                             <label  for="bill_eligible">Bill Eligible Time (24 hour format)</label>
                                                         </div>
-                                                        <div class="form-group custom-control custom-checkbox custom-checkbox-color-check custom-control-inline">
-                                                           <input type="checkbox" name="hr_shift_default" class="custom-control-input bg-primary" id="customCheck-1"  value="1">
-                                                           <label class="custom-control-label" for="customCheck-1"> Default Shift</label>
+                                                        <div class="form-group has-float-label select-search-group">
+                                                            {{ Form::select('ot_shift', $ot_shift, null , ['id'=>'ot_shift', 'class'=> 'form-control','placeholder'=>'Select OT Shift']) }} 
+                                                            <label  for="ot_shift"> OT Shift  </label>
                                                         </div>
                                                         
+                                                        
+                                                        
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-9">
+                                                        <div class="row">
+                                                            <div class="col-sm-4 pr-0">
+                                                                <div class="form-group custom-control custom-checkbox custom-checkbox-color-check custom-control-inline">
+                                                                   <input type="checkbox" name="hr_shift_default" class="custom-control-input bg-primary" id="customCheck-1"  value="1">
+                                                                   <label class="custom-control-label" for="customCheck-1"> Mark as default shift</label>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-sm-4 pl-0">
+                                                                <div class="form-group custom-control custom-checkbox custom-checkbox-color-check custom-control-inline">
+                                                                   <input type="checkbox" name="ot_status" class="custom-control-input bg-primary" id="customCheck-1"  value="1">
+                                                                   <label class="custom-control-label" for="customCheck-1"> OT</label>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                        
+
+                                                        <div class="text-small text-success">Date format should be 24 Hour. Such as 23:00:00</div>
+                                                    </div>
+                                                    <div class="col-sm-3">
                                                         <div class="form-group"> 
                                                             <button class="btn pull-right btn-primary w-80" type="submit">Submit</button>
                                                         </div>

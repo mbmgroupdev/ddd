@@ -49,14 +49,28 @@
             <div class="panel-body">
                 <div class="page-header-summery">
                     
-                    <h2>Maternity Leave (Approximate) </h2>
-                    <h4>Month: <b>{{ \Carbon\Carbon::createFromFormat("Y-m",$month)->format('F, Y') }}</b></h4>
-                    <h4>Total Employee: <b>{{count($appoxleave)}}</b></h4>
-                    <h4>Total Amount: <b>0</b></h4>
-                    <br>
+                    <h4>Maternity Leave (Approximate) </h4>
+                    <div class="row">
+                        <div class="col-sm-4 ">
+                            <h5 class="text-left">Total Employee: <b>{{count($appoxleave)}}</b></h5>
+                        </div>
+                        <div class="col-sm-4 ">
+                            <h5 class="text-center">Month: <b>{{ \Carbon\Carbon::createFromFormat("Y-m",$month)->format('F, Y') }}</b>
+                            </h5>
+                        </div>
+                        <div class="col-sm-4">
+                            <h5 class="text-right">Total Amount: 
+                                @if(count($appoxleave) > 0)
+                                <b>
+                                {{bn_money(number_format(($appoxleave->sum('first_payment')),2, '.', ','))}}
+                                </b>
+                                @endif
+                            </h5>
+                        </div>
+                    </div>
                 </div>
 
-                <table class="table table-bordered table-hover table-head">
+                <table class="table table-bordered table-hover table-head mt-3">
                     <thead>
                         <tr>
                             <th>Sl</th>
@@ -85,12 +99,14 @@
                                     <b>{{ $leave->as_name }}</b>
                                     <p>{{ $leave->as_contact }}</p>
                                 </td>
-                                <td>{{ $unit[$leave->as_unit_id]['hr_unit_name']??'' }}</td>
+                                <td>{{ $unit[$leave->as_unit_id]['hr_unit_short_name']??'' }}</td>
                                 <td>{{ $designation[$leave->as_designation_id]['hr_designation_name']??'' }}</td>
                                 <td>{{ $department[$leave->as_department_id]['hr_department_name']??'' }}</td>
                                 <td>{{ $leave->leave_from?? '' }}</td>
                                 <td>{{ $leave->edd?? '' }}</td>
-                                <td>{{ $leave->edd?? '' }}</td>
+                                <td>
+                                    {{ bn_money($leave->first_payment??0) }}
+                                </td>
                                 <td>
                                     <a href='{{ url("hr/operation/maternity-leave/".$leave->id) }}' target="_blank">View</a>
                                 </td>
@@ -101,7 +117,7 @@
                                 <td>Total Employee</td>
                                 <td>{{count($appoxleave)}}</td>
                                 <td>Total Payment</td>
-                                <td>{{$payment}}</td>
+                                <td>{{bn_money(round($appoxleave->sum('first_payment'),2))}}</td>
                                 <td></td>
                             </tr>
                         @else
@@ -120,14 +136,22 @@
             <div class="panel-body">
                 <div class="page-header-summery">
                     
-                    <h2>Maternity Leave End </h2>
-                    <h4>Month: <b>{{ \Carbon\Carbon::createFromFormat("Y-m",$month)->format('F, Y') }}</b></h4>
-                    <h4>Total Employee: <b>{{count($appoxbacklist)}}</b></h4>
-                    <h4>Total Amount: <b>{{round($appoxbacklist->sum('second_payment'),2)}}</b></h4>
-                    <br>
+                    <h4>Maternity Leave End </h4>
+                    <div class="row">
+                        <div class="col-sm-4 ">
+                            <h5 class="text-left">Total Employee: <b>{{count($appoxbacklist)}}</b></h5>
+                        </div>
+                        <div class="col-sm-4 ">
+                            <h5 class="text-center">Month: <b>{{ \Carbon\Carbon::createFromFormat("Y-m",$month)->format('F, Y') }}</b>
+                            </h5>
+                        </div>
+                        <div class="col-sm-4">
+                            <h5 class="text-right">Total Amount: <b>{{bn_money(round($appoxbacklist->sum('second_payment'),2))}}</b></h5>
+                        </div>
+                    </div>
                 </div>
 
-                <table class="table table-bordered table-hover table-head">
+                <table class="table table-bordered table-hover table-head mt-3">
                     <thead>
                         <tr>
                             <th>Sl</th>
@@ -156,12 +180,12 @@
                                     <b>{{ $leave->as_name }}</b>
                                     <p>{{ $leave->as_contact }}</p>
                                 </td>
-                                <td>{{ $unit[$leave->as_unit_id]['hr_unit_name']??'' }}</td>
+                                <td>{{ $unit[$leave->as_unit_id]['hr_unit_short_name']??'' }}</td>
                                 <td>{{ $designation[$leave->as_designation_id]['hr_designation_name']??'' }}</td>
                                 <td>{{ $department[$leave->as_department_id]['hr_department_name']??'' }}</td>
                                 <td>{{ $leave->leave_to?? '' }}</td>
                                 <td>{{ $leave->edd?? '' }}</td>
-                                <td>{{ $leave->second_payment?? '' }}</td>
+                                <td>{{ bn_money($leave->second_payment??0) }}</td>
                                 <td>
                                     <a href='{{ url("hr/operation/maternity-leave/".$leave->id) }}' target="_blank">View</a>
                                 </td>
@@ -172,7 +196,7 @@
                                 <td>Total Employee</td>
                                 <td>{{count($appoxbacklist)}}</td>
                                 <td>Total Payment</td>
-                                <td>{{$payment}}</td>
+                                <td>{{bn_money($payment)}}</td>
                                 <td></td>
                             </tr>
                         @else

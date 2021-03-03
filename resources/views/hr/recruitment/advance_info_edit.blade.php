@@ -10,32 +10,23 @@
                     <a href="#">Human Resource</a>
                 </li>
                 <li>
-                    <a href="#">Recruitment</a>
+                    <a href="#">Employee</a>
                 </li>
                 <li>
-                    <a href="#">{{$advance->emp_adv_info_as_id}}</a>
+                    <a href="{{ url("hr/recruitment/employee/show/$employee->associate_id") }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='View Profile' class="font-weight-bold">{{$employee->associate_id}}</a>
                 </li>
-                <li class="active"> Advance Information</li>
-            </ul><!-- /.breadcrumb -->
+                <li class="top-nav-btn">
+                    @php 
+                        $act_page = 'advance'; 
+                        $associate_id = $employee->associate_id;
+                    @endphp
+                    @include('hr.common.emp_profile_pagination')
+                </li>
+            </ul>
  
         </div>
         @include('inc/message')
         <div class="panel">
-            <div class="panel-heading">
-                <h6>{{$employee->as_name}}
-                    <div class="btn-group pull-right"> 
-                        <a href='{{ url("hr/recruitment/employee/show/$advance->emp_adv_info_as_id") }}' target="_blank" class="btn  btn-success" title="Profile"><i class="las la-user-tie"></i></a>
-
-                        
-
-                        <a href='{{ url("hr/recruitment/operation/advance_info_edit/$advance->emp_adv_info_as_id") }}' class="btn  btn-info" title="Advance Info"><i class="las la-id-card"></i></a>
-                        <a href='{{ url("hr/payroll/employee-benefit?associate_id=$advance->emp_adv_info_as_id") }}' class="btn  btn-primary" title="Benefits"><i class="las la-dollar-sign"></i></a>
-                        <a  href="{{url("hr/recruitment/operation/medical_info_edit/$advance->emp_adv_info_as_id")}}" target="_blank" data-tooltip="Edit Medical Info" data-tooltip-location="left" class="btn  btn-warning" style="border-radius: 2px !important; padding: 4px;"><i class="las la-stethoscope bigger-100" ></i></a>
-                        <a href='{{ url("hr/employee/medical_incident?associate_id=$advance->emp_adv_info_as_id") }}' class="btn  btn-warning" title="Medical Incident"><i class="las la-procedures"></i></a>
-                        <a href='{{ url("hr/employee/servicebook?associate_id=$advance->emp_adv_info_as_id") }}' class="btn  btn-danger" title="Service Book"><i class="las la-address-book"></i></a>
-                    </div>
-                </h6>
-            </div>
             <div class="panel-body">
                 <div class="row">
                     <div class="col-sm-3">
@@ -192,7 +183,7 @@
                                             </div>
                      
                                             <div class="form-group has-float-label">
-                                                <input name="emp_adv_info_work_exp" type="text" id="experience" placeholder="Work Experience in Year" class="form-control" value="{{$advance->emp_adv_info_work_exp}}" required="number"  required-allowing="range[0;50,float]" required-error-msg="The Work Experience my be 0 to 50 years" />
+                                                <input name="emp_adv_info_work_exp" type="text" id="experience" placeholder="Work Experience in Year" class="form-control" value="{{$advance->emp_adv_info_work_exp}}"  />
                                                 <label  for="emp_adv_info_work_exp"> Work Experience </label>
                                             </div>
                                             

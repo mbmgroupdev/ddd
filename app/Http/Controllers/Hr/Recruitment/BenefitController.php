@@ -239,6 +239,7 @@ class BenefitController extends Controller
                     'b.*'
                 )
                 ->first();
+                
             $fixedSalary= DB::table('hr_fixed_emp_salary AS f')
                 ->where('f.as_id','=', $id)
                 ->select(
@@ -705,22 +706,30 @@ class BenefitController extends Controller
                     $store->status          = 1;  
                 }
 
-                if( $store->save())
-                {
+                if( $store->save()){
 
                     if($store->status == 1){
-                        Employee::where("associate_id", $request->associate_id)
-                        ->update([
-                            'as_designation_id' => $request->current_designation_id
-                        ]);
+                        $emp = Employee::where("associate_id", $request->associate_id)->first();
+                        $emp->as_designation_id = $request->current_designation_id;
+                        $emp->save();
+
+                        // update salary sheet also
+
+                        $month = date('m', strtotime($request->effective_date));
+                        $year = date('Y', strtotime($request->effective_date));
+                        $t = date('t', strtotime($request->effective_date));
+
+                        $tableName = get_att_table($emp->as_unit_id);
+                      
+                        $queue = (new ProcessUnitWiseSalary($tableName, $month, $year, $emp->as_id, $t))
+                                    ->onQueue('salarygenerate')
+                                    ->delay(Carbon::now()->addSeconds(2));
+                                    dispatch($queue);
                     }
 
                     log_file_write($request->associate_id." Associate Promoted!", $store->id);
-                    return back()
-                        ->with('success', 'Promotion data stored! Employee will get promoted on the effective date!');
-                }
-                else
-                {
+                    return back()->with('success', 'Promotion data stored! Employee will get promoted on the effective date!');
+                }else{
                     return back()
                         ->withInput()->with('error', 'Please try again.');
                 }
@@ -806,10 +815,22 @@ class BenefitController extends Controller
             ]);
 
             if($promotion->status == 1){
-                Employee::where("associate_id", $request->associate_id)
-                ->update([
-                    'as_designation_id' => $request->current_designation_id
-                ]);
+                $emp = Employee::where("associate_id", $request->associate_id)->first();
+                $emp->as_designation_id = $request->current_designation_id;
+                $emp->save();
+
+                // update salary sheet also
+
+                $month = date('m', strtotime($request->effective_date));
+                $year = date('Y', strtotime($request->effective_date));
+                $t = date('t', strtotime($request->effective_date));
+
+                $tableName = get_att_table($emp->as_unit_id);
+              
+                $queue = (new ProcessUnitWiseSalary($tableName, $month, $year, $emp->as_id, $t))
+                            ->onQueue('salarygenerate')
+                            ->delay(Carbon::now()->addSeconds(2));
+                            dispatch($queue);
             }
 
             log_file_write("Promotion Updated", $request->promotion_id);
@@ -827,15 +848,27 @@ class BenefitController extends Controller
                   ->where("effective_date", "<=", date("Y-m-d"))
                   ->get();
 
-        foreach ($records as $item)
-        {
-            Employee::where("associate_id", $item->associate_id)
-            ->update([
-                'as_designation_id' => $item->current_designation_id
-            ]);
+        foreach ($records as $item){
 
-            Promotion::where("id", $item->id)
-            ->update([
+            $emp = Employee::where("associate_id", $request->associate_id)->first();
+            $emp->as_designation_id = $request->current_designation_id;
+            $emp->save();
+
+            // update salary sheet also
+
+            $month = date('m', strtotime($request->effective_date));
+            $year = date('Y', strtotime($request->effective_date));
+            $t = date('t', strtotime($request->effective_date));
+
+            $tableName = get_att_table($emp->as_unit_id);
+          
+            $queue = (new ProcessUnitWiseSalary($tableName, $month, $year, $emp->as_id, $t))
+                        ->onQueue('salarygenerate')
+                        ->delay(Carbon::now()->addSeconds(2));
+                        dispatch($queue);
+
+            // update promotion 
+            Promotion::where("id", $item->id)->update([
                 'status' => 1
             ]);
         }

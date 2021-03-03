@@ -31,6 +31,26 @@
         object-fit: cover;
     }
     .slide_upload::before{content: "+";position: absolute;top: 50%;color: #211515;left: 50%;font-size: 52px;margin-left: -17px;margin-top: -37px;}
+    .help-text{
+        color: #777978;
+        font-size: 10px;
+    }
+    .help-text strong{
+        font-size: 10px;
+    }
+    .btn-special{
+        border: 1px solid #089eaf;
+        border-radius: 20px;
+        padding: 2px 15px;
+        color: #089eaf;
+        text-transform: uppercase;
+    }
+    .btn-special:hover{
+        color: #fff;
+        background: #089eaf;
+    }
+    
+
 
 </style>
 @endpush
@@ -39,273 +59,275 @@
         <div class="breadcrumbs ace-save-state" id="breadcrumbs">
             <ul class="breadcrumb">
                 <li>
-                   <a href="/"><i class="ace-icon fa fa-home home-icon"></i>Human Resource</a> 
+                   <a href="/"><i class="ace-icon fa fa-home home-icon"></i> Human Resource</a> 
                 </li>
                 <li>
-                    <a href="#">Recruitment</a>
+                    <a href="#">Employee</a>
                 </li>
                 <li>
-                    <a href="#">{{$employee->associate_id}}</a>
+                    <a href="{{ url("hr/recruitment/employee/show/$employee->associate_id") }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='View Profile' class="font-weight-bold">{{$employee->associate_id}}</a>
                 </li>
-                <li class="active">Update Basic Information</li>
+                <li class="top-nav-btn">
+                    @php 
+                        $act_page = 'basic'; 
+                        $associate_id = $employee->associate_id;
+                    @endphp
+                    @include('hr.common.emp_profile_pagination')
+                </li>
             </ul><!-- /.breadcrumb --> 
         </div>
         @include('inc/message')
-        <div class="panel">
-            <div class="panel-heading">
-                <h6>Basic: {{$employee->associate_id}}
-                    <div class="btn-group pull-right"> 
-                        <a href='{{ url("hr/recruitment/employee/show/$employee->associate_id") }}' target="_blank" class="btn  btn-success" data-toggle="tooltip" data-placement="top" title="" data-original-title='View Profile'><i class="las la-user-tie"></i></a>
-
-                        <a  href="{{url("hr/recruitment/operation/medical_info_edit/$employee->associate_id")}}" target="_blank" data-toggle="tooltip" data-placement="top" title="" data-original-title='Edit Medical Info' class="btn  btn-warning" style="border-radius: 2px !important; padding: 4px;"><i class="las la-stethoscope bigger-100" ></i></a>
-
-                        <a href='{{ url("hr/recruitment/employee/edit/$employee->associate_id") }}' class="btn  btn-success" data-toggle="tooltip" data-placement="top" title="" data-original-title='Basic Info'><i class="las la-bold"></i></a>
-                        <a href='{{ url("hr/recruitment/operation/advance_info_edit/$employee->associate_id") }}' class="btn  btn-info" data-toggle="tooltip" data-placement="top" title="" data-original-title='Advance Info'><i class="las la-id-card"></i></a>
-                        <a href='{{ url("hr/payroll/employee-benefit?associate_id=$employee->associate_id") }}' class="btn  btn-primary" data-toggle="tooltip" data-placement="top" title="" data-original-title='Benefits'><i class="las la-dollar-sign"></i></a>
-                        {{-- <a href='{{ url("hr/ess/medical_incident?associate_id=$employee->associate_id") }}' class="btn  btn-warning" title="Medical Incident"><i class="las la-procedures"></i></a> --}}
-                        <a href='{{ url("hr/employee/servicebook?associate_id=$employee->associate_id") }}' class="btn  btn-danger" data-toggle="tooltip" data-placement="top" title="" data-original-title='Service Book'><i class="las la-address-book"></i></a>
-
-                    </div>
-                </h6>
-            </div>
-            <div class="panel-body">
-                {{ Form::open(['url'=>'hr/recruitment/employee/update_employee', 'files' => true, 'class'=>'form-horizontal']) }}
-                    <div class="row">
-                        <div class="col-sm-4">
-
-                            <input type="hidden" name="as_id" value="{{ $employee->as_id }}">
-
-
-                            <div class="form-group text-center">
-                                <label class="slide_upload" for="file_image" title="Click to change picture"> 
-                                <img id="image_load_id" src='{{ url(emp_profile_picture($employee)) }}' >
-                                </label>
-                                <input type="file" id="file_image" name="as_pic" onchange="readURL(this,this.id)" style="display:none">
-                                
-                            </div>
-                            <input type="hidden" name="old_pic" value="{{ $employee->as_pic }}">
-                            <p class="help-text text-center mb-3">Picture <strong>(jpg, jpeg, png)</strong>  Maximum Size: 200KB</p>
-
-                            {{-- <div class="form-group has-required has-float-label select-search-group">
-                                {{ Form::select('associate_id', [Request::get('associate') => Request::get('associate')], $employee->associate_id, ['placeholder'=>'Select Associate\'s ID', 'id'=>'associate_id', 'class'=> 'associates no-select form-control']) }}
-                                <label  for="associate_id"> Associate's ID  </label>
-                            </div> --}}
-
-                            <div class="form-group has-required has-float-label">
-                                <input name="as_name" type="text" id="as_name" placeholder="Associate's Name" class="form-control" required="required" value="{{ $employee->as_name }}" />
-                                <label  for="as_name"> Associate's Name </label>
-                            </div>
-
-                            
-
-                            <div class="form-group has-required has-float-label select-search-group">
-                                {{ Form::select('as_emp_type_id', $employeeTypes, $employee->as_emp_type_id, ['placeholder'=>'Select Employee Type', 'id'=>'as_emp_type_id',  'required'=>'required']) }}  
-                                <label  for="as_emp_type_id"> Employee Type </label>
-                            </div> 
-
-                            @if(auth()->user()->can('Manage Employee'))
-                            <div class="form-group has-required has-float-label select-search-group">
-                                <select name="as_designation_id" id="as_designation_id" style="width:100%" required="required">
-                                    @foreach($designationList AS $desg)
-                                        <option value="{{ $desg->hr_designation_id }}" {{ $desg->hr_designation_id==$employee->as_designation_id?" Selected ":"" }}>{{ $desg->hr_designation_name }} </option>
-                                    @endforeach 
-                                </select>
-                                <label  for="as_designation_id">Designation </label>
-                            </div>
-                            @else
-                            <div class="form-group has-required has-float-label">
-                                <input type="hidden" value="{{ $employee->as_designation_id }}" name="as_designation_id">
-                                <input type="text" value="{{ $employee->hr_designation_name }}" readonly class="form-control">
-                                <label  for="as_designation_id">Designation </label>
-                            </div>
-                            @endif
-
-                             
-                            
-                            
-
-                            <div class="form-group  has-float-label">
-                                <input name="as_rfid_code" type="text" id="as_rfid_code" placeholder="RFID Code" class="form-control"   value="{{ $employee->as_rfid_code }}"  />
-                                <label  for="as_rfid_code"> RFID Code </label>
-                            </div>
-
-                             
-
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="form-group  has-float-label">
-                                <input name="as_oracle_code" type="text" id="as_oracle_code" placeholder="Oracle Code" class="form-control"  value="{{ $employee->as_oracle_code }}"  />
-                                <label  for="as_oracle_code"> Oracle Code </label>
-                            </div>
-                            <div class="form-group has-required has-float-label">
-
-                                <input type="date" name="as_doj" id="as_doj" placeholder="Date of Joining" class="form-control" required="required"  value="{{ $employee->as_doj->format('Y-m-d') }}" />
-                                <label  for="as_doj"> Date of Joining</label>
-                            </div>
-
-
-
-                            <div class="form-group has-required has-float-label select-search-group">
-                                {{ Form::select('as_ot', [0=>'Non OT',1=>'OT'], $employee->as_ot, ['id'=>'as_ot',  'required'=>'required']) }}  
-                                <label  for="as_ot"> OT Status </label>
-                            </div> 
-                            <div class="form-group has-required has-float-label">
-
-                                <input name="as_dob" type="date" id="date" placeholder="Date of Birth" class="age-validate form-control" required="required"  value="{{ $employee->as_dob!=''?$employee->as_dob->format('Y-m-d'):'' }}" />
-
-                                <label  for="as_dob"> Date of Birth </label>
-                            </div>
-                            
-
-                            
-                            
-                            @if($cost_mapping_unit_status==false)
-                            <div class="form-group">
-                                <label  for="unit_map_checkbox"></label>
-                                <div class="checkbox">
-                                    <label style="padding-left: 10px;">
-                                        <input name="unit_map_checkbox" id="unit_map_checkbox" type="checkbox" class="ace"/>
-                                        <span class="lbl">&nbsp;&nbsp;&nbsp;Assign for Cost Mapping(Unit)</span>
+        
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="panel" style="margin-top: 70px;">
+                        <div class="panel-body">
+                            {{ Form::open(['url'=>'hr/recruitment/employee/update_employee', 'files' => true, 'class'=>'form-horizontal']) }}
+                                @csrf
+                                <input type="hidden" name="as_id" value="{{ $employee->as_id }}">
+                                <div class="form-group text-center" style="margin-bottom: -60px;">
+                                    <label class="slide_upload" for="file_image" title="Click to change picture" style="top: -60px;"> 
+                                    <img id="image_load_id" src='{{ url(emp_profile_picture($employee)) }}' >
                                     </label>
+                                    <input type="file" id="file_image" name="as_pic" onchange="readURL(this,this.id)" style="display:none">
+                                    
                                 </div>
-                            </div>
-                            @endif
+                                <input type="hidden" name="old_pic" value="{{ $employee->as_pic }}">
+                                <p class="help-text text-center mb-3">Picture <strong>(jpg, jpeg, png)</strong>  Maximum Size: 200KB</p>
+                                <div class="form-group text-center">
+                                    <button type="submit" class="btn btn-special">Update</button>
+                                </div>
+                            {{ Form::close() }}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-8 pl-0">
+                    <div class="panel">
+                        <div class="panel-heading text-left">
+                            <h6>Basic Information</h6>
+                        </div>
+                        <div class="panel-body">
+                            <form class="edit-info" method="post">
+                                @csrf
+                                <input type="hidden" name="as_id" value="{{ $employee->as_id }}">
                             
-                            
-                            <div class="form-group has-required has-float-label select-search-group">
-                                {{ Form::select('as_unit_id', $unitList, $employee->as_unit_id, ['placeholder'=>'Select Unit', 'id'=>'as_unit_id',   'required'=>'required']) }}  
-                                <label  for="as_unit_id"> Unit </label>
-                            </div>
-                            <div class="form-group has-required has-float-label select-search-group">
-                                {{ Form::select('as_location_id', $locationList, $employee->as_location, ['placeholder'=>'Select Location', 'id'=>'as_location_id',   'required'=>'required']) }}  
-                                <label  for="as_location_id"> Location </label>
-                            </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        
+                                        <div class="form-group has-required has-float-label">
+                                            <input name="as_name" type="text" id="as_name" placeholder="Associate's Name" class="form-control" required="required" value="{{ $employee->as_name }}" />
+                                            <label  for="as_name"> Associate's Name </label>
+                                        </div>
+                                        <input type="hidden" name="as_id" value="{{ $employee->as_id }}">
 
-                            <!-- WORKER INFORMATION -->
-                            <div id="as_emp_type_info"> 
+                                        <div class="form-group has-required has-float-label select-search-group">
+                                            {{ Form::select('as_emp_type_id', $employeeTypes, $employee->as_emp_type_id, ['placeholder'=>'Select Employee Type', 'id'=>'as_emp_type_id',  'required'=>'required']) }}  
+                                            <label  for="as_emp_type_id"> Employee Type </label>
+                                        </div> 
+
+                                        @if(auth()->user()->can('Manage Employee'))
+                                        <div class="form-group has-required has-float-label select-search-group">
+                                            <select name="as_designation_id" id="as_designation_id" style="width:100%" required="required">
+                                                @foreach($designationList AS $desg)
+                                                    <option value="{{ $desg->hr_designation_id }}" {{ $desg->hr_designation_id==$employee->as_designation_id?" Selected ":"" }}>{{ $desg->hr_designation_name }} </option>
+                                                @endforeach 
+                                            </select>
+                                            <label  for="as_designation_id">Designation </label>
+                                        </div>
+                                        @else
+                                        <div class="form-group has-required has-float-label">
+                                            <input type="hidden" value="{{ $employee->as_designation_id }}" name="as_designation_id">
+                                            <input type="text" value="{{ $employee->hr_designation_name }}" readonly class="form-control">
+                                            <label  for="as_designation_id">Designation </label>
+                                        </div>
+                                        @endif
+
+                                        <div class="form-group has-required has-float-label">
+
+                                            <input type="date" name="as_doj" id="as_doj" placeholder="Date of Joining" class="form-control" required="required"  value="{{ $employee->as_doj->format('Y-m-d') }}" />
+                                            <label  for="as_doj"> Date of Joining</label>
+                                        </div>
+
+                                        <div class="form-group  has-float-label">
+                                            <input name="as_rfid_code" type="text" id="as_rfid_code" placeholder="RFID Code" class="form-control"   value="{{ $employee->as_rfid_code }}"  />
+                                            <label  for="as_rfid_code"> RFID Code </label>
+                                        </div>
+                                        <div class="form-group  has-float-label">
+                                            <input name="as_oracle_code" type="text" id="as_oracle_code" placeholder="Oracle Code" class="form-control"  value="{{ $employee->as_oracle_code }}"  />
+                                            <label  for="as_oracle_code"> Oracle Code </label>
+                                        </div>
+                                    </div>
+                                
+                                    <div class="col-sm-6">
+                                        <div class="form-group has-required has-float-label">
+
+                                            <input name="as_dob" type="date" id="date" placeholder="Date of Birth" class="age-validate form-control" required="required"  value="{{ $employee->as_dob!=''?$employee->as_dob->format('Y-m-d'):'' }}" />
+
+                                            <label  for="as_dob"> Date of Birth </label>
+                                        </div>
+
+                                        <div class="form-group has-required has-float-label">
+                                            <input name="as_contact" type="text" id="as_contact" placeholder="Contact Number" class="form-control" required="required" value="{{ $employee->as_contact }}" />
+                                            <label  for="as_contact"> Contact No. </label>
+                                        </div>
+                                       
+                                        <!-- ENDS OF WORKER INFORMATION -->
+                                        <label>Gender</label> <br>
+                                        <div class="form-inline mb-3">
+                                            <div class="custom-control custom-radio custom-control-inline">
+                                              <input type="radio" id="male" name="as_gender" class="custom-control-input" value="Male" @if($employee->as_gender=="Male") checked @endif>
+                                              <label class="custom-control-label" for="male"> Male </label>
+                                           </div>
+
+                                           <div class="custom-control custom-radio custom-control-inline">
+                                              <input type="radio" id="female" name="as_gender" class="custom-control-input" value="Female" @if($employee->as_gender=="Female") checked @endif>
+                                              <label class="custom-control-label" for="female"> Female </label>
+                                           </div>
+                                        </div>
+                                        <div class="form-group has-float-label">
+                                            <textarea name="as_remarks" id="as_remarks" class="form-control" style="height: 68px;">{{ $employee->as_remarks }}</textarea>
+                                            <label  for="as_remarks"> Remarks </label>           
+                                        </div>
+                                        <div class="form-group text-right">
+                                            <button type="submit" class="btn btn-special">Update</button>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-sm-4">
+                    <div class="panel">
+                        <div class="panel-heading text-center">
+                            <h6>Unit Mapping</h6>
+                        </div>
+                        <div class="panel-body">
+                            <form class="edit-info" method="post">
+                                @csrf
+                                <input type="hidden" name="as_id" value="{{ $employee->as_id }}">
+                                <div class="form-group has-required has-float-label select-search-group">
+                                    {{ Form::select('as_unit_id', $unitList, $employee->as_unit_id, ['placeholder'=>'Select Unit', 'id'=>'as_unit_id',   'required'=>'required']) }}  
+                                    <label  for="as_unit_id"> Unit </label>
+                                </div>
+                                <div class="form-group has-required has-float-label select-search-group">
+                                    {{ Form::select('as_location', $locationList, $employee->as_location, ['placeholder'=>'Select Location', 'id'=>'as_location',   'required'=>'required']) }}  
+                                    <label  for="as_location"> Location </label>
+                                </div>
+
+                                <!-- WORKER INFORMATION -->
+                                <div id="as_emp_type_info"> 
+             
+                                    <div class="form-group has-required has-float-label select-search-group">
+                                        {{ Form::select('as_floor_id', $floorList, $employee->as_floor_id, ['placeholder'=>'Select Floor', 'id'=>'as_floor_id']) }}
+                                        <label  for="as_floor_id"> Floor </label>
+                                    </div>
+
+                                    <div class="form-group has-required has-float-label select-search-group" >
+                                        {{ Form::select('as_line_id', $lineList, $employee->as_line_id, ['placeholder'=>'Select Line', 'id'=>'as_line_id' ]) }} 
+                                        <label  for="as_line_id"> Line </label>
+                                    </div> 
+
+                                    
+                                </div>
+                                <div class="form-group text-center">
+                                    <button type="submit" class="btn btn-special">Update</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4 pl-0">
+                    <div class="panel">
+                        <div class="panel-heading text-center">
+                            <h6>Area Mapping</h6>
+                        </div>
+                        <div class="panel-body">
+                            <form class="edit-info" method="post">
+                                @csrf
+                                <input type="hidden" name="as_id" value="{{ $employee->as_id }}">
+                                <div class="form-group has-required has-float-label select-search-group">
+                                    {{ Form::select('as_area_id', $areaList, $employee->as_area_id, ['placeholder'=>'Area Name', 'id'=>'as_area_id',  'required'=>'required']) }}  
+                                    <label  for="as_area_id">Area </label>
+                                </div>
          
                                 <div class="form-group has-required has-float-label select-search-group">
-                                    {{ Form::select('as_floor_id', $floorList, $employee->as_floor_id, ['placeholder'=>'Select Floor', 'id'=>'as_floor_id']) }}
-                                    <label  for="as_floor_id"> Floor </label>
+                                    {{ Form::select('as_department_id', $departmentList, $employee->as_department_id, ['placeholder'=>'Department Name', 'id'=>'as_department_id',  'required'=>'required']) }} 
+                                    <label  for="as_department_id" >Department Name </label>
                                 </div>
 
-                                <div class="form-group has-required has-float-label select-search-group" >
-                                    {{ Form::select('as_line_id', $lineList, $employee->as_line_id, ['placeholder'=>'Select Line', 'id'=>'as_line_id' ]) }} 
-                                    <label  for="as_line_id"> Line </label>
-                                </div> 
+                                <div class="form-group has-required has-float-label select-search-group">
+                                    {{ Form::select('as_section_id', $sectionList, $employee->as_section_id, ['placeholder'=>'Section Name', 'id'=>'as_section_id',  'required'=>'required']) }}
+                                    <label  for="as_section_id" >Section Name </label>
+                                </div>
 
+                                <div class="form-group has-required has-float-label select-search-group">
+                                    {{ Form::select('as_subsection_id', $subsectionList, $employee->as_subsection_id, ['placeholder'=>'Sub Section Name', 'id'=>'as_subsection_id',  'required'=>'required']) }} 
+                                    <label  for="as_subsection_id" > Sub Section Name </label>
+                                </div>
+                                <div class="form-group text-center">
+                                    <button type="submit" class="btn btn-special">Update</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4 pl-0">
+                    <div class="panel">
+                        <div class="panel-heading text-center">
+                            <h6>Shift & Roaster</h6>
+                        </div>
+                        <div class="panel-body">
+                            <form class="edit-info" method="post">
+                                @csrf
+                                <input type="hidden" name="as_id" value="{{ $employee->as_id }}">
+                                <div class="form-group has-required has-float-label select-search-group">
+                                    {{ Form::select('as_ot', [0=>'Non OT',1=>'OT'], $employee->as_ot, ['id'=>'as_ot',  'required'=>'required']) }}  
+                                    <label  for="as_ot"> OT Status </label>
+                                </div> 
                                 <div class="form-group has-required has-float-label select-search-group">
                                     {{ Form::select('as_shift_id', $shiftList, $employee->as_shift_id, ['placeholder'=>'Select Shift', 'id'=>'as_shift_id',  'required'=>'required']) }} 
                                     <label  for="as_shift_id"> Shift </label>
                                 </div> 
-                            </div>
-                           
-                            
+                                
+                                <div class="form-group has-required has-float-label select-search-group">
+                                    {{ Form::select('shift_roaster_status', [0=>'Shift',1=>'Roaster'], $employee->shift_roaster_status, ['id'=>'shift_roaster_status',  'required'=>'required']) }}  
+                                    <label  for="as_ot"> Shift/Roaster Status </label>
+                                </div> 
+                                <div id="holiday" class="form-group has-required has-float-label select-search-group @if($employee->shift_roaster_status == 1) show @else hide @endif">
+                                    @php
+                                        $days = array(
+                                            ''    => 'Select Holiday',
+                                            'Fri' => 'Friday',
+                                            'Sat' => 'Saturday',
+                                            'Sun' => 'Sunday',
+                                            'Mon' => 'Monday',
+                                            'Tue' => 'Tuesday',
+                                            'Wed' => 'Wednesday',
+                                            'Thu' => 'Thursday'
+                                        );
+
+                                    @endphp
+                                    {{ Form::select('day_off', $days, $employee->day_off??null, ['id'=>'day_off']) }}  
+                                    <label  for="as_ot"> Holiday </label>
+                                </div> 
+                                <div class="form-group text-center">
+                                    <button type="submit" class="btn btn-special">Update</button>
+                                </div>
+                            </form>  
                         </div>
-
-                        <div class="col-sm-4">
-                           <input type="hidden" name="temp_id" value="{{ $employee->temp_id }}">
-                           <div class="form-group has-required has-float-label">
-                                <input name="as_contact" type="text" id="as_contact" placeholder="Contact Number" class="form-control" required="required" value="{{ $employee->as_contact }}" />
-                                <label  for="as_contact"> Contact No. </label>
-                            </div>
-                           
-                            <!-- ENDS OF WORKER INFORMATION -->
-                            <label>Gender</label> <br>
-                            <div class="form-inline mb-3">
-                                <div class="custom-control custom-radio custom-control-inline">
-                                  <input type="radio" id="male" name="as_gender" class="custom-control-input" value="Male" @if($employee->as_gender=="Male") checked @endif>
-                                  <label class="custom-control-label" for="male"> Male </label>
-                               </div>
-
-                               <div class="custom-control custom-radio custom-control-inline">
-                                  <input type="radio" id="female" name="as_gender" class="custom-control-input" value="Female" @if($employee->as_gender=="Female") checked @endif>
-                                  <label class="custom-control-label" for="female"> Female </label>
-                               </div>
-                            </div>
-
-                            {{-- <div class="form-group">
-                                <label  for="gender"> Gender </label>
-                                <div class="radio">
-                                    <label>
-                                        {{ Form::radio('as_gender', 'Male', (($employee->as_gender=="Male")?true:false), ['class'=>'ace' ,'required'=>'required']) }}
-                                        <span class="lbl" value="Male"> Male</span>
-                                    </label>
-                                </div>
-                                <div class="radio">
-                                    <label>
-                                        {{ Form::radio('as_gender', 'Female', (($employee->as_gender=="Female")?true:false), ['class'=>'ace']) }}
-                                        <span class="lbl" value="Female"> Female</span>
-                                    </label>
-                                </div>
-                            </div> --}}
-                            
-                            
-
-                            <div class="form-group has-float-label">
-                                <textarea name="as_remarks" id="as_remarks" class="form-control" style="height: 68px;">{{ $employee->as_remarks }}</textarea>
-                                <label  for="as_remarks"> Remarks </label>           
-                            </div>
-                            
-
-                            @if($cost_mapping_area_status == false)
-                            <div class="form-group">
-                                <label  for="area_map_checkbox"></label>
-                                <div class="checkbox">
-                                    <label style="padding-left: 10px;">
-                                        <input name="area_map_checkbox" id="area_map_checkbox" type="checkbox" class="ace"/>
-                                        <span class="lbl">&nbsp;&nbsp;&nbsp;Assign for Cost Mapping(Area)</span>
-                                    </label>
-                                </div>
-                            </div>
-                            @endif
-                            <div class="form-group has-required has-float-label select-search-group">
-                                {{ Form::select('as_area_id', $areaList, $employee->as_area_id, ['placeholder'=>'Area Name', 'id'=>'as_area_id',  'required'=>'required']) }}  
-                                <label  for="as_area_id">Area </label>
-                            </div>
-     
-                            <div class="form-group has-required has-float-label select-search-group">
-                                {{ Form::select('as_department_id', $departmentList, $employee->as_department_id, ['placeholder'=>'Department Name', 'id'=>'as_department_id',  'required'=>'required']) }} 
-                                <label  for="as_department_id" >Department Name </label>
-                            </div>
-
-                            <div class="form-group has-required has-float-label select-search-group">
-                                {{ Form::select('as_section_id', $sectionList, $employee->as_section_id, ['placeholder'=>'Section Name', 'id'=>'as_section_id',  'required'=>'required']) }}
-                                <label  for="as_section_id" >Section Name </label>
-                            </div>
-
-                            <div class="form-group has-required has-float-label select-search-group">
-                                {{ Form::select('as_subsection_id', $subsectionList, $employee->as_subsection_id, ['placeholder'=>'Sub Section Name', 'id'=>'as_subsection_id',  'required'=>'required']) }} 
-                                <label  for="as_subsection_id" > Sub Section Name </label>
-                            </div>
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-primary pull-right" type="button">
-                                        <i class="fa fa-check"></i> Update
-                                </button>
-                            </div>
-                        </div>
-                    </div> 
-                            
-                {{ Form::close() }}
-                
+                    </div>
+                </div>
             </div>
-        </div>
+        
     </div>
 </div>
  @push('js')
 <script type="text/javascript">
 $(document).ready(function()
 {    
-    var id ='{{$employee->associate_id}}';
-    var text='{{$employee->associate_id}}'+'-'+'{{$employee->as_name}}';
-    var newOption = new Option(text, id, true, true);
-    $('#associate_id').append(newOption).trigger('change');
-
-    /*
-    |-------------------------------------------------- 
-    | ENGLISH
-    |-------------------------------------------------- 
-    */
     var unit= $("#as_unit_id");
     var floor= $("#as_floor_id");
     var line = $("#as_line_id");
@@ -316,6 +338,9 @@ $(document).ready(function()
         window.location = '{{url('hr/recruitment/employee/edit')}}'+'/'+$(this).val();
     });   
 
+    $(document).on('change','#shift_roaster_status', function(){
+        $(this).val() == '1'?$('#holiday').removeClass('hide'):$('#holiday').addClass('hide');
+    });
 
     unit.on("change",function(){
         $.ajax({
@@ -364,21 +389,7 @@ $(document).ready(function()
             }
         });
     });
-    /*line.on("change",function(){
-        $.ajax({
-            url : "{{ url('hr/setup/getShiftListByLineID') }}",
-            type: 'get',
-            data: {unit_id: unit.val(), floor_id: floor.val(), line_id: line.val() },
-            success: function(data)
-            {
-                shift.html(data);
-            },
-            error: function()
-            {
-                console.log('failed...');
-            }
-        });
-    });*/
+  
 
     //Load Department List By Area ID
     var area       = $("#as_area_id");
@@ -524,6 +535,25 @@ $(document).ready(function()
             }
             
         }
+
+        $(document).on('submit','.edit-info', function(e){
+            e.preventDefault();
+            $('.app-loader').show();
+            var dt = $(this).serializeArray();
+            console.log(dt);
+            $.ajax({
+                url: '{{ url('hr/recruitment/employee/update_employee') }}',
+                type: "POST",
+                data : dt,
+                success: function(response){
+                    $('.app-loader').hide();
+                    $.notify('Information updated successfully!','success');
+                }
+            });
+        });
+
+
+
 
         $(document).on('change', '.age-validate', function(){
             var birthDate = new Date($(this).val());

@@ -97,62 +97,84 @@
                                           
                                           @if($flagStatus == 0)
                                           @foreach($attendance as $value)
-                                          <tr>
-                                              <td>
-                                                  {{ $value['date'] }}
-                                                  @if($joinExist)
-                                                      @if($value['date'] == $info->as_doj)
-                                                          <span class="label label-success arrowed-right arrowed-in pull-right">Joined</span>
-                                                      @endif
-                                                  @endif
-                                                  @if($leftExist)
-                                                      @if($value['date'] == $info->as_status_date)
-                                                          @php
-                                                              $flag = '';
-                                                              if($info->as_status === 0) {
-                                                                  $flag = 'Delete';
-                                                              } else if($info->as_status === 2) {
-                                                                  $flag = 'Resign';
-                                                              } else if($info->as_status === 3) {
-                                                                  $flag = 'Terminate';
-                                                              } else if($info->as_status === 4) {
-                                                                  $flag = 'Suspend';
-                                                              } else if($info->as_status === 5) {
-                                                                  $flag = 'Left';
-                                                              }
-                                                          @endphp
-                                                          @if($flag != '')
-                                                          <span class="label label-warning arrowed-right arrowed-in pull-right">
-                                                              {{ $flag }}
-                                                          </span>
-                                                          @endif
-                                                      @endif
-                                                  @endif
-                                              </td>
-                                              <td @if($value['present_status'] == 'A' || $value['present_status'] == 'Weekend(General) - A') style="background: #ea9d99;color:#000;" @endif>
-                                              {!! $value['present_status'] !!}
+                                            @isset($friday[$value['date']])
 
-                                              @if($value['late_status']==1)
-                                                  <span style="height: auto;float:right;" class="label label-warning pull-right">Late</span>
-                                              @endif
-                                              @if($value['remarks']== 'HD')
-                                                  <span style="height: auto;float:right;" class="label label-danger pull-right">Half Day @if($value['late_status']==1) , @endif</span>
+                                                @php $att = $friday[$value['date']];  @endphp
+                                                <tr>
+                                                    <td>{{ $value['date'] }}</td>
+                                                    <td>P</td>
+                                                    <td>{{ $value['floor'] }}</td>
+                                                    <td>{{ $value['line'] }}</td>
+                                                    <td>
+                                                        @if($att->in_time != '')
+                                                        {{ date('H:i', strtotime($att->in_time))}}
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        @if($att->out_time != '')
+                                                        {{ date('H:i', strtotime($att->out_time))}}
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        {{numberToTimeClockFormat($att->ot_hour)}}
+                                                    </td>
+                                                </tr>
+                                            @endisset
 
-                                              @endif
-                                              @if($value['outside'] != null)
-                                              <span style="height: auto;float:right;cursor:pointer;" class="label label-success pull-right" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{$value['outside_msg']}}" >{{$value['outside']}}</span>
-                                              @endif
-                                              </td>
-                                              <td>{{ $value['floor'] }}</td>
-                                              <td>{{ $value['line'] }}</td>
-                                              <td>{{!empty($value['in_time'])?$value['in_time']:null}}</td>
-                                              <td>{{!empty($value['out_time'])?$value['out_time']:null}}</td>
-                                              <td>
-                                              @if($info->as_ot==1)
-                                                  {{numberToTimeClockFormat($value['overtime_time'])}}
-                                              @endif
-                                              </td>
-                                          </tr>
+                                            <tr>
+                                                <td>
+                                                    {{ $value['date'] }}
+                                                    @if($joinExist)
+                                                        @if($value['date'] == $info->as_doj)
+                                                            <span class="label label-success arrowed-right arrowed-in pull-right">Joined</span>
+                                                        @endif
+                                                    @endif
+                                                    @if($leftExist)
+                                                        @if($value['date'] == $info->as_status_date)
+                                                            @php
+                                                                $flag = '';
+                                                                if($info->as_status === 0) {
+                                                                    $flag = 'Delete';
+                                                                } else if($info->as_status === 2) {
+                                                                    $flag = 'Resign';
+                                                                } else if($info->as_status === 3) {
+                                                                    $flag = 'Terminate';
+                                                                } else if($info->as_status === 4) {
+                                                                    $flag = 'Suspend';
+                                                                } else if($info->as_status === 5) {
+                                                                    $flag = 'Left';
+                                                                }
+                                                            @endphp
+                                                            @if($flag != '')
+                                                            <span class="label label-warning arrowed-right arrowed-in pull-right">
+                                                                {{ $flag }}
+                                                            </span>
+                                                            @endif
+                                                        @endif
+                                                    @endif
+                                                </td>
+                                                <td @if($value['present_status'] == 'A' || $value['present_status'] == 'Weekend(General) - A') style="background: #ea9d99;color:#000;" @endif>
+                                                {!! $value['present_status'] !!}
+
+                                                @if($value['late_status']==1)
+                                                    <span style="height: auto;float:right;" class="label label-warning pull-right">Late</span>
+                                                @endif
+                                                @if($value['remarks']== 'HD')
+                                                    <span style="height: auto;float:right;" class="label label-danger pull-right">Half Day @if($value['late_status']==1) , @endif</span>
+
+                                                @endif
+                                                @if($value['outside'] != null)
+                                                <span style="height: auto;float:right;cursor:pointer;" class="label label-success pull-right" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{$value['outside_msg']}}" >{{$value['outside']}}</span>
+                                                @endif
+                                                </td>
+                                                <td>{{ $value['floor'] }}</td>
+                                                <td>{{ $value['line'] }}</td>
+                                                <td>{{!empty($value['in_time'])?$value['in_time']:null}}</td>
+                                                <td>{{!empty($value['out_time'])?$value['out_time']:null}}</td>
+                                                <td>
+                                                    {{numberToTimeClockFormat($value['overtime_time'])}}
+                                                </td>
+                                            </tr>
                                           @endforeach
                                           @else
                                           <tr>
@@ -174,12 +196,10 @@
                                               <th></th>
                                               <th style="text-align:right">Total Over Time</th>
                                               <th>
-                                              @if($info->as_ot==1)
 
                                                   {{numberToTimeClockFormat($info->ot_hour)}}
 
                                                   <input type="hidden" id="ot" value="0">
-                                              @endif
                                               </th>
                                           </tr>
                                       </tfoot>

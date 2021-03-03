@@ -2,6 +2,9 @@
 			
 	<div class="panel-body">
 		<div class="report_section" id="report_section">
+			<style type="text/css" media="print">
+				big{font-size: 9pt;font-weight: bold;}
+			</style>
 			@php
 				$formatHead = explode('_',$format);
 				$urldata = http_build_query($input) . "\n";
@@ -101,10 +104,13 @@
 		        @endif
 			</div>
 			@if($input['report_format'] == 0)
-			<div class="content_list_section" style="column-count: 2;">
+			<div class="content_list_section" @if(count($avail_as) > 10)style="column-count: 2;" @endif>
 				<style type="text/css" media="print">
 					td, tr ,table{
 						padding: 2px !important;
+					}
+					table.table-head th{
+						position: relative !important;
 					}
 				</style>
 					
@@ -118,7 +124,7 @@
 		                	@php
 								if($format == 'as_line_id'){
 									$head = 'Line';
-									$body = $line[$group]['hr_line_name']??'';
+									$body = $group;
 								}elseif($format == 'as_floor_id'){
 									$head = 'Floor';
 									$body = $floor[$group]['hr_floor_name']??'';
@@ -170,11 +176,20 @@
 			            	<tr>
 				            	<td>
 				            		<a class="job_card" data-name="{{ $employee->as_name }}" data-associate="{{ $employee->associate_id }}" data-month-year="{{ $month }}" data-toggle="tooltip" data-placement="top" title="" data-original-title="Job Card">
-				            			@if($employee->as_oracle_code != null)
-				            				{{ $employee->as_oracle_code }}
-				            			@else
-				            				<b> {{ $employee->associate_id }} </b>
-				            			@endif
+				            			@php
+				            				if($employee->as_oracle_code != null){
+				            				  	$strId = (!empty($employee->as_oracle_code)?(substr_replace($employee->as_oracle_code, "<big style='font-size:16px !important'>".$employee->as_oracle_sl."</big>", 3, 4)):'');
+
+				            				}else{
+
+					            				$strId = (!empty($employee->associate_id)?(substr_replace($employee->associate_id, "<big style='font-size:16px !important'>".$employee->temp_id."</big>", 3, 6)):'');
+				            				}
+				            				@endphp
+				            				@if($employee->as_oracle_code != null)
+				            					{!! $strId !!} 
+				            				@else
+				            				<b> {!! $strId !!} </b>
+				            				@endif
 					            	</a>
 					            </td>
 				            	<td>
@@ -270,11 +285,8 @@
 					<thead>
 						<tr>
 							<th>Sl</th>
-							@if($format == 'as_floor_id' || $format == 'as_line_id')
+							@if($format == 'as_floor_id')
 							<th>Unit</th>
-							@endif
-							@if($format == 'as_line_id')
-							<th>Floor</th>
 							@endif
 							@if($format == 'as_section_id' || $format == 'as_subsection_id')
 							<th>Department Name</th>
@@ -292,7 +304,7 @@
 						@foreach($uniqueGroups as $group => $employee)
 						<tr>
 							<td>{{ ++$i }}</td>
-							@if($format == 'as_floor_id' || $format == 'as_line_id')
+							@if($format == 'as_floor_id')
 							<td>
 								@if($format == 'as_floor_id')
 									@php $unitIdfl = $floor[$group]['hr_floor_unit_id']??''; @endphp
@@ -302,12 +314,7 @@
 								{{ $unitIdfl != ''?($unit[$unitIdfl]['hr_unit_name']??''):'' }}
 							</td>
 							@endif
-							@if($format == 'as_line_id')
-							<td>
-								@php $lineFloorId = $line[$group]['hr_line_floor_id']??''; @endphp
-								{{ $lineFloorId != ''?($floor[$lineFloorId]['hr_floor_name']??''):'' }}
-							</td>
-							@endif
+							
 							@if($format == 'as_section_id' || $format == 'as_subsection_id')
 							<td>
 								@php
@@ -339,14 +346,12 @@
 											$exPar = '&selected='.$unit[$group]['hr_unit_id']??'';
 										}
 									}elseif($format == 'as_line_id'){
-
-										if(isset($line[$group])){
-											$body = $line[$group]['hr_line_name']??'';
-											$exPar = '&selected='.$line[$group]['hr_line_id']??'';
-										}else{
-											$body = '-';
-											$exPar = '&selected=null';
-										}
+											$body = $group;
+											if($group == ''){
+												 $body = '-';
+											}
+											$exPar = '&selected='.($group == ''?'null':$group);
+										
 									}elseif($format == 'as_floor_id'){
 										if(isset($floor[$group])){
 

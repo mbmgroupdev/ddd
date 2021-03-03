@@ -466,6 +466,7 @@ class RecruitController extends Controller
 
     public function migrate(Request $request)
     {
+        dd($request->all());
         if (empty($request->worker_id)){
             return back()->with("error", "Unable to start the migration: Invalid user!");
         }

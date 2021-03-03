@@ -128,15 +128,15 @@ class ProcessUnitWiseSalary implements ShouldQueue
                         ->where('in_date','>=',$firstDateMonth)
                         ->where('in_date','<=', $lastDateMonth)
                         ->first();
-
+                    
+                    $lateCount = 0;
+                    $halfCount = 0;
+                    $presentOt = 0;
                     if(!isset($getPresentOT->present)){
                         $getPresentOT->present = 0;
-                    }
-
-                    if(!isset($getPresentOT)){
-                        $presentOt = 0;
-                    }else{
-                        $presentOt = $getPresentOT->ot;
+                        $lateCount = $getPresentOT->late??0;
+                        $halfCount = $getPresentOT->halfday??0;
+                        $presentOt = $getPresentOT->ot??0;
                     }
 
                     $diffExplode = explode('.', $presentOt);
@@ -150,8 +150,8 @@ class ProcessUnitWiseSalary implements ShouldQueue
 
                     $presentOt = $diffExplode[0]+$minutes;
 
-                    $lateCount = $getPresentOT->late??0;
-                    $halfCount = $getPresentOT->halfday??0;
+                    
+                    
 
                     // check OT roaster employee
                     $rosterOTCount = HolidayRoaster::where('year', $year)
@@ -332,7 +332,7 @@ class ProcessUnitWiseSalary implements ShouldQueue
                         
                         if ($lateCount <= $lateAllow && $leaveCount <= $leaveAllow && $getAbsent <= $absentAllow && $getEmployee->as_emp_type_id == 3) {
                             $lastMonth = Carbon::parse($today);
-                            $lastMonth = $lastMonth->startOfMonth()->subMonth()->format('n');
+                            $lastMonth = $lastMonth->startOfMonth()->subMonth()->format('m');
                             if($lastMonth == '12'){
                                 $year = $year - 1;
                             }
@@ -487,11 +487,7 @@ class ProcessUnitWiseSalary implements ShouldQueue
             return 'success';
 
         } catch (\Exception $e) {
-            /*$bug = $e->errorInfo[1];
-            // $bug1 = $e->errorInfo[2];
-            if($bug == 1062){
-                // duplicate
-            }*/
+            DB::table('error')->insert(['msg' => $this->asId.' '.$e->getMessage()]);
         }
     }
 }

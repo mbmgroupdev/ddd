@@ -37,6 +37,11 @@
                <a href="{{ url('/hr/recruitment/recruit') }}"><i class="las la-list-ol"></i>Recruit List</a>
             </li>
             @endif
+            @if($user->can('New Recruit') || $user->hasRole('Super Admin'))
+            <li class="@if($segment2 == 'recruitment' && $segment3=='files') active @endif">
+               <a  href="{{ url('/hr/recruitment/files') }}"><i class="las la-user-plus"></i> Employee Files</a>
+            </li>
+            @endif
             @if($user->can('Job Application') || $user->hasRole('Super Admin'))
             <li class="@if( $segment3=='job-application') active @endif">
                <a href="{{url('hr/recruitment/job-application')}}"><i class="las la-file-contract"></i>Job Application</a>

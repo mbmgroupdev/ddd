@@ -4,7 +4,11 @@
 		@php
 			$urldata = http_build_query($input) . "\n";
 		@endphp
+		@if(auth()->user()->hasRole('Buyer Mode'))
+		<a href='{{ url("hrm/reports/monthly-salary-excel?$urldata")}}' target="_blank" class="btn btn-sm btn-info hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download" style="position: absolute; top: 16px; left: 65px;"><i class="fa fa-file-excel-o"></i></a>
+		@else
 		<a href='{{ url("hr/reports/monthly-salary-excel?$urldata")}}' target="_blank" class="btn btn-sm btn-info hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download" style="position: absolute; top: 16px; left: 65px;"><i class="fa fa-file-excel-o"></i></a>
+		@endif
 		
 		<div id="report_section" class="report_section">
 			<style type="text/css" media="print">
@@ -292,7 +296,7 @@
 					            		<td>{{ ++$i }}</td>
 						            	
 						            	<td>
-						            		<a class="job_card" data-name="{{ $employee->as_name }}" data-associate="{{ $employee->associate_id }}" data-month-year="{{ $month }}" data-toggle="tooltip" data-placement="top" title="" data-original-title="Job Card">{{ $employee->associate_id }}</a>
+						            		<a @if(auth()->user()->hasRole('Buyer Mode'))@else class="job_card" @endif data-name="{{ $employee->as_name }}" data-associate="{{ $employee->associate_id }}" data-month-year="{{ $month }}" data-toggle="tooltip" data-placement="top" title="" data-original-title="Job Card">{{ $employee->associate_id }}</a>
 						            	</td>
 						            	<td>
 						            		<b>{{ $employee->as_name }}</b>
@@ -765,6 +769,11 @@
           $('body').css('overflow', 'unset');
         });
     });
+    @if(auth()->user()->hasRole('Buyer Mode'))
+    	var mainurl = '/hrm/reports/group-salary-sheet-details?';
+    @else
+    	var mainurl = '/hr/reports/group-salary-sheet-details?';
+    @endif
     function selectedGroup(e, body){
     	var part = e;
     	var input = @json($urldata);
@@ -773,7 +782,7 @@
     	$('#right_modal_lg-group').modal('show');
     	$("#content-result-group").html(loaderContent);
     	$.ajax({
-            url: '/hr/reports/group-salary-sheet-details?'+pareUrl,
+            url: mainurl+pareUrl,
             data: {
                 body: body
             },

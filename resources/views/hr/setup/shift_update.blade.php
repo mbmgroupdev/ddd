@@ -85,13 +85,38 @@
                                             <input type="text" id="bill_eligible" name="bill_eligible" class="time form-control" onClick="this.select();" value="{{ $shift->bill_eligible ?? '00:00:00' }}" />
                                             <label  for="bill_eligible">Bill Eligible Time (24 hour format)</label>
                                         </div>
-                                        <div class="form-group custom-control custom-checkbox custom-checkbox-color-check custom-control-inline">
-                                           <input type="checkbox" name="hr_shift_default" class="custom-control-input bg-primary" id="customCheck-1"  value="1" {{ ($shift->hr_shift_default == 1)?"checked":"" }}>
-                                           <label class="custom-control-label" for="customCheck-1"> Default Shift</label>
+                                        <div class="form-group has-float-label select-search-group">
+                                            {{ Form::select('ot_shift', $ot_shift, $shift->ot_shift??'' , ['id'=>'ot_shift', 'class'=> 'form-control','placeholder'=>'Select OT Shift']) }} 
+                                            <label  for="ot_shift"> OT Shift  </label>
                                         </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-9">
+                                        <div class="row">
+                                            <div class="col-sm-4 pr-0">
+                                                <div class="form-group custom-control custom-checkbox custom-checkbox-color-check custom-control-inline">
+                                                   <input type="checkbox" name="hr_shift_default" class="custom-control-input bg-primary" id="customCheck-1"  value="1" @if($shift->hr_shift_default == 1) checked @endif>
+                                                   <label class="custom-control-label" for="customCheck-1" > Mark as default shift</label>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm-4 pl-0">
+                                                <div class="form-group custom-control custom-checkbox custom-checkbox-color-check custom-control-inline">
+                                                   <input type="checkbox" name="ot_status" class="custom-control-input bg-primary" id="customCheck-1"  value="1" @if($shift->ot_status == 1) checked @endif>
+                                                   <label class="custom-control-label" for="customCheck-1"> OT</label>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        
+
+                                        <div class="text-small text-success">Date format should be 24 Hour. Such as 23:00:00</div>
+                                    </div>
+                                    <div class="col-sm-3">
                                         <input type="hidden" name="hr_shift_id" value="{{ $shift->hr_shift_id}}">
                                         <div class="form-group"> 
-                                            <button class="btn pull-right btn-primary" type="submit">Update</button>
+                                            <button class="btn pull-right btn-primary w-80" type="submit">Submit</button>
                                         </div>
                                     </div>
                                 </div>
