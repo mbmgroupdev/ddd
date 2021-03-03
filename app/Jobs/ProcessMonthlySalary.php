@@ -29,6 +29,7 @@ class ProcessMonthlySalary implements ShouldQueue
     public $late;
     public $overtimes;
     public $present;
+    
     public function __construct($asId, $today, $late, $overtimes, $present)
     {
         $this->asId = $asId;

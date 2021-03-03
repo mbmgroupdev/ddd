@@ -8,5 +8,7 @@ class EmployeeBengali extends Model
 {
     protected $table = "hr_employee_bengali";
 
+    protected $guarded = ["hr_bn_id"];
+
     public $timestamps = false;
 }

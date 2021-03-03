@@ -12,16 +12,20 @@
                 <li>
                     <a href="#">Employee </a>
                 </li>
-                <li class="active"> Medical Information</li>
+                <li class="active"> <a href="{{ url("hr/recruitment/employee/show/$medical->med_as_id") }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='View Profile' class="font-weight-bold">{{$medical->med_as_id}}</a></li>
+                <li class="top-nav-btn">
+                    @php 
+                        $act_page = 'medical';  
+                        $associate_id = $medical->med_as_id;
+                    @endphp
+                    @include('hr.common.emp_profile_pagination')
+                </li>
             </ul><!-- /.breadcrumb -->
         </div>
         @include('inc/message')
         <div class="panel"> 
             <div class="panel-heading">
                 <h6>Medical Information
-                    <div class="pull-right">
-                        <a href='{{ url("hr/recruitment/employee/show/$medical->med_as_id") }}'  class="btn btn-primary" title="Profile"><i class="las la-user-tie"></i> View</a>
-                    </div>
                 </h6>
             </div>
 

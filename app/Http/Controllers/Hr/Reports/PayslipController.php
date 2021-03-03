@@ -19,11 +19,14 @@ use DB, PDF;
 
 class PayslipController extends Controller
 {
-	public function showForm(Request $request)
+    public function showForm(Request $request)
     {
+        if(auth()->user()->hasRole('Buyer Mode')){
+            return redirect('hrm/operation/payslip');
+        }
 
-		$data = $request->all();
-		$unitList      = Unit::where('hr_unit_status', '1')
+        $data = $request->all();
+        $unitList      = Unit::where('hr_unit_status', '1')
             ->whereIn('hr_unit_id', auth()->user()->unit_permissions())
             ->orderBy('hr_unit_name', 'desc')
             ->pluck('hr_unit_name', 'hr_unit_id');
@@ -57,13 +60,13 @@ class PayslipController extends Controller
 
         return view("hr/reports/payslip", compact(
             "data",
-        	"unitList",
-        	"areaList",
+            "unitList",
+            "areaList",
             "floorList",
             "deptList",
             "sectionList",
             "subSectionList",
-						"getYear",
+                        "getYear",
                         "locationList",
                         "salaryMin",
                         "salaryMax"
@@ -96,6 +99,16 @@ class PayslipController extends Controller
             }
             if(isset($input['subSection'])){
                 $info['sub_sec'] = Subsection::where('hr_subsec_id',$input['subSection'])->first()->hr_subsec_name_bn??'';
+            }
+            // ignore line
+            $ignore = 1;
+
+            if($input['unit'] != null && $input['department'] == ''  && $input['section'] == ''){
+                $ignore = 0;
+            }
+
+            if(isset($input['line'])){
+                if($input['line'] == 324) $ignore = 0;
             }
             // employee info
             $employeeData = DB::table('hr_as_basic_info');
@@ -154,6 +167,12 @@ class PayslipController extends Controller
             ->when(!empty($input['subSection']), function ($query) use($input){
                return $query->where('s.sub_section_id', $input['subSection']);
             });
+            if($ignore == 1){
+                $queryData->where( function ($q) use ($ignore){
+                    return  $q->where('emp.as_line_id','!=', 324)
+                        ->orWhereNull('emp.as_line_id');
+                });
+            }
             if(isset($input['otnonot']) && $input['otnonot'] != null){
                 $queryData->where('s.ot_status',$input['otnonot']);
             }
@@ -259,64 +278,64 @@ class PayslipController extends Controller
     //get employee info
     public function employeeInfo($unit = null, $floor=null, $department=null, $section=null, $subSection=null, $salaryMonth=null)
     {
-			if(auth()->user()->hasRole('power user 3')){
-				$cantacces = ['power user 2','advance user 2'];
-			}elseif (auth()->user()->hasRole('power user 2')) {
-				$cantacces = ['power user 3','advance user 2'];
-			}elseif (auth()->user()->hasRole('advance user 2')) {
-				$cantacces = ['power user 3','power user 2'];
-			}else{
-				$cantacces = [];
-			}
-			$userIdNotAccessible = DB::table('roles')
-								->whereIn('name',$cantacces)
-								->leftJoin('model_has_roles','roles.id','model_has_roles.role_id')
-								->pluck('model_has_roles.model_id');
+            if(auth()->user()->hasRole('power user 3')){
+                $cantacces = ['power user 2','advance user 2'];
+            }elseif (auth()->user()->hasRole('power user 2')) {
+                $cantacces = ['power user 3','advance user 2'];
+            }elseif (auth()->user()->hasRole('advance user 2')) {
+                $cantacces = ['power user 3','power user 2'];
+            }else{
+                $cantacces = [];
+            }
+            $userIdNotAccessible = DB::table('roles')
+                                ->whereIn('name',$cantacces)
+                                ->leftJoin('model_has_roles','roles.id','model_has_roles.role_id')
+                                ->pluck('model_has_roles.model_id');
 
-					$asIds = DB::table('users')
-									 ->whereIn('id',$userIdNotAccessible)
-									 ->pluck('associate_id');
+                    $asIds = DB::table('users')
+                                     ->whereIn('id',$userIdNotAccessible)
+                                     ->pluck('associate_id');
 
         $salaryMonth = date("Y-m", strtotime($salaryMonth));
 
         DB::statement(DB::raw('set @serial=0'));
-    	return DB::table("hr_as_basic_info AS b")
-    		->select(
+        return DB::table("hr_as_basic_info AS b")
+            ->select(
                 DB::raw('@serial := @serial + 1 AS serial'),
-    			"bd.hr_bn_associate_name AS name",
-    			"b.as_doj AS doj",
+                "bd.hr_bn_associate_name AS name",
+                "b.as_doj AS doj",
                 'dg.hr_designation_name_bn AS designation',
                 'dg.hr_designation_grade AS grade',
-    			"b.as_id",
+                "b.as_id",
                 "b.as_ot",
                 "b.as_emp_type_id AS type",
-    			"b.temp_id",
-    			"b.associate_id AS associate",
-    			"b.as_name",
-    			"b.as_unit_id AS unit",
-    			"ben.ben_current_salary AS salary",
-    			"ben.ben_basic AS basic",
-    			"ben.ben_house_rent AS house",
-    			"ben.ben_medical AS medical",
-    			"ben.ben_transport AS transport",
-    			"ben.ben_food AS food"
-    		)
-    		->leftJoin("hr_employee_bengali AS bd", "bd.hr_bn_associate_id", "=", "b.associate_id")
+                "b.temp_id",
+                "b.associate_id AS associate",
+                "b.as_name",
+                "b.as_unit_id AS unit",
+                "ben.ben_current_salary AS salary",
+                "ben.ben_basic AS basic",
+                "ben.ben_house_rent AS house",
+                "ben.ben_medical AS medical",
+                "ben.ben_transport AS transport",
+                "ben.ben_food AS food"
+            )
+            ->leftJoin("hr_employee_bengali AS bd", "bd.hr_bn_associate_id", "=", "b.associate_id")
             ->leftJoin('hr_designation AS dg', 'dg.hr_designation_id', '=', 'b.as_designation_id')
             ->leftJoin('hr_benefits AS ben', function($join){
-            	$join->on('ben.ben_as_id', '=', 'b.associate_id');
-            	$join->where('ben.ben_status', '=', 1);
+                $join->on('ben.ben_as_id', '=', 'b.associate_id');
+                $join->where('ben.ben_status', '=', 1);
             })
             ->where(function($c) use($unit, $floor, $department, $section, $subSection){
-									$c->where("b.as_unit_id", $unit);
-									if (!empty($department))
-									{
-									$c->where("b.as_department_id", $department);
-								}
-								if (!empty($floor))
-								{
-									$c->where("b.as_floor_id", $floor);
-								}
+                                    $c->where("b.as_unit_id", $unit);
+                                    if (!empty($department))
+                                    {
+                                    $c->where("b.as_department_id", $department);
+                                }
+                                if (!empty($floor))
+                                {
+                                    $c->where("b.as_floor_id", $floor);
+                                }
                 if (!empty($section))
                 {
                     $c->where("b.as_section_id", $section);
@@ -328,9 +347,9 @@ class PayslipController extends Controller
             })
             ->where(DB::raw("DATE_FORMAT(b.as_doj, '%Y-%m')"), "<=", $salaryMonth)
             ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
-						->whereNotIn('b.associate_id',$asIds)
+                        ->whereNotIn('b.associate_id',$asIds)
             ->where('b.as_status',1) // checking status
-    		->paginate(24);
+            ->paginate(24);
     }
 
 }

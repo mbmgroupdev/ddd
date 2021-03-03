@@ -1438,6 +1438,10 @@ Route::group(['prefix' => 'hr/operation/holiday-duty','namespace' => 'Hr\Operati
 
 });
 
+Route::get('hr/reports/analytics', 'Hr\AnalyticsController@index');
+Route::get('hr/recruitment/files', 'Hr\Employee\FileController@index');
+Route::post('hr/employee/get-file', 'Hr\Employee\FileController@getFile');
+
 
 
 
@@ -1454,7 +1458,18 @@ Route::group(['prefix' => 'hr/buyer','namespace' => 'Hr\Buyer'], function(){
 Route::group(['prefix' => 'hrm','namespace' => 'Hr\Buyer'], function(){
 	Route::get('operation/job_card','BuyerJobCardController@index');
 	Route::get('timeattendance/attendance_bulk_manual','BuyerJobCardController@edit');
+	// salary disburse
 	Route::get('operation/salary-sheet', 'BuyerSalaryController@index');
 	Route::get('operation/unit-wise-salary-sheet', 'BuyerSalaryController@unitwise');
 	Route::get('operation/employee-wise-salary-sheet', 'BuyerSalaryController@employeeWise');
+
+	// payslip
+	Route::get('operation/payslip', 'BuyerSalaryController@payslip');
+	Route::get('operation/unit-wise-pay-slip', 'BuyerSalaryController@unitWisePayslip');
+
+	// reports section
+	Route::get('reports/monthly-salary', 'BuyerSalaryController@reports');
+	Route::get('reports/monthly-salary-report', 'BuyerSalaryController@salaryReport');
+	Route::get('reports/monthly-salary-excel', 'BuyerSalaryController@salaryReportExcel');
+	Route::get('/reports/group-salary-sheet-details', 'BuyerSalaryController@groupSalary');
 });

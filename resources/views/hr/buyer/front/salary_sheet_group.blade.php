@@ -118,7 +118,11 @@
                                     @endif
                                     @if(isset($input['perpage']) && $input['perpage'] > 1)
                                     <p style="margin:0;padding: 0;text-align: right;">
-                                        সর্বমোট টাকার পরিমানঃ <span style="color:hotpink" >{{Custom::engToBnConvert(bn_money($totalSalary_s))}}</span>
+                                        সর্বমোট টাকার পরিমানঃ <span style="color:hotpink;border: 1px solid;padding: 2px 10px; 
+                                        @if($buyer->base_ot == 2) border-radius:20px;@endif "
+                                            
+                                            
+                                        >{{Custom::engToBnConvert(bn_money($totalSalary_s))}}</span>
                                     </p>
                                     @php
                                         $list_total_ot = array_column(array_column($lists, 'salary'),'ot_rate');

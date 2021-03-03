@@ -43,7 +43,11 @@
     .cursor-pointer{
         cursor: pointer;
     }
+    .lib-roster-holiday {
+        background-color: #09b0ff !important;
+    }
 </style>
+
 @endpush
 <div class="main-content">
     <div class="main-content-inner">
@@ -170,7 +174,7 @@
                                                 }else{
                                                     if(auth()->user()->can('Attendance Report') || auth()->user()->can('Attendance Report')){
                                                        $reportType = [
-                                                            'att_statistics'=>'Attendance Statistics', 
+                                                            //'att_statistics'=>'Attendance Statistics', 
                                                             'present'=>'Present', 
                                                             'absent'=>'Absent', 
                                                             'before_absent_after_present'=>'Present After Being Absent', 
@@ -627,7 +631,6 @@ $(document).ready(function(){
         $('#reportGroup').val('as_section_id');
 
       }
-
       if(type == 'executive_attendance'){
         $("#unit").val('').trigger('change');
         $('#reportGroupHead').append('<option value="as_area_id">Area</option>');
@@ -722,7 +725,7 @@ function printDiv(divName)
     myWindow.focus();
     myWindow.print();
     myWindow.close();
-}
+} 
     
 </script>
 @endpush

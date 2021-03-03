@@ -108,8 +108,10 @@ class SummaryReportController extends Controller
 
                 $attData = DB::table('hr_as_basic_info AS emp')
                             ->where('emp.as_doj','>=', $input['from_date'])
-                            ->where('emp.as_doj','<=', $input['to_date'])
-                            ->where('emp.as_status',1);
+                            ->where('emp.as_doj','<=', $input['to_date']);
+                            if(isset($request['as_status'])){
+                                $attData->where('emp.as_status', 1);
+                            }
 
             }else if($input['report_type'] == 'absent'){
                 $attData = DB::table('hr_absent AS a')
@@ -182,7 +184,7 @@ class SummaryReportController extends Controller
 
             if($input['report_type'] == 'ot'){
                 
-                $attData->where('a.ot_hour', '>', 0);
+                $attData->where('emp.as_ot', 1);
                 $attData->leftJoin('hr_benefits AS bn', 'bn.ben_as_id', 'emp.associate_id');
                 if($input['report_format'] == 1 && $input['report_group'] != null){
 

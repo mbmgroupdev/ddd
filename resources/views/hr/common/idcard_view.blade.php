@@ -120,7 +120,8 @@
                     @if($associate->hr_unit_authorized_signature)
                     <img style="height: 30px;margin-top: -14px;position: absolute;right: 5px;" src="{{asset($associate->hr_unit_authorized_signature)}}">
                     @else
-                    <img style="height: 30px;margin-top: -8px;margin-left: auto;" src=""></img>
+                    <div style="height: 6px;margin-top: -8px;margin-left: auto;"></div>
+                    {{-- <img style="height: 30px;margin-top: -8px;margin-left: auto;" src=""></img> --}}
                     @endif
                     <br>
                     <strong style="font-size:9px;position: absolute;right: 0;width: 100px;">

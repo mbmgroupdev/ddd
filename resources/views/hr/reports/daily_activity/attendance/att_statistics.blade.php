@@ -48,7 +48,7 @@
 		                			<b>: @if($input['otnonot'] == 0) No @else Yes @endif </b> <br>
 		                		@endif
 	                			Total Employee
-	                			<b>: </b>
+	                			<b>: {{count($avail)}}</b>
 		                		
 		            		</td>
 		            		<td style="text-align: right;width: 25%">
@@ -199,9 +199,7 @@
 			            	<tr>
 			            		<td colspan="11" style="text-align: right;"><b>Total</b></td>
 			            		<td  style="text-align: right"><b>
-			            			@php
-			            			
-			            			@endphp
+			            			{{count($avail)}}
 			            		</b>
 			            		</td>
 			            		<td></td>

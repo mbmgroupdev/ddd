@@ -15,7 +15,9 @@
                 <li>
                     <a href="#">Buyer Mode</a>
                 </li>
-                <li class="top-nav-btn btn btn-sm btn-primary" data-toggle="modal" data-target="#right_modal_template">Create</li>
+                @if(auth()->user()->hasRole('Super Admin'))
+                <li class="top-nav-btn btn btn-sm btn-primary" data-toggle="modal" data-target="#right_modal_template">Create Template</li>
+                @endif
             </ul>
         </div>
     </div>
@@ -97,7 +99,7 @@
                                             <input type="base_ot" class="form-control" id="base_ot" name="base_ot" placeholder="Enter Template Name" required="required" value="" autocomplete="off" />
                                             <label  for="base_ot"> Base OT </label>
                                         </div>
-                                        <button type="submit" class="btn btn-primary btn-sm activityReportBtn"><i class="fa fa-save"></i> Create Buyer Template</button>
+                                        <button type="submit" class="btn btn-primary btn-sm activityReportBtn"><i class="fa fa-save"></i>Create Template</button>
                                     </div>
                                 </div>
                             </div>

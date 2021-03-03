@@ -250,6 +250,7 @@ class BenefitController extends Controller
                     'b.*'
                 )
                 ->first();
+                
             $fixedSalary= DB::table('hr_fixed_emp_salary AS f')
                 ->where('f.as_id','=', $id)
                 ->select(

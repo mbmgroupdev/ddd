@@ -337,7 +337,15 @@
                         </p>
                         <p style="margin:0;padding:0">
 
-                            <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">বেতন/মজুরী অগ্রিম/সমন্বয়</span>
+                            <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">বেতন/মজুরী অগ্রিম/সমন্বয়
+
+                                @if(array_key_exists($salary->as_id, $salaryAddDeduct))
+                                    @if($salaryAddDeduct[$salary->as_id]->salary_add_reason != null)
+                                        ({{$salaryAddDeduct[$salary->as_id]->salary_add_reason}})
+                                    @endif
+                                @endif
+
+                            </span>
                             <span style="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=
                             </span>
                             <span style="text-align: right;width: 30%; float: right;  white-space: wrap;">

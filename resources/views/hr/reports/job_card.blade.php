@@ -75,117 +75,6 @@
               </div>
            </div>
         </div>
-        {{-- <div class="iq-card iq-accordion-block mb-3 {{ Request::get('unit') != null?'accordion-active':'' }}">
-           <div class="active-mat clearfix">
-              <div class="container-fluid">
-                 <div class="row">
-                    <div class="col-sm-12"><a class="accordion-title"><span class="header-title" style="line-height:1.8;border-radius: 50%;"> Unit Wise </span> </a></div>
-                 </div>
-              </div>
-           </div>
-           <div class="accordion-details">
-              <div class="row1">
-                <div class="col-12"> 
-                    <div class="panel mb-0">
-                        
-                        <div class="panel-body pb-0">
-                            <form role="form" method="get" action="{{ url('hr/operation/job_card') }}" class="attendanceReport" id="attendanceReport">
-                                <div class="row">
-                                  <div class="col-3">
-                                    <div class="form-group has-float-label has-required select-search-group">
-                                        
-                                        <select name="unit" class="form-control capitalize select-search" id="unit" required="">
-                                            <option selected="" value="">Choose...</option>
-                                            
-                                            @foreach($unitList as $key => $value)
-                                            <option value="{{ $key }}">{{ $value }}</option>
-                                            @endforeach
-                                        </select>
-                                      <label for="unit">Unit</label>
-                                    </div>
-                                    <div class="form-group has-float-label  select-search-group">
-                                        <select name="area" class="form-control capitalize select-search" id="area">
-                                            <option selected="" value="">Choose...</option>
-                                            @foreach($areaList as $key => $value)
-                                            <option value="{{ $key }}">{{ $value }}</option>
-                                            @endforeach
-                                        </select>
-                                        <label for="area">Area</label>
-                                    </div>
-                                    <div class="form-group has-float-label select-search-group">
-                                        <select name="department" class="form-control capitalize select-search" id="department" disabled>
-                                            <option selected="" value="">Choose...</option>
-                                        </select>
-                                        <label for="department">Department</label>
-                                    </div>
-                                  </div>
-                                  <div class="col-3">
-                                    
-                                    <div class="form-group has-float-label select-search-group">
-                                        <select name="section" class="form-control capitalize select-search " id="section" disabled>
-                                            <option selected="" value="">Choose...</option>
-                                        </select>
-                                        <label for="section">Section</label>
-                                    </div>
-                                    <div class="form-group has-float-label select-search-group">
-                                        <select name="subSection" class="form-control capitalize select-search" id="subSection" disabled>
-                                            <option selected="" value="">Choose...</option> 
-                                        </select>
-                                        <label for="subSection">Sub Section</label>
-                                    </div>
-                                    <div class="form-group has-float-label select-search-group">
-                                        <select name="floor_id" class="form-control capitalize select-search" id="floor_id" disabled >
-                                            <option selected="" value="">Choose...</option>
-                                        </select>
-                                        <label for="floor_id">Floor</label>
-                                    </div>
-                                  </div> 
-                                  <div class="col-3">
-                                    
-                                    <div class="form-group has-float-label select-search-group">
-                                        <select name="line_id" class="form-control capitalize select-search" id="line_id" disabled >
-                                            <option selected="" value="">Choose...</option>
-                                        </select>
-                                        <label for="line_id">Line</label>
-                                    </div>
-                                    <div class="form-group has-float-label select-search-group">
-                                        <select name="as_ot" class="form-control capitalize select-search" id="as_ot"  >
-                                            <option selected="" value="">Choose...</option>
-                                            <option  value="1">OT</option>
-                                            <option  value="0">Non OT</option>
-                                        </select>
-                                        <label for="as_ot">OT</label>
-                                    </div>
-                                  </div>  
-                                  <div class="col-3">
-                                    <div class="form-group has-float-label has-required">
-                                      <input type="month" class="report_date datepicker form-control" id="month" name="month" placeholder="Y-m" required="required" value="{{ date('Y-m') }}" autocomplete="off" />
-                                      <label for="month">Month</label>
-                                    </div>
-                                    <div class="form-group has-float-label has-required select-search-group">
-                                        <?php
-                                          $status = ['1'=>'Active','25' => 'Left & Resign','2'=>'Resign','3'=>'Terminate','4'=>'Suspend','5'=>'Left', '6'=>'Maternity'];
-                                        ?>
-                                        {{ Form::select('employee_status', $status, 1, ['placeholder'=>'Select Employee Status ', 'class'=>'form-control capitalize select-search', 'id'=>'estatus', 'required']) }}
-                                        <label for="estatus">Status</label>
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                      <button class="btn btn-primary nextBtn btn-lg pull-right" type="submit" id="attendanceReport"><i class="fa fa-save"></i> Generate</button>
-                                    </div>
-                                  </div>
-                                  
-                                  
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                    <!-- PAGE CONTENT ENDS -->
-                </div>
-                <!-- /.col -->
-            </div>
-           </div>
-        </div> --}}
         
     </div>
     <div class="page-content">
@@ -337,62 +226,84 @@
                                                 
                                                 @if($flagStatus == 0)
                                                 @foreach($attendance as $value)
-                                                <tr>
-                                                    <td>
-                                                        {{ $value['date'] }}
-                                                        @if($joinExist)
-                                                            @if($value['date'] == $info->as_doj)
-                                                                <span class="label label-success arrowed-right arrowed-in pull-right">Joined</span>
+                                                    {{-- friday --}}
+                                                    @isset($friday[$value['date']])
+
+                                                        @php $att = $friday[$value['date']];  @endphp
+                                                    <tr>
+                                                        <td>{{ $value['date'] }}</td>
+                                                        <td>P</td>
+                                                        <td>{{ $value['floor'] }}</td>
+                                                        <td>{{ $value['line'] }}</td>
+                                                        <td>
+                                                            @if($att->in_time != '')
+                                                            {{ date('H:i', strtotime($att->in_time))}}
                                                             @endif
-                                                        @endif
-                                                        @if($leftExist)
-                                                            @if($value['date'] == $info->as_status_date)
-                                                                @php
-                                                                    $flag = '';
-                                                                    if($info->as_status === 0) {
-                                                                        $flag = 'Delete';
-                                                                    } else if($info->as_status === 2) {
-                                                                        $flag = 'Resign';
-                                                                    } else if($info->as_status === 3) {
-                                                                        $flag = 'Terminate';
-                                                                    } else if($info->as_status === 4) {
-                                                                        $flag = 'Suspend';
-                                                                    } else if($info->as_status === 5) {
-                                                                        $flag = 'Left';
-                                                                    }
-                                                                @endphp
-                                                                @if($flag != '')
-                                                                <span class="label label-warning arrowed-right arrowed-in pull-right">
-                                                                    {{ $flag }}
-                                                                </span>
+                                                        </td>
+                                                        <td>
+                                                            @if($att->out_time != '')
+                                                            {{ date('H:i', strtotime($att->out_time))}}
+                                                            @endif
+                                                        </td>
+                                                        <td>
+                                                            {{numberToTimeClockFormat($att->ot_hour)}}
+                                                        </td>
+                                                    </tr>
+                                                    @endisset
+                                                    <tr>
+                                                        <td>
+                                                            {{ $value['date'] }}
+                                                            @if($joinExist)
+                                                                @if($value['date'] == $info->as_doj)
+                                                                    <span class="label label-success arrowed-right arrowed-in pull-right">Joined</span>
                                                                 @endif
                                                             @endif
+                                                            @if($leftExist)
+                                                                @if($value['date'] == $info->as_status_date)
+                                                                    @php
+                                                                        $flag = '';
+                                                                        if($info->as_status === 0) {
+                                                                            $flag = 'Delete';
+                                                                        } else if($info->as_status === 2) {
+                                                                            $flag = 'Resign';
+                                                                        } else if($info->as_status === 3) {
+                                                                            $flag = 'Terminate';
+                                                                        } else if($info->as_status === 4) {
+                                                                            $flag = 'Suspend';
+                                                                        } else if($info->as_status === 5) {
+                                                                            $flag = 'Left';
+                                                                        }
+                                                                    @endphp
+                                                                    @if($flag != '')
+                                                                    <span class="label label-warning arrowed-right arrowed-in pull-right">
+                                                                        {{ $flag }}
+                                                                    </span>
+                                                                    @endif
+                                                                @endif
+                                                            @endif
+                                                        </td>
+                                                        <td @if($value['present_status'] == 'A' || $value['present_status'] == 'Weekend(General) - A') style="background: #ea9d99;color:#000;" @endif>
+                                                        {!! $value['present_status'] !!}
+
+                                                        @if($value['late_status']==1)
+                                                            <span style="height: auto;float:right;" class="label label-warning pull-right">Late</span>
                                                         @endif
-                                                    </td>
-                                                    <td @if($value['present_status'] == 'A' || $value['present_status'] == 'Weekend(General) - A') style="background: #ea9d99;color:#000;" @endif>
-                                                    {!! $value['present_status'] !!}
+                                                        @if($value['remarks']== 'HD')
+                                                            <span style="height: auto;float:right;" class="label label-danger pull-right">Half Day @if($value['late_status']==1) , @endif</span>
 
-                                                    @if($value['late_status']==1)
-                                                        <span style="height: auto;float:right;" class="label label-warning pull-right">Late</span>
-                                                    @endif
-                                                    @if($value['remarks']== 'HD')
-                                                        <span style="height: auto;float:right;" class="label label-danger pull-right">Half Day @if($value['late_status']==1) , @endif</span>
-
-                                                    @endif
-                                                    @if($value['outside'] != null)
-                                                    <span style="height: auto;float:right;cursor:pointer;" class="label label-success pull-right" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{$value['outside_msg']}}" >{{$value['outside']}}</span>
-                                                    @endif
-                                                    </td>
-                                                    <td>{{ $value['floor'] }}</td>
-                                                    <td>{{ $value['line'] }}</td>
-                                                    <td>{{!empty($value['in_time'])?$value['in_time']:null}}</td>
-                                                    <td>{{!empty($value['out_time'])?$value['out_time']:null}}</td>
-                                                    <td>
-                                                    @if($info->as_ot==1)
-                                                        {{numberToTimeClockFormat($value['overtime_time'])}}
-                                                    @endif
-                                                    </td>
-                                                </tr>
+                                                        @endif
+                                                        @if($value['outside'] != null)
+                                                        <span style="height: auto;float:right;cursor:pointer;" class="label label-success pull-right" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{$value['outside_msg']}}" >{{$value['outside']}}</span>
+                                                        @endif
+                                                        </td>
+                                                        <td>{{ $value['floor'] }}</td>
+                                                        <td>{{ $value['line'] }}</td>
+                                                        <td>{{!empty($value['in_time'])?$value['in_time']:null}}</td>
+                                                        <td>{{!empty($value['out_time'])?$value['out_time']:null}}</td>
+                                                        <td>
+                                                            {{numberToTimeClockFormat($value['overtime_time'])}}
+                                                        </td>
+                                                    </tr>
                                                 @endforeach
                                                 @else
                                                 <tr>
@@ -414,12 +325,10 @@
                                                     <th></th>
                                                     <th style="text-align:right">Total Over Time</th>
                                                     <th>
-                                                    @if($info->as_ot==1)
 
                                                         {{numberToTimeClockFormat($info->ot_hour)}}
 
                                                         <input type="hidden" id="ot" value="0">
-                                                    @endif
                                                     </th>
                                                 </tr>
                                             </tfoot>
