@@ -361,11 +361,12 @@
             @endif
             @if($user->can('Attendance Summary Report') || $user->can('Summary Report'))
             <li class="@if($segment3 == 'summary') active @endif"><a href="{{ url('hr/reports/summary') }}"><i class="las la-file-alt"></i>Summary Report</a></li>
-            <li class="@if($segment3 == 'monthly-attendance-activity') active @endif"><a href="{{ url('hr/reports/monthly-attendance-activity') }}"><i class="las la-fingerprint"></i>Monthly Attendance</a></li>
+            
             @endif
             {{-- <li class="@if($segment3 == 'monthly-reports') active @endif"><a href="{{ url('hr/reports/monthly-reports') }}"><i class="las la-chart-area"></i>Monthly Report</a></li> --}}
             {{-- <li><a href="{{ url('hr/reports/group_attendance') }}"><i class="las la-fingerprint"></i>Group Attendance</a></li> --}}
             @if($user->can('Salary Report') || $user->hasRole('Super Admin'))
+            <li class="@if($segment3 == 'monthly-attendance-activity') active @endif"><a href="{{ url('hr/reports/monthly-attendance-activity') }}"><i class="las la-fingerprint"></i>Monthly Attendance</a></li>
             <li class="@if($segment3 == 'monthly-salary') active @endif"><a href="{{ url('hr/reports/monthly-salary') }}"><i class="las la-fingerprint"></i>Monthly Salary</a></li>
             @endif
             @if($user->can('Monthly OT') || $user->hasRole('Super Admin'))
@@ -421,7 +422,7 @@
 
       @if(auth()->user()->canany(['Manage Role','Manage User','Add User','View User','Role Hierarchy','Assign Permission']) || $user->hasRole('Super Admin'))
       <li class="@if($segment2 == 'adminstrator') active @endif">
-         <a href="#adminstratior" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="las la-users-cog"></i><span>Adminstrator</span><i class="las la-angle-right iq-arrow-right"></i></a>
+         <a href="#adminstratior" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="las la-users-cog"></i><span>Administrator</span><i class="las la-angle-right iq-arrow-right"></i></a>
          <ul id="adminstratior" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
             @if($user->can('Add User') || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'user' && $segment4 == 'create') active @endif">

@@ -22,7 +22,7 @@ class AllLeavesController extends Controller
 {
    public function allLeaves(Request $request)
    {
-        $unit = Unit::pluck('hr_unit_name');
+        $unit = Unit::pluck('hr_unit_short_name');
         $month = $request->month??date('Y-m');
         $date = Carbon::parse($month);
         $now = Carbon::now();
@@ -96,6 +96,16 @@ class AllLeavesController extends Controller
              }
              return $leave_duration;
             })
+            ->addColumn('leave_status', function($data){
+              if($data->leave_status == 1){
+                $leave = '<span class="badge badge-pill badge-primary">Approved</span>';
+              }elseif($data->leave_status == 2){
+                $leave = '<span class="badge badge-pill badge-danger">Declined</span>';
+              }else{
+                $leave = '<span class="badge badge-pill badge-warning">Applied</span> <a class="btn btn-sm btn-outline-success" href="'.url('hr/timeattendance/leave_data/'.$data->id).'/1" onclick=\'return confirm("Are you sure you want to Approved this Leave?");\'><i class="fa fa-check"></i></a> <a class="btn btn-sm btn-outline-danger" href="'.url('hr/timeattendance/leave_data/'.$data->id).'/2" onclick=\'return confirm("Are you sure you want to Declined this Leave?");\'><i class="fa fa-close"></i></a>';
+              }
+              return $leave;
+            })
             ->addColumn('action', function ($data) use ($perm,$sal) {
                 $le = date('Ym',strtotime($data->leave_from)).$data->as_unit_id;
                 if($perm && !in_array($le,$sal)){
@@ -109,7 +119,7 @@ class AllLeavesController extends Controller
                   }
                   return '';
             })
-            ->rawColumns(['serial_no','action'])
+            ->rawColumns(['serial_no', 'leave_status','action'])
             ->make(true);
    }
 
@@ -489,6 +499,7 @@ class AllLeavesController extends Controller
           $checkL['unit_id'] = $getEmployee->as_unit_id;
           $lock = monthly_activity_close($checkL);
           if($lock == 0){
+            DB::table('hr_leave')->where('id', $id)->delete();
             $dates = displayBetweenTwoDates($getLeave->leave_from, $getLeave->leave_to);
           
             if(count($dates) > 0){
@@ -497,7 +508,7 @@ class AllLeavesController extends Controller
               }
             }
 
-            DB::table('hr_leave')->where('id', $id)->delete();
+            
             return back()->with('success', 'Leave Deleted');
           }else{
             $msg = "Salary Lock, This Operation not accepted";

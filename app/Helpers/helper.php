@@ -244,9 +244,18 @@ if(!function_exists('log_file_write')){
 
     function log_file_write($message, $event_id)
     {
-        $log_message = date("Y-m-d H:i:s")." \"".auth()->user()->associate_id."\" ".$message." ".$event_id.PHP_EOL;
-        $log_message .= file_get_contents("assets/log.txt");
-        file_put_contents("assets/log.txt", $log_message);
+        /*$directory = 'assets/logs/'.date("Y").'/'.date("m").'/'.date("d").'/';
+        $file = 'assets/logs/'.date("Y").'/'.date("m").'/'.date("d").'/hr_log.txt';
+        //If the directory doesn't already exists.
+        if(!is_dir($directory)){
+            //Create our directory.
+            mkdir($directory, 755, true);
+        }
+        if ( !unlink( $file ) ) {
+          chmod($file, 0755);
+        }
+        $log_message = date("Y-m-d H:i:s")." \"".Auth()->user()->associate_id."\" ".$message." ".$event_id.PHP_EOL;
+        $log_message .= file_get_contents($file);*/
 
         // store user log
         $logs = UserLog::where('log_as_id', auth()->id())->orderBy('updated_at','ASC')->get();

@@ -112,7 +112,7 @@
                                     <th width="100">ইআরপি ও ওরাকল</th>
                                     <th>তারিখ</th>
                                     <th>একাউন্ট নম্বর</th>
-                                    <th width="80">দিন</th>
+                                    <th>দিন</th>
                                     <th width="120">মোট টাকার পরিমান</th>
                                     <th class="" width="120" >দস্তখত</th>
                                     
@@ -189,10 +189,10 @@
                                             </td>
                                             <td>
                                                 <p style="margin:0;padding:0">
-                                                    <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">মোট দিন
+                                                    {{-- <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">মোট দিন
                                                     </span>
                                                     <span style ="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=
-                                                    </span>
+                                                    </span> --}}
                                                     <span style="text-align: right;width: 30%; float: right;  white-space: wrap;">
                                                         <font style="color:hotpink;" > {{ Custom::engToBnConvert($list->totalDay) }}</font>
                                                     </span>

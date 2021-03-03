@@ -74,14 +74,49 @@ class ReportController extends Controller
 
     public function monthlyOT(Request $request)
     {
+        $unitList = Unit::whereIn('hr_unit_id', auth()->user()->unit_permissions())
+                ->orderBy('hr_unit_name', 'desc')->pluck('hr_unit_short_name','hr_unit_id');
+        unset($unitList[4], $unitList[5]);
+
+        $unit = [];
+        if($request->unit != null){
+            $unit[] = $request->unit;
+        }else{
+            if(in_array(1, auth()->user()->unit_permissions())){
+                $unit[] = 1;
+            }elseif(in_array(2, auth()->user()->unit_permissions())){
+                $unit[] = 2;
+            }elseif(in_array(3, auth()->user()->unit_permissions())){
+                $unit[] = 3;
+            }elseif(in_array(8, auth()->user()->unit_permissions())){
+                $unit[] = 8;
+            }
+        }
+        
+        ini_set('zlib.output_compression', 1);
         $month = $request->month??date('Y-m');
         $monthFormat = Carbon::createFromFormat("Y-m", $month);
         $start_date = $monthFormat->copy()->firstOfMonth();
         $end_date = $monthFormat->copy()->lastOfMonth()->format('Y-m-d');
         $empAs = auth()->user()->permitted_asid();
+        // $att_table = $request->unit??[1,2,3,8];
+        $att_table = $unit;
 
-        $att_table = [1,2,3,8];
+        $date = Carbon::parse($month);
+        $now = Carbon::now();
+        if($date->diffInMonths($now) <= 6 ){
+            $max = Carbon::now();
+        }else{
+            $max = $date->addMonths(6);
+        }
 
+        $months = [];
+        $data = [];
+        $months[date('Y-m')] = 'Current';
+        for ($i=1; $i <= 6 ; $i++) { 
+            $months[$max->format('Y-m')] = $max->format('M, y');
+            $max = $max->subMonth(1);
+        }
 
         foreach ( $att_table as $key => $u) {
             if(in_array($u, auth()->user()->unit_permissions())){
@@ -106,15 +141,14 @@ class ReportController extends Controller
         }
 
 
-        
-        
         $totalday = date('d', strtotime($end_date));
         $chart_data = [];
+        $chart_ot = [];
         $otdata = [];
         
         for ($i=0; $i < $totalday; $i++) { 
             $otday = $start_date->copy()->addDays($i)->format('Y-m-d');
-            $thisday = $start_date->copy()->addDays($i)->format('d M');
+            $thisday = $start_date->copy()->addDays($i)->format('d');
             $maxOT = 0;
             $employee = 0;
             $ot = 0;
@@ -130,7 +164,7 @@ class ReportController extends Controller
             }
 
             $otdata[$i]['emp'] = $employee;
-            $otdata[$i]['date'] = $thisday;
+            $otdata[$i]['date'] = $otday;
             $otdata[$i]['ot_hour'] = $ot;
             $otdata[$i]['max'] = $maxOT;
             $otdata[$i]['avg'] = round($ot/($employee == 0?1:$employee),2);
@@ -139,9 +173,15 @@ class ReportController extends Controller
                 'Date' => $thisday,
                 'Avg'  => $maxOT
             );
+
+            $chart_ot[] = array(
+                'Date' => $thisday,
+                'totalOt' => $ot
+            );
         }
 
-        return view('common.monthly_ot', compact('chart_data','otdata', 'month'));
+        $selectUnit = $unit[0];
+        return view('common.monthly_ot', compact('chart_data', 'chart_ot','otdata', 'month', 'months', 'unitList', 'selectUnit'));
 
     }
 

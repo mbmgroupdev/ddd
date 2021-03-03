@@ -349,6 +349,7 @@ class MonthlyActivityReportController extends Controller
 
     public function attendanceData(Request $request)
     {
+        ini_set('zlib.output_compression', 1);
         $input = $request->all();
         if($input['unit'] == '' && $input['location'] == ''){
             $input['unit'] = 1;

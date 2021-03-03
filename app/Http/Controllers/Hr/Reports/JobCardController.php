@@ -80,26 +80,32 @@ class JobCardController extends Controller
     $month = date("m", strtotime($tempdate));
     $year  = $request->year;
     #------------------------------------------------------
+
     // ASSOCIATE INFORMATION
     $flag = 0;
     $fetchUser = DB::table("hr_as_basic_info AS b")
     ->select('b.as_designation_id', 'b.as_unit_id', 'b.as_location', 'b.as_floor_id', 'b.as_line_id', 'b.as_shift_id', 'b.as_department_id', 'b.as_section_id', 'b.as_subsection_id', 'b.as_doj', 'b.as_id', 'b.as_name', 'b.as_gender', 'b.as_ot', 'b.associate_id', 'b.as_status_date', 'b.as_status', 'b.shift_roaster_status', 'b.as_oracle_code');
-    if(strtotime(date('Y-m')) > strtotime($request->month_year)){
-      $flag = 1;
-      $fetchUser->where("s.as_id", $associate)->where('s.month', $month)->where('s.year', $year);
-      $fetchUser->join('hr_monthly_salary AS s', 'b.associate_id', 's.as_id')
-      ->leftJoin('hr_subsection AS subsec', 's.sub_section_id', 'subsec.hr_subsec_id')
-      ->addSelect('s.unit_id', 's.designation_id', 's.sub_section_id', 'subsec.hr_subsec_department_id', 'subsec.hr_subsec_section_id');
-    }else{
-      $fetchUser->where("b.associate_id", $associate);
-    }
-
-      //return $fetchUser->exists();
+    $fetchUser->where("b.associate_id", $associate);
 
     //check user exists
     if($fetchUser->exists()) {
 
       $info = $fetchUser->first();
+      // check salary
+      if(strtotime(date('Y-m')) > strtotime($request->month_year)){
+        
+        $getSalary = DB::table('hr_monthly_salary as s')
+        ->select('s.unit_id', 's.designation_id', 's.sub_section_id', 'subsec.hr_subsec_department_id', 'subsec.hr_subsec_section_id')
+        ->leftJoin('hr_subsection AS subsec', 's.sub_section_id', 'subsec.hr_subsec_id')
+        ->where('s.as_id', $associate)
+        ->where('s.month', $request->month)
+        ->where('s.year', $request->month_year)
+        ->first();
+        if($getSalary != null){
+          $flag = 1;
+        }
+      }
+
       $getUnit = unit_by_id();
       $getLine = line_by_id();
       $getFloor = floor_by_id();
@@ -112,14 +118,14 @@ class JobCardController extends Controller
       $info->pre_section = '';
       $info->pre_unit = '';
       $info->pre_designation = '';
-      if($flag == 1 && $info->designation_id != $info->as_designation_id){
-        $info->pre_designation = $getDesignation[$info->designation_id]['hr_designation_name']??'';
+      if($flag == 1 && $getSalary->designation_id != $info->as_designation_id){
+        $info->pre_designation = $getDesignation[$getSalary->designation_id]['hr_designation_name']??'';
       }
-      if($flag == 1 && $info->as_section_id != $info->hr_subsec_section_id){
-        $info->pre_designation = $getSection[$info->hr_subsec_section_id]['hr_section_name']??'';
+      if($flag == 1 && $info->as_section_id != $getSalary->hr_subsec_section_id){
+        $info->pre_designation = $getSection[$getSalary->hr_subsec_section_id]['hr_section_name']??'';
       }
-      if($flag == 1 && $info->as_unit_id != $info->unit_id){
-        $info->pre_unit = $getUnit[$info->unit_id]['hr_unit_name']??'';
+      if($flag == 1 && $info->as_unit_id != $getSalary->unit_id){
+        $info->pre_unit = $getUnit[$getSalary->unit_id]['hr_unit_name']??'';
       }
       $date       = ($year."-".$month."-"."01");
       $startDay   = date('Y-m-d', strtotime($date));
@@ -235,6 +241,7 @@ class JobCardController extends Controller
                           $q->where('leave_from', '<=', $thisDay);
                           $q->where('leave_to', '>=', $thisDay);
                         })
+                        ->where('leave_status',1)
                         ->first();
         if($leaveCheck){
           $attendance[$i]['present_status']=$leaveCheck->leave_type." Leave <br><b>".$leaveCheck->leave_comment.'</b>';

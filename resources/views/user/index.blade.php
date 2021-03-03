@@ -107,7 +107,7 @@
                      <div class="iq-card mb-0">
                         <div class="iq-card-header d-flex justify-content-between p-0 bg-white">
                            <div class="iq-header-title">
-                              <h4 class="card-title text-primary border-left-heading">My Leave</h4>
+                              <h4 class="card-title text-primary border-left-heading">My Leave - {{ date('Y') }}</h4>
                            </div>
                         </div>
                         <div class="iq-card-body p-0">

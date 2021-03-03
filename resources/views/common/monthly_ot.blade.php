@@ -1,6 +1,20 @@
 @extends('hr.layout')
 @section('title', 'Monthly OT Report')
 @section('main-content')
+@push('css')
+    <style>
+        .nav-year {
+            font-size: 13px;
+            font-weight: bold;
+            color: #9c9c9c;
+            padding: 1px 10px;
+            border-radius: 10px;
+            margin: 0 2px;
+            background: #eff7f8;
+            display: inline-block;
+        }
+    </style>
+@endpush
 @php 
     if(request()->has('month')){ $month = request()->month; }else{ $month = date('Y-m'); }
 @endphp
@@ -13,41 +27,70 @@
                 <a href="#"> Home</a>
             </li> 
             <li>
-                <a href="#"> Monthly OT Report </a>
+                <a href="#"> <b>Monthly OT Report</b> </a>
             </li>
-            <li class="active"> {{$month}} </li>
+            <li class="active"> {{ date('M, y', strtotime($month)) }} </li>
         </ul><!-- /.breadcrumb --> 
     </div>
     <div class="panel">
         <div class="panel-heading">
-            <h6>Monthly OT Report
-                <div class="pull-right">
-                    @php
-                        $nextDate = date('Y-m', strtotime($month.' +1 month'));
-                        $prevDate = date('Y-m', strtotime($month.' -1 month'));
-
-                        $prevUrl = url("hr/reports/monthly-ot-report?month=$prevDate");
-                        $nextUrl = url("hr/reports/monthly-ot-report?month=$nextDate");
-                    @endphp
-                    <a href="{{ $prevUrl }}" class="btn view prev_btn" data-toggle="tooltip" data-placement="top" title="" data-original-title="Previous Month OT Report" >
-                      <i class="las la-chevron-left f-18"></i>
-                    </a>
-                    <b style="font-weight: normal;">{{ $month }} </b>
-                    @if($month < date('Y-m'))
-                    <a href="{{ $nextUrl }}" class="btn view next_btn" data-toggle="tooltip" data-placement="top" title="" data-original-title="Previous Month MMR report" >
-                      <i class="las la-chevron-right f-18"></i>
-                    </a>
-                    @endif
+            {{-- <h6>Monthly OT Report --}}
+            <h6>
+                <div class="row">
+                    <div class="col-4">
+                        
+                    </div>
+                    <div class="col-6">
+                        @foreach(array_reverse($months) as $k => $i)
+                            <a href="{{url('hr/reports/monthly-ot-report?month='.$k)}}" class="nav-year @if($k== $month) bg-primary text-white @endif" data-toggle="tooltip" data-placement="top" title="" data-original-title="Report of {{$i}}" >
+                                {{$i}}
+                            </a>
+                        @endforeach
+                    </div>
+                    <div class="col-2">
+                        <div class="text-right">
+                            {{-- <a class="btn view grid_view no-padding" data-toggle="tooltip" data-placement="top" title="" data-original-title="Summary Report View" id="1">
+                              <i class="las la-th-large"></i>
+                            </a>
+                            <a class="btn view list_view no-padding" data-toggle="tooltip" data-placement="top" title="" data-original-title="Details Report View" id="0">
+                              <i class="las la-list-ul"></i>
+                            </a> --}}
+                            
+                        </div>
+                    </div>
                 </div>
+                
             </h6>
+            
         </div>
         <div class="panel-body">
             <div class="row justify-content-center">
-                
-                <div class="col-sm-10 p-0">
+                <div class="col-1">
+                        {{-- <div class="custom-control custom-checkbox custom-control-inline">
+                            <input type="checkbox" class="custom-control-input" id="customCheck-t" value="0">
+                            <label class="custom-control-label" for="customCheck-t">All</label>
+                       </div> --}}
+                        @foreach($unitList as $key => $u)
+                        {{-- <div class="custom-control custom-checkbox custom-control-inline">
+                            <input type="checkbox" class="custom-control-input" id="customCheck-t{{$key}}" value="{{$key}}">
+                            <label class="custom-control-label" for="customCheck-t{{$key}}">{{$u}}</label>
+                       </div> --}}
+                       <div class="custom-control custom-radio custom-radio-color-checked custom-control-inline">
+                          <input type="radio" id="customRadio-{{$key}}" name="customRadio-10" class="custom-control-input bg-primary" @if($key == $selectUnit) checked @endif>
+                          <label class="custom-control-label" for="customRadio-{{$key}}"> {{$u}} </label>
+                       </div>
+                       @endforeach
+                </div>
+                <div class="col-sm-5 p-0">
                     <div id="mmr-compare" style="height: 500px;"></div>
                 </div>
-                <div class="col-sm-10">
+                <div class="col-sm-6 p-0">
+                    <div id="mmr-compare1" style="height: 500px;"></div>
+                </div>
+                <div class="col-1"></div>
+            </div>
+            <div class="row">
+                <div class="col-sm-11">
                     <button class="btn btn-sm btn-primary hidden-print" onclick="printDiv('print-table')" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report"><i class="las la-print"></i> </button> <strong> Summery OT Report </strong> <hr>
                     <br>
                     <div id="print-table">
@@ -112,52 +155,108 @@
 <script>
     
     if (jQuery('#mmr-compare').length) {
-    am4core.ready(function() {
+        am4core.ready(function() {
 
-        // Themes begin
-        am4core.useTheme(am4themes_animated);
-        // Themes end
+            // Themes begin
+            am4core.useTheme(am4themes_animated);
+            // Themes end
 
-        // Create chart instance
-        var chart = am4core.create("mmr-compare", am4charts.XYChart);
-        chart.colors.list = [am4core.color("#089bab"), ];
+            // Create chart instance
+            var chart = am4core.create("mmr-compare", am4charts.XYChart);
+            chart.colors.list = [am4core.color("#089bab"), ];
+            chart.svgContainer.autoResize = false;
+            chart.text = "Maximum OT ";
+            // content
+            var topContainer = chart.chartContainer.createChild(am4core.Container);
+            var dateTitle = topContainer.createChild(am4core.Label);
+            dateTitle.text = "January 1st, 2018 -- March 31st, 2018";
+            dateTitle.fontWeight = 600;
+            dateTitle.align = "right";
+            // Add data
+            chart.data = @php echo json_encode($chart_data) @endphp;
 
-        // Add data
-        chart.data = @php echo json_encode($chart_data) @endphp;
+            // Create axes
 
-        // Create axes
+            var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+            categoryAxis.dataFields.category = "Date";
+            categoryAxis.renderer.grid.template.location = 0;
+            categoryAxis.renderer.minGridDistance = 30;
 
-        var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
-        categoryAxis.dataFields.category = "Date";
-        categoryAxis.renderer.grid.template.location = 0;
-        categoryAxis.renderer.minGridDistance = 30;
+            categoryAxis.renderer.labels.template.adapter.add("dy", function(dy, target) {
+                if (target.dataItem && target.dataItem.index & 2 == 2) {
+                    return dy + 25;
+                }
+                return dy;
+            });
 
-        categoryAxis.renderer.labels.template.adapter.add("dy", function(dy, target) {
-            if (target.dataItem && target.dataItem.index & 2 == 2) {
-                return dy + 25;
-            }
-            return dy;
+            var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+
+            // Create series
+            var series = chart.series.push(new am4charts.ColumnSeries());
+            var tooltipText = `[bold]Date : {categoryX}[/]
+                                ----
+                                Maximum OT: {valueY}`;
+            series.dataFields.valueY = "Avg";
+            series.dataFields.categoryX = "Date";
+            series.name = "Date";
+            series.columns.template.tooltipText = tooltipText; //"{categoryX}: [bold]{valueY} Hour[/]";
+            series.columns.template.fillOpacity = .8;
+            
+
+            var columnTemplate = series.columns.template;
+            columnTemplate.strokeWidth = 2;
+            columnTemplate.strokeOpacity = 1;
+
         });
+    }
+    if (jQuery('#mmr-compare1').length) {
+        am4core.ready(function() {
 
-        var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+            // Themes begin
+            am4core.useTheme(am4themes_animated);
+            // Themes end
 
-        // Create series
-        var series = chart.series.push(new am4charts.ColumnSeries());
-        var tooltipText = `[bold]Date : {categoryX}[/]
-                            ----
-                            Maximum OT: {valueY}`;
-        series.dataFields.valueY = "Avg";
-        series.dataFields.categoryX = "Date";
-        series.name = "Date";
-        series.columns.template.tooltipText = tooltipText; //"{categoryX}: [bold]{valueY} Hour[/]";
-        series.columns.template.fillOpacity = .8;
+            // Create chart instance
+            var chart = am4core.create("mmr-compare1", am4charts.XYChart);
+            chart.svgContainer.autoResize = false;
+            chart.colors.list = [am4core.color("#089bab"), ];
 
-        var columnTemplate = series.columns.template;
-        columnTemplate.strokeWidth = 2;
-        columnTemplate.strokeOpacity = 1;
+            // Add data
+            chart.data = @php echo json_encode($chart_ot) @endphp;
 
-    }); // end am4core.ready()
-}
+            // Create axes
+
+            var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+            categoryAxis.dataFields.category = "Date";
+            categoryAxis.renderer.grid.template.location = 0;
+            categoryAxis.renderer.minGridDistance = 30;
+
+            categoryAxis.renderer.labels.template.adapter.add("dy", function(dy, target) {
+                if (target.dataItem && target.dataItem.index & 2 == 2) {
+                    return dy + 25;
+                }
+                return dy;
+            });
+
+            var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+
+            // Create series
+            var series = chart.series.push(new am4charts.ColumnSeries());
+            var tooltipText = `[bold]Date : {categoryX}[/]
+                                ----
+                                Total OT: {valueY}`;
+            series.dataFields.valueY = "totalOt";
+            series.dataFields.categoryX = "Date";
+            series.name = "Date";
+            series.columns.template.tooltipText = tooltipText; //"{categoryX}: [bold]{valueY} Hour[/]";
+            series.columns.template.fillOpacity = .8;
+
+            var columnTemplate = series.columns.template;
+            columnTemplate.strokeWidth = 2;
+            columnTemplate.strokeOpacity = 1;
+
+        }); // end am4core.ready()
+    }
 </script>
 @endpush
 @endsection

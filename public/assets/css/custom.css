@@ -561,6 +561,7 @@ table.table-head th {
   top: 0;
   box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
   color: #000;
+  z-index: 1;
 }
 .text-white{
     color: white !important;
@@ -1022,7 +1023,12 @@ main{
 .icon-card .iq-card-body {
      padding: 5px; 
 }
+.table-row:hover{
+    -webkit-box-shadow: inset 1px 0 0 #dadce0, inset -1px 0 0 #dadce0, 0 1px 2px 0 rgb(60 64 67 / 30%), 0 1px 3px 1px rgb(60 64 67 / 15%);
+    box-shadow: inset 1px 0 0 #dadce0, inset -1px 0 0 #dadce0, 0 1px 2px 0 rgb(60 64 67 / 30%), 0 1px 3px 1px rgb(60 64 67 / 15%);
+    z-index: 1;
 
+}
 ul.color-bar {
     list-style: none;
     display: flex;

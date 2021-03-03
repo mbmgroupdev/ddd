@@ -110,7 +110,7 @@ class ProcessAttendanceFile implements ShouldQueue
                 ->delete();
 
                 // bill calculation
-                if($getEmpAtt->out_time != null && ($this->billEligible != null || $this->billEligible != '00:00:00')){
+                if($getEmpAtt->out_time != null && $this->billEligible != null){
                     $indate = $getEmpAtt->in_date;
                     if($this->shiftNightFlag == 1){
                         $indate = Carbon::createFromFormat('Y-m-d', $indate);

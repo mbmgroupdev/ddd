@@ -139,7 +139,6 @@ class RecruitController extends Controller
             foreach ($validator->errors()->all() as $message){
                 toastr()->error($message);
             }
-            return redirect()->back()->withErrors($validator)->withInput();
         }
 
         $input = $request->except('_token');
