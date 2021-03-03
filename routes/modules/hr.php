@@ -384,6 +384,7 @@ Route::get('hr/shift_roaster/roaster_updated_changes', 'Hr\ShiftRoaster\ShiftRoa
 Route::get('hr/timeattendance/leave-entry',  'Hr\TimeAttendance\LeaveWorkerController@showForm')->middleware(['permission:Manage Leave']);
 
 Route::post('hr/timeattendance/leave_worker',  'Hr\TimeAttendance\LeaveWorkerController@saveData')->middleware(['permission:Manage Leave']);
+Route::get('hr/timeattendance/leave_data/{id}/{type}',  'Hr\TimeAttendance\LeaveWorkerController@leaveApprove')->middleware(['permission:Manage Leave']);
 
 Route::get('hr/reports/maternity', 'Hr\Operation\MaternityPaymentController@report');
 

@@ -42,7 +42,7 @@ class BillOperationController extends Controller
     	$input['subSection'] = $input['subSection']??'';
         $input['area'] = $input['area']??'';
         $input['location'] = $input['location']??'';
-
+        ini_set('zlib.output_compression', 1);
     	try {
             if($input['date_type'] == 'month'){
                 $input['from_date'] = $input['month_year'].'-01';
@@ -183,6 +183,7 @@ class BillOperationController extends Controller
     	if(count($input['pay_id']) == 0){
     		return 'warning';
     	}
+        ini_set('zlib.output_compression', 1);
     	try {
             if($input['date_type'] == 'month'){
                 $input['from_date'] = $input['month_year'].'-01';

@@ -1,0 +1,15 @@
+<?php
+
+namespace App\Models\Merch;
+use Illuminate\Database\Eloquent\Model;
+
+class MainCategory extends Model
+{
+    protected $table= 'mr_material_category';
+    public $timestamps= false;
+    
+    public static function catagory()
+    {
+        return MainCategory::all();
+    }
+}

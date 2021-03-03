@@ -78,7 +78,8 @@
                                 <div class="row">
                                     <div class="col-3">
                                         <div class="form-group has-float-label has-required select-search-group">
-                                            <select name="unit" class="form-control capitalize select-search" id="unit"required >
+                                            <select name="unit" class="form-control capitalize select-search" id="unit"  >
+                                                <option value=""> Select Unit</option>
                                                 @if($mbmFlag == 1)
                                                 <option value="145">MBM + MBF + MBM 2</option>
                                                 @endif
@@ -158,6 +159,7 @@
                                       
                                         <div class="form-group has-float-label select-search-group">
                                             <?php
+
                                                 if(auth()->user()->hasRole('Planning')){
                                                     $reportType = [
                                                         'att_statistics'=>'Attendance Statistics',
@@ -178,11 +180,12 @@
                                                     }
                                                     $reportType['ot'] = 'Overtime(OT)';
                                                     $reportType['working_hour'] = 'Working Hour';
+                                                    $reportType['executive_attendance'] = 'Executive Attendance';
 
                                                     if(auth()->user()->can('Attendance Report') || auth()->user()->can('Attendance Upload')){
                                                         $reportType['late'] = 'Late';
                                                         $reportType['missing_token'] = 'Punch Missing Token';
-                                                        $reportType['two_day_att'] = 'Two Day Attendance'; 
+                                                        $reportType['two_day_att'] = 'Two Day Attendance';  
                                                     }
                                                 }
                                                 
@@ -212,6 +215,25 @@
                                                 </div>
                                             </div>
                                           </div>
+                                        </div>
+                                        <div id="salary-range" style="display: none">
+                                            <div class="row">
+                                              <div class="col-5 pr-0">
+                                                <div class="form-group has-float-label has-required">
+                                                  <input type="number" class="report_date min_sal form-control" id="min_sal" name="min_sal" placeholder="Min Salary" required="required" value="50000" min="{{ $salaryMin}}" max="{{ $salaryMax}}" autocomplete="off" />
+                                                  <label for="min_sal">Range From</label>
+                                                </div>
+                                              </div>
+                                              <div class="col-1 p-0">
+                                                <div class="c1DHiF text-center">-</div>
+                                              </div>
+                                              <div class="col-6">
+                                                <div class="form-group has-float-label has-required">
+                                                  <input type="number" class="max_sal form-control" id="max_sal" name="max_sal" placeholder="Max Salary" required="required" value="{{ $salaryMax }}" min="{{ $salaryMin}}" max="{{ $salaryMax}}" autocomplete="off" />
+                                                  <label for="max_sal">Range To</label>
+                                                </div>
+                                              </div>
+                                            </div>       
                                         </div>
                                         <div class="form-group">
                                           <button class="btn btn-primary nextBtn btn-lg pull-right" type="submit" ><i class="fa fa-save"></i> Generate</button>
@@ -421,9 +443,15 @@ $(document).ready(function(){
       }
       var form = $("#activityReport");
       var flag = 0;
-      if(unit === '' || date === '' || type === ''){
+      if(type !== 'executive_attendance'){
+        if(unit === '' ){
+            flag = 1;
+            $.notify('Please Select Unit', 'error');
+        }
+      }
+      if(date === '' || type === ''){
         flag = 1;
-        $.notify('Select required field', 'error');
+        $.notify('Date / Type Field Require', 'error');
       }
       
       if(flag === 0){
@@ -599,6 +627,18 @@ $(document).ready(function(){
         $('#reportGroup').val('as_section_id');
 
       }
+
+      if(type == 'executive_attendance'){
+        $("#unit").val('').trigger('change');
+        $('#reportGroupHead').append('<option value="as_area_id">Area</option>');
+        $('#reportGroupHead').val('as_area_id');
+        $('#reportGroup').val('as_area_id');
+      }else{
+        $("#reportGroupHead option[value='as_area_id']").remove();
+        $('#reportGroupHead').val('as_section_id');
+        $('#reportGroup').val('as_section_id');
+
+      }
       var date = "{{ date('Y-m-d') }}";
       if(type == 'ot' || type == 'working_hour'|| type == 'in_out_missing'){
         date = "{{ date('Y-m-d', strtotime('-1 day')) }}";
@@ -610,6 +650,11 @@ $(document).ready(function(){
       }else{
         $("#single-date").show();
         $("#double-date").hide();
+      }
+      if(type === 'executive_attendance'){
+        $("#salary-range").show();
+      }else{
+        $("#salary-range").hide();
       }
     });
 
@@ -677,8 +722,7 @@ function printDiv(divName)
     myWindow.focus();
     myWindow.print();
     myWindow.close();
-} 
-
+}
     
 </script>
 @endpush

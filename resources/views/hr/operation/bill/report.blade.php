@@ -327,11 +327,13 @@
             </div>
         @endif
         <br>
+        @if(auth()->user()->canany(['Bill Operation']))
         <div class="row">
             <div class="col form-group text-right disburse-button" id="review-btn">
                 <button class="btn btn-primary nextBtn btn-lg pull-right" type="submit"><i class="fa fa-eye"></i> Review</button>
             </div>
         </div>
+        @endif
     </form>
     
 </div>

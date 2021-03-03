@@ -1,0 +1,109 @@
+
+.popover-close{
+    float: right;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    padding: 3px 7px;
+}
+.popover-close:hover{
+    background: #ccc;
+    color: #fff;
+}
+.highlight {
+    background-color: #ffff99;
+}
+
+.iq-accordion-block{
+    padding: 10px 0;
+}
+.iq-accordion.career-style .iq-accordion-block {
+    margin-bottom: 15px;
+}
+.right-btn{
+	cursor: pointer;
+	position: relative;
+}
+.right-btn a{
+	cursor: pointer;
+	color:#089bab;
+}
+
+/*right click*/
+.context-menu ul{ 
+    z-index: 1000;
+    position: absolute;
+    overflow: hidden;
+    border: 1px solid #CCC;
+    white-space: nowrap;
+    font-family: sans-serif;
+    background: #FFF;
+    color: #333;
+    border-radius: 5px;
+    padding: 0;
+    box-shadow: 2px 4px 4px 0px;
+}
+.context-menu:before {
+  content: "";
+  position: absolute;
+  border-color: rgba(194, 225, 245, 0);
+  border: solid transparent;
+  border-bottom-color: white;
+  border-width: 11px;
+  margin-left: -10px;
+  top: -17px;
+  right: -21px;
+  z-index: 1;
+} 
+.popover{
+	position: absolute;
+    will-change: transform;
+    width: 250px;
+}
+.popover-left{
+	transform: translate3d(80px, -20px, 0px);
+    top: 0px;
+    left: 0;
+}
+.popover-right{
+	transform: translate3d(-260px, -20px, 0px);
+    top: 0px;
+    right: 0;
+}
+.context-menu:after {
+    content: "";
+    position: absolute;
+    right: -20px;
+	top: -17px;
+    width: 0;
+    height: 0;
+    border: solid transparent;
+    border-width: 10px;
+    border-bottom-color: #2B1A41;
+    z-index: 0;
+}
+/* Each of the items in the list */
+.context-menu ul li {
+    padding: 5px 12px;
+    cursor: pointer;
+    list-style-type: none;
+}
+.context-menu ul li:hover {
+    background-color: #DEF;
+}
+.arrows-context{
+	font-size: 13px;
+}
+
+.arrows-context i{
+	font-size: 21px;
+}
+.table-list-section{
+    position: absolute;
+    overflow: auto;
+    width: calc(100% - 25px);
+    height: calc(100vh - 275px);
+}
+
+.ui-autocomplete-loading {
+    background: white url("ajax-loader.gif") right center no-repeat;
+}

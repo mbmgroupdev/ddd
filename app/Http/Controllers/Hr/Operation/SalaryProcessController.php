@@ -185,8 +185,8 @@ class SalaryProcessController extends Controller
             });
 
                 
-            $queryData->select('s.*', 'emp.as_doj','s.as_id AS associate_id', 's.unit_id AS as_unit_id','s.location_id AS as_location', 's.designation_id AS as_designation_id', 's.ot_status AS as_ot', 'emp.as_section_id', 's.location_id', 'bemp.hr_bn_associate_name', 'emp.as_oracle_code',DB::raw('s.ot_hour * s.ot_rate as ot_amount'), 'subsec.hr_subsec_area_id AS as_area_id', 'subsec.hr_subsec_department_id AS as_department_id', 'subsec.hr_subsec_section_id AS as_section_id');
-            $getSalaryList = $queryData->orderBy('emp.as_oracle_sl', 'asc')->get();
+            $queryData->select('s.*', 'emp.as_doj','s.as_id AS associate_id', 's.unit_id AS as_unit_id','s.location_id AS as_location', 's.designation_id AS as_designation_id', 's.ot_status AS as_ot', 'emp.as_section_id', 's.location_id', 'bemp.hr_bn_associate_name', 'emp.as_oracle_code', 'emp.temp_id',DB::raw('s.ot_hour * s.ot_rate as ot_amount'), 'subsec.hr_subsec_area_id AS as_area_id', 'subsec.hr_subsec_department_id AS as_department_id', 'subsec.hr_subsec_section_id AS as_section_id');
+            $getSalaryList = $queryData->orderBy('emp.as_oracle_sl', 'asc')->orderBy('emp.temp_id', 'asc')->get();
             // dd($getSalaryList);
             $totalSalary = round($getSalaryList->sum("total_payable"));
             $totalCashSalary = round($getSalaryList->sum("cash_payable"));

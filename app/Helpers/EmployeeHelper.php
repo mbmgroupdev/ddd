@@ -1055,7 +1055,7 @@ class EmployeeHelper
 		                    ->insertGetId([
 		                        'as_id' => $as_info->as_id,
 		                        'in_date' => date('Y-m-d', strtotime($shift_start)),
-		                        'in_time' => date('Y-m-d H:i:s', strtotime($shift_start)),
+		                        'in_time' => date('Y-m-d H:i:s', strtotime('+4 minutes', strtotime($shift_start))),
 		                        'out_time' => $checktime,
 		                        'hr_shift_code' => $shift_code,
 		                        'remarks'       => "DSI",
@@ -1235,7 +1235,7 @@ class EmployeeHelper
 		                        }
 		                    }else{
 		                        if(!empty($shift_code_new) && $checkHolidayFlag == 0 && $checkLeaveFlag == 0){
-		                            $defaultInTime = date("Y-m-d H:i:s", strtotime($shift_start));
+		                            $defaultInTime = date('Y-m-d H:i:s', strtotime('+4 minutes', strtotime($shift_start)));
 		                            $punchId = DB::table($tableName)
 		                            ->insertGetId([
 		                                'as_id' => $as_info->as_id,
@@ -1275,7 +1275,7 @@ class EmployeeHelper
 	            	$getShift = Shift::where('hr_shift_code', $getAtt->hr_shift_code)->first();
 	            	
 	            	if($getShift != null){
-	            		if($as_info->as_ot == 1 && $getAtt->out_time != null && $getAtt->in_time != null && $getAtt->in_time != 'DSI'){
+	            		if($as_info->as_ot == 1 && $getAtt->out_time != null && $getAtt->in_time != null){
 		                    $otHour = EmployeeHelper::daliyOTCalculation($getAtt->in_time, $getAtt->out_time, $getShift->hr_shift_start_time, $getShift->hr_shift_end_time, $getShift->hr_shift_break_time, $getShift->hr_shift_night_flag, $as_info->associate_id, $as_info->shift_roaster_status, $as_info->as_unit_id);
 		                }
 
@@ -1301,8 +1301,8 @@ class EmployeeHelper
 			            ->first();
 			            
 		            	$getAtt->ot_hour = numberToTimeClockFormat($otHour);
-		            	$getAtt->in_time = date('H:i:s', strtotime($getAtt->in_time));
-		            	$getAtt->out_time = date('H:i:s', strtotime($getAtt->out_time));
+		            	$getAtt->in_time = $getAtt->in_time != null?date('H:i:s', strtotime($getAtt->in_time)):'';
+		            	$getAtt->out_time = $getAtt->out_time != null?date('H:i:s', strtotime($getAtt->out_time)):'';
 		            	$getAtt->totalOt = numberToTimeClockFormat($getOt->ot??0);
 	            	}else{
 	            		$getAtt = '';

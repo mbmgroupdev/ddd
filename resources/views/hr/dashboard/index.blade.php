@@ -87,6 +87,7 @@
          </div>
       </div>
       @endif
+      @if($user->can('Holiday Roster') || $user->hasRole('Super Admin'))
       <div class="col-sm-6">
         <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
           <div class="iq-card-header d-flex justify-content-between">
@@ -141,7 +142,7 @@
                 <h4 class="card-title">Leave Employee Records </h4>
              </div>
              <div class="iq-card-header-toolbar d-flex align-items-center">
-                <a href="" class="btn btn-sm btn-outline-primary"><i class="fa fa-list"></i> See All</a>
+                <a href='{{ url("hr/operation/undeclared-employee?date=$today&report_type=2") }}' class="btn btn-sm btn-outline-primary"><i class="fa fa-list"></i> See All</a>
              </div>
           </div>
           <div class="iq-card-body pt-0">
@@ -179,7 +180,7 @@
           </div>
        </div>
       </div>
-
+      @endif
       
    </div>
    @push('js')

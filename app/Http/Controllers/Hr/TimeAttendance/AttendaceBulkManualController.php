@@ -269,7 +269,7 @@ class AttendaceBulkManualController extends Controller
                             $insert['in_date'] = date('Y-m-d', strtotime($insert['in_time']));
                             DB::table($tableName)->insert($insert);
 
-                            if($outtime != null && ($billEligible != null || $billEligible != '00:00:00')){
+                            if($outtime != null && $billEligible != null){
                                 $pindate = $insert['in_date'];
                                 if($nightFlag == 1){
                                     $pindate = Carbon::createFromFormat('Y-m-d', $pindate);
@@ -481,8 +481,8 @@ class AttendaceBulkManualController extends Controller
                             }else {
                                 $update['ot_hour'] = 0;
                             }
-                            
-                            if($outtime != null && (($billEligible != null || $billEligible != '00:00:00') || $billEligible != '00:00:00')){
+
+                            if($outtime != null && $billEligible != null){
                                 $pindate = $Att->in_date;
                                 if($nightFlag == 1){
                                     $pindate = Carbon::createFromFormat('Y-m-d', $pindate);
@@ -500,6 +500,7 @@ class AttendaceBulkManualController extends Controller
                                     }
                                 }
                             }
+                            
 
                             $event['ot_new'] = $update['ot_hour'];
 
@@ -576,7 +577,7 @@ class AttendaceBulkManualController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
             $bug = $e->getMessage();
-            return $bug;
+            // return $bug;
             return redirect()->back()->with('error',$bug);
         }
     }
@@ -759,6 +760,7 @@ class AttendaceBulkManualController extends Controller
                               $q->where('leave_from', '<=', $thisDay);
                               $q->where('leave_to', '>=', $thisDay);
                             })
+                            ->where('leave_status',1)
                             ->first();
             if($leaveCheck){
               $attendance[$i]['present_status']=$leaveCheck->leave_type." Leave";

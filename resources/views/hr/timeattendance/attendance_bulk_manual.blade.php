@@ -280,6 +280,7 @@
                                                             $data['out_time'] = null;
                                                         }
                                                     }
+                                                    $pStatusCheck = explode(' ', $data['present_status']);
                                                 @endphp
                                                 @if($data['late_status']==1 || ($data['in_time'] == null && $data['out_time'] != null))
                                                     <span style="height: auto;float:right;" class="label label-warning pull-right">Late</span>
@@ -290,8 +291,7 @@
                                                 @if($data['outside'] != null)
                                                 <span style="height: auto;float:right;cursor:pointer;" class="label label-success pull-right" data-tooltip="{{$data['outside_msg']}}" data-tooltip-location="top">{{$data['outside']}}</span>
                                                 @endif
-
-                                                @if($data['present_status'] == 'A' || $data['present_status'] == 'Weekend(General) - A' || ($data['in_time'] != null && $data['out_time'] == null))
+                                                @if($data['holiday'] != 1 && count($pStatusCheck) == 1)
                                                 <a class="attendance-rollback btn btn-sm btn-primary pull-right text-white" data-toggle="tooltip" data-placement="top" title="" data-original-title="Attendance reload" data-date="{{ $data['date'] }}" data-asid="{{ $info->as_id }}"><i class="fa fa-undo"></i></a>
                                                 @endif
                                             </td>
