@@ -217,6 +217,27 @@
         </div><!-- /.page-content -->
     </div>
 </div>
+<div class="modal right fade" id="right_modal_item" tabindex="-1" role="dialog" aria-labelledby="right_modal_item">
+  <div class="modal-dialog modal-lg right-modal-width" role="document" > 
+    <div class="modal-content">
+      <div class="modal-header">
+        <a class="view prev_btn" data-toggle="tooltip" data-dismiss="modal" data-placement="top" title="" data-original-title="Back to Report">
+      <i class="las la-chevron-left"></i>
+    </a>
+        <h5 class="modal-title right-modal-title text-center" id="modal-title-right"> &nbsp; </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" style="padding-top: 0;">
+        <div class="modal-content-result" id="content-result">
+          
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
 @push('js')
 <script src="{{ asset('assets/js/jquery-ui.js')}}"></script>
 <script>
@@ -227,22 +248,22 @@
         var catid = $(this).data('catid');
         var flag = 0;
         var totalRow = $('.items-'+catid).length;
-        if(totalRow <= 1){
-            $(".items-"+catid).each(function(key){
-                if($(this).val() === null || $(this).val() === ''){
-                    flag = 1;
-                    $(this).focus();
-                    return false;
-                }
-            });
-        }else{
-            $(".items-"+catid).each(function(key){
-                if(key !== (totalRow - 1) && ($(this).val() === null || $(this).val() === '')){
-                    flag = 1;
-                    return false;
-                }
-            }); 
-        }
+        // if(totalRow <= 1){
+        //     $(".items-"+catid).each(function(key){
+        //         if($(this).val() === null || $(this).val() === ''){
+        //             flag = 1;
+        //             $(this).focus();
+        //             return false;
+        //         }
+        //     });
+        // }else{
+        //     $(".items-"+catid).each(function(key){
+        //         if(key !== (totalRow - 1) && ($(this).val() === null || $(this).val() === '')){
+        //             flag = 1;
+        //             return false;
+        //         }
+        //     }); 
+        // }
         
         if(flag === 0){
             html = '<tr id="itemRow-'+catid+'_'+i+'">';
@@ -443,6 +464,34 @@
                 });
             }
         });
+    });
+
+    var loaderContent = '<div class="animationLoading"><div id="container-loader"><div id="one"></div><div id="two"></div><div id="three"></div></div><div id="four"></div><div id="five"></div><div id="six"></div></div>';
+    $(document).on('click', '.add-item', function() {
+      var name = $(this).data('name');
+      var associate = $(this).data('associate');
+      var yearMonth = $(this).data('month-year');
+      $("#modal-title-right").html(' New Item');
+      $('#right_modal_item').modal('show');
+      $("#content-result").html(loaderContent);
+      // $.ajax({
+      //       url: "{{ url('hr/operation/partial_job_card') }}",
+      //       data: {
+      //           associate: associate,
+      //           month_year: yearMonth
+      //       },
+      //       type: "GET",
+      //       success: function(response){
+      //         // console.log(response);
+      //           if(response !== 'error'){
+      //             setTimeout(function(){
+      //               $("#content-result").html(response);
+      //             }, 1000);
+      //           }else{
+      //             console.log(response);
+      //           }
+      //       }
+      //   });
     });
 
 </script>
