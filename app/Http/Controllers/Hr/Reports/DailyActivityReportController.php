@@ -380,7 +380,7 @@ class DailyActivityReportController extends Controller
                     $attData->select($groupBy, DB::raw('count(*) as total'), DB::raw('sum(ot_hour) as groupOt'))->groupBy($groupBy);
                     $totalOtHour =  array_sum(array_column($attData->get()->toArray(),'groupOt'));
                 }else{
-                    $attData->select('emp.as_id', 'emp.as_gender', 'emp.as_shift_id', 'emp.as_oracle_code', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_contact', 'emp.as_section_id','emp.as_subsection_id', 'a.in_time', 'a.out_time', 'a.ot_hour')->orderBy('a.ot_hour','desc');
+                    $attData->select('emp.as_id', 'emp.as_gender', 'emp.as_shift_id', 'emp.as_oracle_code', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_contact', 'emp.as_section_id','emp.as_subsection_id', 'a.in_time', 'a.remarks', 'a.out_time', 'a.ot_hour')->orderBy('a.ot_hour','desc');
                     $totalOtHour = $attData->sum("a.ot_hour");
                     
                 }
@@ -399,7 +399,7 @@ class DailyActivityReportController extends Controller
                     
                     $totalWorkingMinute =  array_sum(array_column($attData->get()->toArray(),'groupHourDuration'));
                 }else{
-                    $attData->select('emp.as_id', 'emp.as_gender', 'emp.as_shift_id', 'emp.as_oracle_code', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_contact', 'emp.as_section_id','emp.as_subsection_id', 'a.in_time', 'a.out_time', 's.hr_shift_break_time', 'a.ot_hour');
+                    $attData->select('emp.as_id', 'emp.as_gender', 'emp.as_shift_id', 'emp.as_oracle_code', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_contact', 'emp.as_section_id','emp.as_subsection_id', 'a.in_time', 'a.remarks', 'a.out_time', 's.hr_shift_break_time', 'a.ot_hour');
                     $attData->addSelect(DB::raw('(TIMESTAMPDIFF(minute, in_time, out_time) - s.hr_shift_break_time) as hourDuration'));
                     $totalWorkingMinute =  array_sum(array_column($attData->get()->toArray(),'hourDuration'));
                     
@@ -502,7 +502,6 @@ class DailyActivityReportController extends Controller
     public function twoDayAtt($input,$request)
     {
 
-
         $date[0] = $request['date'];
         $date[1] = \Carbon\Carbon::parse($request['date'])->subDays(1)->toDateString();
         $unit = unit_by_id();
@@ -515,6 +514,7 @@ class DailyActivityReportController extends Controller
         $subSection = subSection_by_id();
         $area = area_by_id();
         $short_designation = shortdesignation_by_id();
+
         
         $queryData = DB::table('hr_as_basic_info AS b')
             ->select('b.as_unit_id', 'b.as_area_id','b.as_location', 'b.as_emp_type_id','b.as_id', 'b.as_gender', 'b.associate_id', 'b.as_line_id', 'b.as_designation_id','b.as_oracle_code', 'b.as_department_id', 'b.as_floor_id', 'b.as_pic', 'b.as_name', 'b.as_contact', 'b.as_section_id','b.as_subsection_id','b.as_oracle_sl','b.temp_id')
@@ -557,11 +557,11 @@ class DailyActivityReportController extends Controller
                     if($input['selected'] == 'null' ){
                         return $query->whereNull($input['report_group']);
                     }else{
-                        return $query->where($input['report_group'], $input['selected']);
+                        return $query->where('b.'.$input['report_group'], $input['selected']);
                     }
                 }
             });
-            
+
             if($input['report_type'] == 'executive_attendance'){
                 // benefit
                 $benefitData = DB::table('hr_benefits');
@@ -574,14 +574,16 @@ class DailyActivityReportController extends Controller
             if($input['report_type'] == 'executive_attendance'){
                 $queryData->orderBy('b.as_unit_id', 'ASC')->orderBy('b.as_area_id', 'ASC');
             }else{
+
                 $queryData->orderBy('b.as_oracle_sl', 'ASC');
+
             }
             $getEmployee = $queryData->get();
 
 
 
         $avail = $getEmployee->pluck('associate_id');
-        
+
 
 
         // modify data with current line & floor
@@ -631,6 +633,7 @@ class DailyActivityReportController extends Controller
 
         $avail_as = $getEmployee->pluck('as_id');
 
+
         if($input['report_group'] == 'as_line_id'){
             $uniqueGroups = collect($getEmployee)
                             //->sortBy('ordby')
@@ -644,6 +647,17 @@ class DailyActivityReportController extends Controller
         }
 
         $format = $request['report_group'];
+        $gUnit = [];
+        $unitWiseEId = [];
+        $attPr = [];
+        if($input['report_type'] == 'executive_attendance'){
+            $gUnit = array_column($getEmployee->toArray(), 'as_unit_id');
+            $gUnit = array_unique($gUnit);
+            // $unitWiseEId = $getEmployee->groupBy('as_unit_id', true);
+            $unitWiseEId = collect($getEmployee)->groupBy('as_unit_id',true)->map(function($row) {
+                return collect($row)->pluck('as_id');
+            });
+
 
         $gUnit = [];
         $unitWiseEId = [];
@@ -677,6 +691,7 @@ class DailyActivityReportController extends Controller
             // $pr = array_reduce($attPr, 'array_merge', array());
             $pr = $attPr;
 
+
         }else{
             $table = get_att_table($input['unit']);
 
@@ -691,7 +706,6 @@ class DailyActivityReportController extends Controller
                     });
             }
         }
-        
 
         $ab = DB::table('hr_absent')
                 ->whereIn('date', $date)
@@ -704,9 +718,6 @@ class DailyActivityReportController extends Controller
                 });
         }
 
-
-
-
         $lv = DB::table('hr_leave')
                 ->selectRaw("
                     leave_ass_id,
@@ -718,6 +729,7 @@ class DailyActivityReportController extends Controller
                     END) AS lv
                 ")
                 ->whereIn('leave_ass_id', $avail)
+                ->where('leave_status', 1)
                 ->where(function($q) use ($date){
                     $q->where('leave_from', "<=", $date[0]);
                     $q->where('leave_to', ">=", $date[0]);

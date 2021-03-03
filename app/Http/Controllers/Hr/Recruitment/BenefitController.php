@@ -166,6 +166,7 @@ class BenefitController extends Controller
                     'b.bank_no',
                     'a.as_name',
                     'a.as_oracle_code',
+                    'a.as_ot',
                     'a.as_unit_id',
                     'u.hr_unit_name AS unit_name'
                 )
@@ -189,21 +190,31 @@ class BenefitController extends Controller
                 if($data->ben_bank_amount == 0 && $data->ben_cash_amount > 0){
                     $method = "Cash";
                 }elseif($data->ben_bank_amount > 0 && $data->ben_cash_amount == 0){
-                    $method = $data->bank_name.' '.$data->bank_no;
+                    $method = $data->bank_name;
                 }else{
-                    $method = $data->bank_name." & Cash ".$data->bank_no;
+                    $method = $data->bank_name." & Cash";
                 }
                 return $method;
             })
-            
+            ->addColumn('bank_no', function ($data){
+                if($data->ben_bank_amount == 0 && $data->ben_cash_amount > 0){
+                    $no = "";
+                }else{
+                    $no = $data->bank_no;
+                }
+                return $no;
+            })
+            ->addColumn('as_ot', function ($data){
+                return $data->as_ot;
+            })
             ->addColumn('action', function ($data) use ($perm) {
                 if($perm){
 
                     return "<div class=\"btn-group\">
-                        <a href=".url('hr/payroll/benefit/'.$data->ben_as_id)." class=\"btn btn-xs btn-success\" data-toggle=\"tooltip\" title=\"View\">
+                        <a href=".url('hr/payroll/benefit/'.$data->ben_as_id)." class=\"btn btn-sm btn-success\" data-toggle=\"tooltip\" title=\"View\">
                             <i class=\"ace-icon fa fa-eye bigger-120\"></i>
                         </a> 
-                        <a href=".url('hr/payroll/employee-benefit?associate_id='.$data->ben_as_id)." class=\"btn btn-xs btn-primary\" data-toggle=\"tooltip\" title=\"Edit\">
+                        <a href=".url('hr/payroll/employee-benefit?associate_id='.$data->ben_as_id)." class=\"btn btn-sm btn-primary\" data-toggle=\"tooltip\" title=\"Edit\">
                             <i class=\"ace-icon fa fa-pencil bigger-120\"></i>
                         </a>
                     </div>";

@@ -9,7 +9,7 @@
     #dataTables th:nth-child(5) select, #dataTables th:nth-child(2) input{
       width: 50px !important;
     }
-    #dataTables th:nth-child(1) input{
+    #dataTables th:nth-child(1) input, #dataTables th:nth-child(3) input{
       width: 100px !important;
     }
     #dataTables th:nth-child(8) select{
@@ -71,6 +71,7 @@
                                 <th width="10%">Leave Type</th>
                                 <th width="20%">Duration</th>
                                 <th width="10%" style="text-align: center;"> Day(s)</th>
+                                <th width="10%"> Status</th>
                                 <th width="20%">Action</th>
                             </tr>
                         </thead>  
@@ -91,8 +92,8 @@ $(document).ready(function(){
         '4':['Casual','Earned','Sick', 'Special','Maternity'],
         '7':['Applied','Approved','Declined'] 
     };
-    var exportColName = ['Associate ID','Oracle ID','Name','Unit', 'Leave Type', 'Leave Duration','Day(s)'];
-      var exportCol = [0,1,2,3,4,5,6];
+    var exportColName = ['Associate ID','Oracle ID','Name','Unit', 'Leave Type', 'Leave Duration','Day(s)', 'Status'];
+      var exportCol = [0,1,2,3,4,5,6,7];
     var dt = $('#dataTables').DataTable({
         order: [],  
         processing: true,
@@ -189,6 +190,7 @@ $(document).ready(function(){
             { data: 'leave_type', name: 'leave_type' , orderable: false}, 
             { data: 'leave_duration', name: 'leave_duration' , orderable: false}, 
             { data: 'days', name: 'days' , orderable: false}, 
+            { data: 'leave_status', name: 'leave_status'}, 
             { data: 'action', name: 'action', orderable: false, searchable: false}
         ], 
         initComplete: function () {   

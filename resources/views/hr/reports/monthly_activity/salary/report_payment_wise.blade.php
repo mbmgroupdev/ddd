@@ -444,10 +444,10 @@
 												$exPar = '&selected='.$unit[$group]['hr_unit_id']??'';
 											}elseif($format == 'as_line_id'){
 												$body = $line[$group]['hr_line_name']??'';
-												$exPar = '&selected='.$line[$group]['hr_line_id']??'';
+												$exPar = '&selected='.$body;
 											}elseif($format == 'as_floor_id'){
 												$body = $floor[$group]['hr_floor_name']??'';
-												$exPar = '&selected='.$floor[$group]['hr_floor_name']??'';
+												$exPar = '&selected='.$body;
 											}elseif($format == 'as_department_id'){
 												$body = $department[$group]['hr_department_name']??'';
 												$exPar = '&selected='.$department[$group]['hr_department_id']??'';

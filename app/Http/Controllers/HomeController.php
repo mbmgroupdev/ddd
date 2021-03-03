@@ -32,6 +32,7 @@ class HomeController extends Controller
         $leaves = array();
         if($associate_id){
             $leaves= Leave::where('leave_ass_id', $associate_id)
+                        ->whereYear('leave_to', date('Y'))
                         ->orderBy('id', 'DESC')
                         ->take(5)
                         ->get();

@@ -23,6 +23,7 @@
         $salmonth = date_to_bn_month($pageHead->for_date);
         $totalPayable = 0;
         $attendanceBonus = 0;
+        $sl = 0;
         // dd($locationDataSet);
     @endphp
     @foreach($uniqueLocation as $locKey=>$location)
@@ -157,7 +158,7 @@
                                 @foreach($lists as $k=>$list)
                                     @if($list->as_unit_id == $location && $list != null)
                                         <tr>
-                                            <td style="text-align: center;">{{ Custom::engToBnConvert($j) }}</td>
+                                            <td style="text-align: center;">{{ Custom::engToBnConvert(++$sl) }}</td>
                                             <td>
                                                 <p style="margin:0;padding:0;">{{ $list->hr_bn_associate_name }}</p>
                                                 <p style="margin:0;padding:0;">{{ Custom::engToBnConvert(date('Y-m-d', strtotime($list->as_doj))) }}</p>
@@ -521,7 +522,7 @@
                     @endphp
                     @if($fraction > 0)
                     <td style="width:10%; text-align:right;">
-                        <p style="margin:0;padding: 0"><strong>ভগ্নাংশ সমন্বয়: </strong>
+                        <p style="margin:0;padding: 0"><strong>সমন্বয়: </strong>
                             {{ Custom::engToBnConvert(bn_money($fraction)) }}
                         </p>
                     </td>

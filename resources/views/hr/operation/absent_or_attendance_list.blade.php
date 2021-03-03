@@ -119,7 +119,8 @@
                                       <div class="col-3">
                                         <div class="form-group has-float-label has-required select-search-group">
                                             <?php
-                                                $type = ['Present'=>'Present','Intime-Outtime Empty'=>'Intime-Outtime Empty','Present(Intime Empty)'=>'Present (In Time Empty)','Present(Outtime Empty)'=>'Present (Out Time Empty)','Present (Halfday)'=>'Present (Halfday)','Absent'=>'Absent','Leave'=>'Leave','Present (Late)'=>'Late','Present (Late(Outtime Empty))'=>'Late (Out Time Empty)'];
+                                                //$type = ['Present'=>'Present','Intime-Outtime Empty'=>'Intime-Outtime Empty','Present(Intime Empty)'=>'Present (In Time Empty)','Present(Outtime Empty)'=>'Present (Out Time Empty)','Present (Halfday)'=>'Present (Halfday)','Absent'=>'Absent','Leave'=>'Leave','Present (Late)'=>'Late','Present (Late(Outtime Empty))'=>'Late (Out Time Empty)'];
+                                                $type = ['Absent'=>'Absent'];
                                             ?>
                                             {{ Form::select('type', $type, 'Absent', ['placeholder'=>'Select Report Type ', 'class'=>'form-control capitalize select-search', 'id'=>'type', 'required'=>'required']) }}
                                             <label for="type">Report Type</label>

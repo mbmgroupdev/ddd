@@ -22,7 +22,11 @@
             <a href="{{ url('/hr') }}" class="iq-waves-effect"><i class="las la-users"></i><span>HR</span></a>
          </li> 
          @endif  
-
+         @if(auth()->user()->module_permission('Merchandising'))
+         <li>
+            <a href="{{ url('/merchandising') }}" class="iq-waves-effect"><i class="lab la-opencart"></i></i><span>Merchandising</span></a>
+         </li> 
+         @endif
          @if(auth()->user()->hasRole('Super Admin'))
          {{-- <li class="@if($segment1 == 'mmr-report') active @endif">
             <a href="{{ url('/mmr-report') }}" class="iq-waves-effect"><i class="las la-file"></i><span>MMR Report</span></a>

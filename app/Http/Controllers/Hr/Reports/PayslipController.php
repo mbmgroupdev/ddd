@@ -197,7 +197,7 @@ class PayslipController extends Controller
                 $join->on('subsec.hr_subsec_id','s.sub_section_id')->addBinding($subSectionData->getBindings());
             });
                 
-            $queryData->select('s.*', 'emp.as_doj', 'emp.as_ot', 'emp.as_designation_id', 'emp.as_location', 'bemp.hr_bn_associate_name', 'emp.as_oracle_code', 'emp.as_unit_id', 's.ot_hour', 's.ot_rate', 's.total_payable', 's.bank_payable', 's.cash_payable', 's.tds', 's.stamp', 's.pay_status','subsec.hr_subsec_area_id AS as_area_id', 'subsec.hr_subsec_department_id AS as_department_id', 'subsec.hr_subsec_section_id AS as_section_id');
+            $queryData->select('s.*', 'emp.as_doj', 'emp.as_ot', 'emp.as_designation_id', 'emp.as_location', 'bemp.hr_bn_associate_name', 'emp.as_oracle_code', 'emp.temp_id', 'emp.as_unit_id', 's.ot_hour', 's.ot_rate', 's.total_payable', 's.bank_payable', 's.cash_payable', 's.tds', 's.stamp', 's.pay_status','subsec.hr_subsec_area_id AS as_area_id', 'subsec.hr_subsec_department_id AS as_department_id', 'subsec.hr_subsec_section_id AS as_section_id');
             $totalSalary = round($queryData->sum("s.total_payable"));
             $totalCashSalary = round($queryData->sum("s.cash_payable"));
             $totalBankSalary = round($queryData->sum("s.bank_payable"));
@@ -205,7 +205,7 @@ class PayslipController extends Controller
             $totalTax = round($queryData->sum("s.tds"));
             $totalOtHour = ($queryData->sum("s.ot_hour"));
             $totalOTAmount = round($queryData->sum(DB::raw('s.ot_hour * s.ot_rate')));
-            $getSalaryList = $queryData->orderBy('emp.as_oracle_sl', 'asc')->get();
+            $getSalaryList = $queryData->orderBy('emp.as_oracle_sl', 'asc')->orderBy('emp.temp_id', 'asc')->get();
             $totalEmployees = count($getSalaryList);
             // dd($getSalaryList);
             // return $getSalaryList;

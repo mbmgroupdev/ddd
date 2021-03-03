@@ -15,9 +15,20 @@ class Controller extends BaseController
 
     # Write Every Events in Log File
     public function logFileWrite($message, $event_id){
+        /*$directory = 'assets/logs/'.date("Y").'/'.date("m").'/'.date("d").'/';
+        $file = 'assets/logs/'.date("Y").'/'.date("m").'/'.date("d").'/hr_log.txt';
+        //If the directory doesn't already exists.
+        if(!is_dir($directory)){
+            //Create our directory.
+            mkdir($directory, 755, true);
+        }
+        if ( !unlink( $file ) ) {
+          chmod($file, 0755);
+        }
         $log_message = date("Y-m-d H:i:s")." \"".Auth()->user()->associate_id."\" ".$message." ".$event_id.PHP_EOL;
-        $log_message .= file_get_contents("assets/log.txt");
-        file_put_contents("assets/log.txt", $log_message);
+        $log_message .= file_get_contents($file);
+        
+        file_put_contents($file, $log_message);*/
 
         $associate_id=Auth()->user()->associate_id;
         $logs=UserLog::where('log_as_id',$associate_id)->orderBy('updated_at','ASC')->get();
@@ -76,11 +87,4 @@ class Controller extends BaseController
 
   }
 
-  public function otbuffer($minutes){
-
-    if($minutes >= 15 && $minutes < 45) $minutes = 30;
-    else if($minutes >= 45) $minutes = 60;
-    else $minutes = 0;
-    return $minutes;
-  }
 }

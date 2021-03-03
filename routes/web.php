@@ -75,7 +75,7 @@ Route::group(['middleware' => 'auth'], function(){
 	*/
 	
     //user dashboard
-	Route::get('/', 'UserDashboardController@index');
+	// Route::get('/', 'UserDashboardController@index');
 	Route::get('user-dashboard/conversations', 'UserDashboardController@conversations');
 	Route::get('user-dashboard/send-message', 'UserDashboardController@sendMessage');
 	Route::get('user-dashboard/delete-message', 'UserDashboardController@deleteMessage');
@@ -113,7 +113,10 @@ Route::group(['middleware' => 'auth'], function(){
 	Route::post('user/change-password', 'Hr\Adminstrator\UserController@changePassword');
 
 	@include 'modules/hr.php';
+	@include 'modules/merchandising.php';
 });
+
+Route::get('test-check', 'TestXYZController@rfidUpdate');
 
 
 

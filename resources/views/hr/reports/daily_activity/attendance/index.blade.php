@@ -163,6 +163,7 @@
                                       
                                         <div class="form-group has-float-label select-search-group">
                                             <?php
+
                                                 if(auth()->user()->hasRole('Planning')){
                                                     $reportType = [
                                                         'att_statistics'=>'Attendance Statistics',
@@ -173,7 +174,7 @@
                                                 }else{
                                                     if(auth()->user()->can('Attendance Report') || auth()->user()->can('Attendance Report')){
                                                        $reportType = [
-                                                            'att_statistics'=>'Attendance Statistics', 
+                                                            //'att_statistics'=>'Attendance Statistics', 
                                                             'present'=>'Present', 
                                                             'absent'=>'Absent', 
                                                             'before_absent_after_present'=>'Present After Being Absent', 
@@ -184,10 +185,11 @@
                                                     $reportType['ot'] = 'Overtime(OT)';
                                                     $reportType['working_hour'] = 'Working Hour';
                                                     $reportType['executive_attendance'] = 'Executive Attendance';
+
                                                     if(auth()->user()->can('Attendance Report') || auth()->user()->can('Attendance Upload')){
                                                         $reportType['late'] = 'Late';
                                                         $reportType['missing_token'] = 'Punch Missing Token';
-                                                        $reportType['two_day_att'] = 'Two Day Attendance'; 
+                                                        $reportType['two_day_att'] = 'Two Day Attendance';  
                                                     }
                                                 }
                                                 

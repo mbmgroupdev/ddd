@@ -35,9 +35,11 @@
                                     <th>Basic Salary</th>
                                     <th>House Rent</th>
                                     <th>Payment Method</th>
+                                    <th>Account No.</th>
                                     <th>Cash Amount</th>
                                     <th>Bank Amount</th>
                                     <th>Tax Amount</th>
+                                    <th>OT Status</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -53,15 +55,16 @@
 <script type="text/javascript">
 $(document).ready(function(){ 
 
-    var searchable = [0,1,2,8];
+    var searchable = [0,1,2,8,12];
     var selectable = [3]; 
 
     var dropdownList = {
-        '3' :[@foreach($unitList as $e) <?php echo "'$e'," ?> @endforeach]
+        '3' :[@foreach($unitList as $e) <?php echo "'$e'," ?> @endforeach],
+        // '12':['1-OT','0-Non OT'],
     };
 
-    var exportColName = ['Associate ID','Name','Oracle ID','Unit','Joining Salary', 'Current Salary', 'Basic Salary', 'House Rent', 'Payment Method', 'Cash Amount', 'Bank Amount', 'Tax Amount'];
-    var exportCol = [0,1,2,3,4,5,6,7,8,9,10,11];
+    var exportColName = ['Associate ID','Name','Oracle ID','Unit','Joining Salary', 'Current Salary', 'Basic Salary', 'House Rent', 'Payment Method', 'Account Number', 'Cash Amount', 'Bank Amount', 'Tax Amount', 'OT status'];
+    var exportCol = [0,1,2,3,4,5,6,7,8,9,10,11,12,13];
     
     var dt = $('#dataTables').DataTable({
         order: [], //reset auto order
@@ -162,9 +165,11 @@ $(document).ready(function(){
             { data: 'ben_basic', name: 'ben_basic' }, 
             { data: 'ben_house_rent', name: 'ben_house_rent' }, 
             { data: 'payment_method', name: 'payment_method' }, 
+            { data: 'bank_no', name: 'bank_no' }, 
             { data: 'ben_cash_amount', name: 'ben_cash_amount' }, 
             { data: 'ben_bank_amount', name: 'ben_bank_amount' }, 
             { data: 'ben_tds_amount', name: 'ben_tds_amount' }, 
+            { data: 'as_ot', name: 'as_ot' }, 
             { data: 'action', name: 'action', orderable: false, searchable: false }
         ], 
         initComplete: function () {   
