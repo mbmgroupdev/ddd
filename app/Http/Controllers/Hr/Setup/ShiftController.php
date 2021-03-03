@@ -27,6 +27,8 @@ class ShiftController extends Controller
             s1.hr_shift_start_time,
             s1.hr_shift_end_time,
             s1.bill_eligible,
+            s1.ot_status,
+            s1.ot_shift,
             s1.hr_shift_break_time,u.hr_unit_name
             FROM hr_shift s1
             LEFT JOIN hr_shift s2
@@ -37,7 +39,9 @@ class ShiftController extends Controller
             ORDER BY s1.hr_shift_id DESC");
         $trashed = [];
 
-    	return view('hr/setup/shift', compact('unitList', 'shifts','trashed'));
+        $ot_shift = collect($shifts)->where('ot_status',1)->pluck('hr_shift_name','hr_shift_name');
+
+    	return view('hr/setup/shift', compact('unitList', 'shifts','trashed','ot_shift'));
     }
 
     public function shiftStore(Request $request)
@@ -48,7 +52,6 @@ class ShiftController extends Controller
     		'hr_shift_name_bn'    => 'max:255',
     		'hr_shift_start_time' => 'required|max:10',
             'hr_shift_end_time'   => 'required|max:10',
-    		// 'hr_shift_code'       => 'required|max:3|unique:hr_shift',
             'hr_shift_break_time' => 'required|max:3'
     	]);
 
@@ -116,6 +119,8 @@ class ShiftController extends Controller
                     $input['hr_shift_default'] = 0;
                 }
 
+
+
                 $data = [
                     'hr_shift_unit_id'    => $unitId,
                     'hr_shift_name'       => $input['hr_shift_name'],
@@ -126,9 +131,13 @@ class ShiftController extends Controller
                     'hr_shift_default'    => $input['hr_shift_default'],
                     'hr_shift_night_flag' => $input['hr_shift_night_flag'],
                     'hr_shift_code'       => $input['hr_shift_code'],
+                    'ot_shift'       => $input['ot_shift'],
                     'bill_eligible'       => ($input['bill_eligible'] == '00:00:00'?null:$input['bill_eligible']),
                     'created_by'          => auth()->user()->id
                 ];
+                if($request->has('ot_status')){
+                    $data['ot_status'] = 1;
+                }
                 $shiftId = Shift::insertGetId($data);
                 
                 $msg = "Unit: ".$getUnitName." New Shift: ".$input['hr_shift_name']." Created Successfully.";
@@ -200,6 +209,8 @@ class ShiftController extends Controller
             s1.hr_shift_start_time,
             s1.hr_shift_end_time,
             s1.bill_eligible,
+            s1.ot_status,
+            s1.ot_shift,
             s1.hr_shift_break_time,u.hr_unit_name
             FROM hr_shift s1
             LEFT JOIN hr_shift s2
@@ -208,8 +219,10 @@ class ShiftController extends Controller
             ON u.hr_unit_id = s1.hr_shift_unit_id
             WHERE s2.hr_shift_id IS NULL AND s1.hr_shift_unit_id IN ($unitids)
             ORDER BY s1.hr_shift_id DESC");
+
+        $ot_shift = collect($shifts)->where('ot_status',1)->pluck('hr_shift_name','hr_shift_name');
         $trashed = [];
-        return view('/hr/setup/shift_update', compact('shift','shifts','trashed'));
+        return view('/hr/setup/shift_update', compact('shift','shifts','trashed','ot_shift'));
     }
 
     public function shiftUpdateStore(Request $request)
@@ -268,6 +281,7 @@ class ShiftController extends Controller
                     'hr_shift_name_bn'    => $request->hr_shift_name_bn,
                     'hr_shift_default'    => $default_shift,
                     'hr_shift_night_flag' => $night_shift,
+                    'ot_shift'            => $request->ot_shift,
                     'bill_eligible'       => ($input['bill_eligible'] == '00:00:00'?null:$input['bill_eligible']),
                     'updated_by'          => auth()->user()->id
                     ]);

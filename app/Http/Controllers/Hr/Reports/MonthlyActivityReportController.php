@@ -19,6 +19,9 @@ class MonthlyActivityReportController extends Controller
 {
     public function salary()
     {
+        if(auth()->user()->hasRole('Buyer Mode')){
+            return redirect('hrm/reports/monthly-salary');
+        }
         $unitList  = Unit::where('hr_unit_status', '1')
         ->whereIn('hr_unit_id', auth()->user()->unit_permissions())
         ->orderBy('hr_unit_name', 'desc')
@@ -33,6 +36,7 @@ class MonthlyActivityReportController extends Controller
         $salaryMin = Benefits::getSalaryRangeMin();
         $salaryMax = Benefits::getSalaryRangeMax();
         return view('hr/reports/monthly_activity/salary.index', compact('unitList','areaList', 'salaryMin', 'salaryMax', 'locationList'));
+        
     }
 
     public function salaryReport(Request $request)
@@ -167,7 +171,7 @@ class MonthlyActivityReportController extends Controller
                 $join->on('s.salary_add_deduct_id','deduct.id')->addBinding($addDeductData->getBindings());
             });
             
-            if($input['report_format'] == 1 && $input['report_group'] != null){
+            if(($input['report_format'] == 1 || $input['report_format'] == 2)  && $input['report_group'] != null){
                 $queryData->select(DB::raw('count(*) as total'), DB::raw('sum(total_payable) as groupTotal'),DB::raw('COUNT(CASE WHEN s.ot_status = 1 THEN s.ot_status END) AS ot, COUNT(CASE WHEN s.ot_status = 0 THEN s.ot_status END) AS nonot'),
                 DB::raw('sum(salary_payable) as groupSalary'), DB::raw('sum(cash_payable) as groupCashSalary'),DB::raw('sum(stamp) as groupStamp'),DB::raw('sum(tds) as groupTds'), DB::raw('sum(bank_payable) as groupBankSalary'), DB::raw('sum(ot_hour) as groupOt'), DB::raw('sum(ot_hour * ot_rate) as groupOtAmount'),DB::raw("SUM(IF(ot_status=0,total_payable,0)) AS totalNonOt"),DB::raw("SUM(deduct.food_deduct) AS foodDeduct"));
                 if($input['report_group'] == 'as_unit_id'){
@@ -232,6 +236,62 @@ class MonthlyActivityReportController extends Controller
             if($format != null && count($getEmployee) > 0 && $input['report_format'] == 0){
                 $uniqueGroupEmp = collect($getEmployee)->groupBy($request['report_group'],true);
                 
+            }
+            if( $input['report_format'] == 2){
+                $format = $request['report_group'];
+                $unit = unit_by_id();
+                $line = line_by_id();
+                $floor = floor_by_id();
+                $department = department_by_id();
+                $designation = designation_by_id();
+                $section = section_by_id();
+                $subSection = subSection_by_id();
+                $area = area_by_id();
+                $location = location_by_id();
+
+                if($format == 'as_unit_id'){
+                    $head = 'Unit';
+                    $gp = $unit;
+                    $dt = 'hr_unit_name';
+                }elseif($format == 'as_line_id'){
+                    $gp = $line;
+                    $dt = 'hr_line_name';
+                    $head = 'Line';
+                }elseif($format == 'as_floor_id'){
+                    $head = 'Floor';
+                    $dt = 'hr_floor_name';
+                    $gp = $floor;
+                }elseif($format == 'as_department_id'){
+                    $head = 'Department';
+                    $dt = 'hr_department_name';
+                    $gp = $department;
+                }elseif($format == 'as_designation_id'){
+                    $head = 'Designation';
+                    $gp = $designation;
+                    $dt = 'hr_designation_name';
+                }elseif($format == 'as_section_id'){
+                    $head = 'Section';
+                    $gp = $section;
+                    $dt = 'hr_section_name';
+                }elseif($format == 'as_subsection_id'){
+                    $head = 'Sub Section';
+                    $dt = 'hr_subsec_name';
+                    $gp = $subSection;
+                }
+
+                $emps = collect($getEmployee)->keyBy($request['report_group']);
+                $chart_data = [];
+                foreach ($emps as $key => $v) {
+                    $name = $gp[$key][$dt]??'';
+                    $chart_data[$name ] = $v->groupTotal;
+                    
+                }
+                $vx['ct'] = array_keys($chart_data);
+                $vx['dt'] = array_values($chart_data);
+                $vx['hd'] = $head;
+
+                return response($vx);
+
             }
             // dd($uniqueGroupEmp);
             if($input['pay_status'] == null){

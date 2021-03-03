@@ -36,7 +36,7 @@ table th {
 	border-radius: 2px;
 }
 .user-details-block .user-profile {
-    margin-top: -85px;
+    margin-top: -85px !important;
     width: 130px;
     height: auto;
     margin: 0 auto;
@@ -54,6 +54,31 @@ table th {
 
 <div  class="main-content">
 	<div class="main-content-inner">
+		<div class="breadcrumbs ace-save-state" id="breadcrumbs">
+            <ul class="breadcrumb">
+                <li>
+                    <i class="ace-icon fa fa-home home-icon"></i>
+                    <a href="#">Human Resource</a>
+                </li>
+                <li>
+                    <a href="#">Employee</a>
+                </li>
+                <li>
+                    <a href="{{ url("hr/recruitment/employee/show/$info->associate_id") }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='View Profile' class="font-weight-bold">{{$info->associate_id}}</a>
+                </li>
+                @if(auth()->user()->canany(['Manage Employee']) || auth()->user()->hasRole('Super Admin'))
+                <li class="top-nav-btn">
+                    @php 
+                        $act_page = ''; 
+                        $associate_id = $info->associate_id;
+                    @endphp
+                    @include('hr.common.emp_profile_pagination')
+
+                </li>
+                @endif
+            </ul>
+ 
+        </div>
 
         <div class="row">
       		<div class="col-4">
@@ -86,10 +111,10 @@ table th {
 							 <div class="buttons mt-3">
 			                	@if(auth()->user()->canany(['Manage Employee']) || auth()->user()->hasRole('Super Admin'))
 				                    <div class="btn-group"> 
-				                        <a  href='{{url("hr/recruitment/employee/pdf/$info->associate_id")}}' target="_blank" data-toggle="tooltip" data-placement="top" title="" data-original-title='Download Employee Profile' class="btn btn-sm btn-danger"  style="border-radius: 2px !important; padding: 4px; "><i class="fa fa-file-pdf-o bigger-120"></i></a> 
-				                        <a  href='{{url("hr/recruitment/employee/edit/$info->associate_id")}}' target="_blank" data-toggle="tooltip" data-placement="top" title="" data-original-title='Edit Profile' class="btn btn-sm btn-info"  style="border-radius: 2px !important; padding: 4px;"><i class="las la-user-tie bigger-120">&nbsp</i> </a> 
-				                      
-				                        <a  href='{{url("hr/recruitment/operation/medical_info_edit/$info->associate_id")}}' target="_blank" data-toggle="tooltip" data-placement="top" title="" data-original-title='Edit Medical Info' class="btn btn-sm btn-warning" style="border-radius: 2px !important; padding: 4px;"><i class="fa fa-user-md bigger-120">&nbsp</i></a>
+				                        
+
+				                        <a  href='{{url("hr/recruitment/employee/pdf/$info->associate_id")}}' target="_blank" data-toggle="tooltip" data-placement="top" title="" data-original-title='Download Employee Profile'  style="border-radius: 2px !important; padding: 4px; "><i class="fa fa-file-pdf-o bigger-120"></i> Get PDF</a> 
+				                        
 				                    </div>
 			                    @endif
 			                </div>

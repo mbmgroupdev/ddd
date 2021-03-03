@@ -515,10 +515,11 @@ class DailyActivityReportController extends Controller
         $area = area_by_id();
         $short_designation = shortdesignation_by_id();
 
+        
         $queryData = DB::table('hr_as_basic_info AS b')
             ->select('b.as_unit_id', 'b.as_area_id','b.as_location', 'b.as_emp_type_id','b.as_id', 'b.as_gender', 'b.associate_id', 'b.as_line_id', 'b.as_designation_id','b.as_oracle_code', 'b.as_department_id', 'b.as_floor_id', 'b.as_pic', 'b.as_name', 'b.as_contact', 'b.as_section_id','b.as_subsection_id','b.as_oracle_sl','b.temp_id')
-            ->whereNotIn('b.associate_id', config('base.ignore_salary'))
             ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
+            ->whereNotIn('b.associate_id', config('base.ignore_salary'))
             ->whereIn('b.as_location', auth()->user()->location_permissions())
             ->when(!empty($input['unit']), function ($query) use($input){
                 if($input['unit'] == 145){
@@ -553,13 +554,14 @@ class DailyActivityReportController extends Controller
             })
             ->when(!empty($input['selected']), function ($query) use($input){
                 if($input['report_group'] != 'as_line_id' && $input['report_group'] != 'as_floor_id'){
-                    if($input['selected'] == 'null'){
+                    if($input['selected'] == 'null' ){
                         return $query->whereNull($input['report_group']);
                     }else{
                         return $query->where('b.'.$input['report_group'], $input['selected']);
                     }
                 }
             });
+
             if($input['report_type'] == 'executive_attendance'){
                 // benefit
                 $benefitData = DB::table('hr_benefits');
@@ -572,7 +574,9 @@ class DailyActivityReportController extends Controller
             if($input['report_type'] == 'executive_attendance'){
                 $queryData->orderBy('b.as_unit_id', 'ASC')->orderBy('b.as_area_id', 'ASC');
             }else{
-                $queryData->orderBy('b.as_location', 'ASC');
+
+                $queryData->orderBy('b.as_oracle_sl', 'ASC');
+
             }
             $getEmployee = $queryData->get();
 
@@ -593,8 +597,9 @@ class DailyActivityReportController extends Controller
                     })
                     ->get()->keyBy('associate_id');
 
+        
         if(count($lineInfo) > 0){
-            $getEmployee = $getEmployee->map(function ($arr) use ($lineInfo) {
+            $getEmployee = $getEmployee->map(function ($arr) use ($lineInfo, $line) {
                 $as_id = $arr->associate_id;
                 if(isset($lineInfo[$as_id])){
                     $arr->df_line_id = $arr->as_line_id;
@@ -603,25 +608,57 @@ class DailyActivityReportController extends Controller
                     $arr->as_floor_id = $lineInfo[$as_id]->changed_floor;
 
                 }
+                if(isset($line[$arr->as_line_id])){
+                    $arr->ordby = $line[$arr->as_line_id]['hr_line_name'];
+                }else{
+                    $arr->ordby = '';
+                }
                 return $arr;
             });
         }
+        
 
+            //dd($input['selected']);
         if(!empty($input['selected']) && ($input['report_group'] == 'as_line_id' || $input['report_group'] == 'as_floor_id')){
+            $input['sel_type'] = $input['report_group'] == 'as_line_id'? 'ordby':$input['report_group'];
             $getEmployee = $getEmployee->filter(function($arr) use ($input){
                 if($input['selected'] == 'null'){
-                    return $arr->{$input['report_group']} == '';
+
+                    return $arr->{$input['sel_type']} == '';
                 }else{
-                    return $arr->{$input['report_group']} == $input['selected'];
+                    return $arr->{$input['sel_type']} == $input['selected'];
                 }
             })->values();
         }
 
         $avail_as = $getEmployee->pluck('as_id');
-        
-        $uniqueGroups = $getEmployee->groupBy($request['report_group'], true);
+
+
+        if($input['report_group'] == 'as_line_id'){
+            $uniqueGroups = collect($getEmployee)
+                            //->sortBy('ordby')
+                            ->groupBy('ordby', true)->toArray();
+            ksort($uniqueGroups);
+        }else{
+
+            $uniqueGroups = collect($getEmployee)
+                            //->sortBy('ordby')
+                            ->groupBy($request['report_group'], true);
+        }
 
         $format = $request['report_group'];
+        $gUnit = [];
+        $unitWiseEId = [];
+        $attPr = [];
+        if($input['report_type'] == 'executive_attendance'){
+            $gUnit = array_column($getEmployee->toArray(), 'as_unit_id');
+            $gUnit = array_unique($gUnit);
+            // $unitWiseEId = $getEmployee->groupBy('as_unit_id', true);
+            $unitWiseEId = collect($getEmployee)->groupBy('as_unit_id',true)->map(function($row) {
+                return collect($row)->pluck('as_id');
+            });
+
+
         $gUnit = [];
         $unitWiseEId = [];
         $attPr = [];
@@ -653,6 +690,7 @@ class DailyActivityReportController extends Controller
 
             // $pr = array_reduce($attPr, 'array_merge', array());
             $pr = $attPr;
+
 
         }else{
             $table = get_att_table($input['unit']);
@@ -893,7 +931,7 @@ class DailyActivityReportController extends Controller
             }
         }
 
-        return view('hr.reports.daily_activity.attendance.att_statistics', compact('uniqueGroups', 'getEmployee', 'input', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area','pr','ab','lv','do','format','date','avail_as','count'));
+        return view('hr.reports.daily_activity.attendance.att_statistics', compact('avail','uniqueGroups', 'getEmployee', 'input', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area','pr','ab','lv','do','format','date','avail_as','count'));
     }
 
    

@@ -57,10 +57,18 @@ class MaternityPaymentController extends Controller
 
 
 		$appoxleave = DB::table('hr_maternity_leave as l')
+						->select(
+							'l.*',
+							'b.*',
+							'p.first_payment'
+						)
 						->leftJoin('hr_as_basic_info AS b','l.associate_id', 'b.associate_id')
+						->leftJoin('hr_maternity_payment AS p','p.hr_maternity_leave_id', 'l.id')
 						->where('l.edd', '>=', $projected_edd_start)
 						->where('l.edd', '<=', $projected_edd_last)
 						->get();
+
+		
 
 		
 		$appoxbacklist = DB::table('hr_maternity_leave as l')

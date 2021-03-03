@@ -142,6 +142,23 @@
                             </select>
                             <label  for="target_status" style="color: maroon;">Target Status  </label>
                         </div>
+                        <div id="holiday" class="form-group has-required has-float-label select-search-group  hide ">
+                            @php
+                                $days = array(
+                                    ''    => 'Select Holiday',
+                                    'Fri' => 'Friday',
+                                    'Sat' => 'Saturday',
+                                    'Sun' => 'Sunday',
+                                    'Mon' => 'Monday',
+                                    'Tue' => 'Tuesday',
+                                    'Wed' => 'Wednesday',
+                                    'Thu' => 'Thursday'
+                                );
+
+                            @endphp
+                            {{ Form::select('day_off', $days, null, ['id'=>'day_off']) }}  
+                            <label  for="as_ot"> Holiday </label>
+                        </div> 
                         <div class="form-group"> 
                             <button type="submit" id="formSubmit" class="btn btn-primary text-center" >
                                <i class="fa fa-save"></i> Save
@@ -165,6 +182,9 @@ function targetStatus(value){
     $("#msg").html(msg);
 }
 $(document).ready(function(){
+    $(document).on('change','#target_status', function(){
+        $(this).val() == '1'?$('#holiday').removeClass('hide'):$('#holiday').addClass('hide');
+    });
 
     var totalempcount = 0;
     var totalemp = 0;

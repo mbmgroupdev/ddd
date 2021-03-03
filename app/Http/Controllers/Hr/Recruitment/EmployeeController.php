@@ -50,15 +50,9 @@ class EmployeeController extends Controller
 
     public function saveEmployee(Request $request)
     {
-        //ACL::check(["permission" => "hr_recruitment_employer_add"]);
-        #-----------------------------------------------------------#
 
         $validator = Validator::make($request->all(), [
             'as_emp_type_id'    => 'required',
-            // 'as_unit_id'        => '',
-            // 'as_floor_id'       => '',
-            // 'as_line_id'        => '',
-            // 'as_shift_id'       => '',
 
             'as_area_id'        => 'required',
             'as_department_id'  => 'required',
@@ -1382,6 +1376,9 @@ class EmployeeController extends Controller
         else{
 
             $employee  = get_employee_by_id($id);
+            if($employee->shift_roaster_status == 1){
+                $employee->day_off = DB::table('hr_roaster_holiday')->where('as_id' , $employee->as_id)->first()->day??'';
+            }
             // $all_employee_list  = Employee::select('as_id', 'associate_id', 'as_name')->get();
             $employeeTypes  = EmpType::where('hr_emp_type_status', '1')->pluck('hr_emp_type_name', 'emp_type_id');
             $unitList  = Unit::where('hr_unit_status', '1')
@@ -1444,33 +1441,9 @@ class EmployeeController extends Controller
 
     public function updateEmployee(Request $request)
     {
-        $map = new CostMappingController;
-        if($request->has('unit_map_checkbox')){
-            $map->defaultCostMapUnit($request->associate_id, $request->as_emp_type_id);
-        }
-        if($request->has('area_map_checkbox')){
-            $map->defaultCostMapArea($request->associate_id, $request->as_emp_type_id);
-        }
-
-        //ACL::check(["permission" => "hr_recruitment_employer_list"]);
-        #-----------------------------------------------------------#
+       
         $validator = Validator::make($request->all(), [
-            'as_emp_type_id'    => 'required',
-            'as_area_id'        => 'required',
-            'as_department_id'  => 'required',
-            'as_section_id'     => 'required',
-            'as_subsection_id'  => 'required',
-            'as_shift_id'       => 'required',
-            'as_doj'            => 'required|date',
-            'temp_id'           => 'required|max:6|min:6',
-            'as_name'           => 'required|max:128',
-            'as_gender'         => 'required|max:10',
-            'as_dob'            => 'required|date',
-            'as_contact'        => 'required',
-            'as_ot'             => 'required|max:1',
-            'as_pic'            => 'image|mimes:jpeg,png,jpg|max:200',
-            'as_oracle_code'    => 'max:20',
-            'as_rfid_code'      => 'max:20',
+            'as_pic'            => 'image|mimes:jpeg,png,jpg',
         ]);
 
         if ($validator->fails())
@@ -1481,13 +1454,13 @@ class EmployeeController extends Controller
                     ->with('error', 'Please fillup all required fields!');
         }
         $input = $request->all();
-        $employeeOldStatus = Employee::select('as_status', 'as_pic')->where('as_id', $input['as_id'])->first();
+
+        $emp = Employee::where('as_id', $input['as_id'])->first();
        
         DB::beginTransaction();
         
         try {
-            // return $request->all();
-            //-----------IMAGE UPLOAD---------------------
+            $update_array = [];
             $as_pic = $request->old_pic;
             if($request->hasFile('as_pic'))
             {
@@ -1505,66 +1478,78 @@ class EmployeeController extends Controller
                                         $constraint->aspectRatio();
                                     })
                                    ->save(public_path( $as_pic ) );
-                if($employeeOldStatus->as_pic != null && file_exists($employeeOldStatus->as_pic)){
-                    unlink($employeeOldStatus->as_pic);
+                if($emp->as_pic != null && file_exists($emp->as_pic)){
+                    unlink($emp->as_pic);
+                }
+                $data1 = DB::table('hr_as_basic_info')
+                    ->where('as_id', $input['as_id'])
+                    ->update(['as_pic' => $as_pic]);
+                
+                DB::commit();
+
+                return back()->with('success', 'Employee photo updated successfully!.');
+            }else{
+                $update_array = $request->except(['_token','as_pic','day_off','as_id','associate_id']);
+
+                $user = auth()->user()->associate_id;
+                if($emp->as_designation_id != $request->as_designation_id){            
+                    DesignationUpdateLog::insert([
+                        'associate_id' => $request->associate_id,
+                        'previous_designation' => $emp->as_designation_id,
+                        'updated_designation' => $request->as_designation_id,
+                        'updated_by' =>$user
+                    ]);
                 }
             }
-            //getting previous designation
-            $prev_dsg= Employee::where('as_id', $request->as_id)->pluck('as_designation_id')->first();
-            //updated by current user
-            $user= Auth()->user()->associate_id;
-            if($prev_dsg != $request->as_designation_id){
 
-                Employee::where('as_id', $request->as_id)->update([
-                'as_designation_id' => $request->as_designation_id
-                ]);
-
-                DesignationUpdateLog::insert([
-                    'associate_id' =>$request->associate_id,
-                    'previous_designation' =>$prev_dsg,
-                    'updated_designation' =>$request->as_designation_id,
-                    'updated_by' =>$user
-                ]);
+            if(isset($request->as_doj)){
+                $update_array['as_doj'] = (!empty($request->as_doj)?date('Y-m-d',strtotime($request->as_doj)):null);
+            }
+            if(isset($request->as_name)){
+                $update_array['as_name'] = strtoupper($request->as_name);
+            }
+            if(isset($request->as_dob)){
+                $update_array['as_dob']  = (!empty($request->as_dob)?date('Y-m-d',strtotime($request->as_dob)):null);
             }
 
-            //-----------Store Data---------------------
-            $update = Employee::where('as_id', $request->as_id)->update([
-                'as_emp_type_id'   => $request->as_emp_type_id,
-                'as_unit_id'       => $request->as_unit_id,
-                'as_floor_id'      => $request->as_floor_id,
-                'as_line_id'       => $request->as_line_id,
-                'as_shift_id'      => $request->as_shift_id,
-                'as_area_id'       => $request->as_area_id,
-                'as_department_id' => $request->as_department_id,
-                'as_section_id'    => $request->as_section_id,
-                'as_subsection_id' => $request->as_subsection_id,
-                // 'as_designation_id' => $request->as_designation_id,
-                'as_doj'           => (!empty($request->as_doj)?date('Y-m-d',strtotime($request->as_doj)):null),
-                // 'temp_id'        => $request->temp_id,
-                // 'associate_id'   => $request->associate_id,
-                'as_name'          => strtoupper($request->as_name),
-                'as_gender'        => $request->as_gender,
-                'as_dob'           => (!empty($request->as_dob)?date('Y-m-d',strtotime($request->as_dob)):null),
-                'as_contact'       => $request->as_contact,
-                'as_ot'            => $request->as_ot,
-                'as_pic'           => $as_pic,
-                'as_remarks'       => $request->as_remarks,
-                'as_oracle_code'   => $request->as_oracle_code,
-                'as_oracle_sl'     => ($request->as_oracle_code != ''?substr($request->as_oracle_code,3, -1):''),
-                'as_rfid_code'     => $request->as_rfid_code,
-                'as_location'      => $request->as_location_id
-            ]);
+            if(isset($request->day_off)){
+                if($request->shift_roaster_status == 1){
+                    $p = DB::table('hr_roaster_holiday')->updateOrInsert(
+                        ['as_id' => $emp->as_id],
+                        [
+                            'day' => $request->day_off,
+                            'created_by' => auth()->user()->id
+                        ]
+                    );
+                    $this->logFileWrite("Roaster Holiday added", $emp->as_id);
+                }
+            }
+
+            $update = Employee::where('as_id', $emp->as_id)->update($update_array);
+
+            // update basic line id for the employee
+            if(isset($request->as_line_id)){
+                if($request->as_line_id != $emp->as_line_id){ 
+                    $att_table = get_att_table($emp->as_unit_id);
+
+                    DB::table($att_table)
+                        ->where('in_date', date('Y-m-d'))
+                        ->where('as_id',$emp->as_id)
+                        ->update(['line_id' => $request->as_line_id]);
+                }
+            }
 
             
-            $this->logFileWrite("Employee Data Updated", $request->as_id);
+            $this->logFileWrite("Employee Data Updated", $emp->as_id);
             Cache::forget('employee_count');
             DB::commit();
-            return back()->with('success', 'Update Successful.');
+
+            return response(['msg' => 'success']);
             
         } catch (\Exception $e) {
             DB::rollback();
             $bug = $e->getMessage();
-            return back()->with('error', $bug);
+            return $bug;
         }
     }
 

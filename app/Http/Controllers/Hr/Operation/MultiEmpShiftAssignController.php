@@ -134,6 +134,11 @@ class MultiEmpShiftAssignController extends Controller
         ->whereIn('as_location', auth()->user()->location_permissions())
         ->get();
 
+        $ids = collect($employees)->pluck('as_id');
+        $roaster = DB::table('hr_roaster_holiday')
+                    ->whereIn('as_id',$ids)
+                    ->pluck('day','as_id');
+
         // show user id
         $data['filter'] = "<input type=\"text\" id=\"AssociateSearch\" placeholder=\"Search an Associate\" autocomplete=\"off\" class=\"form-control\"/>";
         $data['result'] = "";

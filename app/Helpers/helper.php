@@ -1048,6 +1048,27 @@ if(!function_exists('district_by_id')){
     }
 }
 
+if(!function_exists('district_info_by_id')){
+    function district_info_by_id()
+    {
+       
+       return  Cache::rememberForever('district_info_by_id', function () {
+            return District::get()->keyBy('dis_id')->toArray();
+        });      
+
+    }
+}
+
+if(!function_exists('upzila_info_by_id')){
+    function upzila_info_by_id()
+    {
+       return  Cache::rememberForever('upzila_info_by_id', function () {
+            return Upazilla::get()->keyBy('upa_id')->toArray();
+        });      
+
+    }
+}
+
 if(!function_exists('upzila_by_id')){
     function upzila_by_id()
     {
@@ -1057,6 +1078,8 @@ if(!function_exists('upzila_by_id')){
 
     }
 }
+
+
 
 
 

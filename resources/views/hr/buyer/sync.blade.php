@@ -75,6 +75,10 @@
             background: #eff7f8;
             display: inline-block;
         }
+        .round-btn{
+            border-radius: 25px;
+            padding: 3px 20px;
+        }
     </style>
         
 @endpush
@@ -166,9 +170,11 @@
                                 </div>
                             </div>
                             @if($temp_info == null)
-                                <button type="submit" id="start-sync" class="btn btn-danger mt-3">Getting Started &nbsp;&nbsp;&nbsp;&nbsp; &#8594;</button>
+                                <button type="button" id="start-sync" class="btn btn-danger mt-3">Getting Started &nbsp;&nbsp;&nbsp;&nbsp; &#8594;</button>
                             @else
-                                <button type="submit" id="start-sync" class="btn btn-danger mt-3 round-btn">Update Holiday &nbsp;&nbsp;&nbsp;&nbsp; &#8594;</button>
+                                <button type="button" id="start-sync" class="btn btn-danger mt-3 round-btn">Update &nbsp;</button>
+
+                                <button type="button" id="start-sync-update" class="btn btn-danger mt-3 round-btn">Update & Sync &nbsp;</button>
                             @endif
                             
                         </form>
@@ -186,6 +192,11 @@
                             @foreach($date_array as $key => $dates)
                                 <div class="col-sm-6">
                                     <table style="width: 100%" border="0">
+                                        <tr>
+                                            <td>Date</td>
+                                            <td>Synced</td>
+                                            <td></td>
+                                        </tr>
                                         @foreach($dates as $k => $d)
                                             <tr @if($d > date('Y-m-d')) disabled class="text-muted" @endif style="border-bottom: 1px solid #d1d1d1;">
                                                 <td>
@@ -297,8 +308,7 @@
         $(this).parent().parent().remove();
     });
 
-    $('#holiday-buyer').on('submit', function(e){
-        e.preventDefault();
+    function syncHoliday(){
         $.ajax({
             url: '{{ url('hr/buyer/holidays/'.$buyer->id) }}',
             type: "POST",
@@ -314,6 +324,15 @@
             error: function (reject) {
             }
         });
+    }
+
+    $('#start-sync').on('click', function(e){
+        syncHoliday();
+    });
+
+    $('#start-sync-update').on('click', function(e){
+        syncHoliday();
+        syncAll();
     });
 
         
@@ -339,7 +358,7 @@
                 $('.count-'+date).text(res.count);
                 $('#date-'+date).removeClass("bg-danger").attr('disabled',false);
                 $('#date-'+date+' i').removeClass('fa-spin');
-                $.notify('Date: '+date+' Data sync successfully!','success');
+                $.notify(date+'  synced successfully!','success');
             },
             error: function (reject) {
             }

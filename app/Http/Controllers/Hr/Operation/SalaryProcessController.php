@@ -67,6 +67,17 @@ class SalaryProcessController extends Controller
             }else if($input['unit'] == 15){
                 $getUnit = 'MBM + SRT';
             }
+            
+            // ignore line
+            $ignore = 1;
+
+            if($input['unit'] != null && $input['department'] == ''  && $input['section'] == ''){
+                $ignore = 0;
+            }
+
+            if(isset($input['line'])){
+                if($input['line'] == 324) $ignore = 0;
+            }
 
             $info = [];
             if(isset($input['area'])){
@@ -133,6 +144,7 @@ class SalaryProcessController extends Controller
             ->when(!empty($input['area']), function ($query) use($input){
                return $query->where('subsec.hr_subsec_area_id',$input['area']);
             })
+            
             ->when(!empty($input['department']), function ($query) use($input){
                return $query->where('subsec.hr_subsec_department_id',$input['department']);
             })
@@ -148,6 +160,13 @@ class SalaryProcessController extends Controller
             ->when(!empty($input['subSection']), function ($query) use($input){
                return $query->where('s.sub_section_id', $input['subSection']);
             });
+            if($ignore == 1){
+                $queryData->where( function ($q) use ($ignore){
+                    return  $q->where('emp.as_line_id','!=', 324)
+                        ->orWhereNull('emp.as_line_id');
+                });
+            }
+            
             if(isset($input['otnonot']) && $input['otnonot'] != null){
                 $queryData->where('s.ot_status',$input['otnonot']);
             }
@@ -183,6 +202,9 @@ class SalaryProcessController extends Controller
             $queryData->leftjoin(DB::raw('(' . $employeeBanDataSql. ') AS bemp'), function($join) use ($employeeBanData) {
                 $join->on('bemp.hr_bn_associate_id','emp.associate_id')->addBinding($employeeBanData->getBindings());
             });
+            /*if($ignore == 1){
+                $queryData->whereNotIn('emp.as_line_id',[324])->orWhereNull('emp.as_line_id');
+            }*/
 
                 
             $queryData->select('s.*', 'emp.as_doj','s.as_id AS associate_id', 's.unit_id AS as_unit_id','s.location_id AS as_location', 's.designation_id AS as_designation_id', 's.ot_status AS as_ot', 'emp.as_section_id', 's.location_id', 'bemp.hr_bn_associate_name', 'emp.as_oracle_code', 'emp.temp_id',DB::raw('s.ot_hour * s.ot_rate as ot_amount'), 'subsec.hr_subsec_area_id AS as_area_id', 'subsec.hr_subsec_department_id AS as_department_id', 'subsec.hr_subsec_section_id AS as_section_id');

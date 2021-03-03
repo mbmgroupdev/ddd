@@ -52,17 +52,17 @@ class ProcessBuyerSalary implements ShouldQueue
 
 
         $yearMonth = $this->year.'-'.$this->month;
-        $start_date = date($yearMonth.'-01');
-        $monthDayCount = cal_days_in_month(CAL_GREGORIAN, $this->month, $this->year);
-        $partial = 0;
         
 
         foreach ($this->employees as $key => $as_id) {
             try {
 
+                $monthDayCount = cal_days_in_month(CAL_GREGORIAN, $this->month, $this->year);
+                $partial = 0;
+                $start_date = date($yearMonth.'-01');
                 $getEmployee = Employee::where('as_id', $as_id)->first();
 
-                if($getEmployee != null && date('Y-m', strtotime($getEmployee->as_doj)) <= $yearMonth){
+                if($getEmployee){
 
                     $empdoj = $getEmployee->as_doj;
                     $empdojMonth = date('Y-m', strtotime($getEmployee->as_doj));
@@ -107,8 +107,8 @@ class ProcessBuyerSalary implements ShouldQueue
                                     $maxDay = date('d', strtotime($salary_date));
                                     $end_date = $salary_date;
                                     $partial = 1;
-                                }else if($getEmployee->as_status == 1 && $getEmployee->as_status_date != null){
-                                    $maxDay = $maxDay - ((date('d', strtotime($getEmployee->as_status_date))) + 1);
+                                }else if($getEmployee->as_status == 1){
+                                    $maxDay = $maxDay - (date('d', strtotime($getEmployee->as_status_date))) + 1;
 
                                     $start_date = $getEmployee->as_status_date;
                                     $partial = 1;
@@ -119,6 +119,10 @@ class ProcessBuyerSalary implements ShouldQueue
                         if($empdojMonth == $yearMonth){
                             $salary_date = $getEmployee->as_doj;
                             $maxDay = $maxDay - $empdojDay + 1;
+                        }
+
+                        if($start_date > $end_date){
+                           $end_date = $start_date;
                         }
 
                         $att = DB::table($this->attTable)
@@ -341,6 +345,7 @@ class ProcessBuyerSalary implements ShouldQueue
                             $salary['year']  = $this->year;
                             DB::table($this->salaryTable)->insert($salary);
                         }
+                        
                     }
 
                 }

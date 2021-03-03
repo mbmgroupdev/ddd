@@ -672,7 +672,11 @@ class EmployeeHelper
         $attBonus = 0;
         $totalLate = $late;
         $salary_date = $present + $getHoliday + $leaveCount;
-        
+
+        $stamp = 10;
+        if($status == 2 && in_array($employee->as_unit_id,[1,4,5])){
+        	$stamp = 0;
+        }
         $salary = [
             'as_id' => $employee->associate_id,
             'month' => $month,
@@ -695,7 +699,7 @@ class EmployeeHelper
             'attendance_bonus' => $attBonus,
             'production_bonus' => $productionBonus,
             'emp_status' => $status,
-            'stamp' => 0,
+            'stamp' => $stamp,
             'pay_status' => 1,
             'bank_payable' => 0,
             'tds' => 0,
@@ -705,7 +709,7 @@ class EmployeeHelper
         
         
 
-        $stamp = 0;
+        
 
         $salaryAdjust = SalaryAdjustMaster::getCheckEmployeeIdMonthYearWise($employee->associate_id, $month, $year);
         $leaveAdjust = 0.00;
@@ -720,7 +724,7 @@ class EmployeeHelper
         $leaveAdjust = round($leaveAdjust, 2);
         
         // get salary payable calculation
-        $salaryPayable = round(((($perDayGross*$total_day) - ($getAbsentDeduct + ($deductCost)))), 2);
+        $salaryPayable = round((($perDayGross*$total_day) - ($getAbsentDeduct + $deductCost + $stamp)), 2);
         $ot = ($overtime_rate*$overtimes);
 
         $totalPayable = ceil((float)($salaryPayable + $ot + $deductSalaryAdd  + $productionBonus + $leaveAdjust));

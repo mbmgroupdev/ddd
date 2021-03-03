@@ -18,6 +18,7 @@ use App\Models\Hr\OtherBenefits;
 use App\Models\Hr\OtherBenefitAssign;
 use App\Models\Hr\SalaryAdjustMaster;
 use App\Models\Hr\SalaryAdjustDetails;
+use App\Jobs\ProcessUnitWiseSalary;
 use Carbon\Carbon;
 use Validator,DB, DataTables, ACL,Auth;
 
@@ -26,27 +27,27 @@ class IncrementController extends Controller
     public function index(Request $request)
     {
 
-    	$unitList  = Unit::where('hr_unit_status', '1')
-		    ->whereIn('hr_unit_id', auth()->user()->unit_permissions())
-		    ->pluck('hr_unit_name', 'hr_unit_id');
-	    $floorList= [];
-	    $lineList= [];
+        $unitList  = Unit::where('hr_unit_status', '1')
+            ->whereIn('hr_unit_id', auth()->user()->unit_permissions())
+            ->pluck('hr_unit_name', 'hr_unit_id');
+        $floorList= [];
+        $lineList= [];
  
-	    $areaList  = DB::table('hr_area')->where('hr_area_status', '1')->pluck('hr_area_name', 'hr_area_id');
+        $areaList  = DB::table('hr_area')->where('hr_area_status', '1')->pluck('hr_area_name', 'hr_area_id');
 
-	    $deptList= [];
+        $deptList= [];
 
-	    $sectionList= [];
+        $sectionList= [];
 
-	    $subSectionList= [];
+        $subSectionList= [];
 
         $employeeTypes  = EmpType::where('hr_emp_type_status', '1')->pluck('hr_emp_type_name', 'emp_type_id');
 
-	    $data['salaryMin']      = Benefits::getSalaryRangeMin();
-	    $data['salaryMax']      = Benefits::getSalaryRangeMax();
+        $data['salaryMin']      = Benefits::getSalaryRangeMin();
+        $data['salaryMax']      = Benefits::getSalaryRangeMax();
 
 
-	    return view('hr.payroll.increment.index', compact('unitList','floorList','lineList','areaList','deptList','sectionList','subSectionList', 'data','employeeTypes'));
+        return view('hr.payroll.increment.index', compact('unitList','floorList','lineList','areaList','deptList','sectionList','subSectionList', 'data','employeeTypes'));
 
     }
 
@@ -287,87 +288,49 @@ class IncrementController extends Controller
     }
 
     //Increment corn job
-    public function incrementJobs(){
-
-        $today= date('Y-m-d');
-        $todays_increment= DB::table('hr_increment')
-                ->where('effective_date', '<=', $today)
-                ->where('status', 0)
-                ->limit(10)
+    public function incrementJobs()
+    {
+        $data = DB::table('hr_increment as ic')
+                ->select('ic.*','a.as_id','a.as_unit_id','a.as_status','b.*')
+                ->leftJoin('hr_as_basic_info as a','a.associate_id','ic.associate_id')
+                ->leftJoin('hr_benefits as b','b.ben_as_id','ic.associate_id')
+                ->where('ic.effective_date','<=',date('Y-m-d'))
+                ->where('ic.status', 0)
                 ->get();
-
-        $salary_structure= DB::table('hr_salary_structure AS s')
-                                ->where('status', 1)
-                                ->select('s.*')
-                                ->orderBy('id', 'DESC')
-                                ->first();
-
-        if(!empty($todays_increment) && !empty($salary_structure)){
-
-            foreach ($todays_increment as $key => $increment) {
-
-                if($increment->amount_type ==1)
-                {
-                    $ben_current_salary= $increment->current_salary+ $increment->increment_amount;
-                }
-                else{
-                    $ben_current_salary= $increment->current_salary+ (($increment->current_salary/100)*$increment->increment_amount);
-                }
-
-                $ben_medical= $salary_structure->medical;
-                $ben_transport= $salary_structure->transport;
-                $ben_food= $salary_structure->food;
-
-                $ben_basic= (($ben_current_salary-($salary_structure->medical+$salary_structure->transport+$salary_structure->food))/$salary_structure->basic);
-                //$ben_basic= (($ben_current_salary/100)*$salary_structure->basic);
-                $ben_house_rent= $ben_current_salary - ($ben_basic+$salary_structure->medical+$salary_structure->transport+$salary_structure->food);
                 
+        
 
-                $bank= DB::table('hr_benefits')->where('ben_as_id', $increment->associate_id)
-                            ->where('ben_status', 1)
-                            ->first();
+        foreach ($data as $key => $d) {
+            $gross = $d->current_salary + $d->increment_amount;
+            $up['ben_current_salary'] = $gross;
+            $up['ben_basic'] = ceil(($gross-1850)/1.5);
+            $up['ben_house_rent'] = $gross -1850 - $up['ben_basic'];
 
-                //paid in bank
-                if(!empty($bank)){
-                    if($bank->ben_bank_amount>= $ben_current_salary ){
-                        $bank_paid= $ben_current_salary;
-                        $cash_paid= 0;
-                    }
-                    else{
-                        $bank_paid= $bank->ben_bank_amount;
-                        $cash_paid= $ben_current_salary-$bank->ben_bank_amount;
-                    }
-                }
-                else{
-                    $bank_paid= $ben_current_salary;
-                        $cash_paid= 0;
-                }
-
-
-                Benefits::where('ben_as_id', $increment->associate_id)
-                    ->update([
-                        'ben_cash_amount' => $cash_paid,
-                        'ben_bank_amount' => $bank_paid,
-                        'ben_current_salary' => $ben_current_salary,
-                        'ben_basic' => $ben_basic,
-                        'ben_house_rent' => $ben_house_rent,
-                        'ben_medical' => $ben_medical,
-                        'ben_transport' => $ben_transport,
-                        'ben_food' => $ben_food
-                        ]);
-
-                $id = Benefits::where('ben_as_id', $increment->associate_id)->value('ben_id');
-                log_file_write("Jobs Benefits Updated", $id );
-
-                Increment::where('associate_id', $increment->associate_id)
-                            ->where('status', 0)
-                            ->update([
-                                'status' => 1
-                            ]);
-
-
+            if($d->ben_bank_amount > 0 && $d->ben_cash_amount > 0){
+                $up['ben_cash_amount'] = $gross - $d->ben_bank_amount;
+            }else if ($d->ben_bank_amount > 0 && $d->ben_cash_amount == 0){
+                $up['ben_bank_amount'] = $gross;
+                $up['ben_cash_amount'] = 0;
+            }else{
+                $up['ben_bank_amount'] = 0;
+                $up['ben_cash_amount'] = $gross;
             }
+
+            DB::table('hr_benefits')->where('ben_id', $d->ben_id)->update($up);
+            DB::table('hr_increment')->where('id', $d->id)->where('associate_id', $d->associate_id)->update(['status' => 1]);
+
+            $tableName = get_att_table($d->as_unit_id);
+
+            if($d->as_status == 1){
+
+                $queue = (new ProcessUnitWiseSalary($tableName, date('m'), date('Y'), $d->as_id, date('d')))
+                            ->onQueue('salarygenerate')
+                            ->delay(Carbon::now()->addSeconds(2));
+                            dispatch($queue);
+            }
+
         }
+        
     }
 
 
@@ -468,44 +431,44 @@ class IncrementController extends Controller
             ->where('ben.ben_current_salary','<=' ,$input['max_salary'])
             ->pluck('b.associate_id')->toArray();
 
-    	$inc_month = $request->month;
+        $inc_month = $request->month;
         $date = $request->month.'-01';
         $inc_year = date('Y', strtotime($date));
-    	$effective_date = Carbon::parse($date);
-    	$range_start = $effective_date->copy()->subMonths(11)->toDateString();
-    	$range_end = $effective_date->copy()->endOfMonth()->toDateString();
+        $effective_date = Carbon::parse($date);
+        $range_start = $effective_date->copy()->subMonths(11)->toDateString();
+        $range_end = $effective_date->copy()->endOfMonth()->toDateString();
 
 
-    	$gazette_date = '2018-12-01';
+        $gazette_date = '2018-12-01';
         $gazette_month = date('m', strtotime($gazette_date)) ;
         $isGazette = $gazette_month == date('m', strtotime($inc_month))?1:0;
-    	$eligible_date = Carbon::parse($range_end)->subYear()->endOfMonth()->toDateString();
+        $eligible_date = Carbon::parse($range_end)->subYear()->endOfMonth()->toDateString();
         
-    	$increment = DB::table('hr_increment')
+        $increment = DB::table('hr_increment')
                      ->where('increment_type', 2)
-    				 ->where('applied_date','>=',$range_start)
-    				 ->where('applied_date','<=',$range_end)
-    				 ->pluck('associate_id')->toArray();
+                     ->where('applied_date','>=',$range_start)
+                     ->where('applied_date','<=',$range_end)
+                     ->pluck('associate_id')->toArray();
 
-    	// if gazette month gazzette employee will be added
-    	$gazette = DB::table('hr_as_basic_info')
-    				->where('as_doj', '<=', $gazette_date)
-    				->where('as_emp_type_id', 3)
+        // if gazette month gazzette employee will be added
+        $gazette = DB::table('hr_as_basic_info')
+                    ->where('as_doj', '<=', $gazette_date)
+                    ->where('as_emp_type_id', 3)
                     ->whereIn('associate_id', $request_associates)
-    				->whereNotIn('associate_id', $increment)
-    				->pluck('associate_id')->toArray();
+                    ->whereNotIn('associate_id', $increment)
+                    ->pluck('associate_id')->toArray();
 
         $no_associate = $increment;
 
         if($isGazette == 0){
-    	   $no_associate = array_merge($increment,$gazette);
+           $no_associate = array_merge($increment,$gazette);
         }
 
-    	$eligible = DB::table('hr_as_basic_info')
-    				->where('as_doj','<=',$eligible_date)
+        $eligible = DB::table('hr_as_basic_info')
+                    ->where('as_doj','<=',$eligible_date)
                     ->whereIn('associate_id', $request_associates)
-    				->whereNotIn('associate_id',$no_associate)
-    				->pluck('associate_id')->toArray();
+                    ->whereNotIn('associate_id',$no_associate)
+                    ->pluck('associate_id')->toArray();
 
         if($isGazette == 1){
             $eligible = array_merge($eligible,$gazette);
@@ -586,6 +549,12 @@ class IncrementController extends Controller
         
         $increment = $request->increment;
         $count = 0;
+        $benefits = DB::table('hr_benefits as b')
+                    ->select('a.as_id','a.as_unit_id','a.as_status','b.*')
+                    ->leftJoin('hr_as_basic_info as a','a.associate_id','b.ben_as_id')
+                    ->get()
+                    ->keyBy('ben_as_id');
+
         foreach ($increment as $key => $v) {
 
             if(isset($v['status'])){
@@ -604,6 +573,12 @@ class IncrementController extends Controller
                 $inc->save();
 
             }
+            $amount = $v['salary'] + $v['amount'];
+            if($inc->effective_date <= date('Y-m-d')){
+                $this->reflectBenefit($benefits[$key], $amount, $key, $request->effective_date);
+                $inc->status = 1 ;
+                $inc->save();
+            }
         }
 
         return response([
@@ -612,5 +587,62 @@ class IncrementController extends Controller
         ]);
 
 
+    }
+
+    public function reflectBenefit($b, $amount, $associate, $date)
+    {
+        $ss =  \Cache::remember('salary_structure', 10000000, function () {
+            return DB::table('hr_salary_structure AS s')
+                    ->where('status', 1)
+                    ->select('s.*')
+                    ->orderBy('id', 'DESC')
+                    ->first();
+        }); 
+        
+
+       
+        $allowance = $ss->medical + $ss->transport+$ss->food;
+        $ben_basic= (($amount - $allowance / $ss->basic));
+        //$ben_basic= (($amount/100)*$ss->basic);
+        $ben_house_rent = $amount - $allowance;
+
+        if($b->ben_bank_amount > 0 && $b->ben_cash_amount > 0){
+            $ben_bank_amount = $b->ben_bank_amount;
+            $ben_cash_amount = $amount - $ben_bank_amount;
+        }else if($b->ben_bank_amount > 0 && $b->ben_cash_amount == 0){
+            $ben_bank_amount = $amount;
+            $ben_cash_amount = 0;
+        }else{
+            $ben_bank_amount = 0;
+            $ben_cash_amount = $amount;
+        }
+
+        DB::table('hr_benefits')
+            ->where('ben_as_id', $associate)
+            ->update([
+                'ben_current_salary' => $amount,
+                'ben_basic' => $ben_basic,
+                'ben_house_rent' => $ben_house_rent,
+                'ben_cash_amount' => $ben_cash_amount,
+                'ben_bank_amount' => $ben_bank_amount
+            ]);
+
+        $tableName = get_att_table($b->as_unit_id);
+
+        if($b->as_status == 1){
+            
+            
+                // check monthly salary lock
+              $month = date('m', strtotime($date));
+              $year = date('Y', strtotime($date));
+              $t = date('t', strtotime($date));
+              
+              $queue = (new ProcessUnitWiseSalary($tableName, $month, $year, $b->as_id, $t))
+                            ->onQueue('salarygenerate')
+                            ->delay(Carbon::now()->addSeconds(2));
+                            dispatch($queue);
+              
+            
+        }
     }
 }

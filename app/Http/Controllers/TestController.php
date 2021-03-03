@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Hr\IDGenerator as IDGenerator;
+use App\Http\Controllers\Hr\Recruitment\RecruitController as Recruit;
 use App\Jobs\ProcessUnitWiseSalary;
 use App\Jobs\ProcessAttendanceOuttime;
 use App\Helpers\EmployeeHelper;
 use App\Models\Employee;
+use App\Models\Hr\Benefits;
 use App\Models\Hr\AdvanceInfo;
 use App\Models\Hr\MedicalInfo;
 use App\Models\Hr\Absent;
@@ -45,7 +47,7 @@ class TestController extends Controller
      *
      * @return void
      */
-    public function __construct()
+    /*public function __construct()
     {
         $this->buyer = DB::table('hr_buyer_template')->where('id',7)->first();
         $this->month = '01';
@@ -53,7 +55,7 @@ class TestController extends Controller
         $this->asId  = 4601;
         $this->attTable  = 'hr_buyer_att_'.$this->buyer->table_alias;
         $this->salaryTable  = 'hr_buyer_salary_'.$this->buyer->table_alias;
-    }
+    }*/
 
     public function jobcardupdate()
     {
@@ -104,7 +106,7 @@ class TestController extends Controller
     {
 
         
-        return $this->testBuyer();
+        return $this->salarygenerate();
         return $this->testMail();
         
         return '';
@@ -414,7 +416,7 @@ class TestController extends Controller
         $totalOt = count($rosterOTCount);
         // return $rosterOTCount;
         foreach ($rosterOTCount as $ot) {
-            $checkAtt = DB::table($this->tableName)
+            $checkAtt = DB::table($table)
             ->where('as_id', $employee->as_id)
             ->where('in_date', $ot->date)
             ->first();
@@ -1571,7 +1573,7 @@ class TestController extends Controller
 
     }
 
-    public function increment()
+    public function incrementexcel()
     {
         $data = [];
         
@@ -1610,6 +1612,51 @@ class TestController extends Controller
 
         }
         return $not;
+    }
+    
+    public function increment()
+    {
+        $data = DB::table('hr_increment as ic')
+                ->select('ic.*','a.as_id','a.as_unit_id','a.as_status','b.*')
+                ->leftJoin('hr_as_basic_info as a','a.associate_id','ic.associate_id')
+                ->leftJoin('hr_benefits as b','b.ben_as_id','ic.associate_id')
+                ->where('ic.effective_date','<=',date('Y-m-d'))
+                ->where('ic.status', 0)
+                ->get();
+                
+        
+
+        foreach ($data as $key => $d) {
+            $gross = $d->current_salary + $d->increment_amount;
+            $up['ben_current_salary'] = $gross;
+            $up['ben_basic'] = ceil(($gross-1850)/1.5);
+            $up['ben_house_rent'] = $gross -1850 - $up['ben_basic'];
+
+            if($d->ben_bank_amount > 0 && $d->ben_cash_amount > 0){
+                $up['ben_cash_amount'] = $gross - $d->ben_bank_amount;
+            }else if ($d->ben_bank_amount > 0 && $d->ben_cash_amount == 0){
+                $up['ben_bank_amount'] = $gross;
+                $up['ben_cash_amount'] = 0;
+            }else{
+                $up['ben_bank_amount'] = 0;
+                $up['ben_cash_amount'] = $gross;
+            }
+
+            DB::table('hr_benefits')->where('ben_id', $d->ben_id)->update($up);
+            DB::table('hr_increment')->where('id', $d->id)->where('associate_id', $d->associate_id)->update(['status' => 1]);
+
+            $tableName = get_att_table($d->as_unit_id);
+
+            if($d->as_status == 1){
+
+                $queue = (new ProcessUnitWiseSalary($tableName, date('m'), date('Y'), $d->as_id, date('d')))
+                            ->onQueue('salarygenerate')
+                            ->delay(Carbon::now()->addSeconds(2));
+                            dispatch($queue);
+            }
+
+        }
+        return count($data);
     }
     
     public function testMail()
@@ -2006,4 +2053,1096 @@ class TestController extends Controller
 
         return 'success';
     }
+
+    public function substitute()
+    {
+        $designation = designation_by_id();
+        $department = department_by_id();
+        $section = section_by_id();
+        $subsection = subSection_by_id();
+        $unit = unit_by_id();
+        $disctrict = district_by_id();
+        $upzilla = upzila_by_id();
+        
+        $data = DB::table('hr_as_basic_info AS b')
+                ->select('r.as_id','r.in_date','b.associate_id','b.as_oracle_code','b.as_name','b.as_section_id','b.as_designation_id','b.as_department_id','b.as_unit_id','bn.ben_current_salary','b.as_doj')
+                ->leftJoin('hr_attendance_mbm AS r','b.as_id','r.as_id')
+                ->leftJoin('hr_benefits as bn','bn.ben_as_id','b.associate_id')
+                ->whereIn('r.in_date',['2020-10-30','2020-10-02'])
+                ->where('b.as_emp_type_id', 3)
+                ->where('b.as_doj','>=','2020-08-09')
+                ->get();
+           
+        $employees = collect($data)->groupBy('as_id');
+        $sal=[];
+        foreach ($employees as $key => $e) {
+            $sal[] = array(
+                'Associate ID' =>  $e[0]->associate_id,
+                'Oracle ID' =>  $e[0]->as_oracle_code,
+                'Name' =>  $e[0]->as_name,
+                'DOJ' =>  $e[0]->as_doj,
+                'Designation' =>  $designation[$e[0]->as_designation_id]['hr_designation_name'],
+                'Section' =>  $section[$e[0]->as_section_id]['hr_section_name'],
+                'Department' =>  $department[$e[0]->as_department_id]['hr_department_name'],
+                'Unit' =>  $unit[$e[0]->as_unit_id]['hr_unit_short_name'],
+                'Gross' =>  $e[0]->ben_current_salary,
+                'Day' => count($e),
+                'Per Day' =>  round($e[0]->ben_current_salary/31,2),
+                'Total' => ceil(count($e)*round($e[0]->ben_current_salary/31,2))
+            );
+        }
+        return (new FastExcel(collect($sal)))->download('Substitute Holiday Payment.xlsx');
+    }
+
+    public function newMigrate()
+    {
+        $section = section_by_id();
+        $designation = designation_by_id();
+
+        $emps =  [];
+
+        $insert = [];
+        foreach ($emps as $key => $v) {
+            $insert[$key] = $v;
+            $insert[$key]['worker_area_id'] = null;
+            $insert[$key]['as_oracle_code'] = $key;
+            $insert[$key]['worker_department_id'] = null;
+            $insert[$key]['worker_emp_type_id'] = null;
+            if($v['worker_section_id'] != null){
+                $k = $v['worker_section_id'];
+                if(isset($section[$k])){
+
+                    $insert[$key]['worker_area_id'] = $section[$k]['hr_section_area_id'];
+                    $insert[$key]['worker_department_id'] = $section[$k]['hr_section_department_id'];
+                }
+
+            }
+            if($v['worker_designation_id'] != null){
+                $kd = $v['worker_designation_id'];
+                if(isset($designation[$k])){
+                    $insert[$key]['worker_emp_type_id'] = $designation[$kd]['hr_designation_emp_type'];
+                }
+            }
+
+            $insert[$key]['worker_color_band_join'] = 1;
+            $insert[$key]['worker_doctor_acceptance'] = 1;
+
+        }
+
+        DB::table('hr_worker_recruitment')->insert($insert);
+
+        dd($insert);
+    }
+
+    public function migrateAll(){
+        $data = DB::table('hr_worker_recruitment')
+            ->where('worker_unit_id', 8)
+            ->whereNotNull('worker_department_id')
+            ->take(10)
+            ->get();
+            $d = [];
+        foreach ($data as $key => $worker) {
+            DB::beginTransaction();
+            try {
+                if ( ($worker->worker_unit_id != null || $worker->worker_unit_id != ''))
+                {
+                    $location= DB::table('hr_location')->where('hr_location_unit_id', $worker->worker_unit_id)->orderBy('hr_location_id', 'asc')->first(['hr_location_id']); 
+                    $shift_exist= DB::table('hr_shift')
+                            ->where('hr_shift_unit_id', $worker->worker_unit_id)
+                            ->where('hr_shift_default', 1)
+                            ->pluck('hr_shift_name')
+                            ->first();
+                    
+                    $IDGenerator = (new  \App\Http\Controllers\Hr\IDGenerator)->generator2(array(
+                        'department' => $worker->worker_department_id,
+                        'date' => $worker->worker_doj
+                    ));
+
+                    
+
+                    if (!empty($IDGenerator['error']))
+                    {
+                        /*toastr()->error($IDGenerator['error']);
+                        return back()->with("error", $IDGenerator['error']);*/
+                    }
+                    else if(strlen($IDGenerator['id']) != 10)
+                    {
+                        /*toastr()->error("Unable to start the migration: Alphanumeric Associate's ID required with exactly 10 characters ");
+                        return back()->with("error", "Unable to start the migration: Alphanumeric Associate's ID required with exactly 10 characters ");*/
+                    }
+                    else if($shift_exist == null)
+                    {
+                        /*toastr()->error("Unable to start the migration: Default Shift Doesn't Exist ");
+                        return back()->with("error", "Unable to start the migration: Default Shift Doesn't Exist ");*/
+                    }
+                    else
+                    {
+                        //Default Shift Code
+                        $default_shift= DB::table('hr_shift')
+                        ->where('hr_shift_unit_id', $worker->worker_unit_id)
+                        ->where('hr_shift_default', 1)
+                        ->pluck('hr_shift_name')
+                        ->first();
+                        /*---INSERT INTO BASIC INFO TABLE---*/
+                        $check = Employee::insert(array(
+                            'as_emp_type_id'  => $worker->worker_emp_type_id,
+                            'as_unit_id'      => $worker->worker_unit_id,
+                            'as_shift_id'     => $default_shift,
+                            'as_area_id'      => $worker->worker_area_id,
+                            'as_department_id' => $worker->worker_department_id,
+                            'as_section_id'  => $worker->worker_section_id,
+                            'as_subsection_id'  => $worker->worker_subsection_id,
+                            'as_designation_id' => $worker->worker_designation_id,
+                            'as_doj'         => (!empty($worker->worker_doj)?date('Y-m-d',strtotime($worker->worker_doj)):null),
+                            'temp_id'        => $IDGenerator['temp'],
+                            'associate_id'   => $IDGenerator['id'],
+                            'as_name'        => $worker->worker_name,
+                            'as_gender'      => $worker->worker_gender,
+                            'as_dob'         => (!empty($worker->worker_dob)?date('Y-m-d',strtotime($worker->worker_dob)):null),
+                            'as_contact'     => $worker->worker_contact,
+                            'as_ot'          => $worker->worker_ot,
+                            'as_oracle_code' => $worker->as_oracle_code,
+                            'as_oracle_sl'   => ($worker->as_oracle_code != ''?substr($worker->as_oracle_code,3, -1):''),
+                            'as_rfid_code'   => $worker->as_rfid,
+                            'as_pic'         => null,
+                            'created_at'     => date("Y-m-d H:i:s"),
+                            'created_by'     => Auth::user()->id,
+                            'as_status'      => 1 ,
+                            'as_location'    => $location->hr_location_id??''
+                        ));
+
+                        DB::table('hr_med_info')->insert(array(
+                            'med_as_id'       => $IDGenerator['id'],
+                            'med_height'      => $worker->worker_height,
+                            'med_weight'      => $worker->worker_weight,
+                            'med_tooth_str'   => $worker->worker_tooth_structure,
+                            'med_blood_group' => $worker->worker_blood_group,
+                            'med_ident_mark'  => (!empty($worker->worker_identification_mark)?$worker->worker_identification_mark:"N/A"),
+                            'med_doct_comment'   => $worker->worker_doctor_comments,
+                            'med_doct_conf_age'  => $worker->worker_doctor_age_confirm,
+                            'med_doct_signature' => $worker->worker_doctor_signature
+                        ));
+
+                        DB::table('hr_as_adv_info')->insert(array(
+                            'emp_adv_info_as_id' => $IDGenerator['id'],
+                            'emp_adv_info_nid'   => $worker->worker_nid
+                        ));
+
+
+                        $t = DB::table('hr_worker_recruitment')->where('worker_id', $worker->worker_id)
+                            ->delete();
+
+                        // make default absent
+                        DB::table('hr_absent')->insert([
+                            'associate_id' => $IDGenerator['id'],
+                            'date' => date('Y-m-d'),
+                            'hr_unit' => $worker->worker_unit_id
+                        ]);
+                        $d[] = $IDGenerator['id'];
+                        
+
+                        //Cache::forget('employee_count');
+                        DB::commit();
+                        /*toastr()->success('Migration successful!');
+                        $this->logFileWrite("Employee migration updated", $request->worker_id);
+                        return back()->with("success", "Migration successful!");*/
+                    }
+                }
+                else
+                {
+                    /*toastr()->error("Unable to start the migration: Please check the user's medical status or user already migrated!");
+                    return back()->with("error", "Unable to start the migration: Please check the user's medical status or user already migrated!");*/
+                }
+                
+            } catch (\Exception $e) {
+                $d[] = $e->getMessage();
+                DB::rollback();
+            }
+        }
+
+        return $d;
+    }
+
+    public function set_emp_type_id()
+    {
+        $designation = designation_by_id();
+        $data = DB::table('hr_worker_recruitment')
+                    ->whereIn('worker_unit_id',[3,8])
+                    ->whereIn('location_id',[9,11])
+                    ->get();
+
+        foreach ($data  as $key => $v) {
+            if($v->worker_designation_id != null){
+                $kd = $v->worker_designation_id;
+                if(isset($designation[$kd])){
+                    DB::table('hr_worker_recruitment')
+                        ->where('worker_id', $v->worker_id)
+                        ->update([
+                            'worker_emp_type_id' => $designation[$kd]['hr_designation_emp_type']
+                        ]);
+                }
+            }
+            # code...
+        }
+        
+        return 'done';
+    }
+
+    public function updateRFID()
+    {
+        $data = [];
+
+        foreach ($data as $key => $v) {
+            DB::table('hr_as_basic_info')
+                ->where('as_unit_id', 3)
+                ->where('as_location', 9)
+                ->where('as_oracle_code', $key)
+                ->update([
+                    'as_rfid_code' => $v['as_rfid']
+                ]);
+        }
+
+        return 'done';
+    }
+
+    public function advBn()
+    {
+        $data = array(
+                 '20K1469E' => array('SALARY' => '9500', 'J_SAL' => '9500', 'MARRIED' => 'M', 'FNAME' => 'MD.Demo', 'HNAME' => '', 'PAD1' => 'Demo', 'PAD2' => '', 'PPOST' => 'HOLDIBARI-5470', 'PTHANA' => 'PIRGANJ', 'PDIST' => '32', 'CAD1' => 'SALNA', 'CAD2' => '', 'CPOST' => 'SALNA BAZAR', 'CTHANA' => '154', 'CDIST' => '3', 'B_NAME' => 'মোঃ লেবু মন্ডল', 'MOTHER' => 'মোছাঃ রোকেয়া বেগম', 'BFATHER' => 'মোঃ আব্দুল মান্নান মন্ডল', 'BGRAM' => 'বড় বদনাপাড়া', 'BPOST' => 'হলদীবাড়ী', 'MNAME' => 'MST.ROKEYA BEGUM', 'HOUSE_NO' => 'সালনা', 'ROAD_NO' => '', 'PO' => 'সালনা বাজার', 'CHILDREN' => '', 'CLASS' => 'EIGHT', 'RELEG' => 'I')
+            );
+
+
+        $as = DB::table('hr_as_basic_info')
+            ->where('as_unit_id', 3)
+            ->pluck('associate_id','as_oracle_code');
+
+        $bn = DB::table('hr_employee_bengali')
+                ->whereIn('hr_bn_associate_id', $as)
+                ->pluck('hr_bn_associate_id')->toArray();
+        $insert = [];
+        foreach ($data as $key => $v) {
+            if(isset($as[$key])){
+                DB::table('hr_as_adv_info')
+                    ->where('emp_adv_info_as_id', $as[$key])
+                    ->update([
+                        'emp_adv_info_nationality' => 'BANGLADESHI', 
+                        'emp_adv_info_fathers_name' => $v['FNAME'], 
+                        'emp_adv_info_mothers_name' => $v['MNAME'], 
+                        'emp_adv_info_spouse' => $v['HNAME'], 
+                        'emp_adv_info_children' => $v['CHILDREN'], 
+                        //'emp_adv_info_religion' => $v['FNAME'], 
+                        'emp_adv_info_per_vill' => $v['PAD1'],
+                        'emp_adv_info_per_po' => $v['PPOST'],
+                        'emp_adv_info_per_dist' => $v['PDIST'],
+                        'emp_adv_info_pres_house_no' => $v['CAD1'],
+                        'emp_adv_info_pres_road' => $v['CAD2'],
+                        'emp_adv_info_pres_po' => $v['CPOST'],
+                        'emp_adv_info_pres_dist' => $v['CDIST'],
+                        'emp_adv_info_pres_upz' => $v['CTHANA'],
+                    ]);
+
+                if(in_array($as[$key], $bn)){
+                    DB::table('hr_employee_bengali')
+                        ->where('hr_bn_associate_id', $as[$key])
+                        ->update([
+                        'hr_bn_associate_name' => $v['B_NAME'], 
+                        'hr_bn_father_name' => $v['BFATHER'], 
+                        'hr_bn_mother_name' => $v['MOTHER'], 
+                        'hr_bn_permanent_village' => $v['BGRAM'],
+                        'hr_bn_permanent_po' => $v['BPOST'],
+                        'hr_bn_present_road' => $v['ROAD_NO'],
+                        'hr_bn_present_house' => $v['HOUSE_NO'],
+                        'hr_bn_present_po' => $v['PO']
+                    ]);
+
+                }else{
+                    $insert[$key] = [
+                        'hr_bn_associate_id' => $as[$key],
+                        'hr_bn_associate_name' => $v['B_NAME'], 
+                        'hr_bn_father_name' => $v['BFATHER'], 
+                        'hr_bn_mother_name' => $v['MOTHER'], 
+                        'hr_bn_permanent_village' => $v['BGRAM'],
+                        'hr_bn_permanent_po' => $v['BPOST'],
+                        'hr_bn_present_road' => $v['ROAD_NO'],
+                        'hr_bn_present_house' => $v['HOUSE_NO'],
+                        'hr_bn_present_po' => $v['PO']
+                    ];
+                }
+            }
+        }
+        DB::table('hr_employee_bengali')->insert($insert);
+
+        return 'success';
+    }
+
+    public function processLeftSalary()
+    {
+        $data = [];
+        $datas = DB::table('hr_as_basic_info as b')
+            ->whereIn('b.associate_id', array_keys($data))
+            ->leftJoin('hr_benefits as ben', 'b.associate_id','ben.ben_as_id')
+            ->where('b.as_unit_id', 2)
+            ->where('b.as_status', '!=', 1)
+            ->get();
+        foreach ($datas as $key => $v) {
+            \App\Helpers\EmployeeHelper::processPartialSalary($v, $data[$v->associate_id]['Date'],2);
+        }
+        return 'done';
+    }
+
+    public function processBuyerLeftSalary()
+    {
+        
+        $datas = DB::table('hr_monthly_salary as s')
+            ->select('s.*','b.as_id as ass')
+            ->leftJoin('hr_as_basic_info as b', 'b.associate_id','s.as_id')
+            ->where('b.as_unit_id', 2)
+            ->where('s.month','01')
+            ->where('s.emp_status',5)
+            ->whereNull('s.disburse_date')
+            ->where('s.location_id',7)
+            ->get();
+
+        $as_id = collect($datas)->pluck('ass');
+
+
+        $buyer_sal = DB::table('hr_buyer_salary_ceil4 as s')
+                    ->select('s.*')
+                    ->leftJoin('hr_as_basic_info as b','b.as_id','s.as_id')
+                    ->whereIn('s.as_id', $as_id)
+                    ->where('b.as_unit_id', 2)
+                    ->where('s.month', '01')
+                    ->get()
+                    ->keyBy('as_id');
+
+        foreach ($datas as $key => $v) {
+            if(isset($buyer_sal[$v->ass])){
+                    $sl = $buyer_sal[$v->ass];
+                    $deductCost = ($sl->adv_deduct + $sl->cg_deduct + $sl->food_deduct + $sl->others_deduct);
+                    $ot = ($v->ot_rate*$sl->ot_hour);
+                    $lvadjust = $sl->leave_adjust;
+                    $deductSalaryAdd = $sl->salary_add;
+            }else{
+                    $adv_deduct = 0;
+                        $cg_deduct = 0;
+                        $food_deduct = 0;
+                        $others_deduct = 0;
+                        $salary_add = 0;
+                        $bonus_add = 0;
+                        $deductCost = 0;
+                        $productionBonus = 0;
+
+                        $getAddDeduct = DB::table('hr_salary_add_deduct')
+                            ->where('associate_id', $v->as_id)
+                            ->where('month', '=', '01')
+                            ->where('year', '=', 2021)
+                            ->first();
+
+                        if($getAddDeduct != null){
+                            $advp_deduct = $getAddDeduct->advp_deduct;
+                            $cg_deduct = $getAddDeduct->cg_deduct;
+                            $food_deduct = $getAddDeduct->food_deduct;
+                            $others_deduct = $getAddDeduct->others_deduct;
+                            $salary_add = $getAddDeduct->salary_add;
+                            $deductSalaryAdd = $salary_add;
+
+                            $deductCost = ($advp_deduct + $cg_deduct + $food_deduct + $others_deduct);
+                            $productionBonus = $getAddDeduct->bonus_add;
+                        }
+
+                    $ot = DB::table('hr_buyer_att_ceil4')
+                            ->where('as_id', $v->ass)
+                            ->where('in_date','<=','2021-01-30')
+                            ->sum('ot_hour');
+
+                    $ot_num_min = min_to_ot();
+
+                        if($ot > 0){
+                            $otfm = explode(".", $ot);
+
+                            if(isset($otfm[1])){
+                                $ot_min = round((('0.'.$otfm[1]) * 60));
+                                $ot_hour = $otfm[0] + ($ot_min == 1? 1:($ot_num_min[$ot_min]));
+                            }else{
+                                $ot_hour = $ot;
+                            }
+                        }
+
+                    $ot = $ot*$v->ot_rate;
+                    $lvadjust = 0;
+
+
+            }
+            $at = [
+                'present' => $v->present,
+                'absent' => $v->absent,
+                'holiday' => $v->holiday,
+                'late_count' => $v->late_count,
+                'leave' => $v->leave,
+                'ot_rate' => $v->ot_rate,
+                'stamp' => 10,
+                'pay_type' => null,
+                'emp_status' => 5,
+                'disburse_date' => null
+            ];
+
+            $attBonus = 0;
+            $salary_date = $v->present + $v->holiday + $v->leave + $v->absent;
+            $stamp = 10;
+            
+
+            $perDayBasic = round(($v->basic / 30),2);
+            $perDayGross = round(($v->gross /  31),2);
+            $getAbsentDeduct = $v->absent * $perDayBasic;
+
+            
+            
+            // get salary payable calculation
+            $salaryPayable = round((($perDayGross*$salary_date) - ($getAbsentDeduct + $deductCost + $stamp)), 2);
+            
+
+            $totalPayable = ceil((float)($salaryPayable + $ot   + $v->production_bonus + $lvadjust));
+            
+            $at['total_payable'] = $totalPayable;
+            $at['cash_payable'] = $totalPayable;
+            $at['bank_payable'] = 0;
+            $at['salary_payable'] = $salaryPayable;
+            $at['leave_adjust'] = $lvadjust;
+            $at['absent_deduct'] = $getAbsentDeduct;
+
+            if(isset($buyer_sal[$v->ass])){
+
+                DB::table('hr_buyer_salary_ceil4')
+                    ->where('as_id', $v->ass)
+                    ->where('id', $sl->id)
+                    ->update($at);
+            }else{
+                $at['month'] = '01';
+                $at['as_id'] = $v->ass;
+                $at['year'] = 2021;
+
+                $at['gross'] = $v->gross;
+                $at['basic'] = $v->basic;
+                $at['house'] = $v->house;
+                $at['medical'] = $v->medical;
+                $at['transport'] = $v->transport;
+                $at['food'] = $v->food;
+                $at['late_count'] = $v->late_count;
+                $at['absent_deduct'] = $getAbsentDeduct;
+                $at['adv_deduct'] = $adv_deduct;
+                $at['cg_deduct'] = $cg_deduct;
+                $at['food_deduct'] = $food_deduct;
+                $at['others_deduct'] = $others_deduct;
+                $at['salary_add'] = $salary_add;
+                $at['bonus_add'] = $bonus_add;
+                $at['leave_adjust'] = $v->leave_adjust;
+                $at['ot_hour'] = $ot_hour;
+                $at['attendance_bonus'] = 0;
+                $at['production_bonus'] = $productionBonus;
+                $at['stamp'] = 10;
+                $at['salary_payable'] = $salaryPayable;
+                $at['total_payable'] = $totalPayable;
+                $at['cash_payable'] = $totalPayable;
+                $at['bank_payable'] = 0;
+                $at['tds'] = 0;
+                $at['pay_status'] = $v->pay_status;
+                $at['pay_type'] = $v->pay_type;
+                $at['emp_status'] = $v->emp_status;
+                $at['ot_status'] = $v->ot_status;
+                $at['designation_id'] = $v->designation_id;
+                $at['subsection_id'] = $v->sub_section_id;
+                $at['location_id'] = $v->location_id;
+                $at['unit_id'] = $v->unit_id;
+                DB::table('hr_buyer_salary_ceil4')->insert($at);
+            }
+
+
+            
+            
+        }
+
+
+        DB::table('hr_buyer_salary_ceil4')
+            ->whereNotIn('as_id', $as_id)
+            ->where('emp_status', 5)
+            ->where('month', '01')
+            ->update([
+                'disburse_date'=> '2021-01-30'
+            ]);
+
+
+        return 'hi';
+    }
+
+
+    public function addSalary()
+    {
+        $emp = DB::table('hr_as_basic_info')
+                ->where('as_unit_id', 8)
+                ->pluck('associate_id', 'as_oracle_code');
+
+        $ben = DB::table('hr_benefits')
+                ->whereIn('ben_as_id', $emp)
+                ->get()
+                ->keyBy('ben_as_id');
+        $data = [];
+
+        $up = []; $ins = [];
+
+        foreach ($data as $key => $val) {
+
+            if(isset($emp[$key])){
+                $ass = $emp[$key];
+                // check salary
+                $up['ben_joining_salary'] = $val['J_SAL'];
+                $up['ben_current_salary'] = $val['SALARY'];
+                $up['ben_basic'] = ceil(($val['SALARY']-1850)/1.5);
+                $up['ben_house_rent'] = $val['SALARY'] -1850 - $up['ben_basic'];
+
+                // bank 
+                if($val['dbbl'] != '#N/A'){
+                    $up['ben_bank_amount'] = $val['bank'];
+                    $up['ben_cash_amount'] = $val['SALARY'] - $val['bank'] ;
+                    $up['ben_tds_amount'] = $val['tds'];
+                    $up['bank_name'] = 'dbbl';
+                    $up['bank_no'] = $val['dbbl'];
+
+                }else if($val['rocket'] != '#N/A'){
+                // rocket
+                    $up['ben_bank_amount'] = $val['SALARY'];
+                    $up['ben_cash_amount'] = 0 ;
+                    $up['bank_name'] = 'rocket';
+                    $up['bank_no'] = $val['rocket'];
+                }else{
+                // cash
+                    $up['ben_bank_amount'] = 0;
+                    $up['ben_cash_amount'] = $val['SALARY'] ;
+
+                }
+
+
+                if(isset($ben[$ass])){
+                    DB::table('hr_benefits')->where('ben_as_id', $ass)->update($up);
+                }else{
+                    $ins[$ass]['ben_as_id'] = $ass;
+                    $ins[$ass] = $up;
+                    $ins[$ass]['ben_medical'] = 600;
+                    $ins[$ass]['ben_transport'] = 350;
+                    $ins[$ass]['ben_food'] = 900;
+                    $ins[$ass]['ben_status'] = 1;
+                    $ins[$ass]['ben_as_id'] = $ass;
+                }
+            }
+        }
+        
+        DB::table('hr_benefits')->insert($ins);
+    }
+
+
+    public function gross2pay()
+    {
+        $data = DB::table('hr_attendance_mbm as a')
+                 ->select('b.associate_id', DB::raw('ben.ben_current_salary/28 as gs'))
+                 ->leftJoin('hr_as_basic_info as b', 'b.as_id', 'a.as_id')
+                 ->leftJoin('hr_benefits as ben', 'ben.ben_as_id', 'b.associate_id')
+                 ->whereIn('b.as_unit_id',[1,4,5])
+                 ->where('a.in_date', '2021-02-01')
+                 ->get();
+        
+        foreach($data as $d){
+            DB::table('hr_salary_add_deduct')
+            ->insert([
+              'associate_id' => $d->associate_id,
+              'month' => '02',
+              'year' => '2021',
+              'salary_add' => ceil(2 * $d->gs),
+              'salary_add_reason' => '২১শে ফেব্রুয়ারী'
+            ]);
+            
+        }
+        
+    }
+    public function addRocket(){
+        $data = [];
+        
+        $emp = DB::table('hr_as_basic_info as b')
+                ->select('b.as_id','b.associate_id','ben.ben_current_salary')
+                ->leftJoin('hr_benefits as ben','b.associate_id','ben.ben_as_id')
+                ->whereIn('associate_id', array_keys($data))
+                ->get()->keyBy('associate_id');
+        
+        foreach($data as $key => $d){
+            DB::table('hr_benefits')
+                ->where('ben_as_id', $key)
+                ->update([
+                    'ben_bank_amount' => $emp[$key]->ben_current_salary,
+                    'ben_cash_amount' => 0,
+                    'bank_name' => 'rocket',
+                    'bank_no' => $d['ACCOUNT NUMBER']
+                  ]);
+                  
+           $queue = (new ProcessUnitWiseSalary('hr_attendance_mbm', '02', 2021, $emp[$key]->as_id, 28))
+                            ->onQueue('salarygenerate')
+                            ->delay(Carbon::now()->addSeconds(2));
+                            dispatch($queue);
+        }
+        return $emp;
+    }
+
+
+    public function salarygenerate()
+    {
+        $as_id = 5754;
+        $getEmployee = Employee::where('as_id', 5754)->first();
+        $year = 2021;
+        $month = '02';
+        $ttday = 28;
+        $table = 'hr_attendance_ceil';
+        $yearMonth = $year.'-'.$month;
+        $monthDayCount  = Carbon::parse($yearMonth)->daysInMonth;
+        $partial = 0;
+        try {
+            if($getEmployee != null && date('Y-m', strtotime($getEmployee->as_doj)) <= $yearMonth){
+                // check lock month
+                $checkL['month'] = $month;
+                $checkL['year'] = $year;
+                $checkL['unit_id'] = $getEmployee->as_unit_id;
+                $checkLock = monthly_activity_close($checkL);
+                if($checkLock == 1){
+                    return 'error';
+                }
+                //  get benefit employee associate id wise
+                $getBenefit = Benefits::
+                where('ben_as_id', $getEmployee->associate_id)
+                ->first();
+
+                $empdoj = $getEmployee->as_doj;
+                $empdojMonth = date('Y-m', strtotime($getEmployee->as_doj));
+                $empdojDay = date('d', strtotime($getEmployee->as_doj));
+
+                $totalDay = $ttday;
+                $today = $yearMonth.'-01';
+                $firstDateMonth = Carbon::parse($today)->startOfMonth()->toDateString();
+                if($empdojMonth == $yearMonth){
+                    $totalDay = $ttday - ((int) $empdojDay-1);
+                    $firstDateMonth = $getEmployee->as_doj;
+                }
+
+                if($getBenefit != null){
+                    
+                    if($getEmployee->as_status_date != null){
+                        $sDate = $getEmployee->as_status_date;
+                        $sYearMonth = Carbon::parse($sDate)->format('Y-m');
+                        $sDay = Carbon::parse($sDate)->format('d');
+
+
+                        if($yearMonth == $sYearMonth){
+                            $firstDateMonth = $getEmployee->as_status_date;
+                            $totalDay = $ttday - ((int) $sDay-1);
+
+                            if($sDay > 1){
+                                $partial = 1;
+                            }
+                        }
+                    }
+
+                    
+                    if($monthDayCount > $ttday){
+                        $lastDateMonth = $yearMonth.'-'.$ttday;
+                    }else{
+                        $lastDateMonth = Carbon::parse($today)->endOfMonth()->toDateString();
+                    }
+                    // get exists check this month data employee wise
+                    $getSalary = HrMonthlySalary::
+                    where('as_id', $getEmployee->associate_id)
+                    ->where('month', $month)
+                    ->where('year', $year)
+                    ->first();
+
+                    // get absent employee wise
+                    $getPresentOT = DB::table($table)
+                        ->select([
+                            DB::raw('count(as_id) as present'),
+                            DB::raw('SUM(ot_hour) as ot'),
+                            DB::raw('COUNT(CASE WHEN late_status =1 THEN 1 END) AS late'),
+                            DB::raw('COUNT(CASE WHEN remarks ="HD" THEN 1 END) AS halfday')
+
+                        ])
+                        ->where('as_id', $this->asId)
+                        ->where('in_date','>=',$firstDateMonth)
+                        ->where('in_date','<=', $lastDateMonth)
+                        ->first();
+                    
+                    $lateCount = 0;
+                    $halfCount = 0;
+                    $presentOt
+                    if(!isset($getPresentOT->present)){
+                        $getPresentOT->present = 0;
+                        $lateCount = $getPresentOT->late??0;
+                        $halfCount = $getPresentOT->halfday??0;
+                        $presentOt = $getPresentOT->ot??0;
+                    }
+
+                    $diffExplode = explode('.', $presentOt);
+                    
+                    $minutes = (isset($diffExplode[1]) ? $diffExplode[1] : 0);
+                    $minutes = floatval('0.'.$minutes);
+                    if($minutes > 0 && $minutes != 1){
+                        $min = (int)round($minutes*60);
+                        $minOT = min_to_ot();
+                        $minutes = $minOT[$min]??0;
+                    }
+
+                    $presentOt = $diffExplode[0] + $minutes;
+
+                    
+                    
+
+                    // check OT roaster employee
+                    $rosterOTCount = HolidayRoaster::where('year', $year)
+                    ->where('month', $month)
+                    ->where('as_id', $getEmployee->associate_id)
+                    ->where('date','>=', $firstDateMonth)
+                    ->where('date','<=', $lastDateMonth)
+                    ->where('remarks', 'OT')
+                    ->get();
+                    $rosterOtData = $rosterOTCount->pluck('date');
+
+                    $otDayCount = 0;
+                    $totalOt = count($rosterOTCount);
+                    // return $rosterOTCount;
+                    foreach ($rosterOTCount as $otc) {
+                        $checkAtt = DB::table($table)
+                        ->where('as_id', $getEmployee->as_id)
+                        ->where('in_date', $otc->date)
+                        ->first();
+                        if($checkAtt != null){
+                            $otDayCount += 1;
+                        }
+                    }
+
+                    if($getEmployee->shift_roaster_status == 1){
+                        // check holiday roaster employee
+                        $getHoliday = HolidayRoaster::where('year', $year)
+                        ->where('month', $month)
+                        ->where('as_id', $getEmployee->associate_id)
+                        ->where('date','>=', $firstDateMonth)
+                        ->where('date','<=', $lastDateMonth)
+                        ->where('remarks', 'Holiday')
+                        ->count();
+                        $getHoliday = $getHoliday + ($totalOt - $otDayCount);
+                    }else{
+                        // check holiday roaster employee
+                        $RosterHolidayCount = HolidayRoaster::where('year', $year)
+                        ->where('month', $month)
+                        ->where('as_id', $getEmployee->associate_id)
+                        ->where('date','>=', $firstDateMonth)
+                        ->where('date','<=', $lastDateMonth)
+                        ->where('remarks', 'Holiday')
+                        ->count();
+                        // check General roaster employee
+                        $RosterGeneralCount = HolidayRoaster::where('year', $year)
+                        ->where('month', $month)
+                        ->where('as_id', $getEmployee->associate_id)
+                        ->where('date','>=', $firstDateMonth)
+                        ->where('date','<=', $lastDateMonth)
+                        ->where('remarks', 'General')
+                        ->count();
+                        
+                         // check holiday shift employee
+                        
+                        if($empdojMonth == $yearMonth){
+                            $query = YearlyHolyDay::
+                                where('hr_yhp_unit', $getEmployee->as_unit_id)
+                                ->where('hr_yhp_dates_of_holidays','>=', $firstDateMonth)
+                                ->where('hr_yhp_dates_of_holidays','<=', $lastDateMonth)
+                                ->where('hr_yhp_dates_of_holidays','>=', $empdoj)
+                                ->where('hr_yhp_open_status', 0);
+                            if(count($rosterOtData) > 0){
+                                $query->whereNotIn('hr_yhp_dates_of_holidays', $rosterOtData);
+                            }
+                            $shiftHolidayCount = $query->count();
+                        }else{
+                            $query = YearlyHolyDay::
+                                where('hr_yhp_unit', $getEmployee->as_unit_id)
+                                ->where('hr_yhp_dates_of_holidays','>=', $firstDateMonth)
+                                ->where('hr_yhp_dates_of_holidays','<=', $lastDateMonth)
+                                ->where('hr_yhp_open_status', 0);
+                            if(count($rosterOtData) > 0){
+                                $query->whereNotIn('hr_yhp_dates_of_holidays', $rosterOtData);
+                            }
+                            $shiftHolidayCount = $query->count();
+                        }
+                        $shiftHolidayCount = $shiftHolidayCount + ($totalOt - $otDayCount);
+
+                        if($RosterHolidayCount > 0 || $RosterGeneralCount > 0){
+                            $getHoliday = ($RosterHolidayCount + $shiftHolidayCount) - $RosterGeneralCount;
+                        }else{
+                            $getHoliday = $shiftHolidayCount;
+                        }
+                    }
+                    $getHoliday = $getHoliday < 0 ? 0:$getHoliday;
+
+
+                    // get absent employee wise
+                    // $getAbsent = DB::table('hr_absent')
+                    //     ->where('associate_id', $getEmployee->associate_id)
+                    //     ->where('date','>=', $firstDateMonth)
+                    //     ->where('date','<=', $lastDateMonth)
+                    //     ->count();
+
+                    // get leave employee wise
+
+                    $leaveCount = DB::table('hr_leave')
+                    ->select(
+                        DB::raw("SUM(DATEDIFF(leave_to, leave_from)+1) AS total")
+                    )
+                    ->where('leave_ass_id', $getEmployee->associate_id)
+                    ->where('leave_status', 1)
+                    ->where('leave_from', '>=', $firstDateMonth)
+                    ->where('leave_to', '<=', $lastDateMonth)
+                    ->first()->total??0;
+
+                    
+
+                    $getAbsent = $totalDay - ($getPresentOT->present + $getHoliday + $leaveCount);
+                    if($getAbsent < 0){
+                        $getAbsent = 0;
+                    }
+                    // get salary add deduct id form salary add deduct table
+                    $getAddDeduct = SalaryAddDeduct::
+                    where('associate_id', $getEmployee->associate_id)
+                    ->where('month', '=', $month)
+                    ->where('year', '=', $year)
+                    ->first();
+                    if($getAddDeduct != null){
+                        $deductCost = ($getAddDeduct->advp_deduct + $getAddDeduct->cg_deduct + $getAddDeduct->food_deduct + $getAddDeduct->others_deduct);
+                        $deductSalaryAdd = $getAddDeduct->salary_add;
+                        $productionBonus = $getAddDeduct->bonus_add;
+                        $deductId = $getAddDeduct->id;
+                    }else{
+                        $deductCost = 0;
+                        $deductSalaryAdd = 0;
+                        $deductId = null;
+                        $productionBonus = 0;
+                    }
+                    
+                    //get add absent deduct calculation
+                    $perDayBasic = $getBenefit->ben_basic / 30;
+                    $getAbsentDeduct = (int)($getAbsent * $perDayBasic);
+                    $getHalfDeduct = (int)($halfCount * ($perDayBasic / 2));
+
+                    $stamp = 10;
+                    $payStatus = 1; // cash pay
+                    if($getBenefit->ben_bank_amount != 0 && $getBenefit->ben_cash_amount != 0){
+                        $payStatus = 3; // partial pay
+                    }elseif($getBenefit->ben_bank_amount != 0){
+                        $payStatus = 2; // bank pay
+                    }
+
+                    if($getBenefit->ben_cash_amount == 0 && $getEmployee->as_emp_type_id == 3){
+                        $stamp = 0;
+                    }
+
+                    if($getEmployee->as_ot == 1){
+                        $overtime_rate = number_format((($getBenefit->ben_basic/208)*2), 2, ".", "");
+                    } else {
+                        $overtime_rate = 0;
+                    }
+                    
+                    // get unit wise att bonus calculation 
+                    $attBonus = 0;
+                    
+                    /*
+                     *get unit wise bonus rules 
+                     *if employee joined this month, employee will get bonus 
+                      only he/she joined at 1
+                    */ 
+                      if(($empdojMonth == $yearMonth && date('d', strtotime($getEmployee->as_doj)) > 1) || $partial == 1 ){
+                        $attBonus = 0;
+                      }else{
+                        
+                        $getBonusRule = AttendanceBonusConfig::
+                        where('unit_id', $getEmployee->as_unit_id)
+                        ->first();
+                        if($getBonusRule != null){
+                            $lateAllow = $getBonusRule->late_count;
+                            $leaveAllow = $getBonusRule->leave_count;
+                            $absentAllow = $getBonusRule->absent_count;
+                        }else{
+                            $lateAllow = 3;
+                            $leaveAllow = 1;
+                            $absentAllow = 1;
+                        }
+                        
+                        if ($lateCount <= $lateAllow && $leaveCount <= $leaveAllow && $getAbsent <= $absentAllow && $getEmployee->as_emp_type_id == 3) {
+                            $lastMonth = Carbon::parse($today);
+                            $lastMonth = $lastMonth->startOfMonth()->subMonth()->format('m');
+                            if($lastMonth == '12'){
+                                $year = $year - 1;
+                            }
+                            $getLastMonthSalary = HrMonthlySalary::
+                                where('as_id', $getEmployee->associate_id)
+                                ->where('month', $lastMonth)
+                                ->where('year', $year)
+                                ->first();
+                            if (($getLastMonthSalary != null) && ($getLastMonthSalary->attendance_bonus > 0)) {
+                                if(isset($getBonusRule->second_month)) {
+                                    $attBonus = $getBonusRule->second_month;
+                                }
+                            } else {
+                                if(isset($getBonusRule->first_month)) {
+                                    $attBonus = $getBonusRule->first_month;
+                                }
+                            }
+                        }
+                    }
+
+                    // leave adjust calculate
+                    $salaryAdjust = SalaryAdjustMaster::getCheckEmployeeIdMonthYearWise($getEmployee->associate_id, $month, $year);
+                    $leaveAdjust = 0.00;
+                    if($salaryAdjust != null){
+                        if(isset($salaryAdjust->salary_adjust)){
+                            foreach ($salaryAdjust->salary_adjust as $leaveAd) {
+                                $leaveAdjust += $leaveAd->amount;
+                            }
+                        }
+                    }
+
+                    $leaveAdjust = ceil((float)$leaveAdjust);
+
+                    if(($empdojMonth == $yearMonth && date('d', strtotime($getEmployee->as_doj)) > 1) || $monthDayCount > $ttday || $partial == 1){
+                        $perDayGross   = $getBenefit->ben_current_salary/$monthDayCount;
+                        $totalGrossPay = ($perDayGross * $totalDay);
+                        $salaryPayable = $totalGrossPay - ($getAbsentDeduct + $getHalfDeduct + $deductCost + $stamp);
+                    }else{
+
+                        $salaryPayable = $getBenefit->ben_current_salary - ($getAbsentDeduct + $getHalfDeduct + $deductCost + $stamp);
+                    }
+
+                    $ot = ((float)($overtime_rate) * ($presentOt));
+                    
+                    $totalPayable = ceil((float)($salaryPayable + $ot + $deductSalaryAdd + $attBonus + $productionBonus + $leaveAdjust));
+
+                    // cash & bank part
+                    $tds = $getBenefit->ben_tds_amount??0;
+                    if($payStatus == 1){
+                        $tds = 0;
+                        $cashPayable = $totalPayable;
+                        $bankPayable = 0; 
+                    }elseif($payStatus == 2){
+                        $cashPayable = 0;
+                        $bankPayable = $totalPayable;
+                    }else{
+                        if($getBenefit->ben_bank_amount <= $totalPayable){
+                            $cashPayable = $totalPayable - $getBenefit->ben_bank_amount;
+                            $bankPayable = $getBenefit->ben_bank_amount;
+                        }else{
+                            $cashPayable = 0;
+                            $bankPayable = $totalPayable;
+                        }
+                    }
+
+                    if($bankPayable > 0 && $tds > 0 && $bankPayable > $tds){
+                        $bankPayable = $bankPayable - $tds;
+                    }else{
+                        $tds = 0;
+                    }
+
+                    if($getSalary == null){
+                        $salary = [
+                            'as_id' => $getEmployee->associate_id,
+                            'ot_status' => $getEmployee->as_ot,
+                            'unit_id' => $getEmployee->as_unit_id,
+                            'designation_id' => $getEmployee->as_designation_id,
+                            'sub_section_id' => $getEmployee->as_subsection_id,
+                            'location_id' => $getEmployee->as_location,
+                            'pay_type' => $getBenefit->bank_name,
+                            'month' => $month,
+                            'year'  => $year,
+                            'gross' => $getBenefit->ben_current_salary,
+                            'basic' => $getBenefit->ben_basic,
+                            'house' => $getBenefit->ben_house_rent,
+                            'medical' => $getBenefit->ben_medical,
+                            'transport' => $getBenefit->ben_transport,
+                            'food' => $getBenefit->ben_food,
+                            'late_count' => $lateCount,
+                            'present' => $getPresentOT->present,
+                            'holiday' => $getHoliday,
+                            'absent' => $getAbsent,
+                            'leave' => $leaveCount,
+                            'absent_deduct' => $getAbsentDeduct,
+                            'half_day_deduct' => $getHalfDeduct,
+                            'salary_add_deduct_id' => $deductId,
+                            'salary_payable' => $salaryPayable,
+                            'ot_rate' => $overtime_rate,
+                            'ot_hour' => $presentOt,
+                            'attendance_bonus' => $attBonus,
+                            'production_bonus' => $productionBonus,
+                            'leave_adjust' => $leaveAdjust,
+                            'stamp' => $stamp,
+                            'pay_status' => $payStatus,
+                            'emp_status' => $getEmployee->as_status,
+                            'total_payable' => $totalPayable,
+                            'cash_payable' => $cashPayable,
+                            'bank_payable' => $bankPayable,
+                            'tds' => $tds
+                        ];
+                        HrMonthlySalary::insert($salary);
+                    }else{
+                        $salary = [
+                            'ot_status' => $getEmployee->as_ot,
+                            'unit_id' => $getEmployee->as_unit_id,
+                            'designation_id' => $getEmployee->as_designation_id,
+                            'sub_section_id' => $getEmployee->as_subsection_id,
+                            'location_id' => $getEmployee->as_location,
+                            'pay_type' => $getBenefit->bank_name,
+                            'gross' => $getBenefit->ben_current_salary,
+                            'basic' => $getBenefit->ben_basic,
+                            'house' => $getBenefit->ben_house_rent,
+                            'medical' => $getBenefit->ben_medical,
+                            'transport' => $getBenefit->ben_transport,
+                            'food' => $getBenefit->ben_food,
+                            'late_count' => $lateCount,
+                            'present' => $getPresentOT->present,
+                            'holiday' => $getHoliday,
+                            'absent' => $getAbsent,
+                            'leave' => $leaveCount,
+                            'absent_deduct' => $getAbsentDeduct,
+                            'half_day_deduct' => $getHalfDeduct,
+                            'salary_add_deduct_id' => $deductId,
+                            'salary_payable' => $salaryPayable,
+                            'ot_rate' => $overtime_rate,
+                            'ot_hour' => $presentOt,
+                            'attendance_bonus' => $attBonus,
+                            'production_bonus' => $productionBonus,
+                            'leave_adjust' => $leaveAdjust,
+                            'stamp' => $stamp,
+                            'pay_status' => $payStatus,
+                            'emp_status' => $getEmployee->as_status,
+                            'total_payable' => $totalPayable,
+                            'cash_payable' => $cashPayable,
+                            'bank_payable' => $bankPayable,
+                            'tds' => $tds
+                        ];
+                        HrMonthlySalary::where('id', $getSalary->id)->update($salary);
+                    }
+                }
+            }
+            return 'success';
+
+        } catch (\Exception $e) {
+            return $e;
+            DB::table('error')->insert(['msg' => $this->asId.' '.$e->getMessage()]);
+            /*$bug = $e->errorInfo[1];
+            // $bug1 = $e->errorInfo[2];
+            if($bug == 1062){
+                // duplicate
+            }*/
+        }
+    
+
+    }
+
+
 }
