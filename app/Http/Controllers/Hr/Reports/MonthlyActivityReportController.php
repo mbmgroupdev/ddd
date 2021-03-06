@@ -429,6 +429,7 @@ class MonthlyActivityReportController extends Controller
 
         $getDesignation = designation_by_id();
         $getDepartment = department_by_id();
+        $section = section_by_id();
         // employee basic sql binding
         $employeeData = DB::table('hr_as_basic_info');
         $employeeData_sql = $employeeData->toSql();
@@ -515,6 +516,12 @@ class MonthlyActivityReportController extends Controller
             })
             ->addColumn('hr_department_name', function($data) use ($getDepartment){
                 return $getDepartment[$data->hr_subsec_department_id]['hr_department_name']??'';
+            })
+            ->addColumn('hr_section_name', function($data) use ($section){
+                return $section[$data->hr_subsec_section_id]['hr_section_name']??'';
+            })
+            ->addColumn('hr_subsection_name', function($data){
+                return $data->hr_subsec_name??'';
             })
             ->addColumn('ot_hour', function($data){
                 return numberToTimeClockFormat($data->ot_hour);
