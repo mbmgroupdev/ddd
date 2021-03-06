@@ -132,8 +132,9 @@ class ProcessUnitWiseSalary implements ShouldQueue
                     $lateCount = 0;
                     $halfCount = 0;
                     $presentOt = 0;
-                    if(!isset($getPresentOT->present)){
-                        $getPresentOT->present = 0;
+                    $present = 0;
+                    if($getPresentOT){
+                        $present = $getPresentOT->present??0;
                         $lateCount = $getPresentOT->late??0;
                         $halfCount = $getPresentOT->halfday??0;
                         $presentOt = $getPresentOT->ot??0;
@@ -260,7 +261,7 @@ class ProcessUnitWiseSalary implements ShouldQueue
 
                     
 
-                    $getAbsent = $totalDay - ($getPresentOT->present + $getHoliday + $leaveCount);
+                    $getAbsent = $totalDay - ($present + $getHoliday + $leaveCount);
                     if($getAbsent < 0){
                         $getAbsent = 0;
                     }
@@ -422,7 +423,7 @@ class ProcessUnitWiseSalary implements ShouldQueue
                             'transport' => $getBenefit->ben_transport,
                             'food' => $getBenefit->ben_food,
                             'late_count' => $lateCount,
-                            'present' => $getPresentOT->present,
+                            'present' => $present,
                             'holiday' => $getHoliday,
                             'absent' => $getAbsent,
                             'leave' => $leaveCount,
@@ -459,7 +460,7 @@ class ProcessUnitWiseSalary implements ShouldQueue
                             'transport' => $getBenefit->ben_transport,
                             'food' => $getBenefit->ben_food,
                             'late_count' => $lateCount,
-                            'present' => $getPresentOT->present,
+                            'present' => $present,
                             'holiday' => $getHoliday,
                             'absent' => $getAbsent,
                             'leave' => $leaveCount,
@@ -488,6 +489,11 @@ class ProcessUnitWiseSalary implements ShouldQueue
 
         } catch (\Exception $e) {
             DB::table('error')->insert(['msg' => $this->asId.' '.$e->getMessage()]);
+            /*$bug = $e->errorInfo[1];
+            // $bug1 = $e->errorInfo[2];
+            if($bug == 1062){
+                // duplicate
+            }*/
         }
     }
 }

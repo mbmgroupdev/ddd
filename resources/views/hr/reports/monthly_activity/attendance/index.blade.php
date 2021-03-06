@@ -26,8 +26,8 @@
     #dataTables th:nth-child(8) input, #dataTables th:nth-child(9) input, #dataTables th:nth-child(10) input{
       width: 62px !important;
     }
-    #dataTables th:nth-child(11){
-      width: 120px !important;
+    #dataTables th:nth-child(11) input,#dataTables th:nth-child(12) input{
+      width: 62px !important;
     }
     table.dataTable {
       border-spacing: 1px;
@@ -214,6 +214,8 @@
                                    <th>Name & phone</th>
                                    <th>Designation</th>
                                    <th>Department</th>
+                                   <th>Section</th>
+                                   <th>Subsection</th>
                                    <th>Present</th>
                                    <th>Absent</th>
                                    <th>Leave</th>
@@ -314,7 +316,7 @@
             });
         });
 
-        var searchable = [2,3,4,5,6,7,8,9];
+        var searchable = [2,3,4,5,6,7,8,9,10,11];
         $('#section').on("change", function(){
            $.ajax({
              url : "{{ url('hr/setup/getSubSectionListBySectionID') }}",
@@ -340,8 +342,8 @@
         var selectable = []; //use 4,5,6,7,8,9,10,11,....and * for all
         var dropdownList = {};
 
-        var exportColName = ['Sl.','','ID','Name','Designation', 'Department', 'Present', 'Absent', 'Leave', 'Holiday', 'OT Hour', 'Total Day'];
-        var exportCol = [2,3,4,5,6,7,8,9, 10,11];
+        var exportColName = ['Sl.','','ID','Name','Designation', 'Department', 'Section','Subsection','Present', 'Absent', 'Leave', 'Holiday', 'OT Hour', 'Total Day'];
+        var exportCol = [2,3,4,5,6,7,8,9,10,11,12,13];
 
         var dTable =  $('#dataTables').DataTable({
 
@@ -487,6 +489,8 @@
            { data: 'as_name', name: 'as_name' },
            { data: 'hr_designation_name', name: 'hr_designation_name' },
            { data: 'hr_department_name', name: 'hr_department_name' },
+           { data: 'hr_section_name', name: 'hr_section_name' },
+           { data: 'hr_subsection_name', name: 'hr_subsection_name' },
            { data: 'present', name: 'present' },
            { data: 'absent', name: 'absent' },
            { data: 'leave', name: 'leave' },
