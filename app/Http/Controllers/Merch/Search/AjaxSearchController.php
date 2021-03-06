@@ -28,7 +28,7 @@ class AjaxSearchController extends Controller
             	$data['items'] = $getItems;
 
             	$getUom = DB::table('uom')
-            	->select('id','measurement_name AS text')
+            	->select('measurement_name AS id','measurement_name AS text')
             	->get();
 
             	$uomData = DB::table('uom');
@@ -37,7 +37,7 @@ class AjaxSearchController extends Controller
             	$itemsId = array_column($getItems->toArray(), 'id');
             	
             	$getItemUom = DB::table('mr_cat_item_uom AS iu')
-            	->select('u.id', 'u.measurement_name AS text','iu.mr_cat_item_id')
+            	->select('u.measurement_name AS id', 'u.measurement_name AS text','iu.mr_cat_item_id')
             	->whereIn('iu.mr_cat_item_id', $itemsId)
             	->leftjoin(DB::raw('(' . $uomData_sql. ') AS u'), function($join) use ($uomData) {
 	                $join->on('iu.uom_id','u.id')->addBinding($uomData->getBindings());

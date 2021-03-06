@@ -1090,7 +1090,8 @@ class EmployeeHelper
 		                $checkLP['unit_id'] = $as_info->as_unit_id;
 		                $checkLockP = monthly_activity_close($checkLP);
 		                if($checkLockP == 1){
-		                    return "Month Activity Lock";
+		                    $msg[] = $as_info->associate_id." - ".$today." Month Activity Lock";
+	                    	continue;
 		                }
 		                    
 		                // return $day_num;

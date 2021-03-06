@@ -93,7 +93,7 @@ class StyleBomController extends Controller
             	}
             	else
             	{
-                    $return .= "<a href=".url('merch/style_bom/'.$data->stl_id.'/edit')." class=\"btn btn-sm btn-success\" data-toggle=\"tooltip\" title=\"Edit\">
+                    $return .= "<a href=".url('merch/style/bom/'.$data->stl_id)." class=\"btn btn-sm btn-success\" data-toggle=\"tooltip\" title=\"Edit Style BOM\">
                      		<i class=\"ace-icon fa fa-pencil bigger-120\"></i>
                         </a>
                         <a href=".url('merch/style_bom/'.$data->stl_id.'/delete')." class=\"btn btn-sm btn-danger\" data-toggle=\"tooltip\" onClick=\"return window.confirm('Are you sure?')\" title=\"Delete\">

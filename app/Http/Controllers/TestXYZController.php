@@ -325,26 +325,50 @@ class TestXYZController extends Controller
 
     public function tiffinBillCheck()
     {
-        $date = '2021-01-';
+        $date = '2021-02-';
         $data = [];
         for ($i=1; $i <= 31; $i++) { 
             $getBill = DB::table('hr_bill')
             ->where('bill_date', date('Y-m-d', strtotime($date.$i)))
             ->get()
             ->toArray();
-            $getatt = DB::table('hr_attendance_mbm')
-            ->select(DB::raw("CONCAT(in_date,as_id) AS asdate"))
+            // $getatt = DB::table('hr_attendance_mbm')
+            // ->select(DB::raw("CONCAT(in_date,as_id) AS asdate"))
+            // ->where('in_date', date('Y-m-d', strtotime($date.$i)))
+            // ->get()
+            // ->keyBy('asdate')
+            // ->toArray();
+            $getatt[] = DB::table('hr_attendance_mbm')
+            ->select(DB::raw("CONCAT(in_date,as_id) AS asdate"), 'in_date', 'in_time', 'out_time')
             ->where('in_date', date('Y-m-d', strtotime($date.$i)))
+            ->where('hr_shift_code', 'HH3')
             ->get()
             ->keyBy('asdate')
             ->toArray();
             
-            foreach ($getBill as $value) {
-                if(!isset($getatt[$value->bill_date.$value->as_id])){
-                    $data[] = DB::table('hr_bill')->where('id', $value->id)->delete();
-                }
-            }
+            // foreach ($getBill as $value) {
+            //     if(isset($getatt[$value->bill_date.$value->as_id])){
+            //         $data[] = $value;
+            //         // $data[] = DB::table('hr_bill')->where('id', $value->id)->delete();
+            //     }
+            // }
         }
-        return $data;
+        return ($getatt);
+    }
+
+    public function billRemove()
+    {
+        $getBill = DB::table("hr_bill AS t")
+        ->select('t.*', 'b.as_designation_id', 'b.as_location', 'b.as_subsection_id', 'b.as_department_id')
+        ->leftJoin('hr_as_basic_info AS b', function($q){
+            $q->on('b.as_id', 't.as_id');
+        })
+        // ->whereIn('b.as_location', [12,13])
+        ->whereIn('b.as_subsection_id', [185,108])
+        // ->whereIn('b.as_designation_id', [408,397,218,229,204,211,356,230,470,407,221,293,375,449,196,454,402,463])
+        // ->whereIn('b.as_department_id', [53,56])
+        ->get();
+        return $getBill;
+
     }
 }

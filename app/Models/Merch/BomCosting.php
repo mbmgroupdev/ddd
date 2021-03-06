@@ -8,7 +8,11 @@ class BomCosting extends Model
 {
 	// public $with = ['cat_item', 'article', 'construction', 'composition', 'supplier'];
     protected $table= 'mr_stl_bom_n_costing';
-    public $timestamps= false;
+    protected $guarded = [];
+
+    protected $dates = [
+        'created_at', 'updated_at'
+    ];
 
     public function cat_item()
     {

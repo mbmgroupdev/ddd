@@ -59,7 +59,7 @@
                                 @endphp
                                 @if($head != '')
                                 <th style=" font-weight: bold; font-size:13px;" colspan="2">{{ $head }}</th>
-                                <th style=" font-weight: bold; font-size:13px;" colspan="12">{{ $body }}</th>
+                                <th style=" font-weight: bold; font-size:13px;" colspan="13">{{ $body }}</th>
                                 @endif
                             </tr>
                             @endif
@@ -95,6 +95,7 @@
                                 <th style=" font-weight: bold; font-size:13px;">Net Pay</th>
                                 <th style=" font-weight: bold; font-size:13px;">Payment Method</th>
                                 <th style=" font-weight: bold; font-size:13px;">Account No.</th>
+                                <th style=" font-weight: bold; font-size:13px;">Location</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -170,6 +171,9 @@
                                             <b>{{ $employee->bank_no }}</b>
                                         @endif
                                     </td>
+                                    <td>
+                                        {{ $location[$employee->as_location]['hr_location_name']??'' }}
+                                    </td>
                                 </tr>
                                 @else
                                 @if($group == $employee->$format)
@@ -232,6 +236,9 @@
                                             <b>{{ $employee->bank_no }}</b>
                                         @endif
                                     </td>
+                                    <td>
+                                        {{ $location[$employee->as_location]['hr_location_name']??'' }}
+                                    </td>
                                 </tr>
                                 @endif
                                 @endif
@@ -239,11 +246,11 @@
                         @else
                             <tr>
                                 @if($input['pay_status'] == 'cash')
-                                <td colspan="15" class="text-center">No Employee Found!</td>
+                                <td colspan="16" class="text-center">No Employee Found!</td>
                                 @elseif($input['pay_status'] != 'cash' && $input['pay_status'] != 'all')
-                                <td colspan="15" class="text-center">No Employee Found!</td>
+                                <td colspan="16" class="text-center">No Employee Found!</td>
                                 @else
-                                <td colspan="15" class="text-center">No Employee Found!</td>
+                                <td colspan="16" class="text-center">No Employee Found!</td>
                                 @endif
                             </tr>
                         @endif
