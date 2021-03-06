@@ -647,18 +647,7 @@ class DailyActivityReportController extends Controller
         }
 
         $format = $request['report_group'];
-        $gUnit = [];
-        $unitWiseEId = [];
-        $attPr = [];
-        if($input['report_type'] == 'executive_attendance'){
-            $gUnit = array_column($getEmployee->toArray(), 'as_unit_id');
-            $gUnit = array_unique($gUnit);
-            // $unitWiseEId = $getEmployee->groupBy('as_unit_id', true);
-            $unitWiseEId = collect($getEmployee)->groupBy('as_unit_id',true)->map(function($row) {
-                return collect($row)->pluck('as_id');
-            });
-
-
+        
         $gUnit = [];
         $unitWiseEId = [];
         $attPr = [];

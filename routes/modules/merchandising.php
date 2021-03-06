@@ -59,6 +59,7 @@ Route::group(['prefix' => 'merch/style','namespace' => 'Merch\Style'], function(
 
 	// BOM
 	Route::get('bom/{id}', 'BOMController@show');
+	Route::get('bom-ajax-store', 'BOMController@ajaxStore');
 });
 
 /*
