@@ -59,8 +59,8 @@ class BOMController extends Controller
 			$style = $queryData->where("s.stl_id", $id)->first();
 			
 			if($style != null){
-				$uom= DB::table('uom')->pluck('measurement_name','id');
-
+				$uom = uom_by_id();
+  				$uom = collect($uom)->pluck('measurement_name','id');
 				$getStyleBom = DB::table('mr_stl_bom_n_costing AS b')
 				->select('b.id', 'b.mr_material_category_mcat_id AS mcat_id', 'b.mr_cat_item_id', 'b.item_description', 'b.clr_id', 'b.size', 'b.mr_supplier_sup_id', 'b.mr_article_id', 'b.uom', 'b.consumption', 'b.extra_percent', DB::raw('(consumption/100)*extra_percent AS qty'), DB::raw('((consumption/100)*extra_percent)+consumption AS total'), 'b.sl')
 				->where('b.mr_style_stl_id', $id)
@@ -149,7 +149,7 @@ class BOMController extends Controller
 			    	->where("sm.stl_id", $id)
 			    	->first();
 			    $getColor = DB::table("mr_material_color")->select('clr_id AS id', 'clr_name AS text')->get();
-			    $itemCategory = DB::table('mr_material_category')->get();
+			    $itemCategory = item_category_by_id();
 			    
 			    return view('merch.style_bom.index', compact('style', 'samples', 'operations', 'machines', 'getColor', 'itemCategory', 'uom', 'groupStyleBom', 'getArticle', 'getSupplier', 'getItems'));
 			}
@@ -166,16 +166,25 @@ class BOMController extends Controller
     {
     	$input = $request->all();
     	$data['type'] = 'error';
-    	// return $input;
+    	$data['value'] = [];
+    	DB::beginTransaction();
     	try {
+    		$oldItem = array_filter($input['bomitemid'], 'strlen');
+	    	$getItemBom = BomCosting::getStyleWiseItem($input['stl_id'], ['id']);
+	    	$getBomId = collect($getItemBom->toArray())->pluck('id')->toArray();
+	    	// return $getBomId;
+	    	$itemDiff = array_diff($getBomId, $oldItem);
+	    	for ($d=0; $d < count($itemDiff); $d++) { 
+	    		BomCosting::whereIn('id', $itemDiff)->delete();
+	    	}
+
     		$sl = 1;
     		for ($i=0; $i<sizeof($input['itemid']); $i++){
     			$itemId = $input['itemid'][$i];
             	if($itemId != null){
-            		BomCosting::updateOrCreate([
+            		$bom = [
             			'mr_style_stl_id' => $input['stl_id'],
             			'mr_material_category_mcat_id' => $input['itemcatid'][$i],
-            		],[
             			'mr_cat_item_id' => $itemId,
             			'item_description' => $input['description'][$i],
             			'clr_id' => $input['color'][$i],
@@ -186,18 +195,28 @@ class BOMController extends Controller
             			'consumption' => $input['consumption'][$i],
             			'extra_percent' => $input['extraper'][$i],
             			'sl' => $sl,
-            		]);
+            		];
+            		if($input['bomitemid'][$i] != null){ 
+            			// update
+            			BomCosting::where('id', $input['bomitemid'][$i])->update($bom);
+            		}else{
+            			// create
+            			$bomId = BomCosting::create($bom)->id;
+            			$data['value'][$i] = $bomId;
+            		}
+            		
             		$sl++;
             	}
 	
             }
 
             //log_file_write("BOM Successfully Save", $input['stl_id']);
-
+            DB::commit();
 	        $data['type'] = 'success';
 	        $data['message'] = "BOM Successfully Save.";
 	        return response()->json($data);
     	} catch (\Exception $e) {
+    		DB::rollback();
     		$bug = $e->getMessage();
 	        $data['message'] = $bug;
 	        return response()->json($data);

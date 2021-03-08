@@ -51,7 +51,8 @@
         },
         "files": [
             "app/Helpers/helper.php",
-            "app/Helpers/employee.php"
+            "app/Helpers/employee.php",
+            "app/Helpers/merchHelper.php"
         ],
         "classmap": [
             "database/seeds",

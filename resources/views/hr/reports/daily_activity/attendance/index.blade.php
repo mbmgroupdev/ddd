@@ -624,7 +624,7 @@ $(document).ready(function(){
       if(type == 'ot'){
         $('#reportGroupHead').append('<option value="ot_hour">OT Hour</option>');
         $('#reportGroupHead').val('ot_hour');
-        $('#reportGroup').val('ot_hour');
+        $('#reportGroup').val('ot_hour').change();
       }else{
         $("#reportGroupHead option[value='ot_hour']").remove();
         $('#reportGroupHead').val('as_section_id');

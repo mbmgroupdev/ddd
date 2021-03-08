@@ -92,6 +92,7 @@
 }
 .arrows-context{
 	font-size: 13px;
+	display: block;
 }
 
 .arrows-context i{

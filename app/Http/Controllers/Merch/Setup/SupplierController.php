@@ -201,7 +201,7 @@ class SupplierController extends Controller
             }
 
             $data['url'] = url()->previous();
-            
+            $data['value'] = $sup;
             return response()->json($data);
 
         } catch (\Exception $e) {

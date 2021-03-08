@@ -3,6 +3,7 @@
 namespace App\Models\Merch;
 
 use Illuminate\Database\Eloquent\Model;
+use DB;
 
 class BomCosting extends Model
 {
@@ -34,5 +35,15 @@ class BomCosting extends Model
     public function supplier()
     {
         return $this->belongsTo(Supplier::class, 'mr_supplier_sup_id', 'sup_id');
+    }
+
+    public static function getStyleWiseItem($stlId, $selectedField)
+    {
+        $query = DB::table('mr_stl_bom_n_costing')
+        ->where('mr_style_stl_id', $stlId);
+        if($selectedField != 'all'){
+            $query->select($selectedField);
+        }
+        return $query->get();
     }
 }

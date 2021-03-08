@@ -12,7 +12,7 @@ class TestXYZController extends Controller
 {
     public function rfidUpdate()
     {
-    	return $this->tiffinBillCheck();
+    	return $this->employeeCheck();
     	$data = array();
     	$getBasic = DB::table('hr_as_basic_info')
     	->select('as_id', 'as_rfid_code')
@@ -370,5 +370,15 @@ class TestXYZController extends Controller
         ->get();
         return $getBill;
 
+    }
+
+    public function employeeCheck()
+    {
+        $getEmployee = DB::table('hr_as_basic_info AS b')
+        ->leftJoin('hr_employee_bengali AS ben', 'b.associate_id', 'ben.hr_bn_associate_id')
+        ->where('b.as_unit_id', 2)
+        ->whereNull('ben.hr_bn_associate_name')
+        ->get();
+        return $getEmployee;
     }
 }

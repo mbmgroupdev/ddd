@@ -25,7 +25,7 @@ $(document).on('click','.add-arrows',function(){
     
     if(flag === 0){
         html = '<tr id="itemRow-'+catid+'_'+i+'">';
-        html += '<td class="right-btn"><a class="btn btn-sm btn-outline-primary arrows-alt" data-toggle="tooltip" data-placement="top" title="" data-original-title="Right Click Action"><i class="las la-arrows-alt"></i></a><div class="context-menu" id="context-menu-file-" style="display:none;position:absolute;z-index:1;"><ul><li><a class="textblack arrows-context add-arrows" data-catid="'+catid+'"><i class="las la-cart-plus"></i> Add Row</a></li><li><a class="textblack arrows-context remove-arrows" data-catid="'+catid+'" ><i class="las la-trash"></i> Remove Row</a></li><li><a class="textblack arrows-context add-item"  data-catid="{{ $itemCat->mcat_id }}" id="additem-'+catid+'_'+i+'"><i class="las la-folder-plus"></i> Add New Item</a></li></ul></div></td>';
+        html += '<td class="right-btn"><a class="btn btn-sm btn-outline-primary arrows-alt" data-toggle="tooltip" data-placement="top" title="" data-original-title="Right Click Action"><i class="las la-arrows-alt"></i></a><div class="context-menu" id="context-menu-file-" style="display:none;position:absolute;z-index:1;"><ul><li><a class="textblack arrows-context add-arrows" data-catid="'+catid+'"><i class="las la-cart-plus"></i> Add Row</a></li><li><a class="textblack arrows-context remove-arrows" data-catid="'+catid+'" ><i class="las la-trash"></i> Remove Row</a></li><li><a class="textblack arrows-context add-new" data-type="item" data-catid="{{ $itemCat->mcat_id }}" id="additem-'+catid+'_'+i+'"><i class="las la-folder-plus"></i> Add New Item</a></li></ul></div></td>';
         html += '<td><input type="hidden" id="bomitemid-'+catid+'_'+i+'" name="bomitemid[]" value=""><input type="hidden" id="itemcatid-'+catid+'_'+i+'" value="'+catid+'" name="itemcatid[]"><input type="hidden" id="itemid-'+catid+'_'+i+'" value="" name="itemid[]"><input type="text" data-category="'+catid+'" data-type="item" name="item[]" id="item-'+catid+'_'+i+'" class="form-control autocomplete_txt items-'+catid+'" autocomplete="off" onClick="this.select()"></td>';
         html += '<td><input type="text" data-type="description" name="description[]" id="description-'+catid+'_'+i+'" class="form-control" autocomplete="off"></td>';
         html += '<td><select name="color[]" id="color-'+catid+'_'+i+'" class="form-control" data-toggle="tooltip" data-placement="top" title="" data-original-title="this.value"><option value=""> - Select - </option></select></td>';
@@ -40,7 +40,7 @@ $(document).on('click','.add-arrows',function(){
         html += '</tr>';
         $(this).parent().parent().parent().parent().parent().after(html);
         // $('#').append(html);
-        $('#description-'+catid+'_'+i).focus();
+        $('#item-'+catid+'_'+i).focus();
         i++;
     }else{
         $('#item-'+catid+'_'+i).focus();
@@ -136,7 +136,9 @@ $(document).on('focus keyup','.autocomplete_txt',function(){
             $('#supplier-'+itemCategory+'_'+id[1]).val(null).trigger('change').attr('disabled', true);
             $('#article-'+itemCategory+'_'+id[1]).val(null).trigger('change').attr('disabled', true);
             $('#uom-'+itemCategory+'_'+id[1]).val(null).trigger('change').attr('disabled', true);
+
             if(item !== ''){
+            	saveBOM('added');
                 $('#itemid-'+item.mcat_id+'_'+id[1]).val(item.id);
                 $('#color-'+item.mcat_id+'_'+id[1]).select2({
                     data: getColor
@@ -151,7 +153,10 @@ $(document).on('focus keyup','.autocomplete_txt',function(){
                 }).removeAttr('disabled');
 
                 setTimeout(function() { $('#description-'+item.mcat_id+'_'+id[1]).focus().select(); }, 100);
-                $(this).parent().parent().find('.right-btn .add-arrows').click();
+                var nextinput = $('#itemid-'+item.mcat_id+'_'+id[1]).closest('tr').next().find('td:eq(' + $('#itemid-'+item.mcat_id+'_'+id[1]).closest('td').index() + ')').find('input')[0];
+                if(nextinput === undefined){
+                	$(this).parent().parent().find('.right-btn .add-arrows').click();
+                }
             }
             
         }               
@@ -169,7 +174,12 @@ function IsNumeric(e) {
 }
 
 $(document).on('click', '.remove-arrows', function(){
-    $(this).parent().parent().parent().parent().parent().remove();
+	var isGood=confirm('Are you sure you want to remove this row?');
+    if (isGood) {
+      $(this).parent().parent().parent().parent().parent().remove();
+      saveBOM('remove');
+    }
+    // $(this).parent().parent().parent().parent().parent().remove();
 })
 $(document).on("contextmenu", ".right-btn", function(e) {
     // Show contextmenu
@@ -220,6 +230,7 @@ $(function () {
         },
         stop: function (e, ui) {
             ui.item.removeClass("selected");
+            saveBOM('move');
             $(this).find("tr").each(function (index) {
                 if (index > 0) {
                     // $(this).find("td").eq(2).html(index);
@@ -230,34 +241,69 @@ $(function () {
 });
 
 var loaderContent = '<div class="animationLoading"><div id="container-loader"><div id="one"></div><div id="two"></div><div id="three"></div></div><div id="four"></div><div id="five"></div><div id="six"></div></div>';
-$(document).on('click', '.add-item', function() {
+$(document).on('click', '.add-new', function() {
     itemid = $(this).attr('id');
     i_id = itemid.split("_");
-    
+    type = $(this).data('type');
+    typeCat = $(this).data('catid');
     $("#itemForm").hide();
     $('#right_modal_item').modal('show');
-    $("#content-result").html(loaderContent);
-    setTimeout(function(){
-        $("#content-result").html('');
-        $("#itemForm").show();
-    },1000);
-});
+    $('#modal-title-right').html(' <i class="fa fa-plus"></i> Add New '+type);
 
-$(document).on('click', '.addSupplier', function() {
-    suid = $(this).attr('id');
-    s_id = suid.split("_");
-    suCat = $(this).data('category');
-    if($('#itemid-'+suCat+'_'+s_id[1]).val() !== null){
-	    $("#supplierForm").hide();
-	    $('#right_modal_supplier').modal('show');
-	    $("#content-result-supplier").html(loaderContent);
-	    setTimeout(function(){
-	        $("#content-result-supplier").html('');
-	        $("#supplierForm").show();
-	    },1000);
+    $("#content-result").html(loaderContent);
+    var data = {};
+    if(type === 'article'){
+    	data= {
+        	type:type,
+            item_category: typeCat,
+            index:i_id[1], 
+            supplierid: $("#supplierid-"+typeCat+'_'+i_id[1]).val()
+        }
+    }else{
+    	data= {
+        	type:type,
+            item_category: typeCat,
+            index:i_id[1]
+        }
     }
+    $.ajax({
+        type: "GET",
+        url: base_url+'/merch/page-content-load',
+        data:data,
+        success: function(response)
+        {
+        	// console.log(response)
+            if(response !== 'error'){
+            	setTimeout(function(){
+			        $("#content-result").html(response);
+			        if(type === 'item'){
+			        	$('#uom-item').select2({
+	                        dropdownParent: $('#right_modal_item')
+	                    });
+			        }else if(type === 'supplier'){
+			        	$('#country_id').select2({
+	                        dropdownParent: $('#right_modal_item')
+	                    });	
+			        }else{
+			        	$('#supplier').select2({
+	                        dropdownParent: $('#right_modal_item')
+	                    });
+			        }
+			        
+                    
+			    },1000);
+            	
+            }else{
+            	$.notify('Something Error! Please try again');
+            }
+        },
+        error: function (reject) {
+          console.log(reject);
+        }
+    });
     
 });
+
 
 $("body").on("keyup", ".changesNo", function(){
 	conid = $(this).attr('id');
@@ -282,4 +328,110 @@ $(document).on('change', '.articlechange', function(){
 $(document).on('change', '.uomchange', function(){
 	var uom = $(this).val();
     $(this).parent().find('.uomname').val(uom);
+});
+
+$(document).on('click', '#itemBtn', function () {
+	$("#app-loader").show();
+    var curStep = jQuery(this).closest("#itemForm"),
+      curInputs = curStep.find("input[type='text'],input[type='email'],input[type='hidden'],input[type='url'],input[type='date'],input[type='checkbox'],input[type='radio'],textarea,select"),
+      isValid = true;
+      var cati = $("#mcat_id").val();
+      var itIndex = $("#item-index").val();
+      var itemNa  = $('#item_name').val();
+      var clickType  = $('#click-type').val();
+    $(".form-group").removeClass("has-error");
+    for (var i = 0; i < curInputs.length; i++) {
+       	if (!curInputs[i].validity.valid) {
+          isValid = false;
+          $(curInputs[i]).closest(".form-group").addClass("has-error");
+       	}
+    }
+    var url = base_url;
+    if(clickType === 'item'){
+    	url += '/merch/setup/item_store_ajax';
+    }else if(clickType === 'supplier'){
+		url += '/merch/setup/ajax_save_supplier';
+    }
+    
+    if (isValid){
+       $.ajax({
+          type: "POST",
+          url: url,
+          data: curInputs.serialize(), // serializes the form's elements.
+          success: function(response)
+          {
+            $("#app-loader").hide();
+            console.log(response)
+            $.notify(response.message, response.type);
+             if(response.type === 'success'){
+                if(clickType === 'item'){
+	                // $("#item-"+cati+'_'+itIndex).val(itemNa);
+	            }else if(clickType === 'supplier'){
+					$("#supplierid-"+cati+'_'+itIndex).val(response.value.id);
+					// $('#supplier'+cati+'_'+itIndex).select2([{id: response.value.id, text: response.value.sup_name}]).trigger('change');
+					// var mySelect = $('#supplier'+cati+'_'+itIndex).append('<option value="104">Delhi</option>'); 
+					// mySelect.trigger("change");
+					saveBOM('save');
+					setTimeout(function() {
+                       window.location.href=response.url;
+                    }, 500);
+
+			    }
+	            setTimeout(function() {
+	            	$('.close').click();
+                }, 500);
+             }
+          },
+          error: function (reject) {
+            $("#app-loader").hide();
+            if( reject.status === 400) {
+                var data = $.parseJSON(reject.responseText);
+                 $.notify(data.message, data.type);
+            }else if(reject.status === 422){
+              var data = $.parseJSON(reject.responseText);
+              var errors = data.errors;
+              // console.log(errors);
+              for (var key in errors) {
+                var value = errors[key];
+                $.notify(value[0], 'error');
+              }
+               
+            }
+          }
+       });
+    }else{
+        $("#app-loader").hide();
+       	$.notify("Some field are required", 'error');
+    }
+});
+
+$(document).on('change', '#country_id', function () {
+    var countryName = $("#country_id option:selected").text();
+    if (countryName === 'Bangladesh'){
+        $('.local').prop('checked',true);
+    }
+    else if(countryName==""){
+        $('.local').prop('checked',false);
+        $('.foreign').prop('checked',false);
+    }
+    else{
+        $('.foreign').prop('checked',true);
+    }
+
+});
+
+var sd=1;
+$(document).on('click', '.AddBtn_bu', function () {
+  html = '<div class="row"><div class="col-10 pr-0"><div class="form-group has-float-label">';
+  html += '<input type="text" id="contact'+sd+'" name="scp_details[]" placeholder="Enter Contact Person (Name, Cell No, Email)" class="form-control scp_details"/>';
+  html += '<label for="contact'+sd+'"> Contact Person </label></div></div><div class="col-2">';
+  html += '<button type="button" class="btn btn-sm btn-outline-danger RemoveBtn_bu">-</button></div></div>';
+  
+  $('#addAddress').append(html);
+  $('#contact'+i).focus();
+  i++;
+});
+
+$(document).on('click', '.RemoveBtn_bu', function(){
+    $(this).parent().parent().remove();
 });
