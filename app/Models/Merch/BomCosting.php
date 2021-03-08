@@ -3,12 +3,17 @@
 namespace App\Models\Merch;
 
 use Illuminate\Database\Eloquent\Model;
+use DB;
 
 class BomCosting extends Model
 {
 	// public $with = ['cat_item', 'article', 'construction', 'composition', 'supplier'];
     protected $table= 'mr_stl_bom_n_costing';
-    public $timestamps= false;
+    protected $guarded = [];
+
+    protected $dates = [
+        'created_at', 'updated_at'
+    ];
 
     public function cat_item()
     {
@@ -30,5 +35,15 @@ class BomCosting extends Model
     public function supplier()
     {
         return $this->belongsTo(Supplier::class, 'mr_supplier_sup_id', 'sup_id');
+    }
+
+    public static function getStyleWiseItem($stlId, $selectedField)
+    {
+        $query = DB::table('mr_stl_bom_n_costing')
+        ->where('mr_style_stl_id', $stlId);
+        if($selectedField != 'all'){
+            $query->select($selectedField);
+        }
+        return $query->get();
     }
 }

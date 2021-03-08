@@ -59,6 +59,7 @@ Route::group(['prefix' => 'merch/style','namespace' => 'Merch\Style'], function(
 
 	// BOM
 	Route::get('bom/{id}', 'BOMController@show');
+	Route::get('bom-ajax-store', 'BOMController@ajaxStore');
 });
 
 /*
@@ -84,7 +85,7 @@ Route::group(['prefix' => 'merch/style_bom','namespace' => 'Merch\StyleBOM'], fu
 	Route::post("/newcolorstore", "StyleBomController@saveNewColor");
 
 	Route::get("/get_composition_by_article", "StyleBomController@compositionByArticle");
-	Route::post('/ajax_save_supplier', 'StyleBomController@ajaxSaveSupplier');
+	// Route::post('/ajax_save_supplier', 'StyleBomController@ajaxSaveSupplier');
 	Route::post('/ajax_save_bom_info', 'StyleBomController@ajaxSaveBomInfo');
 	Route::post('/ajax_update_bom_info', 'StyleBomController@ajaxUpdateBomInfo');
 
@@ -100,6 +101,14 @@ Route::group(['prefix' => 'merch/search','namespace' => 'Merch\Search'], functio
 	Route::get('ajax-supplier-article-search', 'AjaxSearchController@article');
 
 });
+
+/*
+*--------------------------------------------------------------
+* Page load
+*--------------------------------------------------------------
+*/
+Route::get('merch/page-content-load', 'Merch\PageContentController@index');
+
 
 /*
 *--------------------------------------------------------------
