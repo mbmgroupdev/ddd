@@ -144,7 +144,7 @@
                                                                     <a class="textblack arrows-context remove-arrows"  data-catid="{{ $itemBom->mcat_id }}" ><i class="las la-trash"></i> Remove Row</a>
                                                                   </li>           
                                                                   <li>
-                                                                    <a class="textblack arrows-context add-item"  data-catid="{{ $itemBom->mcat_id }}" id="additem-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}"><i class="las la-folder-plus"></i> Add New Item</a>
+                                                                    <a class="textblack arrows-context add-new" data-type="item" data-catid="{{ $itemBom->mcat_id }}" id="additem-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}"><i class="las la-folder-plus"></i> Add New Item</a>
                                                                 </li>
                                                                 </ul>
                                                             </div>
@@ -185,7 +185,7 @@
                                                                     
                                                                 </div>
                                                                 <div class="col-3 pl-0 pr-0 pt-2">
-                                                                    <a class="btn btn-xs btn-primary text-white addSupplier" id="addsupplier-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" data-category="{{ $itemBom->mcat_id }}" data-toggle="tooltip" data-placement="top" title="" data-original-title="Add New Supplier">
+                                                                    <a class="btn btn-xs btn-primary text-white addSupplier add-new" data-type="supplier" id="addsupplier-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" data-catid="{{ $itemBom->mcat_id }}" data-toggle="tooltip" data-placement="top" title="" data-original-title="Add New Supplier">
                                                                         <i class="fa fa-plus"></i>
                                                                     </a>
 
@@ -207,7 +207,7 @@
                                                                     <input type="hidden" class="articleid" name="articleid[]" id="articleid-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" value="{{ $itemBom->mr_article_id }}">
                                                                 </div>
                                                                 <div class="col-3 pl-0 pr-0 pt-2">
-                                                                    <a class="btn btn-xs btn-primary text-white" data-toggle="tooltip" data-placement="top" title="" data-original-title="Add New Article">
+                                                                    <a class="btn btn-xs btn-primary text-white add-new"  data-type="article" id="addarticle-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" data-catid="{{ $itemCat->mcat_id }}" data-toggle="tooltip" data-placement="top" title="" data-original-title="Add New Article">
                                                                         <i class="fa fa-plus"></i>
                                                                     </a>
                                                                 </div>
@@ -253,7 +253,7 @@
                                                                 <a class="textblack arrows-context remove-arrows"  data-catid="{{ $itemCat->mcat_id }}" ><i class="las la-trash"></i> Remove Row</a>
                                                               </li>           
                                                               <li>
-                                                                <a class="textblack arrows-context add-item"  data-catid="{{ $itemCat->mcat_id }}" id="additem-{{ $itemCat->mcat_id}}_1"><i class="las la-folder-plus"></i> Add New Item</a>
+                                                                <a class="textblack arrows-context add-new" data-type="item" data-catid="{{ $itemCat->mcat_id }}" id="additem-{{ $itemCat->mcat_id}}_1"><i class="las la-folder-plus"></i> Add New Item</a>
                                                             </li>
                                                             </ul>
                                                         </div>
@@ -287,7 +287,7 @@
                                                                 
                                                             </div>
                                                             <div class="col-3 pl-0 pr-0 pt-2">
-                                                                <a class="btn btn-xs btn-primary text-white addSupplier" id="addsupplier-{{ $itemCat->mcat_id}}_1" data-category="{{ $itemCat->mcat_id }}" data-toggle="tooltip" data-placement="top" title="" data-original-title="Add New Supplier">
+                                                                <a class="btn btn-xs btn-primary text-white addSupplier add-new" data-type="supplier" id="addsupplier-{{ $itemCat->mcat_id}}_1" data-catid="{{ $itemCat->mcat_id }}" data-toggle="tooltip" data-placement="top" title="" data-original-title="Add New Supplier">
                                                                     <i class="fa fa-plus"></i>
                                                                 </a>
 
@@ -298,13 +298,13 @@
                                                         <div class="row m-0">
                                                             <div class="col-9 p-0">
                                                                 
-                                                                <select name="article[]" id="article-{{ $itemCat->mcat_id}}_1" class="form-control articlechange" disabled>
+                                                                <select name="article[]" id="article-{{ $itemCat->mcat_id}}_1" class="form-control articlechange " disabled>
                                                                   <option value=""> - Select - </option>
                                                                 </select>
                                                                 <input type="hidden" class="articleid" name="articleid[]" id="articleid-{{ $itemCat->mcat_id}}_1" value="">
                                                             </div>
                                                             <div class="col-3 pl-0 pr-0 pt-2">
-                                                                <a class="btn btn-xs btn-primary text-white" data-toggle="tooltip" data-placement="top" title="" data-original-title="Add New Article">
+                                                                <a class="btn btn-xs btn-primary text-white add-new"  data-type="article" id="addarticle-{{ $itemCat->mcat_id}}_1" data-catid="{{ $itemCat->mcat_id }}" data-toggle="tooltip" data-placement="top" title="" data-original-title="Add New Article">
                                                                     <i class="fa fa-plus"></i>
                                                                 </a>
                                                             </div>
@@ -343,7 +343,7 @@
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <div class="submit-invoice invoice-save-btn pull-right">
-                                            <button type="button" class="btn btn-outline-success btn-md text-center saveBom" onclick="saveBOM()"><i class="fa fa-save"></i> Save</button>
+                                            <button type="button" class="btn btn-outline-success btn-md text-center saveBom" onclick="saveBOM('manual')"><i class="fa fa-save"></i> Save</button>
                                         </div>
                                     </div>
                                 </div>
@@ -362,14 +362,14 @@
         <a class="view prev_btn" data-toggle="tooltip" data-dismiss="modal" data-placement="top" title="" data-original-title="Back to Report">
           <i class="las la-chevron-left"></i>
         </a>
-        <h5 class="modal-title right-modal-title text-center" id="modal-title-right"> &nbsp; <i class="fa fa-plus"></i> New Item</h5>
+        <h5 class="modal-title right-modal-title text-center" id="modal-title-right"> &nbsp; </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
         <div class="modal-content-result" id="content-result"></div>
-        <form class="form-horizontal" id="itemForm" role="form" enctype="multipart/form-data" style="display: none">
+        {{-- <form class="form-horizontal" id="itemForm" role="form" enctype="multipart/form-data" style="display: none">
             <div class="row">
                 <div class="offset-3 col-6">
                     <div class="row">
@@ -428,7 +428,7 @@
                 </div>
             </div>
             
-        </form>
+        </form> --}}
       </div>
       
     </div>
@@ -442,8 +442,8 @@
 </script>
 <script src="{{ asset('assets/js/bom.js')}}"></script>
 <script>
-    function saveBOM() {
-        $(".app-loader").show();
+    function saveBOM(savetype) {
+        if(savetype =='manual' ) $(".app-loader").show();
         var curStep = $(this).closest("#bomForm"),
           curInputs = curStep.find("input[type='text'],input[type='hidden'],input[type='number'],input[type='date'],input[type='checkbox'],input[type='radio'],textarea,select"),
           isValid = true;
@@ -465,18 +465,24 @@
               data: form.serialize(), // serializes the form's elements.
               success: function(response)
               {
-                console.log(response);
-                // $.notify(response.message, response.type);
-                // if(response.type === 'success'){
-                //     setTimeout(function() {
-                //        window.location.href=response.url;
-                //     }, 500);
-                // }
+                if(savetype =='manual' ){
+                    $.notify(response.message, response.type);
+                }else{
+                    $.notify('Item has been '+savetype, response.type);
+                }
+                if(response.type === 'success'){
+                    var bomindex = $('input[name="bomitemid[]"]');
+                    $.each(response.value, function(i, el) {
+                        var bomid = bomindex[i].getAttribute('id');
+                        $("#"+bomid).val(el);
+                    });
+                   
+                }
                 $(".app-loader").hide();
               },
               error: function (reject) {
                 $(".app-loader").hide();
-                console.log(reject);
+                // console.log(reject);
                 if( reject.status === 400) {
                     var data = $.parseJSON(reject.responseText);
                      $.notify(data.message, {

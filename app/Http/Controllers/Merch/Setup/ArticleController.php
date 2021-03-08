@@ -54,7 +54,7 @@ class ArticleController extends Controller
     return view('merch/setup/article', compact('supplier','articleList','supId'));
   }
   public function articleStore(Request $request){
-        #-----------------------------------------------------------#
+    #-----------------------------------------------------------#
     $validator= Validator::make($request->all(), [
       "supplier"         => "required|max:11",
       "art_name"         =>"required|unique:mr_article",
@@ -122,6 +122,11 @@ class ArticleController extends Controller
       return back();
     }
     
+  }
+
+  public function articleAjaxStore(Request $request)
+  {
+    # code...
   }
   public function articleDelete($art_id){
 

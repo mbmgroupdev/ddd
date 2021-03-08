@@ -64,7 +64,7 @@
                                                   </div>
                                                 </div>
                                                 <div class="col-2">
-                                                  <button type="button" class="btn btn-xs btn-outline-success AddBtn_bu">+</button>
+                                                  <button type="button" class="btn btn-sm btn-outline-success AddBtn_bu">+</button>
                                                 </div>
                                               </div>
                                               <div id="addAddress"></div>
@@ -407,7 +407,7 @@
           html = '<div class="row"><div class="col-10 pr-0"><div class="form-group has-float-label">';
           html += '<input type="text" id="contact'+i+'" name="scp_details[]" placeholder="Enter Contact Person (Name, Cell No, Email)" class="form-control scp_details"/>';
           html += '<label for="contact'+i+'"> Contact Person </label></div></div><div class="col-2">';
-          html += '<button type="button" class="btn btn-xs btn-outline-danger RemoveBtn_bu">-</button></div></div>';
+          html += '<button type="button" class="btn btn-sm btn-outline-danger RemoveBtn_bu">-</button></div></div>';
           
           $('#addAddress').append(html);
           $('#contact'+i).focus();
