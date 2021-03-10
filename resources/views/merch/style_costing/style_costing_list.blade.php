@@ -1,12 +1,9 @@
-@extends('merch.index')
+@extends('merch.layout')
+@section('title', 'Style Costing')
+@section('main-content')
 @push('css')
     <style>
         #dataTables thead input, #dataTables thead select {max-width: unset !important;}
-</style>
-@endpush
-@push('css')
-<style type="text/css">
-{{-- removing the links in print and adding each page header --}}
     a[href]:after { content: none !important; }
     thead {display: table-header-group;}
 
@@ -32,18 +29,26 @@
     }
 </style>
 @endpush
-@section('content')
 <div class="main-content">
 	<div class="main-content-inner">
-		<div class="breadcrumbs ace-save-state" id="breadcrumbs">
-			<ul class="breadcrumb">
-				<li>
-					<i class="ace-icon fa fa-usd home-icon"></i>
-					<a href="#">Style Costing</a>
-				</li>
-				<li class="active">Style Costing List</li>
-			</ul><!-- /.breadcrumb -->
-		</div>
+        <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+          <ul class="breadcrumb">
+              <li>
+                  <i class="ace-icon fa fa-home home-icon"></i>
+                  <a href="#">Merchandising</a>
+              </li>
+              <li>
+                  <a href="#">Style</a>
+              </li>
+              <li class="active">Style Costing List</li>
+              <li class="top-nav-btn">
+                <a href="{{ url('merch/style/style_list')}}" target="_blank" class="btn btn-outline-primary btn-sm pull-right"> <i class="fa fa-list"></i> Style List</a> &nbsp;
+                <a href="{{ url('merch/style_bom')}}" target="_blank" class="btn btn-outline-success btn-sm pull-right"> <i class="fa fa-list"></i> Style BOM</a> &nbsp;
+                
+                </li>
+          </ul><!-- /.breadcrumb -->
+
+        </div>
 
 		<div class="page-content">
             <div class="panel panel-warning">
@@ -56,32 +61,19 @@
                             <table id="dataTables" class="table table-striped table-bordered" style="display: block;overflow-x: auto;width: 100%;">
                                 <thead>
                                     <tr>
-                                        <th>SL</th>
-                                        <th>Production Type</th>
-                                        <th>Style Reference 1</th>
-                                        <th>Buyer</th>
-                                        <th>Brand</th>
-                                        <th>Style Reference 2</th>
-                                        <th>SMV/pc</th>
-                                        <th>Season</th>
-        								                <th>Status</th>
-                                        <th>Action</th>
+                                        <th width="8%">SL</th>
+                                        <th width="10%">Production Type</th>
+                                        <th width="20%">Style Reference 1</th>
+                                        <th width="15%">Buyer</th>
+                                        <th width="10%">Brand</th>
+                                        <th width="20%">Style Reference 2</th>
+                                        <th width="10%">SMV/PC</th>
+                                        <th width="8%">Season</th>
+                                        <th width="7%">Status</th>
+                                        <th width="15%">Action</th>
                                     </tr>
                                 </thead>
-                                <tfoot>
-                                    <tr>
-                                        <th>SL</th>
-                                        <th>Production Type</th>
-                                        <th>Style Reference 1</th>
-                                        <th>Buyer</th>
-                                        <th>Brand</th>
-                                        <th>Style Reference 2</th>
-                                        <th>SMV/pc</th>
-                                        <th>Season</th>
-        								                <th>Status</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </tfoot>
+                                <tbody></tbody>
                             </table>
                         </div><!-- /.col -->
                     </div><!-- /.row -->
@@ -128,8 +120,10 @@ $(document).ready(function(){
         '3' :[@foreach($buyerList as $e) <?php echo "\"$e\"," ?> @endforeach],
         '7' :[@foreach($seasonList as $e) <?php echo "\"$e\"," ?> @endforeach]
     };
-
-    $('#dataTables').DataTable({
+    var exportColName = ['Production Type','Style Reference 1','Buyer','Brand', 'Style Reference 2', 'SMV/pc','Season', 'Status'];
+        
+    var exportCol = [1,2,3,4,5,6,7,8];
+    var dt = $('#dataTables').DataTable({
         order: [], //reset auto order
         processing: true,
         responsive: false,
@@ -137,12 +131,83 @@ $(document).ready(function(){
         pagingType: "full_numbers",
         dom: "<'row'<'col-sm-2'l><'col-sm-4'i><'col-sm-3 text-center'B><'col-sm-3'f>>tp",
         ajax: {
-            url: '{!! url("merch/style_costing_data") !!}',
-            type: "POST",
+            url: '{!! url("merch/style_costing/style_costing_data") !!}',
+            type: "GET",
             headers: {
                   'X-CSRF-TOKEN': '{{ csrf_token() }}'
             }
         },
+        dom: "lBftrip",
+        buttons: [   
+            {
+                extend: 'csv', 
+                className: 'btn btn-sm btn-success',
+                title: 'Style list',
+                header: true,
+                footer: false,
+                exportOptions: {
+                    columns: exportCol,
+                    format: {
+                        header: function ( data, columnIdx ) {
+                            return exportColName[columnIdx];
+                        }
+                    }
+                },
+                "action": allExport,
+                messageTop: ''
+            }, 
+            {
+                extend: 'excel', 
+                className: 'btn btn-sm btn-warning',
+                title: 'Style list',
+                header: true,
+                footer: false,
+                exportOptions: {
+                    columns: exportCol,
+                    format: {
+                        header: function ( data, columnIdx ) {
+                            return exportColName[columnIdx];
+                        }
+                    }
+                },
+                "action": allExport,
+                messageTop: ''
+            }, 
+            {
+                extend: 'pdf', 
+                className: 'btn btn-sm btn-primary', 
+                title: 'Style list',
+                header: true,
+                footer: false,
+                exportOptions: {
+                    columns: exportCol,
+                    format: {
+                        header: function ( data, columnIdx ) {
+                            return exportColName[columnIdx];
+                        }
+                    }
+                },
+                "action": allExport,
+                messageTop: ''
+            }, 
+            {
+                extend: 'print', 
+                className: 'btn btn-sm btn-default',
+                title: '',
+                header: true,
+                footer: false,
+                exportOptions: {
+                    columns: exportCol,
+                    format: {
+                        header: function ( data, columnIdx ) {
+                            return exportColName[columnIdx];
+                        }
+                    }
+                },
+                "action": allExport,
+                messageTop: customReportHeader('Style list', { })
+            } 
+        ],
         columns: [
             {data: 'DT_RowIndex', name: 'DT_RowIndex'},
             {data: 'stl_type',  name: 'stl_type'},
@@ -152,68 +217,10 @@ $(document).ready(function(){
             {data: 'stl_product_name',  name: 'stl_product_name'},
             {data: 'stl_smv', name: 'stl_smv'},
             {data: 'se_name', name: 'se_name'},
-						{data: 'stl_status', name: 'stl_status'},
+			{data: 'stl_status', name: 'stl_status'},
             {data: 'action', name: 'action', orderable: false, searchable: false}
         ],
-        buttons: [
-            {
-                extend: 'copy',
-                className: 'btn-sm btn-info',
-                title: 'Style Costing List',
-                exportOptions: {
-                    // columns: ':visible'
-                    columns: [0,1,2,3,4,5,6,7]
-                },
-                header: false,
-                footer: true
-            },
-            {
-                extend: 'csv',
-                className: 'btn-sm btn-success',
-                title: 'Style Costing List',
-                exportOptions: {
-                    // columns: ':visible'
-                    columns: [0,1,2,3,4,5,6,7]
-                },
-                header: false,
-                footer: true
-            },
-            {
-                extend: 'excel',
-                className: 'btn-sm btn-warning',
-                title: 'Style Costing List',
-                exportOptions: {
-                    // columns: ':visible'
-                    columns: [0,1,2,3,4,5,6,7]
-                },
-                header: false,
-                footer: true
-            },
-            {
-                extend: 'pdf',
-                className: 'btn-sm btn-primary',
-                title: 'Style Costing List',
-                exportOptions: {
-                    // columns: ':visible'
-                    columns: [0,1,2,3,4,5,6,7]
-                },
-                header: false,
-                footer: true
-            },
-            {
-                extend: 'print',
-                autoPrint: true,
-                className: 'btn-sm btn-default',
-                title: 'Style Costing List',
-                exportOptions: {
-                    // columns: ':visible',
-                    columns: [0,1,2,3,4,5,6,7],
-                    stripHtml: false
-                },
-                // header: false,
-                // footer: true
-            }
-        ],
+
         initComplete: function () {
             var api =  this.api();
 
