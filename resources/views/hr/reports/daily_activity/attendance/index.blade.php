@@ -714,18 +714,7 @@ function selectedGroup(e, body, inputUrl){
 
 }
 
-function printDiv(divName)
-{
-    var myWindow=window.open('','','width=800,height=800');
-    myWindow.document.write('<html><head><title></title>');
-    myWindow.document.write('<style>h4{font-size: 8pt;}div,p,td,span,strong,th,b{line-height: 110%;padding: 0;margin: 0;font-size: 7pt;}p{padding: 0;margin: 0;}@import url(https://fonts.googleapis.com/css?family=Poppins:200,200i,300,400,500,600,700,800,900&amp;display=swap);body {font-family: Poppins,sans-serif;}.table{width: 100%;}a{text-decoration: none;}.table-bordered {border-collapse: collapse;}.table-bordered th,.table-bordered td {border: 1px solid #777 !important;padding:5px;}.no-border td, .no-border th{border:0 !important;vertical-align: top;}.f-16 th,.f-16 td, .f-16 td b{font-size: 16px !important;}</style>');
-    myWindow.document.write('</head><body>');
-    myWindow.document.write(document.getElementById(divName).innerHTML);
-    myWindow.document.close();
-    myWindow.focus();
-    myWindow.print();
-    myWindow.close();
-} 
+
     
 </script>
 @endpush

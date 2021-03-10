@@ -138,8 +138,9 @@ $(document).on('focus keyup','.autocomplete_txt',function(){
             $('#uom-'+itemCategory+'_'+id[1]).val(null).trigger('change').attr('disabled', true);
 
             if(item !== ''){
-            	saveBOM('added');
+            	
                 $('#itemid-'+item.mcat_id+'_'+id[1]).val(item.id);
+                saveBOM('added');
                 $('#color-'+item.mcat_id+'_'+id[1]).select2({
                     data: getColor
                 }).removeAttr('disabled');
@@ -157,6 +158,7 @@ $(document).on('focus keyup','.autocomplete_txt',function(){
                 if(nextinput === undefined){
                 	$(this).parent().parent().find('.right-btn .add-arrows').click();
                 }
+
             }
             
         }               
@@ -230,12 +232,13 @@ $(function () {
         },
         stop: function (e, ui) {
             ui.item.removeClass("selected");
-            saveBOM('move');
+            
             $(this).find("tr").each(function (index) {
                 if (index > 0) {
                     // $(this).find("td").eq(2).html(index);
                 }
             });
+            saveBOM('move');
         }
     });
 });
@@ -351,6 +354,8 @@ $(document).on('click', '#itemBtn', function () {
     	url += '/merch/setup/item_store_ajax';
     }else if(clickType === 'supplier'){
 		url += '/merch/setup/ajax_save_supplier';
+    }else if(clickType === 'article'){
+    	url += '/merch/setup/ajax_save_article';
     }
     
     if (isValid){
@@ -376,6 +381,12 @@ $(document).on('click', '#itemBtn', function () {
                        window.location.href=response.url;
                     }, 500);
 
+			    }else if(clickType === 'article'){
+			    	$("#articleid-"+cati+'_'+itIndex).val(response.value.id);
+			    	saveBOM('save');
+					setTimeout(function() {
+                       window.location.href=response.url;
+                    }, 500);
 			    }
 	            setTimeout(function() {
 	            	$('.close').click();

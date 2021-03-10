@@ -126,7 +126,50 @@ class ArticleController extends Controller
 
   public function articleAjaxStore(Request $request)
   {
-    # code...
+      $request->validate([
+          'supplier'         => 'required',
+          'art_name'         => 'required',
+          'composition'      => 'required',
+          'art_construction' => 'required'
+      ]);
+      $data = array();
+      $data['type'] = 'error';
+      $input = $request->all();
+      // check existing supplier
+      $input['art_name'] = $this->quoteReplaceHtmlEntry($request->art_name);
+      $article = Article::checkExistSupplierWiseArticle($input);
+
+      if($article != null){
+          $data['message'] = ' This Article already exists';
+          return response()->json($data);
+      }
+      
+      DB::beginTransaction();
+      try {
+
+        $data_ar  = new Article();
+        $data_ar->art_name            = $this->quoteReplaceHtmlEntry($request->art_name);
+        $data_ar->mr_supplier_sup_id  = $request->supplier;
+        $data_ar->composition         = $request->composition;
+        $data_ar->construction    = $request->art_construction;
+        
+        if($data_ar->save()){
+          // $this->logFileWrite("Article Saved", $data_ar->id);
+          $data['type'] = 'success';
+          $data['message'] = "Article successfully done.";
+          DB::commit();
+        }else{
+          $data['message'] = "Something Wrong, Please try again!";
+        }
+        $data['url'] = url()->previous();
+        $data['value'] = $data_ar;
+        return response()->json($data);
+      } catch (\Exception $e) {
+        DB::rollback();
+        $bug = $e->getMessage();
+        $data['message'] = $bug;
+        return response()->json($data);
+      }
   }
   public function articleDelete($art_id){
 

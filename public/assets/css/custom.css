@@ -1226,3 +1226,19 @@ div.dataTables_wrapper div.dataTables_processing {
   line-height: 1.5 !important;
   border-radius: 3px !important;
 }
+.tsticky-bottom{
+    background: white;
+    position: sticky;
+    bottom: 0;
+    box-shadow: 0 1px 2px 1px rgb(0 0 0 / 40%);
+    color: #000;
+    z-index: 1;
+}
+.tsticky-top{
+    background: white;
+    position: sticky;
+    top: 0;
+    box-shadow: 0 2px 2px -1px rgb(0 0 0 / 40%);
+    color: #000;
+    z-index: 1;
+}

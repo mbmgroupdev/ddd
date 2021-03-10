@@ -62,20 +62,16 @@
                       <li>
                           <a href="#">Style</a>
                       </li>
-                      <li class="active">Style BOM</li>
+                      <li class="active">Style BOM List</li>
+                      <li class="top-nav-btn">
+                        <a href="{{ url('merch/style/style_list')}}" target="_blank" class="btn btn-outline-primary btn-sm pull-right"> <i class="fa fa-list"></i> Style List</a> &nbsp;
+                        
+                        </li>
                   </ul><!-- /.breadcrumb -->
        
               </div>
               <div class="panel">
-                <div class="panel-heading">
-                      <h6>Style BOM List
-                          <div class="pull-right">
-                            
-                            <a class="btn btn-primary" href="{{ url('merch/style/style_list') }}"><i class="las la-list"></i> Style List</a>
-                            
-                        </div>
-                      </h6>
-                </div>
+
                 <div class="panel-body">
                   @include('inc/message')
                   <div class="style_section">
@@ -95,19 +91,7 @@
                                         <th width="15%">Action</th>
                                     </tr>
                                 </thead>
-                                <tfoot>
-                                    <tr>
-                                        <th width="8%">SL</th>
-                                        <th width="10%">Production Type</th>
-                                        <th width="20%">Style Reference 1</th>
-                                        <th width="15%">Buyer</th>
-                                        <th width="10%">Brand</th>
-                                        <th width="20%">Style Reference 2</th>
-                                        <th width="10%">SMV/pc</th>
-                                        <th width="15%">Season</th>
-                                        <th width="15%">Action</th>
-                                    </tr>
-                                </tfoot>
+                                <tbody></tbody>
                             </table>
                         </div><!-- /.col -->
                     </div><!-- /.row -->
@@ -262,6 +246,7 @@
                             );
                             
                             column.search(val ? '^'+val+'$' : '', true, false ).draw();
+                            column.search(val ? val.toUpperCase().replace("'S","").replace( /&/g, '&amp;' ): '', true, false ).draw();
                             e.stopPropagation();
                         });
 

@@ -49,19 +49,14 @@
                           <a href="#">Style</a>
                       </li>
                       <li class="active">Style List</li>
+                      <li class="top-nav-btn">
+                        <a class="btn btn-sm btn-primary" href="{{ url('merch/style/style_new') }}"><i class="las la-plus"></i> New Style</a>
+                        </li>
                   </ul><!-- /.breadcrumb -->
        
               </div>
               <div class="panel">
-                <div class="panel-heading">
-                      <h6>Style List
-                          <div class="pull-right">
-                            
-                            <a class="btn btn-sm btn-primary" href="{{ url('merch/style/style_new') }}"><i class="las la-plus"></i> New Style</a>
-                            
-                        </div>
-                      </h6>
-                </div>
+
                 <div class="panel-body">
                   @include('inc/message')
                   <div class="style_section">
