@@ -60,7 +60,7 @@
                                                 <th>Production Type</th>
                                                 <td>{{ (!empty($style->stl_type)?$style->stl_type:null) }}</td>
                                                 <th>Style Reference 1</th>
-                                                <td>{{ (!empty($style->stl_no)?$style->stl_no:null) }}</td>
+                                                <td>{!! (!empty($style->stl_no)?$style->stl_no:null) !!}</td>
                                                 <th>Operation</th>
                                                 <td>{{ (!empty($operations->name)?$operations->name:null) }}</td>
                                             </tr>
@@ -74,7 +74,7 @@
                                             </tr>
                                             <tr>
                                                 <th>Style Reference 2</th>
-                                                <td>{{ (!empty($style->stl_product_name)?$style->stl_product_name:null) }}</td>
+                                                <td>{!! (!empty($style->stl_product_name)?$style->stl_product_name:null) !!}</td>
                                                 <th>Sample Type</th>
                                                 <td>{{ (!empty($samples->name)?$samples->name:null) }}</td>
                                                 <th>Description</th>
@@ -405,17 +405,20 @@
               data: form.serialize(), // serializes the form's elements.
               success: function(response)
               {
-                if(savetype =='manual' ){
-                    $.notify(response.message, response.type);
-                }else{
-                    $.notify('Item has been '+savetype, response.type);
-                }
+                
                 if(response.type === 'success'){
-                    var bomindex = $('input[name="bomitemid[]"]');
-                    $.each(response.value, function(i, el) {
-                        var bomid = bomindex[i].getAttribute('id');
-                        $("#"+bomid).val(el);
-                    });
+                  if(savetype =='manual' ){
+                    $.notify(response.message, response.type);
+                  }else if(savetype =='cost'){
+                    $.notify('Saved '+savetype, response.type);
+                  }else{
+                    $.notify('Item has been '+savetype, response.type);
+                  }
+                  var bomindex = $('input[name="bomitemid[]"]');
+                  $.each(response.value, function(i, el) {
+                      var bomid = bomindex[i].getAttribute('id');
+                      $("#"+bomid).val(el);
+                  });
                    
                 }
                 $(".app-loader").hide();

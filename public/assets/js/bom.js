@@ -366,7 +366,7 @@ $(document).on('click', '#itemBtn', function () {
           success: function(response)
           {
             $("#app-loader").hide();
-            console.log(response)
+            // console.log(response)
             $.notify(response.message, response.type);
              if(response.type === 'success'){
                 if(clickType === 'item'){
@@ -445,4 +445,11 @@ $(document).on('click', '.AddBtn_bu', function () {
 
 $(document).on('click', '.RemoveBtn_bu', function(){
     $(this).parent().parent().remove();
+});
+
+// auto save
+$(document).on('blur','.changesNo',function(){
+    setTimeout(function(){
+        saveBOM('cost');
+    }, 600)
 });

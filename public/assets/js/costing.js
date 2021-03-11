@@ -5,7 +5,7 @@ var base_url = $("#base_url").val();
 
 $(document).on('change', '.terms:radio', function(){
     termsCondition($(this));
-    changeCost($(this), 'radio');
+    
     
 }); 
 $(document).ready(function() {
@@ -16,14 +16,15 @@ $(document).ready(function() {
 
 function termsCondition(thisvalue){
     if(thisvalue.val() == "C&F"){
-        thisvalue.parent().parent().parent().find('.fob').attr('disabled', true).val(0);
-        thisvalue.parent().parent().parent().find('.lc').attr('disabled', true).val(0);
-        thisvalue.parent().parent().parent().find('.freight').attr('disabled', true).val(0);
+        thisvalue.parent().parent().parent().find('.fob').attr('readonly', true).val(0);
+        thisvalue.parent().parent().parent().find('.lc').attr('readonly', true).val(0);
+        thisvalue.parent().parent().parent().find('.freight').attr('readonly', true).val(0);
     }else{
         thisvalue.parent().parent().parent().find('.fob').removeAttr('disabled readonly').addClass('highlight');
         thisvalue.parent().parent().parent().find('.lc').removeAttr('disabled readonly').addClass('highlight');
         thisvalue.parent().parent().parent().find('.freight').removeAttr('disabled readonly').addClass('highlight');
     }
+    changeCost(thisvalue, 'radio');
     
 }
 // on change input cost
@@ -77,15 +78,60 @@ function changeCost(thisvalue, type) {
 
     calculateFOB();
 }
+
+// special costing
+$(document).on("keyup change blur", ".sp_price", function(){
+    var sp_price = parseFloat($(this).val()).toFixed(6);
+    sp_price = (isNaN(sp_price) || sp_price == '')?'0':sp_price;
+    $(this).parent().parent().find(".sp_per_price").html(sp_price);
+    calculateFOB();
+});
+
+// commission
+$(document).on('change keyup blur','.buyer-commission-percent, .agent-commission-percent',function(){
+    calculateFOB();
+});
+
 // calculate total and net fob price
 function calculateFOB(){
     var categoryFob = 0;
     $(".categoryPrice").each(function(i, v) {
         if($(this).html() != '' )categoryFob += parseFloat( $(this).html() ); 
     });
-    var totalFob = parseFloat(parseFloat(categoryFob)).toFixed(6); 
-    $("#totalfob").html(totalFob);
+    var netFob = parseFloat(categoryFob).toFixed(6);
+    netFob = (isNaN(netFob) || netFob == '')?'0':netFob;
+    $("#net-fob").html(netFob);
+    $("#net_fob").val(netFob);
+    
+    //buyer fob 
+    var buyerPercent = $('.buyer-commission-percent').val();
+    buyerPercent = (isNaN(buyerPercent) || buyerPercent == '')?'0':buyerPercent;
+    var buyerPerVal = parseFloat((netFob * buyerPercent)/100).toFixed(6);
+    $("#buyer-commission-unitprice").val(buyerPerVal);
+    var buyerFob = parseFloat(parseFloat(netFob) + parseFloat(buyerPerVal)).toFixed(6);
+    buyerFob = (isNaN(buyerFob) || buyerFob == '')?'0':buyerFob;
+    $("#buyer-fob").html(buyerFob);
+    $("#buyer_fob").val(buyerFob);
+
+    //agent fob
+    var agentPercent = $('.agent-commission-percent').val();
+    agentPercent = (isNaN(agentPercent) || agentPercent == '')?'0':agentPercent;
+    var agentPerVal = parseFloat((buyerFob * agentPercent)/100).toFixed(6);
+    $("#agent-commission-unitprice").val(agentPerVal);
+    var agentFob = parseFloat(parseFloat(buyerFob) + parseFloat(agentPerVal)).toFixed(6);
+    $("#agent-fob").html(agentFob);
+    $("#agent_fob").val(agentFob);
+
+    // var totalFob = parseFloat(parseFloat(netFob) + parseFloat(buyerFob) + parseFloat(agentFob)).toFixed(6); 
+    $("#totalfob").html(agentFob);
 }
+// auto save
+$(document).on('blur','.commission, .changesNo, .sp_price',function(){
+    setTimeout(function(){
+        saveCosting('auto');
+    }, 600)
+});
+
 
 $(document).on('keyup', 'input, select', function(e) {
     if (e.which == 39) { // right arrow
