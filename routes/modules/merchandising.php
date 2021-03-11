@@ -63,6 +63,7 @@ Route::group(['prefix' => 'merch/style','namespace' => 'Merch\Style'], function(
 
 	// Costing
 	Route::get('costing/{id}', 'CostingController@show');
+	Route::get('costing-ajax-store', 'CostingController@ajaxStore');
 });
 
 /*

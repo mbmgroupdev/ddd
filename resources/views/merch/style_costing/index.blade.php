@@ -60,7 +60,7 @@
                                                 <th>Production Type</th>
                                                 <td>{{ (!empty($style->stl_type)?$style->stl_type:null) }}</td>
                                                 <th>Style Reference 1</th>
-                                                <td>{{ (!empty($style->stl_no)?$style->stl_no:null) }}</td>
+                                                <td>{!! (!empty($style->stl_no)?$style->stl_no:null) !!}</td>
                                                 <th>Operation</th>
                                                 <td>{{ (!empty($operations->name)?$operations->name:null) }}</td>
                                             </tr>
@@ -74,7 +74,7 @@
                                             </tr>
                                             <tr>
                                                 <th>Style Reference 2</th>
-                                                <td>{{ (!empty($style->stl_product_name)?$style->stl_product_name:null) }}</td>
+                                                <td>{!! (!empty($style->stl_product_name)?$style->stl_product_name:null) !!}</td>
                                                 <th>Sample Type</th>
                                                 <td>{{ (!empty($samples->name)?$samples->name:null) }}</td>
                                                 <th>Description</th>
@@ -97,7 +97,7 @@
                     </div> 
                 </div>
                 <div class="panel panel-info table-list-section">
-                        <form class="form-horizontal" role="form" method="post" id="bomForm">
+                        <form class="form-horizontal" role="form" method="post" id="costingForm">
                             <input type="hidden" name="stl_id" value="{{ $style->stl_id }}">
                             {{ csrf_field() }} 
                             <div class="panel-body">
@@ -114,7 +114,8 @@
                                                     <th width="130" class="vertical-align">Supplier</th>
                                                     <th width="130" class="vertical-align">Article</th>
                                                     
-                                                    <th width="80" class="vertical-align">Cost</th>
+                                                    {{-- <th width="80" class="vertical-align">Cost</th> --}}
+                                                    <th width="70" class="vertical-align p-1" >Consum- ption</th>
                                                     <th width="80" class="vertical-align">Extra (%)</th>
                                                     <th width="80" class="vertical-align">UOM</th>
                                                     
@@ -129,7 +130,7 @@
                                             @foreach($itemCategory as $itemCat)
                                             <tbody>
                                                 <tr class="table-active">
-                                                    <td colspan="14"><h4 class="capilize">{{ $itemCat->mcat_name }}</h4></td>
+                                                    <td colspan="14"><h5 class="capilize">{{ $itemCat->mcat_name }}</h5></td>
                                                 </tr>
                                                 @if(count($groupStyleBom) > 0 && isset($groupStyleBom[$itemCat->mcat_id]))
                                                   @foreach($groupStyleBom[$itemCat->mcat_id] as $itemBom)
@@ -153,25 +154,25 @@
                                                       <td> {{ $itemBom->uom }} </td>
                                                       <td>
                                                         <div class="custom-control custom-radio custom-radio-color-checked custom-control-inline ">
-                                                          <input type="radio" id="FOB-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" name="terms-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" class="custom-control-input bg-primary terms" value="FOB">
+                                                          <input type="radio" id="FOB-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" name="terms-{{ $itemBom->mcat_id}}{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" class="custom-control-input bg-primary terms" value="FOB" @if($itemBom->bom_term == 'FOB') checked @endif >
                                                           <label class="custom-control-label" for="FOB-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}"> FOB </label>
                                                         </div>
                                                         <div class="custom-control custom-radio custom-radio-color-checked custom-control-inline ">
-                                                          <input type="radio" id="CF-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" name="terms-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" class="custom-control-input bg-primary terms" value="C&F" checked>
+                                                          <input type="radio" id="CF-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" name="terms-{{ $itemBom->mcat_id}}{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" class="custom-control-input bg-primary terms" value="C&F" @if($itemBom->bom_term != 'FOB') checked @endif>
                                                           <label class="custom-control-label" for="CF-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}"> C&F</label>
                                                         </div>
                                                       </td>
                                                       <td>
-                                                          <input type="text" step="any" min="0" name="fob[]" id="fob-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" class="form-control changesNo fob" autocomplete="off" data-catid="{{ $itemBom->mcat_id}}" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="0" readonly>
+                                                          <input type="text" step="any" min="0" name="precost_fob[]" id="fob-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" class="form-control changesNo fob" autocomplete="off" data-catid="{{ $itemBom->mcat_id}}" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="{{ $itemBom->precost_fob??'0' }}" readonly>
                                                       </td>
                                                       <td>
-                                                          <input type="text" step="any" min="0" name="lc[]" id="lc-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" class="form-control changesNo lc" autocomplete="off" data-catid="{{ $itemBom->mcat_id}}" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="0" readonly>
+                                                          <input type="text" step="any" min="0" name="precost_lc[]" id="lc-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" class="form-control changesNo lc" autocomplete="off" data-catid="{{ $itemBom->mcat_id}}" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="{{ $itemBom->precost_lc??'0' }}" readonly>
                                                       </td>
                                                       <td>
-                                                          <input type="text" step="any" min="0" name="freight[]" id="freight-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" class="form-control changesNo freight" autocomplete="off" data-catid="{{ $itemBom->mcat_id}}" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="0" readonly>
+                                                          <input type="text" step="any" min="0" name="precost_freight[]" id="freight-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" class="form-control changesNo freight" autocomplete="off" data-catid="{{ $itemBom->mcat_id}}" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="{{ $itemBom->precost_freight??'0' }}" readonly>
                                                       </td>
                                                       <td>
-                                                          <input type="text" step="any" min="0" name="unitprice[]" id="unitprice-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" data-catid="{{ $itemBom->mcat_id}}" class="form-control changesNo unitprice" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="0">
+                                                          <input type="text" step="any" min="0" name="precost_unit_price[]" id="unitprice-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" data-catid="{{ $itemBom->mcat_id}}" class="form-control changesNo unitprice" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="{{ $itemBom->precost_unit_price??'0' }}">
                                                       </td>
                                                       <td>
                                                         <p id="percosting-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" class="text-right fwb totalpercost">0</p>
@@ -181,7 +182,7 @@
                                                   </tr>
                                                   @endforeach
                                                   <tr class="table-default">
-                                                    <td colspan="13"><h4 class="capilize">Total {{ $itemCat->mcat_name }} Price</h4></td>
+                                                    <td colspan="13"><h5 class="capilize">Total {{ $itemCat->mcat_name }} Price</h5></td>
                                                     <td>
                                                       <p id="totalcosting-{{ $itemBom->mcat_id}}" class="text-right fwb categoryPrice {{ $itemCat->mcat_name }}">0</p>
                                                     </td>
@@ -192,69 +193,121 @@
                                             @endforeach
                                             <tbody>
                                               <tr class="table-default">
-                                                  <td colspan="13"><h4 class="capilize">Total Sewing and Finishing Accessories Price</h4></td>
+                                                  <td colspan="13"><h5 class="capilize">Total Sewing and Finishing Accessories Price</h5></td>
                                                   <td>
                                                     <p id="tsewing-finishing" class="text-right fwb">0</p>
                                                   </td>
                                               </tr>
                                               @foreach($specialOperation as $spo)
                                               <tr class="table-default">
-                                                  <td colspan="5"><p class="capilize">{{ $spo->opr_name }}</p></td>
-                                                  <td> 1 </td>
-                                                  <td> 0 </td>
-                                                  <td></td>
-                                                  <td colspan="4"></td>
-                                                  <td>
-                                                    <p id="sp-{{ $spo->style_op_id }}" class="text-right fwb">0</p>
-                                                  </td>
-                                                  <td>
-                                                    <input type="text" step="any" min="0" name="unitprice[]" id="spunitprice-{{ $spo->style_op_id }}" class="form-control changesNo spunitprice" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="0">
+                                                <td colspan="5"><p class="capilize">{{ $spo->opr_name }}</p></td>
+                                                <td> 1 </td>
+                                                <td> 0 </td>
+                                                <td>
+                                                  <select name="spuom[]" id="spuom-{{ $spo->style_op_id }}" class="form-control" >
+                                                    @foreach($uom as $key => $um)
+                                                      <option value="{{ $um }}" @if($um == $spo->uom) selected @endif>{{ $um }}</option>
+                                                    @endforeach
+                                                  </select>
+                                                </td>
+                                                <td colspan="4"></td>
+                                                
+                                                <td>
+                                                  <input type="text" step="any" min="0" name="spunitprice[]" id="spunitprice-{{ $spo->style_op_id }}" class="form-control sp_price spunitprice" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="{{ $spo->unit_price??'0' }}">
+                                                  <input type="hidden" name="style_op_id[]" value="{{ $spo->style_op_id }}">
+                                                  <input type="hidden" name="opr_type[]" value="{{ $spo->opr_type }}">
+                                                  <input type="hidden" name="mr_operation_opr_id[]" value="{{ $spo->mr_operation_opr_id }}">
                                                 </td>
                                                 <td>
-                                                  <p id="sp-{{ $spo->style_op_id }}" class="text-right fwb totalpercost">0</p>
-                                                  <input type="hidden" step="any" min="0" name="pertotal[]" id="sprice-{{ $spo->style_op_id }}" class="form-control" autocomplete="off" value="0">
+                                                  <p id="sp-{{ $spo->style_op_id }}" class="text-right fwb categoryPrice sp_per_price">{{ number_format((float)($spo->unit_price??'0'), 6,'.','') }}</p>
+                                                  
                                                 </td>
                                               </tr>
                                               @endforeach
                                               <tr class="table-default">
-                                                  <td colspan="13"><p class="capilize">Testing Cost</p></td>
-                                                  <td>
-                                                    <p id="testing-cost" class="text-right fwb">0</p>
-                                                  </td>
+                                                <td colspan="5"><p class="capilize">Testing Cost</p></td>
+                                                <td> 1 </td>
+                                                <td> 0 </td>
+                                                <td>Piece</td>
+                                                <td colspan="4"></td>
+                                                <td>
+                                                  <input type="text" step="any" min="0" name="testing_cost" id="tcunitprice" class="form-control sp_price tcunitprice" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="{{ $otherCosting->testing_cost??'0' }}">
+                                                </td>
+                                                <td>
+                                                  <p id="testing-cost" class="text-right fwb categoryPrice sp_per_price">{{ number_format((float)($otherCosting->testing_cost??'0'), 6,'.','') }}</p>
+                                                  
+                                                </td>
                                               </tr>
                                               <tr class="table-default">
-                                                  <td colspan="13"><p class="capilize">CM</p></td>
-                                                  <td>
-                                                    <p id="cm" class="text-right fwb">0</p>
-                                                  </td>
+                                                <td colspan="5"><p class="capilize">CM</p></td>
+                                                <td> 1 </td>
+                                                <td> 0 </td>
+                                                <td>Piece</td>
+                                                <td colspan="4"></td>
+                                                <td>
+                                                  <input type="text" step="any" min="0" name="cm" id="cmunitprice" class="form-control sp_price cmunitprice" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="{{ $otherCosting->cm??'0' }}">
+                                                </td>
+                                                <td>
+                                                  <p id="cm-cost" class="text-right fwb categoryPrice sp_per_price">{{ number_format((float)($otherCosting->cm??'0'), 6,'.','') }}</p>
+                                                  
+                                                </td>
                                               </tr>
                                               <tr class="table-default">
-                                                  <td colspan="13"><p class="capilize">Commercial Cost</p></td>
-                                                  <td>
-                                                    <p id="commercial-cost" class="text-right fwb">0</p>
-                                                  </td>
+                                                <td colspan="8"><p class="capilize">Commercial Cost</p></td>
+                                                <td colspan="4"></td>
+                                                <td>
+                                                  <input type="text" step="any" min="0" name="commercial_cost" id="commercialunitprice" class="form-control sp_price commercialunitprice" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="{{ $otherCosting->commercial_cost??'0' }}">
+                                                </td>
+                                                <td>
+                                                  <p id="commercial-cost" class="text-right fwb categoryPrice sp_per_price">{{ number_format((float)($otherCosting->commercial_cost??'0'), 6,'.','') }}</p>
+                                                  
+                                                </td>
                                               </tr>
                                               <tr class="table-default">
-                                                  <td colspan="13"><h4 class="capilize">Net FOB</h4></td>
+                                                  <td colspan="13"><h5 class="capilize">Net FOB</h5></td>
                                                   <td>
                                                     <p id="net-fob" class="text-right fwb">0</p>
+                                                    <input type="hidden" id="net_fob" name="net_fob" value="0">
                                                   </td>
                                               </tr>
                                               <tr class="table-default">
-                                                  <td colspan="13"><p class="capilize">Buyer Commission</p></td>
-                                                  <td>
-                                                    <p id="buyer-commission" class="text-right fwb">0</p>
-                                                  </td>
+                                                <td colspan="5"><h5 class="capilize">Buyer FOB</h5></td>
+                                                <td>
+                                                  <input type="text" step="any" min="0" name="buyer_comission_percent" id="buyer-commission-percent" class="form-control commission buyer-commission-percent" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="{{ $otherCosting->buyer_comission_percent??'0' }}">
+                                                </td>
+                                                <td>%</td>
+                                                <td></td>
+                                                <td colspan="4"></td>
+                                                <td>
+                                                  <input type="text" step="any" min="0" id="buyer-commission-unitprice" class="form-control buyer-commission-unitprice" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="0" readonly>
+                                                  <input type="hidden" name="buyer_fob" value="0" id="buyer_fob">
+                                                </td>
+                                                <td>
+                                                  <p id="buyer-fob" class="text-right fwb totalpercost">0</p>
+                                                  
+                                                </td>
                                               </tr>
                                               <tr class="table-default">
-                                                  <td colspan="13"><p class="capilize">Agent Commission</p></td>
-                                                  <td>
-                                                    <p id="agent-commission" class="text-right fwb">0</p>
-                                                  </td>
+                                                <td colspan="5"><h5 class="capilize">Agent FOB</h5></td>
+                                                <td>
+                                                  <input type="text" step="any" min="0" name="agent_comission_percent" id="agent-commission-percent" class="form-control commission agent-commission-percent" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="{{ $otherCosting->agent_comission_percent??'0' }}">
+                                                </td>
+                                                <td>%</td>
+                                                <td></td>
+                                                <td colspan="4"></td>
+                                                <td>
+                                                  <input type="text" step="any" min="0" id="agent-commission-unitprice" class="form-control agent-commission-unitprice" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="0" readonly>
+
+                                                  <input type="hidden" step="any" min="0" name="agent_fob" id="agent_fob" class="form-control agent-commission-unitprice" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="0">
+                                                </td>
+                                                <td>
+                                                  <p id="agent-fob" class="text-right fwb totalpercost">0</p>
+                                                  
+                                                </td>
                                               </tr>
 
                                               <tr class="table-default">
-                                                  <td colspan="13" class="tsticky-bottom"><h4 class="capilize ">Total FOB</h4></td>
+                                                  <td colspan="13" class="tsticky-bottom"><h5 class="capilize ">Total FOB</h5></td>
                                                   <td class="tsticky-bottom">
                                                     <p id="totalfob" class="text-right fwb ">0</p>
                                                   </td>
@@ -268,7 +321,7 @@
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <div class="submit-invoice invoice-save-btn pull-right">
-                                            <button type="button" class="btn btn-outline-success btn-md text-center saveBom" onclick="saveBOM('manual')"><i class="fa fa-save"></i> Save</button>
+                                            <button type="button" class="btn btn-outline-success btn-md text-center saveBom" onclick="saveCosting('manual')"><i class="fa fa-save"></i> Save</button>
                                         </div>
                                     </div>
                                 </div>
@@ -286,9 +339,9 @@
 
 <script src="{{ asset('assets/js/costing.js')}}"></script>
 <script>
-    function saveBOM(savetype) {
+    function saveCosting(savetype) {
         if(savetype =='manual' ) $(".app-loader").show();
-        var curStep = $(this).closest("#bomForm"),
+        var curStep = $(this).closest("#costingForm"),
           curInputs = curStep.find("input[type='text'],input[type='hidden'],input[type='number'],input[type='date'],input[type='checkbox'],input[type='radio'],textarea,select"),
           isValid = true;
         $(".form-group").removeClass("has-error");
@@ -298,29 +351,26 @@
         //       $(curInputs[i]).closest(".form-group").addClass("has-error");
         //    }
         // }
-        var form = $("#bomForm");
+        var form = $("#costingForm");
         if (isValid){
            $.ajax({
               type: "GET",
-              url: '{{ url("/merch/style/bom-ajax-store") }}',
+              url: '{{ url("/merch/style/costing-ajax-store") }}',
               headers: {
                   'X-CSRF-TOKEN': '{{ csrf_token() }}',
               },
               data: form.serialize(), // serializes the form's elements.
               success: function(response)
               {
-                if(savetype =='manual' ){
-                    $.notify(response.message, response.type);
-                }else{
-                    $.notify('Item has been '+savetype, response.type);
-                }
+                // console.log(response);
                 if(response.type === 'success'){
-                    var bomindex = $('input[name="bomitemid[]"]');
-                    $.each(response.value, function(i, el) {
-                        var bomid = bomindex[i].getAttribute('id');
-                        $("#"+bomid).val(el);
-                    });
-                   
+                  if(savetype =='manual' ){
+                      $.notify(response.message, response.type);
+                  }else{
+                      $.notify('Costing Save '+savetype, response.type);
+                  }
+                }else{
+                  $.notify(response.message, response.type);
                 }
                 $(".app-loader").hide();
               },

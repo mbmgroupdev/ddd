@@ -112,13 +112,9 @@ class StyleCostingController extends Controller
     		}
     		else
     		{
-    			$return .= "<a href=".url('merch/style_costing/'.$data->stl_id.'/edit')." class=\"btn btn-sm btn-info\" data-toggle=\"tooltip\" title=\"Edit Costing\">
+    			$return .= "<a href=".url('merch/style/costing/'.$data->stl_id)." class=\"btn btn-sm btn-primary\" data-toggle=\"tooltip\" title=\"Edit Costing\">
     			<i class=\"ace-icon fa fa-pencil bigger-120\"></i>
-    			</a>
-    			<a href=".url('merch/style_costing/'.$data->stl_id.'/print')." class=\"btn btn-sm btn-success\" data-toggle=\"tooltip\" title=\"Print Costing\">
-    			<i class=\"ace-icon fa fa-print bigger-120\"></i>
-    			</a>
-    			";
+    			</a>";
     		}
     		$return .= "</div>";
     		return $return;
