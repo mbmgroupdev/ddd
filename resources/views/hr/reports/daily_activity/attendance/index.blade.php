@@ -726,6 +726,7 @@ function printDiv(divName)
     myWindow.print();
     myWindow.close();
 } 
+
     
 </script>
 @endpush

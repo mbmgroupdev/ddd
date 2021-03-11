@@ -60,6 +60,10 @@ Route::group(['prefix' => 'merch/style','namespace' => 'Merch\Style'], function(
 	// BOM
 	Route::get('bom/{id}', 'BOMController@show');
 	Route::get('bom-ajax-store', 'BOMController@ajaxStore');
+
+	// Costing
+	Route::get('costing/{id}', 'CostingController@show');
+	Route::get('costing-ajax-store', 'CostingController@ajaxStore');
 });
 
 /*
@@ -89,6 +93,21 @@ Route::group(['prefix' => 'merch/style_bom','namespace' => 'Merch\StyleBOM'], fu
 	Route::post('/ajax_save_bom_info', 'StyleBomController@ajaxSaveBomInfo');
 	Route::post('/ajax_update_bom_info', 'StyleBomController@ajaxUpdateBomInfo');
 
+});
+
+/*
+*--------------------------------------------------------------
+* STYLE BOM Costing
+*--------------------------------------------------------------
+*/
+Route::group(['prefix' => 'merch/style_costing','namespace' => 'Merch\StyleCosting'], function(){
+	Route::get("/", "StyleCostingController@showList");
+	Route::get("/style_costing_data", "StyleCostingController@getListData");
+	Route::get("/{id}/create", "StyleCostingController@showForm");
+	Route::post("/{id}/create", "StyleCostingController@store");
+	Route::get("/{id}/edit", "StyleCostingController@editForm");
+	Route::get("/{id}/print", "StyleCostingController@editFormPrint");
+	Route::post("/{id}/edit", "StyleCostingController@update");
 });
 
 /*
@@ -202,6 +221,7 @@ Route::group(['prefix' => 'merch/setup','namespace' => 'Merch\Setup'], function(
 	Route::get('article/{sup_id}', 'ArticleController@articleForm');
 	Route::get('article', 'ArticleController@articleForm');
 	Route::post('article_store', 'ArticleController@articleStore');
+	Route::post('ajax_save_article', 'ArticleController@articleAjaxStore');
 	Route::get('article_edit/{type}/{a_id}', 'ArticleController@articleEdit');
 	// Route::get('composition_edit/{a_id}', 'ArticleController@compositionEdit');
 	// Route::get('construction_edit/{a_id}', 'ArticleController@constructionEdit');
@@ -337,19 +357,8 @@ Route::post('merch/setup/excecutive/members_update', 'Merch\Setup\ExcecutiveTeam
 
 
 
-/*
-*--------------------------------------------------------------
-* STYLE BOM Costing
-*--------------------------------------------------------------
-*/
-Route::get("merch/style_costing", "Merch\StyleCosting\StyleCostingController@showList");
-Route::post("merch/style_costing_data", "Merch\StyleCosting\StyleCostingController@getListData");
-Route::get("merch/style_costing/{id}/create", "Merch\StyleCosting\StyleCostingController@showForm");
-Route::post("merch/style_costing/{id}/create", "Merch\StyleCosting\StyleCostingController@store");
-Route::get("merch/style_costing/{id}/edit", "Merch\StyleCosting\StyleCostingController@editForm");
-Route::get("merch/style_costing/{id}/print", "Merch\StyleCosting\StyleCostingController@editFormPrint");
-Route::post("merch/style_costing/{id}/edit", "Merch\StyleCosting\StyleCostingController@update");
-#----------------- Capacity Reservation by MATI --------------#
+
+#----------------- Capacity Reservation --------------#
 #-------------------------------------------------------------#
 Route::get('merch/reservation/reservation','Merch\Reservation\ReservationController@showForm');
 Route::post('merch/reservation/reservation','Merch\Reservation\ReservationController@storeData');

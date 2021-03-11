@@ -7,5 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class BomOtherCosting extends Model
 {
     protected $table= 'mr_stl_bom_other_costing';
-    public $timestamps= false;
+    protected $guarded = [];
+    protected $dates = [
+        'created_at', 'updated_at'
+    ];
 }

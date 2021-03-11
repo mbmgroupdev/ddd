@@ -64,7 +64,12 @@ class StyleCostingController extends Controller
     	->orderBy('s.stl_id', 'desc')
     	->get();
 
-
+    	$approvalLevel = DB::table('mr_stl_costing_approval')
+		->leftJoin('users','mr_stl_costing_approval.submit_to','users.associate_id')
+		->where('status',1)
+		->get()
+		->groupBy('mr_style_stl_id', true)
+		->toArray();
 		//dd($data);exit;
     	return DataTables::of($data)
     	->addIndexColumn()
@@ -81,51 +86,41 @@ class StyleCostingController extends Controller
     	->editColumn('stl_status', function ($data) {
     		if ($data->stl_status == "0")
     		{
-    			return "<button class=\"btn btn-xs btn-primary btn-round\">Created</button>";
+    			return '<span class="badge badge-pill badge-primary">Created</span>';
     		}
     		else if($data->stl_status == "1")
     		{
-    			$approvalLevel = DB::table('mr_stl_costing_approval')
-    			->leftJoin('users','mr_stl_costing_approval.submit_to','users.associate_id')
-    			->where('mr_style_stl_id',$data->mr_style_stl_id)
-    			->where('status',1)
-    			->first();
-
-    			if(!empty($approvalLevel)){
-    				return "<button class=\"btn btn-xs btn-danger btn-round\" rel='tooltip' data-tooltip=\"In Level-$approvalLevel->level To $approvalLevel->name\" data-tooltip-location='top' >
-    				Pending</button>";
+    			if(isset($approvalLevel[$data->mr_style_stl_id]) && $approvalLevel[$data->mr_style_stl_id] != null){
+    				$appro = $approvalLevel[$data->mr_style_stl_id];
+    				return "<span class=\"badge badge-pill badge-danger\" rel='tooltip' data-tooltip=\"In Level-$appro->level To $appro->name\" data-tooltip-location='top' >
+    				Pending</span>";
     			}else{
-    				return "<button class=\"btn btn-xs btn-danger btn-round\" rel='tooltip' data-tooltip=\"In Level-Unknown To Unknown\" data-tooltip-location='top' >
-    				Pending</button>";
+    				return "<span class=\"badge badge-pill badge-danger\" rel='tooltip' data-tooltip=\"In Level-Unknown To Unknown\" data-tooltip-location='top' >
+    				Pending</span>";
     			}
     		}else if($data->stl_status == "2")
     		{
-    			return "<button class=\"btn btn-xs btn-success btn-round\">Approved</button>";
+    			return '<span class="badge badge-pill badge-success">Approved</span>';
     		}
     	})
     	->editColumn('action', function ($data) {
     		$return = "<div class=\"btn-group\">";
     		if (empty($data->bom_term))
     		{
-    			$return .= "<a href=".url('merch/style_costing/'.$data->stl_id.'/create')." class=\"btn btn-xs btn-warning\" data-toggle=\"tooltip\" title=\"Pre-Costing\">Pre-Costing$data->bom_term</a>";
+    			// $return .= "<a href=".url('merch/style_costing/'.$data->stl_id.'/create')." class=\"btn btn-sm btn-warning\" data-toggle=\"tooltip\" title=\"Pre-Costing$data->bom_term\"><i class='las la-donate'></i></a>";
+    			$return .= "<a href=".url('merch/style/costing/'.$data->stl_id)." class=\"btn btn-sm btn-warning\" data-toggle=\"tooltip\" title=\"Pre-Costing$data->bom_term\"><i class='las la-donate'></i></a>";
     		}
     		else
     		{
-    			$return .= "<a href=".url('merch/style_costing/'.$data->stl_id.'/edit')." class=\"btn btn-xs btn-info\" data-toggle=\"tooltip\" title=\"Edit\">
+    			$return .= "<a href=".url('merch/style/costing/'.$data->stl_id)." class=\"btn btn-sm btn-primary\" data-toggle=\"tooltip\" title=\"Edit Costing\">
     			<i class=\"ace-icon fa fa-pencil bigger-120\"></i>
-    			</a>
-    			<a href=".url('merch/style_costing/'.$data->stl_id.'/print')." class=\"btn btn-xs btn-success\" data-toggle=\"tooltip\" title=\"Print\">
-    			<i class=\"ace-icon fa fa-print bigger-120\"></i>
-    			</a>
-    			";
+    			</a>";
     		}
     		$return .= "</div>";
     		return $return;
     	})
     	->rawColumns([
-    		'stl_type',
-    		'stl_status',
-    		'action'
+    		'stl_type', 'stl_no', 'b_name', 'br_name', 'stl_product_name', 'stl_smv', 'se_name', 'stl_status', 'action'
     	])
     	->make(true);
     }

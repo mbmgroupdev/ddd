@@ -27,9 +27,8 @@
               </li>
               <li class="active">Style BOM</li>
               <li class="top-nav-btn">
-                <a href="{{ url('hr/operation/shift_assign')}}" target="_blank" class="btn btn-outline-primary btn-sm pull-right"> <i class="fa fa-list"></i> Style BOM List</a> &nbsp;
-                <a href="{{ url('hr/operation/shift_assign')}}" target="_blank" class="btn btn-outline-success btn-sm pull-right"> <i class="fa fa-plus"></i> Add Costing</a>
-                    {{-- <a href="#" class="iq-waves-effect" id="btnFullscreen"><i class="ri-fullscreen-line"></i></a> --}}
+                <a href='{{ url("merch/style/costing/$style->stl_id")}}' class="btn btn-outline-success btn-sm pull-right"> <i class="fa fa-plus"></i> Add Costing</a>
+                <a href="{{ url('merch/style_bom')}}" target="_blank" class="btn btn-outline-primary btn-sm pull-right"> <i class="fa fa-list"></i> Style BOM List</a> &nbsp;
                 </li>
             </ul><!-- /.breadcrumb -->
         </div>
@@ -61,7 +60,7 @@
                                                 <th>Production Type</th>
                                                 <td>{{ (!empty($style->stl_type)?$style->stl_type:null) }}</td>
                                                 <th>Style Reference 1</th>
-                                                <td>{{ (!empty($style->stl_no)?$style->stl_no:null) }}</td>
+                                                <td>{!! (!empty($style->stl_no)?$style->stl_no:null) !!}</td>
                                                 <th>Operation</th>
                                                 <td>{{ (!empty($operations->name)?$operations->name:null) }}</td>
                                             </tr>
@@ -75,7 +74,7 @@
                                             </tr>
                                             <tr>
                                                 <th>Style Reference 2</th>
-                                                <td>{{ (!empty($style->stl_product_name)?$style->stl_product_name:null) }}</td>
+                                                <td>{!! (!empty($style->stl_product_name)?$style->stl_product_name:null) !!}</td>
                                                 <th>Sample Type</th>
                                                 <td>{{ (!empty($samples->name)?$samples->name:null) }}</td>
                                                 <th>Description</th>
@@ -369,66 +368,7 @@
       </div>
       <div class="modal-body">
         <div class="modal-content-result" id="content-result"></div>
-        {{-- <form class="form-horizontal" id="itemForm" role="form" enctype="multipart/form-data" style="display: none">
-            <div class="row">
-                <div class="offset-3 col-6">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <div class="form-group has-float-label">
-                                <input type="text" class="autocomplete_sub_cat form-control" id="subcategory_name" name="subcategory_name" data-type="subcategory_name" placeholder="Enter Sub Category" value="" autocomplete="off" />
-                              <label for="subcategory_name">Sub Category</label>
-                            </div>
-                            <div class="form-group has-float-label">
-                                <input type="text" class=" form-control" id="item_code-0" name="item_code" placeholder="Enter Item Code" value="" autocomplete="off" />
-                              <label for="item_code-0">Item Code</label>
-                            </div>
-                            <div class="form-group has-float-label has-required">
-                                <input type="text" class=" form-control" id="item_name-0" name="item_name" placeholder="Enter Item Name" value="" autocomplete="off" required />
-                              <label for="item_name-0">Item Name</label>
-                            </div>
-                            <div class="form-group has-float-label has-required select-search-group">
-                              {{ Form::select('uom[]', $uom, null, ['id'=>'uom-0','class'=> 'form-control', 'required', 'multiple']) }}
-                              <label for="uom-0">UOM</label>
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            
-                            <div class="form-group has-float-label">
-                                <input type="text" class=" form-control" id="description-0" name="description" placeholder="Enter Description" value="" autocomplete="off" />
-                              <label for="description-0">Description</label>
-                            </div>
-                            
-                            <div class="form-group has-required ">
-                                <label>Depends On:</label>
-                                <div class="custom-control custom-radio custom-radio-color-checked custom-control-inline">
-                                  <input type="radio" id="color-0" name="depends" class="custom-control-input bg-primary" value="1">
-                                  <label class="custom-control-label" for="color-0"> Color </label>
-                                </div>
-                                <div class="custom-control custom-radio custom-radio-color-checked custom-control-inline">
-                                  <input type="radio" id="size-0" name="depends" class="custom-control-input bg-primary" value="2">
-                                  <label class="custom-control-label" for="size-0"> Size</label>
-                                </div>
-                                <div class="custom-control custom-radio custom-radio-color-checked custom-control-inline">
-                                  <input type="radio" id="sizecolor-0" name="depends" class="custom-control-input bg-primary" value="3">
-                                  <label class="custom-control-label" for="sizecolor-0"> Size & Color </label>
-                                </div>
-                                <div class="custom-control custom-radio custom-radio-color-checked custom-control-inline">
-                                  <input type="radio" id="none-0" name="depends" class="custom-control-input bg-primary" value="0" checked>
-                                  <label class="custom-control-label" for="none-0"> None </label>
-                                </div>
-                                
-                            </div>
-                        </div>
-                    </div>
-                    
-                    
-                    <div class="form-group">
-                      <button class="btn btn-outline-success btn-md" type="button" id="itemBtn"><i class="fa fa-save"></i> Save</button>
-                    </div>
-                </div>
-            </div>
-            
-        </form> --}}
+
       </div>
       
     </div>
@@ -465,17 +405,20 @@
               data: form.serialize(), // serializes the form's elements.
               success: function(response)
               {
-                if(savetype =='manual' ){
-                    $.notify(response.message, response.type);
-                }else{
-                    $.notify('Item has been '+savetype, response.type);
-                }
+                
                 if(response.type === 'success'){
-                    var bomindex = $('input[name="bomitemid[]"]');
-                    $.each(response.value, function(i, el) {
-                        var bomid = bomindex[i].getAttribute('id');
-                        $("#"+bomid).val(el);
-                    });
+                  if(savetype =='manual' ){
+                    $.notify(response.message, response.type);
+                  }else if(savetype =='cost'){
+                    $.notify('Saved '+savetype, response.type);
+                  }else{
+                    $.notify('Item has been '+savetype, response.type);
+                  }
+                  var bomindex = $('input[name="bomitemid[]"]');
+                  $.each(response.value, function(i, el) {
+                      var bomid = bomindex[i].getAttribute('id');
+                      $("#"+bomid).val(el);
+                  });
                    
                 }
                 $(".app-loader").hide();
