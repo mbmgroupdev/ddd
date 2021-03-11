@@ -674,9 +674,7 @@ class EmployeeHelper
         $salary_date = $present + $getHoliday + $leaveCount;
 
         $stamp = 10;
-        if($status == 2 && in_array($employee->as_unit_id,[1,4,5])){
-        	$stamp = 0;
-        }
+        
         $salary = [
             'as_id' => $employee->associate_id,
             'month' => $month,
@@ -706,10 +704,6 @@ class EmployeeHelper
             'created_by' => auth()->id()
             
         ];
-        
-        
-
-        
 
         $salaryAdjust = SalaryAdjustMaster::getCheckEmployeeIdMonthYearWise($employee->associate_id, $month, $year);
         $leaveAdjust = 0.00;
@@ -734,26 +728,36 @@ class EmployeeHelper
         $salary['salary_payable'] = $salaryPayable;
         $salary['leave_adjust'] = $leaveAdjust;
 
+    	if(($present + $leaveCount) > 0){
+	        $getSalary = HrMonthlySalary::where('as_id', $employee->associate_id)
+                ->where('month', $month)
+                ->where('year', $year)
+                ->first();
 
-        $getSalary = HrMonthlySalary::
-                    where('as_id', $employee->associate_id)
-                    ->where('month', $month)
-                    ->where('year', $year)
-                    ->first();
+	        if($getSalary == null){
+	            DB::table('hr_monthly_salary')->insert($salary);
+	        }else{
+	            DB::table('hr_monthly_salary')
+	            	->where('id', $getSalary->id)
+	            	->update($salary);  
+	        }
 
-        if($getSalary == null){
-            DB::table('hr_monthly_salary')->insert($salary);
-        }else{
-            DB::table('hr_monthly_salary')->where('id', $getSalary->id)->update($salary);  
-        }
-        $salary['adjust'] = $leaveAdjust - $deductCost + $deductSalaryAdd + $productionBonus;
-        $salary['per_day_basic'] = $perDayBasic;
-        $salary['per_day_gross'] = $perDayGross;
-        $salary['salary_date'] = $total_day;
-        $salary['disburse_date'] = null;
-        
+	        $salary['adjust'] = $leaveAdjust - $deductCost + $deductSalaryAdd + $productionBonus;
+	        $salary['per_day_basic'] = $perDayBasic;
+	        $salary['per_day_gross'] = $perDayGross;
+	        $salary['salary_date'] = $total_day;
+	        $salary['disburse_date'] = null;
+	        
 
-        return $salary;
+	        return $salary;
+	    }else{
+	    	$getSalary = HrMonthlySalary::where('as_id', $employee->associate_id)
+                ->where('month', $month)
+                ->where('year', $year)
+                ->delete();
+
+            return '';
+	    }
     }
 
     public static function getHolidayDate($getEmployee, $startDate, $endEnd)

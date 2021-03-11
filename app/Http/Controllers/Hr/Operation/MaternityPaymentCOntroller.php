@@ -662,7 +662,10 @@ class MaternityPaymentController extends Controller
 				$view = $this->calculateMaternityPayment($leave, $employee, $request);
 
 
-				$view .= view('hr.common.partial_salary_sheet', compact('salary','employee' ))->render();
+				if($salary != ''){
+					$view .= view('hr.common.partial_salary_sheet', compact('salary','employee' ))->render();
+				}
+
 
 
 			}

@@ -13,21 +13,38 @@
               <a href="#">User</a>
           </li>
           <li class="active">Create</li>
+          <li class="top-nav-btn">
+              <a class="pull-right btn btn-primary bn-sm" href="{{url('hr/adminstrator/users')}}">User List</a>
+          </li>
       </ul><!-- /.breadcrumb --> 
   </div>
   @include('inc/message')
    <div class="panel">
-      <div class="panel-heading">
-            <h6 class="card-title">
-               Add User
-               <a class="pull-right btn btn-primary" href="{{url('hr/adminstrator/users')}}">User List</a>
-            </h6>
-      </div>
       <div class="panel-body">   
          <form class="needs-validation" novalidate method="post" action="{{url('hr/adminstrator/user/store')}}">
             @csrf
             <div class="row">
-               <div class="col-sm-4">
+              <div class="col-sm-3">
+                  <div class="user-details-block" >
+                      <div class="user-profile text-center mt-0">
+                          <img id="avatar" class="avatar-130 img-fluid" src="{{ asset('assets/images/user/09.jpg') }} " onerror="this.onerror=null;this.src='{{ asset("assets/images/user/09.jpg") }}';">
+                      </div>
+                      <div class="text-center mt-3">
+                       <h4><b id="emp-name">-------------</b></h4>
+                       <p class="mb-0" id="designation">
+                          --------------------------</p>
+                       <p class="mb-0" >
+                          Oracle ID: <span id="oracle_id" class="text-success">-------------</span>
+                       </p>
+                       <p class="mb-0" >
+                          Associate ID: <span id="associate_id_emp" class="text-success">-------------</span>
+                       </p>
+                       <p  class="mb-0">Department: <span id="department" class="text-success">--------------------</span> </p>
+                       
+                      </div>
+                  </div>
+              </div>
+               <div class="col-sm-3 mt-5">
                   <div class="form-group has-float-label select-search-group">
                      {{ Form::select('associate_id', [], null, ['placeholder'=>'Select Associate ID', 'id'=>'associate_id', 'class'=> 'associates form-control']) }}
                      <label  for="associate_id"> Associate's ID </label>
@@ -60,9 +77,7 @@
                      <span class="text-muted">Default password for user is </span><strong class="text-success">123456</strong >
                      
                   </div>
-                  <div class="form-group">
-                     <button class="btn btn-primary btn-100" type="submit">Save</button>
-                  </div>
+                  
                   
                   
                </div>
@@ -103,26 +118,27 @@
                   </div>
                   
                </div>
-              <div class="col-sm-4">
-                  <div class="user-details-block" >
-                      <div class="user-profile text-center mt-0">
-                          <img id="avatar" class="avatar-130 img-fluid" src="{{ asset('assets/images/user/09.jpg') }} " onerror="this.onerror=null;this.src='{{ asset("assets/images/user/09.jpg") }}';">
-                      </div>
-                      <div class="text-center mt-3">
-                       <h4><b id="emp-name">-------------</b></h4>
-                       <p class="mb-0" id="designation">
-                          --------------------------</p>
-                       <p class="mb-0" >
-                          Oracle ID: <span id="oracle_id" class="text-success">-------------</span>
-                       </p>
-                       <p class="mb-0" >
-                          Associate ID: <span id="associate_id_emp" class="text-success">-------------</span>
-                       </p>
-                       <p  class="mb-0">Department: <span id="department" class="text-success">------------------------</span> </p>
-                       
-                      </div>
+               <div class="col-sm-2">
+                  
+                  
+                  <div class="form-group ">
+                     <label  for="roles" ><b>Buyer </b></label>
+                     <br>
+                     @foreach($buyers as $key => $buyer)
+                     <div class="custom-control custom-checkbox custom-checkbox-color-check custom-control-inline">
+                        <input class="custom-control-input bg-success" type="checkbox" value="{{ $buyer->b_id }}" id="buyer{{ $buyer->b_id }}" name="buyer_permissions[]" >
+                        <label class="custom-control-label" for="buyer{{ $buyer->b_id }}">
+                        {{ $buyer->b_name }}
+                        </label>
+                     </div>
+                     @endforeach
                   </div>
-              </div>  
+                  <div class="form-group">
+                     <button class="btn btn-primary btn-100" type="submit">Save</button>
+                  </div>
+                  
+               </div>
+                
             </div>
          </form>
 

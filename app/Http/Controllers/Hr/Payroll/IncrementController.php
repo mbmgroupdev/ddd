@@ -601,10 +601,10 @@ class IncrementController extends Controller
         
 
        
-        $allowance = $ss->medical + $ss->transport+$ss->food;
-        $ben_basic= (($amount - $allowance / $ss->basic));
+        $allowance = $ss->medical + $ss->transport + $ss->food;
+        $ben_basic= ceil(($amount - $allowance) / $ss->basic);
         //$ben_basic= (($amount/100)*$ss->basic);
-        $ben_house_rent = $amount - $allowance;
+        $ben_house_rent = $amount - ($basic + $allowance);
 
         if($b->ben_bank_amount > 0 && $b->ben_cash_amount > 0){
             $ben_bank_amount = $b->ben_bank_amount;
