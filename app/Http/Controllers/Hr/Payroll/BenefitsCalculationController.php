@@ -262,8 +262,11 @@ class BenefitsCalculationController extends Controller
                 if($salary_date->toDateString() != $month_last && $lockActivity == 0){
 
                     $salary = EmployeeHelper::processPartialSalary($employee, $salary_date->toDateString(), $status);
+                    $salary_page = '';
+                    if($salary != ''){
 
-                    $salary_page = view('hr.common.partial_salary_sheet', compact('salary','employee' ))->render();
+                        $salary_page = view('hr.common.partial_salary_sheet', compact('salary','employee' ))->render();
+                    }
                 }else{
 
                     // remove current month salary

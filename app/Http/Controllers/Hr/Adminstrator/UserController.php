@@ -35,9 +35,8 @@ class UserController extends Controller
         $roles = Role::get()->pluck('name', 'name');
         $units = Unit::get();
         $locations = Location::where('hr_location_status', 1)->get();
-        /*$buyers= Buyer::get();
-        $templates = DB::table('hr_buyer_template')->get();*/
-        return view('hr.adminstrator.add-user', compact('roles', 'units', 'locations'));
+        $buyers = DB::table('mr_buyer')->get();
+        return view('hr.adminstrator.add-user', compact('roles', 'units', 'locations','buyers'));
     }
 
     /**
@@ -61,6 +60,11 @@ class UserController extends Controller
 
             $unit_permissions = implode(",", $request->input("unit_permissions"));
             $location_permission = implode(",", $request->input("location_permission"));
+            $buyer_permission = null;
+            if($request->input("buyer_permissions")){
+                $buyer_permission = implode(",", $request->input("buyer_permissions"));
+
+            }
 
             $user = new User();
             $user->name = $request->name;
@@ -69,6 +73,7 @@ class UserController extends Controller
             $user->password = Hash::make('123456');
             $user->unit_permissions = $unit_permissions;
             $user->location_permission = $location_permission;
+            $user->buyer_permissions = $buyer_permission;
             $user->created_by = auth()->user()->id??'';
 
             $user->save();
@@ -78,8 +83,8 @@ class UserController extends Controller
 
             // create log file
             log_file_write("User Created", $user->id);
-
-            return redirect('hr/adminstrator/user/edit/'.$user->id)->with('success', 'Save Successful.');
+            toastr()->success('User created successfully');
+            return redirect('hr/adminstrator/user/edit/'.$user->id);
         }
     }
 
@@ -340,13 +345,14 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        $user = User::findOrFail($id);
+        $user = User::with('employee')->findOrFail($id);
         $roles = Role::get()->pluck('name', 'name');
         $units = Unit::get();
+        $buyers = DB::table('mr_buyer')->get();
         $locations = Location::where('hr_location_status', 1)->get();
         $role = $user->roles()->first()->name??'';
 
-        return view('hr.adminstrator.edit-user', compact('user','roles', 'units','role','locations'));
+        return view('hr.adminstrator.edit-user', compact('user','roles', 'units','role','locations','buyers'));
     }
 
     /**
@@ -358,33 +364,40 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $validator = Validator::make($request->all(),[
-            'name'     => 'required|string|max:255',
-            'associate_id' => 'sometimes|unique:users,associate_id,{$id}',
-            'role'    => 'required'
-        ]);
-
-        if ($validator->fails()){
-            return redirect()->back()->withErrors($validator)->withInput();
-        }else{
+        try{
 
             $user = User::findOrFail($id);
-            $user->name = $request->name;
-            if($request->associate_id){
-                $user->associate_id = $request->associate_id;
+            if(isset($request->name)){
+                $user->name = $request->name;
             }
-            $user->unit_permissions = implode(",", $request->input("unit_permissions"));
-            $user->location_permission = implode(",", $request->input("location_permission"));
+            if(isset($request->unit_permissions)){
+                $user->unit_permissions = $request->unit_permissions?(implode(",", $request->unit_permissions)):null;
+            }
+            if(isset($request->location_permission)){
+                $user->location_permission = $request->location_permission?(implode(",", $request->location_permission)):null;
+            }
+            if(isset($request->buyer_permissions)){
+                $user->buyer_permissions = $request->buyer_permissions?(implode(",", $request->buyer_permissions)):null;
+            }
 
+            // change password
+            if(isset($request->password)){
+                $user->password = Hash::make($request->password);
+                log_file_write("User password changed", $user->id);
+            }
             $user->save();
-
-            $roles = $request->input('role') ? [$request->input('role')] : [];
-            $user->syncRoles($roles);
+            if(isset($request->role)){
+                $roles = $request->input('role') ? [$request->input('role')] : [];
+                $user->syncRoles($roles);
+            }
 
             // create log file
             log_file_write("User information updated", $user->id);
-
-            return redirect()->back()->with('success', 'User information updated succesfully.');
+            toastr()->success('User information updated succesfully.');
+            return redirect()->back();
+        }catch( \Exception $e){
+            toastr()->error($e->getMessage());
+            return redirect()->back();
         }
     }
 

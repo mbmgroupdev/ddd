@@ -222,7 +222,7 @@ class ProcessBuyerSalary implements ShouldQueue
                             if ($att->late <= $lateAllow && $leave <= $leaveAllow && $absent <= $absentAllow && $getEmployee->as_emp_type_id == 3) {
 
                                 $lastMonth = Carbon::parse($start_date)->subMonth();
-                                $l_month = $lastMonth->copy()->format('n');
+                                $l_month = $lastMonth->copy()->format('m');
                                 $l_year = $lastMonth->copy()->format('Y');
 
                                 $getLastMonthSalary = DB::table($this->salaryTable)

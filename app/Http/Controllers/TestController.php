@@ -106,7 +106,7 @@ class TestController extends Controller
     {
 
         
-        return $this->makeHoliday();
+        return $this->processLeftSalary();
         return $this->testMail();
         
         return '';
@@ -2375,7 +2375,7 @@ class TestController extends Controller
         return 'success';
     }
 
-    public function processLeftSalary()
+   /* public function processLeftSalary()
     {
         $data = [];
         $datas = DB::table('hr_as_basic_info as b')
@@ -2388,7 +2388,7 @@ class TestController extends Controller
             \App\Helpers\EmployeeHelper::processPartialSalary($v, $data[$v->associate_id]['Date'],2);
         }
         return 'done';
-    }
+    }*/
 
     public function processBuyerLeftSalary()
     {
@@ -2717,7 +2717,7 @@ class TestController extends Controller
 
     public function makeHoliday()
     {
-        $first_day = date('Y-m-d');
+        $first_day = date('Y-m-01');
         $day_count = date('t');
         $date_by_day = [];
         for ($i = 1; $i <= $day_count; $i++) {
@@ -2731,6 +2731,7 @@ class TestController extends Controller
         $holiday = DB::table('hr_roaster_holiday as r')
             ->select('r.*','b.associate_id')
             ->where('b.shift_roaster_status', 1)
+            ->whereIn('b.as_unit_id', [3,8])
             ->leftJoin('hr_as_basic_info as b','b.as_id','r.as_id')
             ->get();
 
@@ -2773,6 +2774,252 @@ class TestController extends Controller
         }
 
         return 'done';
+    }
+
+
+    public function findManual()
+    {
+        $designation = designation_by_id();
+        $att = DB::table('hr_attendance_mbm as a')
+            ->select('a.id','a.as_id','b.associate_id','b.as_name','b.as_doj','b.as_designation_id','b.as_unit_id','a.in_date','a.in_time','a.out_time','a.ot_hour')
+            ->leftJoin('hr_as_basic_info as b','a.as_id','b.as_id')
+            ->where('a.in_date','>=','2021-02-01')
+            ->where('a.in_date','<=','2021-02-28')
+            ->where('a.remarks','BM')
+            ->get();
+
+         // find event history related to this fields
+        $event_ids = collect($att)->pluck('id');
+        $ev =  DB::table('event_history')
+            ->select('previous_event->id as id','previous_event','modified_event')
+            ->whereIn('previous_event->id',$event_ids)
+            ->orderBy('id','desc')
+            ->get()
+            ->keyBy('id');
+
+
+        $actual = DB::table('hr_attendance_history')
+                    ->select('as_id','att_date','raw_data')
+                    ->whereIn('unit_id', [1,4,5])
+                    ->where('att_date','>=','2021-02-01')
+                    ->where('att_date','<=','2021-02-28')
+                    ->get();
+        $actual = collect($actual)->groupBy('as_id');
+        $bm = [];
+        foreach ($att as $key => $v) {
+            $v->as_designation_id = isset($designation[$v->as_designation_id])?$designation[$v->as_designation_id]['hr_designation_name']:'';
+            if($v->as_unit_id == 1)
+                $v->as_unit_id = 'MBM';
+            else if($v->as_unit_id == 4)
+                $v->as_unit_id = 'MFW';
+            else if($v->as_unit_id == 5)
+                $v->as_unit_id = 'MBM-2';
+
+            $v->prev_in = null;
+            $v->prev_out = null;
+            $v->prev_ot_hour = null;
+            if(isset($actual[$v->as_id])){
+                $raw = collect($actual[$v->as_id]);
+                // check exist
+                $fndIn = $raw->where('raw_data', $v->in_time)->first();
+                $fndOut = $raw->where('raw_data', $v->out_time)->first();
+
+                if($fndIn && $fndOut){
+
+                }else{
+                    
+                    if($fndIn){
+                        //find out punch from event history
+                        if(isset($ev[$v->id])){
+                            $v->prev_out = json_decode($ev[$v->id]->previous_event)->out_time;
+                            $v->prev_ot_hour = json_decode($ev[$v->id]->previous_event)->ot_hour;
+                        }
+                    }     
+                    if($fndOut){
+                        //find in punch from event history
+                        if(isset($ev[$v->id])){
+                            $v->prev_ot_hour = json_decode($ev[$v->id]->previous_event)->ot_hour;
+                            $v->prev_in = json_decode($ev[$v->id]->previous_event)->in_time;
+                        }
+                    }
+
+                    $bm[] = $v; 
+                }
+            }else{
+                $bm[] = $v;
+            }
+        }
+
+        
+        //return $event_ids;
+
+       
+
+        $chk = collect($bm)->groupBy('as_id');
+        $chk = $chk->filter(function($i){
+            return count($i) >= 5;
+        });
+
+        $arr = [];
+
+        foreach ($chk as $key => $v) {
+            foreach ($v as $k => $t) {
+                $arr[] = $t; 
+            }
+        }
+
+        /*$chk = collect($chk)->map( function($i){
+            $np = collect($i)->first();
+            $ot_hour = collect($i)->sum('ot_hour');
+            $prev_hour = collect($i)->sum('prev_ot_hour');
+            return array(
+                'Associate ID' => $np->associate_id,
+                'Name' => $np->as_name,
+                'Designation' => $np->as_designation_id,
+                'Unit' => $np->as_unit_id,
+                'DoJ' => $np->as_doj,
+                'OT' => $ot_hour,
+                'Prev OT' => $prev_hour,
+                'Changed' => count($i)
+            );
+        });*/
+
+        return (new FastExcel(collect($arr)))->download('mbm_all_final.xlsx');
+
+    }
+
+    public function processLeftSalary()
+    {
+        $data = array(
+            '19D700071P' => array('Date' => '2020-10-07'),
+            '14K000025A' => array('Date' => '2020-10-04'),
+            '19F100083N' => array('Date' => '2020-10-09'),
+            '17A100091N' => array('Date' => '2020-10-05'),
+            '19G100102N' => array('Date' => '2020-10-17'),
+            '19C100154N' => array('Date' => '2020-10-30'),
+            '15L100156N' => array('Date' => '2020-10-30'),
+            '17L100201N' => array('Date' => '2020-10-25'),
+            '18A100252N' => array('Date' => '2020-10-25'),
+            '19D100270N' => array('Date' => '2020-10-16'),
+            '18D100280N' => array('Date' => '2020-10-27'),
+            '18K100298N' => array('Date' => '2020-10-27'),
+            '18D500031O' => array('Date' => '2020-10-11'),
+            '17A500041O' => array('Date' => '2020-10-11'),
+            '02F500187O' => array('Date' => '2020-10-27'),
+            '15M100373N' => array('Date' => '2020-10-09'),
+            '13A100430N' => array('Date' => '2020-10-07'),
+            '16L100438N' => array('Date' => '2020-10-05'),
+            '12F100447N' => array('Date' => '2020-10-06'),
+            '13J100460N' => array('Date' => '2020-10-13'),
+            '10B100486N' => array('Date' => '2020-10-17'),
+            '13D100504N' => array('Date' => '2020-10-30'),
+            '18D100598N' => array('Date' => '2020-10-06'),
+            '06C100610N' => array('Date' => '2020-10-06'),
+            '18K100615N' => array('Date' => '2020-10-11'),
+            '18D100642N' => array('Date' => '2020-10-19'),
+            '17L100748N' => array('Date' => '2020-10-06'),
+            '17J100753N' => array('Date' => '2020-10-06'),
+            '12L100771N' => array('Date' => '2020-10-09'),
+            '19G100774N' => array('Date' => '2020-10-26'),
+            '17M100846N' => array('Date' => '2020-10-12'),
+            '18C100857N' => array('Date' => '2020-10-17'),
+            '15L100982N' => array('Date' => '2020-10-06'),
+            '18B101021N' => array('Date' => '2020-10-10'),
+            '18C101023N' => array('Date' => '2020-10-20'),
+            '15L101050N' => array('Date' => '2020-10-13'),
+            '19A101070N' => array('Date' => '2020-10-10'),
+            '19B101075N' => array('Date' => '2020-10-24'),
+            '19B101080N' => array('Date' => '2020-10-23'),
+            '19C101108N' => array('Date' => '2020-10-30'),
+            '19F101115N' => array('Date' => '2020-10-30'),
+            '13F101243N' => array('Date' => '2020-10-20'),
+            '13D101258N' => array('Date' => '2020-10-23'),
+            '19F101261N' => array('Date' => '2020-10-12'),
+            '19F101275N' => array('Date' => '2020-10-27'),
+            '94L101326N' => array('Date' => '2020-10-14'),
+            '17J101359N' => array('Date' => '2020-10-14'),
+            '19J000075A' => array('Date' => '2020-10-12'),
+            '11D101557N' => array('Date' => '2020-10-05'),
+            '18C101605N' => array('Date' => '2020-10-14'),
+            '19E101640N' => array('Date' => '2020-10-09'),
+            '13C101726N' => array('Date' => '2020-10-30'),
+            '18A101756N' => array('Date' => '2020-10-12'),
+            '18G102009N' => array('Date' => '2020-10-02'),
+            '19K000404A' => array('Date' => '2020-10-28'),
+            '19K106051N' => array('Date' => '2020-10-06'),
+            '19K106120N' => array('Date' => '2020-10-06'),
+            '19L106177N' => array('Date' => '2020-10-19'),
+            '19L106253N' => array('Date' => '2020-10-21'),
+            '19M106471N' => array('Date' => '2020-10-09'),
+            '19M106551N' => array('Date' => '2020-10-20'),
+            '19L106562N' => array('Date' => '2020-10-01'),
+            '19M106584N' => array('Date' => '2020-10-14'),
+            '20C000452A' => array('Date' => '2020-10-06'),
+            '20K106765N' => array('Date' => '2020-10-07'),
+            '20K106782N' => array('Date' => '2020-10-06'),
+            '20K106786N' => array('Date' => '2020-10-27'),
+            '20K106790N' => array('Date' => '2020-10-27'),
+            '20K700397P' => array('Date' => '2020-10-09'),
+            '20K500889O' => array('Date' => '2020-10-18'),
+            '20K106809N' => array('Date' => '2020-10-13'),
+            '20K500892O' => array('Date' => '2020-10-18'),
+            '20K500896O' => array('Date' => '2020-10-06'),
+            '20K700399P' => array('Date' => '2020-10-06'),
+            '20K106822N' => array('Date' => '2020-10-16'),
+            '20K106825N' => array('Date' => '2020-10-18'),
+            '20K106852N' => array('Date' => '2020-10-27'),
+            '20L107680N' => array('Date' => '2020-10-06'),
+            '20L107681N' => array('Date' => '2020-10-06')
+        );
+        $ids = DB::table('hr_monthly_salary')
+            ->where('month','10')
+            ->whereIn('unit_id', [1,4,5])
+            ->whereIn('emp_status',[2,5])
+            ->whereIn('as_id', array_keys($data))
+            ->pluck('as_id');
+
+
+        $datas = DB::table('hr_as_basic_info as b')
+            ->whereIn('b.associate_id',$ids)
+            ->leftJoin('hr_benefits as ben', 'b.associate_id','ben.ben_as_id')
+            ->get();
+
+        $ben = DB::table('hr_all_given_benefits')
+                ->whereIn('associate_id',$ids)
+                ->groupBy('associate_id')
+                ->get()
+                ->keyBy('associate_id');
+        $h = [];
+        foreach ($datas as $key => $v) {
+            $dt = $data[$v->associate_id]['Date'];
+            \App\Helpers\EmployeeHelper::processPartialSalary($v, $dt ,$v->as_status);
+
+            if(isset($ben[$v->associate_id])){
+                $ldt = $ben[$v->associate_id]->status_date??$dt;
+
+                if($dt >=  $ldt || $v->as_status == 2){
+
+                    $ldt = Carbon::parse($dt)->addDay()->toDateString();
+                    
+
+                }
+                DB::table('hr_as_basic_info')
+                    ->where('as_id', $v->as_id)
+                    ->update(['as_status_date' => $ldt]);
+
+               $h[$v->associate_id] = $dt;
+               DB::table('hr_all_given_benefits')
+                    ->where('associate_id', $v->associate_id)
+                    ->update(
+                        [
+                            'status_date' => $ldt,
+                            'salary_date' => $dt 
+                        ]
+                    );
+
+            }
+        }
+        return $h;
     }
 
 
