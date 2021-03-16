@@ -46,6 +46,7 @@
         <div id="loading-center">
         </div>
     </div>
+    <div id="main"></div>
     <!-- loader END -->
     <div id="app">
         <!-- Wrapper Start -->

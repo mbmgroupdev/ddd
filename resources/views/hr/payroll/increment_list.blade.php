@@ -22,6 +22,12 @@
         .nav-year:last-child{
             border: 0;
         }
+        #dataTables th:nth-child(2) input{
+          width: 70px !important;
+        }
+        #dataTables th:nth-child(1) select{
+          width: 100px !important;
+        } 
 
 
     </style>
@@ -61,10 +67,11 @@
             <div class="panel panel-success">
                 <div class="panel-body">
                     
-                    <table id="dataTables" class="table table-striped table-bordered" style="width: 100% !important;">
+                    <table id="dataTables" class="table table-striped table-bordered table-responsive" style="width: 100% !important;">
                         <thead>
                             <tr>
                                 <th>Sl.</th>
+                                <th>Unit Name</th>
                                 <th>Associate ID</th>
                                 <th>Name</th>
                                 <th>Oracle ID</th>
@@ -133,11 +140,13 @@ function printEnLetter(letter)
 $(document).ready(function(){
     var totalempcount = 0;
     var totalemp = 0;
-    var searchable = [1,2];
-    var selectable = []; //use 4,5,6,7,8,9,10,11,....and * for all
-    var dropdownList = {};
-    var exportColName = ['Sl.','Associate ID','Name','Oracle Code','Designation','Increment Type','Increment Amount','Applied Date','Effective Date'];
-        var exportCol = [0,1,2,3,4,5];
+    var searchable = [2,3];
+    var selectable = [1]; //use 4,5,6,7,8,9,10,11,....and * for all
+    var dropdownList = {
+        '1' :[@foreach($unitList as $e) <?php echo "'$e'," ?> @endforeach]
+    };
+    var exportColName = ['SL.','Unit Name','Associate ID','Name','Oracle Code','Designation','Increment Type','Increment Amount','Applied Date','Effective Date'];
+        var exportCol = [0,1,2,3,4,5,6,7,8,9];
     var dt =  $('#dataTables').DataTable({
            order: [], //reset auto order
             lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
@@ -163,49 +172,74 @@ $(document).ready(function(){
                 {
                     extend: 'csv',
                     className: 'btn-sm btn-success',
-                    "action": allExport,
+                    title: '',
+                    header: true,
+                    footer: false,
                     exportOptions: {
-                        columns: ':visible'
-                    }
+                          columns: exportCol,
+                          format: {
+                              header: function ( data, columnIdx ) {
+                                  return exportColName[columnIdx];
+                              }
+                          }
+                    },
+                    "action": allExport,
                 },
                 {
                     extend: 'excel',
-                    className: 'btn-sm btn-warning',
-                    "action": allExport,
+                    className: 'btn btn-sm btn-warning',
+                    title: '',
+                    header: true,
+                    footer: false,
                     exportOptions: {
-                        columns: ':visible'
-                    }
+                          columns: exportCol,
+                          format: {
+                              header: function ( data, columnIdx ) {
+                                  return exportColName[columnIdx];
+                              }
+                          }
+                    },
+                    "action": allExport,
                 },
                 {
                     extend: 'pdf',
-                    "action": allExport,
-                    className: 'btn-sm btn-primary',
+                    className: 'btn btn-sm btn-primary',
+                    title: '',
+                    header: true,
+                    footer: false,
                     exportOptions: {
-                        columns: ':visible'
-                    }
+                          columns: exportCol,
+                          format: {
+                              header: function ( data, columnIdx ) {
+                                  return exportColName[columnIdx];
+                              }
+                          }
+                    },
+                    "action": allExport,
                 },
                 {
 
-                    extend: 'print',
-                    autoWidth: true,
-                    "action": allExport,
-                    className: 'btn-sm btn-default print',
-                    title: '',
-                    exportOptions: {
-                        columns: ':visible',
-                        stripHtml: false
-                    },
-                    title: '',
-                    messageTop: function () {
-                        return  '<h3 class="text-center">Increment List</h3>';
-                               
-                    }
+                  extend: 'print', 
+                  className: 'btn btn-sm btn-default',
+                  title: '',
+                  header: true,
+                  footer: false,
+                  exportOptions: {
+                      columns: exportCol,
+                      format: {
+                          header: function ( data, columnIdx ) {
+                              return exportColName[columnIdx];
+                          }
+                      }
+                  },
+                  "action": allExport,
 
                 }
             ],
 
             columns: [
                 { data: 'DT_RowIndex', name: 'DT_RowIndex' },
+                { data: 'hr_unit_name',  name: 'hr_unit_name' },
                 { data: 'associate_id',  name: 'associate_id' },
                 { data: 'as_name', name: 'as_name'},
                 { data: 'as_oracle_code', name: 'as_oracle_code'},
@@ -224,6 +258,7 @@ $(document).ready(function(){
                     var column = this;
                     var input = document.createElement("input");
                     input.setAttribute('placeholder', $(column.header()).text());
+                    input.setAttribute('style', 'width: 140px; height:25px; border:1px solid whitesmoke;');
 
                     $(input).appendTo($(column.header()).empty())
                     .on('keyup', function () {
@@ -235,23 +270,23 @@ $(document).ready(function(){
                     });
                 });
 
-                // each column select list
                 api.columns(selectable).every( function (i, x) {
                     var column = this;
 
-                    var select = $('<select><option value="">'+$(column.header()).text()+'</option></select>')
+                    var select = $('<select style="width: 140px; height:25px; border:1px solid whitesmoke; font-size: 12px; font-weight:bold;"><option value="">'+$(column.header()).text()+'</option></select>')
                         .appendTo($(column.header()).empty())
                         .on('change', function(e){
                             var val = $.fn.dataTable.util.escapeRegex(
                                 $(this).val()
                             );
-                            column.search(val ? val : '', true, false ).draw();
+                            column.search(val ? '^'+val+'$' : '', true, false ).draw();
                             e.stopPropagation();
                         });
 
                     $.each(dropdownList[i], function(j, v) {
                         select.append('<option value="'+v+'">'+v+'</option>')
                     });
+                // }, 1000);
                 });
             }
         }); 

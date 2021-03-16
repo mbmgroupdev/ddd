@@ -43,6 +43,36 @@ if(!function_exists('supplier_by_id')){
     }
 }
 
+if(!function_exists('article_by_id')){
+    function article_by_id()
+    {
+       return  Cache::remember('article_by_id', Carbon::now()->addHour(12), function () {
+            return DB::table('mr_article')->get()->keyBy('id')->toArray();
+        });      
+
+    }
+}
+
+if(!function_exists('item_by_id')){
+    function item_by_id()
+    {
+       return  Cache::remember('item_by_id', Carbon::now()->addHour(12), function () {
+            return DB::table('mr_cat_item')->get()->keyBy('id')->toArray();
+        });      
+
+    }
+}
+
+if(!function_exists('buyer_by_id')){
+    function buyer_by_id()
+    {
+       return  Cache::remember('buyer_by_id', Carbon::now()->addHour(12), function () {
+            return DB::table('mr_buyer')->get()->keyBy('b_id')->toArray();
+        });      
+
+    }
+}
+
 if(!function_exists('material_color_by_id')){
     function material_color_by_id()
     {
@@ -50,5 +80,10 @@ if(!function_exists('material_color_by_id')){
             return DB::table('mr_material_color')->get()->keyBy('clr_id')->toArray();
         });      
 
+    }
+}
+if(!function_exists('custom_date_format')){
+    function custom_date_format($date){
+        return $date != '' || $date != null ? date('F d, Y', strtotime($date)):'';
     }
 }

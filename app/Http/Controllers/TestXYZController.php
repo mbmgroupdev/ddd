@@ -12,7 +12,8 @@ class TestXYZController extends Controller
 {
     public function rfidUpdate()
     {
-    	return $this->employeeCheck();
+    	// return $this->incrementHistory();
+        return '';
     	$data = array();
     	$getBasic = DB::table('hr_as_basic_info')
     	->select('as_id', 'as_rfid_code')
@@ -380,5 +381,103 @@ class TestXYZController extends Controller
         ->whereNull('ben.hr_bn_associate_name')
         ->get();
         return $getEmployee;
+    }
+
+    public function incrementHistory()
+    {
+        $getData = [];
+        $getBasic = DB::table('hr_as_basic_info AS b')
+        ->select('as_oracle_code', 'associate_id', 'as_status', 'as_doj', 'as_name')
+        ->whereIn('b.as_unit_id', [8])
+        ->get();
+
+        $getIncrement = DB::table('hr_increment')
+        ->get()
+        ->keyBy('associate_id')
+        ->toArray();
+
+        $count = 0;
+        $macth = [];
+        foreach ($getBasic as $key => $info) {
+            foreach ($getData as $key1 => $value) {
+                if($info->as_oracle_code == $value['PID']){
+                    if(!isset($getIncrement[$info->associate_id])){
+                        ++$count;
+                        // $macth[$info->associate_id] = DB::table('hr_increment')
+                        // ->insertGetId([
+                        //     'associate_id' => $info->associate_id,
+                        //     'current_salary' => ($value['CURRENT_SALARY'] - $value['LAST_INCRIMENT_AMOUNT']),
+                        //     'increment_type' => 2,
+                        //     'increment_amount' => $value['LAST_INCRIMENT_AMOUNT'],
+                        //     'amount_type' => 1,
+                        //     'applied_date' => date('Y-m-d', strtotime($value['LAST_INCRIMENT_DATE'])),
+                        //     'eligible_date' => date('Y-m-d', strtotime($value['LAST_INCRIMENT_DATE'])),
+                        //     'effective_date' => date('Y-m-d', strtotime($value['LAST_INCRIMENT_DATE'])),
+                        //     'status' => 1,
+                        // ]);
+
+                    }
+                }
+            }
+        }
+
+        return $count;
+        return count($macth);
+    }
+
+    public function benefitUpdate()
+    {
+        $getBasic = DB::table('hr_as_basic_info AS b')
+        ->select('b.as_oracle_code', 'b.associate_id', 'b.as_status', 'b.as_doj', 'b.as_name', 'b.as_unit_id', 'a.ben_current_salary')
+        // ->whereIn('b.as_unit_id', [8])
+        ->leftJoin('hr_benefits AS a', function($q){
+            $q->on('a.ben_as_id', 'b.associate_id');
+        })
+        ->where('as_status', '!=', 0)
+        ->get();
+        // return $getBasic;
+        $getIncrement = DB::table('hr_increment')
+        ->get()
+        ->keyBy('associate_id')
+        ->toArray();
+
+        $count = 0;
+        $macth = [];
+        foreach ($getBasic as $key => $info) {
+            foreach ($getIncrement as $key => $value) {
+                if($info->associate_id == $value->associate_id && (($value->current_salary+$value->increment_amount) > $info->ben_current_salary) && in_array($info->as_unit_id, [3,8])){
+
+                    $value->ben_current_salary = $info->ben_current_salary;
+                    $value->as_unit_id = $info->as_unit_id;
+                    $macth[] = $value;
+
+                }
+            }
+        }
+
+        $tomacth = [];
+        return $macth;
+        foreach ($macth as $key1 => $val) {
+            $ben = DB::table('hr_benefits as b')
+                            ->leftJoin('hr_as_basic_info as a','a.associate_id','b.ben_as_id')
+                            ->where('a.associate_id', $val->associate_id)
+                            ->first();
+            if($ben != null){
+                $up['ben_current_salary'] = ($val->current_salary + $val->increment_amount);
+                $up['ben_basic'] = ceil(($up['ben_current_salary']-1850)/1.5);
+                $up['ben_house_rent'] = $up['ben_current_salary'] -1850 - $up['ben_basic'];
+
+                if($ben->ben_bank_amount > 0){
+                    $up['ben_bank_amount'] = $up['ben_current_salary'];
+                    $up['ben_cash_amount'] = 0;
+                }else{
+                    $up['ben_cash_amount'] = $up['ben_current_salary'];
+                    $up['ben_bank_amount'] = 0;
+                }
+                $tomacth[] = $up;
+                $exist[$key1] = DB::table('hr_benefits')->where('ben_id', $ben->ben_id)->update($up);
+            }
+        }
+        return ($exist);
     }
 }

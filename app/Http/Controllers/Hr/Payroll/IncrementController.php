@@ -53,7 +53,10 @@ class IncrementController extends Controller
 
     public function incrementList()
     {
-        return view('hr/payroll/increment_list');
+        $unitList  = Unit::where('hr_unit_status', '1')
+            ->whereIn('hr_unit_id', auth()->user()->unit_permissions())
+            ->pluck('hr_unit_name', 'hr_unit_id');
+        return view('hr/payroll/increment_list', compact('unitList'));
     }
 
     public function incrementListData(Request $request)
@@ -93,6 +96,12 @@ class IncrementController extends Controller
 
         return DataTables::of($data)
             ->addIndexColumn()
+            ->addColumn('hr_unit_name', function($data) use ($unit){
+                return $unit[$data->as_unit_id]['hr_unit_name']??'';
+            })
+            ->addColumn('effective_date', function($data){
+                return date('Y-m-d', strtotime($data->effective_date));
+            })
             ->addColumn('action', function ($data) use ($perm, $designation,$section,$department) {
                 $button = '<div class=\"btn-group\">';
                 if($perm){

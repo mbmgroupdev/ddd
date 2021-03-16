@@ -16,7 +16,7 @@ class AjaxSearchController extends Controller
     	$getItems = array();
     	if(!empty($input['category'])){
     		$queryData = DB::table('mr_cat_item AS i')
-            ->select('i.id','i.mcat_id','i.item_name','i.item_code')
+            ->select('i.id','i.mcat_id','i.item_name','i.item_code', 'i.dependent_on')
             ->where('i.mcat_id', $input['category'])
             ->when(!empty($input['keyvalue']), function ($query) use($input){
                 return $query->where('i.item_name','LIKE', $input['keyvalue'].'%')->orWhere('i.item_code','LIKE', $input['keyvalue'].'%');

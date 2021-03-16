@@ -17,9 +17,11 @@
 }
 @media(min-width:1300px) {
 	body.sidebar-main .iq-top-navbar.fixed-header { width: calc(100% - 80px); }
-	body.sidebar-main-menu .iq-top-navbar { width: calc(100% - 140px); }
+	body.sidebar-main-menu .iq-top-navbar { width: calc(100% - 100px); }
 	body.sidebar-main-menu .iq-top-navbar.fixed-header { width: calc(100% - 80px); }
 	body.sidebar-main-menu .content-page { margin-left: 80px;background: #eff7f8;border-radius: 25px 0 0 25px; }
+	body.sidebar-main-menu #loading { margin-left: 80px; border-radius: 25px 0 0 25px; }
+	body.sidebar-main-menu .iq-sidebar-logo img {height: 40px; }
 	body.sidebar-main-menu .iq-sidebar-logo { width: 80px; }
 	body.sidebar-main-menu .iq-sidebar .iq-sidebar-menu .iq-menu li a span, body.sidebar-main-menu .iq-sidebar-logo a span, body.sidebar-main-menu .iq-sidebar-menu .iq-menu li a .badge { opacity: 0; display: none; transition: all 0.45s ease 0s; }
 	body.sidebar-main-menu .iq-sidebar-menu .iq-menu .iq-menu-title span { display: none; }

@@ -44,12 +44,13 @@
         
     </script>
 </head>
-<body>
+<body class="@if(request()->segment(3) =='bom' || request()->segment(3) =='costing') sidebar-main-menu @endif">
     <!-- loader Start -->
     <div id="loading">
         <div id="loading-center">
         </div>
     </div>
+    <div id="main"></div>
     <!-- loader END -->
     <div id="app">
         <!-- Wrapper Start -->
@@ -105,14 +106,16 @@
                                <div class="hover-circle"><i class="las la-ellipsis-v"></i></div>
                             </div>
                          </div>
+
                          <div class="nav-item iq-full-screen">
-                            <a href="#" class="iq-waves-effect" id="btnFullscreen"><i class="ri-fullscreen-line"></i></a>
+                            <a href="#" class="iq-waves-effect" id="btnFullscreen"  data-toggle="tooltip" data-placement="right" title="" data-original-title="Window FullScreen" ><i class="las la-expand" style="font-size: 20px; margin-top: 7px;"></i></a>
                          </div>
                          <div class="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul class="navbar-nav ml-auto navbar-list">
 
                             </ul>
                          </div>
+
                          <ul class="navbar-list">
                             <li>
                                <a href="#" class="search-toggle iq-waves-effect d-flex align-items-center">

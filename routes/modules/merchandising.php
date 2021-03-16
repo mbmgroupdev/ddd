@@ -97,7 +97,7 @@ Route::group(['prefix' => 'merch/style_bom','namespace' => 'Merch\StyleBOM'], fu
 
 /*
 *--------------------------------------------------------------
-* STYLE BOM Costing
+* STYLE Costing
 *--------------------------------------------------------------
 */
 Route::group(['prefix' => 'merch/style_costing','namespace' => 'Merch\StyleCosting'], function(){
@@ -108,6 +108,55 @@ Route::group(['prefix' => 'merch/style_costing','namespace' => 'Merch\StyleCosti
 	Route::get("/{id}/edit", "StyleCostingController@editForm");
 	Route::get("/{id}/print", "StyleCostingController@editFormPrint");
 	Route::post("/{id}/edit", "StyleCostingController@update");
+});
+
+/*
+*--------------------------------------------------------------
+* Style
+*--------------------------------------------------------------
+*/
+Route::group(['prefix' => 'merch/order','namespace' => 'Merch\Orders'], function(){
+
+	// BOM
+	Route::get('bom/{id}', 'BOMController@show');
+	Route::get('bom-ajax-store', 'BOMController@ajaxStore');
+
+	// Costing
+	Route::get('costing/{id}', 'CostingController@show');
+	Route::get('costing-ajax-store', 'CostingController@ajaxStore');
+});
+
+/*
+*--------------------------------------------------------------
+* Order BOM
+*--------------------------------------------------------------
+*/
+Route::group(['prefix' => 'merch/order_bom','namespace' => 'Merch\OrderBOM'], function(){
+	Route::get("/", "OrderBomController@showList");
+	Route::post("/order_bom_data", "OrderBomController@getListData");
+	Route::get("/{id}/create", "OrderBomController@showForm");
+	Route::get("/{id}/create/{po_id}", "OrderBomController@showForm");
+	Route::get("/{id}/preview", "OrderBomController@previewOrder");
+	Route::get("/get_item_data", "OrderBomController@getItemData");
+	Route::post("/{id}/store", "OrderBomController@storeData");
+	Route::post("/{id}/store/{po_id}", "OrderBomController@storeData");
+	Route::get("/get_article_by_supplier", "OrderBomController@article");
+});
+
+/*
+*--------------------------------------------------------------
+* Order Costing
+*--------------------------------------------------------------
+*/
+Route::group(['prefix' => 'merch/order_costing','namespace' => 'Merch\OrderCosting'], function(){
+	Route::get("/", "OrderCostingController@showList");
+	Route::get("order_costing_data", "OrderCostingController@getListData");
+	Route::get("/{id}/create", "OrderCostingController@showForm");
+	Route::get("/{id}/create/{po_id}", "OrderCostingController@showForm");
+	Route::post("/{id}/create", "OrderCostingController@store");
+	Route::get("/{id}/edit", "OrderCostingController@editForm");
+	Route::get("/{id}/print", "OrderCostingController@editFormPrint");
+	Route::post("/{id}/edit", "OrderCostingController@update");
 });
 
 /*
@@ -453,27 +502,9 @@ Route::get('merch/costing-compare/{id}', 'Merch\Costing\CostingController@orderW
 Route::post('merch/costing/list-data', 'Merch\Costing\CostingController@listData');
 
 
-#-------------------------------------------------------------#
-Route::get("merch/order_bom", "Merch\OrderBOM\OrderBomController@showList");
-Route::post("merch/order_bom_data", "Merch\OrderBOM\OrderBomController@getListData");
-Route::get("merch/order_bom/{id}/create", "Merch\OrderBOM\OrderBomController@showForm");
-Route::get("merch/order_bom/{id}/create/{po_id}", "Merch\OrderBOM\OrderBomController@showForm");
-Route::get("merch/order_bom/{id}/preview", "Merch\OrderBOM\OrderBomController@previewOrder");
-Route::get("merch/order_bom/get_item_data", "Merch\OrderBOM\OrderBomController@getItemData");
-Route::post("merch/order_bom/{id}/store", "Merch\OrderBOM\OrderBomController@storeData");
-Route::post("merch/order_bom/{id}/store/{po_id}", "Merch\OrderBOM\OrderBomController@storeData");
-Route::get("merch/order_bom/get_article_by_supplier", "Merch\OrderBOM\OrderBomController@article");
 
 
-#-------------------------------------------------------------#
-Route::get("merch/order_costing", "Merch\OrderCosting\OrderCostingController@showList");
-Route::post("merch/order_costing_data", "Merch\OrderCosting\OrderCostingController@getListData");
-Route::get("merch/order_costing/{id}/create", "Merch\OrderCosting\OrderCostingController@showForm");
-Route::get("merch/order_costing/{id}/create/{po_id}", "Merch\OrderCosting\OrderCostingController@showForm");
-Route::post("merch/order_costing/{id}/create", "Merch\OrderCosting\OrderCostingController@store");
-Route::get("merch/order_costing/{id}/edit", "Merch\OrderCosting\OrderCostingController@editForm");
-Route::get("merch/order_costing/{id}/print", "Merch\OrderCosting\OrderCostingController@editFormPrint");
-Route::post("merch/order_costing/{id}/edit", "Merch\OrderCosting\OrderCostingController@update");
+
 
 
 #-------------------------------------------------------------#
