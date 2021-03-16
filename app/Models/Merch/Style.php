@@ -5,6 +5,7 @@ namespace App\Models\Merch;
 use App\Models\Merch\Style;
 use App\Models\Merch\StyleImage;
 use Illuminate\Database\Eloquent\Model;
+use DB;
 
 class Style extends Model
 {
@@ -25,8 +26,19 @@ class Style extends Model
     	return $this->hasMany(StyleImage::class, 'mr_stl_id', 'stl_id');
     }
 
-    public  function order()
+    public function order()
     {
         return $this->hasMany('App\Models\Merch\OrderEntry', 'stl_id', 'mr_style_stl_id');
+    }
+
+    public static function getStyleIdWiseStyleInfo($id, $selectedField)
+    {
+        $query = DB::table("mr_style")
+            ->whereIn('mr_buyer_b_id', auth()->user()->buyer_permissions())
+            ->where("stl_id", $id);
+        if($selectedField != 'all'){
+            $query->select($selectedField);
+        }
+        return $query->first();
     }
 }

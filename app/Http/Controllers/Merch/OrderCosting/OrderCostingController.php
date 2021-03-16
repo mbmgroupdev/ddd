@@ -54,13 +54,10 @@ class OrderCostingController extends Controller
 		}
 		//dd($team);exit;
 		$b_permissions = explode(',', auth()->user()->buyer_permissions);
-		DB::statement(DB::raw('set @rownum=0'));
-		if(!empty($team)){
-			$data= DB::table('mr_order_bom_costing_booking AS bom')
+		$query= DB::table('mr_order_bom_costing_booking AS bom')
 			->groupBy('bom.order_id')
 			->leftJoin('mr_order_entry AS OE', 'OE.order_id', 'bom.order_id')
 			->select([
-				DB::raw('@rownum := @rownum + 1 AS DT_Row_Index'),
 				'bom.id AS bom_id',
 				'bom.bom_term',
 				"OE.order_id",
@@ -82,49 +79,21 @@ class OrderCostingController extends Controller
 			->leftJoin('mr_season AS s', 's.se_id', 'OE.mr_season_se_id')
 			->leftJoin('mr_style AS stl', 'stl.stl_id', "OE.mr_style_stl_id")
 			->orderBy('bom_id', 'DESC')
-			->whereIn('OE.created_by', $team)
-			->whereIn('b.b_id', $b_permissions)
-			->get();
-
-		}else{
-			$data= DB::table('mr_order_bom_costing_booking AS bom')
-			->groupBy('bom.order_id')
-			->leftJoin('mr_order_entry AS OE', 'OE.order_id', 'bom.order_id')
-			->select([
-				DB::raw('@rownum := @rownum + 1 AS DT_Row_Index'),
-				'bom.id AS bom_id',
-				'bom.bom_term',
-				"OE.order_id",
-				"OE.order_code",
-				"u.hr_unit_name",
-				"b.b_name",
-				"br.br_name",
-				"s.se_name",
-				"stl.stl_no",
-				"OE.order_ref_no",
-				"OE.order_qty",
-				"OE.order_delivery_date",
-				"OE.created_by",
-				"OE.order_status"
-			])
-			->leftJoin('hr_unit AS u', 'u.hr_unit_id', 'OE.unit_id')
-			->leftJoin('mr_buyer AS b', 'b.b_id', 'OE.mr_buyer_b_id')
-			->leftJoin('mr_brand AS br', 'br.br_id', 'OE.mr_brand_br_id')
-			->leftJoin('mr_season AS s', 's.se_id', 'OE.mr_season_se_id')
-			->leftJoin('mr_style AS stl', 'stl.stl_id', "OE.mr_style_stl_id")
-			->orderBy('bom_id', 'DESC')
-			->whereIn('b.b_id', $b_permissions)
-			->get();
-
-		}
+			->whereIn('b.b_id', $b_permissions);
+			if(!empty($team)){
+				$query->whereIn('OE.created_by', $team);
+			}
+		$data = $query->get();
+		
 
 
 		return DataTables::of($data)->addIndexColumn()
+		->addIndexColumn()
 		->addColumn('action', function ($data) {
 			if(empty($data->bom_term)){
 
 				$action_buttons= "<div class=\"btn-group\">
-				<a href=".url('merch/order_costing/'.$data->order_id.'/create')." class=\"btn btn-xs btn-primary btn-round\" data-toggle=\"tooltip\" title=\"Add Costing\">
+				<a href=".url('merch/order/costing/'.$data->order_id)." class=\"btn btn-xs btn-primary btn-round\" data-toggle=\"tooltip\" title=\"Add Costing\">
 				<i class=\"ace-icon fa fa-plus bigger-120\"></i>
 				</a>";
 
@@ -143,6 +112,9 @@ class OrderCostingController extends Controller
 				return $action_buttons;
 			}
 		})
+		->editColumn('order_delivery_date', function($data){
+			return custom_date_format($data->order_delivery_date);
+		})
 		->editColumn('order_status', function($data){
 			if($data->order_status == "Costed")
 				{
@@ -150,7 +122,7 @@ class OrderCostingController extends Controller
 				}
 			else if($data->order_status == "Active")
 				{
-					return "<button class=\"btn btn-xs btn-info btn-round\" rel='tooltip' data-tooltip=\"Active\" data-tooltip-location='left'>Active</button>";
+					return "<button class=\"btn btn-xs btn-primary btn-round\" rel='tooltip' data-tooltip=\"Active\" data-tooltip-location='left'>Active</button>";
 				}
 			else if($data->order_status == "Approval Pending")
 
@@ -166,8 +138,10 @@ class OrderCostingController extends Controller
 				}
 			else return $data->order_status;
 		})
-		->rawColumns(['action','order_status'])
-		->toJson();
+		->rawColumns([
+            'order_code', 'hr_unit_name', 'b_name', 'br_name', 'se_name', 'stl_no', 'order_qty', 'order_delivery_date', 'order_status', 'action'
+        ])
+        ->make(true);
 	}
 
 	public function showForm(Request $request)

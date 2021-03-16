@@ -1,4 +1,18 @@
-
+th input::-webkit-input-placeholder {
+    color: #827979;
+    font-weight: bold;
+    font-size: 12px;
+}
+th input:-moz-placeholder {
+    color: #827979;
+    font-weight: bold;
+    font-size: 12px;
+}
+th input:-ms-input-placeholder {
+    color: #827979;
+    font-weight: bold;
+    font-size: 12px;
+}
 .popover-close{
     float: right;
     cursor: pointer;

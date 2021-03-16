@@ -1,11 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\Merch\Style;
+namespace App\Http\Controllers\Merch\Orders;
 
 use App\Http\Controllers\Controller;
 use App\Models\Merch\BomCosting;
 use App\Models\Merch\BomOtherCosting;
 use App\Models\Merch\OperationCost;
+use App\Models\Merch\OrderBOM;
+use App\Models\Merch\OrderBomOtherCosting;
+use App\Models\Merch\OrderEntry;
+use App\Models\Merch\OrderOperationNCost;
 use App\Models\Merch\SampleStyle;
 use App\Models\Merch\Style;
 use App\Models\Merch\StyleSpecialMachine;
@@ -22,21 +26,42 @@ class CostingController extends Controller
     public function show(Request $request, $id)
     {
     	try {
-    		$style = Style::getStyleIdWiseStyleInfo($id, ['stl_id', 'mr_buyer_b_id', 'stl_type', 'stl_no', 'stl_product_name', 'stl_description', 'stl_smv', 'stl_img_link', 'stl_status']);
-	    	
-			if($style == null){
-				toastr()->error("Style Not Found!");
+    		$queryData = OrderEntry::with(['style', 'season'])
+	        	->whereIn('mr_buyer_b_id', auth()->user()->buyer_permissions());
+
+			$order = $queryData->where("order_id", $id)->first();
+    		
+			if($order == null){
+				toastr()->error("Order Not Found!");
 				return back();
 			}
 
-			$getStyleBom = BomCosting::getStyleIdWiseStyleBOM($id);
-			$groupStyleBom = collect($getStyleBom->toArray())->groupBy('mcat_id',true);
-			$specialOperation = OperationCost::getStyleIdWiseOperationInfo($id, 2);
-			$otherCosting = BomOtherCosting::getStyleIdWiseStyleOtherCosting($id);
-			$samples = SampleStyle::getStyleIdWiseSampleName($id);
-		    $operations = OperationCost::getStyleIdWiseOperationCostName($id);
-		    $machines = StyleSpecialMachine::getStyleIdWiseSpMachineName($id);
+			$getBom = OrderBOM::getOrderIdWiseOrderBOM($id);
+			$getBOMCollect = collect($getBom->toArray())->pluck('bom_term')->toArray();
+
+			$checkCosting = array_filter($getBOMCollect);
+			if(count($checkCosting) == 0){
+				// $getBom = BomCosting::getStyleIdWiseStyleBOM($order->mr_style_stl_id);
+				$specialOperation = OperationCost::getStyleIdWiseOperationInfo($order->mr_style_stl_id, 2);
+				$otherCosting = BomOtherCosting::getStyleIdWiseStyleOtherCosting($order->mr_style_stl_id);
+			}else{
+				$specialOperation = OrderOperationNCost::getOrderIdWiseOperationInfo($id, 2);
+				$otherCosting = OrderBomOtherCosting::getOrderIdWiseOrderOtherCosting($id);
+				// $styleCosting = BomCosting::getStyleWiseItem($order->mr_style_stl_id, ['mr_style_stl_id', 'mr_cat_item_id', 'precost_unit_price']);
+			}
+
+			$styleCosting = BomCosting::getStyleWiseItem($order->mr_style_stl_id, ['mr_cat_item_id', 'precost_unit_price']);
+			$styleCosting = collect($styleCosting->toArray())->pluck('precost_unit_price','mr_cat_item_id')->toArray();
+			return $styleCosting;
+
+
+			$groupBom = collect($getBom->toArray())->groupBy('mcat_id',true);
+			
+			$samples = SampleStyle::getStyleIdWiseSampleName($order->mr_style_stl_id);
+		    $operations = OperationCost::getStyleIdWiseOperationCostName($order->mr_style_stl_id);
+		    $machines = StyleSpecialMachine::getStyleIdWiseSpMachineName($order->mr_style_stl_id);
 		    // cache data
+		    $getUnit = unit_by_id();
 		    $getSupplier = supplier_by_id();
         	$getArticle = article_by_id();
         	$getItem = item_by_id();
@@ -46,7 +71,7 @@ class CostingController extends Controller
 		    $uom = uom_by_id();
 			$uom = collect($uom)->pluck('measurement_name','id');
 
-		    return view('merch.style_costing.index', compact('style', 'samples', 'operations', 'machines', 'getColor', 'itemCategory', 'uom', 'groupStyleBom', 'getArticle', 'getSupplier', 'getItem', 'specialOperation', 'otherCosting', 'getBuyer'));
+		    return view('merch.order_costing.index', compact('order', 'samples', 'operations', 'machines', 'getColor', 'itemCategory', 'uom', 'groupBom', 'getArticle', 'getSupplier', 'getItem', 'specialOperation', 'otherCosting', 'getBuyer', 'getUnit'));
 			
 		} catch (\Exception $e) {
 			$bug = $e->getMessage();

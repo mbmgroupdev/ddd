@@ -48,6 +48,7 @@
         <div id="loading-center">
         </div>
     </div>
+    <div id="main"></div>
     <!-- loader END -->
     <div id="app">
         <!-- Wrapper Start -->
@@ -199,6 +200,7 @@
             
 
         </div>
+
     </div>
     <script src="{{asset('assets/js/all.js')}}"></script>
     <!-- Custom JavaScript -->

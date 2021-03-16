@@ -1,5 +1,5 @@
 @extends('merch.layout')
-@section('title', 'Style Costing')
+@section('title', 'Order Costing')
 
 @section('main-content')
 @push('css')
@@ -23,13 +23,13 @@
                   <a href="#">Merchandising</a>
               </li>
               <li>
-                  <a href="#">Style</a>
+                  <a href="#">Order</a>
               </li>
-              <li class="active">Style Costing</li>
+              <li class="active">Order Costing</li>
               <li class="top-nav-btn">
-                <a href='{{ url("merch/style/bom/$style->stl_id") }}' class="btn btn-outline-primary btn-sm pull-right"> <i class="fa fa-plus"></i> Style BOM</a> &nbsp;
-                <a href="{{ url('merch/style_bom')}}" target="_blank" class="btn btn-outline-primary btn-sm pull-right"> <i class="fa fa-list"></i> Style BOM List</a> &nbsp;
-                <a href="{{ url('merch/style_costing')}}" target="_blank" class="btn btn-outline-success btn-sm pull-right"> <i class="fa fa-list"></i> Style Costing List</a>
+                <a href='{{ url("merch/order/bom/$order->mr_style_stl_id") }}' class="btn btn-outline-primary btn-sm pull-right"> <i class="fa fa-plus"></i> Order BOM</a> &nbsp;
+                <a href="{{ url('merch/order_bom')}}" target="_blank" class="btn btn-outline-primary btn-sm pull-right"> <i class="fa fa-list"></i> Order BOM List</a> &nbsp;
+                <a href="{{ url('merch/order_costing')}}" target="_blank" class="btn btn-outline-success btn-sm pull-right"> <i class="fa fa-list"></i> Order Costing List</a>
                 </li>
             </ul><!-- /.breadcrumb -->
         </div>
@@ -41,52 +41,46 @@
               <div class="col-12">
                 <div class="panel panel-success">
                     <div class="panel-body pb-2">
+                        
                         <div class="wrapper center-block">
                           <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                           <div class="panel panel-default">
                             <div class="panel-heading active" role="tab" id="headingOne">
                               <h4 class="panel-title">
                                 <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" style="display: block; font-size: 13px;">
-                                  Style Info
+                                  Order Info
                                 </a>
                               </h4>
                             </div>
                             <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
                               <div class="panel-body">
                                 <div class="row">
-                                    <div class="col-sm-10">
+                                    <div class="col-sm-12">
                                         <table class="table custom-font-table detailTable" width="50%" cellpadding="0" cellspacing="0" border="0">
                                             <tr>
-                                                <th>Production Type</th>
-                                                <td>{{ (!empty($style->stl_type)?$style->stl_type:null) }}</td>
-                                                <th>Style Reference 1</th>
-                                                <td>{!! (!empty($style->stl_no)?$style->stl_no:null) !!}</td>
-                                                <th>Operation</th>
-                                                <td>{{ (!empty($operations->name)?$operations->name:null) }}</td>
+                                              <td width="80">Order No :</td>
+                                              <th id="order_code">{{ (!empty($order->order_code)?$order->order_code:null) }}</th>
+                                              <td width="120">Order Quantity :</td>
+                                              <th>{{ (!empty($order->order_qty)?$order->order_qty:null) }}</th>
+                                              <td width="80">Buyer :</td>
+                                              <th>{!! $getBuyer[$order->mr_buyer_b_id]->b_name??'' !!}</th>
+                                              <td width="120">Reference No :</td>
+                                              <th>{{ (!empty($order->order_ref_no)?$order->order_ref_no:null) }}</th>
                                             </tr>
                                             <tr>
-                                                <th>Buyer</th>
-                                                <td>{!! $getBuyer[$style->mr_buyer_b_id]->b_name??'' !!}</td>
-                                                <th>SMV/PC</th>
-                                                <td>{{ (!empty($style->stl_smv)?$style->stl_smv:null) }}</td>
-                                                <th>Special Machine</th>
-                                                <td>{{ (!empty($machines->name)?$machines->name:null) }}</td>
+                                              <td width="80">Unit :</td>
+                                              <th>{{ $getUnit[$order->unit_id]['hr_unit_name']??'' }}</th>
+                                              <td width="120">Delivery Date:</td>
+                                              <th>{{ custom_date_format($order->order_delivery_date) }}</th>
+                                              <td width="80">Season :</td>
+                                              <th>{!! $order->season->se_name??'' !!}</th>
+                                              <td width="120">Style No :</td>
+                                              <th>{!! $order->style->stl_no??'' !!}</th>
                                             </tr>
-                                            <tr>
-                                                <th>Style Reference 2</th>
-                                                <td>{!! (!empty($style->stl_product_name)?$style->stl_product_name:null) !!}</td>
-                                                <th>Sample Type</th>
-                                                <td>{{ (!empty($samples->name)?$samples->name:null) }}</td>
-                                                <th>Description</th>
-                                                <td>{{ (!empty($style->stl_description)?$style->stl_description:null) }}</td>
-                                            </tr>
+                                            
                                         </table>
                                     </div>
-                                    <div class="col-sm-2">
-                                        <a href="{{ asset(!empty($style->stl_img_link)?$style->stl_img_link:'assets/images/avatars/profile-pic.jpg') }}" target="_blank">
-                                            <img class="thumbnail" height="100px" src="{{ asset(!empty($style->stl_img_link)?$style->stl_img_link:'assets/images/avatars/profile-pic.jpg') }}" alt=""/>
-                                        </a>
-                                    </div>
+                                    
                                 </div>
                               </div>
                             </div>
@@ -98,7 +92,8 @@
                 </div>
                 <div class="panel panel-info table-list-section">
                         <form class="form-horizontal" role="form" method="post" id="costingForm">
-                            <input type="hidden" name="stl_id" value="{{ $style->stl_id }}">
+                            <input type="hidden" name="stl_id" value="{{ $order->mr_style_stl_id }}">
+                            <input type="hidden" name="order_id" value="{{ $order->order_id }}">
                             {{ csrf_field() }} 
                             <div class="panel-body">
                                 
@@ -132,8 +127,8 @@
                                                 <tr class="table-active">
                                                     <td colspan="14"><h5 class="capilize">{{ $itemCat->mcat_name }}</h5></td>
                                                 </tr>
-                                                @if(count($groupStyleBom) > 0 && isset($groupStyleBom[$itemCat->mcat_id]))
-                                                  @foreach($groupStyleBom[$itemCat->mcat_id] as $itemBom)
+                                                @if(count($groupBom) > 0 && isset($groupBom[$itemCat->mcat_id]))
+                                                  @foreach($groupBom[$itemCat->mcat_id] as $itemBom)
                                                   <tr id="itemRow-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}">
                                                       <td>
                                                           <input type="hidden" id="bomitemid-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" name="bomitemid[]" value="{{ $itemBom->id }}">
@@ -204,7 +199,7 @@
                                                 <td> 1 </td>
                                                 <td> 0 </td>
                                                 <td>
-                                                  <select name="spuom[]" id="spuom-{{ $spo->style_op_id }}" class="form-control" >
+                                                  <select name="spuom[]" id="spuom-{{ $spo->op_id }}" class="form-control" >
                                                     @foreach($uom as $key => $um)
                                                       <option value="{{ $um }}" @if($um == $spo->uom) selected @endif>{{ $um }}</option>
                                                     @endforeach
@@ -213,13 +208,13 @@
                                                 <td colspan="4"></td>
                                                 
                                                 <td>
-                                                  <input type="text" step="any" min="0" name="spunitprice[]" id="spunitprice-{{ $spo->style_op_id }}" class="form-control sp_price spunitprice" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="{{ $spo->unit_price??'0' }}">
-                                                  <input type="hidden" name="style_op_id[]" value="{{ $spo->style_op_id }}">
+                                                  <input type="text" step="any" min="0" name="spunitprice[]" id="spunitprice-{{ $spo->op_id }}" class="form-control sp_price spunitprice" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="{{ $spo->unit_price??'0' }}">
+                                                  <input type="hidden" name="style_op_id[]" value="{{ $spo->op_id }}">
                                                   <input type="hidden" name="opr_type[]" value="{{ $spo->opr_type }}">
                                                   <input type="hidden" name="mr_operation_opr_id[]" value="{{ $spo->mr_operation_opr_id }}">
                                                 </td>
                                                 <td>
-                                                  <p id="sp-{{ $spo->style_op_id }}" class="text-right fwb categoryPrice sp_per_price">{{ number_format((float)($spo->unit_price??'0'), 6,'.','') }}</p>
+                                                  <p id="sp-{{ $spo->op_id }}" class="text-right fwb categoryPrice sp_per_price">{{ number_format((float)($spo->unit_price??'0'), 6,'.','') }}</p>
                                                   
                                                 </td>
                                               </tr>
@@ -352,61 +347,55 @@
         //    }
         // }
         var form = $("#costingForm");
-        if (isValid){
-           $.ajax({
-              type: "GET",
-              url: '{{ url("/merch/style/costing-ajax-store") }}',
-              headers: {
-                  'X-CSRF-TOKEN': '{{ csrf_token() }}',
-              },
-              data: form.serialize(), // serializes the form's elements.
-              success: function(response)
-              {
-                // console.log(response);
-                if(response.type === 'success'){
-                  if(savetype =='manual' ){
-                      $.notify(response.message, response.type);
-                  }else{
-                      $.notify('Costing Save '+savetype, response.type);
-                  }
-                }else{
-                  $.notify(response.message, response.type);
-                }
-                $(".app-loader").hide();
-              },
-              error: function (reject) {
-                $(".app-loader").hide();
-                // console.log(reject);
-                if( reject.status === 400) {
-                    var data = $.parseJSON(reject.responseText);
-                     $.notify(data.message, {
-                        type: data.type,
-                        allow_dismiss: true,
-                        delay: 100,
-                        timer: 300
-                    });
-                }else if(reject.status === 422){
-                  var data = $.parseJSON(reject.responseText);
-                  var errors = data.errors;
-                  // console.log(errors);
-                  for (var key in errors) {
-                    var value = errors[key];
-                    $.notify(value[0], 'error');
-                  }
+        // if (isValid){
+        //    $.ajax({
+        //       type: "GET",
+        //       url: '{{ url("/merch/style/costing-ajax-store") }}',
+        //       headers: {
+        //           'X-CSRF-TOKEN': '{{ csrf_token() }}',
+        //       },
+        //       data: form.serialize(), // serializes the form's elements.
+        //       success: function(response)
+        //       {
+        //         // console.log(response);
+        //         if(response.type === 'success'){
+        //           if(savetype =='manual' ){
+        //               $.notify(response.message, response.type);
+        //           }else{
+        //               $.notify('Costing Save '+savetype, response.type);
+        //           }
+        //         }else{
+        //           $.notify(response.message, response.type);
+        //         }
+        //         $(".app-loader").hide();
+        //       },
+        //       error: function (reject) {
+        //         $(".app-loader").hide();
+        //         // console.log(reject);
+        //         if( reject.status === 400) {
+        //             var data = $.parseJSON(reject.responseText);
+        //              $.notify(data.message, {
+        //                 type: data.type,
+        //                 allow_dismiss: true,
+        //                 delay: 100,
+        //                 timer: 300
+        //             });
+        //         }else if(reject.status === 422){
+        //           var data = $.parseJSON(reject.responseText);
+        //           var errors = data.errors;
+        //           // console.log(errors);
+        //           for (var key in errors) {
+        //             var value = errors[key];
+        //             $.notify(value[0], 'error');
+        //           }
                    
-                }
-              }
-           });
-        }else{
-            $(".app-loader").hide();
-            $.notify("Some field are required", {
-              type: 'error',
-              allow_dismiss: true,
-              delay: 100,
-              z_index: 1031,
-              timer: 300
-           });
-        }
+        //         }
+        //       }
+        //    });
+        // }else{
+        //     $(".app-loader").hide();
+        //     $.notify("Some field are required", 'error');
+        // }
     };
 </script>
 @endpush

@@ -1,5 +1,5 @@
 @extends('merch.layout')
-@section('title', 'Style BOM')
+@section('title', 'Order BOM')
 
 @section('main-content')
 @push('css')
@@ -23,19 +23,19 @@
                   <a href="#">Merchandising</a>
               </li>
               <li>
-                  <a href="#">Style</a>
+                  <a href="#">Order</a>
               </li>
-              <li class="active">Style BOM</li>
+              <li class="active">Order BOM</li>
               <li class="top-nav-btn">
-                <a href='{{ url("merch/style/costing/$style->stl_id")}}' class="btn btn-outline-success btn-sm pull-right"> <i class="fa fa-plus"></i> Add Costing</a>
-                <a href="{{ url('merch/style_bom')}}" target="_blank" class="btn btn-outline-primary btn-sm pull-right"> <i class="fa fa-list"></i> Style BOM List</a> &nbsp;
+                <a href='{{ url("merch/order/costing/$order->mr_style_stl_id")}}' class="btn btn-outline-success btn-sm pull-right"> <i class="fa fa-plus"></i> Add Costing</a>
+                <a href="{{ url('merch/order_bom')}}" target="_blank" class="btn btn-outline-primary btn-sm pull-right"> <i class="fa fa-list"></i> Order BOM List</a> &nbsp;
                 </li>
             </ul><!-- /.breadcrumb -->
         </div>
 
         <div class="page-content">
             <input type="hidden" id="base_url" value="{{ url('/') }}">
-            <input type="hidden" id="blade_type" value="style">
+            <input type="hidden" id="blade_type" value="order">
             <div class="row">
               <div class="col-12">
                 <div class="panel panel-success">
@@ -47,46 +47,39 @@
                             <div class="panel-heading active" role="tab" id="headingOne">
                               <h4 class="panel-title">
                                 <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" style="display: block; font-size: 13px;">
-                                  Style Info
+                                  Order Info
                                 </a>
                               </h4>
                             </div>
                             <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
                               <div class="panel-body">
                                 <div class="row">
-                                    <div class="col-sm-10">
+                                    <div class="col-sm-12">
                                         <table class="table custom-font-table detailTable" width="50%" cellpadding="0" cellspacing="0" border="0">
                                             <tr>
-                                                <th>Production Type</th>
-                                                <td>{{ (!empty($style->stl_type)?$style->stl_type:null) }}</td>
-                                                <th>Style Reference 1</th>
-                                                <td>{!! (!empty($style->stl_no)?$style->stl_no:null) !!}</td>
-                                                <th>Operation</th>
-                                                <td>{{ (!empty($operations->name)?$operations->name:null) }}</td>
+                                              <td width="80">Order No :</td>
+                                              <th id="order_code">{{ (!empty($order->order_code)?$order->order_code:null) }}</th>
+                                              <td width="120">Order Quantity :</td>
+                                              <th>{{ (!empty($order->order_qty)?$order->order_qty:null) }}</th>
+                                              <td width="80">Buyer :</td>
+                                              <th>{!! $getBuyer[$order->mr_buyer_b_id]->b_name??'' !!}</th>
+                                              <td width="120">Reference No :</td>
+                                              <th>{{ (!empty($order->order_ref_no)?$order->order_ref_no:null) }}</th>
                                             </tr>
                                             <tr>
-                                                <th>Buyer</th>
-                                                <td>{!! (!empty($style->b_name)?$style->b_name:null) !!}</td>
-                                                <th>SMV/PC</th>
-                                                <td>{{ (!empty($style->stl_smv)?$style->stl_smv:null) }}</td>
-                                                <th>Special Machine</th>
-                                                <td>{{ (!empty($machines->name)?$machines->name:null) }}</td>
+                                              <td width="80">Unit :</td>
+                                              <th>{{ $getUnit[$order->unit_id]['hr_unit_name']??'' }}</th>
+                                              <td width="120">Delivery Date:</td>
+                                              <th>{{ custom_date_format($order->order_delivery_date) }}</th>
+                                              <td width="80">Season :</td>
+                                              <th>{!! $order->season->se_name??'' !!}</th>
+                                              <td width="120">Style No :</td>
+                                              <th>{!! $order->style->stl_no??'' !!}</th>
                                             </tr>
-                                            <tr>
-                                                <th>Style Reference 2</th>
-                                                <td>{!! (!empty($style->stl_product_name)?$style->stl_product_name:null) !!}</td>
-                                                <th>Sample Type</th>
-                                                <td>{{ (!empty($samples->name)?$samples->name:null) }}</td>
-                                                <th>Description</th>
-                                                <td>{{ (!empty($style->stl_description)?$style->stl_description:null) }}</td>
-                                            </tr>
+                                            
                                         </table>
                                     </div>
-                                    <div class="col-sm-2">
-                                        <a href="{{ asset(!empty($style->stl_img_link)?$style->stl_img_link:'assets/images/avatars/profile-pic.jpg') }}" target="_blank">
-                                            <img class="thumbnail" height="100px" src="{{ asset(!empty($style->stl_img_link)?$style->stl_img_link:'assets/images/avatars/profile-pic.jpg') }}" alt=""/>
-                                        </a>
-                                    </div>
+                                    
                                 </div>
                               </div>
                             </div>
@@ -98,7 +91,8 @@
                 </div>
                 <div class="panel panel-info table-list-section">
                         <form class="form-horizontal" role="form" method="post" id="bomForm">
-                            <input type="hidden" name="stl_id" value="{{ $style->stl_id }}">
+                            <input type="hidden" name="stl_id" value="{{ $order->mr_style_stl_id }}">
+                            <input type="hidden" name="order_id" value="{{ $order->order_id }}">
                             {{ csrf_field() }} 
                             <div class="panel-body">
                                 
@@ -112,8 +106,9 @@
                                                     </th>
                                                     <th width="150">Item Name</th>
                                                     <th width="100">Description</th>
-                                                    <th width="100">Color</th>
-                                                    <th width="80">Size/Width</th>
+                                                    <th width="80">Color</th>
+                                                    <th width="80">Size/ Width</th>
+                                                    <th width="80">Depen-<br>dency</th>
                                                     <th width="130">Supplier</th>
                                                     <th width="130">Article</th>
                                                     
@@ -127,10 +122,10 @@
                                             @foreach($itemCategory as $itemCat)
                                             <tbody class="xyz-body">
                                                 <tr class="table-active">
-                                                    <td colspan="12"><h4 class="capilize">{{ $itemCat->mcat_name }}</h4></td>
+                                                    <td colspan="13"><h4 class="capilize">{{ $itemCat->mcat_name }}</h4></td>
                                                 </tr>
-                                                @if(count($groupStyleBom) > 0 && isset($groupStyleBom[$itemCat->mcat_id]))
-                                                @foreach($groupStyleBom[$itemCat->mcat_id] as $itemBom)
+                                                @if(count($groupBom) > 0 && isset($groupBom[$itemCat->mcat_id]))
+                                                @foreach($groupBom[$itemCat->mcat_id] as $itemBom)
                                                     <tr id="itemRow_{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}">
                                                         <td class="right-btn">
                                                             <a class="btn btn-sm btn-outline-primary arrows-alt" data-toggle="tooltip" data-placement="top" title="" data-original-title='Right Click Action'><i class="las la-arrows-alt"></i></a>
@@ -153,6 +148,7 @@
                                                             <input type="hidden" id="bomitemid_{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" name="bomitemid[]" value="{{ $itemBom->id }}">
                                                             <input type="hidden" id="itemcatid_{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" value="{{ $itemBom->mcat_id }}" name="itemcatid[]">
                                                             <input type="hidden" id="itemid_{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" value="{{ $itemBom->mr_cat_item_id }}" name="itemid[]">
+                                                            <input type="hidden" name="stl_bom_id[]" id="stlbomid_{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" value="{{ $itemBom->stl_bom_id }}">
                                                             <input type="text" data-category="{{ $itemBom->mcat_id }}" data-type="item" name="item[]" id="item_{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" class="form-control autocomplete_txt items-{{ $itemBom->mcat_id}}" autocomplete="off" onClick="this.select()" value="{{ $getItems[$itemBom->mr_cat_item_id]->item_name??'' }}">
                                                         </td>
                                                         <td>
@@ -168,6 +164,41 @@
                                                         </td>
                                                         <td>
                                                           <input type="text" name="size_width[]" id="sizewidth_{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" class="form-control" autocomplete="off" value="{{ $itemBom->size }}" >
+                                                        </td>
+                                                        <td>
+                                                          @php
+                                                            $dependsOn = 0;
+                                                            $dependsColor = 0;
+                                                            $dependsSize = 0;
+                                                            if(isset($itemBom->depends_on)){
+                                                              $dependsOn = $itemBom->depends_on;
+                                                              if($itemBom->depends_on == 1 || $itemBom->depends_on == 3){
+                                                                $dependsColor = 1;
+                                                              }
+
+                                                              if($itemBom->depends_on == 2 || $itemBom->depends_on == 3){
+                                                                $dependsSize = 1;
+                                                              }
+                                                            }else{
+                                                              $dependsOn = $getItems[$itemBom->mr_cat_item_id]->dependent_on??0;
+                                                              if($dependsOn == 1 || $dependsOn == 3){
+                                                                $dependsColor = 1;
+                                                              }
+                                                              
+                                                              if($dependsOn == 2 || $dependsOn == 3){
+                                                                $dependsSize = 1;
+                                                              }
+                                                            }
+                                                          @endphp
+                                                          <input type="hidden" class="dependsid" name="depends_on[]" id="dependson_{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" value="{{ $dependsOn }}">
+                                                          <div class="custom-control custom-checkbox custom-control-inline">
+                                                            <input type="checkbox" class="custom-control-input depends_on" id="dependenciescolor_{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" @if($dependsColor == 1) checked @endif>
+                                                            <label class="custom-control-label" for="dependenciescolor_{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}">Color</label>
+                                                          </div>
+                                                          <div class="custom-control custom-checkbox custom-control-inline">
+                                                            <input type="checkbox" class="custom-control-input depends_on" id="dependenciessize_{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" @if($dependsSize == 1) checked @endif>
+                                                            <label class="custom-control-label" for="dependenciessize_{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}">Size</label>
+                                                          </div>
                                                         </td>
                                                         <td>
                                                             <input type="hidden" name="supplierid[]" id="supplierid_{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" value="{{ $itemBom->mr_supplier_sup_id }}">
@@ -262,6 +293,7 @@
                                                         <input type="hidden" id="bomitemid_{{ $itemCat->mcat_id}}_1" name="bomitemid[]" value="">
                                                         <input type="hidden" id="itemcatid_{{ $itemCat->mcat_id}}_1" value="{{ $itemCat->mcat_id}}" name="itemcatid[]">
                                                         <input type="hidden" id="itemid_{{ $itemCat->mcat_id}}_1" value="" name="itemid[]">
+                                                        <input type="hidden" name="stl_bom_id[]" id="stlbomid_{{ $itemCat->mcat_id}}_1" value="">
                                                         <input type="text" data-category="{{ $itemCat->mcat_id }}" data-type="item" name="item[]" id="item_{{ $itemCat->mcat_id}}_1" class="form-control autocomplete_txt items-{{ $itemCat->mcat_id}}" autocomplete="off" onClick="this.select()">
                                                     </td>
                                                     <td>
@@ -275,6 +307,17 @@
                                                     </td>
                                                     <td>
                                                       <input type="text" name="size_width[]" id="sizewidth_{{ $itemCat->mcat_id}}_1" class="form-control" autocomplete="off" >
+                                                    </td>
+                                                    <td>
+                                                      <input type="hidden" class="dependsid" name="depends_on[]" id="dependson_{{ $itemCat->mcat_id}}_1" value="0">
+                                                      <div class="custom-control custom-checkbox custom-control-inline">
+                                                        <input type="checkbox" class="custom-control-input" id="dependenciescolor_{{ $itemCat->mcat_id}}_1">
+                                                        <label class="custom-control-label" for="dependenciescolor_{{ $itemCat->mcat_id}}_1">Color</label>
+                                                      </div>
+                                                      <div class="custom-control custom-checkbox custom-control-inline">
+                                                        <input type="checkbox" class="custom-control-input" id="dependenciessize_{{ $itemCat->mcat_id}}_1">
+                                                        <label class="custom-control-label" for="dependenciessize_{{ $itemCat->mcat_id}}_1">Size</label>
+                                                      </div>
                                                     </td>
                                                     <td>
                                                         <input type="hidden" name="supplierid[]" id="supplierid_{{ $itemCat->mcat_id}}_1">
@@ -386,69 +429,71 @@
 <script src="{{ asset('assets/js/bom.js')}}"></script>
 <script>
     function saveBOM(savetype) {
-        if(savetype =='manual' ) $(".app-loader").show();
-        var curStep = $(this).closest("#bomForm"),
-          curInputs = curStep.find("input[type='text'],input[type='hidden'],input[type='number'],input[type='date'],input[type='checkbox'],input[type='radio'],textarea,select"),
-          isValid = true;
-        $(".form-group").removeClass("has-error");
-        // for (var i = 0; i < curInputs.length; i++) {
-        //    if (!curInputs[i].validity.valid) {
-        //       isValid = false;
-        //       $(curInputs[i]).closest(".form-group").addClass("has-error");
-        //    }
-        // }
-        var form = $("#bomForm");
-        if (isValid){
-           $.ajax({
-              type: "GET",
-              url: '{{ url("/merch/style/bom-ajax-store") }}',
-              headers: {
-                  'X-CSRF-TOKEN': '{{ csrf_token() }}',
-              },
-              data: form.serialize(), // serializes the form's elements.
-              success: function(response)
-              {
-                
-                if(response.type === 'success'){
-                  if(savetype =='manual' ){
-                    $.notify(response.message, response.type);
-                  }else if(savetype =='cost'){
-                    $.notify('Saved '+savetype, response.type);
-                  }else{
-                    $.notify('Item has been '+savetype, response.type);
-                  }
-                  var bomindex = $('input[name="bomitemid[]"]');
-                  $.each(response.value, function(i, el) {
-                      var bomid = bomindex[i].getAttribute('id');
-                      $("#"+bomid).val(el);
-                  });
-                   
+      if(savetype =='manual' ) $(".app-loader").show();
+      var curStep = $(this).closest("#bomForm"),
+        curInputs = curStep.find("input[type='text'],input[type='hidden'],input[type='number'],input[type='date'],input[type='checkbox'],input[type='radio'],textarea,select"),
+        isValid = true;
+      $(".form-group").removeClass("has-error");
+      // for (var i = 0; i < curInputs.length; i++) {
+      //    if (!curInputs[i].validity.valid) {
+      //       isValid = false;
+      //       $(curInputs[i]).closest(".form-group").addClass("has-error");
+      //    }
+      // }
+      var form = $("#bomForm");
+      if (isValid){
+         $.ajax({
+            type: "GET",
+            url: '{{ url("/merch/order/bom-ajax-store") }}',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            },
+            data: form.serialize(), // serializes the form's elements.
+            success: function(response)
+            {
+              // console.log(response);
+              if(response.type === 'success'){
+                if(savetype =='manual' ){
+                  $.notify(response.message, response.type);
+                }else if(savetype =='cost'){
+                  $.notify('Saved '+savetype, response.type);
+                }else{
+                  $.notify('Item has been '+savetype, response.type);
                 }
-                $(".app-loader").hide();
-              },
-              error: function (reject) {
-                $(".app-loader").hide();
-                // console.log(reject);
-                if( reject.status === 400) {
-                    var data = $.parseJSON(reject.responseText);
-                     $.notify(data.message, data.type);
-                }else if(reject.status === 422){
-                  var data = $.parseJSON(reject.responseText);
-                  var errors = data.errors;
-                  // console.log(errors);
-                  for (var key in errors) {
-                    var value = errors[key];
-                    $.notify(value[0], 'error');
-                  }
-                   
-                }
+                var bomindex = $('input[name="bomitemid[]"]');
+                $.each(response.value, function(i, el) {
+                    var bomid = bomindex[i].getAttribute('id');
+                    $("#"+bomid).val(el);
+                });
+                 
               }
-           });
-        }else{
-            $(".app-loader").hide();
-            $.notify("Some field are required", 'error');
-        }
+              $(".app-loader").hide();
+            },
+            error: function (reject) {
+              $(".app-loader").hide();
+              // console.log(reject);
+              if( reject.status === 400) {
+                  var data = $.parseJSON(reject.responseText);
+                   $.notify(data.message, data.type);
+              }else if(reject.status === 422){
+                var data = $.parseJSON(reject.responseText);
+                var errors = data.errors;
+                // console.log(errors);
+                for (var key in errors) {
+                  var value = errors[key];
+                  $.notify(value[0], 'error');
+                }
+                 
+              }
+            }
+         });
+      }else{
+          $(".app-loader").hide();
+          $.notify("Some field are required", 'error');
+      }
     };
+    
 </script>
+
 @endpush
 @endsection

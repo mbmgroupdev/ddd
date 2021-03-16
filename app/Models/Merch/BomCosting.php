@@ -46,4 +46,13 @@ class BomCosting extends Model
         }
         return $query->get();
     }
+
+    public static function getStyleIdWiseStyleBOM($stlId)
+    {
+        return DB::table('mr_stl_bom_n_costing')
+            ->select('id', 'mr_material_category_mcat_id AS mcat_id', 'mr_cat_item_id', 'item_description', 'clr_id', 'size', 'mr_supplier_sup_id', 'mr_article_id', 'uom', 'consumption', 'bom_term', 'precost_fob', 'precost_lc', 'precost_freight', 'precost_unit_price', 'extra_percent', DB::raw('(consumption/100)*extra_percent AS qty'), DB::raw('((consumption/100)*extra_percent)+consumption AS total'), 'sl')
+            ->where('mr_style_stl_id', $stlId)
+            ->orderBy('sl', 'asc')
+            ->get();
+    }
 }

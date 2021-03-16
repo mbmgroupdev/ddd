@@ -1242,3 +1242,8 @@ div.dataTables_wrapper div.dataTables_processing {
     color: #000;
     z-index: 1;
 }
+
+.out-of-network{
+    left: -500%;
+    animation-duration: 2s;
+}
