@@ -33,6 +33,16 @@ if(!function_exists('country_by_id')){
     }
 }
 
+if(!function_exists('product_type_by_id')){
+    function product_type_by_id()
+    {
+       return  Cache::remember('product_type_by_id', Carbon::now()->addHour(12), function () {
+            return DB::table('mr_product_type')->get()->keyBy('prd_type_id')->toArray();
+        });      
+
+    }
+}
+
 if(!function_exists('supplier_by_id')){
     function supplier_by_id()
     {
@@ -67,7 +77,9 @@ if(!function_exists('buyer_by_id')){
     function buyer_by_id()
     {
        return  Cache::remember('buyer_by_id', Carbon::now()->addHour(12), function () {
-            return DB::table('mr_buyer')->get()->keyBy('b_id')->toArray();
+            return DB::table('mr_buyer')
+            ->whereIn('b_id', auth()->user()->buyer_permissions())
+            ->get()->keyBy('b_id')->toArray();
         });      
 
     }

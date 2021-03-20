@@ -215,8 +215,8 @@ class AttendaceBulkManualController extends Controller
                         if($intime == null && $outtime == null){
                             $absentData = [
                                 'associate_id' => $info->associate_id,
-                                'date' => $date,
-                                'hr_unit' => $info->as_unit_id
+                                'date' => $date
+                                // 'hr_unit' => $info->as_unit_id
                             ];
                             $getAbsent = Absent::where($absentData)->first();
                             if($getAbsent == null && $checkDay == 'open'){
@@ -388,7 +388,7 @@ class AttendaceBulkManualController extends Controller
                                 $absentData = [
                                     'associate_id' => $info->associate_id,
                                     'date' => $date,
-                                    'hr_unit' => $info->as_unit_id
+                                    // 'hr_unit' => $info->as_unit_id
                                 ];
                                 $getAbsent = Absent::where($absentData)->first();
                                 if($getAbsent == null && $checkDay == 'open'){
@@ -403,7 +403,7 @@ class AttendaceBulkManualController extends Controller
                                 $absentData = [
                                     'associate_id' => $info->associate_id,
                                     'date' => $date,
-                                    'hr_unit' => $info->as_unit_id
+                                    // 'hr_unit' => $info->as_unit_id
                                 ];
                                 $getAbsent = Absent::where($absentData)->first();
                                 if($getAbsent == null && $checkDay == 'open'){

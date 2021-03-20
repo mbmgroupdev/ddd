@@ -27,7 +27,7 @@
               <li class="active">Style Costing List</li>
               <li class="top-nav-btn">
                 <a href="{{ url('merch/style/style_list')}}" target="_blank" class="btn btn-outline-primary btn-sm pull-right"> <i class="fa fa-list"></i> Style List</a> &nbsp;
-                <a href="{{ url('merch/style_bom')}}" target="_blank" class="btn btn-outline-success btn-sm pull-right"> <i class="fa fa-list"></i> Style BOM</a> &nbsp;
+                <a href="{{ url('/merch/style/bom-list')}}" class="btn btn-outline-success btn-sm pull-right"> <i class="fa fa-list"></i> Style BOM</a> &nbsp;
                 
                 </li>
           </ul><!-- /.breadcrumb -->
@@ -117,7 +117,7 @@ $(document).ready(function(){
         serverSide: true,
         pagingType: "full_numbers", 
         ajax: {
-            url: '{!! url("merch/style_costing/style_costing_data") !!}',
+            url: '{!! url("merch/style/costing-list-data") !!}',
             type: "GET",
             headers: {
                   'X-CSRF-TOKEN': '{{ csrf_token() }}'

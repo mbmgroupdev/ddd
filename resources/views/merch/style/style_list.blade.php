@@ -58,7 +58,6 @@
               <div class="panel">
 
                 <div class="panel-body">
-                  @include('inc/message')
                   <div class="style_section">
                     <div class="col-xs-12 table-responsive worker-list">
                         <table id="example" class="table table-striped table-bordered" style="display: block;overflow-x: auto;width: 100%;" border="1">
@@ -243,7 +242,7 @@ $(document).ready(function(){
              }
        }); 
 
-   }); 
+}); 
 
 </script>
 @endpush

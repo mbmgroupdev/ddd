@@ -127,8 +127,7 @@ class OrderBomController extends Controller
 			$action_buttons= "<div class=\"btn-group\">
 			<a href=".url('merch/order/bom/'.$data->order_id)." class=\"btn btn-xs btn-success\" data-toggle=\"tooltip\" title=\"Order BOM\">
 			<i class=\"ace-icon fa fa-pencil bigger-120\"></i>
-			</a>";
-			$action_buttons.= "</div>";
+			</a></div>";
 			return $action_buttons;
 		})
 		->rawColumns([

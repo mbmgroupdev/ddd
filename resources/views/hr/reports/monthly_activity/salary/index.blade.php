@@ -209,14 +209,14 @@
                               </div>
                               
                             </div>
-                            <div class="col-5 text-center">
+                            <div class="col-6 text-center">
                               <h4 class="card-title capitalize inline">
                                 
                               </h4>
                             </div>
-                            <div class="col-4">
+                            <div class="col-3">
                               <div class="row">
-                                <div class="col-5 pr-0">
+                                <div class="col-7 pr-0">
                                   <div class="format">
                                     <div class="form-group has-float-label select-search-group mb-0">
                                         <?php
@@ -227,11 +227,8 @@
                                     </div>
                                   </div>
                                 </div>
-                                <div class="col-7 pl-0">
+                                <div class="col-5 pl-0">
                                   <div class="text-right">
-                                    <a class="btn view chart_view no-padding" data-toggle="tooltip" data-placement="top" title="" data-original-title="Summary Report View" id="2">
-                                      <i class="las la-list-ul"></i>
-                                    </a>
                                     <a class="btn view grid_view no-padding" data-toggle="tooltip" data-placement="top" title="" data-original-title="Summary Report View" id="1">
                                       <i class="las la-th-large"></i>
                                     </a>
@@ -262,15 +259,6 @@
 @include('common.right-modal')
 @push('js')
 <script src="{{ asset('assets/js/moment.min.js')}}"></script>
-<script src="{{ asset('assets/js/apexcharts.js') }}"></script>
-<script src="{{ asset('assets/js/lottie.js') }}"></script>
-<!-- am core JavaScript -->
-<script src="{{ asset('assets/js/core.js') }}"></script>
-<!-- am charts JavaScript -->
-<script src="{{ asset('assets/js/charts.js') }}"></script>
-
-<script src="{{ asset('assets/js/animated.js') }}"></script>
-<script src="{{ asset('assets/js/highcharts.js')}}"></script>
 <script type="text/javascript">
     $(document).ready(function(){   
         var loader = '<div class="panel"><div class="panel-body"><p style="text-align:center;margin:100px;"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>';
@@ -279,7 +267,7 @@
           e.preventDefault();
           salaryProcess();
         });
-        $(".grid_view, .list_view, .chart_view").click(function() {
+        $(".grid_view, .list_view").click(function() {
           var value = $(this).attr('id');
           // console.log(value);
           $("#reportformat").val(value);
@@ -323,30 +311,21 @@
                 data: form.serialize(), // serializes the form's elements.
                 success: function(response)
                 {
-
-                    if(format == 2){
-                        console.log(response);
-                        $("#result-data").html('<div id="salary-comparison"></div>');
-                        buildChart(response.ct,response.dt,response.hd);
-                    }else{
-                        if(response !== 'error'){
-                            $("#result-data").html(response);
-                        }else{
-                        // console.log(response);
-                        $("#result-data").html('');
-                      }
-
-                    }
                   // console.log(response);
-                  $('.view').removeClass('active').attr('disabled', false);
+                  if(response !== 'error'){
+                    $("#result-data").html(response);
+                  }else{
+                    // console.log(response);
+                    $("#result-data").html('');
+                  }
                   if(format == 0 && response !== 'error'){
                     $("#single-employee-search").show();
                     $('.list_view').addClass('active').attr('disabled', true);
-                  }else if(format == 1 && response !== 'error'){
+                    $('.grid_view').removeClass('active').attr('disabled', false);
+                  }else{
                     $("#single-employee-search").hide();
                     $('.grid_view').addClass('active').attr('disabled', true);
-                  }else{
-                    $('.chart_view').addClass('active').attr('disabled', true);
+                    $('.list_view').removeClass('active').attr('disabled', false);
                   }
                 },
                 error: function (reject) {
@@ -354,64 +333,9 @@
                 }
             });
           }else{
+            console.log('required');
             $("#result-data").html('');
           }
-        }
-
-        function buildChart(ct,dt,hd)
-        {
-            if (jQuery('#salary-comparison').length) {
-                Highcharts.chart('salary-comparison', {
-                    chart: {
-                        zoomType: 'xy'
-                    },
-                    title: {
-                        text: ''
-                    },
-                    xAxis: [{
-                        categories: ct,
-                        crosshair: true
-                    }],
-                    yAxis: [{ // Primary yAxis
-                        labels: {
-                            format: '{value} ৳',
-                            style: {
-                                color: Highcharts.getOptions().colors[1]
-                            }
-                        },
-
-                        title: {
-                            text: 'BDT',
-                            style: {
-                                color: Highcharts.getOptions().colors[1]
-                            }
-                        }
-                    }],
-                    tooltip: {
-                        shared: true
-                    },
-                    legend: {
-                        layout: 'vertical',
-                        align: 'left',
-                        x: 120,
-                        verticalAlign: 'top',
-                        y: 100,
-                        floating: true,
-                        backgroundColor: Highcharts.defaultOptions.legend.backgroundColor || // theme
-                            'rgba(255,255,255,0.25)'
-                    },
-                    series: [{
-                        name: hd,
-                        type: 'bar',
-                        data: dt,
-                        color: '#FC9F5B',
-                        tooltip: {
-                            valueSuffix: ' ৳'
-                        }
-                    }]
-                });
-            }
-
         }
         
         // change unit
@@ -537,7 +461,6 @@
     $(document).bind('contextmenu click',function(){
         $(".context-menu").hide();
     });
-
 
 </script>
 @endpush

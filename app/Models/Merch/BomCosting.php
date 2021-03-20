@@ -55,4 +55,13 @@ class BomCosting extends Model
             ->orderBy('sl', 'asc')
             ->get();
     }
+
+    public static function getStyleWiseItemUnitPrice($stlId)
+    {
+        return DB::table('mr_stl_bom_n_costing')
+            ->select('id', 'mr_cat_item_id', DB::raw('((precost_unit_price + precost_fob + precost_lc + precost_freight)  * ((consumption*extra_percent)/100 + consumption)) AS unitprice'), 'precost_unit_price')
+            ->where('mr_style_stl_id', $stlId)
+            ->orderBy('sl', 'asc')
+            ->get();
+    }
 }

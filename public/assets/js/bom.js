@@ -55,7 +55,7 @@ $(document).on('click','.add-arrows',function(){
 $(document).on('change', '.supplier', function(){
     var id_arr = $(this).attr('id'),
         id = id_arr.split("_");
-    $('#article_'+id[1]+'_'+id[2]).val(null).trigger('change').attr('disabled', true);
+    $('#article_'+id[1]+'_'+id[2]).empty().select2({data: [{id: '', text: ' Select Article'}]}).attr('disabled', true);
     if($(this).val() !== ''){
     	var supid = $(this).val();
         $.ajax({
@@ -134,11 +134,9 @@ $(document).on('focus keyup','.autocomplete_txt',function(){
             // console.log(supplier);
             id_arr = $(this).attr('id');
             id = id_arr.split("_");
-
-            $('#supplier_'+id[1]+'_'+id[2]).val(null).trigger('change').attr('disabled', true);
-            $('#article_'+id[1]+'_'+id[2]).val(null).trigger('change').attr('disabled', true);
-            $('#uom_'+id[1]+'_'+id[2]).val(null).trigger('change').attr('disabled', true);
-
+            $('#supplier_'+id[1]+'_'+id[2]).empty().select2({data: [{id: '', text: ' Select Supplier'}]}).attr('disabled', true);
+            $('#article_'+id[1]+'_'+id[2]).empty().select2({data: [{id: '', text: ' Select Article'}]}).attr('disabled', true);
+            $('#uom_'+id[1]+'_'+id[2]).empty().select2({data: [{id: '', text: ' Select UOM'}]}).attr('disabled', true);
             if(item !== ''){
             	
                 $('#itemid_'+item.mcat_id+'_'+id[2]).val(item.id);
@@ -526,18 +524,19 @@ $(document).on('contextmenu', 'input', function(event) {
 });
 
 $(document).on('contextmenu', '.action-input', function(event) {
-    $(".calc-main").removeClass('out-of-network');
+    $(".calc-wrapper").removeClass('out-of-network');
+
     var selectid = $(this).attr('id');
     $("#cal-input").val(selectid);
     return false;
 });
 $(document).on('click', '.close-cal', function(event) {
-    $(".calc-main").addClass('out-of-network');
+    $(".calc-wrapper").addClass('out-of-network');
     $(".calc-brown").click();
     $("#cal-input").val('');
 });
 $(document).on('click', '.ok-cal', function(event) {
-    $(".calc-main").addClass('out-of-network');
+    $(".calc-wrapper").addClass('out-of-network');
     var selectedid = $("#cal-input").val();
     var inputval = $(".calc-display span").html();
     var inputval = parseFloat(inputval).toFixed(6);

@@ -111,7 +111,7 @@
               serverSide: true,
               pagingType: "full_numbers", 
               ajax: {
-                   url: '{!! url("merch/style_bom/style_bom_data") !!}',
+                   url: '{!! url("merch/style/bom-list-data") !!}',
                    type: "GET",
                    headers: {
                          'X-CSRF-TOKEN': '{{ csrf_token() }}'

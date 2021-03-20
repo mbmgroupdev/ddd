@@ -12,6 +12,9 @@
             box-shadow: 0 2px 2px -1px rgb(0 0 0 / 40%);
             color: #000;
         }
+        .select2 {
+            width: 100px !important;
+        }
     </style>
 @endpush
 <div class="main-content">
@@ -27,8 +30,8 @@
               </li>
               <li class="active">Order BOM</li>
               <li class="top-nav-btn">
-                <a href='{{ url("merch/order/costing/$order->mr_style_stl_id")}}' class="btn btn-outline-success btn-sm pull-right"> <i class="fa fa-plus"></i> Add Costing</a>
-                <a href="{{ url('merch/order_bom')}}" target="_blank" class="btn btn-outline-primary btn-sm pull-right"> <i class="fa fa-list"></i> Order BOM List</a> &nbsp;
+                <a href='{{ url("merch/order/costing/$order->order_id")}}' class="btn btn-outline-success btn-sm pull-right"> <i class="fa fa-plus"></i> Add Costing</a>
+                <a href="{{ url('merch/order/bom-list')}}" target="_blank" class="btn btn-outline-primary btn-sm pull-right"> <i class="fa fa-list"></i> Order BOM List</a> &nbsp;
                 </li>
             </ul><!-- /.breadcrumb -->
         </div>

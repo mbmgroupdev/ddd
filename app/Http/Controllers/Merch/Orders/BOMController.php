@@ -3,10 +3,16 @@
 namespace App\Http\Controllers\Merch\Orders;
 
 use App\Http\Controllers\Controller;
-use App\Models\Merch\OrderEntry;
+use App\Models\Hr\Unit;
+use App\Models\Merch\Brand;
+use App\Models\Merch\Buyer;
 use App\Models\Merch\OrderBOM;
+use App\Models\Merch\OrderEntry;
+use App\Models\Merch\Season;
+use App\Models\Merch\Style;
 use DB;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 
 class BOMController extends Controller
 {
@@ -14,6 +20,98 @@ class BOMController extends Controller
     {
         ini_set('zlib.output_compression', 1);
     }
+
+    public function index(){
+
+		$unitList= Unit::whereIn('hr_unit_id', auth()->user()->unit_permissions())->pluck('hr_unit_name', 'hr_unit_id');
+		$buyerList= Buyer::whereIn('b_id', auth()->user()->buyer_permissions())->pluck('b_name', 'b_id');
+		$brandList= Brand::pluck('br_name','br_id');
+		$styleList= Style::pluck('stl_no', 'stl_id');
+		$seasonList= Season::pluck('se_name', 'se_id');
+		return view("merch.order_bom.order_bom_list", compact('buyerList', 'seasonList', 'unitList', 'brandList', 'styleList'));
+	}
+    // Order List Data for Order BOM
+	public function getListData(){
+		if(auth()->user()->hasRole('merchandiser')){
+			$lead_associateId[] = auth()->user()->associate_id;
+		 	$team_members = DB::table('hr_as_basic_info as b')
+				->where('associate_id',auth()->user()->associate_id)
+				->leftJoin('mr_excecutive_team','b.as_id','mr_excecutive_team.team_lead_id')
+				->leftJoin('mr_excecutive_team_members','mr_excecutive_team.id','mr_excecutive_team_members.mr_excecutive_team_id')
+				->pluck('member_id');
+			$team_members_associateId = DB::table('hr_as_basic_info as b')
+	 				                    ->whereIn('as_id',$team_members)
+										->pluck('associate_id');
+		 	$team = array_merge($team_members_associateId->toArray(),$lead_associateId);
+
+	 	}elseif (auth()->user()->hasRole('merchandising_executive')) {
+		 	$executive_associateId[] = auth()->user()->associate_id;
+
+		 	$teamid = DB::table('hr_as_basic_info as b')
+				->where('associate_id',auth()->user()->associate_id)
+				->leftJoin('mr_excecutive_team_members','b.as_id','mr_excecutive_team_members.member_id')
+				->pluck('mr_excecutive_team_id');
+			$team_lead = DB::table('mr_excecutive_team')
+					 ->whereIn('id',$teamid)
+					 ->leftJoin('hr_as_basic_info as b','mr_excecutive_team.team_lead_id','b.as_id')
+					 ->pluck('associate_id');
+			$team_members_associateId = DB::table('mr_excecutive_team_members')
+									->whereIn('mr_excecutive_team_id',$teamid)
+									->leftJoin('hr_as_basic_info as b','mr_excecutive_team_members.member_id','b.as_id')
+									->pluck('associate_id');
+																		 
+			$team = array_merge($team_members_associateId->toArray(),$team_lead->toArray());
+		}else{
+		 	$team =[];
+		}
+
+		$query= DB::table('mr_order_entry AS OE')
+		->select([
+			"OE.order_id",
+			"OE.order_code",
+			//"u.hr_unit_name",
+			"b.b_name",
+			"br.br_name",
+			"s.se_name",
+			"stl.stl_no",
+			"OE.order_ref_no",
+			"OE.order_qty",
+			"OE.order_delivery_date",
+			"OE.unit_id"
+		])
+		->whereIn('b.b_id', auth()->user()->buyer_permissions())
+		//->leftJoin('hr_unit AS u', 'u.hr_unit_id', 'OE.unit_id')
+		->leftJoin('mr_buyer AS b', 'b.b_id', 'OE.mr_buyer_b_id')
+		->leftJoin('mr_brand AS br', 'br.br_id', 'OE.mr_brand_br_id')
+		->leftJoin('mr_season AS s', 's.se_id', 'OE.mr_season_se_id')
+		->leftJoin('mr_style AS stl', 'stl.stl_id', "OE.mr_style_stl_id");
+		if(!empty($team)){
+			$query->whereIn('OE.created_by', $team);
+		}
+		$data = $query->orderBy('OE.order_id', 'DESC')
+		->get();
+		$getUnit = unit_by_id();
+
+		return DataTables::of($data)
+		->addIndexColumn()
+		->editColumn('hr_unit_name', function($data) use ($getUnit){
+			return $getUnit[$data->unit_id]['hr_unit_name']??'';
+		})
+		->editColumn('order_delivery_date', function($data){
+			return custom_date_format($data->order_delivery_date);
+		})
+		->addColumn('action', function ($data) {
+			$action_buttons= "<div class=\"btn-group\">
+			<a href=".url('merch/order/bom/'.$data->order_id)." class=\"btn btn-xs btn-success\" data-toggle=\"tooltip\" title=\"Order BOM\">
+			<i class=\"ace-icon fa fa-pencil bigger-120\"></i>
+			</a></div>";
+			return $action_buttons;
+		})
+		->rawColumns([
+            'order_code', 'hr_unit_name', 'b_name', 'br_name', 'se_name', 'stl_no', 'order_qty', 'order_delivery_date', 'action'
+        ])
+        ->make(true);
+	}
 
     public function show(Request $request, $id)
     {

@@ -102,11 +102,8 @@ class OrderCostingController extends Controller
 			}
 			else{
 				$action_buttons= "<div class=\"btn-group\">
-				<a href=".url('merch/order_costing/'.$data->order_id.'/edit')." class=\"btn btn-xs btn-success btn-round\" data-toggle=\"tooltip\" title=\"Edit Costing\">
+				<a href=".url('merch/order/costing/'.$data->order_id)." class=\"btn btn-xs btn-success btn-round\" data-toggle=\"tooltip\" title=\"Edit Costing\">
 				<i class=\"ace-icon fa fa-pencil bigger-120\"></i>
-				</a>
-				<a href=".url('merch/order_costing/'.$data->order_id.'/print')." class=\"btn btn-xs btn-info btn-round\" data-toggle=\"tooltip\" title=\"Print Costing\">
-				<i class=\"ace-icon fa fa-print bigger-120\"></i>
 				</a>";
 				$action_buttons.= "</div>";
 				return $action_buttons;
