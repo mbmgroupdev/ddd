@@ -31,7 +31,8 @@ class SummaryReportController extends Controller
 
         $reportType = [
             'ot'=>'OT', 
-            'working_hour' => 'Working Hour'
+            'working_hour' => 'Working Hour',
+            'leave' => 'Leave'
         ];
         if(array_intersect(auth()->user()->unit_permissions(), [1,4,5])){
            $reportType['ot_levis'] = 'OT (Levis format)';
@@ -53,15 +54,7 @@ class SummaryReportController extends Controller
         try {
             
             ini_set('zlib.output_compression', 1);
-            $unit = unit_by_id();
-            $location = location_by_id();
-            $line = line_by_id();
-            $floor = floor_by_id();
-            $department = department_by_id();
-            $designation = designation_by_id();
-            $section = section_by_id();
-            $subSection = subSection_by_id();
-            $area = area_by_id();
+            
 
             $input['area']       = isset($request['area'])?$request['area']:'';
             $input['location']       = isset($request['location'])?$request['location']:'';
@@ -73,6 +66,21 @@ class SummaryReportController extends Controller
             $input['subSection'] = isset($request['subSection'])?$request['subSection']:'';
 
             $format = $request['report_group']??'';
+
+
+            if($input['report_type'] == 'leave'){
+                return $this->getLeaveSummary($request, $input);
+            }
+
+            $unit = unit_by_id();
+            $location = location_by_id();
+            $line = line_by_id();
+            $floor = floor_by_id();
+            $department = department_by_id();
+            $designation = designation_by_id();
+            $section = section_by_id();
+            $subSection = subSection_by_id();
+            $area = area_by_id();
 
          
             $getEmployee = array();
@@ -339,6 +347,127 @@ class SummaryReportController extends Controller
         }
     }
 
+    public function getLeaveSummary($request, $input)
+    {
+        $unit = unit_by_id();
+        $location = location_by_id();
+        $line = line_by_id();
+        $floor = floor_by_id();
+        $department = department_by_id();
+        $designation = designation_by_id();
+        $section = section_by_id();
+        $subSection = subSection_by_id();
+        $area = area_by_id();
+
+        $from = $input['from_date']; $to = $input['to_date'];
+        DB::statement("SET @from='".$from."', @to='".$to."'");
+        $data =  DB::table('hr_leave as l')
+            ->select(
+                'b.as_id', 'b.as_gender', 'b.as_unit_id', 'b.as_shift_id', 'b.as_oracle_code', 'b.associate_id', 'b.as_line_id', 'b.as_designation_id', 'b.as_department_id', 'b.as_floor_id', 'b.as_pic', 'b.as_name', 'b.as_contact', 'b.as_section_id','b.as_subsection_id','l.leave_type',
+                DB::raw('
+                    SUM((CASE 
+                        WHEN (l.leave_from <= @from &&  l.leave_to <= @to) 
+                            THEN  DATEDIFF(l.leave_to, @from)+1
+                        WHEN (leave_from <= @from && leave_to >= @to) 
+                            THEN DATEDIFF(@to, @from)+1
+                        WHEN (l.leave_from >= @from && l.leave_to >= @to) 
+                            THEN DATEDIFF(@to, l.leave_from)+1
+                        ELSE
+                            DATEDIFF(l.leave_to, l.leave_from)+1
+                    END)) AS days'
+                )
+            )
+            ->leftjoin('hr_as_basic_info as b','b.associate_id','l.leave_ass_id')
+            ->where('l.leave_to','>=',$input['from_date'])
+            ->where('l.leave_from','<=',$input['to_date'])
+            ->where('l.leave_status',1)
+            ->where('l.leave_type','!=','Maternity');
+            if($input['report_format'] == 0 && !empty($input['employee'])){
+                $data->where('associate_id', 'LIKE', '%'.$input['employee'] .'%');
+            }
+        $data = $data->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
+            ->whereIn('b.as_location', auth()->user()->location_permissions())
+            ->when(!empty($input['unit']), function ($query) use($input){
+                if($input['unit'] == 145){
+                    return $query->whereIn('b.as_unit_id',[1, 4, 5]);
+                }else{
+                    return $query->where('b.as_unit_id',$input['unit']);
+                }
+            })
+            ->when(!empty($input['location']), function ($query) use($input){
+               return $query->where('b.as_location',$input['location']);
+            })
+            ->when(!empty($input['area']), function ($query) use($input){
+               return $query->where('b.as_area_id',$input['area']);
+            })
+            ->when(!empty($input['department']), function ($query) use($input){
+               return $query->where('b.as_department_id',$input['department']);
+            })
+            ->when(!empty($input['line_id']), function ($query) use($input){
+               return $query->where('b.as_line_id', $input['line_id']);
+            })
+            ->when(!empty($input['floor_id']), function ($query) use($input){
+               return $query->where('b.as_floor_id',$input['floor_id']);
+            })
+            ->when($request['otnonot']!=null, function ($query) use($input){
+               return $query->where('b.as_ot',$input['otnonot']);
+            })
+            ->when(!empty($input['section']), function ($query) use($input){
+               return $query->where('b.as_section_id', $input['section']);
+            })
+            ->when(!empty($input['subSection']), function ($query) use($input){
+               return $query->where('b.as_subsection_id', $input['subSection']);
+            })
+            ->when(!empty($input['selected']), function ($query) use($input){
+                if($input['selected'] == 'null'){
+                    return $query->whereNull('b.'.$input['report_group']);
+                }else{
+                    return $query->where('b.'.$input['report_group'], $input['selected']);
+                }
+            })
+
+            ->groupBy('l.leave_ass_id','leave_type')
+            ->get();
+
+        
+        $uniqueGroups = collect($data)
+            ->groupBy('associate_id')
+            ->map(function($data){
+                $lv = collect($data)->pluck('days','leave_type')->toArray();
+                $p = $data[0];
+                foreach ($lv as $k => $v) {
+                    $p->{$k} = $v;
+                }
+                return $p; 
+            });
+
+        $totalEmployees = count($uniqueGroups);
+        $uniqueGroups = collect($uniqueGroups)
+            ->groupBy($input['report_group'],true);
+
+        //dd($uniqueGroups);
+
+        $format = $request['report_group'];
+        if($input['report_format'] == 1){
+            $uniqueGroups = collect($uniqueGroups)
+                ->map(function($q){
+                    $p['emp'] = $q;
+                    $p['Sick'] = 0;
+                    $p['Casual'] = 0;
+                    $p['Earned'] = 0;
+                    $p['Special'] = 0;
+                    foreach ($q as $key => $v) {
+                        $p[$v->leave_type]++;
+                    }
+                    return $p;
+                });
+
+        }
+
+        return view('hr.reports.summary.leave', compact('uniqueGroups','input','format', 'totalEmployees', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area'));
+
+    }
+
 
     
 
@@ -357,6 +486,8 @@ class SummaryReportController extends Controller
             $filename = 'Left & Resign Report ';
         }else if($input['report_type'] == 'recruitment'){
             $filename = 'Recruitment Report ';
+        }else{
+            return back();
         }
         $filename .= $input['from_date'].' to '.$input['to_date'];
         $filename .= '.xlsx';

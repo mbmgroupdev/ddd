@@ -2,17 +2,14 @@
 @section('title', 'Warning Notice')
 @section('main-content')
 @push('css')
-    <style>
-        .address_section{width:100%; height: 100%;}
-        .address_left{width: 40%; float: left;}
-        .address_right{width: 60%; float: left;}
-        .user-action-content{
-            padding: 10px 20px;
-            border: 1px solid #000;
-            border-radius: 5px;
-            margin-top: 10px;
-        }
-    </style>
+<style type="text/css">
+    .user-action-content{
+                                    padding: 10px 20px;
+                                    border: 1px solid #000;
+                                    border-radius: 5px;
+                                    margin-top: 10px;
+                                }
+</style>
 @endpush
 <div class="main-content">
   <div class="main-content-inner">
@@ -269,7 +266,7 @@
                                                 </div>
                                                 <div class="text-center mt-3">
                                                  <h4><b id="name">{{ $info->as_name }}</b></h4>
-                                                 <p class="mb-0" id="joined">Joined {{ $info->as_doj->diffForHumans() }}</p>
+                                                 <p class="mb-0" id="joined">Joined {{ $info->as_doj }}</p>
                                                  <p class="mb-0" id="designation">{{ $info->designation['hr_designation_name'] }}</p>
                                                  <p class="mb-0" >
                                                     Oracle ID: <span id="oracle_id" class="text-success">{{ $info->as_oracle_code }}</span>
@@ -299,53 +296,64 @@
             <div class="panel">
                 <div class="panel-heading report-print-section hide">
                     <h6 class="">
-                        <button type="button" onClick="printMe1('result-data')" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report"><i class="fa fa-print"></i>
+                        <button type="button" onClick="printDiv('result-data')" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report"><i class="fa fa-print"></i>
                         </button>
-                        <button type="button" onClick="printMe1('result-data-cover')" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Envelope"><i class="las la-envelope"></i>
+                        <button type="button" onClick="printDiv('result-data-cover',11)" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Envelope"><i class="las la-envelope"></i>
                         </button>
                     </h6>
                 </div>
                 <div class="panel-body row">
                     <div class=" offset-2 col-sm-8">
                         <div id="result-data">
+                            <style type="text/css" media="print">
+                                .stepLetter{padding:60pt 36pt }
+
+                            </style>
                             <div class="step_one" id="step_one" style="display: none">
                                 <div class="stepLetter" id="letter" style="font-size: 12px;">
                                     <style type="text/css">p{margin: 0;}</style>
                                     <p>
-                                    <center><h3 class="underline">“রেজিস্ট্রি ডাক যোগে প্রেরিত”</h3></center>
+                                    <center><h3 class="underline" style="font-size:16px;">“রেজিস্ট্রি ডাক যোগে প্রেরিত”</h3></center>
                                     <p>তারিখ :&nbsp; <b id="firstIssueDate">@if($notice != null){{ eng_to_bn(date('d-m-Y', strtotime($notice->first_step_date))) }} @endif</b> ইং</p>
+
                                     <p>বরাবর,</p>
-                                    <p>নামঃ {{ $info->employee_bengali['hr_bn_associate_name']?$info->employee_bengali['hr_bn_associate_name']:'' }}</p>
-                                    <p>পিতাঃ {{ $info->employee_bengali['hr_bn_father_name']?$info->employee_bengali['hr_bn_father_name']:'' }} </p>
+                                    <p>নামঃ {{ $info->hr_bn_associate_name??'' }}</p>
+                                    <p>পিতাঃ {{ $info->hr_bn_father_name??'' }} </p>
                                     <p>পদবীঃ {{ $info->designation['hr_designation_name_bn']?$info->designation['hr_designation_name_bn']:'' }}</p>
-                                    <p>আইডিঃ {{ $info->employee_bengali['hr_bn_associate_id']?$info->employee_bengali['hr_bn_associate_id']:'' }}</p>
-                                    <div class="address_section">
-                                        <div class="address_left">
+                                    <p>আইডিঃ {{ $info->associate_id??'' }}</p>
+                                    <br>
+                                    <div class="address_section" style="display: flex;">
+                                        <div class="address_left" style="width:250px;">
                                             <p><b class="underline">বর্তমান ঠিকানাঃ </b></p>
-                                            <p>বাসা নংঃ {{ $info->employee_bengali['hr_bn_present_house']?$info->employee_bengali['hr_bn_present_house']:'' }}</p>
-                                            <p>পোষ্টঃ {{ $info->employee_bengali['hr_bn_present_po']?$info->employee_bengali['hr_bn_present_po']:'' }}</p>
-                                            <p>থানাঃ </p>
-                                            <p>জেলাঃ</p>
+                                            <p>বাসা নংঃ {{ $info->hr_bn_present_house??'' }}</p>
+                                            <p>পোষ্টঃ {{ $info->hr_bn_present_po??'' }}</p>
+                                            <p>থানাঃ {{ (!empty($info->present_upazilla_bn)?$info->present_upazilla_bn:null) }}</p>
+                                            <p>জেলাঃ {{ $info->present_district_bn??'' }}</p>
                                         </div>
                                         <div class="address_right">
                                             <p><b class="underline">স্থায়ী ঠিকানাঃ </b></p>
-                                            <p>গ্রামঃ {{ $info->employee_bengali['hr_bn_permanent_village']?$info->employee_bengali['hr_bn_permanent_village']:'' }}</p>
-                                            <p>পোষ্টঃ {{ $info->employee_bengali['hr_bn_permanent_po']?$info->employee_bengali['hr_bn_permanent_po']:'' }}</p>
-                                            <p>থানাঃ  </p>
-                                            <p>জেলাঃ </p>
+                                            <p>গ্রামঃ {{ $info->hr_bn_permanent_village??'' }}</p>
+                                            <p>পোষ্টঃ {{ $info->hr_bn_permanent_po??'' }}</p>
+                                            <p>থানাঃ {{ $info->permanent_upazilla_bn??'' }} </p>
+                                            <p>জেলাঃ {{ $info->permanent_district_bn??'' }} </p>
                                         </div>
                                     </div>
-                                    
+                                    <br>
                                     <p><span style="text-decoration: underline;"><strong>বিষয়ঃ বাংলাদেশ শ্রম আইন ২০০৬ এর ২৭(৩ক) ধারা মোতাবেক ব্যাখ্যা প্রদান সহ চাকুরীতে যোগদানের জন্য নোটিশ। </strong></span></p>
+                                    <br>
                                     <p>জনাব/জনাবা,</p>
-                                    <p>আপনি গত <b id="firstAbsentDate">@if($notice != null){{ eng_to_bn(date('d-m-Y', strtotime($notice->start_date))) }} @endif</b> ইং তারিখ থেকে কারখানা কর্তৃপক্ষের বিনা অনুমতিতে কর্মস্থলে অনুপস্থিত রয়েছেন। আপনার এরুপ অনুপস্থিতি বাংলাদেশ শ্রম আইন ২০০৬ এর ২৭(৩ক) ধারার আওতায় পড়ে।</p>
+                                    <br>
+                                    <p style="text-align: justify;">আপনি গত <b id="firstAbsentDate">@if($notice != null){{ eng_to_bn(date('d-m-Y', strtotime($notice->start_date))) }} @endif</b> ইং তারিখ থেকে কারখানা কর্তৃপক্ষের বিনা অনুমতিতে কর্মস্থলে অনুপস্থিত রয়েছেন। আপনার এরুপ অনুপস্থিতি বাংলাদেশ শ্রম আইন ২০০৬ এর ২৭(৩ক) ধারার আওতায় পড়ে।</p>
                                     <br>
                                     <p>সুতরাং অত্র পত্র প্রাপ্তির <b id="firstResDay">@if($notice != null){{ eng_to_bn($notice->first_response) }} @endif</b> দিনের মধ্যে আপনার অনুপস্থিতির কারন ব্যাখ্যা সহ কাজে যোগদানের জন্য আপনাকে নির্দেশ দেয়া হল।</p>
                                     <p>আপনার লিখিত জবাব উক্ত সময়ের মধ্যে নিম্ন স্বাক্ষরকারীর নিকট অবশ্যই পৌঁছাতে হবে। অন্যথায় কর্তৃপক্ষ আপনার বিরুদ্ধে প্রয়োজনীয় আইনানুগ ব্যবস্থা নিতে বাধ্য হবে।</p>
+                                    <br>
+                                    <br>
                                     <p>ধন্যবাদান্তে,</p>
                                     <br>
                                     <br>
-                                    <b id="firsrtManagerName"> ( {{ $firstManagerBan }} )</b>
+                                    <br>
+                                    <b id="firsrtManagerName"> </b>
                                     <p id="firsrtManagerDeg"></p>
                                     <br>
                                     <p>অনুলিপিঃ </p>
@@ -362,41 +370,47 @@
                             <div class="step_two" id="step_two" style="display: none">
                                 <div class="stepLetter" id="letter" style="font-size: 12px;">
                                     <p>
-                                    <center><h3 class="underline">“রেজিস্ট্রি ডাক যোগে প্রেরিত”</h3></center>
+                                    <center><h3 class="underline" style="font-size:16px;">“রেজিস্ট্রি ডাক যোগে প্রেরিত”</h3></center>
                                     <p>তারিখ :&nbsp; <b id="secondIssueDate">@if($notice != null){{ eng_to_bn(date('d-m-Y', strtotime($notice->second_step_date))) }} @endif</b> ইং</p>
                                     <p>বরাবর,</p>
-                                    <p>নামঃ {{ $info->employee_bengali['hr_bn_associate_name']?$info->employee_bengali['hr_bn_associate_name']:'' }}</p>
-                                    <p>পিতাঃ {{ $info->employee_bengali['hr_bn_father_name']?$info->employee_bengali['hr_bn_father_name']:'' }} </p>
+                                    <p>নামঃ {{ $info->hr_bn_associate_name??'' }}</p>
+                                    <p>পিতাঃ {{ $info->hr_bn_father_name??'' }} </p>
                                     <p>পদবীঃ {{ $info->designation['hr_designation_name_bn']?$info->designation['hr_designation_name_bn']:'' }}</p>
-                                    <p>আইডিঃ {{ $info->employee_bengali['hr_bn_associate_id']?$info->employee_bengali['hr_bn_associate_id']:'' }}</p>
-                                    <div class="address_section">
-                                        <div class="address_left">
+                                    <p>আইডিঃ {{ $info->associate_id??'' }}</p>
+                                    <br>
+                                    <div class="address_section" style="display: flex;">
+                                        <div class="address_left" style="width:250px;">
                                             <p><b class="underline">বর্তমান ঠিকানাঃ </b></p>
-                                            <p>বাসা নংঃ {{ $info->employee_bengali['hr_bn_present_house']?$info->employee_bengali['hr_bn_present_house']:'' }}</p>
-                                            <p>পোষ্টঃ {{ $info->employee_bengali['hr_bn_present_po']?$info->employee_bengali['hr_bn_present_po']:'' }}</p>
-                                            <p>থানাঃ </p>
-                                            <p>জেলাঃ</p>
+                                            <p>বাসা নংঃ {{ $info->hr_bn_present_house??'' }}</p>
+                                            <p>পোষ্টঃ {{ $info->hr_bn_present_po??'' }}</p>
+                                            <p>থানাঃ {{ (!empty($info->present_upazilla_bn)?$info->present_upazilla_bn:null) }}</p>
+                                            <p>জেলাঃ {{ $info->present_district_bn??'' }}</p>
                                         </div>
                                         <div class="address_right">
                                             <p><b class="underline">স্থায়ী ঠিকানাঃ </b></p>
-                                            <p>গ্রামঃ {{ $info->employee_bengali['hr_bn_permanent_village']?$info->employee_bengali['hr_bn_permanent_village']:'' }}</p>
-                                            <p>পোষ্টঃ {{ $info->employee_bengali['hr_bn_permanent_po']?$info->employee_bengali['hr_bn_permanent_po']:'' }}</p>
-                                            <p>থানাঃ  </p>
-                                            <p>জেলাঃ </p>
+                                            <p>গ্রামঃ {{ $info->hr_bn_permanent_village??'' }}</p>
+                                            <p>পোষ্টঃ {{ $info->hr_bn_permanent_po??'' }}</p>
+                                            <p>থানাঃ {{ $info->permanent_upazilla_bn??'' }} </p>
+                                            <p>জেলাঃ {{ $info->permanent_district_bn??'' }} </p>
                                         </div>
                                     </div>
-                                    
+                                    <br>
                                     <p><span style="text-decoration: underline;"><strong>বিষয়ঃ বাংলাদেশ শ্রম আইন ২০০৬ এর ২৭(৩ক) ধারা মোতাবেক আত্নপক্ষ সমর্থনের সুযোগ প্রদান প্রসঙ্গে। </strong></span></p>
+                                    <br>
                                     <p>জনাব/জনাবা,</p>
+                                    <br>
                                     
-                                    <p>আপনি গত <b id="sfirstAbsentDate">@if($notice != null){{ eng_to_bn(date('d-m-Y', strtotime($notice->start_date))) }} @endif</b> ইং তারিখ থেকে কারখানা কর্তৃপক্ষের বিনা অনুমতিতে কর্মস্থলে অনুপস্থিত রয়েছেন। এ প্রেক্ষিতে কারখানার কর্তৃপক্ষ আপনার স্থায়ী ও বর্তমান ঠিকানায় রেজিস্ট্রি ডাকযোগে গত <b id="sfirstIssueDate">@if($notice != null){{ eng_to_bn(date('d-m-Y', strtotime($notice->first_step_date))) }} @endif</b> ইং তারিখে বিনাঅনুমতিতে চাকুরীতে অনুপস্থিতির কারন ব্যাখ্যা সহ কাজে যোগদানের জন্য পত্র প্রেরন করেছে। কিন্তু অদ্যবধি আপনি উপরোক্ত বিষয়ে কোন ধরনের লিখিত ব্যাখ্যা প্রদান করেন নাই অথবা চাকুরিতেও যোগদান করেন নাই। </p>
+                                    <p style="text-align: justify;">আপনি গত <b id="sfirstAbsentDate">@if($notice != null){{ eng_to_bn(date('d-m-Y', strtotime($notice->start_date))) }} @endif</b> ইং তারিখ থেকে কারখানা কর্তৃপক্ষের বিনা অনুমতিতে কর্মস্থলে অনুপস্থিত রয়েছেন। এ প্রেক্ষিতে কারখানার কর্তৃপক্ষ আপনার স্থায়ী ও বর্তমান ঠিকানায় রেজিস্ট্রি ডাকযোগে গত <b id="sfirstIssueDate">@if($notice != null){{ eng_to_bn(date('d-m-Y', strtotime($notice->first_step_date))) }} @endif</b> ইং তারিখে বিনাঅনুমতিতে চাকুরীতে অনুপস্থিতির কারন ব্যাখ্যা সহ কাজে যোগদানের জন্য পত্র প্রেরন করেছে। কিন্তু অদ্যবধি আপনি উপরোক্ত বিষয়ে কোন ধরনের লিখিত ব্যাখ্যা প্রদান করেন নাই অথবা চাকুরিতেও যোগদান করেন নাই। </p>
                                     <br>
                                     <p>অতএব, অত্র পত্র প্রাপ্তির <b id="secondResDay">@if($notice != null){{ eng_to_bn($notice->second_response) }} @endif</b> দিনের মধ্যে আত্নপক্ষ সমর্থন সহ কাজে যোগদান করিতে আপনাকে নির্দেশ দেয়া গেল।</p>
                                     <p>উক্ত সময়ের মধ্যে আপনি আত্নপক্ষ সমর্থনের জবাব সহ কাজে যোগদান করতে ব্যর্থ হলে বাংলাদেশ শ্রম আইন ২০০৬ এর ২৭(৩ক) ধারা অনুযায়ী আপনি স্বেচ্ছায় চাকুরী থেকে অব্যাহতি গ্রহন করেছেন বলে গণ্য হবে।</p>
+                                    <br>
+                                    <br>
                                     <p>ধন্যবাদান্তে,</p>
                                     <br>
                                     <br>
-                                    <b id="secondManagerName"> ( {{ $secondManagerBan }} )</b>
+                                    <br>
+                                    <b id="secondManagerName"> </b>
                                     <p id="secondManagerDeg"></p>
                                     <br>
                                     <p>অনুলিপিঃ </p>
@@ -413,39 +427,45 @@
                             <div class="step_three" id="step_three" style="display: none">
                                 <div class="stepLetter" id="letter" style="font-size: 12px;">
                                     <p>
-                                    <center><h3 class="underline">“রেজিস্ট্রি ডাক যোগে প্রেরিত”</h3></center>
+                                    <center><h3 class="underline" style="font-size:16px;">“রেজিস্ট্রি ডাক যোগে প্রেরিত”</h3></center>
                                     <p>তারিখ :&nbsp; <b id="thirdIssueDate"></b> ইং</p>
                                     <p>বরাবর,</p>
-                                    <p>নামঃ {{ $info->employee_bengali['hr_bn_associate_name']?$info->employee_bengali['hr_bn_associate_name']:'' }}</p>
-                                    <p>পিতাঃ {{ $info->employee_bengali['hr_bn_father_name']?$info->employee_bengali['hr_bn_father_name']:'' }} </p>
+                                    <p>নামঃ {{ $info->hr_bn_associate_name??'' }}</p>
+                                    <p>পিতাঃ {{ $info->hr_bn_father_name??'' }} </p>
                                     <p>পদবীঃ {{ $info->designation['hr_designation_name_bn']?$info->designation['hr_designation_name_bn']:'' }}</p>
-                                    <p>আইডিঃ {{ $info->employee_bengali['hr_bn_associate_id']?$info->employee_bengali['hr_bn_associate_id']:'' }}</p>
-                                    <div class="address_section">
-                                        <div class="address_left">
+                                    <p>আইডিঃ {{ $info->associate_id??'' }}</p>
+                                    <br>
+                                    <div class="address_section" style="display: flex;">
+                                        <div class="address_left" style="width:250px;">
                                             <p><b class="underline">বর্তমান ঠিকানাঃ </b></p>
-                                            <p>বাসা নংঃ {{ $info->employee_bengali['hr_bn_present_house']?$info->employee_bengali['hr_bn_present_house']:'' }}</p>
-                                            <p>পোষ্টঃ {{ $info->employee_bengali['hr_bn_present_po']?$info->employee_bengali['hr_bn_present_po']:'' }}</p>
-                                            <p>থানাঃ </p>
-                                            <p>জেলাঃ</p>
+                                            <p>বাসা নংঃ {{ $info->hr_bn_present_house??'' }}</p>
+                                            <p>পোষ্টঃ {{ $info->hr_bn_present_po??'' }}</p>
+                                            <p>থানাঃ {{ (!empty($info->present_upazilla_bn)?$info->present_upazilla_bn:null) }}</p>
+                                            <p>জেলাঃ {{ $info->present_district_bn??'' }}</p>
                                         </div>
                                         <div class="address_right">
                                             <p><b class="underline">স্থায়ী ঠিকানাঃ </b></p>
-                                            <p>গ্রামঃ {{ $info->employee_bengali['hr_bn_permanent_village']?$info->employee_bengali['hr_bn_permanent_village']:'' }}</p>
-                                            <p>পোষ্টঃ {{ $info->employee_bengali['hr_bn_permanent_po']?$info->employee_bengali['hr_bn_permanent_po']:'' }}</p>
-                                            <p>থানাঃ  </p>
-                                            <p>জেলাঃ </p>
+                                            <p>গ্রামঃ {{ $info->hr_bn_permanent_village??'' }}</p>
+                                            <p>পোষ্টঃ {{ $info->hr_bn_permanent_po??'' }}</p>
+                                            <p>থানাঃ {{ $info->permanent_upazilla_bn??'' }} </p>
+                                            <p>জেলাঃ {{ $info->permanent_district_bn??'' }} </p>
                                         </div>
                                     </div>
-                                    
+                                    <br>
                                     <p><span style="text-decoration: underline;"><strong>বিষয়ঃ বাংলাদেশ শ্রম আইন ২০০৬ এর ২৭(৩ক) ধারা মোতাবেক শ্রমিক কর্তৃক স্বেচ্ছায় চাকুরী হইতে অব্যাহতি প্রসঙ্গে। </strong></span></p>
+                                    <br>
                                     <p>জনাব/জনাবা,</p>
+                                    <br>
                                     
                                     
-                                    <p>আপনি গত <b id="tfirstAbsentDate"></b> ইং তারিখ হতে অদ্যবদি পর্যন্ত কর্তৃপক্ষের বিনা অনুমতিতে কর্মস্থলে অনুপস্থিত থাকার কারনে আপনাকে গত <b id="tfirstIssueDate"></b> ইং তারিখে পত্রের মাধ্যমে <b id="tfirstResDay"></b> দিনের সময় দিয়ে চাকুরীতে যোগদান সহ ব্যাখ্যা প্রদান করতে বলা হয়েছিল। কিন্তু আপনি নির্ধারিত সময়ের মধ্যে কর্মস্থলে উপস্থিত হননি এবং কোন ব্যাখ্যা প্রদান করেননি। তথাপি কর্তৃপক্ষ গত  <b id="tsecondIssueDate"></b> ইং তারিখে আর একটি পত্রের মাধ্যমে আপনাকে আরো <b id="tsecondResDay"></b> দিনের সময় দিয়ে আত্নপক্ষ সমর্থন সহ চাকুরীতে যোগদানের জন্য পুনরায় নির্দেশ প্রদান করেন।  তৎসত্ত্বেও আপনি নির্ধারিত সময়ের মধ্যে আত্নপক্ষ সমর্থন করেননি এবং চাকুরিতে যোগদান করেননি।</p>
+                                    <p style="text-align: justify;">আপনি গত <b id="tfirstAbsentDate"></b> ইং তারিখ হতে অদ্যবদি পর্যন্ত কর্তৃপক্ষের বিনা অনুমতিতে কর্মস্থলে অনুপস্থিত থাকার কারনে আপনাকে গত <b id="tfirstIssueDate"></b> ইং তারিখে পত্রের মাধ্যমে <b id="tfirstResDay"></b> দিনের সময় দিয়ে চাকুরীতে যোগদান সহ ব্যাখ্যা প্রদান করতে বলা হয়েছিল। কিন্তু আপনি নির্ধারিত সময়ের মধ্যে কর্মস্থলে উপস্থিত হননি এবং কোন ব্যাখ্যা প্রদান করেননি। তথাপি কর্তৃপক্ষ গত  <b id="tsecondIssueDate"></b> ইং তারিখে আর একটি পত্রের মাধ্যমে আপনাকে আরো <b id="tsecondResDay"></b> দিনের সময় দিয়ে আত্নপক্ষ সমর্থন সহ চাকুরীতে যোগদানের জন্য পুনরায় নির্দেশ প্রদান করেন।  তৎসত্ত্বেও আপনি নির্ধারিত সময়ের মধ্যে আত্নপক্ষ সমর্থন করেননি এবং চাকুরিতে যোগদান করেননি।</p>
                                     <br>
                                     <p>সুতরাং বাংলাদেশ শ্রম আইন ২০০৬ এর ২৭(৩ক) ধারা অনুযায়ী অনুপস্তিত দিন থেকে আপনি চাকুরী থেকে স্বেচ্ছায় অব্যাহতি গ্রহন করেছেন বলে গণ্য হলো।</p>
                                     <p>অতএব, আপনার বকেয়া মজুরী ও আইনানুগ পাওনা (যদি থাকে) যে কোন কর্মদিবসে অফিস চলাকালীন সময়ে কারখানা হিসাব শাখা থেকে গ্রহন করার নির্দেশ দেয়া গেল।</p>
+                                    <br>
+                                    <br>
                                     <p>ধন্যবাদান্তে,</p>
+                                    <br>
                                     <br>
                                     <br>
                                     <b id="thirdManagerName"></b>
@@ -465,23 +485,21 @@
                         </div>
                         <div class="hide">
                             <div class="envelope-content" id="result-data-cover">
-                                <div class="address_section">
-                                        <div class="address_left">
-                                            <p><b class="underline">প্রেরক: </b></p>
-                                            <p>এমবিএম গ্রুপ</p>
-                                            <p>{{ $unitAddress }} </p>
-                                        </div>
-                                        <div class="address_right pl-5">
-                                            <p><b class="underline">প্রাপক: </b></p>
-                                            <p>নামঃ {{ $info->employee_bengali['hr_bn_associate_name']?$info->employee_bengali['hr_bn_associate_name']:'' }}</p>
-                                            <p>পিতাঃ {{ $info->employee_bengali['hr_bn_father_name']?$info->employee_bengali['hr_bn_father_name']:'' }} </p>
-                                            <p><b class="underline">বর্তমান ঠিকানাঃ </b></p>
-                                            <p>বাসা নংঃ {{ $info->employee_bengali['hr_bn_present_house']?$info->employee_bengali['hr_bn_present_house']:'' }}</p>
-                                            <p>পোষ্টঃ {{ $info->employee_bengali['hr_bn_present_po']?$info->employee_bengali['hr_bn_present_po']:'' }}</p>
-                                            <p>থানাঃ </p>
-                                            <p>জেলাঃ</p>
-                                        </div>
+                                <div class="address_section" style="display: flex;width:800px;margin:20pt auto;">
+                                    <div class="address_left" style="width:340px;padding:30pt;">
+                                        <p><b class="underline">প্রেরক, </b><br><br></p>
+                                        <p>{{ $unitAddress['hr_unit_name_bn']??'' }} </p>
+                                        <p>{{ $unitAddress['hr_unit_address_bn']??'' }} </p>
                                     </div>
+                                    <div class="address_right pl-5" style="padding:30pt;border-left: 1px solid #d1d1d1;">
+                                        <p><b class="underline">প্রাপক, </b><br><br></p>
+                                        <p>নামঃ {{$info->hr_bn_associate_name??'' }}</p>
+                                        <p>পিতাঃ {{ $info->hr_bn_father_name??'' }} </p>
+                                        <p>বাসা নংঃ {{ $info->hr_bn_present_house??'' }}, {{ $info->hr_bn_present_house??'' }} {{$info->emp_adv_info_pres_road??''}},</p>
+                                        <p> ডাকঘরঃ {{ $info->hr_bn_present_po??'' }}</p>
+                                        <p>থানাঃ {{ $info->permanent_upzilla_bn??'' }}, জেলাঃ {{ $info->permanent_district_bn??'' }} </p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -494,20 +512,17 @@
 </div>
 @push('js')
 <script type="text/javascript">
-    function printMe1(divName)
-    {
-        var mywindow=window.open('','','width=800,height=800');
-        
-        mywindow.document.write('<html><head><title>Print Contents</title>');
-        mywindow.document.write('<style>@page {color: color;} </style>');
-        mywindow.document.write('</head><body>');
-        mywindow.document.write(document.getElementById(divName).innerHTML);
-        mywindow.document.write('</body></html>');
-
-        mywindow.document.close();  
-        mywindow.focus();           
-        mywindow.print();
-        mywindow.close();
+    function printDiv(divName, font = 9)
+    { 
+        var myWindow=window.open('','','width=800,height=800');
+        myWindow.document.write('<html><head><title></title>');
+        myWindow.document.write('<style>div,p,td,span,strong,th,b{font-size:'+font+'pt;padding: 0;margin: 0;}p{padding: 0;margin: 0;}@import url(https://fonts.googleapis.com/css?family=Poppins:200,200i,300,400,500,600,700,800,900&amp;display=swap);body {font-family: Poppins,sans-serif;}.table{width: 100%;}a{text-decoration: none;}.table-bordered {border-collapse: collapse;}.table-bordered th,.table-bordered td {border: 1px solid #777 !important;padding:5px;}.no-border td, .no-border th{border:0 !important;vertical-align: top;}.f-16 th,.f-16 td, .f-16 td b{font-size: 16px !important;}.text-center{text-align:center!important;}.text-justy{text-align: justify!important;}.page-break{page-break-after: always;}.mb-2{margin-bottom:10px!important;}</style>');
+        myWindow.document.write('</head><body>');
+        myWindow.document.write(document.getElementById(divName).innerHTML); 
+        myWindow.document.close();
+        myWindow.focus();
+        myWindow.print();
+        myWindow.close();
     }
     function stepOne() {
         let issueDate = $('#first_step_date').val();
@@ -563,8 +578,8 @@
                         $("#step_two").hide();
                         $("#step_three").hide();
                         $("#step_one").show();
-                        $("#firsrtManagerName").html('( '+response.first_manager+' )');
-                        $("#firsrtManagerDeg").html('( '+response.first_manager_deg+' )');
+                        $("#firsrtManagerName").html(response.first_manager.name);
+                        $("#firsrtManagerDeg").html(response.first_manager.designation+', '+response.first_manager.department);
                         $("#firstResDay").html(response.first_response);
                         $("#firstAbsentDate").html(response.start_date);
                         $("#firstIssueDate").html(response.issue_date);
@@ -623,15 +638,15 @@
                 },
                 success: function(response)
                 {
-                    // console.log(response);
+                    console.log(response);
                     if(response.type === 'success'){
                         $(".report-print-section").removeClass('hide');
                         $(".third-step-content").removeClass('hide');
                         $("#step_two").show();
                         $("#step_three").hide();
                         $("#step_one").hide();
-                        $("#secondManagerName").html('( '+response.second_manager+' )');
-                        $("#secondManagerDeg").html('( '+response.second_manager_deg+' )');
+                        $("#secondManagerName").html(response.second_manager.name);
+                        $("#secondManagerDeg").html(response.second_manager.designation+', '+response.second_manager.department);
                         $("#secondResDay").html(response.second_response);
                         $("#sfirstAbsentDate").html(response.start_date);
                         $("#sfirstIssueDate").html(response.issue_date);
@@ -699,8 +714,8 @@
                         $("#tsecondIssueDate").html(response.second_issue_date);
                         $("#tsecondResDay").html(response.second_response);
                         $("#thirdIssueDate").html(response.third_issue_date);
-                        $("#thirdManagerName").html('( '+response.third_manager+' )');
-                        $("#thirdManagerDeg").html('( '+response.third_manager_deg+' )');
+                        $("#thirdManagerName").html(response.third_manager.name);
+                        $("#thirdManagerDeg").html(response.third_manager.designation+', '+response.third_manager.department);
                         $('html, body').animate({
                             scrollTop: $(".report-section").offset().top
                         }, 2000);

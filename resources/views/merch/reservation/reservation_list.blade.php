@@ -1,4 +1,6 @@
-@extends('merch.index')
+@extends('merch.layout')
+@section('title', 'Style BOM')
+
 @push('css')
 <style type="text/css">
     {{-- removing the links in print and adding each page header --}}
@@ -10,7 +12,7 @@
     }
     </style>
 @endpush
-@section('content')
+@section('main-content')
 <div class="main-content">
     <div class="main-content-inner">
         <div class="breadcrumbs ace-save-state" id="breadcrumbs">
