@@ -26,7 +26,7 @@
 		    <div class="row">
 		    	<div class="col-sm-6">
 		    		<div class="form-group has-required has-float-label">
-				        <input type="month" class="form-control" id="month" name="res_year" placeholder=" Month-Year"required="required" value="{{ date('Y-m') }}"autocomplete="off" />
+				        <input type="month" class="form-control" id="month" name="res_year_month" placeholder=" Month-Year"required="required" value="{{ date('Y-m') }}"autocomplete="off" />
 				        <label for="year-month" > Year-Month </label>
 				    </div>
 		    	</div>
@@ -69,13 +69,13 @@
 		    	<div class="row">
 		    		<div class="col-sm-6">
 			    		<div class="form-group has-required has-float-label select-search-group">
-					      {{Form::select('mr_season_se_id', [], null, [ 'id' => 'season', 'placeholder' => 'Select Season Name', 'class' => 'form-control filter seasonChange', 'required', 'readonly'])}}
+					      {{Form::select('mr_season_se_id', [], null, [ 'id' => 'season', 'placeholder' => 'Select Season Name', 'class' => 'form-control filter seasonChange', 'readonly'])}}
 					      <label for="season" > Season Name </label>
 					    </div>
 			    	</div>
 			    	<div class="col-sm-6">
 			    		<div class="form-group has-required has-float-label">
-					        <input type="text" id="reference-no" name="order_ref_no" placeholder="Enter Reference No" class="form-control" autocomplete="off" required />
+					        <input type="text" id="reference-no" name="order_ref_no" placeholder="Enter Reference No" class="form-control" autocomplete="off" />
 					        <label for="reference-no" > Reference No </label>
 					    </div>
 			    	</div>
@@ -83,13 +83,13 @@
 		    	<div class="row">
 		    		<div class="col-sm-6">
 			    		<div class="form-group has-required has-float-label select-search-group">
-					      {{Form::select('mr_style_stl_id', [], null, [ 'id' => 'style-no', 'placeholder' => 'Select Style Number', 'class' => 'form-control filter', 'required', 'readonly'])}}
+					      {{Form::select('mr_style_stl_id', [], null, [ 'id' => 'style-no', 'placeholder' => 'Select Style Number', 'class' => 'form-control filter', 'readonly'])}}
 					      <label for="style-no" > Style Number </label>
 					    </div>
 			    	</div>
 			    	<div class="col-sm-6">
 			    		<div class="form-group has-required has-float-label">
-					        <input type="number" id="order-quantity" name="order_qty" placeholder="Enter Order Quantity" class="form-control" autocomplete="off" value="0" onClick="this.select()" required min="0" />
+					        <input type="number" id="order-quantity" name="order_qty" placeholder="Enter Order Quantity" class="form-control" autocomplete="off" value="0" required onClick="this.select()" min="0" />
 					        <label for="order-quantity" > Order Quantity </label>
 					    </div>
 			    	</div>

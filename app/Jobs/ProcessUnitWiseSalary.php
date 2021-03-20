@@ -205,31 +205,47 @@ class ProcessUnitWiseSalary implements ShouldQueue
                         ->where('remarks', 'General')
                         ->count();
                         
-                         // check holiday shift employee
-                        
-                        if($empdojMonth == $yearMonth){
-                            $query = YearlyHolyDay::
-                                where('hr_yhp_unit', $getEmployee->as_unit_id)
-                                ->where('hr_yhp_dates_of_holidays','>=', $firstDateMonth)
-                                ->where('hr_yhp_dates_of_holidays','<=', $lastDateMonth)
-                                ->where('hr_yhp_dates_of_holidays','>=', $empdoj)
-                                ->where('hr_yhp_open_status', 0);
+                        // check holiday shift employee
+                        $query = YearlyHolyDay::
+                            where('hr_yhp_unit', $getEmployee->as_unit_id)
+                            ->where('hr_yhp_dates_of_holidays','>=', $firstDateMonth)
+                            ->where('hr_yhp_dates_of_holidays','<=', $lastDateMonth)
+                            ->where('hr_yhp_open_status', 0);
+                            if($empdojMonth == $yearMonth){
+                                $query->where('hr_yhp_dates_of_holidays','>=', $empdoj);
+                            }
+
                             if(count($rosterOtData) > 0){
                                 $query->whereNotIn('hr_yhp_dates_of_holidays', $rosterOtData);
                             }
-                            $shiftHolidayCount = $query->count();
-                        }else{
-                            $query = YearlyHolyDay::
-                                where('hr_yhp_unit', $getEmployee->as_unit_id)
-                                ->where('hr_yhp_dates_of_holidays','>=', $firstDateMonth)
-                                ->where('hr_yhp_dates_of_holidays','<=', $lastDateMonth)
-                                ->where('hr_yhp_open_status', 0);
-                            if(count($rosterOtData) > 0){
-                                $query->whereNotIn('hr_yhp_dates_of_holidays', $rosterOtData);
+                        $shiftHolidayCount = $query->count();
+                        // OT check 
+                        $queryOt = YearlyHolyDay::
+                            where('hr_yhp_unit', $getEmployee->as_unit_id)
+                            ->where('hr_yhp_dates_of_holidays','>=', $firstDateMonth)
+                            ->where('hr_yhp_dates_of_holidays','<=', $lastDateMonth)
+                            ->where('hr_yhp_open_status', 2);
+                            if($empdojMonth == $yearMonth){
+                                $query->where('hr_yhp_dates_of_holidays','>=', $empdoj);
                             }
-                            $shiftHolidayCount = $query->count();
+                            
+                            if(count($rosterOtData) > 0){
+                                $queryOt->whereNotIn('hr_yhp_dates_of_holidays', $rosterOtData);
+                            }
+                        $getShiftOt = $queryOt->get();
+                        $shiftOtCount = $getShiftOt->count();
+                        $shiftOtDayCout = 0;
+                        foreach ($getShiftOt as $shiftOt) {
+                            $checkAtt = DB::table($this->tableName)
+                            ->where('as_id', $getEmployee->as_id)
+                            ->where('in_date', $shiftOt->hr_yhp_dates_of_holidays)
+                            ->first();
+                            if($checkAtt != null){
+                                $shiftOtDayCout += 1;
+                            }
                         }
-                        $shiftHolidayCount = $shiftHolidayCount + ($totalOt - $otDayCount);
+                        
+                        $shiftHolidayCount = $shiftHolidayCount + ($totalOt - $otDayCount) + ($shiftOtCount - $shiftOtDayCout);
 
                         if($RosterHolidayCount > 0 || $RosterGeneralCount > 0){
                             $getHoliday = ($RosterHolidayCount + $shiftHolidayCount) - $RosterGeneralCount;
