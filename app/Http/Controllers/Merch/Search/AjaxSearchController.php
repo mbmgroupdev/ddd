@@ -16,7 +16,7 @@ class AjaxSearchController extends Controller
     	$getItems = array();
     	if(!empty($input['category'])){
     		$queryData = DB::table('mr_cat_item AS i')
-            ->select('i.id','i.mcat_id','i.item_name','i.item_code')
+            ->select('i.id','i.mcat_id','i.item_name','i.item_code', 'i.dependent_on')
             ->where('i.mcat_id', $input['category'])
             ->when(!empty($input['keyvalue']), function ($query) use($input){
                 return $query->where('i.item_name','LIKE', $input['keyvalue'].'%')->orWhere('i.item_code','LIKE', $input['keyvalue'].'%');
@@ -74,7 +74,6 @@ class AjaxSearchController extends Controller
 
     public function article(Request $request)
     {
-    	$data = array();
     	$input = $request->all();
     	$getArticle = DB::table('mr_article')
     	->select('id', 'art_name AS text')
@@ -82,5 +81,28 @@ class AjaxSearchController extends Controller
     	->get();
     	
     	return $getArticle;
+    }
+
+    public function buyerWiseSeason(Request $request)
+    {
+        $getSeason = DB::table('mr_season')
+        ->select('se_id AS id', 'se_name AS text')
+        ->where('b_id', $request->b_id)
+        ->orderBy('se_id', 'desc')
+        ->get();
+        
+        return $getSeason;
+    }
+
+    public function SeasonWiseStyle(Request $request)
+    {
+        $getStyle = DB::table('mr_style')
+        ->select('stl_id AS id', 'stl_no AS text')
+        ->where('mr_buyer_b_id', $request->mr_buyer_b_id)
+        ->where('mr_season_se_id', $request->mr_season_se_id)
+        ->orderBy('stl_id', 'desc')
+        ->get();
+        
+        return $getStyle;
     }
 }

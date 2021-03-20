@@ -262,7 +262,8 @@ Index Of Script
                     document.msExitFullscreen();
                 }
             }
-            elem.find('i').toggleClass('ri-fullscreen-line').toggleClass('ri-fullscreen-exit-line');
+            // elem.find('i').toggleClass('ri-fullscreen-line').toggleClass('ri-fullscreen-exit-line');
+            elem.find('i').toggleClass('la-expand').toggleClass('la-compress');
         });
 
         /*---------------------------------------------------------------------

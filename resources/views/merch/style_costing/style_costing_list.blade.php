@@ -7,22 +7,6 @@
     a[href]:after { content: none !important; }
     thead {display: table-header-group;}
 
-    /*making place holder custom*/
-    input::-webkit-input-placeholder {
-        color: #827979;
-        font-weight: bold;
-        font-size: 12px;
-    }
-    input:-moz-placeholder {
-        color: #827979;
-        font-weight: bold;
-        font-size: 12px;
-    }
-    input:-ms-input-placeholder {
-        color: #827979;
-        font-weight: bold;
-        font-size: 12px;
-    }
     th{
         font-size: 12px;
         font-weight: bold;
@@ -43,7 +27,7 @@
               <li class="active">Style Costing List</li>
               <li class="top-nav-btn">
                 <a href="{{ url('merch/style/style_list')}}" target="_blank" class="btn btn-outline-primary btn-sm pull-right"> <i class="fa fa-list"></i> Style List</a> &nbsp;
-                <a href="{{ url('merch/style_bom')}}" target="_blank" class="btn btn-outline-success btn-sm pull-right"> <i class="fa fa-list"></i> Style BOM</a> &nbsp;
+                <a href="{{ url('/merch/style/bom-list')}}" class="btn btn-outline-success btn-sm pull-right"> <i class="fa fa-list"></i> Style BOM</a> &nbsp;
                 
                 </li>
           </ul><!-- /.breadcrumb -->
@@ -126,12 +110,14 @@ $(document).ready(function(){
     var dt = $('#dataTables').DataTable({
         order: [], //reset auto order
         processing: true,
-        responsive: false,
+        language: {
+          processing: '<i class="fa fa-spinner fa-spin orange bigger-500" style="font-size:60px;margin-top:50px;z-index:100;"></i>'
+        },
+        responsive: true,
         serverSide: true,
-        pagingType: "full_numbers",
-        dom: "<'row'<'col-sm-2'l><'col-sm-4'i><'col-sm-3 text-center'B><'col-sm-3'f>>tp",
+        pagingType: "full_numbers", 
         ajax: {
-            url: '{!! url("merch/style_costing/style_costing_data") !!}',
+            url: '{!! url("merch/style/costing-list-data") !!}',
             type: "GET",
             headers: {
                   'X-CSRF-TOKEN': '{{ csrf_token() }}'
@@ -251,6 +237,7 @@ $(document).ready(function(){
                         var val = $.fn.dataTable.util.escapeRegex(
                             $(this).val()
                         );
+                        column.search(val ? '^'+val+'$' : '', true, false ).draw();
                         column.search(val ? val.toUpperCase().replace("'S","").replace( /&/g, '&amp;' ): '', true, false ).draw();
                         e.stopPropagation();
                     });

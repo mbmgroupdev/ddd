@@ -95,14 +95,14 @@ class MonthlyActivityReportController extends Controller
             $uniqueGroups = ['all'];
 
             $queryData = DB::table('hr_monthly_salary AS s')
-            ->whereNotIn('s.as_id', config('base.ignore_salary'))
-            ->whereIn('emp.as_unit_id', auth()->user()->unit_permissions())
-            ->whereIn('emp.as_location', auth()->user()->location_permissions());
+            ->whereNotIn('s.as_id', config('base.ignore_salary'));
             if($input['report_format'] == 0 && !empty($input['employee'])){
                 $queryData->where('s.as_id', 'LIKE', '%'.$input['employee'] .'%');
             }
             $queryData->where('s.year', $year)
             ->where('s.month', $month)
+            ->whereIn('s.unit_id', auth()->user()->unit_permissions())
+            ->whereIn('s.location_id', auth()->user()->location_permissions())
             ->whereBetween('s.gross', [$input['min_sal'], $input['max_sal']])
             ->when(!empty($input['unit']), function ($query) use($input){
                return $query->where('s.unit_id',$input['unit']);
@@ -293,6 +293,7 @@ class MonthlyActivityReportController extends Controller
                 return response($vx);
 
             }
+
             // dd($uniqueGroupEmp);
             if($input['pay_status'] == null){
 
@@ -440,11 +441,11 @@ class MonthlyActivityReportController extends Controller
         $subSectionData = DB::table('hr_subsection');
         $subSectionDataSql = $subSectionData->toSql();
 
-        $queryData = DB::table('hr_monthly_salary AS s')
-        ->whereIn('emp.as_unit_id', auth()->user()->unit_permissions())
-        ->whereIn('emp.as_location', auth()->user()->location_permissions());
+        $queryData = DB::table('hr_monthly_salary AS s');
         $queryData->where('s.year', $year)
         ->where('s.month', $month)
+        ->whereIn('s.unit_id', auth()->user()->unit_permissions())
+        ->whereIn('s.location_id', auth()->user()->location_permissions())
         ->whereBetween('s.gross', [$input['min_sal'], $input['max_sal']])
         ->when(!empty($input['unit']), function ($query) use($input){
            return $query->where('s.unit_id',$input['unit']);
@@ -566,24 +567,27 @@ class MonthlyActivityReportController extends Controller
             // employee basic sql binding
             $designationData = DB::table('hr_designation');
             $designationData_sql = $designationData->toSql();
-
+            // employee sub section sql binding
+            $subSectionData = DB::table('hr_subsection');
+            $subSectionDataSql = $subSectionData->toSql();
+            
             $getEmployee = array();
             $format = $request['report_group'];
             $uniqueGroups = ['all'];
 
             $queryData = DB::table('hr_monthly_salary AS s')
             ->whereNotIn('s.as_id', config('base.ignore_salary'))
-            ->whereIn('emp.as_unit_id', auth()->user()->unit_permissions())
-            ->whereIn('emp.as_location', auth()->user()->location_permissions())
             ->where('emp.'.$input['report_group'], $input['selected']);
             $queryData->where('s.year', $year)
             ->where('s.month', $month)
+            ->whereIn('s.unit_id', auth()->user()->unit_permissions())
+            ->whereIn('s.location_id', auth()->user()->location_permissions())
             ->whereBetween('s.gross', [$input['min_sal'], $input['max_sal']])
             ->when(!empty($input['unit']), function ($query) use($input){
-               return $query->where('emp.as_unit_id',$input['unit']);
+               return $query->where('s.unit_id',$input['unit']);
             })
             ->when(!empty($input['location']), function ($query) use($input){
-               return $query->where('emp.as_location',$input['location']);
+               return $query->where('s.location_id',$input['location']);
             })
             ->when(!empty($input['employee_status']), function ($query) use($input){
                 if($input['employee_status'] == 25){
@@ -594,17 +598,22 @@ class MonthlyActivityReportController extends Controller
                 }
             })
             ->when(!empty($input['pay_status']), function ($query) use($input){
-                if($input['pay_status'] == "cash"){
-                    return $query->where('ben.ben_cash_amount', '>', 0);
-                }elseif($input['pay_status'] != 'cash' && $input['pay_status'] != 'all'){
-                    return $query->where('ben.bank_name',$input['pay_status']);
+                // if($input['pay_status'] == "cash"){
+                //     return $query->where('s.pay_status', 1);
+                // }elseif($input['pay_status'] != 'cash' && $input['pay_status'] != 'all'){
+                //     return $query->where('s.pay_status', 1)->where('ben.bank_name',$input['pay_status']);
+                // }
+                if($input['pay_status'] == 'cash'){
+                    return $query->where('s.cash_payable', '>', 0);
+                }elseif($input['pay_status'] != 'all'){
+                    return $query->where('s.pay_type', $input['pay_status']);
                 }
             })
             ->when(!empty($input['area']), function ($query) use($input){
-               return $query->where('emp.as_area_id',$input['area']);
+               return $query->where('subsec.hr_subsec_area_id',$input['area']);
             })
             ->when(!empty($input['department']), function ($query) use($input){
-               return $query->where('emp.as_department_id',$input['department']);
+               return $query->where('subsec.hr_subsec_department_id',$input['department']);
             })
             ->when(!empty($input['line_id']), function ($query) use($input){
                return $query->where('emp.as_line_id', $input['line_id']);
@@ -613,13 +622,13 @@ class MonthlyActivityReportController extends Controller
                return $query->where('emp.as_floor_id',$input['floor_id']);
             })
             ->when($request['otnonot']!=null, function ($query) use($input){
-               return $query->where('emp.as_ot',$input['otnonot']);
+               return $query->where('s.ot_status',$input['otnonot']);
             })
             ->when(!empty($input['section']), function ($query) use($input){
-               return $query->where('emp.as_section_id', $input['section']);
+               return $query->where('subsec.hr_subsec_section_id', $input['section']);
             })
             ->when(!empty($input['subSection']), function ($query) use($input){
-               return $query->where('emp.as_subsection_id', $input['subSection']);
+               return $query->where('s.sub_section_id', $input['subSection']);
             })
             ->orderBy('emp.as_department_id', 'ASC');
             $queryData->leftjoin(DB::raw('(' . $employeeData_sql. ') AS emp'), function($join) use ($employeeData) {
@@ -629,7 +638,10 @@ class MonthlyActivityReportController extends Controller
                 $join->on('ben.ben_as_id','emp.associate_id')->addBinding($benefitData->getBindings());
             });
             $queryData->leftjoin(DB::raw('(' . $designationData_sql. ') AS deg'), function($join) use ($designationData) {
-                $join->on('deg.hr_designation_id','emp.as_designation_id')->addBinding($designationData->getBindings());
+                $join->on('deg.hr_designation_id','s.designation_id')->addBinding($designationData->getBindings());
+            });
+            $queryData->leftjoin(DB::raw('(' . $subSectionDataSql. ') AS subsec'), function($join) use ($subSectionData) {
+                $join->on('subsec.hr_subsec_id','s.sub_section_id')->addBinding($subSectionData->getBindings());
             });
 
             $queryData->select('deg.hr_designation_position','deg.hr_designation_name', 'ben.bank_name','ben.bank_no', 'ben.ben_tds_amount','emp.as_id','emp.as_gender', 'emp.as_oracle_code', 'emp.associate_id', 'emp.as_unit_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_section_id', 's.present', 's.absent', 's.ot_hour', 's.ot_rate', 's.total_payable','s.salary_payable', 's.bank_payable', 's.cash_payable', 's.tds', 's.stamp', 's.pay_status');
@@ -642,7 +654,7 @@ class MonthlyActivityReportController extends Controller
             $totalOTAmount = round($queryData->sum(DB::raw('s.ot_hour * s.ot_rate')));
 
             $getEmployee = $queryData->orderBy('deg.hr_designation_position', 'asc')->get();
-            
+
             $totalEmployees = count($getEmployee);
             $auditedEmployee = [];
             if(isset($input['audit']) && $input['audit'] == 'Audit'){
@@ -650,7 +662,7 @@ class MonthlyActivityReportController extends Controller
                 $auditedEmployee = SalaryIndividualAudit::with('user')->where('month', $month)->where('year', $year)->whereIn('as_id', $employeeList)->get()->keyBy('as_id');
 
             }
-            
+
             return view('hr.reports.monthly_activity.salary.group_salary_details', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalSalary', 'totalEmployees', 'totalOtHour','totalOTAmount', 'totalCashSalary', 'totalBankSalary', 'totalTax', 'totalStamp', 'auditedEmployee'));
         } catch (\Exception $e) {
             return $e->getMessage();

@@ -33,11 +33,53 @@ if(!function_exists('country_by_id')){
     }
 }
 
+if(!function_exists('product_type_by_id')){
+    function product_type_by_id()
+    {
+       return  Cache::remember('product_type_by_id', Carbon::now()->addHour(12), function () {
+            return DB::table('mr_product_type')->get()->keyBy('prd_type_id')->toArray();
+        });      
+
+    }
+}
+
 if(!function_exists('supplier_by_id')){
     function supplier_by_id()
     {
        return  Cache::remember('supplier_by_id', Carbon::now()->addHour(12), function () {
             return DB::table('mr_supplier')->get()->keyBy('sup_id')->toArray();
+        });      
+
+    }
+}
+
+if(!function_exists('article_by_id')){
+    function article_by_id()
+    {
+       return  Cache::remember('article_by_id', Carbon::now()->addHour(12), function () {
+            return DB::table('mr_article')->get()->keyBy('id')->toArray();
+        });      
+
+    }
+}
+
+if(!function_exists('item_by_id')){
+    function item_by_id()
+    {
+       return  Cache::remember('item_by_id', Carbon::now()->addHour(12), function () {
+            return DB::table('mr_cat_item')->get()->keyBy('id')->toArray();
+        });      
+
+    }
+}
+
+if(!function_exists('buyer_by_id')){
+    function buyer_by_id()
+    {
+       return  Cache::remember('buyer_by_id', Carbon::now()->addHour(12), function () {
+            return DB::table('mr_buyer')
+            ->whereIn('b_id', auth()->user()->buyer_permissions())
+            ->get()->keyBy('b_id')->toArray();
         });      
 
     }
@@ -50,5 +92,10 @@ if(!function_exists('material_color_by_id')){
             return DB::table('mr_material_color')->get()->keyBy('clr_id')->toArray();
         });      
 
+    }
+}
+if(!function_exists('custom_date_format')){
+    function custom_date_format($date){
+        return $date != '' || $date != null ? date('F d, Y', strtotime($date)):'';
     }
 }

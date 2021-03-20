@@ -37,95 +37,80 @@ class OrderBomController extends Controller
 	}
     // Order List Data for Order BOM
 	public function getListData(){
-
+		ini_set('zlib.output_compression', 1);
 		if(auth()->user()->hasRole('merchandiser')){
 			$lead_associateId[] = auth()->user()->associate_id;
-		 $team_members = DB::table('hr_as_basic_info as b')
+		 	$team_members = DB::table('hr_as_basic_info as b')
 				->where('associate_id',auth()->user()->associate_id)
 				->leftJoin('mr_excecutive_team','b.as_id','mr_excecutive_team.team_lead_id')
 				->leftJoin('mr_excecutive_team_members','mr_excecutive_team.id','mr_excecutive_team_members.mr_excecutive_team_id')
 				->pluck('member_id');
-		$team_members_associateId = DB::table('hr_as_basic_info as b')
-	 				                       ->whereIn('as_id',$team_members)
-																 ->pluck('associate_id');
-		 $team = array_merge($team_members_associateId->toArray(),$lead_associateId);
-		 //dd($team);exit;
-	 }elseif (auth()->user()->hasRole('merchandising_executive')) {
-		 $executive_associateId[] = auth()->user()->associate_id;
+			$team_members_associateId = DB::table('hr_as_basic_info as b')
+	 				                    ->whereIn('as_id',$team_members)
+										->pluck('associate_id');
+		 	$team = array_merge($team_members_associateId->toArray(),$lead_associateId);
 
-		 $teamid = DB::table('hr_as_basic_info as b')
+	 	}elseif (auth()->user()->hasRole('merchandising_executive')) {
+		 	$executive_associateId[] = auth()->user()->associate_id;
+
+		 	$teamid = DB::table('hr_as_basic_info as b')
 				->where('associate_id',auth()->user()->associate_id)
 				->leftJoin('mr_excecutive_team_members','b.as_id','mr_excecutive_team_members.member_id')
 				->pluck('mr_excecutive_team_id');
-		$team_lead = DB::table('mr_excecutive_team')
+			$team_lead = DB::table('mr_excecutive_team')
 					 ->whereIn('id',$teamid)
 					 ->leftJoin('hr_as_basic_info as b','mr_excecutive_team.team_lead_id','b.as_id')
 					 ->pluck('associate_id');
-		$team_members_associateId = DB::table('mr_excecutive_team_members')
-																			->whereIn('mr_excecutive_team_id',$teamid)
-																			->leftJoin('hr_as_basic_info as b','mr_excecutive_team_members.member_id','b.as_id')
-																		 ->pluck('associate_id');
-																		 //dd($team_members_associateId);exit;
-	$team = array_merge($team_members_associateId->toArray(),$team_lead->toArray());
+			$team_members_associateId = DB::table('mr_excecutive_team_members')
+									->whereIn('mr_excecutive_team_id',$teamid)
+									->leftJoin('hr_as_basic_info as b','mr_excecutive_team_members.member_id','b.as_id')
+									->pluck('associate_id');
+																		 
+			$team = array_merge($team_members_associateId->toArray(),$team_lead->toArray());
 		}else{
-		 $team =[];
-		}
-		DB::statement(DB::raw('set @rownum=0'));
-		if(!empty($team)){
-			$data= DB::table('mr_order_entry AS OE')
-			->select([
-				DB::raw('@rownum := @rownum + 1 AS DT_Row_Index'),
-				"OE.order_id",
-				"OE.order_code",
-				"u.hr_unit_name",
-				"b.b_name",
-				"br.br_name",
-				"s.se_name",
-				"stl.stl_no",
-				"OE.order_ref_no",
-				"OE.order_qty",
-				"OE.order_delivery_date"
-			])
-			->leftJoin('hr_unit AS u', 'u.hr_unit_id', 'OE.unit_id')
-			->leftJoin('mr_buyer AS b', 'b.b_id', 'OE.mr_buyer_b_id')
-			->whereIn('b.b_id', auth()->user()->buyer_permissions())
-			->leftJoin('mr_brand AS br', 'br.br_id', 'OE.mr_brand_br_id')
-			->leftJoin('mr_season AS s', 's.se_id', 'OE.mr_season_se_id')
-			->leftJoin('mr_style AS stl', 'stl.stl_id', "OE.mr_style_stl_id")
-			->whereIn('OE.created_by', $team)
-			->orderBy('order_id', 'DESC')
-			->get();
-		}else{
-			$data= DB::table('mr_order_entry AS OE')
-			->select([
-				DB::raw('@rownum := @rownum + 1 AS DT_Row_Index'),
-				"OE.order_id",
-				"OE.order_code",
-				"u.hr_unit_name",
-				"b.b_name",
-				"br.br_name",
-				"s.se_name",
-				"stl.stl_no",
-				"OE.order_ref_no",
-				"OE.order_qty",
-				"OE.order_delivery_date"
-			])
-			->leftJoin('hr_unit AS u', 'u.hr_unit_id', 'OE.unit_id')
-			->leftJoin('mr_buyer AS b', 'b.b_id', 'OE.mr_buyer_b_id')
-			->whereIn('b.b_id', auth()->user()->buyer_permissions())
-			->leftJoin('mr_brand AS br', 'br.br_id', 'OE.mr_brand_br_id')
-			->leftJoin('mr_season AS s', 's.se_id', 'OE.mr_season_se_id')
-			->leftJoin('mr_style AS stl', 'stl.stl_id', "OE.mr_style_stl_id")
-			->orderBy('order_id', 'DESC')
-			->get();
+		 	$team =[];
 		}
 
-		return DataTables::of($data)->addIndexColumn()
+		$query= DB::table('mr_order_entry AS OE')
+		->select([
+			"OE.order_id",
+			"OE.order_code",
+			//"u.hr_unit_name",
+			"b.b_name",
+			"br.br_name",
+			"s.se_name",
+			"stl.stl_no",
+			"OE.order_ref_no",
+			"OE.order_qty",
+			"OE.order_delivery_date",
+			"OE.unit_id"
+		])
+		->whereIn('b.b_id', auth()->user()->buyer_permissions())
+		//->leftJoin('hr_unit AS u', 'u.hr_unit_id', 'OE.unit_id')
+		->leftJoin('mr_buyer AS b', 'b.b_id', 'OE.mr_buyer_b_id')
+		->leftJoin('mr_brand AS br', 'br.br_id', 'OE.mr_brand_br_id')
+		->leftJoin('mr_season AS s', 's.se_id', 'OE.mr_season_se_id')
+		->leftJoin('mr_style AS stl', 'stl.stl_id', "OE.mr_style_stl_id");
+		if(!empty($team)){
+			$query->whereIn('OE.created_by', $team);
+		}
+		$data = $query->orderBy('OE.order_id', 'DESC')
+		->get();
+		$getUnit = unit_by_id();
+
+		return DataTables::of($data)
+		->addIndexColumn()
+		->editColumn('hr_unit_name', function($data) use ($getUnit){
+			return $getUnit[$data->unit_id]['hr_unit_name']??'';
+		})
+		->editColumn('order_delivery_date', function($data){
+			return custom_date_format($data->order_delivery_date);
+		})
 		->addColumn('action', function ($data) {
-			$isBom= OrderBOM::where('order_id', $data->order_id)->exists();
+			/*$isBom= OrderBOM::where('order_id', $data->order_id)->exists();
 			if($isBom){
 				$action_buttons= "<div class=\"btn-group\">
-				<a href=".url('merch/order_bom/'.$data->order_id.'/create')." class=\"btn btn-xs btn-success\" data-toggle=\"tooltip\" title=\"Edit BOM\">
+				<a href=".url('merch/order/bom/'.$data->order_id)." class=\"btn btn-xs btn-success\" data-toggle=\"tooltip\" title=\"Edit BOM\">
 				<i class=\"ace-icon fa fa-pencil bigger-120\"></i>
 				</a>";
 				$action_buttons.= "</div>";
@@ -133,15 +118,22 @@ class OrderBomController extends Controller
 			}
 			else{
 				$action_buttons= "<div class=\"btn-group\">
-				<a href=".url('merch/order_bom/'.$data->order_id.'/create')." class=\"btn btn-xs btn-primary\" data-toggle=\"tooltip\" title=\"Add BOM\">
+				<a href=".url('merch/order/bom/'.$data->order_id)." class=\"btn btn-xs btn-primary\" data-toggle=\"tooltip\" title=\"Add BOM\">
 				<i class=\"ace-icon fa fa-plus bigger-120\"></i>
 				</a>";
 				$action_buttons.= "</div>";
 				return $action_buttons;
-			}
+			}*/
+			$action_buttons= "<div class=\"btn-group\">
+			<a href=".url('merch/order/bom/'.$data->order_id)." class=\"btn btn-xs btn-success\" data-toggle=\"tooltip\" title=\"Order BOM\">
+			<i class=\"ace-icon fa fa-pencil bigger-120\"></i>
+			</a></div>";
+			return $action_buttons;
 		})
-		->rawColumns(['action'])
-		->toJson();
+		->rawColumns([
+            'order_code', 'hr_unit_name', 'b_name', 'br_name', 'se_name', 'stl_no', 'order_qty', 'order_delivery_date', 'action'
+        ])
+        ->make(true);
 	}
 
 	public function getStyleItemBomData($category,$stl_id)
@@ -1002,7 +994,7 @@ class OrderBomController extends Controller
 		    	//get order ID
 		  		$order_id = request()->segment(3);
 		  		$po_no = request()->segment(5);
-				//check bom available or not for this order
+				//check BOM available or not for this order
 		  		$bom_exists= OrderBOM::where('order_id', $order_id)->exists();
 		  		if($bom_exists){
 					//Delete BOM which are deselected while Editing
@@ -1159,7 +1151,7 @@ class OrderBomController extends Controller
 						{
 							$depends_on= $request->color_depends[$i]+ $request->size_depends[$i];
 
-							//get construction and compostion of the article id
+							//get construction and composition of the article id
 							$cons= DB::table('mr_construction')->where('mr_article_id', $request->mr_article_id[$i])->pluck('id')->first();
 							$comp= DB::table('mr_composition')->where('mr_article_id', $request->mr_article_id[$i])->pluck('id')->first();
 

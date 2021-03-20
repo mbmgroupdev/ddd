@@ -411,7 +411,7 @@ class NewStyleController extends Controller
       // get unit from hr_basic table
 
       $associate_id = auth()->user()->associate_id;
-      $user_basic_info = Employee::where(['associate_id' => $associate_id])->first();
+      $user_basic_info = Employee::select('as_unit_id')->where(['associate_id' => $associate_id])->first();
 
       if(isset($user_basic_info->as_id)) {
         $unit_id = $user_basic_info->as_unit_id;
@@ -593,10 +593,8 @@ class NewStyleController extends Controller
   {
     $b_permissions = explode(',', auth()->user()->buyer_permissions);
 
-    DB::statement(DB::raw('set @serial_no=0'));
     $data = DB::table('mr_style AS s')
         ->select(
-            // DB::raw('@serial_no := @serial_no + 1 AS serial_no'),
             "s.stl_id",
             "s.stl_type",
             "s.prd_type_id",
@@ -616,11 +614,12 @@ class NewStyleController extends Controller
         ->leftJoin('mr_product_type AS pt', 'pt.prd_type_id', '=', 's.prd_type_id')
         ->leftJoin('mr_season AS se', 'se.se_id', '=', 's.mr_season_se_id')
         ->leftJoin('mr_brand AS br', 'br.br_id', '=', 's.mr_brand_br_id')
-        // ->whereIn('b.b_id', $b_permissions)
+        ->whereIn('b.b_id', $b_permissions)
         ->orderBy('s.stl_id', 'desc')
         ->get();
 
     return DataTables::of($data)
+
         ->editColumn('stl_img_link', function ($data) {
           if($data->stl_img_link == null){
             $imageUrl = "/assets/files/style/empty_style.jpg";
@@ -679,6 +678,7 @@ class NewStyleController extends Controller
         ->rawColumns([
             'stl_img_link',
             'stl_type',
+            'se_name',
             'b_name',
             'stl_no',
             'action'

@@ -41,6 +41,7 @@ class StyleBomController extends Controller
 
     public function getListData()
     {
+        ini_set('zlib.output_compression', 1);
     	$data = DB::table("mr_style AS s")
     		->select(
     			"s.stl_id",

@@ -42,97 +42,87 @@ class OrderController extends Controller
 	}
 	//Order Entry List Data
 	public function orderListData()
-  {
+  	{
 		if(auth()->user()->hasRole('merchandiser')){
 			$lead_associateId[] = auth()->user()->associate_id;
-		 $team_members = DB::table('hr_as_basic_info as b')
+		 	$team_members = DB::table('hr_as_basic_info as b')
 				->where('associate_id',auth()->user()->associate_id)
 				->leftJoin('mr_excecutive_team','b.as_id','mr_excecutive_team.team_lead_id')
 				->leftJoin('mr_excecutive_team_members','mr_excecutive_team.id','mr_excecutive_team_members.mr_excecutive_team_id')
 				->pluck('member_id');
-		$team_members_associateId = DB::table('hr_as_basic_info as b')
-	 				                       ->whereIn('as_id',$team_members)
-																 ->pluck('associate_id');
-		 $team = array_merge($team_members_associateId->toArray(),$lead_associateId);
-		 //dd($team);exit;
-	 }elseif (auth()->user()->hasRole('merchandising_executive')) {
-			   $executive_associateId[] = auth()->user()->associate_id;
+			$team_members_associateId = DB::table('hr_as_basic_info as b')
+	 				                ->whereIn('as_id',$team_members)
+									->pluck('associate_id');
+			$team = array_merge($team_members_associateId->toArray(),$lead_associateId);
 
-				 $teamid = DB::table('hr_as_basic_info as b')
-						->where('associate_id',auth()->user()->associate_id)
-						->leftJoin('mr_excecutive_team_members','b.as_id','mr_excecutive_team_members.member_id')
-						->pluck('mr_excecutive_team_id');
-				$team_lead = DB::table('mr_excecutive_team')
-							 ->whereIn('id',$teamid)
-							 ->leftJoin('hr_as_basic_info as b','mr_excecutive_team.team_lead_id','b.as_id')
-							 ->pluck('associate_id');
-				$team_members_associateId = DB::table('mr_excecutive_team_members')
-						                              ->whereIn('mr_excecutive_team_id',$teamid)
-																					->leftJoin('hr_as_basic_info as b','mr_excecutive_team_members.member_id','b.as_id')
-																				 ->pluck('associate_id');
-																				 //dd($team_members_associateId);exit;
+	 	}elseif (auth()->user()->hasRole('merchandising_executive')) {
+		   $executive_associateId[] = auth()->user()->associate_id;
+
+			$teamid = DB::table('hr_as_basic_info as b')
+				->where('associate_id',auth()->user()->associate_id)
+				->leftJoin('mr_excecutive_team_members','b.as_id','mr_excecutive_team_members.member_id')
+				->pluck('mr_excecutive_team_id');
+			$team_lead = DB::table('mr_excecutive_team')
+					->whereIn('id',$teamid)
+					->leftJoin('hr_as_basic_info as b','mr_excecutive_team.team_lead_id','b.as_id')
+					->pluck('associate_id');
+			$team_members_associateId = DB::table('mr_excecutive_team_members')
+				                    ->whereIn('mr_excecutive_team_id',$teamid)
+									->leftJoin('hr_as_basic_info as b','mr_excecutive_team_members.member_id','b.as_id')
+								 	->pluck('associate_id');
 			$team = array_merge($team_members_associateId->toArray(),$team_lead->toArray());
-			//dd($team);exit;
 
 		}else{
-		 $team =[];
+		 	$team =[];
 		}
+		$getBuyer = buyer_by_id();
+		$getUnit = unit_by_id();
+		// return $getUnit;
+		$queryData = DB::table('mr_order_entry AS OE')
+			->select([
+				"OE.order_id",
+				"OE.order_code",
+				"OE.mr_buyer_b_id",
+				"OE.unit_id",
+				"s.se_name",
+				"stl.stl_no",
+				"OE.order_ref_no",
+				"OE.order_qty",
+				"OE.order_delivery_date",
+                "OE.created_by"
+			])
+    		->whereIn('OE.mr_buyer_b_id', auth()->user()->buyer_permissions());
+    		if(!empty($team)){
+    			$queryData->whereIn('OE.created_by', $team);
+    		}
+			$queryData->leftJoin('mr_season AS s', 's.se_id', 'OE.mr_season_se_id')
+			->leftJoin('mr_style AS stl', 'stl.stl_id', "OE.mr_style_stl_id")
+			->orderBy('order_id', 'DESC');
+		$data = $queryData->get();
 
-		if(!empty($team)){
-			$data= DB::table('mr_order_entry AS OE')
-	                //->where('OE.order_status', "Active")
-					->select([
-						"OE.order_id",
-						"OE.order_code",
-						"u.hr_unit_name",
-						"b.b_name",
-						"br.br_name",
-						"s.se_name",
-						"stl.stl_no",
-						"OE.order_ref_no",
-						"OE.order_qty",
-						"OE.order_delivery_date",
-	                    "OE.created_by"
-					])
-					->leftJoin('hr_unit AS u', 'u.hr_unit_id', 'OE.unit_id')
-					->leftJoin('mr_buyer AS b', 'b.b_id', 'OE.mr_buyer_b_id')
-	        ->whereIn('b.b_id', auth()->user()->buyer_permissions())
-					->whereIn('OE.created_by', $team)
-					->leftJoin('mr_brand AS br', 'br.br_id', 'OE.mr_brand_br_id')
-					->leftJoin('mr_season AS s', 's.se_id', 'OE.mr_season_se_id')
-					->leftJoin('mr_style AS stl', 'stl.stl_id', "OE.mr_style_stl_id")
-					->orderBy('order_id', 'DESC')
-					->get();
-		}else{
-			$data= DB::table('mr_order_entry AS OE')
-	                //->where('OE.order_status', "Active")
-					->select([
-						"OE.order_id",
-						"OE.order_code",
-						"u.hr_unit_name",
-						"b.b_name",
-						"br.br_name",
-						"s.se_name",
-						"stl.stl_no",
-						"OE.order_ref_no",
-						"OE.order_qty",
-						"OE.order_delivery_date",
-	                    "OE.created_by"
-					])
-					->leftJoin('hr_unit AS u', 'u.hr_unit_id', 'OE.unit_id')
-					->leftJoin('mr_buyer AS b', 'b.b_id', 'OE.mr_buyer_b_id')
-	        ->whereIn('b.b_id', auth()->user()->buyer_permissions())
-					->leftJoin('mr_brand AS br', 'br.br_id', 'OE.mr_brand_br_id')
-					->leftJoin('mr_season AS s', 's.se_id', 'OE.mr_season_se_id')
-					->leftJoin('mr_style AS stl', 'stl.stl_id', "OE.mr_style_stl_id")
-					->orderBy('order_id', 'DESC')
-					->get();
-		}
-
-		return $this->orderListData_datatable($data);
+		return DataTables::of($data)
+			->addIndexColumn()
+            ->addColumn('b_name', function ($data) use ($getBuyer){
+            	return $getBuyer[$data->mr_buyer_b_id]->b_name??'';
+            })
+            ->addColumn('hr_unit_name', function ($data) use ($getUnit){
+            	return $getUnit[$data->unit_id]['hr_unit_name']??'';
+            })
+            ->editColumn('order_delivery_date', function($data){
+				return custom_date_format($data->order_delivery_date);
+			})
+            ->addColumn('action', function ($data) {
+				$action_buttons = "<div class=\"btn-group\">
+					<a href=".url('merch/orders/order_edit/'.$data->order_id)." class=\"btn btn-xs btn-success\" data-toggle=\"tooltip\" title=\"Order Edit\">
+					<i class=\"ace-icon fa fa-pencil bigger-120\"></i>
+					</a></div>";
+				return $action_buttons;
+            })
+            ->rawColumns(['order_code', 'order_ref_no', 'hr_unit_name', 'b_name', 'se_name', 'stl_no', 'order_qty', 'order_delivery_date', 'action'])
+            ->make(true);
 	}
 
-    //Order Entry List Data Datatable
+    //Order Entry List Data Data table
     public function orderListData_datatable($data)
     {
         return DataTables::of($data)->addIndexColumn()

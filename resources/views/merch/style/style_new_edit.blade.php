@@ -71,16 +71,8 @@
                             
                             <a class="btn btn-primary btn-sm" href="{{ url('merch/style/style_new') }}"><i class="las la-plus"></i> Style New</a>
                             <a class="btn btn-primary btn-sm" href="{{ url('merch/style/style_list') }}"><i class="las la-list"></i> Style List</a>
-                            <?php
-                              $bom_exist = DB::table('mr_stl_bom_n_costing as bc')
-                                          ->where('bc.mr_style_stl_id', $style_id)->exists();
-                               if($bom_exist){
-                            ?>
-                                <a href="{{ url('merch/style_bom/'.$style->stl_id.'/edit') }}" class="btn btn-primary btn-sm" style="border-radius: 5px;"><i class="las la-sitemap"></i> BOM</a>
-                            <?php }
-                            else {?>
-                                <a href="{{ url('merch/style_bom/'.$style->stl_id.'/create') }}" class="btn btn-primary btn-sm" style="border-radius: 5px;"><i class="las la-sitemap"></i> BOM</a>
-                            <?php } ?>
+                            <a href="{{ url('merch/style/bom/'.$style->stl_id) }}" class="btn btn-primary btn-sm" style="border-radius: 5px;"><i class="las la-sitemap"></i> BOM</a>
+
                             <a href="{{ URL::to('merch/style/style_copy_search?style_no='.$style->stl_id) }}"  class="btn btn-warning btn-sm" style="border-radius: 5px;" ><i class="las la-copyright"></i> Style Copy</a>
                         </div>
                       </h6>

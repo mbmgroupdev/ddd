@@ -9,9 +9,20 @@ class Reservation extends Model
 {
     protected $table= 'mr_capacity_reservation';
     public $timestamps= false;
+    protected $guarded = [];
 
     public static function getReservationIdWiseReservation($rId)
     {
     	return Reservation::where('res_id', $rId)->first();
+    }
+
+    public static function checkReservationExists($value)
+    {
+    	return Reservation::where('hr_unit_id', $value['hr_unit_id'])
+    	->where('b_id', $value['b_id'])
+    	->where('res_month', $value['res_month'])
+    	->where('res_year', $value['res_year'])
+    	->where('prd_type_id', $value['prd_type_id'])
+    	->exists();
     }
 }

@@ -4,24 +4,8 @@
 @push('css')
   <style>
    #dataTables thead input, #dataTables thead select {max-width: unset !important;}
-
-    {{-- removing the links in print and adding each page header --}}
     a[href]:after { content: none !important; }
-    input::-webkit-input-placeholder {
-        color: #827979;
-        font-weight: bold;
-        font-size: 12px;
-    }
-    input:-moz-placeholder {
-        color: #827979;
-        font-weight: bold;
-        font-size: 12px;
-    }
-    input:-ms-input-placeholder {
-        color: #827979;
-        font-weight: bold;
-        font-size: 12px;
-    }
+    
     thead {display: table-header-group;}
     th{
         font-size: 12px;
@@ -52,7 +36,7 @@
 @endpush
   <div class="main-content">
       <div class="main-content-inner">
-          <div class="col-sm-12">
+          <div class="">
               <div class="breadcrumbs ace-save-state" id="breadcrumbs">
                   <ul class="breadcrumb">
                       <li>
@@ -127,7 +111,7 @@
               serverSide: true,
               pagingType: "full_numbers", 
               ajax: {
-                   url: '{!! url("merch/style_bom/style_bom_data") !!}',
+                   url: '{!! url("merch/style/bom-list-data") !!}',
                    type: "GET",
                    headers: {
                          'X-CSRF-TOKEN': '{{ csrf_token() }}'
@@ -214,9 +198,9 @@
                     {data: 'stl_smv', name: 'stl_smv'},
                     {data: 'se_name', name: 'se_name'},
                     {data: 'action', name: 'action', orderable: false, searchable: false}
-                ],
+              ],
 
-                initComplete: function () {   
+              initComplete: function () {   
                 var api =  this.api();
 
                 // Apply the search 
