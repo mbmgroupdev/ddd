@@ -28,15 +28,15 @@
               <li class="active">Style Costing</li>
               <li class="top-nav-btn">
                 <a href='{{ url("merch/style/bom/$style->stl_id") }}' class="btn btn-outline-primary btn-sm pull-right"> <i class="fa fa-plus"></i> Style BOM</a> &nbsp;
-                <a href="{{ url('merch/style_bom')}}" target="_blank" class="btn btn-outline-primary btn-sm pull-right"> <i class="fa fa-list"></i> Style BOM List</a> &nbsp;
-                <a href="{{ url('merch/style_costing')}}" target="_blank" class="btn btn-outline-success btn-sm pull-right"> <i class="fa fa-list"></i> Style Costing List</a>
+                <a href="{{ url('merch/style/bom-list')}}" target="_blank" class="btn btn-outline-primary btn-sm pull-right"> <i class="fa fa-list"></i> Style BOM List</a> &nbsp;
+                <a href="{{ url('merch/style/costing-list')}}" target="_blank" class="btn btn-outline-success btn-sm pull-right"> <i class="fa fa-list"></i> Style Costing List</a>
                 </li>
             </ul><!-- /.breadcrumb -->
         </div>
 
         <div class="page-content">
             <input type="hidden" id="base_url" value="{{ url('/') }}">
-            
+            <input type="hidden" id="blade_type" value="style">
             <div class="row">
               <div class="col-12">
                 <div class="panel panel-success">
@@ -172,7 +172,7 @@
                                                           <input type="text" step="any" min="0" name="precost_freight[]" id="freight-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" class="form-control changesNo freight" autocomplete="off" data-catid="{{ $itemBom->mcat_id}}" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="{{ $itemBom->precost_freight??'0' }}" readonly>
                                                       </td>
                                                       <td>
-                                                          <input type="text" step="any" min="0" name="precost_unit_price[]" id="unitprice-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" data-catid="{{ $itemBom->mcat_id}}" class="form-control changesNo unitprice" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="{{ $itemBom->precost_unit_price??'0' }}">
+                                                          <input type="text" step="any" min="0" name="precost_unit_price[]" id="unitprice-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" data-catid="{{ $itemBom->mcat_id}}" class="form-control changesNo unitprice action-input" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="{{ $itemBom->precost_unit_price??'0' }}">
                                                       </td>
                                                       <td>
                                                         <p id="percosting-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" class="text-right fwb totalpercost">0</p>
@@ -213,7 +213,7 @@
                                                 <td colspan="4"></td>
                                                 
                                                 <td>
-                                                  <input type="text" step="any" min="0" name="spunitprice[]" id="spunitprice-{{ $spo->style_op_id }}" class="form-control sp_price spunitprice" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="{{ $spo->unit_price??'0' }}">
+                                                  <input type="text" step="any" min="0" name="spunitprice[]" id="spunitprice-{{ $spo->style_op_id }}" class="form-control sp_price spunitprice action-input" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="{{ $spo->unit_price??'0' }}">
                                                   <input type="hidden" name="style_op_id[]" value="{{ $spo->style_op_id }}">
                                                   <input type="hidden" name="opr_type[]" value="{{ $spo->opr_type }}">
                                                   <input type="hidden" name="mr_operation_opr_id[]" value="{{ $spo->mr_operation_opr_id }}">
@@ -231,7 +231,7 @@
                                                 <td>Piece</td>
                                                 <td colspan="4"></td>
                                                 <td>
-                                                  <input type="text" step="any" min="0" name="testing_cost" id="tcunitprice" class="form-control sp_price tcunitprice" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="{{ $otherCosting->testing_cost??'0' }}">
+                                                  <input type="text" step="any" min="0" name="testing_cost" id="tcunitprice" class="form-control sp_price tcunitprice action-input" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="{{ $otherCosting->testing_cost??'0' }}">
                                                 </td>
                                                 <td>
                                                   <p id="testing-cost" class="text-right fwb categoryPrice sp_per_price">{{ number_format((float)($otherCosting->testing_cost??'0'), 6,'.','') }}</p>
@@ -245,7 +245,7 @@
                                                 <td>Piece</td>
                                                 <td colspan="4"></td>
                                                 <td>
-                                                  <input type="text" step="any" min="0" name="cm" id="cmunitprice" class="form-control sp_price cmunitprice" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="{{ $otherCosting->cm??'0' }}">
+                                                  <input type="text" step="any" min="0" name="cm" id="cmunitprice" class="form-control sp_price cmunitprice action-input" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="{{ $otherCosting->cm??'0' }}">
                                                 </td>
                                                 <td>
                                                   <p id="cm-cost" class="text-right fwb categoryPrice sp_per_price">{{ number_format((float)($otherCosting->cm??'0'), 6,'.','') }}</p>
@@ -256,7 +256,7 @@
                                                 <td colspan="8"><p class="capilize">Commercial Cost</p></td>
                                                 <td colspan="4"></td>
                                                 <td>
-                                                  <input type="text" step="any" min="0" name="commercial_cost" id="commercialunitprice" class="form-control sp_price commercialunitprice" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="{{ $otherCosting->commercial_cost??'0' }}">
+                                                  <input type="text" step="any" min="0" name="commercial_cost" id="commercialunitprice" class="form-control sp_price commercialunitprice action-input" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="{{ $otherCosting->commercial_cost??'0' }}">
                                                 </td>
                                                 <td>
                                                   <p id="commercial-cost" class="text-right fwb categoryPrice sp_per_price">{{ number_format((float)($otherCosting->commercial_cost??'0'), 6,'.','') }}</p>
@@ -333,7 +333,9 @@
         </div><!-- /.page-content -->
     </div>
 </div>
-
+<div class="calculator_section">
+  @include('common.calculator')
+</div>
 @push('js')
 <script src="{{ asset('assets/js/jquery-ui.js')}}"></script>
 

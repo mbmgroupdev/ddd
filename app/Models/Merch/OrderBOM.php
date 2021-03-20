@@ -67,7 +67,7 @@ class OrderBOM extends Model
     public static function getOrderIdWiseOrderBOM($ordId)
     {
         return DB::table('mr_order_bom_costing_booking')
-			->select('id', 'mr_material_category_mcat_id AS mcat_id', 'mr_cat_item_id', 'item_description', 'clr_id', 'size', 'mr_supplier_sup_id', 'mr_article_id', 'uom', 'consumption', 'bom_term', 'precost_fob', 'precost_lc', 'precost_freight', 'precost_unit_price', 'extra_percent', DB::raw('(consumption/100)*extra_percent AS qty'), DB::raw('((consumption/100)*extra_percent)+consumption AS total'), 'sl', 'depends_on', 'order_id')
+			->select('id', 'mr_material_category_mcat_id AS mcat_id', 'mr_cat_item_id', 'item_description', 'clr_id', 'size', 'mr_supplier_sup_id', 'mr_article_id', 'uom', 'consumption', 'bom_term', 'precost_fob', 'precost_lc', 'precost_freight', 'precost_unit_price', 'extra_percent', DB::raw('(consumption/100)*extra_percent AS qty'), DB::raw('((consumption/100)*extra_percent)+consumption AS total'), 'sl', 'depends_on', 'order_id', 'stl_bom_id')
 			->where('order_id', $ordId)
 			->orderBy('sl', 'asc')
 			->get();

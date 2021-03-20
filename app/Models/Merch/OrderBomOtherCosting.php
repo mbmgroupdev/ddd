@@ -9,6 +9,7 @@ class OrderBomOtherCosting extends Model
 {
     protected $table= 'mr_order_bom_other_costing';
     public $timestamps= false;
+    protected $guarded = [];
 
     public static function getOrderIdWiseOrderOtherCosting($ordId)
     {

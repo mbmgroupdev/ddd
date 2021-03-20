@@ -8,7 +8,9 @@ use DB;
 class OrderOperationNCost extends Model
 {
     protected $table= 'mr_order_operation_n_cost';
+    protected $primaryKey = 'order_op_id';
     public $timestamps= false;
+    protected $guarded = [];
 
     public static function getOrderIdWiseOperationInfo($ordId, $oprType)
     {

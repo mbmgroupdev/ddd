@@ -108,10 +108,10 @@ class SalaryProcessController extends Controller
             $subSectionDataSql = $subSectionData->toSql();
 
             $queryData = DB::table('hr_monthly_salary as s')
-            ->whereIn('emp.as_unit_id', auth()->user()->unit_permissions())
-            ->whereIn('emp.as_location', auth()->user()->location_permissions())
             ->where('s.year', $input['year'])
             ->where('s.month', $input['month'])
+            ->whereIn('s.unit_id', auth()->user()->unit_permissions())
+            ->whereIn('s.location_id', auth()->user()->location_permissions())
             ->whereBetween('s.gross', [$input['min_sal'], $input['max_sal']])
             ->whereNotIn('s.as_id', config('base.ignore_salary'))
             ->when(!empty($input['unit']), function ($query) use($input){

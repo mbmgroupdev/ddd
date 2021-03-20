@@ -50,8 +50,8 @@
               </li>
               <li class="active">Order Costing List</li>
               <li class="top-nav-btn">
-                <a href="" target="_blank" class="btn btn-outline-primary btn-sm pull-right"> <i class="fa fa-list"></i> Order List</a> &nbsp;
-                <a href="" target="_blank" class="btn btn-outline-success btn-sm pull-right"> <i class="fa fa-list"></i> Order BOM</a> &nbsp;
+                <a href="{{ url('order/order_list')}}" class="btn btn-outline-primary btn-sm pull-right"> <i class="fa fa-list"></i> Order List</a> &nbsp;
+                <a href="{{ url('merch/order/bom-list')}}" class="btn btn-outline-success btn-sm pull-right"> <i class="fa fa-list"></i> Order BOM</a> &nbsp;
                 
                 </li>
           </ul><!-- /.breadcrumb -->
@@ -117,7 +117,7 @@ $(document).ready(function(){
         serverSide: true,
         pagingType: "full_numbers", 
         ajax: {
-            url: '{!! url("merch/order_costing/order_costing_data") !!}',
+            url: '{!! url("merch/order/costing-list-data") !!}',
             type: "GET",
             headers: {
                   'X-CSRF-TOKEN': '{{ csrf_token() }}'

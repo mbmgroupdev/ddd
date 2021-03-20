@@ -575,7 +575,7 @@ class DailyActivityReportController extends Controller
                 $queryData->orderBy('b.as_unit_id', 'ASC')->orderBy('b.as_area_id', 'ASC');
             }else{
 
-                $queryData->orderBy('b.as_oracle_sl', 'ASC');
+                $queryData->orderBy('b.as_oracle_sl', 'ASC')->orderBy('b.temp_id', 'ASC');
 
             }
             $getEmployee = $queryData->get();

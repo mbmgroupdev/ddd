@@ -112,7 +112,7 @@ $(document).ready(function(){
           serverSide: true,
           pagingType: "full_numbers", 
           ajax: {
-               url: '{!! url("merch/order_bom/order_bom_data") !!}',
+               url: '{!! url("merch/order/bom-list-data") !!}',
                type: "post",
                headers: {
                      'X-CSRF-TOKEN': '{{ csrf_token() }}'

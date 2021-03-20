@@ -3,9 +3,15 @@
 namespace App\Http\Controllers\Merch\Style;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Merch\BomCosting;
+use App\Models\Merch\Buyer;
+use App\Models\Merch\OperationCost;
+use App\Models\Merch\SampleStyle;
+use App\Models\Merch\Season;
+use App\Models\Merch\StyleSpecialMachine;
 use DB;
+use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 
 class BOMController extends Controller
 {
@@ -13,6 +19,88 @@ class BOMController extends Controller
     {
         ini_set('zlib.output_compression', 1);
     }
+
+    public function index()
+    {
+    	$buyerList = Buyer::whereIn('b_id', auth()->user()->buyer_permissions())
+                    ->pluck('b_name', 'b_id');
+
+        $seasonList = Season::pluck('se_name','se_id');
+    	return view("merch.style_bom.style_bom_list", compact(
+            'buyerList',
+            'seasonList'
+        ));
+    }
+    public function getListData()
+    {
+    	$data = DB::table("mr_style AS s")
+    		->select(
+    			"s.stl_id",
+    			"sb.mr_style_stl_id",
+    			"s.stl_type",
+    			"s.stl_no",
+    			"b.b_name",
+                "br.br_name",
+    			"t.prd_type_name",
+    			"g.gmt_name",
+    			"s.stl_product_name",
+    			"s.stl_description",
+    			"se.se_name",
+    			"s.stl_smv",
+    			"s.stl_img_link",
+    			"s.stl_status"
+    		)
+			->leftJoin("mr_stl_bom_n_costing AS sb", "sb.mr_style_stl_id", "=", "s.stl_id")
+			->leftJoin("mr_buyer AS b", "b.b_id", "=", "s.mr_buyer_b_id")
+            ->whereIn('b.b_id', auth()->user()->buyer_permissions())
+			->leftJoin("mr_product_type AS t", "t.prd_type_id", "=", "s.prd_type_id")
+			->leftJoin("mr_garment_type AS g", "g.gmt_id", "=", "s.gmt_id")
+			->leftJoin("mr_season AS se", "se.se_id", "=", "s.mr_season_se_id")
+            ->leftJoin("mr_brand AS br", "br.br_id", "=", "s.mr_brand_br_id")
+			->groupBy("s.stl_id")
+            ->orderBy('s.stl_id', 'desc')
+			->get();
+
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->editColumn('stl_type', function ($data) {
+                if ($data->stl_type == "Bulk")
+                {
+                    return $data->stl_type;
+                }
+                else
+                {
+                    return $data->stl_type;
+                }
+            })
+            ->editColumn('se_name', function ($data)
+            {
+                return htmlspecialchars_decode($data->se_name);
+            })
+            ->editColumn('action', function ($data) {
+                $return = "<div class=\"btn-group\">";
+            	if (empty($data->mr_style_stl_id))
+            	{
+            		$return .= "<a href=".url('merch/style/bom/'.$data->stl_id)." class=\"btn btn-sm btn-warning\" data-toggle=\"tooltip\" title=\"Create Style BOM\">BOM</a>";
+            	}
+            	else
+            	{
+                    $return .= "<a href=".url('merch/style/bom/'.$data->stl_id)." class=\"btn btn-sm btn-success\" data-toggle=\"tooltip\" title=\"Edit Style BOM\">
+                     		<i class=\"ace-icon fa fa-pencil bigger-120\"></i>
+                        </a>
+                        <a href=".url('merch/style_bom/'.$data->stl_id.'/delete')." class=\"btn btn-sm btn-danger\" data-toggle=\"tooltip\" onClick=\"return window.confirm('Are you sure?')\" title=\"Delete\">
+                        <i class=\"ace-icon fa fa-trash bigger-120\"></i>
+                    </a>";
+            	}
+                $return .= "</div>";
+                return $return;
+            })
+            ->rawColumns([
+                'stl_type', 'stl_no', 'b_name', 'br_name', 'stl_product_name', 'se_name', 'action'
+            ])
+            ->make(true);
+    }
+
     public function show(Request $request, $id)
     {
 		try {
@@ -132,26 +220,9 @@ class BOMController extends Controller
 	            	}
 				}
 				// sample
-				$samples = DB::table("mr_stl_sample AS ss")
-			    	->select(DB::raw("GROUP_CONCAT(st.sample_name SEPARATOR ', ') AS name"))
-			    	->leftJoin("mr_sample_type AS st", "st.sample_id", "ss.sample_id")
-			    	->where("ss.stl_id", $id)
-			    	->first();
-
-		        //operations
-			    $operations = DB::table("mr_style_operation_n_cost AS oc")
-			    	->select("o.opr_name")
-			    	->select(DB::raw("GROUP_CONCAT(o.opr_name SEPARATOR ', ') AS name"))
-			    	->leftJoin("mr_operation AS o", "o.opr_id", "oc.mr_operation_opr_id")
-			    	->where("oc.mr_style_stl_id", $id)
-			    	->first();
-
-		        //machines
-			    $machines = DB::table("mr_style_sp_machine AS sm")
-			    	->select(DB::raw("GROUP_CONCAT(m.spmachine_name SEPARATOR ', ') AS name"))
-			    	->leftJoin("mr_special_machine AS m", "m.spmachine_id", "sm.spmachine_id")
-			    	->where("sm.stl_id", $id)
-			    	->first();
+				$samples = SampleStyle::getStyleIdWiseSampleName($id);
+			    $operations = OperationCost::getStyleIdWiseOperationCostName($id);
+			    $machines = StyleSpecialMachine::getStyleIdWiseSpMachineName($id);
 			    $getColor = DB::table("mr_material_color")->select('clr_id AS id', 'clr_name AS text')->get();
 			    $itemCategory = item_category_by_id();
 			    

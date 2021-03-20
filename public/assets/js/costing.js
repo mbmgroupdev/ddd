@@ -4,9 +4,7 @@ var base_url = $("#base_url").val();
 // change terms
 
 $(document).on('change', '.terms:radio', function(){
-    termsCondition($(this));
-    
-    
+    termsCondition($(this)); 
 }); 
 $(document).ready(function() {
     $(".terms:checked").each(function(){
@@ -59,6 +57,7 @@ function changeCost(thisvalue, type) {
     index.find(".totalpercost").html(totalpercost);
     index.find(".pertotalcosting").val(totalpercost);
     var catid = index.find(".unitprice").data('catid');
+
     var total = 0;
     var tSewFin = 0;
     // check cat wise
@@ -76,6 +75,14 @@ function changeCost(thisvalue, type) {
     tSewFin = parseFloat(parseFloat(finishing) + parseFloat(sewing)).toFixed(6);
     $("#tsewing-finishing").html(tSewFin);
 
+    // order costing qty, value cal
+    if($("#blade_type").val() === 'order'){
+        var orderQty = $("#order-qty").val();
+        var precost_req_qty = parseFloat(parseFloat(consumption) + parseFloat(comsumptionPer) * parseFloat(orderQty)).toFixed(6);
+        var total_value = parseFloat(parseFloat(unitprice)*parseFloat(precost_req_qty)).toFixed(6);
+        index.find(".totalperqty").html(precost_req_qty);
+        index.find(".totalpervalue").html(total_value);
+    }
     calculateFOB();
 }
 
@@ -164,6 +171,34 @@ $(document).on('keypress', function(e) {
             e.preventDefault();
         }
     }            
+});
+
+// cal
+$(document).on('contextmenu', 'input', function(event) {
+    return false;
+});
+
+$(document).on('contextmenu', '.action-input', function(event) {
+    $(".calc-wrapper").removeClass('out-of-network');
+
+    var selectid = $(this).attr('id');
+    $("#cal-input").val(selectid);
+    return false;
+});
+$(document).on('click', '.close-cal', function(event) {
+    $(".calc-wrapper").addClass('out-of-network');
+    $(".calc-brown").click();
+    $("#cal-input").val('');
+});
+$(document).on('click', '.ok-cal', function(event) {
+    $(".calc-wrapper").addClass('out-of-network');
+    var selectedid = $("#cal-input").val();
+    var inputval = $(".calc-display span").html();
+    var inputval = parseFloat(inputval).toFixed(6);
+    inputval = (isNaN(inputval) || inputval == '')?'0':inputval;
+    $('#'+selectedid).val(inputval);
+    changeCost($('#'+selectedid), 'input');
+    $("#cal-input").val('');
 });
 
 

@@ -5,12 +5,15 @@
 @push('css')
     <link href="{{ asset('assets/css/jquery-ui.min.css') }}" rel="stylesheet">
     <style>
-        .table td {
-            padding: 5px 5px !important;
+        .table td, .table th {
+            padding: 4px 5px !important;
         }
         .table-active, .table-active > th, .table-active > td {
             box-shadow: 0 2px 2px -1px rgb(0 0 0 / 40%);
             color: #000;
+        }
+        .select2 {
+            width: 100px !important;
         }
     </style>
 @endpush
@@ -28,7 +31,7 @@
               <li class="active">Style BOM</li>
               <li class="top-nav-btn">
                 <a href='{{ url("merch/style/costing/$style->stl_id")}}' class="btn btn-outline-success btn-sm pull-right"> <i class="fa fa-plus"></i> Add Costing</a>
-                <a href="{{ url('merch/style_bom')}}" target="_blank" class="btn btn-outline-primary btn-sm pull-right"> <i class="fa fa-list"></i> Style BOM List</a> &nbsp;
+                <a href="{{ url('merch/style/bom-list')}}" target="_blank" class="btn btn-outline-primary btn-sm pull-right"> <i class="fa fa-list"></i> Style BOM List</a> &nbsp;
                 </li>
             </ul><!-- /.breadcrumb -->
         </div>
@@ -107,21 +110,21 @@
                                         <table class="table table-bordered table-hover table-fixed table-head" id="itemList">
                                             <thead>
                                                 <tr class="text-center active">
-                                                    <th width="2%">
-                                                        
-                                                    </th>
-                                                    <th width="150">Item Name</th>
-                                                    <th width="100">Description</th>
-                                                    <th width="100">Color</th>
-                                                    <th width="80">Size/Width</th>
-                                                    <th width="130">Supplier</th>
-                                                    <th width="130">Article</th>
-                                                    
-                                                    <th width="80">UOM</th>
-                                                    <th width="80">Consumption</th>
-                                                    <th width="80">Extra (%)</th>
-                                                    <th width="80">Extra Qty</th>
-                                                    <th width="80">Total</th>
+                                                    <th rowspan="2" width="2%" ></th>
+                                                    <th rowspan="2" width="150" class="vertical-align">Item Name</th>
+                                                    <th rowspan="2" width="100" class="vertical-align">Description</th>
+                                                    <th colspan="2" width="180" class="vertical-align">Specification</th>
+                                                    <th rowspan="2" width="130" class="vertical-align">Supplier</th>
+                                                    <th rowspan="2" width="130" class="vertical-align">Article</th>
+                                                    <th rowspan="2" width="80" class="vertical-align">UOM</th>
+                                                    <th rowspan="2" width="80" class="vertical-align">Consumption</th>
+                                                    <th rowspan="2" width="80" class="vertical-align">Extra (%)</th>
+                                                    <th rowspan="2" width="80" class="vertical-align">Extra Qty</th>
+                                                    <th rowspan="2" width="80" class="vertical-align">Total</th>
+                                                </tr>
+                                                <tr>
+                                                  <th width="100" style="top:31px;">Color</th>
+                                                  <th width="80" style="top:31px;">Size/Width</th>
                                                 </tr>
                                             </thead>
                                             @foreach($itemCategory as $itemCat)
