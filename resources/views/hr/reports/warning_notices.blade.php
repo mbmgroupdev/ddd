@@ -67,7 +67,7 @@
                   <div class="table d-table">
                       <div class="iq-card">
                         <div class="iq-card-body">
-                          <table id="dataTables" class="table table-striped table-bordered table-head w-100" >
+                          <table id="dataTables" class="table table-striped table-bordered table-responsive table-head w-100" >
                              <thead>
                                 <tr>
                                   <th>Sl.</th>

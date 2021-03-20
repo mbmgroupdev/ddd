@@ -60,6 +60,19 @@ class FileController extends Controller
         	ini_set('zlib.output_compression', 1);
         	// employee basic sql binding
             $emp = DB::table('hr_as_basic_info as b')
+            	->select(
+            		'b.*','a.*','bn.*','be.*',
+            		# permanent district & upazilla
+	                "per_dist.dis_name AS permanent_district",
+	                "per_dist.dis_name_bn AS permanent_district_bn",
+	                "per_upz.upa_name AS permanent_upazilla",
+	                "per_upz.upa_name_bn AS permanent_upazilla_bn",
+	                # present district & upazilla
+	                "pres_dist.dis_name AS present_district",
+	                "pres_dist.dis_name_bn AS present_district_bn",
+	                "pres_upz.upa_name AS present_upazilla",
+	                "pres_upz.upa_name_bn AS present_upazilla_bn"
+            	)
 	            ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
 	            ->whereIn('b.as_location', auth()->user()->location_permissions())
 	            ->when(!empty($input['unit']), function ($q) use($input){
@@ -102,7 +115,14 @@ class FileController extends Controller
 	            ->leftJoin("hr_as_adv_info AS a", "a.emp_adv_info_as_id", "=", "b.associate_id")
 	            ->leftJoin('hr_employee_bengali AS bn', 'bn.hr_bn_associate_id', '=', 'b.associate_id')
 	            ->leftJoin('hr_benefits AS be', 'be.ben_as_id', '=' , 'b.associate_id')
-	            ->orderBy('b.as_oracle_sl');
+	            #permanent district & upazilla
+	            ->leftJoin('hr_dist AS per_dist', 'per_dist.dis_id', '=', 'a.emp_adv_info_per_dist')
+	            ->leftJoin('hr_upazilla AS per_upz', 'per_upz.upa_id', '=', 'a.emp_adv_info_per_upz')
+	            #present district & upazilla
+	            ->leftJoin('hr_dist AS pres_dist', 'pres_dist.dis_id', '=', 'a.emp_adv_info_pres_dist')
+	            ->leftJoin('hr_upazilla AS pres_upz', 'pres_upz.upa_id', '=', 'a.emp_adv_info_pres_upz')
+	            ->orderBy('b.as_oracle_sl')
+	            ->orderBy('b.temp_id');
 
 		    if($input['files'] == 'night_concern'){
 		    	$emp->where('as_gender','Female');
@@ -119,21 +139,26 @@ class FileController extends Controller
             $data['subSection'] = subSection_by_id();
             $data['area'] = area_by_id();
             $data['location'] = location_by_id();
-            $data['district'] = district_info_by_id();
-            $data['upazila'] = upzila_info_by_id();
 
             $view = '';
             if($input['files'] == 'night_concern'){
 		        $view = view('hr.employee.files.night_concern', $data)->render();
 		    }else if($input['files'] == 'job_application'){
 		        $view = view('hr.employee.files.job_application', $data)->render();
+		    }else if($input['files'] == 'appointment_letter'){
+		        $view = view('hr.employee.files.appointment_letter_bn', $data)->render();
+		    }else if($input['files'] == 'nominee'){
+		        $view = view('hr.employee.files.nominee', $data)->render();
+		    }else if($input['files'] == 'background_verification'){
+		        $view = view('hr.employee.files.background_verification', $data)->render();
 		    }
+
 	        return response([
 	        	'view' => $view
 	        ]);
 
         }catch(\Exception $e){
-
+        	return response(['msg' => $e->getMessage()]);
         }
 
 	}

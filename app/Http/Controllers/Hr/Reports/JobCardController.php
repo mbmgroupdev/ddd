@@ -174,7 +174,7 @@ class JobCardController extends Controller
                 }
             }
 
-            $totalDays  = (date('d', strtotime($endDay))-date('d', strtotime($startDay)));
+            $totalDays  = (date('d', strtotime($endDay)) - date('d', strtotime($startDay))) + 1;
 
 
             $floor = $getFloor[$info->as_floor_id]['hr_floor_name']??'';

@@ -490,6 +490,14 @@ Route::get('hr/payroll/increment', 'Hr\Payroll\IncrementController@index');
 Route::get('hr/payroll/increment-eligible', 'Hr\Payroll\IncrementController@getEligibleList');
 Route::get('hr/payroll/increment-employeewise', 'Hr\Payroll\IncrementController@getEmployeeSpecialList');
 Route::post('hr/payroll/increment-action', 'Hr\Payroll\IncrementController@incrementAction');
+
+Route::get('hr/payroll/increment-process', 'Hr\Payroll\IncrementController@process');
+Route::get('hr/payroll/increment-approval', 'Hr\Payroll\IncrementController@approval')->middleware(['permission:Increment Approval']);
+Route::post('hr/payroll/increment/get-approval-data','Hr\Payroll\IncrementController@getApprovalData');
+Route::post('hr/payroll/increment-action-initial', 'Hr\Payroll\IncrementController@incrementActionInitial');
+
+Route::post('hr/payroll/increment-action-approval','Hr\Payroll\IncrementController@incrementActionApproval');
+
 //Route::get('hr/payroll/increment', 'Hr\Recruitment\BenefitController@showIncrementForm');
 Route::get('hr/payroll/increment-list', 'Hr\Payroll\IncrementController@incrementList');
 Route::get('hr/payroll/increment-list-data', 'Hr\Payroll\IncrementController@incrementListData');
