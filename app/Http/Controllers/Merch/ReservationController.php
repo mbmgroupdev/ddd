@@ -6,9 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Hr\Unit;
 use App\Models\Merch\Buyer;
 use App\Models\Merch\ProductType;
+use App\Models\Merch\Reservation;
+use DB;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
-use DB;
 
 class ReservationController extends Controller
 {
@@ -63,7 +64,7 @@ class ReservationController extends Controller
             if(!empty($team)){
                 $queueData->whereIn('cr.res_created_by', $team);
             }
-            $queueData->orderBy('cr.res_id', 'DESC');
+            $queueData->orderBy('cr.id', 'DESC');
         $data = $queueData->get();
         $ordered = DB::table('mr_order_entry')
             ->select('res_id', DB::raw("SUM(order_qty) AS sum"))
@@ -93,11 +94,11 @@ class ReservationController extends Controller
                 return $data->res_quantity;
             })
             ->addColumn('confirmed', function($data) use ($ordered){
-                return $ordered[$data->res_id]??0;
+                return $ordered[$data->id]??0;
 
             })
             ->addColumn('balance', function($data) use ($ordered){
-                return $data->res_quantity - (isset($ordered[$data->res_id])?($ordered[$data->res_id]??0):0);
+                return $data->res_quantity - (isset($ordered[$data->id])?($ordered[$data->id]??0):0);
 
             })
             ->addColumn('status', function ($data){
@@ -125,7 +126,7 @@ class ReservationController extends Controller
                     <a href='#' class=\"btn btn-sm btn-success\" data-toggle=\"tooltip\" title=\"Edit Reservation\">
                         <i class=\"ace-icon fa fa-pencil bigger-120\"></i>
                     </a> ";
-                    if($data->res_quantity > (isset($ordered[$data->res_id])?($ordered[$data->res_id]??0):0)) {
+                    if($data->res_quantity > (isset($ordered[$data->id])?($ordered[$data->id]??0):0)) {
                         $action_buttons.= "<a href='#' class=\"btn btn-sm btn-primary\" data-toggle='tooltip' title=\"Order Entry\">
                             <i class=\"ace-icon fa fa-cart-plus bigger-120\"></i>
                         </a>";
@@ -157,7 +158,36 @@ class ReservationController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $input = $request->all();
+        $data['type'] = 'error';
+        $data['value'] = [];
+        $yearMonth = explode('-', $input['res_year_month']);
+        $input['res_month'] = $yearMonth[1];
+        $input['res_year'] = $yearMonth[0];
+        return $input;
+        DB::beginTransaction();
+        try {
+            // check reservation exists
+            $getRes = Reservation::checkReservationExists($input);
+            if($getRes == true){
+                $data['message'] = "Reservation already exists.";
+                return response()->json($data);
+            }
+
+            // create reservation
+            $resId = Reservation::create($input)->id;
+            // check & create order base on mr_style_stl_id
+            // if()
+            DB::commit();
+            $data['type'] = 'success';
+            $data['message'] = "Reservation Successfully Save.";
+            return response()->json($data);
+        } catch (\Exception $e) {
+            DB::rollback();
+            $bug = $e->getMessage();
+            $data['message'] = $bug;
+            return response()->json($data);
+        }
     }
 
     /**

@@ -143,7 +143,7 @@ $(document).on('click', '.add-new', function() {
 $(document).on('click', '#itemBtn', function(event) {
   $("#app-loader").show();
   var curStep = jQuery(this).closest("#itemForm"),
-    curInputs = curStep.find("input[type='text'], input[type='number'],input[type='hidden'],input[type='date'],input[type='checkbox'],input[type='radio'],textarea,select"),
+    curInputs = curStep.find("input[type='text'], input[type='number'],input[type='hidden'],input[type='date'], input[type='month'],input[type='checkbox'],input[type='radio'],textarea,select"),
     isValid = true;
     
   $(".form-group").removeClass("has-error");
@@ -153,7 +153,7 @@ $(document).on('click', '#itemBtn', function(event) {
       $(curInputs[i]).closest(".form-group").addClass("has-error");
     }
   }
-  var url = '{{ url("merch/reservation/store")}}';
+  var url = '{{ route("reservation.store")}}';
   
   if (isValid){
      $.ajax({
@@ -171,7 +171,7 @@ $(document).on('click', '#itemBtn', function(event) {
           $("#app-loader").hide();
           if( reject.status === 400) {
               var data = $.parseJSON(reject.responseText);
-               $.notify(data.message, data.type);
+              $.notify(data.message, data.type);
           }else if(reject.status === 422){
             var data = $.parseJSON(reject.responseText);
             var errors = data.errors;
@@ -203,9 +203,16 @@ $(document).on('keyup', '.sah_cal', function(){
 
 $(document).on('change', '#order-check:checkbox', function(){
     if ($(this).is(':checked')) {
+      $("#season").attr('required', true);
+      $("#reference-no").attr('required', true);
+      $("#style-no").attr('required', true);
       $("#order-entry-section").show();
     }else{
+      $("#season").removeAttr('required');
+      $("#reference-no").removeAttr('required');
+      $("#style-no").removeAttr('required').val('').change();
       $("#order-entry-section").hide();
+
     }
 });
 
