@@ -128,10 +128,6 @@ class BOMController extends Controller
 	    			"se.se_name",
 	    			"s.stl_smv",
 	    			"s.stl_img_link",
-	    			"s.stl_addedby",
-	    			"s.stl_added_on",
-	    			"s.stl_updated_by",
-	    			"s.stl_updated_on",
 	    			"s.stl_status"
 	    		)
 	            ->whereIn('b.b_id', auth()->user()->buyer_permissions());

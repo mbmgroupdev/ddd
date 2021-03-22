@@ -51,9 +51,9 @@
                   <a href="#">Order</a>
               </li>
               <li class="active">Order List</li>
-              <li class="top-nav-btn">
+              {{-- <li class="top-nav-btn">
                 <a class="btn btn-sm btn-primary" href="#"><i class="las la-plus"></i> New Order</a>
-                </li>
+              </li> --}}
           </ul><!-- /.breadcrumb -->
 
       </div>

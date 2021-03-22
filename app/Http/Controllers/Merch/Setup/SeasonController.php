@@ -27,8 +27,8 @@ class SeasonController extends Controller
     	$validator = Validator::make($request->all(),[
             'b_id'    => 'required|max:11',
             'se_name' => 'required|max:50',
-            'se_mm_start' =>'required',
-            'se_mm_end'   =>'required'
+            'se_start' =>'required',
+            'se_end'   =>'required'
     	]);
 
         if($validator->fails()){
@@ -39,21 +39,12 @@ class SeasonController extends Controller
         }
         $input = $request->all();
 
-        if(strtotime($input['se_mm_start']) > strtotime($input['se_mm_end'])){
-            toastr()->error('Start Month Less then End Month!');
-            return back();
-        }
         try {
-            $date_s = $request->se_mm_start;
-            $date_e = $request->se_mm_end;
-            $date_start=date('Y-m-d', strtotime($date_s));
-            $date_end=date('Y-m-d', strtotime($date_e));
-
             $store = new Season;
             $store->b_id     = $request->b_id;
             $store->se_name  = $this->quoteReplaceHtmlEntry($request->se_name);
-            $store->se_start = $date_start;
-            $store->se_end   = $date_end;
+            $store->se_start = $request->se_start;
+            $store->se_end   = $request->se_end;
             $store->created_by = auth()->user()->id;
 
             if ($store->save()) {
@@ -148,7 +139,8 @@ class SeasonController extends Controller
         Season::where('se_id',  $request->id)->delete();
         
         $this->logFileWrite("Season Deleted", $request->id );
-        return back()->with('success', "Delete Successful.");
+        toastr()->error('Season Delete Successfully');
+        return back();
     }
     public function searchSeason(Request $request)
     {

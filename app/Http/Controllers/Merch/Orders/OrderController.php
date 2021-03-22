@@ -77,6 +77,7 @@ class OrderController extends Controller
 		}
 		$getBuyer = buyer_by_id();
 		$getUnit = unit_by_id();
+		$getSeason = season_by_id();
 		// return $getUnit;
 		$queryData = DB::table('mr_order_entry AS OE')
 			->select([
@@ -84,7 +85,8 @@ class OrderController extends Controller
 				"OE.order_code",
 				"OE.mr_buyer_b_id",
 				"OE.unit_id",
-				"s.se_name",
+				"stl.stl_year",
+				"stl.mr_season_se_id",
 				"stl.stl_no",
 				"OE.order_ref_no",
 				"OE.order_qty",
@@ -95,8 +97,7 @@ class OrderController extends Controller
     		if(!empty($team)){
     			$queryData->whereIn('OE.created_by', $team);
     		}
-			$queryData->leftJoin('mr_season AS s', 's.se_id', 'OE.mr_season_se_id')
-			->leftJoin('mr_style AS stl', 'stl.stl_id', "OE.mr_style_stl_id")
+			$queryData->leftJoin('mr_style AS stl', 'stl.stl_id', "OE.mr_style_stl_id")
 			->orderBy('order_id', 'DESC');
 		$data = $queryData->get();
 
@@ -107,6 +108,9 @@ class OrderController extends Controller
             })
             ->addColumn('hr_unit_name', function ($data) use ($getUnit){
             	return $getUnit[$data->unit_id]['hr_unit_name']??'';
+            })
+            ->addColumn('se_name', function ($data) use ($getSeason){
+            	return $getSeason[$data->mr_season_se_id]->se_name??''. '-'.$data->stl_year;
             })
             ->editColumn('order_delivery_date', function($data){
 				return custom_date_format($data->order_delivery_date);

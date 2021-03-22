@@ -145,6 +145,7 @@ Route::group(['prefix' => 'merch/order','namespace' => 'Merch\Orders'], function
 Route::group(['prefix' => 'merch','namespace' => 'Merch'], function(){
 	Route::resource('reservation', 'ReservationController');
 	Route::get('reservation_list_data', 'ReservationController@getData');
+	Route::get('reservation/order-entry/{resid}', 'ReservationController@orderEntry');
 });
 
 /*

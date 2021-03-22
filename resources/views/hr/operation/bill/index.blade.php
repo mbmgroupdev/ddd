@@ -80,7 +80,7 @@
                                                         <label for="as_id">Employees</label>
                                                     </div>
                                                 </div>
-                                                {{-- <input type="hidden" id="form-range" name="date_type" class="date_type custom-control-input" value="range" checked=""> --}}
+                                                <input type="hidden" id="form-range" name="date_type" class="" value="range">
                                                 <input type="hidden" class="report_date form-control" id="month-year" name="month_year" placeholder=" Month-Year" value="{{ date('Y-m') }}"autocomplete="off" />
                                                 <div class="col-sm-2">
                                                     <div class="form-group has-float-label has-required">
@@ -532,7 +532,7 @@
                 data: form.serialize(), // serializes the form's elements.
                 success: function(response)
                 {
-                  // console.log(response);
+                  console.log(response);
                     if(response !== 'error'){
                         setTimeout(() => {
                             $('#setFlug').val(1); 
