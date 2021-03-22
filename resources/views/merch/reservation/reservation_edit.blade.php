@@ -1,5 +1,7 @@
-@extends('merch.index')
-@section('content')
+@extends('merch.layout')
+@section('title', 'Style BOM')
+
+@section('main-content')
 @push('css')
     <style>
         .margin-5{margin:0 5px;}

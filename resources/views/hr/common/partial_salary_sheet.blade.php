@@ -193,12 +193,12 @@
                     <td> </td>
                     <td>চূড়ান্ত প্রাপ্য</td>
                     <td></td>
-                    <td style="text-align: right;">{{eng_to_bn(bn_money(number_format($salary['total_payable'],2,".","")))}}</td>
+                    <td style="text-align: right;">{{eng_to_bn(bn_money(number_format(($salary['total_payable']+$salary['stamp']),2,".","")))}}</td>
                 </tr>
                 <tr>
                     @php
                         $bnConvert = new BnConvert();
-                        $toword = $bnConvert->bnMoney(number_format($salary['total_payable'],2,".",""));
+                        $toword = $bnConvert->bnMoney(number_format(($salary['total_payable']+$salary['stamp']),2,".",""));
 
                     @endphp
                     <td colspan="4" ><br><strong> কথায়ঃ {{$toword}} মাত্র </strong></td>

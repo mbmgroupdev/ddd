@@ -1,31 +1,71 @@
 @extends('hr.layout')
 @section('title', 'Eligible')
+@push('css')
+<style type="text/css">
+     <style type="text/css">
+        input[type=date]{
+            position: relative;
+        }
+        input[type="date"]::-webkit-inner-spin-button,
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            position: absolute;
+            right:0;
+            -webkit-appearance: none;
+        }
+        .table td {
+            padding: 3px 5px;
+        }
+        table.table-head th{
+            top: -1px;
+            z-index: 10;
+            vertical-align: middle !important;
+        }
+        .table th {
+            padding: .5rem;
+            vertical-align: middle !important;
+        }
+    .btn-primary.disabled, .btn-primary:disabled {
+        color: #fff;
+        background-color: #595f65;
+        border-color: #53595f;
+        background: #6c757d;
+    }
+  .iq-accordion-block{: ;
+    padding: 10px 0;
+  }
+  .eligible-data .disburse-button{
+    display: none;
 
+  }
+  .notifyjs-wrapper {
+    z-index: 10000!important;
+  }
+</style>
+@endpush
 @section('main-content')
 <div class="main-content">
-	<div class="main-content-inner">
-		<div class="breadcrumbs ace-save-state" id="breadcrumbs">
-			<ul class="breadcrumb">
-				<li>
-					<i class="ace-icon fa fa-home home-icon"></i>
-					<a href="#"> Human Resource </a>
-				</li> 
-				<li>
-					<a href="#"> Payroll </a>
-				</li>
-				<li class="active"> Increment </li>
+    <div class="main-content-inner">
+        <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+            <ul class="breadcrumb">
+                <li>
+                    <i class="ace-icon fa fa-home home-icon"></i>
+                    <a href="#"> Human Resource </a>
+                </li> 
+                <li>
+                    <a href="#"> Payroll </a>
+                </li>
+                <li class="active"> Increment Approval</li>
                 <li class="top-nav-btn">
                     <a href="{{url('hr/payroll/increment-list')}}" class="btn btn-sm btn-primary pull-right"><i class="fa fa-list"></i> Increment List</a>
                 </li>
-			</ul><!-- /.breadcrumb --> 
-		</div>
-
+            </ul><!-- /.breadcrumb --> 
+        </div>
         <div class="iq-accordion career-style mat-style  ">
             <div class="iq-card iq-accordion-block mb-3">
                <div class="active-mat clearfix">
                   <div class="container-fluid">
                      <div class="row">
-                        <div class="col-sm-12"><a class="accordion-title"><span class="header-title" style="line-height:1.8;border-radius: 50%;"> Employee Wise </span> </a></div>
+                        <div class="col-sm-12"><a class="accordion-title"><span class="header-title" style="line-height:1.8;border-radius: 50%;border:0;"> Employee Wise </span> </a></div>
                      </div>
                   </div>
                </div>
@@ -58,7 +98,7 @@
                <div class="active-mat clearfix">
                   <div class="container-fluid">
                      <div class="row">
-                        <div class="col-sm-12"><a class="accordion-title"><span class="header-title" style="line-height:1.8;border-radius: 50%;"> Unit Wise </span> </a></div>
+                        <div class="col-sm-12"><a class="accordion-title"><span class="header-title" style="line-height:1.8;border-radius: 50%;border:0;"> Filter </span> </a></div>
                      </div>
                   </div>
                </div>
@@ -193,21 +233,33 @@
             
         </div>
 
-        @include('inc/message')
-        
+        <div id="processed-data">
+            {!!$unit_status!!}
+        </div>
 
-		<div class="page-content"> 
-            <div id="increment-data">
+
+    
+        <div class="panel panel-info" >
+            <div class="panel-body" >
+                <div class="approval-result">
+                    
+                </div>
                 
             </div>
-            @can('Manage Increment')
-            
-            @endcan
-      
-		</div><!-- /.page-content -->
-	</div>
+        </div>
+
+        <div class="panel panel-info arear"  >
+            <div class="panel-body" >
+                <div id="arear-section">
+                    
+                </div>
+            </div>
+        </div>
+        
+
+    
+    </div>
 </div>
-@include('hr.common.activity_modal')
 @push('js')
 <script type="text/javascript"> 
     function activityProcess() {
@@ -240,10 +292,8 @@
                 success: function(response)
                 {
                     if(response !== 'error'){
-                        $("#increment-data").html(response);
-                        $('html, body').animate({
-                            scrollTop: $("#increment-data").offset().top
-                        }, 2000);
+                        $(".approval-result").html(response);
+                        $('.submission-button').attr('disabled','disabled');
                     }
                     $('.app-loader').hide();
                 },
@@ -252,7 +302,7 @@
             });
 
         }else{
-            $("#result-data").html('');
+            $(".approval-result").html('');
         }
     }
 
@@ -268,19 +318,17 @@
             success: function(response)
             {
                 if(response !== 'error'){
-                    $("#increment-data").html(response);
-                    $('html, body').animate({
-                        scrollTop: $("#increment-data").offset().top
-                    }, 2000);
+                    $(".approval-result").html(response);
+                    $('.submission-button').attr('disabled','disabled');
                 }
                 $('.app-loader').hide();
             },
             error: function (reject) {
+                $(".approval-result").html('');
             }
         });
 
     }
-
 
     $.fn.getForm2obj = function() {
       var _ = {};
@@ -303,8 +351,31 @@
     
     $(document).on('submit','#increment-action', function(e) {
         e.preventDefault();
+        var count = 0;
+        $('.increment-amount').each(function( index ) {
+            if($(this).data('checked') == 1){
+                if(isNaN($(this).val()) || $(this).val() == 0 || $(this).val() == ''){
+                    count++;
+                }
+
+            }
+        });
+        if(count > 1 ){
+            if(confirm(count + ' selected employee(s) missing increment data. Do you want to ignore and continue?')){
+                takeAction();
+            }
+        }else{
+            takeAction();
+        }
+        
+        
+    });
+
+    function takeAction()
+    {
         $('.app-loader').show();
-        var data = $('#increment-action').getForm2obj();
+        var data = $('#increment-action').getForm2obj(),
+            level = $('#increment-action').data('level');
 
         const chunksize = 300;
 
@@ -323,18 +394,21 @@
 
             var request = $.ajax({
                 type: "POST",
-                url: '{{ url("hr/payroll/increment-action") }}',
+                url: '{{ url("hr/payroll/increment-action-approval") }}',
                 data : {
                     _token : data._token,
-                    effective_date : data.effective_date,
-                    increment_type : data.increment_type,
                     increment : increment[i],
+                    level : level
                 },
                 success: function(res)
                 {
+                    $.notify('Increment data approved','success');
                     if(res.status != 'success'){
                         $.notify(res.msg,'error');
                     }
+                    //getApprovalData();
+                    $('#processed-data').html(res.data);
+                    $(".approval-result").html('');
                     
                 },
                 error: function (reject) {
@@ -348,10 +422,8 @@
         $.when.apply(null, promises).done(function() {
             $("#increment-data").html('');
             $('.app-loader').hide();
-            $.notify('Increment saved successfully!','success');
-        })
-        
-    });
+        });
+    }
 
     $(document).ready(function(){
         // change unit
@@ -540,8 +612,7 @@
             $('#selectEmp').text(totalempcount);
         });
     });
-</script>
-<script type="text/javascript">
+
     function printDiv(divName)
     { 
         var myWindow=window.open('','','width=800,height=800');
@@ -554,6 +625,7 @@
         myWindow.print();
         myWindow.close();
     }
+
 
     $(document).on('keypress','#AssociateSearch',function(e){
         if (e.keyCode === 13 || e.which === 13) {
@@ -631,7 +703,7 @@
     {
         var per = $('#inc_percent').val(), total = 0, emp = 0;
         
-        if(per > 0){
+        if(per){
             $('.increment-amount').each(function( index ) {
                 if($(this).data('checked') == 1){
                     var t = Math.ceil($(this).data('salary')*(per/100));
@@ -639,7 +711,7 @@
                     var sal = $(this).data('salary'),
                     nes = parseInt(sal) + parseInt(t);
 
-                    if(isNaN(t) || t === ''){
+                    if(isNaN(t) || t === '' ){
                       own = nes = '';
                     }
                     $(this).parent().next().children().text(parseFloat(per).toFixed(2)),
@@ -650,7 +722,7 @@
             });
         }else{
             $('.increment-amount').each(function( index ) {
-                $(this).val(0);
+                $(this).val('');
                 $(this).parent().next().children().text(''),
                 $(this).parent().next().next().children().text('');
             });
@@ -669,7 +741,6 @@
                 total += parseInt($(this).val()); 
                 emp++; 
             }
-            
         });
 
         $('.total-amount').text(total);
@@ -679,7 +750,7 @@
     $(document).on('keyup','#inc_percent', function(){
         calculateInc();
     });
-     $(document).on('keyup','.increment-amount',function(){
+    $(document).on('keyup','.increment-amount',function(){
         // calculate %
         var sal = $(this).data('salary'),
             val = $(this).val(),
@@ -687,6 +758,10 @@
             nes = parseInt(sal) + parseInt(val);
         if(isNaN(val) || val === '' ){
           per = nes = '';
+          $(this).css({'border-color':'#d7dbda'});
+          //$(this).notify('Please uncheck the checkbox', 'error');
+        }else{
+          $(this).css({'border-color':'#46b4c0'}); 
         }
         $(this).parent().next().children().text(per),
         $(this).parent().next().next().children().text(nes);
@@ -695,7 +770,6 @@
 
     function checkAllGroup(val){
         var id = '';
-        console.log('hi');
       if($(val).is(':checked')){
         $('.checkbox-inc').prop("checked", true);
         $('.increment-amount').data('checked',1);
@@ -706,14 +780,40 @@
       }
       getSum();
     }
-
-    $(document).ready(function() {
-        $("input[type=number]").addClass('inputnumber');
-        $("input[type=number]").on("focus", function() {
-            $(this).on("keydown", function(event) {
-                if (event.keyCode === 38 || event.keyCode === 40 || event.keyCode === 69) {
-                event.preventDefault();
+    function getApprovalData(unit_id = null)
+    {
+        $('.app-loader').show();
+        $.ajax({
+            type: "POST",
+            url: '{{ url("hr/payroll/increment/get-approval-data") }}',
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            data : {
+                unit : unit_id
+            },
+            success: function(res)
+            {
+                $('.approval-result').html(res);
+                getSum();
+                $('.app-loader').hide();
+            },
+            error: function (reject) {
+                 $('.app-loader').hide();
             }
+        });   
+    }
+
+        $(document).ready(function() {
+            $('#activityReport').on('submit', function(e) {
+                  e.preventDefault();
+                  activityProcess();
+            });
+            //getApprovalData();
+            $("input[type=number]").addClass('inputnumber');
+            $("input[type=number]").on("focus", function() {
+                $(this).on("keydown", function(event) {
+                    if (event.keyCode === 38 || event.keyCode === 40 || event.keyCode === 69) {
+                    event.preventDefault();
+                }
         });
         $(this).on("mousewheel", function(event) {
             event.preventDefault();
@@ -722,4 +822,5 @@
     });
 </script>
 @endpush
+
 @endsection

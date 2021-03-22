@@ -754,7 +754,7 @@ class DailyActivityReportController extends Controller
             return view('hr.reports.daily_activity.attendance.unit_wise_att', compact('uniqueGroups', 'getEmployee', 'input', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area','pr','ab','lv','do','format','date','short_designation','avail_as'))->render();
         }
         return view('hr.reports.daily_activity.attendance.two_day_att', compact('uniqueGroups', 'getEmployee', 'input', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area','pr','ab','lv','do','format','date','short_designation','avail_as'))->render();
-    }
+    
 
     
 

@@ -42,7 +42,7 @@
                <a  href="{{ url('/hr/recruitment/files') }}"><i class="las la-user-plus"></i> Employee Files</a>
             </li>
             @endif
-            @if($user->can('Job Application') || $user->hasRole('Super Admin'))
+           {{--  @if($user->can('Job Application') || $user->hasRole('Super Admin'))
             <li class="@if( $segment3=='job-application') active @endif">
                <a href="{{url('hr/recruitment/job-application')}}"><i class="las la-file-contract"></i>Job Application</a>
             </li>
@@ -61,7 +61,7 @@
             <li class="@if($segment2 == 'recruitment' && $segment3=='background-verification') active @endif">
                <a href="{{ url('hr/recruitment/background-verification') }}"><i class="las la-user-check"></i>Background Verification</a>
             </li>
-            @endif
+            @endif --}}
             @if($user->can('ID Card') || $user->hasRole('Super Admin'))
             <li class="@if($segment4 == 'idcard') active @endif">
                <a href="{{ url('hr/recruitment/employee/idcard') }}"><i class="las la-list-ul"></i>ID Card</a>

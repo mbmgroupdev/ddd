@@ -1,6 +1,12 @@
 @extends('hr.layout')
 @section('title', 'Eligible')
-
+@push('css')
+<style type="text/css">
+  .iq-accordion-block{: ;
+    padding: 10px 0;
+  }
+</style>
+@endpush
 @section('main-content')
 <div class="main-content">
 	<div class="main-content-inner">
@@ -13,11 +19,11 @@
 				<li>
 					<a href="#"> Payroll </a>
 				</li>
-				<li class="active"> Increment </li>
-                <li class="top-nav-btn">
-                    <a href="{{url('hr/payroll/increment-list')}}" class="btn btn-sm btn-primary pull-right"><i class="fa fa-list"></i> Increment List</a>
-                </li>
-			</ul><!-- /.breadcrumb --> 
+				<li class="active"> Increment Approval </li>
+            <li class="top-nav-btn">
+               <a href="{{url('hr/payroll/increment-list')}}" class="btn btn-sm btn-primary pull-right">Increment List</a>
+            </li>
+			  </ul><!-- /.breadcrumb --> 
 		</div>
 
         <div class="iq-accordion career-style mat-style  ">
@@ -25,7 +31,7 @@
                <div class="active-mat clearfix">
                   <div class="container-fluid">
                      <div class="row">
-                        <div class="col-sm-12"><a class="accordion-title"><span class="header-title" style="line-height:1.8;border-radius: 50%;"> Employee Wise </span> </a></div>
+                        <div class="col-sm-12"><a class="accordion-title"><span class="header-title" style="line-height:1.8;border-radius: 50%;border:0;"> Employee Wise </span> </a></div>
                      </div>
                   </div>
                </div>
@@ -58,7 +64,7 @@
                <div class="active-mat clearfix">
                   <div class="container-fluid">
                      <div class="row">
-                        <div class="col-sm-12"><a class="accordion-title"><span class="header-title" style="line-height:1.8;border-radius: 50%;"> Unit Wise </span> </a></div>
+                        <div class="col-sm-12"><a class="accordion-title"><span class="header-title" style="line-height:1.8;border-radius: 50%;border:0;"> Filter </span> </a></div>
                      </div>
                   </div>
                </div>
@@ -323,7 +329,7 @@
 
             var request = $.ajax({
                 type: "POST",
-                url: '{{ url("hr/payroll/increment-action") }}',
+                url: '{{ url("hr/payroll/increment-action-initial") }}',
                 data : {
                     _token : data._token,
                     effective_date : data.effective_date,
@@ -555,6 +561,7 @@
         myWindow.close();
     }
 
+
     $(document).on('keypress','#AssociateSearch',function(e){
         if (e.keyCode === 13 || e.which === 13) {
             e.preventDefault();
@@ -631,7 +638,7 @@
     {
         var per = $('#inc_percent').val(), total = 0, emp = 0;
         
-        if(per > 0){
+        if(per){
             $('.increment-amount').each(function( index ) {
                 if($(this).data('checked') == 1){
                     var t = Math.ceil($(this).data('salary')*(per/100));
@@ -639,7 +646,7 @@
                     var sal = $(this).data('salary'),
                     nes = parseInt(sal) + parseInt(t);
 
-                    if(isNaN(t) || t === ''){
+                    if(isNaN(t) || t === '' ){
                       own = nes = '';
                     }
                     $(this).parent().next().children().text(parseFloat(per).toFixed(2)),
@@ -650,7 +657,7 @@
             });
         }else{
             $('.increment-amount').each(function( index ) {
-                $(this).val(0);
+                $(this).val('');
                 $(this).parent().next().children().text(''),
                 $(this).parent().next().next().children().text('');
             });
@@ -669,7 +676,6 @@
                 total += parseInt($(this).val()); 
                 emp++; 
             }
-            
         });
 
         $('.total-amount').text(total);
@@ -679,7 +685,7 @@
     $(document).on('keyup','#inc_percent', function(){
         calculateInc();
     });
-     $(document).on('keyup','.increment-amount',function(){
+    $(document).on('keyup','.increment-amount',function(){
         // calculate %
         var sal = $(this).data('salary'),
             val = $(this).val(),
