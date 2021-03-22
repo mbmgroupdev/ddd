@@ -121,10 +121,6 @@ class TestController extends Controller
 
 
 
-
-
-
-
         $data = DB::table('hr_as_basic_info AS b')
                 ->select('r.as_id','r.in_date','b.associate_id','b.as_oracle_code','b.as_name','b.as_section_id','b.as_designation_id','b.as_department_id','b.as_unit_id','bn.ben_current_salary','b.as_doj')
                 ->leftJoin('hr_attendance_mbm AS r','b.as_id','r.as_id')

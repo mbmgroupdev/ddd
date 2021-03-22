@@ -8,7 +8,7 @@
         date_default_timezone_set('Asia/Dhaka');
         $en = array('0','1','2','3','4','5','6','7','8','9');
         $bn = array('০', '১', '২', '৩',  '৪', '৫', '৬', '৭', '৮', '৯');
-        $date = str_replace($en, $bn, $emp->as_doj);
+        
     ?>
 	<div id="print-area" class="col-sm-9">
 		<style type="text/css">
@@ -23,6 +23,7 @@
 		</style>
 
 		@foreach($employees as $key => $emp)
+        @php $date = str_replace($en, $bn, $emp->as_doj); @endphp
 		<div id="jc-{{$emp->associate_id}}" class="bn-form-output" >
 
 			@php
@@ -84,7 +85,7 @@
             </table>
             <br>
             <p><span style="text-decoration: underline;"><strong>বিষয়ঃ- নিয়োগপত্র</strong></span></p>
-            <p style="text-align: justify;">কর্তৃপক্ষ অত্যন্ত আনন্দের সহিত জানাচ্ছে যে, আপনাকে নিম্নলিখিত শর্তসাপেক্ষে অত্র কারখানার <b>{{ (!empty($emp->hr_designation_name_bn)?$emp->hr_designation_name_bn:null) }}</b> পদে প্রতি মাসে সর্বসাকুল্যে মোট {{ (!empty($emp->ben_current_salary)?str_replace($en, $bn, $emp->ben_current_salary):null) }} টাকা বেতনে  
+            <p style="text-align: justify;">কর্তৃপক্ষ অত্যন্ত আনন্দের সহিত জানাচ্ছে যে, আপনাকে নিম্নলিখিত শর্তসাপেক্ষে অত্র কারখানার <b>{{ $des['bn'] }}</b> পদে প্রতি মাসে সর্বসাকুল্যে মোট {{ (!empty($emp->ben_current_salary)?str_replace($en, $bn, $emp->ben_current_salary):null) }} টাকা বেতনে  
             	@if($emp->as_emp_type_id == 3)
             	গ্রেডঃ <span style="display: inline-block;min-width: 10px; text-align: center;"> {{$des['grade']}} </span> 
             	@endif
