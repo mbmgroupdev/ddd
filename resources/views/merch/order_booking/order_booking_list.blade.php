@@ -1,33 +1,7 @@
-@extends('merch.index')
-@push('css')
-    <style type="text/css">
-        {{-- removing the links in print and adding each page header --}}
-        a[href]:after { content: none !important; }
-        thead {display: table-header-group;}
+@extends('merch.layout')
+@section('title', 'Order Booking')
 
-        /*making place holder custom*/
-        input::-webkit-input-placeholder {
-            color: #827979;
-            font-weight: bold;
-            font-size: 12px;
-        }
-        input:-moz-placeholder {
-            color: #827979;
-            font-weight: bold;
-            font-size: 12px;
-        }
-        input:-ms-input-placeholder {
-            color: #827979;
-            font-weight: bold;
-            font-size: 12px;
-        }
-        th{
-            font-size: 12px;
-            font-weight: bold;
-        }
-    </style>
-@endpush
-@section('content')
+@section('main-content')
 <div class="main-content">
 	<div class="main-content-inner">
 		<div class="breadcrumbs ace-save-state" id="breadcrumbs">
@@ -40,13 +14,11 @@
 			</ul><!-- /.breadcrumb --> 
 		</div>
 
-		<div class="page-content">    
-            <!-- Display Erro/Success Message -->
-            @include('inc/message')
-
-            <div class="row">
-                <div class="col-xs-12 table-responsive"> 
-                    <table id="dataTables" class="table table-striped table-bordered">
+        @include('inc/message')
+		<div class="panel">
+            <div class="panle-body p-4">
+                    
+                    <table id="dataTables" class="table table-responsive table-striped table-bordered" width="100%">
                         <thead>
                             <tr>
                                 <th>Sl</th>
@@ -76,8 +48,6 @@
                             </tr>
                         </tfoot>  
                     </table>
-                    </table>
-                </div><!-- /.col -->
             </div><!-- /.row -->
 		</div><!-- /.page-content -->
 	</div>
@@ -101,7 +71,7 @@ $(document).ready(function(){
         responsive: false,
         serverSide: true,
         pagingType: "full_numbers",
-        dom: "<'row'<'col-sm-2'l><'col-sm-4'i><'col-sm-3 text-center'B><'col-sm-3'f>>tp", 
+        dom: "<'row'<'col-sm-2'l><'col-sm-3'i><'col-sm-5 text-center'B><'col-sm-2'f>>tp", 
         ajax: {
             url: '{!! url("merch/order_booking_data") !!}',
             type: "POST",

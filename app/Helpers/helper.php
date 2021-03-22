@@ -918,9 +918,17 @@ if(!function_exists('shift_by_code')){
 if(!function_exists('unit_by_id')){
     function unit_by_id()
     {
-       return  Cache::remember('unit', Carbon::now()->addHour(12), function () {
+        $unit_permissions = auth()->user()->unit_permissions();
+        $data = Cache::remember('unit', Carbon::now()->addHour(12), function () {
             return Unit::orderBy('hr_unit_name','DESC')->get()->keyBy('hr_unit_id')->toArray();
-        });      
+        });  
+
+        return collect($data)
+                ->filter(function($q) use ($unit_permissions){
+                    return in_array($q['hr_unit_id'], $unit_permissions);
+                })
+                ->values()
+                ->keyBy('hr_unit_id');  
 
     }
 }
