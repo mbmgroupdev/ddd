@@ -86,7 +86,7 @@
                           <div class="row" style="padding-top: 20px;">
                               <div class="col-sm-12">
                                   <div  class=" form-group row">
-                                      <label class="col-sm-2 control-label no-padding-right" for="se_id" > Image  </label>
+                                      <label class="col-sm-2 control-label no-padding-right" for="image" > Image  </label>
                                       <div class="col-sm-10">
                                         <div class="row" id="multi-image-div" style="padding:0;">
                                           <div class="col-sm-2 multi-image">
@@ -144,17 +144,14 @@
                                       <div class="col-sm-7 col-xs-11">
                                           {{ Form::select('prd_type_id', $productTypeList, null, ['placeholder'=>'Select Product Type', 'class'=> 'col-xs-12  form-control', 'id'=>'prd_type_id', 'data-validation' => 'required']) }}
                                       </div>
-                                      @hasanyrole("Super Admin|merchandiser")
-                                          <div class="col-sm-1 col-xs-1" style="padding-left: 0px;">
-                                              <button class="addart btn btn-sm btn-info" style=" padding-bottom: 5px; padding-right: 0px; padding-left: 1px;"  data-toggle="modal" data-target="#new_product" type="button"><i class="fa fa-plus"></i></button>
-                                          </div>
-                                      @endhasanyrole
+                                      
                                   </div>
 
                                   <div class="form-group row">
                                       <label class="col-sm-4 control-label no-padding-right" for="gmt_id" > Garments Type <span style="color: red; vertical-align: top;">&#42;</span> </label>
                                       <div class="col-sm-7 col-xs-11">
-                                          {{ Form::select('gmt_id', $garmentsTypeList, null, ['placeholder'=>'Select Garments Type', 'id'=>'gmt_id', 'class'=> 'from-control col-xs-12', 'data-validation' => 'required']) }}
+                                          
+                                          {{ Form::select('gmt_id', $garmentsTypeList, null, ['placeholder'=>'Please Select Garments Type', 'id'=>'gmt_id', 'class'=> 'form-control col-xs-12 ', 'data-validation' => 'required']) }}
                                       </div>
                                       @hasanyrole("Super Admin|merchandiser")
                                           <div class="col-sm-1 col-xs-1" style="padding-left: 0px;">
@@ -166,20 +163,24 @@
                                   <div class="form-group row">
                                       <label class="col-sm-4 control-label no-padding-right" for="se_id"> Season <span style="color: red; vertical-align: top;">&#42;</span> </label>
                                       <div class="col-sm-7 col-xs-11">
-                                          {{ Form::select('se_id', $season, null, ['placeholder'=>'Please Select season', 'id'=>'se_id', 'class'=> 'from-control col-xs-12 se_id', 'data-validation' => 'required']) }}
-                                      </div>
-                                      @hasanyrole("Super Admin|merchandiser")
-                                          <div class="col-sm-1 col-xs-1" style="padding-left: 0px;">
-                                              <button class="addart btn btn-sm btn-info" style=" padding-bottom: 5px; padding-right: 0px; padding-left: 1px; display: none;" data-toggle="modal" data-target="#new_season" id="new_session_btn_id" type="button"><i class="fa fa-plus"></i></button>
+                                        <div class="row">
+                                          <div class="col-sm-9">
+                                            {{ Form::select('se_id', [], null, ['placeholder'=>'Please Select season', 'id'=>'se_id', 'class'=> 'form-control col-xs-12 ', 'data-validation' => 'required']) }}
                                           </div>
-                                      @endhasanyrole
+                                        
+                                          <div class="col-sm-3 pl-0">
+                                            <input type="year" class=" form-control" id="year" name="stl_year" placeholder="Y" required="required" value="{{ date('Y') }}" autocomplete="off" onClick="this.select()">
+                                          </div>
+                                        </div> 
+                                      </div>
+                                      
                                   </div>
 
                                   <div class="form-group row">
                                       <label class="col-sm-4 control-label no-padding-right" for="gender"> Gender <span style="color: red; vertical-align: top;">&#42;</span> </label>
                                       <div class="col-sm-7 col-xs-11">
                                         <?php $gender = ['Male'=>'Male','Female'=>'Female']; ?>
-                                          {{ Form::select('gender', $gender, null, ['placeholder'=>'Please Select Gender', 'id'=>'gender', 'class'=> 'form-control col-xs-12 se_id', 'data-validation' => 'required']) }}
+                                          {{ Form::select('gender', $gender, null, ['placeholder'=>'Please Select Gender', 'id'=>'gender', 'class'=> 'form-control col-xs-12 ', 'data-validation' => 'required']) }}
                                       </div>
                                   </div>
 
@@ -191,7 +192,7 @@
                                 <div class="form-group row" id="style-form">
                                     <label class="col-sm-4 control-label no-padding-right" for="stl_no" > Style Reference 1 <span style="color: red; vertical-align: top;">&#42;</span></label>
                                     <div class="col-sm-8 col-xs-11">
-                                        <input type="text" id="stl_no" name="stl_no" placeholder="Enter Style No" class="col-xs-12 form-control" />
+                                        <input type="text" id="stl_no" name="stl_no" placeholder="Enter Style No" class="col-xs-12 form-control" autocomplete="off" />
                                         <span id="error_stl_no"></span>
                                     </div>
                                 </div>
@@ -199,14 +200,14 @@
                                 <div class="form-group row">
                                     <label class="col-sm-4 control-label no-padding-right" for="stl_product_name" > Style Reference 2</label>
                                     <div class="col-sm-8 col-xs-11">
-                                        <input type="text" id="stl_product_name" name="stl_product_name" placeholder="Enter Text" class="col-xs-12 form-control"  />
+                                        <input type="text" id="stl_product_name" name="stl_product_name" placeholder="Enter Text" autocomplete="off" class="col-xs-12 form-control"  />
                                     </div>
                                 </div>
 
                                 <div class="form-group row">
                                     <label class="col-sm-4 control-label no-padding-right" for="stl_smv" > Sewing SMV <span style="color: red; vertical-align: top;">&#42;</span></label>
                                     <div class="col-sm-8 col-xs-11">
-                                      <input type="text" id="stl_smv" name="stl_smv" placeholder="Enter Value" class="col-xs-12 form-control" data-validation="number" data-validation-allowing="float"/>
+                                      <input type="text" id="stl_smv" name="stl_smv" placeholder="Enter Value" class="col-xs-12 form-control" autocomplete="off" data-validation="number" data-validation-allowing="float"/>
                                     </div>
                                 </div>
 
@@ -240,7 +241,7 @@
                                           <div class="form-group row" style="padding-left: 0px;">
 
                                               <div class="col-sm-3 col-xs-4">
-                                                  <button type="button" class="btn btn-primary btn-xs" id="operationModalId" data-toggle="modal" data-target="#operationModal" style="width:145px;border-radius: 5px;">Select Operation</button>
+                                                  <button type="button" class="btn btn-primary btn-sm" id="operationModalId" data-toggle="modal" data-target="#operationModal" style="width:145px;border-radius: 5px;">Select Operation</button>
                                               </div>
                                               <div class="col-sm-6 col-xs-8" id="show_selected_operations" style="margin: 0px; padding-left: 0px; padding-right: 0px;">
 
@@ -251,7 +252,7 @@
 
                                               <div class="col-sm-3 col-xs-4">
                                                   <div class="col-xs-12" style="margin-left:0px; padding-left: 0px;">
-                                                      <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" id="washTypeModalId" data-target="#washTypeSelectModal" style="border-radius: 5px;">Select Wash Type</button>
+                                                      <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" id="washTypeModalId" data-target="#washTypeSelectModal" style="border-radius: 5px;">Select Wash Type</button>
                                                       @hasanyrole("Super Admin|merchandiser")
                                                          <a href="{{ url('merch/setup/wash_type') }}" class="btn btn-sm btn-info" target="_blank"><i class="fa fa-plus"></i></a>
                                                       @endhasanyrole
@@ -263,7 +264,7 @@
                                           <div class="form-group row" style="padding-left: 0px;">
 
                                               <div class="col-sm-3 col-xs-4">
-                                                  <button type="button" class="btn btn-primary btn-xs" id="specialMachineModalId" data-toggle="modal" data-target="#specialMachineModal" style="width:145px;border-radius: 5px;">Special Machine</button>
+                                                  <button type="button" class="btn btn-primary btn-sm" id="specialMachineModalId" data-toggle="modal" data-target="#specialMachineModal" style="width:145px;border-radius: 5px;">Special Machine</button>
                                               </div>
                                               <div class="col-sm-6 col-xs-8" id="show_selected_machines" style="margin: 0px; padding-left: 0px; padding-right: 0px;"></div>
                                           </div>
@@ -272,7 +273,7 @@
 
                                               <div class="col-sm-3 col-xs-4">
                                                   <div class="col-xs-12" style="margin-left: 0px; padding-left: 0px; padding-right: 0px;">
-                                                      <button type="button" class="btn btn-primary btn-xs"  data-toggle="modal" id="sizeGroupModalId" data-target="#sizeGroupModal" style="border-radius: 5px;">Select Size Group</button>
+                                                      <button type="button" class="btn btn-primary btn-sm"  data-toggle="modal" id="sizeGroupModalId" data-target="#sizeGroupModal" style="border-radius: 5px;">Select Size Group</button>
                                                       @hasanyrole("Super Admin|merchandiser")
                                                       <a id="size-group-buyer" href="{{ url('/merch/setup/productsize?buyer=&&p_type=')}}" target="_blank" class="addart btn btn-sm btn-info" ><i class="fa fa-plus"></i></a>
                                                      @endhasanyrole
@@ -999,7 +1000,7 @@ $(document).ready(function()
          $("#new_session_btn_id").hide();
          $('#se_id')
              .empty()
-             .append('<option value="" selected="selected">Please Select Buyer</option>');
+             .append('<option value="" selected="selected">Please Select Season</option>');
          $("#show_selected_size_group").html("");
      }
     $("#b_id").on("change",function(){

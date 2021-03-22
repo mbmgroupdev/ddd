@@ -1133,5 +1133,9 @@ function displayBetweenTwoDates($date1, $date2, $format = 'Y-m-d' ) {
     return $dates;
 }
 
+function numberToMonth($val)
+{
+    return date("F", mktime(0, 0, 0, $val, 10));
+}
 
 

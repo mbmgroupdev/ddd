@@ -52,8 +52,8 @@
               </li>
               <li class="top-nav-btn">
                 <a class="btn btn-sm btn-primary add-new text-white" data-type="reservation"><i class="las la-plus"></i> New Reservation</a>
-                <a class="btn btn-sm btn-success add-new text-white" data-type="reservation"><i class="las la-list"></i> Order List</a>
-                </li>
+                <a href="{{ url('merch/order/order_list')}}" class="btn btn-sm btn-success text-white" data-type="reservation"><i class="las la-list"></i> Order List</a>
+              </li>
           </ul><!-- /.breadcrumb -->
 
       </div>
@@ -118,6 +118,9 @@ $(document).on('click', '.add-new', function() {
     var url = '';
     if(type === 'reservation'){
       url = '/merch/reservation/create';
+    }else if(type === 'order'){
+      var resId = $(this).data('resid');
+      url = '/merch/reservation/order-entry/'+resId;
     }
     $.ajax({
         type: "GET",
@@ -165,7 +168,11 @@ $(document).on('click', '#itemBtn', function(event) {
           $("#app-loader").hide();
           console.log(response)
           $.notify(response.message, response.type);
-           
+          if(response.type === 'success'){
+            setTimeout(function(){
+              window.location.href=response.url;
+            }, 1000);
+          } 
         },
         error: function (reject) {
           $("#app-loader").hide();

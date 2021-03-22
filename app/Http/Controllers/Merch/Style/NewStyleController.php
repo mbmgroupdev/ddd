@@ -48,7 +48,6 @@ class NewStyleController extends Controller
     $country          = Country::pluck('cnt_name','cnt_name');
     $buyer            = Buyer::pluck('b_name', 'b_id');
     $brand            = Brand::pluck('br_name', 'br_id');
-    $season           = Season::pluck('se_name','se_id');
 
     return view('merch/style/style_new', compact(
       'buyerList',
@@ -57,8 +56,7 @@ class NewStyleController extends Controller
       'machineList',
       'garmentsTypeList',
       'buyer',
-      'brand',
-      'season'
+      'brand'
     ));
   }
 
@@ -457,11 +455,10 @@ class NewStyleController extends Controller
       $data->gmt_id           = $request->gmt_id;
       $data->stl_description  = $this->quoteReplaceHtmlEntry($request->stl_description);
       $data->mr_season_se_id  = $request->se_id;
+      $data->stl_year         = $request->stl_year;
       $data->stl_img_link     = $stlimg;     //Image url
       $data->mr_brand_br_id   = $request->mr_brand_br_id;
-      $data->stl_addedby      = (!empty(Auth::id())?(Auth::id()):null);
-      $data->stl_updated_by   = null;
-      $data->stl_updated_on   = null;
+      $data->created_by       = (!empty(Auth::id())?(Auth::id()):null);
       $data->gender           = $request->gender;
       $data->unit_id          = $unit_id;
 
@@ -599,7 +596,6 @@ class NewStyleController extends Controller
             "s.stl_type",
             "s.prd_type_id",
             "s.stl_img_link",
-            "s.stl_updated_on",
             "b.b_id",
             "b.b_name",
             "s.stl_no",
@@ -1122,8 +1118,8 @@ class NewStyleController extends Controller
         'mr_season_se_id'  => $request->se_id,
         'stl_img_link'     => $stlimg,     //Image url
         'mr_brand_br_id'   =>$request->mr_brand_br_id,
-        'stl_updated_by'   => (!empty(Auth::id())?(Auth::id()):null),
-        'stl_updated_on'   => null
+        'updated_by'   => (!empty(Auth::id())?(Auth::id()):null),
+        'updated_at'   => null
       ]);
 
 
@@ -1375,8 +1371,8 @@ class NewStyleController extends Controller
       $data->mr_season_se_id  = $styleToCopy->mr_season_se_id;
       $data->stl_img_link     = $styleToCopy->stl_img_link;     //Image url
       $data->stl_addedby      = (!empty(Auth::id())?(Auth::id()):null);
-      $data->stl_updated_by   = null;
-      $data->stl_updated_on   = null;
+      $data->updated_by   = null;
+      $data->updated_at   = null;
       $data->stl_status       = 0;
       $data->gender           = $styleToCopy->gender;
       $data->unit_id          = $styleToCopy->unit_id;
@@ -1678,8 +1674,8 @@ class NewStyleController extends Controller
       $data->stl_smv          = $this->quoteReplaceHtmlEntry($development->stl_smv);
       $data->stl_img_link     = $development->stl_img_link;   //Image url
       $data->stl_addedby      = (!empty(Auth::id())?(Auth::id()):null);
-      $data->stl_updated_by   = null;
-      $data->stl_updated_on   = null;
+      $data->updated_by   = null;
+      $data->updated_at   = null;
       $data->stl_status       = $development->stl_status;
       $data->gender           = $development->gender;
       $data->unit_id          = $development->unit_id;
@@ -1867,8 +1863,8 @@ class NewStyleController extends Controller
                   "s.stl_img_link",
                   "s.stl_addedby",
                   "s.stl_added_on",
-                  "s.stl_updated_by",
-                  "s.stl_updated_on",
+                  "s.updated_by",
+                  "s.updated_at",
                   "s.stl_status"
                   )
                   ->leftJoin("mr_buyer AS b", "b.b_id", "=", "s.mr_buyer_b_id")
@@ -2413,8 +2409,8 @@ class NewStyleController extends Controller
       $data->mr_season_se_id  = $request->se_id;
       $data->stl_img_link     = $stlimg;     //Image url
       $data->stl_addedby      = (!empty(Auth::id())?(Auth::id()):null);
-      $data->stl_updated_by   = null;
-      $data->stl_updated_on   = null;
+      $data->updated_by   = null;
+      $data->updated_at   = null;
       $data->stl_status       = 0;
       $data->gender           = $request->gender;
       $data->unit_id          = $styleToCopy->unit_id;

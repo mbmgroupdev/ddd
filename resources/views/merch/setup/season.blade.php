@@ -45,15 +45,24 @@
                                 <label for="se_name" > Season Name </label>
                                 
                             </div>
-                            <div class="form-group has-required has-float-label">
-                                <input type="month" class="form-control" id="se_mm_start" name="se_mm_start" placeholder="Start Month-Year"required="required" value="{{ (request()->month_year?request()->month_year:date('Y-m') )}}"autocomplete="off" />
-                                <label for="se_mm_start" > Start Month-Year </label>
-                                
+                            
+                            <div class="form-group has-required has-float-label select-search-group">
+                              <select name="se_start" class="form-control capitalize select-search" id="se_start" >
+                                <option value=""> - Select - </option>
+                                @for($i=1;$i<=12;$i++)
+                                <option value="{{$i}}">{{ numberToMonth($i) }}</option>
+                                @endfor
+                              </select>
+                              <label for="se_start">Start Month</label>
                             </div>
-                            <div class="form-group has-required has-float-label">
-                                <input type="month" class="form-control" id="se_mm_end" name="se_mm_end" placeholder="End Month-Year"required="required" value="{{ (request()->month_year?request()->month_year:date('Y-m') )}}"autocomplete="off" />
-                                <label for="se_mm_end" > End Month-Year </label>
-                                
+                            <div class="form-group has-required has-float-label select-search-group">
+                                <select name="se_end" class="form-control capitalize select-search" id="se_end" >
+                                    <option value=""> - Select - </option>
+                                    @for($i=1;$i<=12;$i++)
+                                    <option value="{{$i}}">{{ numberToMonth($i) }}</option>
+                                    @endfor
+                                </select>
+                                <label for="se_end" > End Month </label>
                             </div>
                             
                             <div class="form-group">
@@ -74,8 +83,8 @@
                                     <th>SL.</th>
                                     <th>Buyer Name</th>
                                     <th>Season Name</th>
-                                    <th>Start Month-Year</th>
-                                    <th>End Month-Year</th>
+                                    <th>Start Month</th>
+                                    <th>End Month</th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -87,8 +96,8 @@
                                     <td>{{ ++$i }}</td>
                                     <td id="season-buyer-{{ $season->se_id }}">{!! $season->b_name !!}</td>
                                     <td id="season-name-{{ $season->se_id }}">{!! $season->se_name !!}</td>
-                                    <td id="season-start-{{ $season->se_id }}">{{ $season->se_start }}</td>
-                                    <td id="season-end-{{ $season->se_id }}">{{ $season->se_end }}</td>
+                                    <td id="season-start-{{ $season->se_id }}">{{ numberToMonth($season->se_start) }}</td>
+                                    <td id="season-end-{{ $season->se_id }}">{{ numberToMonth($season->se_end) }}</td>
                                     <td id="season-status-{{ $season->se_id }}">{{ ($season->season_status ==1)? "Active":"Inactive" }}</td>
 
                                     <td width="20%">
