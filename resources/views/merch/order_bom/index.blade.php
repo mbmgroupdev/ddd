@@ -75,7 +75,7 @@
                                               <td width="120">Delivery Date:</td>
                                               <th>{{ custom_date_format($order->order_delivery_date) }}</th>
                                               <td width="80">Season :</td>
-                                              <th>{!! $order->season->se_name??'' !!}</th>
+                                              <th>{!! $getSeason[$order->style->mr_season_se_id]->se_name !!} - {{ $order->style->stl_year??'' }}</th>
                                               <td width="120">Style No :</td>
                                               <th>{!! $order->style->stl_no??'' !!}</th>
                                             </tr>

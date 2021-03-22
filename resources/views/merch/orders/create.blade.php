@@ -30,42 +30,11 @@
 				        <label for="year-month" > Year-Month </label>
 				    </div>
 		    	</div>
-		    	<div class="col-sm-6">
-		    		<div class="form-group has-required has-float-label select-search-group">
-				      {{Form::select('prd_type_id', $prdtypList, null, [ 'id' => 'product-type', 'placeholder' => 'Select Product Type Name', 'class' => 'form-control filter', 'required'])}}
-				      <label for="product-type" > Product Type Name </label>
-				      
-				    </div>
-		    	</div>
+		    	
 		    </div>
 		    
-		    <div class="row">
-		    	<div class="col-sm-4">
-		    		<div class="form-group has-required has-float-label">
-				        <input type="number" id="res-quantity" name="res_quantity" placeholder="Enter Quantity" class="form-control sah_cal" autocomplete="off" value="0" onClick="this.select()" required min="0" />
-				        <label for="res-quantity" > Quantity </label>
-				    </div>
-		    	</div>
-		    	<div class="col-sm-4">
-		    		<div class="form-group has-required has-float-label">
-				        <input type="number" id="res-smv" name="res_sewing_smv" placeholder="Enter Sewing SMV " class="form-control sah_cal" autocomplete="off" value="0" step="any" onClick="this.select()" required min="0" />
-				        <label for="res-smv" > Sewing SMV </label>
-				    </div>
-		    	</div>
-		    	<div class="col-sm-4">
-				    <div class="form-group has-required has-float-label">
-				        <input type="number" id="sah" name="res_sah" placeholder="Enter SAH" class="form-control" autocomplete="off" step="any" required readonly value="0" min="0" />
-				        <label for="sah" > SAH </label>
-				    </div>
-		    	</div>
-		    </div>
-		    <div class="form-group">
-		    	<div class="custom-control custom-checkbox custom-checkbox-color-check custom-control-inline">
-                  <input type="checkbox" name="order_check" class="custom-control-input bg-primary" value="0" id="order-check" >
-                  <label class="custom-control-label cursor-pointer" for="order-check"> Order Entry</label>
-                </div>
-		    </div>
-		    <div id="order-entry-section" style="display: none">
+		    
+		    <div id="order-entry-section">
 		    	<div class="row">
 		    		<div class="col-sm-6">
 			    		<div class="form-group has-required has-float-label select-search-group">

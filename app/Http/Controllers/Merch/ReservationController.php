@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Merch;
 
 use App\Http\Controllers\Controller;
 use App\Models\Hr\Unit;
+use App\Models\Merch\Brand;
 use App\Models\Merch\Buyer;
+use App\Models\Merch\OrderEntry;
 use App\Models\Merch\ProductType;
 use App\Models\Merch\Reservation;
+use App\Models\Merch\Style;
 use DB;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
@@ -67,11 +70,14 @@ class ReservationController extends Controller
             $queueData->orderBy('cr.id', 'DESC');
         $data = $queueData->get();
         $ordered = DB::table('mr_order_entry')
-            ->select('res_id', DB::raw("SUM(order_qty) AS sum"))
-            ->whereIn('unit_id', auth()->user()->unit_permissions())
-            ->whereIn('mr_buyer_b_id', auth()->user()->buyer_permissions())
-            ->pluck('sum', 'res_id');
-
+            ->select('res_id', DB::raw("SUM(order_qty) AS qty"))
+            // ->whereIn('unit_id', auth()->user()->unit_permissions())
+            // ->whereIn('mr_buyer_b_id', auth()->user()->buyer_permissions())
+            // ->pluck('sum', 'res_id')
+            ->groupBy('res_id')
+            ->get()
+            ->keyBy('res_id', true);
+        // dd($ordered);
         $getUnit = unit_by_id();
         $getBuyer = buyer_by_id();
         $getProductType = product_type_by_id();
@@ -94,16 +100,17 @@ class ReservationController extends Controller
                 return $data->res_quantity;
             })
             ->addColumn('confirmed', function($data) use ($ordered){
-                return $ordered[$data->id]??0;
+                return $ordered[$data->id]->qty??0;
 
             })
             ->addColumn('balance', function($data) use ($ordered){
-                return $data->res_quantity - (isset($ordered[$data->id])?($ordered[$data->id]??0):0);
+                return $data->res_quantity - (isset($ordered[$data->id])?($ordered[$data->id]->qty??0):0);
 
             })
             ->addColumn('status', function ($data){
-                
-                if((date('Y') == (int)$data->res_year) && (date('m') >= (int)$data->res_month - 1) ){
+                $yearMonth = $data->res_year.'-'.$data->res_month;
+                $resLastMonth = date('Y-m', strtotime('-1 month', strtotime($yearMonth)));
+                if(strtotime(date('Y-m')) > strtotime($resLastMonth)){
                   $rdata = '<button class="btn btn-xs btn-danger btn-round" rel="tooltip" data-tooltip="Date Expired" data-tooltip-location="top" >
                             Closed</button>';
 
@@ -114,21 +121,19 @@ class ReservationController extends Controller
 
             })
             ->addColumn('action', function($data) use ($ordered){
-                $mytime = date("Y-m-d");
-                $mnth = explode('-',$mytime);
-               
-                if(((int)$mnth[0] == (int)$data->res_year) && (((int)$mnth[1]) >= (int)$data->res_month - 1) ){
-                    $rd = 'style="pointer-events: none;"';//1=closed
-                }else{
-                    $rd = '';//2=not closed
+                $yearMonth = $data->res_year.'-'.$data->res_month;
+                $resLastMonth = date('Y-m', strtotime('-1 month', strtotime($yearMonth)));
+                $flag = 0;
+                if(strtotime(date('Y-m')) > strtotime($resLastMonth)){
+                    $flag = 1;
                 }
                 $action_buttons= "<div>
-                    <a href='#' class=\"btn btn-sm btn-success\" data-toggle=\"tooltip\" title=\"Edit Reservation\">
-                        <i class=\"ace-icon fa fa-pencil bigger-120\"></i>
+                    <a href='#' class=\"btn btn-xs btn-success\" data-toggle=\"tooltip\" title=\"Edit Reservation\">
+                        <i class=\"ace-icon fa fa-pencil \"></i>
                     </a> ";
-                    if($data->res_quantity > (isset($ordered[$data->id])?($ordered[$data->id]??0):0)) {
-                        $action_buttons.= "<a href='#' class=\"btn btn-sm btn-primary\" data-toggle='tooltip' title=\"Order Entry\">
-                            <i class=\"ace-icon fa fa-cart-plus bigger-120\"></i>
+                    if($data->res_quantity > (isset($ordered[$data->id])?($ordered[$data->id]->qty??0):0) && $flag == 0) {
+                        $action_buttons.= "<a href='#' class=\"btn btn-xs add-new btn-primary\" data-toggle='tooltip' title=\"Order Entry\" data-type='order' data-resid=\"$data->id\">
+                            <i class=\"ace-icon fa fa-cart-plus \"></i>
                         </a>";
                     }
                 $action_buttons.= "</div>";
@@ -160,11 +165,11 @@ class ReservationController extends Controller
     {
         $input = $request->all();
         $data['type'] = 'error';
-        $data['value'] = [];
         $yearMonth = explode('-', $input['res_year_month']);
         $input['res_month'] = $yearMonth[1];
         $input['res_year'] = $yearMonth[0];
-        return $input;
+        $orderNo = make_order_number($input, $input['res_year']);
+
         DB::beginTransaction();
         try {
             // check reservation exists
@@ -175,12 +180,61 @@ class ReservationController extends Controller
             }
 
             // create reservation
-            $resId = Reservation::create($input)->id;
+            $resId = Reservation::insertGetId([
+                'hr_unit_id'     => $input['hr_unit_id'],
+                'b_id'           => $input['b_id'],
+                'res_month'      => $input['res_month'],
+                'res_year'       => $input['res_year'],
+                'prd_type_id'    => $input['prd_type_id'],
+                'res_quantity'   => $input['res_quantity'],
+                'res_sah'        => $input['res_sah'],
+                'res_sewing_smv' => $input['res_sewing_smv'],
+                'res_status'     => 1,
+                'created_by'     => auth()->user()->id
+            ]);
+            $data['url'] = url()->previous();
+            $data['message'] = "Reservation Successfully Save.";
             // check & create order base on mr_style_stl_id
-            // if()
+            if($input['mr_style_stl_id'] != null && $input['mr_style_stl_id'] != ''){
+                // check order qty > reservation qty
+                if($input['order_qty'] > $input['res_quantity']){
+                    DB::rollback();
+                    $data['message'] = "Order quantity can't large then Reservation Quantity!";
+                    return response()->json($data);
+                }
+
+                // order entry & check
+                $orderNo = make_order_number($input, $input['res_year']);
+                $order = [
+                    'order_code'          => $orderNo,
+                    'res_id'              => $resId,
+                    'unit_id'             => $input['hr_unit_id'],
+                    'mr_buyer_b_id'       => $input['b_id'],
+                    'order_month'         => $input['res_month'],
+                    'order_year'          => $input['res_year'],
+                    'mr_style_stl_id'     => $input['mr_style_stl_id'],
+                    'order_ref_no'        => $input['order_ref_no'],
+                    'order_qty'           => $input['order_qty'],
+                    'order_delivery_date' => $input['order_delivery_date'],
+                    'pcd'                 => $input['pcd'],
+                    'order_status'        => 1,
+                    'order_entry_source'  => 0,
+                    'created_by'          => auth()->user()->id
+                ];
+                $checkOrder = OrderEntry::getCheckOrderExists($order);
+                if($checkOrder == true){
+                    DB::rollback();
+                    $data['message'] = "Order Already Exists";
+                    return response()->json($data);
+                }
+
+                $orderId = OrderEntry::insertGetId($order);
+                $data['url'] = url('/merch/order/bom/').'/'.$orderId;
+                $data['message'] = "Order Entry Successfully.";
+            }
+
             DB::commit();
             $data['type'] = 'success';
-            $data['message'] = "Reservation Successfully Save.";
             return response()->json($data);
         } catch (\Exception $e) {
             DB::rollback();
@@ -233,5 +287,32 @@ class ReservationController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function orderEntry($resid)
+    {
+        try {
+            $unitList= Unit::whereIn('hr_unit_id', auth()->user()->unit_permissions())->pluck('hr_unit_name', 'hr_unit_id');
+            
+            $reservation = DB::table('mr_capacity_reservation')
+                        ->where('id', $resid)
+                        ->first();
+            $reservation->res_month = date('F', mktime(0, 0, 0, $reservation->res_month, 10));
+
+            $ordered = DB::table('mr_order_entry')
+                        ->where('res_id', $resid)
+                        ->select(DB::raw("SUM(order_qty) AS sum"))
+                        ->first();
+            $reservation->res_quantity = $reservation->res_quantity - $ordered->sum;
+            $brandList = Brand::where('b_id', $reservation->b_id)->pluck('br_name','br_id');
+
+            $styleList = Style::where('mr_buyer_b_id', $reservation->b_id)
+                        ->where('stl_type', "Bulk")
+                        ->pluck('stl_no', 'stl_id');
+            return view('merch/orders/create', compact('unitList','reservation', 'brandList', 'styleList'));
+        } catch (\Exception $e) {
+            return 'error';
+        }
+        
     }
 }

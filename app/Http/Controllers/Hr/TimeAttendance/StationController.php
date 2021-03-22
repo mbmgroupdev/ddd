@@ -705,6 +705,7 @@ class StationController extends Controller
                 $stationId = $input['exist_id'][$i];
                 $table = get_att_table($value['unit_id']);
                 $flag = 0;
+                $newIn = 0;
                 if($input['name'][$i] != null && $value['changed_line'] != null){
                     if($value['end_date'] != null){
                         if($value['start_date'] > $value['end_date']){
@@ -720,6 +721,14 @@ class StationController extends Controller
                             if($checkStation != null){
                                 $data['message'][] = $value['associate_id'].' is already assigned.';
                                 continue;
+                            }
+                            if($station->end_date == '' && strtotime(date('Y-m-d', strtotime($station->start_date))) < strtotime(date('Y-m-d', strtotime($value['start_date'])))){
+
+                                $previousDate = date('Y-m-d', strtotime('-1 day', strtotime($value['start_date'])));
+                                Station::where('station_id', $station->station_id)->update([
+                                    'end_date' => $previousDate
+                                ]);
+                                $newIn = 1;
                             }else{
                                 $checkNull = Station::where('station_id', $station->station_id)->whereNull('end_date')->first();
 
@@ -734,8 +743,14 @@ class StationController extends Controller
                                 $getStation = Station::where('station_id', $station->station_id)->update($value);
                                 $flag = 1;
                             }
+                            
                         }
                     }else{
+                        $newIn = 1;
+
+                    }
+
+                    if($newIn == 1){
                         if($value['end_date'] != null){
                             $getStation = Station::checkDateRangeWiseStartDateExistsLine($value['associate_id'], $value['start_date'], $value['end_date'], $value['changed_line']);
                             
@@ -763,7 +778,6 @@ class StationController extends Controller
                             $flag = 1;
                            
                         }
-
                     }
                     // attendance update
                     if($flag == 1){

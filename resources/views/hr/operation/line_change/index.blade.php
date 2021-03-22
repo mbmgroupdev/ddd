@@ -226,39 +226,39 @@
         });
     });
 
-    $(document).on('change','.start-date', function(){
-        typeId = $(this).attr('id');
-        id = typeId.split("_");
+    // $(document).on('change','.start-date', function(){
+    //     typeId = $(this).attr('id');
+    //     id = typeId.split("_");
 
-        $.ajax({
-            type: "get",
-            url: '{{ url("/hr/operation/date-wise-line-floor") }}',
-            data: {
-                associate: $('#associate_'+id[1]).val(),
-                date: $('#startdate_'+id[1]).val()
-            },
-            success: function(response)
-            {
-              if(response.type === 'success'){
-                item = response.value;
-                $('#unit_'+id[1]).val(item.unit_id);
-                $('#line_'+id[1]).val(item.line_name);
-                $('#lineid_'+id[1]).val(item.line_id);
-                $('#floor_'+id[1]).val(item.floor_name);
-                $('#floorid_'+id[1]).val(item.floor_id);
-                $('#startdate_'+id[1]).val(item.start_date);
-                $('#enddate_'+id[1]).val(item.end_date);
-                $('#existid_'+id[1]).val(item.exist_id);
-                setTimeout(function() { $('#line_'+id[1]).focus().select(); }, 200);
-              }else{
-                $.notify(response.msg, 'error');
-              }
-            },
-            error: function (reject) {
-              $.notify(reject, 'error');
-            }
-        });
-    });
+    //     $.ajax({
+    //         type: "get",
+    //         url: '{{ url("/hr/operation/date-wise-line-floor") }}',
+    //         data: {
+    //             associate: $('#associate_'+id[1]).val(),
+    //             date: $('#startdate_'+id[1]).val()
+    //         },
+    //         success: function(response)
+    //         {
+    //           if(response.type === 'success'){
+    //             item = response.value;
+    //             $('#unit_'+id[1]).val(item.unit_id);
+    //             $('#line_'+id[1]).val(item.line_name);
+    //             $('#lineid_'+id[1]).val(item.line_id);
+    //             $('#floor_'+id[1]).val(item.floor_name);
+    //             $('#floorid_'+id[1]).val(item.floor_id);
+    //             $('#startdate_'+id[1]).val(item.start_date);
+    //             $('#enddate_'+id[1]).val(item.end_date);
+    //             $('#existid_'+id[1]).val(item.exist_id);
+    //             setTimeout(function() { $('#line_'+id[1]).focus().select(); }, 200);
+    //           }else{
+    //             $.notify(response.msg, 'error');
+    //           }
+    //         },
+    //         error: function (reject) {
+    //           $.notify(reject, 'error');
+    //         }
+    //     });
+    // });
     $(document).on('change','.unit', function(){
         typeId = $(this).attr('id');
         id = typeId.split("_");
@@ -323,7 +323,7 @@
             data: form.serialize(), // serializes the form's elements.
             success: function(response)
             {
-                console.log(response);
+                // console.log(response);
                 var flag = 0;
                 if(response.type === 'success'){
                     for (var key in response.message) {
