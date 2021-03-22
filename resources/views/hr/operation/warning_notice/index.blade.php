@@ -495,8 +495,26 @@
                                         <p><b class="underline">প্রাপক, </b><br><br></p>
                                         <p>নামঃ {{$info->hr_bn_associate_name??'' }}</p>
                                         <p>পিতাঃ {{ $info->hr_bn_father_name??'' }} </p>
-                                        <p>বাসা নংঃ {{ $info->hr_bn_present_house??'' }}, {{ $info->hr_bn_present_house??'' }} {{$info->emp_adv_info_pres_road??''}},</p>
+                                        <p><b>বর্তমান ঠিকানাঃ</b></p>
+                                        <p>বাসা নংঃ {{ $info->hr_bn_present_house??'' }}, {{ $info->hr_bn_present_house??'' }} {{$info->hr_bn_present_po??''}},</p>
                                         <p> ডাকঘরঃ {{ $info->hr_bn_present_po??'' }}</p>
+                                        <p>থানাঃ {{ $info->present_upzilla_bn??'' }}, জেলাঃ {{ $info->present_district_bn??'' }} </p>
+                                    </div>
+                                </div>
+                                <div style="page-break-after: always;"></div>
+                                <div class="address_section" style="display: flex;width:800px;margin:20pt auto;">
+                                    <div class="address_left" style="width:340px;padding:30pt;">
+                                        <p><b class="underline">প্রেরক, </b><br><br></p>
+                                        <p>{{ $unitAddress['hr_unit_name_bn']??'' }} </p>
+                                        <p>{{ $unitAddress['hr_unit_address_bn']??'' }} </p>
+                                    </div>
+                                    <div class="address_right pl-5" style="padding:30pt;border-left: 1px solid #d1d1d1;">
+                                        <p><b class="underline">প্রাপক, </b><br><br></p>
+                                        <p>নামঃ {{$info->hr_bn_associate_name??'' }}</p>
+                                        <p>পিতাঃ {{ $info->hr_bn_father_name??'' }} </p>
+                                        <p><b>স্থায়ী ঠিকানাঃ</b></p>
+                                        <p>গ্রামঃ {{ $info->hr_bn_permanent_village??'' }}, {{ $info->hr_bn_permanent_village??'' }},</p>
+                                        <p> ডাকঘরঃ {{ $info->hr_bn_permanent_po??'' }}</p>
                                         <p>থানাঃ {{ $info->permanent_upzilla_bn??'' }}, জেলাঃ {{ $info->permanent_district_bn??'' }} </p>
                                     </div>
                                 </div>

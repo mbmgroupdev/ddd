@@ -144,7 +144,7 @@
       </li>
       @if(auth()->user()->canany([]) || $user->hasRole('Super Admin'))
 
-      <li class="@if($segment2 == 'po') active @endif">
+      <li class="@if($segment2 == 'order_booking') active @endif">
          <a href="#order_booking" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="las la-book-medical"></i><span>Order Booking</span><i class="las la-angle-right iq-arrow-right"></i></a>
          <ul id="order_booking" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
             @if($user->can('New Style') || $user->hasRole('Super Admin'))
@@ -153,8 +153,8 @@
             </li>
             @endif
             @if($user->can('Style List' ) || $user->hasRole('Super Admin'))
-            <li class="@if($segment2 == 'style' && $segment3=='style_list') active @endif">
-               <a href="#"><i class="las la-list-ol"></i> Order Booking List</a>
+            <li class="@if($segment2 == 'order_booking') active @endif">
+               <a href="{{url('merch/order_booking')}}"><i class="las la-list-ol"></i> Order Booking List</a>
             </li>
             @endif
          </ul>

@@ -14,23 +14,26 @@ use App\Models\Merch\BomOtherCosting;
 use App\Models\Merch\OrderBomOtherCosting;
 use App\Models\Merch\OrderOperationNCost;
 use DB,Validator, ACL, DataTables, Form;
+
 class OrderBookingController extends Controller
 {
-    public function showList(){
-    	$unitList= Unit::whereIn('hr_unit_id', auth()->user()->unit_permissions())->pluck('hr_unit_name', 'hr_unit_id');
-		$buyerList= Buyer::whereIn('b_id', auth()->user()->buyer_permissions())->pluck('b_name', 'b_id');
-		$brandList= Brand::pluck('br_name','br_id');
-		$styleList= Style::pluck('stl_no', 'stl_id');
-    	$seasonList= Season::pluck('se_name', 'se_id');
+    public function showList()
+    {
+    	$unitList = collect(unit_by_id())->pluck('hr_unit_short_name', 'hr_unit_id');
+		$buyerList = Buyer::whereIn('b_id', auth()->user()->buyer_permissions())->pluck('b_name', 'b_id');
+		$brandList = Brand::pluck('br_name','br_id');
+		$styleList = Style::pluck('stl_no', 'stl_id');
+    	$seasonList = Season::pluck('se_name', 'se_id');
     	return view("merch.order_booking.order_booking_list", compact('buyerList', 'seasonList', 'unitList', 'brandList', 'styleList'));
     }
-    public function getListData(){
 
+    public function getListData()
+    {
         $orders = DB::table('mr_order_entry as moe')
             ->select(
                 "moe.order_id",
                 "moe.order_code",
-                "hu.hr_unit_name",
+                "hu.hr_unit_short_name as hr_unit_name",
                 "mb.b_name",
                 "mbr.br_name",
                 "ms.se_name",
@@ -45,7 +48,6 @@ class OrderBookingController extends Controller
             ->leftJoin("mr_style As mstl", "mstl.stl_id","=","moe.mr_style_stl_id")
             ->orderBy('moe.order_id','desc')
             ->get();
-        //dd($orders);exit;
 
 
         return DataTables::of($orders)
@@ -58,15 +60,6 @@ class OrderBookingController extends Controller
                                  <i class=\"ace-icon fa fa-edit \"></i>
                                   </a>
                                   ";
-//                }else{
-//                    $return .= "<a href=".url('merch/order_breakdown/show/'.$orders->order_id)." class=\"btn btn-xs btn-warning\" data-toggle=\"tooltip\" title=\"Edit\">
-//                                 <i class=\"ace-icon fa fa-plus \"></i>
-//                                  </a>
-//
-//                                  ";
-//                }
-
-
 
                 $return .= "</div>";
                 return $return;

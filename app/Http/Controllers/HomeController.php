@@ -26,7 +26,16 @@ class HomeController extends Controller
      */
     public function index()
     {
-        
+        $ids = [220,221,22,234,212,253,457,123,45];
+        DB::beginTransaction();
+            foreach ($ids as $key => $value) {
+                # code...
+                DB::table('hr_attendance_mbm')
+                    ->where('as_id', $value)
+                    ->update(['ot_hour'=> 0]);
+            }
+        DB::commit();
+
         $att = $this->userAtt();
         $associate_id = auth()->user()->associate_id;
         $leaves = array();

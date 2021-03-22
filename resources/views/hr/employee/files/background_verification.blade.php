@@ -63,7 +63,7 @@
                 	<font style="width:30%;border-bottom:1px dotted #999;font-weight: bold;font-size:12px;text-align: center;"> {{ (!empty($emp->associate_id)?$emp->associate_id:null) }}
                     </font>
                     <font style="width:10%;">পদবীঃ</font>
-                    <font style="width:50%;border-bottom:1px dotted #999; text-align: center;">&nbsp; {{ $des['en'] }}
+                    <font style="width:50%;border-bottom:1px dotted #999; text-align: center;">&nbsp; {{ $des['bn'] }}
                     </font>
                 </p>
                 <p style="display:flex;justify-content: space-between;">

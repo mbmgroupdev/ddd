@@ -138,8 +138,8 @@
         
             <p class="d-flex">
                 <font style="display:inline-block">৯ । পদের নামঃ</font>
-                <font class="bordered">
-                    {{ (!empty($emp->hr_designation_name_bn)?$emp->hr_designation_name_bn:null) }}
+                <font class="bordered" style="padding-left: 10px;">
+                    {{ $des['bn'] }}
                 </font>
             </p> 
 
