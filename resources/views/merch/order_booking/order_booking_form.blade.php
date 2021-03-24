@@ -1,5 +1,7 @@
-@extends('merch.index')
-@section('content')
+@extends('merch.layout')
+@section('title', 'Order Booking')
+
+@section('main-content')
 <div class="main-content">
 	<div class="main-content-inner">
 		<div class="breadcrumbs ace-save-state" id="breadcrumbs">

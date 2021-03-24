@@ -106,7 +106,7 @@ class TestController extends Controller
     {
 
         
-        return $this->updateDept();
+        return $this->newMigrate();
         return $this->testMail();
         
         return '';
@@ -2092,31 +2092,45 @@ class TestController extends Controller
 
     public function newMigrate()
     {
-        $section = section_by_id();
+        $section = subSection_by_id();
         $designation = designation_by_id();
 
         $emps =  [];
 
         $insert = [];
         foreach ($emps as $key => $v) {
-            $insert[$key] = $v;
-            $insert[$key]['worker_area_id'] = null;
             $insert[$key]['as_oracle_code'] = $key;
+            $insert[$key]['worker_name'] = $v['NAME'];
+            $insert[$key]['worker_doj'] = date('Y-m-d', strtotime($v['doj']));
+            $insert[$key]['worker_dob'] = date('Y-m-d', strtotime($v['dob']));
+            $insert[$key]['worker_ot'] = $v['OT'] == 'Y'?1:0;
+            $insert[$key]['worker_gender'] = $v['sex'] == 'M'?'Male':'Female';
+            $insert[$key]['worker_unit_id'] = 3;
+            $insert[$key]['location_id'] = 9;
+            $insert[$key]['worker_area_id'] = null;
             $insert[$key]['worker_department_id'] = null;
+            $insert[$key]['worker_section_id'] = null;
+            $insert[$key]['worker_subsection_id'] = null;
             $insert[$key]['worker_emp_type_id'] = null;
-            if($v['worker_section_id'] != null){
-                $k = $v['worker_section_id'];
+            $insert[$key]['worker_designation_id'] = null;
+            $c = 0;
+            if($v['SECTION'] != null){
+                $k = $v['SECTION'];
                 if(isset($section[$k])){
 
-                    $insert[$key]['worker_area_id'] = $section[$k]['hr_section_area_id'];
-                    $insert[$key]['worker_department_id'] = $section[$k]['hr_section_department_id'];
+                    $insert[$key]['worker_area_id'] = $section[$k]['hr_subsec_area_id'];
+                    $insert[$key]['worker_department_id'] = $section[$k]['hr_subsec_department_id'];
+                    $insert[$key]['worker_section_id'] = $section[$k]['hr_subsec_section_id'];
+                    $insert[$key]['worker_subsection_id'] = $k;
                 }
 
             }
-            if($v['worker_designation_id'] != null){
-                $kd = $v['worker_designation_id'];
-                if(isset($designation[$k])){
+            if($v['DESIGNATION'] != null){
+
+                $kd = $v['DESIGNATION'];
+                if(isset($designation[$kd])){
                     $insert[$key]['worker_emp_type_id'] = $designation[$kd]['hr_designation_emp_type'];
+                    $insert[$key]['worker_designation_id'] = $kd;
                 }
             }
 
@@ -2125,9 +2139,9 @@ class TestController extends Controller
 
         }
 
-        DB::table('hr_worker_recruitment')->insert($insert);
+        return DB::table('hr_worker_recruitment')->insert($insert);
 
-        dd($insert);
+        return (count($insert));
     }
 
     public function migrateAll(){

@@ -1,4 +1,7 @@
-@extends('merch.index')
+@extends('merch.layout')
+@section('title', 'Order Booking')
+
+@section('main-content')
 @push('css')
 <style type="text/css">
     {{-- removing the links in print and adding each page header --}}
@@ -27,7 +30,6 @@
     }
 </style>
 @endpush
-@section('content')
 <div class="main-content">
 	<div class="main-content-inner">
 		<div class="breadcrumbs ace-save-state" id="breadcrumbs">
@@ -37,48 +39,49 @@
 					<a href="#">Order Booking</a>
 				</li>  
 				<li class="active">Order Booking List</li>
+                <li class="top-nav-btn">
+                    <a type="button" class="btn btn-primary btn-xs" href="{{ url('merch/order_po_booking/showForm') }}">Add Order Booking</a>
+                </li>
 			</ul><!-- /.breadcrumb --> 
 		</div>
 
-		<div class="page-content">
-            <div class="row">
-                <!-- Widget Body -->
-                <div class="panel-body">
-                    <a type="button" class="btn btn-primary btn-xs" href="{{ url('merch/order_po_booking/showForm') }}">Add Order Booking</a>
-                    @include('inc/message')
-                    <div class="worker-list">
-                        <table id="dataTables" class="table table-striped table-bordered table-responsive" style="display: block; white-space: nowrap; overflow-x: auto; width: 100%;">
-                            <thead>
-                                <tr class="warning">
-                                    <th width="5%">Sl</th>
-                                    <th width="10%">Booking Reference</th>
-                                    <th>Buyer</th>
-                                    <th>Supplier</th>
-                                    <th>Unit</th>
-                                    {{-- <th>Order & PO</th> --}}
-                                    <th>Booking Quantity</th>
-                                    <th>Delivery Date</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                             <tfoot>
-                                <tr>
-                                    <th>Sl</th>
-                                    <th>Booking Reference</th>
-                                    <th>Buyer</th>
-                                    <th>Supplier</th>
-                                    <th>Unit</th>
-                                    {{-- <th>Order & PO</th> --}}
-                                    <th>Booking Quantity</th>
-                                    <th>Delivery Date</th>
-                                    <th>Action</th>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                </div><!-- /.Widget Body -->
-            </div><!-- /.row -->
-		</div><!-- /.page-content -->
+        @include('inc/message')
+        <div class="panel">
+            <!-- Widget Body -->
+            <div class="panel-body">
+                
+                <div class="worker-list">
+                    <table id="dataTables" class="table table-striped table-bordered table-responsive" style="display: block; white-space: nowrap; overflow-x: auto; width: 100%;">
+                        <thead>
+                            <tr class="warning">
+                                <th width="5%">Sl</th>
+                                <th width="10%">Booking Reference</th>
+                                <th>Buyer</th>
+                                <th>Supplier</th>
+                                <th>Unit</th>
+                                {{-- <th>Order & PO</th> --}}
+                                <th>Booking Quantity</th>
+                                <th>Delivery Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                         <tfoot>
+                            <tr>
+                                <th>Sl</th>
+                                <th>Booking Reference</th>
+                                <th>Buyer</th>
+                                <th>Supplier</th>
+                                <th>Unit</th>
+                                {{-- <th>Order & PO</th> --}}
+                                <th>Booking Quantity</th>
+                                <th>Delivery Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div><!-- /.Widget Body -->
+        </div><!-- /.row -->
 	</div>
 </div>
 <script type="text/javascript">
@@ -93,7 +96,7 @@ $(document).ready(function() {
         serverSide: true,
         pagingType: "full_numbers",
         ajax: '{!! url("merch/order_po_booking/getPoOrderListData") !!}',
-        dom: "<'row'<'col-sm-2'l><'col-sm-4'i><'col-sm-3 text-center'B><'col-sm-3'f>>tp", 
+        dom: "lBftrip",
         buttons: [
             {
                 extend: 'copy', 
