@@ -1,5 +1,7 @@
-@extends('merch.index')
-@section('content')
+@extends('merch.layout')
+@section('title', 'Order Booking Confirm')
+
+@section('main-content')
 @push('css')
     <style type="text/css">
 		td input[type=text], input[type=number], .text-custom-style {

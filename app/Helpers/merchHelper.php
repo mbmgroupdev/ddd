@@ -181,3 +181,11 @@ if(!function_exists('make_order_number')){
         return $codeNo;
     }
 }
+
+if(!function_exists('merchandisers_team')){
+
+    function merchandisers_team()
+    {
+
+    }
+}
