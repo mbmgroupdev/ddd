@@ -282,7 +282,8 @@ class OrderBookingController extends Controller
     {
 
     	$order_id = $request->id;
-    	//order info
+    	
+
     	$order= DB::table('mr_order_entry AS OE')
     				->where('OE.order_id', $order_id)
     				->select([
@@ -305,6 +306,8 @@ class OrderBookingController extends Controller
 					->leftJoin('mr_season AS s', 's.se_id', 'OE.mr_season_se_id')
 					->leftJoin('mr_style AS stl', 'stl.stl_id', "OE.mr_style_stl_id")
 					->first();
+
+        
 			
 		$id= $order->mr_style_stl_id;
         //sampleTypes
