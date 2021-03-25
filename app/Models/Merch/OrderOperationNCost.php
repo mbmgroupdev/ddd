@@ -25,4 +25,12 @@ class OrderOperationNCost extends Model
 			->where("oc.opr_type", $oprType)
 			->get();
     }
+
+    public static function getOrderIdWiseOperation($ordId, $oprType)
+    {
+        return DB::table("mr_order_operation_n_cost AS oc")
+            ->where("oc.mr_order_entry_order_id", $ordId)
+            ->where("oc.opr_type", $oprType)
+            ->get();
+    }
 }

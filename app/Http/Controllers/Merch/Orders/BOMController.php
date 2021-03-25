@@ -107,9 +107,6 @@ class BOMController extends Controller
 		->editColumn('order_delivery_date', function($data){
 			return custom_date_format($data->order_delivery_date);
 		})
-		->editColumn('order_delivery_date', function($data){
-			return custom_date_format($data->order_delivery_date);
-		})
 		->addColumn('action', function ($data) {
 			$action_buttons= "<div class=\"btn-group\">
 			<a href=".url('merch/order/bom/'.$data->order_id)." class=\"btn btn-xs btn-success\" data-toggle=\"tooltip\" title=\"Order BOM\">
@@ -234,8 +231,7 @@ class BOMController extends Controller
 			    $itemCategory = item_category_by_id();
 			    $getUnit = unit_by_id();
 			    $getBuyer = buyer_by_id();
-			    $getSeason = season_by_id();
-			    return view('merch.order_bom.index', compact('order', 'samples', 'operations', 'machines', 'getColor', 'itemCategory', 'uom', 'groupBom', 'getArticle', 'getSupplier', 'getItems', 'getUnit', 'getBuyer', 'getSeason'));
+			    return view('merch.order_bom.index', compact('order', 'samples', 'operations', 'machines', 'getColor', 'itemCategory', 'uom', 'groupBom', 'getArticle', 'getSupplier', 'getItems', 'getUnit', 'getBuyer'));
 			}
 			toastr()->error("Order Not Found!");
 			return back();

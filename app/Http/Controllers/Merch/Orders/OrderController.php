@@ -117,9 +117,19 @@ class OrderController extends Controller
 			})
             ->addColumn('action', function ($data) {
 				$action_buttons = "<div class=\"btn-group\">
-					<a href=".url('merch/orders/order_edit/'.$data->order_id)." class=\"btn btn-xs btn-success\" data-toggle=\"tooltip\" title=\"Order Edit\">
+					<a href='#' class=\"btn btn-sm btn-secondary\" data-toggle=\"tooltip\" title=\"Order Edit\">
 					<i class=\"ace-icon fa fa-pencil bigger-120\"></i>
-					</a></div>";
+					</a>
+					<a href='".url("merch/order/bom/$data->order_id")."' class=\"btn btn-sm btn-primary\" data-toggle=\"tooltip\" title=\"Order BOM\">
+					<i class=\"las la-clipboard-list\"></i>
+					</a>
+					<a href='".url("merch/order/costing/$data->order_id")."' class=\"btn btn-sm btn-warning\" data-toggle=\"tooltip\" title=\"Order Costing\">
+					<i class=\"las la-clipboard-list\"></i>
+					</a>
+					<a href='".url("merch/po-order?order_id=$data->order_id")."' class=\"btn btn-sm btn-success\" data-toggle=\"tooltip\" title=\"Order PO\">
+					<i class=\"las la-shopping-cart\"></i>
+					</a>
+					</div>";
 				return $action_buttons;
             })
             ->rawColumns(['order_code', 'order_ref_no', 'hr_unit_name', 'b_name', 'se_name', 'stl_no', 'order_qty', 'order_delivery_date', 'action'])

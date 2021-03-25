@@ -9,6 +9,7 @@ use App\Models\Merch\Buyer;
 use App\Models\Merch\OrderEntry;
 use App\Models\Merch\ProductType;
 use App\Models\Merch\Reservation;
+use App\Models\Merch\Season;
 use App\Models\Merch\Style;
 use DB;
 use Illuminate\Http\Request;
@@ -168,7 +169,6 @@ class ReservationController extends Controller
         $yearMonth = explode('-', $input['res_year_month']);
         $input['res_month'] = $yearMonth[1];
         $input['res_year'] = $yearMonth[0];
-        $orderNo = make_order_number($input, $input['res_year']);
 
         DB::beginTransaction();
         try {
@@ -292,8 +292,6 @@ class ReservationController extends Controller
     public function orderEntry($resid)
     {
         try {
-            $unitList= Unit::whereIn('hr_unit_id', auth()->user()->unit_permissions())->pluck('hr_unit_name', 'hr_unit_id');
-            
             $reservation = DB::table('mr_capacity_reservation')
                         ->where('id', $resid)
                         ->first();
@@ -309,10 +307,68 @@ class ReservationController extends Controller
             $styleList = Style::where('mr_buyer_b_id', $reservation->b_id)
                         ->where('stl_type', "Bulk")
                         ->pluck('stl_no', 'stl_id');
-            return view('merch/orders/create', compact('unitList','reservation', 'brandList', 'styleList'));
+            $seasonList= Season::where('b_id', $reservation->b_id)->pluck('se_name', 'se_id');
+            return view('merch/orders/create', compact('reservation', 'brandList', 'styleList', 'seasonList'));
         } catch (\Exception $e) {
             return 'error';
         }
         
+    }
+
+    public function orderStore(Request $request)
+    {
+        $input = $request->all();
+        $data['type'] = 'error';
+        $yearMonth = explode('-', $input['order_year_month']);
+        $input['order_month'] = $yearMonth[1];
+        $input['order_year'] = $yearMonth[0];
+        // return $input;
+        DB::beginTransaction();
+        try {
+            // check order qty > reservation qty
+            if($input['order_qty'] > $input['res_quantity']){
+                DB::rollback();
+                $data['message'] = "Order quantity can't large then "+$input['res_quantity']+" Quantity!";
+                return response()->json($data);
+            }
+
+            // order entry & check
+            $orderNo = make_order_number($input, $input['order_year']);
+            $order = [
+                'order_code'          => $orderNo,
+                'res_id'              => $input['res_id'],
+                'unit_id'             => $input['unit_id'],
+                'mr_buyer_b_id'       => $input['b_id'],
+                'order_month'         => $input['order_month'],
+                'order_year'          => $input['order_year'],
+                'mr_style_stl_id'     => $input['mr_style_stl_id'],
+                'order_ref_no'        => $input['order_ref_no'],
+                'order_qty'           => $input['order_qty'],
+                'order_delivery_date' => $input['order_delivery_date'],
+                'pcd'                 => $input['pcd'],
+                'order_status'        => 1,
+                'order_entry_source'  => 0,
+                'created_by'          => auth()->user()->id
+            ];
+            $checkOrder = OrderEntry::getCheckOrderExists($order);
+            if($checkOrder == true){
+                DB::rollback();
+                $data['message'] = "Order Already Exists";
+                return response()->json($data);
+            }
+
+            $orderId = OrderEntry::insertGetId($order);
+            $data['url'] = url('/merch/order/bom/').'/'.$orderId;
+            $data['message'] = "Order Entry Successfully.";
+            
+            DB::commit();
+            $data['type'] = 'success';
+            return response()->json($data);
+        } catch (\Exception $e) {
+            DB::rollback();
+            $bug = $e->getMessage();
+            $data['message'] = $bug;
+            return response()->json($data);
+        }
     }
 }

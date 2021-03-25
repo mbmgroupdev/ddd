@@ -28,18 +28,20 @@ class DashboardController extends Controller
         $ot_chart = $this->ot_data($permitted_associate);
         $salary_chart = $this->salary_data($permitted_associate);
         $today_att_chart = $this->today_att($permitted_associate);
-        $getHolidayRecord = AttendanceUndeclared::with('employee')
-        ->whereIn('as_id', auth()->user()->permitted_asid())
-        ->where('punch_date', date('Y-m-d'))
-        ->where('type', 1)
-        ->where('flag', 0)
-        ->limit(10)->get();
-        $getLeaveRecord = AttendanceUndeclared::with('employee')
-        ->whereIn('as_id', auth()->user()->permitted_asid())
-        ->where('punch_date', date('Y-m-d'))
-        ->where('type', 2)
-        ->where('flag', 0)
-        ->limit(10)->get();
+        // $getHolidayRecord = AttendanceUndeclared::with('employee')
+        // ->whereIn('as_id', $permitted_asid)
+        // ->where('punch_date', date('Y-m-d'))
+        // ->where('type', 1)
+        // ->where('flag', 0)
+        // ->limit(10)->get();
+        // $getLeaveRecord = AttendanceUndeclared::with('employee')
+        // ->whereIn('as_id', $permitted_asid)
+        // ->where('punch_date', date('Y-m-d'))
+        // ->where('type', 2)
+        // ->where('flag', 0)
+        // ->limit(10)->get();
+        $getHolidayRecord = [];
+        $getLeaveRecord = [];
         return view('hr.dashboard.index', compact('ot_chart','salary_chart','att_chart','today_att_chart', 'getHolidayRecord', 'getLeaveRecord'));
     }
 
