@@ -70,7 +70,7 @@
                                         <th width="8%">Brand</th>
                                         <th width="8%">Season</th>
                                         <th width="12%">Style No</th>
-                                        <th width="8%">Amount</th>
+                                        <th width="8%">Quantity</th>
                                         <th width="10%">Delivery Date</th>
                                         <th width="5%">Action</th>
                                     </tr>
@@ -99,7 +99,7 @@ $(document).ready(function(){
         '5' :[@foreach($seasonList as $e) <?php echo "'$e'," ?> @endforeach],
         {{-- '7' :[@foreach($styleList as $e) <?php echo "'$e'," ?> @endforeach], --}}
     };
-    var exportColName = ['Order No','Unit','Buyer','Brand','Season', 'Style No', 'Amount', 'Delivery Date'];
+    var exportColName = ['Order No','Unit','Buyer','Brand','Season', 'Style No', 'Quantity', 'Delivery Date'];
     
     var exportCol = [1,2,3,4,5,6,7,8];
     var dt = $('#dataTables').DataTable({

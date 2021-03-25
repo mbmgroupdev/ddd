@@ -73,7 +73,7 @@
                                         <th width="8%">Brand</th>
                                         <th width="8%">Season</th>
                                         <th width="15%">Style</th>
-                                        <th width="8%">Amount</th>
+                                        <th width="8%">Quantity</th>
                                         <th width="18%">Delivery Date</th>
                                         <th width="8%">Status</th>
                                         <th width="8%">Action</th>
@@ -104,7 +104,7 @@ $(document).ready(function(){
         '9' :['Active','Approval Pending','Costed','Completed','Inactive'],
     };
 
-    var exportColName = ['Order No','Unit','Buyer','Brand', 'Style No', 'Amount','Delivery Date', 'Status'];
+    var exportColName = ['Order No','Unit','Buyer','Brand', 'Style No', 'Quantity','Delivery Date', 'Status'];
         
     var exportCol = [1,2,3,4,5,6,7,8];
     var dt = $('#dataTables').DataTable({

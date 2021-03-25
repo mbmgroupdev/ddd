@@ -8,7 +8,7 @@
       <div class="offset-3 col-6">
 		<form class="form-horizontal" id="itemForm" role="form" method="post" enctype="multipart/form-data">
 		    <input type="hidden" name="_token" value="{{ csrf_token() }}" />
-		    
+		    <input type="hidden" id="page-type" value="reservation-store" />
 		    <div class="row">
 		    	<div class="col-sm-6">
 		    		<div class="form-group has-required has-float-label select-search-group">

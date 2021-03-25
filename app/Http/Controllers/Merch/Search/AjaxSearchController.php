@@ -94,7 +94,7 @@ class AjaxSearchController extends Controller
         return $getSeason;
     }
 
-    public function SeasonWiseStyle(Request $request)
+    public function seasonWiseStyle(Request $request)
     {
         $getStyle = DB::table('mr_style')
         ->select('stl_id AS id', 'stl_no AS text')
@@ -104,5 +104,42 @@ class AjaxSearchController extends Controller
         ->get();
         
         return $getStyle;
+    }
+
+    public function orderNo(Request $request)
+    {
+        $data = []; 
+        if($request->has('keyword')){
+
+            $styleData = DB::table('mr_style');
+            $styleSqlData = $styleData->toSql();
+
+            $search = $request->keyword;
+            $data = DB::table('mr_order_entry as o')
+                ->select("o.order_id", DB::raw('CONCAT_WS(" - ", order_code, stl_no) AS order_stl'))
+                ->whereIn('o.mr_buyer_b_id', auth()->user()->buyer_permissions())
+                ->join(DB::raw('(' . $styleSqlData. ') AS stl'), function($join) use ($styleData) {
+                    $join->on('stl.stl_id', "o.mr_style_stl_id")->addBinding($styleData->getBindings());
+                })
+                ->where(function($q) use($search) {
+                    $q->where("o.order_code", "LIKE" , "%{$search}%");
+                    $q->orWhere("stl.stl_no", "LIKE" , "%{$search}%");
+                })
+                ->take(10)
+                ->get();
+        }
+
+        return response()->json($data);
+    }
+
+    public function port(Request $request)
+    {
+        $getPort = DB::table('cm_port')
+        ->select('id AS id', 'port_name AS text')
+        ->where('cnt_id', $request->cnt_id)
+        ->orderBy('id', 'desc')
+        ->get();
+        
+        return $getPort;
     }
 }

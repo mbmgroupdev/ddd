@@ -60,41 +60,51 @@ class CostingController extends Controller
 		}else{
 		 	$team =[];
 		}
-		//dd($team);exit;
-		$b_permissions = explode(',', auth()->user()->buyer_permissions);
-		$query= DB::table('mr_order_bom_costing_booking AS bom')
-			->groupBy('bom.order_id')
-			->leftJoin('mr_order_entry AS OE', 'OE.order_id', 'bom.order_id')
-			->select([
-				'bom.id AS bom_id',
-				'bom.bom_term',
-				"OE.order_id",
-				"OE.order_code",
-				"u.hr_unit_name",
-				"b.b_name",
-				"br.br_name",
-				"s.se_name",
-				"stl.stl_no",
-				"OE.order_ref_no",
-				"OE.order_qty",
-				"OE.order_delivery_date",
-				"OE.created_by",
-				"OE.order_status"
-			])
-			->leftJoin('hr_unit AS u', 'u.hr_unit_id', 'OE.unit_id')
-			->leftJoin('mr_buyer AS b', 'b.b_id', 'OE.mr_buyer_b_id')
-			->leftJoin('mr_brand AS br', 'br.br_id', 'OE.mr_brand_br_id')
-			->leftJoin('mr_season AS s', 's.se_id', 'OE.mr_season_se_id')
-			->leftJoin('mr_style AS stl', 'stl.stl_id', "OE.mr_style_stl_id")
-			->orderBy('bom_id', 'DESC')
-			->whereIn('b.b_id', $b_permissions);
-			if(!empty($team)){
-				$query->whereIn('OE.created_by', $team);
-			}
-		$data = $query->get();
+		
+		$getBuyer = buyer_by_id();
+		$getSeason = season_by_id();
+		$getBrand = brand_by_id();
+		$query= DB::table('mr_order_entry AS OE')
+		->select([
+			"OE.order_id",
+			"OE.order_code",
+			"stl.stl_no",
+			"stl.stl_year",
+			"stl.mr_season_se_id",
+			"stl.mr_brand_br_id",
+			"OE.order_ref_no",
+			"OE.mr_buyer_b_id",
+			"OE.order_qty",
+			"OE.order_delivery_date",
+			"OE.unit_id",
+			"OE.order_status"
+		])
+		->whereIn('OE.mr_buyer_b_id', auth()->user()->buyer_permissions())
+		->leftJoin('mr_style AS stl', 'stl.stl_id', "OE.mr_style_stl_id");
+		if(!empty($team)){
+			$query->whereIn('OE.created_by', $team);
+		}
+		$data = $query->orderBy('OE.order_id', 'DESC')
+		->get();
+		$getUnit = unit_by_id();
 
 		return DataTables::of($data)->addIndexColumn()
 		->addIndexColumn()
+		->editColumn('hr_unit_name', function($data) use ($getUnit){
+			return $getUnit[$data->unit_id]['hr_unit_name']??'';
+		})
+		->editColumn('b_name', function($data) use ($getBuyer){
+			return $getBuyer[$data->mr_buyer_b_id]->b_name??'';
+		})
+		->editColumn('br_name', function($data) use ($getBrand){
+			return $getBrand[$data->mr_brand_br_id]->br_name??'';
+		})
+		->editColumn('se_name', function($data) use ($getSeason){
+			return $getSeason[$data->mr_season_se_id]->se_name??''. '-'.$data->stl_year;
+		})
+		->editColumn('order_delivery_date', function($data){
+			return custom_date_format($data->order_delivery_date);
+		})
 		->addColumn('action', function ($data) {
 			if(empty($data->bom_term)){
 				$action_buttons= "<div class=\"btn-group\">
@@ -148,7 +158,7 @@ class CostingController extends Controller
     public function show(Request $request, $id)
     {
     	try {
-    		$queryData = OrderEntry::with(['style', 'season'])
+    		$queryData = OrderEntry::with(['style'])
 	        	->whereIn('mr_buyer_b_id', auth()->user()->buyer_permissions());
 
 			$order = $queryData->where("order_id", $id)->first();

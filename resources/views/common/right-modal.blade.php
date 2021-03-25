@@ -25,7 +25,7 @@
         <a class="view prev_btn-job" data-toggle="tooltip" data-dismiss="modal" data-placement="top" title="" data-original-title="Back to Report">
       <i class="las la-chevron-left"></i>
     </a>
-        <h5 class="modal-title right-modal-title text-center" id="modal-title-right"> &nbsp; </h5>
+        <h5 class="modal-title right-modal-title text-center capitalize" id="modal-title-right"> &nbsp; </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>

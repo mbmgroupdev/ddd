@@ -2337,7 +2337,6 @@ class NewStyleController extends Controller
       'selectedWahsData',
       'sizeGroupDatatoShow',
       'sizegroupListModal',
-      'sizeGroupDatatoShow',
       'style_id',
       'pdSizeList'
     ));

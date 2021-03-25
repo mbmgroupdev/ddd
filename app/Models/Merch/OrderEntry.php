@@ -7,7 +7,7 @@ class OrderEntry extends Model
 {
     protected $table= 'mr_order_entry';
     public $timestamps= false;
-    protected $with= ['style'];
+    // protected $with= ['style'];
 
     public static function getResIdWiseOrder($rId)
     {
@@ -66,5 +66,10 @@ class OrderEntry extends Model
         ->where('order_year', $value['order_year'])
         ->where('order_delivery_date', $value['order_delivery_date'])
         ->exists();
+    }
+
+    public static function getOrderInfoIdWise($orderId)
+    {
+        return OrderEntry::where('order_id', $orderId)->first();
     }
 }
