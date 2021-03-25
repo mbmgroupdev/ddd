@@ -210,7 +210,8 @@ class POController extends Controller
             unset($poOtherCosting['id']);
 
             MrPoBomOtherCosting::insert($poOtherCosting);
-
+            // total PO qty
+            $data['poqty'] = PurchaseOrder::getPoOrderSumQtyOrderIdWise($input['order_id']);
             $data['type'] = 'success';
             $data['message'] = "PO Successfully Save.";
             DB::commit();
@@ -292,10 +293,10 @@ class POController extends Controller
             if($sizeGroup != null){
                 $getSizeGroup= ProductSize::getProductSizeGroupIdWiseInfo($sizeGroup);
             }
-
             $sizeValue = collect($getSizeGroup)->pluck('value','mr_product_pallete_name');
-            // $totalPoQty = 
-            return view('merch.po.create', compact('input', 'order', 'getSizeGroup', 'sizeValue'));
+            $totalPoQty = PurchaseOrder::getPoOrderSumQtyOrderIdWise($order->order_id);
+
+            return view('merch.po.create', compact('input', 'order', 'getSizeGroup', 'sizeValue', 'totalPoQty'));
         } catch (\Exception $e) {
             $bug = $e->getMessage();
             toastr()->error($bug);

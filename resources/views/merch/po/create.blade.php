@@ -91,20 +91,35 @@
         		<form class="form-horizontal" role="form" id="poForm">
 	        		<div class="panel-heading active" role="tab" id="headingOne">
 				        <div class="row">
-				        	<div class="col-sm-1 pr-0">
+				        	<div class="col pr-0">
 				        		<h5 class="panel-title"> Create PO </h5>
 				        	</div>
-				        	<div class="col-sm-4 pl-0">
-				        		
+				        	<div class="col pl-0">
+				        		<table class="table m-0">
+                                    <tbody>
+                                        <tr>
+                                            <th align="right" class="no-padding" style="border: 0;">
+                                                Order Qty:
+                                                <span style="color: maroon;" id="odr_qty_view">{{ $order->order_qty }}</span>
+                                            </th>
+                                            <th align="center" class="no-padding" style="border: 0;">
+                                                Total PO Qty:
+                                                <span style="color: maroon;" id="po_qty_total">{{ $totalPoQty }}</span>
+                                            </th>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
 				        	</div>
-				        	<div class="col-sm-7">
-				        		<a class="btn btn-sm btn-success add-new text-white pull-right" data-type="size breakdown"><i class="las la-list"></i> Size Color Breakdown</a>
+				        	<div class="col">
+				        		<a class="btn btn-xs btn-success add-new text-white pull-right" data-type="size breakdown"><i class="las la-list"></i> Size Color Breakdown</a>
 				        	</div>
 				        	
 				        </div>
 				    </div>
         			<input type="hidden" name="order_id" value="{{ $order->order_id }}">
-        			<input type="hidden" id="total-po-order" value="0">
+        			<input type="hidden" id="total-po-order" value="{{ $totalPoQty }}">
+        			<input type="hidden" id="total-order-qty" value="{{ $order->order_qty }}">
 		            {{ csrf_field() }} 
 		            <div class="panel-body">
 		            	<div class="row mb-3">
@@ -166,7 +181,7 @@
 		                	<div class="col">
 		                		<div class="form-group has-float-label has-required mb-0">
                                 	<input type="text" step="any" min="0" name="po_qty" id="quantity" class="form-control changesNo action-input" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="0" required>
-                                    <label  for="quantity"> Quantity </label>
+                                    <label  for="quantity">Po Quantity </label>
                                 </div>
 		                	</div>
 		            	</div>
@@ -291,6 +306,16 @@
 	  	return false;
 	  }
 
+	  // order quantity check total PO quantity
+	  var orderPoQty = $("#total-po-order").val(), totalOrderQty = $("#total-order-qty").val();
+	  if(parseInt(totalOrderQty) < (parseInt(totalQuantity) + parseInt(orderPoQty))){
+  		isValid = false;
+  		var leftQty = parseInt(totalOrderQty) - parseInt(orderPoQty);
+	    $("#quantity").notify("There are "+leftQty+" order qty", 'error');
+	  	$(".app-loader").hide();
+	  	return false;
+	  }
+
 	  var form = $("#poForm");
 	  if (isValid){
 	     $.ajax({
@@ -313,7 +338,9 @@
 		            	$("#size-"+i).parent().removeClass('highlight');
 		            	sizeQty[i] = '0';     
 				    });
-				    $("#totalQty").val('0');	
+				    $("#totalQty").val('0');
+				    $("#total-po-order").val(response.poqty);	
+				    $("#po_qty_total").val(response.poqty);	
 	          	}
 	          	$(".app-loader").hide();
 	        },

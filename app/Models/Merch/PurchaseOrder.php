@@ -20,4 +20,13 @@ class PurchaseOrder extends Model
     	->where('clr_id', $value['clr_id'])
     	->exists();
     }
+
+    public static function getPoOrderSumQtyOrderIdWise($orderId)
+    {
+        return DB::table('mr_purchase_order')
+        ->where('mr_order_entry_order_id', $orderId)
+        ->select(DB::raw("SUM(po_qty) AS sum"))
+        ->pluck('sum')
+        ->first();
+    }
 }
