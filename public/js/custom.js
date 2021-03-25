@@ -80,8 +80,30 @@ $(function() {
             cache: true
         }
     });
-
-
+    $('select.mbm-order-no').select2({
+        placeholder: 'Select MBM Order No - Style No',
+        ajax: {
+            url: baseurl+'merch/search/mbm-order-no',
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return { 
+                    keyword: params.term
+                }; 
+            },
+            processResults: function (data) { 
+                return {
+                    results:  $.map(data, function (item) {
+                        return {
+                            text: item.order_stl,
+                            id: item.order_id
+                        }
+                    }) 
+                };
+            },
+            cache: true
+        }
+    });
     $('select.users').select2({
         ajax: {
             url: baseurl+'hr/adminstrator/user/search',
@@ -144,19 +166,6 @@ $(function() {
           cache: true
         }
     }); 
-
-    function printMe(el)
-    { 
-
-        var myWindow=window.open('','','width=800,height=800');
-        myWindow.document.write('<html><head></head><body style="font-size:9px;">');
-        myWindow.document.write(document.getElementById(el).innerHtml);
-        myWindow.document.write('</body></html>');
-        myWindow.focus();
-        myWindow.print();
-        myWindow.close();
-    } 
-
 
     $(document).on("change", ".file-type-validation", function () {
         var allow = $(this).data('file-allow'),

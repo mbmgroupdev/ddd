@@ -225,6 +225,26 @@
             //"delay": {"show": 1000, "hide": 0},
         });
       });
+      $(document).on('keyup', 'input, select', function(e) {
+          if (e.which == 39) { // right arrow
+            $(this).closest('td').next().find('input, select').focus().select();
+          } else if (e.which == 37) { // left arrow
+            $(this).closest('td').prev().find('input, select').focus().select();
+          } else if (e.which == 40) { // down arrow
+            $(this).closest('tr').next().find('td:eq(' + $(this).closest('td').index() + ')').find('input').focus().select();
+          } else if (e.which == 38) { // up arrow
+            $(this).closest('tr').prev().find('td:eq(' + $(this).closest('td').index() + ')').find('input').focus().select();
+          }
+      });
+
+      var specialKeys = new Array();
+      specialKeys.push(8,46); //Backspace
+      function IsNumeric(e) {
+          var keyCode = e.which ? e.which : e.keyCode;
+          //console.log( keyCode );
+          var ret = ((keyCode >= 48 && keyCode <= 57) || specialKeys.indexOf(keyCode) != -1);
+          return ret;
+      }
     </script>
     <script src="{{ asset('assets/js/custom.js') }}"></script>
     <script src="{{ asset('js/custom.js') }}"></script>

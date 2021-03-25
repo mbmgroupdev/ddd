@@ -134,6 +134,8 @@ Route::group(['prefix' => 'merch/order','namespace' => 'Merch\Orders'], function
 	Route::get("/costing-list-data", "CostingController@getListData");
 	Route::get('costing/{id}', 'CostingController@show');
 	Route::get('costing-ajax-store', 'CostingController@ajaxStore');
+
+
 });
 
 /*
@@ -146,6 +148,7 @@ Route::group(['prefix' => 'merch','namespace' => 'Merch'], function(){
 	Route::resource('reservation', 'ReservationController');
 	Route::get('reservation_list_data', 'ReservationController@getData');
 	Route::get('reservation/order-entry/{resid}', 'ReservationController@orderEntry');
+	Route::post('reservation/order-entry-store', 'ReservationController@orderStore');
 });
 
 /*
@@ -179,6 +182,19 @@ Route::group(['prefix' => 'merch/order_costing','namespace' => 'Merch\OrderCosti
 
 /*
 *--------------------------------------------------------------
+* PO (Purchase Order)
+*--------------------------------------------------------------
+*/
+
+Route::group(['prefix' => 'merch','namespace' => 'Merch'], function(){
+	Route::resource('po', 'POController');
+	Route::get('po-list', 'POController@list');
+	Route::get('po-order', 'POController@orderWise');
+	Route::get('po-process-text', 'POController@process');
+});
+
+/*
+*--------------------------------------------------------------
 * Search
 *--------------------------------------------------------------
 */
@@ -186,7 +202,9 @@ Route::group(['prefix' => 'merch/search','namespace' => 'Merch\Search'], functio
 	Route::get('ajax-item-search', 'AjaxSearchController@item');
 	Route::get('ajax-supplier-article-search', 'AjaxSearchController@article');
 	Route::get('ajax-buyer-wise-season-search', 'AjaxSearchController@buyerWiseSeason');
-	Route::get('ajax-season-wise-style-search', 'AjaxSearchController@SeasonWiseStyle');
+	Route::get('ajax-season-wise-style-search', 'AjaxSearchController@seasonWiseStyle');
+	Route::get('mbm-order-no', 'AjaxSearchController@orderNo');
+	Route::get('ajax-country-port-search', 'AjaxSearchController@port');
 
 });
 

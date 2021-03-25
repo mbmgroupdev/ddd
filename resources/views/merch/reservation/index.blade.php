@@ -129,11 +129,11 @@ $(document).on('click', '.add-new', function() {
         {
           if(response !== 'error'){
             $('#content-result').html(response);
-            if(type === 'reservation'){
-              $('.filter').select2({
-                  dropdownParent: $('#right_modal_item')
-              });
-            }
+            $('.filter').select2({
+                dropdownParent: $('#right_modal_item')
+            });
+          }else{
+            $('#content-result').html('<h4 class="text-center">Something wrong, please close and try again!</h4>');
           }
         },
         error: function (reject) {
@@ -156,7 +156,12 @@ $(document).on('click', '#itemBtn', function(event) {
       $(curInputs[i]).closest(".form-group").addClass("has-error");
     }
   }
-  var url = '{{ route("reservation.store")}}';
+  var pageType = $("#page-type").val();
+  if(pageType === 'reservation-store'){
+    var url = '{{ route("reservation.store")}}';
+  }else if(pageType === 'order-store'){
+    var url = '{{ url("merch/reservation/order-entry-store")}}';
+  }
   
   if (isValid){
      $.ajax({
@@ -166,7 +171,7 @@ $(document).on('click', '#itemBtn', function(event) {
         success: function(response)
         {
           $("#app-loader").hide();
-          console.log(response)
+          // console.log(response)
           $.notify(response.message, response.type);
           if(response.type === 'success'){
             setTimeout(function(){

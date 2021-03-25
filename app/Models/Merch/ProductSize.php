@@ -4,6 +4,7 @@ namespace App\Models\Merch;
 
 use App\Models\Merch\ProductSize;
 use Illuminate\Database\Eloquent\Model;
+use DB;
 
 class ProductSize extends Model
 {
@@ -16,4 +17,9 @@ class ProductSize extends Model
     	 ->where('mr_product_pallete_name', 'LIKE', '%'. $value .'%')
     	->get();
     }
+
+	public static function getProductSizeGroupIdWiseInfo($sizeId)
+    {
+    	return DB::table('mr_product_size')->select('mr_product_size.*', DB::raw("'0' as value"))->where('mr_product_size_group_id', $sizeId)->orderBy('mr_product_size_serial', 'asc')->get();
+    }    
 }
