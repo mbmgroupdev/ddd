@@ -115,8 +115,8 @@
                                            <div class="form-group has-float-label has-required select-search-group">
                                               <select name="worker_unit_id" class="form-control capitalize select-search @error('worker_unit_id') is-invalid @enderror" id="unit" required="">
                                                  <option selected="" disabled="" value="">Choose...</option>
-                                                 @foreach($getUnit as $unit)
-                                                 <option value="{{ $unit->hr_unit_id }}">{{ $unit->hr_unit_name }}</option>
+                                                 @foreach($getUnit as $key => $unit)
+                                                 <option value="{{ $key }}">{{ $unit }}</option>
                                                  @endforeach
                                               </select>
                                               <label for="unit">Unit</label>

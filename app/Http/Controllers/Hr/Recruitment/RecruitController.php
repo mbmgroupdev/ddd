@@ -104,7 +104,7 @@ class RecruitController extends Controller
     public function create()
     {
         $data['getEmpType'] = EmpType::getActiveEmpType();
-        $data['getUnit'] = Unit::getActiveUnit();
+        $data['getUnit'] = collect(unit_by_id())->pluck('hr_unit_name','hr_unit_id');
         $data['getArea'] = Area::getActiveArea();
         return view('hr.recruitment.recruit.create', $data);
 
@@ -190,7 +190,7 @@ class RecruitController extends Controller
     public function edit($id)
     {
         $data['getEmpType'] = EmpType::getActiveEmpType();
-        $data['getUnit'] = unit_list();
+        $data['getUnit'] = collect(unit_by_id())->pluck('hr_unit_name','hr_unit_id');
         $data['getArea'] = Area::getActiveArea();
 
         $worker = WorkerRecruitment::where('worker_id',$id)->firstOrFail();
