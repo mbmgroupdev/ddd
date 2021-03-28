@@ -3,6 +3,7 @@
 namespace App\Models\Merch;
 
 use Illuminate\Database\Eloquent\Model;
+use DB;
 
 class MrPoOperationNCost extends Model
 {
@@ -32,5 +33,19 @@ class MrPoOperationNCost extends Model
 
     public static function deleteRowPOWise($po_id){
     	MrPoOperationNCost::where('po_id', $po_id)->delete();
+    }
+
+    public static function getPoIdWiseOperationInfo($poId, $oprType)
+    {
+        $operationData = DB::table('mr_operation');
+        $operationSql = $operationData->toSql();
+        return DB::table("mr_po_operation_n_cost AS oc")
+            ->select("oc.*","o.opr_name")
+            ->leftjoin(DB::raw('(' . $operationSql. ') AS o'), function($join) use ($operationData) {
+                $join->on("oc.mr_operation_opr_id", "o.opr_id")->addBinding($operationData->getBindings());
+            })
+            ->where("oc.po_id", $poId)
+            ->where("oc.opr_type", $oprType)
+            ->get();
     }
 }

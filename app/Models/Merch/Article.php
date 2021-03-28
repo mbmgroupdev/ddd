@@ -24,4 +24,12 @@ class Article extends Model
     	->where('art_name', $value['art_name'])
     	->first();
     }
+
+    public static function getArticleSupplierIdsWise($supIds)
+    {
+        return DB::table('mr_article')
+            ->select('id', 'art_name', 'mr_supplier_sup_id')
+            ->whereIn('mr_supplier_sup_id', $supIds)
+            ->get();
+    }
 }

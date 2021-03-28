@@ -3,6 +3,7 @@
 namespace App\Models\Merch;
 
 use Illuminate\Database\Eloquent\Model;
+use DB;
 
 class MrPoBomOtherCosting extends Model
 {
@@ -38,4 +39,11 @@ class MrPoBomOtherCosting extends Model
    public static function deleteRowPOWise($po_id){
       MrPoBomOtherCosting::where('po_id', $po_id)->delete();
    }
+
+   public static function getOpIdWisePoOtherCosting($poId)
+    {
+      return DB::table('mr_po_bom_other_costing')
+         ->where('po_id', $poId)
+         ->first();
+    }
 }

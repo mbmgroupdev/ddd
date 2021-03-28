@@ -44,7 +44,7 @@
         
     </script>
 </head>
-<body class="@if(request()->segment(3) =='bom' || request()->segment(3) =='costing') sidebar-main-menu @endif">
+<body class="@if(request()->segment(3) =='bom' || request()->segment(3) =='costing' || request()->segment(2) =='po-costing' || request()->segment(2) =='po-bom') sidebar-main-menu @endif">
     <!-- loader Start -->
     <div id="loading">
         <div id="loading-center">

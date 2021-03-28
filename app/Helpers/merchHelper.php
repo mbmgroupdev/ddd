@@ -34,6 +34,16 @@ if(!function_exists('country_by_id')){
     }
 }
 
+if(!function_exists('port_by_id')){
+    function port_by_id()
+    {
+       return  Cache::remember('port_by_id', Carbon::now()->addHour(12), function () {
+            return DB::table('cm_port')->get()->keyBy('id')->toArray();
+        });      
+
+    }
+}
+
 if(!function_exists('product_type_by_id')){
     function product_type_by_id()
     {
@@ -131,6 +141,16 @@ if(!function_exists('material_color_by_id')){
     {
        return  Cache::remember('material_color_by_id', Carbon::now()->addHour(12), function () {
             return DB::table('mr_material_color')->get()->keyBy('clr_id')->toArray();
+        });      
+
+    }
+}
+
+if(!function_exists('size_by_id')){
+    function size_by_id()
+    {
+       return  Cache::remember('size_by_id', Carbon::now()->addHour(12), function () {
+            return DB::table('mr_product_size')->get()->keyBy('id')->toArray();
         });      
 
     }

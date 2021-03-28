@@ -2,6 +2,8 @@
   $getSeason = season_by_id();
   $getUnit = unit_by_id();
   $getBuyer = buyer_by_id();
+  $getColor = material_color_by_id();
+  $getCountry = country_by_id();
 @endphp
 <div class="wrapper center-block">
   <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
@@ -13,7 +15,7 @@
           @else
           <a>
           @endif
-            {{ $order->order_code }} - Order Information
+            {{ $po->po_no }} - PO Information
           </a>
         </h4>
       </div>
@@ -41,6 +43,16 @@
                         <th>{!! $getSeason[$order->style->mr_season_se_id]->se_name !!} - {{ $order->style->stl_year??'' }}</th>
                         <td width="120">Style No :</td>
                         <th>{!! $order->style->stl_no??'' !!}</th>
+                      </tr>
+                      <tr>
+                        <td width="80">PO No :</td>
+                        <th>{{ $po->po_no }}</th>
+                        <td width="120">Color & Country:</td>
+                        <th>{{ $getColor[$po->clr_id]->clr_name??'' }} - {{ $getCountry[$po->po_delivery_country]->cnt_name??'' }}</th>
+                        <td width="120">PO Quantity :</td>
+                        <th>{{ $po->po_qty }}</th>
+                        <td width="120">PO Ex.fty :</td>
+                        <th>{{ custom_date_format($po->po_ex_fty) }}</th>
                       </tr>
                       
                   </table>

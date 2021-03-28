@@ -123,10 +123,7 @@ class BOMController extends Controller
     public function show(Request $request, $id)
     {
 		try {
-	        $queryData = OrderEntry::with(['style'])
-	        	->whereIn('mr_buyer_b_id', auth()->user()->buyer_permissions());
-
-			$order = $queryData->where("order_id", $id)->first();
+			$order = OrderEntry::orderInfoWithStyle($id);
 
 			if($order != null){
 				$uom = uom_by_id();

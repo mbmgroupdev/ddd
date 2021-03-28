@@ -12,6 +12,7 @@ use App\Models\Merch\OrderOperationNCost;
 use App\Models\Merch\PoBOM;
 use App\Models\Merch\ProductSize;
 use App\Models\Merch\PurchaseOrder;
+use App\Models\Merch\StyleSizeGroup;
 use DB;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
@@ -116,10 +117,10 @@ class POController extends Controller
                     <a href='#' class=\"btn btn-sm btn-secondary\" data-toggle=\"tooltip\" title=\"PO Edit\">
                     <i class=\"ace-icon fa fa-pencil bigger-120\"></i>
                     </a>
-                    <a href='".url("merch/order/bom/$data->po_id")."' class=\"btn btn-sm btn-primary\" data-toggle=\"tooltip\" title=\"PO BOM\">
+                    <a href='".url("merch/po-bom/$data->po_id")."' class=\"btn btn-sm btn-primary\" data-toggle=\"tooltip\" title=\"PO BOM\">
                     <i class=\"las la-clipboard-list\"></i>
                     </a>
-                    <a href='".url("merch/order/costing/$data->po_id")."' class=\"btn btn-sm btn-warning\" data-toggle=\"tooltip\" title=\"Order Costing\">
+                    <a href='".url("merch/po-costing/$data->po_id")."' class=\"btn btn-sm btn-warning text-white\" data-toggle=\"tooltip\" title=\"Order Costing\">
                     <i class=\"las la-clipboard-list\"></i>
                     </a>
                     
@@ -286,16 +287,14 @@ class POController extends Controller
                 return back();
             }
 
-            $sizeGroup= DB::table('mr_stl_size_group AS s')
-              ->where('s.mr_style_stl_id', $order->style->stl_id)
-              ->pluck('mr_product_size_group_id');
+            $sizeGroup= StyleSizeGroup::getSizeGroupIdStyleWise($order->style->stl_id);
             $getSizeGroup = [];
             if($sizeGroup != null){
                 $getSizeGroup= ProductSize::getProductSizeGroupIdWiseInfo($sizeGroup);
             }
             $sizeValue = collect($getSizeGroup)->pluck('value','mr_product_pallete_name');
             $totalPoQty = PurchaseOrder::getPoOrderSumQtyOrderIdWise($order->order_id);
-
+            $totalPoQty = $totalPoQty??0;
             return view('merch.po.create', compact('input', 'order', 'getSizeGroup', 'sizeValue', 'totalPoQty'));
         } catch (\Exception $e) {
             $bug = $e->getMessage();
@@ -326,6 +325,46 @@ class POController extends Controller
         } catch (\Exception $e) {
             $result['message'] = $e->getMessage();
             return $result;
+        }
+    }
+
+    public function sizeBreakdown(Request $request)
+    {
+        $input = $request->all();
+        try {
+            $getPoList = PurchaseOrder::getPOListOrderIdWise($input['order_id']);
+            $order = OrderEntry::orderInfoWithStyle($input['order_id']);
+            $pagesize = 'size-breakdown';
+            $sizeGroup= StyleSizeGroup::getSizeGroupIdStyleWise($order->style->stl_id);
+            // $getSizeGroup = [];
+            // if($sizeGroup != null){
+            //     $getSizeGroup= ProductSize::getProductSizeGroupIdWiseInfo($sizeGroup);
+            // }
+            // $getSizeGroup = array_chunk($getSizeGroup->toArray(), 5);
+            $getPoId = collect($getPoList)->pluck('po_id');
+            // PO id wise size qty
+            // $getPOSize = DB::table('mr_po_size_qty')
+            // ->whereIn('po_id', $getPoId)
+            // ->get()
+            // ->groupBy('po_id', true)
+            // ->map(function($q) {
+            //     return collect($q)->pluck('qty','mr_product_size_id');
+            // });
+            $getPoSizeQty = DB::table('mr_po_size_qty')
+            ->whereIn('po_id', $getPoId)
+            ->get();
+            $getPOSize = collect($getPoSizeQty)->groupBy('po_id', true)->map(function($q){
+                return collect($q)->pluck('qty','mr_product_size_id');
+            });
+            $uniqueSizeQty = collect($getPoSizeQty)->groupBy('mr_product_size_id', true)->map(function($q){
+                return collect($q)->sum('qty');
+            });
+            return view('merch.po.order_wise_list', compact('getPoList', 'order', 'pagesize', 'getPOSize', 'uniqueSizeQty'));
+        } catch (\Exception $e) {
+
+            $data['type'] = 'error';
+            $data['message'] = $e->getMessage();
+            return 'error';
         }
     }
 }
