@@ -72,4 +72,12 @@ class OrderEntry extends Model
     {
         return OrderEntry::where('order_id', $orderId)->first();
     }
+
+    public static function orderInfoWithStyle($id)
+    {
+        return OrderEntry::with(['style'])
+            ->whereIn('mr_buyer_b_id', auth()->user()->buyer_permissions())
+            ->where("order_id", $id)
+            ->first();
+    }
 }

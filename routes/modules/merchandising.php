@@ -185,12 +185,20 @@ Route::group(['prefix' => 'merch/order_costing','namespace' => 'Merch\OrderCosti
 * PO (Purchase Order)
 *--------------------------------------------------------------
 */
-
 Route::group(['prefix' => 'merch','namespace' => 'Merch'], function(){
 	Route::resource('po', 'POController');
 	Route::get('po-list', 'POController@list');
 	Route::get('po-order', 'POController@orderWise');
 	Route::get('po-process-text', 'POController@process');
+	Route::get('po-size-breakdown', 'POController@sizeBreakdown');
+
+	// BOM
+	Route::get('po-bom/{id}', 'PO\BOMController@show');
+	Route::get('po-bom-ajax-store', 'BOMController@ajaxStore');
+
+	// Costing
+	Route::get('po-costing/{id}', 'PO\CostingController@show');
+	// Route::get('costing-ajax-store', 'CostingController@ajaxStore');
 });
 
 /*

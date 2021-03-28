@@ -40,8 +40,6 @@
 
       </div>
 
-    
-    
     <div class="page-content">
         <div class="panel panel-success">
             <div class="panel-body pb-2">
@@ -55,11 +53,11 @@
 		                            <div class="col-8">
 		                                <div class="form-group has-float-label has-required select-search-group">
 		                                	@if(isset($order) && $order != null)
-		                                	{{ Form::select('order_id', [$order->order_id => $order->order_code.' - '.$order->style->stl_no], $order->order_id, ['placeholder'=>'Select MBM Order No/Style No', 'id'=>'order_id', 'class'=> 'mbm-order-no no-select ','style', 'required'=>'required']) }}
+		                                	{{ Form::select('order_id', [$order->order_id => $order->order_code.' - '.$order->style->stl_no], $order->order_id, ['placeholder'=>'Select Internal Order No/Style No', 'id'=>'order_id', 'class'=> 'mbm-order-no no-select ','style', 'required'=>'required']) }}
 		                                	@else
-		                                    {{ Form::select('order_id', [Request::get('order_id') => Request::get('order_id')], Request::get('order_id'), ['placeholder'=>'Select MBM Order No/Style No', 'id'=>'order_id', 'class'=> 'mbm-order-no no-select ','style', 'required'=>'required']) }}
+		                                    {{ Form::select('order_id', [Request::get('order_id') => Request::get('order_id')], Request::get('order_id'), ['placeholder'=>'Select Internal Order No/Style No', 'id'=>'order_id', 'class'=> 'mbm-order-no no-select ','style', 'required'=>'required']) }}
 		                                    @endif
-		                                    <label  for="order_id"> MBM Order No/Style No </label>
+		                                    <label  for="order_id"> Internal Order No/Style No </label>
 		                                </div>
 		                            </div>
 		                            
@@ -190,7 +188,7 @@
 		            		<div class="process w-100">
 		            			<div class="row">
 		            				<div class="col-sm-12">
-		            					<textarea class="form-control" id="process-text" rows="2" placeholder="Paste PDF text copy data..."></textarea>
+		            					<textarea class="form-control" id="process-text" rows="3" placeholder="Paste PDF text copy data..."></textarea>
 		            				</div>
 		            				<div class="col-sm-12">
 		            					<a class="process btn btn-primary btn-sm text-white" onClick="process()"><i class="las la-recycle"></i> Process</a>
@@ -261,27 +259,29 @@
 	    $('#modal-title-right').html(' '+type);
 	    $("#content-result").html(loaderContent);
 	    var url = '';
-	    if(type === 'po create'){
-	      //url = '/merch/po/create';
+	    if(type === 'size breakdown'){
+	      url = '/merch/po-size-breakdown';
 	    }
-	    // $.ajax({
-	    //     type: "GET",
-	    //     url: "{{ url('/')}}"+url,
-	    //     success: function(response)
-	    //     {
-	    //       if(response !== 'error'){
-	    //         $('#content-result').html(response);
-	    //         $('.filter').select2({
-	    //             dropdownParent: $('#right_modal_item')
-	    //         });
-	    //       }else{
-	    //         $('#content-result').html('<h4 class="text-center">Something wrong, please close and try again!</h4>');
-	    //       }
-	    //     },
-	    //     error: function (reject) {
-	    //       console.log(reject);
-	    //     }
-	    // });
+	    $.ajax({
+	        type: "GET",
+	        url: "{{ url('/')}}"+url,
+	        data:{
+	        	order_id: $("#order_id").val()
+	        },
+	        success: function(response)
+	        {
+	        	// console.log(response);
+	          if(response !== 'error'){
+	            $('#content-result').html(response);
+	            
+	          }else{
+	            $('#content-result').html('<h4 class="text-center">Something wrong, please close and try again!</h4>');
+	          }
+	        },
+	        error: function (reject) {
+	          console.log(reject);
+	        }
+	    });
 	    
 	});
 
@@ -296,6 +296,13 @@
 	        isValid = false;
 	        $(curInputs[i]).closest(".form-group").addClass("has-error");
 	     }
+	  }
+	  // PO qty > 0
+	  if(parseInt($("#quantity").val()) < 1){
+	  	isValid = false;
+	  	$("#quantity").notify("Qty at least 1 or more ", 'error');
+	  	$(".app-loader").hide();
+	  	return false;
 	  }
 	  // total quantity check PO quantity
 	  var poQuantity = $("#quantity").val(), totalQuantity = $("#totalQty").val();
@@ -340,7 +347,7 @@
 				    });
 				    $("#totalQty").val('0');
 				    $("#total-po-order").val(response.poqty);	
-				    $("#po_qty_total").val(response.poqty);	
+				    $("#po_qty_total").html(response.poqty);	
 	          	}
 	          	$(".app-loader").hide();
 	        },
@@ -477,7 +484,7 @@
 	}
 	// country 
 	$(document).on('change', '#country', function(){
-	    $('#port').empty().select2({data: [{id: '', text: ' Select Article'}]}).attr('disabled', true);
+	    $('#port').empty().select2({data: [{id: '', text: ' Select Port'}]}).attr('disabled', true);
 	    if($(this).val() !== ''){
 	    	var countryid = $(this).val();
 	        $.ajax({

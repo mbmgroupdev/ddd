@@ -6,6 +6,7 @@ use App\Models\Merch\MainCategory;
 use App\Models\Merch\McatItem;
 use App\Models\Merch\OrderBomCostingBooking;
 use Illuminate\Database\Eloquent\Model;
+use DB;
 
 class McatItem extends Model
 {
@@ -35,5 +36,13 @@ class McatItem extends Model
 		->where('item_name', $data['item_name'])
 		->where('item_code', $data['item_code'])
 		->first();
+	}
+
+	public static function getItemListItemIdsWise($ids)
+	{
+		return DB::table('mr_cat_item AS i')
+            ->select('i.id','i.item_name','i.item_code', 'i.dependent_on')
+            ->whereIn('i.id', $ids)
+            ->get();
 	}
 }
