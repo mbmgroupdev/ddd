@@ -20,6 +20,15 @@ class PoBomRepository implements PoBomInterface
        //parent::__construct($model);
    }
 
+    /**
+    * @return Collection
+    */
+
+   public function supplier($order_id): Collection
+   {
+             
+   }
+
    /**
     * @return Collection
     */
