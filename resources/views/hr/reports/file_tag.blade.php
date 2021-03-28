@@ -80,6 +80,13 @@
 							<div class="form-group" style="margin:10px 0px; display: none;">
 		                        
 							</div>
+						</div>
+						<div class="col-sm-12 d-block">
+							<hr>
+							<div class="form-group has-float-label select-search-group" style="height: 100px;">
+	                            {{ Form::select('as_id[]', [],'', ['id'=>'as_id', 'class'=> 'allassociates form-control select-search no-select filter', 'multiple'=>"multiple",'style', 'data-validation'=>'required']) }}
+	                            <label for="as_id">Employees</label>
+	                        </div>
 						</div>  
 					</div>
 					<div class="row">
@@ -257,6 +264,7 @@ $(document).ready(function(){
 				unit: $("select[name=unit]").val(),
 				floor: $("select[name=floor]").val(),
 				line: $("select[name=line]").val(), 
+				associate_id: $("#as_id").val(), 
 				doj_from: $("input[name=doj_from]").val(), 
 				doj_to: $("input[name=doj_to]").val() 
 			},

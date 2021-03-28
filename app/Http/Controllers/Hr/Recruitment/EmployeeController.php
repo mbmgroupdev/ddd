@@ -1713,11 +1713,13 @@ class EmployeeController extends Controller
                 }
                 if (!empty($associate_id)){
                     $q->whereIn('associate_id', $associate_id);
+                }else{
+                    $q->where('as_status', 1);
                 }
             })
+
             ->whereIn('as_unit_id', auth()->user()->unit_permissions())
             ->whereIn('as_location', auth()->user()->location_permissions())
-            ->where('as_status', 1)
             ->get();
 
         // show user id

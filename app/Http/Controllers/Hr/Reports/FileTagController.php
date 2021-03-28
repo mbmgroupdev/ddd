@@ -54,7 +54,7 @@ class FileTagController extends Controller
             ->whereIn('as_unit_id', auth()->user()->unit_permissions())
             ->whereIn('as_location', auth()->user()->location_permissions())
             ->get();
-
+            
         $data['filetag'] = view('hr.common.file_tag_view', compact('employees','designation','department','section','unit'))->render();
 
         $data['printbutton'] = "";

@@ -20,6 +20,15 @@ class PoBomRepository implements PoBomInterface
        //parent::__construct($model);
    }
 
+    /**
+    * @return Collection
+    */
+
+   public function supplier($order_id): Collection
+   {
+             
+   }
+
    /**
     * @return Collection
     */
@@ -70,7 +79,7 @@ class PoBomRepository implements PoBomInterface
         ->orderBy("b.mr_material_category_mcat_id",'ASC')
         ->groupBy("i.id")
         ->get()
-        ->groupBy('po_id')
+        //->groupBy('po_id')
         ->map(function($po){
             // group by category
             return collect($po)
