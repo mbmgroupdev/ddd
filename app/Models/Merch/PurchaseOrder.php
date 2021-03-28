@@ -29,4 +29,11 @@ class PurchaseOrder extends Model
         ->pluck('sum')
         ->first();
     }
+
+    public static function getPOListOrderIdWise($orderId)
+    {
+        return DB::table('mr_purchase_order')
+        ->where('mr_order_entry_order_id', $orderId)
+        ->get();
+    }
 }

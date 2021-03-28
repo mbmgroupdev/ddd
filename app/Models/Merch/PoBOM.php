@@ -4,6 +4,7 @@ namespace App\Models\Merch;
 
 use App\Models\Merch\PoBOM;
 use Illuminate\Database\Eloquent\Model;
+use DB;
 
 class PoBOM extends Model
 {
@@ -52,5 +53,14 @@ class PoBOM extends Model
 	  // {
 	  // 	return $this->hasMany('App\Models\Merch\OrdBomPlacement', ['order_id', 'mr_cat_item_id'], ['order_id', 'item_id']);
 	  // }
+
+	public static function getPoIdWisePoBOM($poId)
+    {
+        return DB::table('mr_po_bom_costing_booking')
+			->select('id', 'mr_material_category_mcat_id AS mcat_id', 'mr_cat_item_id', 'item_description', 'clr_id', 'size', 'mr_supplier_sup_id', 'mr_article_id', 'uom', 'consumption', 'bom_term', 'precost_fob', 'precost_lc', 'precost_freight', 'precost_unit_price', 'extra_percent', DB::raw('(consumption/100)*extra_percent AS qty'), DB::raw('((consumption/100)*extra_percent)+consumption AS total'), 'sl', 'depends_on', 'order_id', 'ord_bom_id')
+			->where('po_id', $poId)
+			->orderBy('sl', 'asc')
+			->get();
+    }
 
 }
