@@ -19,6 +19,9 @@ use Validator, DB, DataTables, ACL, Collection;
 
 class ShiftRoasterController extends Controller
 {
+    protected $planner;
+
+    protected $roaster;
 
     public function shiftAssign()
     {
@@ -653,17 +656,17 @@ class ShiftRoasterController extends Controller
 
     public function getRoasterDatatableData(Request $request)
     {
-        $unit  = $request->post("unit");
-        $floor = $request->post("floor_id");
-        $line  = $request->post("line_id");
-        $area  = $request->post("area");
-        $otnonot     = $request->post("otnonot");
-        $department  = $request->post("department");
-        $section     = $request->post("section");
-        $subsection  = $request->post("subsection");
+        $unit  = $request->unit??'';
+        $floor = $request->floor_id??'';
+        $line  = $request->line_id??'';
+        $area  = $request->area??'';
+        $otnonot     = $request->otnonot??'';
+        $department  = $request->department??'';
+        $section     = $request->section??'';
+        $subsection  = $request->subsection??'';
         $type        = $request->emptype;
         // year month section
-        $yearMonth = explode('-', $request->post("month"));
+        $yearMonth = explode('-', $request->month);
         $month = $yearMonth[1];
         $year = $yearMonth[0];
         // last day and first day of the selected month
@@ -673,69 +676,65 @@ class ShiftRoasterController extends Controller
         $getLine = line_by_id();
         $getFloor = floor_by_id();
         $getDesignation = designation_by_id();
-        // return $lastDay;
+
         if(isset($request->reporttype) && $request->reporttype == 0){
-            // roster basic sql binding
+            
             $shiftRosterData = DB::table('hr_shift_roaster');
             $shiftRosterDataSql = $shiftRosterData->toSql();
 
-            $data = Employee::select([
-                    'hr_as_basic_info.as_id',
-                    'hr_as_basic_info.associate_id',
-                    'hr_as_basic_info.as_oracle_code',
-                    'hr_as_basic_info.as_name',
-                    'hr_as_basic_info.as_shift_id',
-                    'hr_as_basic_info.shift_roaster_status',
-                    'hr_as_basic_info.as_designation_id',
-                    'hr_as_basic_info.as_line_id',
-                    'hr_as_basic_info.as_floor_id',
-                    'hr_as_basic_info.as_shift_id',
-                    // 'd.hr_designation_name',
-                    // 'l.hr_line_name',
-                    // 'f.hr_floor_name',
+            $data = DB::table('hr_as_basic_info as b')
+                ->select([
+                    'b.as_id',
+                    'b.associate_id',
+                    'b.as_oracle_code',
+                    'b.as_name',
+                    'b.as_shift_id',
+                    'b.shift_roaster_status',
+                    'b.as_designation_id',
+                    'b.as_line_id',
+                    'b.as_floor_id',
+                    'b.as_shift_id',
+                    'b.as_doj',
+                    'b.as_status_date',
                     's.*'
                 ])
-                ->where('hr_as_basic_info.as_unit_id', $unit)
-                ->where('hr_as_basic_info.as_status', 1)
-                // ->where('hr_as_basic_info.as_ot', 0)
-                // ->where('hr_as_basic_info.associate_id', '15F700039P')
+                ->where('b.as_unit_id', $unit)
+                ->where('b.as_status', 1)
                 ->when(!empty($floor), function($q) use($floor){
-                    $q->where('hr_as_basic_info.as_floor_id', $floor);
+                    $q->where('b.as_floor_id', $floor);
                 })
                 ->when($otnonot!=null, function($q) use($otnonot){
-                    $q->where('hr_as_basic_info.as_ot', $otnonot);
+                    $q->where('b.as_ot', $otnonot);
                 })
                 ->when(!empty($line), function($q) use($line){
-                    $q->where('hr_as_basic_info.as_line_id', $line);
+                    $q->where('b.as_line_id', $line);
                 })
                 ->when(!empty($area), function($q) use($area){
-                    $q->where('hr_as_basic_info.as_area_id', $area);
+                    $q->where('b.as_area_id', $area);
                 })
                 ->when(!empty($department), function($q) use($department){
-                    $q->where('hr_as_basic_info.as_department_id', $department);
+                    $q->where('b.as_department_id', $department);
                 })
                 ->when(!empty($type), function($q) use($type){
-                    $q->where('hr_as_basic_info.as_emp_type_id', $type);
+                    $q->where('b.as_emp_type_id', $type);
                 })
                 ->when(!empty($section), function($q) use($section){
-                    $q->where('hr_as_basic_info.as_section_id', $section);
+                    $q->where('b.as_section_id', $section);
                 })
                 ->when(!empty($subsection), function($q) use($subsection){
-                    $q->where('hr_as_basic_info.as_subsection_id', $subsection);
+                    $q->where('b.as_subsection_id', $subsection);
                 })
-                // ->leftJoin('hr_line AS l','l.hr_line_id','hr_as_basic_info.as_line_id')
-                // ->leftJoin('hr_designation AS d','d.hr_designation_id','hr_as_basic_info.as_designation_id')
-                // ->leftJoin('hr_floor AS f','f.hr_floor_id','hr_as_basic_info.as_floor_id')
                 ->leftjoin(DB::raw('(' . $shiftRosterDataSql. ') AS s'), function($join) use ($shiftRosterData, $month, $year) {
-                    $join->on('hr_as_basic_info.associate_id','s.shift_roaster_associate_id')->addBinding($shiftRosterData->getBindings());
+                    $join->on('b.associate_id','s.shift_roaster_associate_id')->addBinding($shiftRosterData->getBindings());
                     $join->where('s.shift_roaster_month', (int)$month);
                     $join->where('s.shift_roaster_year', (int)$year);
-                });
+                })
+                ->orderBy('b.as_id', 'ASC')->get();
 
-            $userPluck = $data->pluck('associate_id');
-            $data = $data->orderBy('hr_as_basic_info.as_id', 'ASC')->get();
-        }else{
-            // employee basic sql binding
+            //$userPluck = $data->pluck('associate_id');
+            //$data = $data;
+
+        }/*else{
             $employeeData = DB::table('hr_as_basic_info');
             $employeeDataSql = $employeeData->toSql();
 
@@ -784,23 +783,35 @@ class ShiftRoasterController extends Controller
                 });
             $userPluck = $data->pluck('associate_id');
             $data = $data->orderBy('emp.as_id', 'ASC')->get();
-        }
-        // dd($data);
-        // return $data;
-        // holiday planner
+        }*/
+
+        $userPluck = $data->pluck('associate_id');
+
         $holidayCheck = DB::table("hr_yearly_holiday_planner")
                 ->whereBetween('hr_yhp_dates_of_holidays', [$firstDay,$lastDay])
                 ->where('hr_yhp_status', 1)
-                ->where('hr_yhp_unit', $unit);
+                ->where('hr_yhp_unit', $unit)
+                ->get();
 
-        // holiday planner pluck
-        $holidayCheckComment = $holidayCheck->pluck('hr_yhp_comments','hr_yhp_dates_of_holidays');
-        $holidayCheckStatus  = $holidayCheck->pluck('hr_yhp_open_status','hr_yhp_dates_of_holidays');
+        // assign to planner for checking later
+        $this->planner = $holidayCheck;
+
 
         // holiday roaster
-        $holidayRoasterAll = HolidayRoaster::where('status', 1)->whereIn('as_id',$userPluck)->whereBetween('date',[$firstDay,$lastDay])->get()->groupBy('as_id')->toArray();
+        $holidayRoasterAll = HolidayRoaster::where('status', 1)
+            ->whereIn('as_id',$userPluck)
+            ->whereBetween('date',[$firstDay,$lastDay])
+            ->get()
+            ->groupBy('as_id')
+            ->map(function($q){
+                return collect($q)->keyBy('date');
+            });
 
-        // return $holidayRoasterAll;
+        $this->roaster = $holidayRoasterAll;
+
+        $dt = collect($data)->map(function($q){
+            return $this->proeceeShiftTable($q);
+        });
 
         foreach($data as $k=>$dd) {
             for($i=1; $i<=31; $i++) {
@@ -988,6 +999,22 @@ class ShiftRoasterController extends Controller
                 'day_31'
             ])
             ->make(true);
+    }
+
+    protected function proeceeShiftTable($emp)
+    {
+        // holiday planner pluck
+        $holiday = collect($this->planner)
+                    ->where('hr_yhp_open_status', 0)
+                    ->pluck('hr_yhp_comments','hr_yhp_dates_of_holidays');
+
+        $general  = collect($this->planner)
+                    ->where('hr_yhp_open_status', 1)
+                    ->pluck('hr_yhp_comments','hr_yhp_dates_of_holidays');;
+
+        foreach ($emp as $key => $v) {
+            dd($emp);
+        }
     }
 
     /*public function getRoasterDatatableData(Request $request)
