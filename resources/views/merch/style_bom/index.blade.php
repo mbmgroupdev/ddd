@@ -102,6 +102,7 @@
                 <div class="panel panel-info table-list-section">
                         <form class="form-horizontal" role="form" method="post" id="bomForm">
                             <input type="hidden" name="stl_id" value="{{ $style->stl_id }}">
+                            <input type="hidden" id="change-flag" value="0">
                             {{ csrf_field() }} 
                             <div class="panel-body">
                                 
@@ -403,7 +404,7 @@
         var form = $("#bomForm");
         if (isValid){
            $.ajax({
-              type: "GET",
+              type: "POST",
               url: '{{ url("/merch/style/bom-ajax-store") }}',
               headers: {
                   'X-CSRF-TOKEN': '{{ csrf_token() }}',

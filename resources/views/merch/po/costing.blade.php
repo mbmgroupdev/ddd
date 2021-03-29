@@ -37,7 +37,7 @@
 
         <div class="page-content">
             <input type="hidden" id="base_url" value="{{ url('/') }}">
-            <input type="hidden" id="blade_type" value="order">
+            <input type="hidden" id="blade_type" value="po">
             <div class="row">
               <div class="col-12">
                 <div class="panel panel-success">
@@ -50,7 +50,8 @@
                             <input type="hidden" name="stl_id" value="{{ $order->mr_style_stl_id }}">
                             <input type="hidden" name="order_id" value="{{ $order->order_id }}">
                             <input type="hidden" id="order-qty" value="{{ $order->order_qty??0 }}">
-                            <input type="hidden" id="po_id" value="{{ $po->id }}">
+                            <input type="hidden" name="po_id" value="{{ $po->po_id }}">
+                            <input type="hidden" id="change-flag" value="0">
 
                             {{ csrf_field() }} 
                             <div class="panel-body">
@@ -205,7 +206,7 @@
                                                 
                                                 <td>
                                                   <input type="text" step="any" min="0" name="spunitprice[]" id="spunitprice-{{ $spo->id }}" class="form-control sp_price spunitprice action-input" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="{{ $spo->unit_price??'0' }}">
-                                                  <input type="hidden" name="order_op_id[]" value="{{ $spo->id }}">
+                                                  <input type="hidden" name="op_id[]" value="{{ $spo->id }}">
                                                   <input type="hidden" name="opr_type[]" value="{{ $spo->opr_type }}">
                                                   <input type="hidden" name="mr_operation_opr_id[]" value="{{ $spo->mr_operation_opr_id }}">
                                                 </td>
@@ -392,51 +393,51 @@
         //       $(curInputs[i]).closest(".form-group").addClass("has-error");
         //    }
         // }
-        // var form = $("#costingForm");
-        // if (isValid){
-        //    $.ajax({
-        //       type: "GET",
-        //       url: '{{ url("/merch/order/costing-ajax-store") }}',
-        //       headers: {
-        //           'X-CSRF-TOKEN': '{{ csrf_token() }}',
-        //       },
-        //       data: form.serialize(), // serializes the form's elements.
-        //       success: function(response)
-        //       {
-        //         console.log(response);
-        //         if(response.type === 'success'){
-        //           if(savetype =='manual' ){
-        //               $.notify(response.message, response.type);
-        //           }else{
-        //               $.notify('Costing Save '+savetype, response.type);
-        //           }
-        //         }else{
-        //           $.notify(response.message, response.type);
-        //         }
-        //         $(".app-loader").hide();
-        //       },
-        //       error: function (reject) {
-        //         $(".app-loader").hide();
-        //         // console.log(reject);
-        //         if( reject.status === 400) {
-        //             var data = $.parseJSON(reject.responseText);
-        //             $.notify(data.message, data.type);
-        //         }else if(reject.status === 422){
-        //           var data = $.parseJSON(reject.responseText);
-        //           var errors = data.errors;
-        //           // console.log(errors);
-        //           for (var key in errors) {
-        //             var value = errors[key];
-        //             $.notify(value[0], 'error');
-        //           }
+        var form = $("#costingForm");
+        if (isValid){
+           $.ajax({
+              type: "POST",
+              url: '{{ url("/merch/po-costing-ajax-store") }}',
+              headers: {
+                  'X-CSRF-TOKEN': '{{ csrf_token() }}',
+              },
+              data: form.serialize(), // serializes the form's elements.
+              success: function(response)
+              {
+                // console.log(response);
+                if(response.type === 'success'){
+                  if(savetype =='manual' ){
+                      $.notify(response.message, response.type);
+                  }else{
+                      $.notify('Costing Save '+savetype, response.type);
+                  }
+                }else{
+                  $.notify(response.message, response.type);
+                }
+                $(".app-loader").hide();
+              },
+              error: function (reject) {
+                $(".app-loader").hide();
+                // console.log(reject);
+                if( reject.status === 400) {
+                    var data = $.parseJSON(reject.responseText);
+                    $.notify(data.message, data.type);
+                }else if(reject.status === 422){
+                  var data = $.parseJSON(reject.responseText);
+                  var errors = data.errors;
+                  // console.log(errors);
+                  for (var key in errors) {
+                    var value = errors[key];
+                    $.notify(value[0], 'error');
+                  }
                    
-        //         }
-        //       }
-        //    });
-        // }else{
-        //     $(".app-loader").hide();
-        //     $.notify("Some field are required", 'error');
-        // }
+                }
+              }
+           });
+        }else{
+            $(".app-loader").hide();
+            $.notify("Some field are required", 'error');
+        }
     };
 </script>
 @endpush

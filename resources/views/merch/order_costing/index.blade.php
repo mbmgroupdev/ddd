@@ -50,7 +50,7 @@
                             <input type="hidden" name="stl_id" value="{{ $order->mr_style_stl_id }}">
                             <input type="hidden" name="order_id" value="{{ $order->order_id }}">
                             <input type="hidden" id="order-qty" value="{{ $order->order_qty??0 }}">
-
+                            <input type="hidden" id="change-flag" value="0">
                             {{ csrf_field() }} 
                             <div class="panel-body">
                                 
@@ -396,7 +396,7 @@
         var form = $("#costingForm");
         if (isValid){
            $.ajax({
-              type: "GET",
+              type: "POST",
               url: '{{ url("/merch/order/costing-ajax-store") }}',
               headers: {
                   'X-CSRF-TOKEN': '{{ csrf_token() }}',

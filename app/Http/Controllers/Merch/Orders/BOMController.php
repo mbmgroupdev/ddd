@@ -287,8 +287,6 @@ class BOMController extends Controller
             			$bomId = OrderBOM::create($bom)->id;
             			$data['value'][$i] = $bomId;
             		}
-
-            		// PO create or update before
             		
             		$sl++;
             	}

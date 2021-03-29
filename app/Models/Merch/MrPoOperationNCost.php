@@ -9,6 +9,7 @@ class MrPoOperationNCost extends Model
 {
     protected $table= 'mr_po_operation_n_cost';
     public $timestamps= false;
+    protected $guarded = [];
 
     public static function storeData($datas, $poId, $clrId){
     	foreach ($datas as $data) {

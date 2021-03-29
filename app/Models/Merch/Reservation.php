@@ -13,7 +13,7 @@ class Reservation extends Model
 
     public static function getReservationIdWiseReservation($rId)
     {
-    	return Reservation::where('res_id', $rId)->first();
+    	return Reservation::where('id', $rId)->first();
     }
 
     public static function checkReservationExists($value)
@@ -24,5 +24,15 @@ class Reservation extends Model
     	->where('res_year', $value['res_year'])
     	->where('prd_type_id', $value['prd_type_id'])
     	->exists();
+    }
+
+    public static function checkReservationIdWise($value)
+    {
+        return Reservation::where('hr_unit_id', $value['hr_unit_id'])
+        ->where('b_id', $value['b_id'])
+        ->where('res_month', $value['res_month'])
+        ->where('res_year', $value['res_year'])
+        ->where('prd_type_id', $value['prd_type_id'])
+        ->first();
     }
 }

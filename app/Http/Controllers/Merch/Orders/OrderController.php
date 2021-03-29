@@ -103,8 +103,11 @@ class OrderController extends Controller
 
 		return DataTables::of($data)
 			->addIndexColumn()
+            ->addColumn('order_code', function ($data){
+                return '<a class="add-new" data-orderid="'.$data->order_id.'" data-type="Order View" data-toggle="tooltip" data-placement="top" title="" data-original-title="Order View">'.$data->order_code.'</a>';
+            })
             ->addColumn('b_name', function ($data) use ($getBuyer){
-            	return $getBuyer[$data->mr_buyer_b_id]->b_name??'';
+                return $getBuyer[$data->mr_buyer_b_id]->b_name??'';
             })
             ->addColumn('hr_unit_name', function ($data) use ($getUnit){
             	return $getUnit[$data->unit_id]['hr_unit_name']??'';
@@ -117,7 +120,7 @@ class OrderController extends Controller
 			})
             ->addColumn('action', function ($data) {
 				$action_buttons = "<div class=\"btn-group\">
-					<a href='#' class=\"btn btn-sm btn-secondary\" data-toggle=\"tooltip\" title=\"Order Edit\">
+					<a href='#' class=\"btn btn-sm btn-secondary add-new\" data-type=\"Order Edit\" data-toggle=\"tooltip\" title=\"Order Edit\" data-orderid=\"$data->order_id\">
 					<i class=\"ace-icon fa fa-pencil bigger-120\"></i>
 					</a>
 					<a href='".url("merch/order/bom/$data->order_id")."' class=\"btn btn-sm btn-primary\" data-toggle=\"tooltip\" title=\"Order BOM\">
@@ -213,38 +216,38 @@ class OrderController extends Controller
     	return view('merch/orders/order_entry', compact('unitList', 'buyerList', 'po_list', 'reseravtion', 'brandList', 'styleList','seasonList'));
     }
 
-		//Order Entry Form
-	    public function orderEntryDirect()
-	    {
-	    	$unitList= Unit::whereIn('hr_unit_id', auth()->user()->unit_permissions())->pluck('hr_unit_name', 'hr_unit_id');
-	    	$buyerList= Buyer::whereIn('b_id', auth()->user()->buyer_permissions())->pluck('b_name', 'b_id');
-	    	$po_list= PurchaseOrder::pluck('po_no', 'po_id');
-	    	// $reseravtion= DB::table('mr_capacity_reservation AS cr')
-	    	// 				->select(
-	    	// 					'cr.*',
-	    	// 					'u.hr_unit_name',
-	    	// 					'b.b_name'
-	    	// 				)
-	    	// 				->where('res_id', $id)
-	    	// 				->leftJoin('hr_unit AS u', 'u.hr_unit_id', 'cr.hr_unit_id')
-	    	// 				->leftJoin('mr_buyer AS b', 'b.b_id', 'cr.b_id')
-	    	// 				->first();
-	      // $reseravtion->res_month= date('F', mktime(0, 0, 0, $reseravtion->res_month, 10));
-			  // $ordered= DB::table('mr_order_entry')
-	      //               ->where('res_id', $reseravtion->res_id)
-	      //               ->select(DB::raw("SUM(order_qty) AS sum"))
-	      //               ->first();
-	      //   $reseravtion->res_quantity= $reseravtion->res_quantity- $ordered->sum;
-	    	$brandList= Brand::pluck('br_name','br_id');
-	        $style_order_type= "Bulk";
-	    	$styleList= Style::
-	                        where('stl_type', "=", $style_order_type)
-	                        ->pluck('stl_no', 'stl_id');
-	    	$seasonList= Season::pluck('se_name', 'se_id');
-				$prdtypList= ProductType::pluck('prd_type_name', 'prd_type_id');
+	//Order Entry Form
+    public function orderEntryDirect()
+    {
+    	$unitList= Unit::whereIn('hr_unit_id', auth()->user()->unit_permissions())->pluck('hr_unit_name', 'hr_unit_id');
+    	$buyerList= Buyer::whereIn('b_id', auth()->user()->buyer_permissions())->pluck('b_name', 'b_id');
+    	$po_list= PurchaseOrder::pluck('po_no', 'po_id');
+    	// $reseravtion= DB::table('mr_capacity_reservation AS cr')
+    	// 				->select(
+    	// 					'cr.*',
+    	// 					'u.hr_unit_name',
+    	// 					'b.b_name'
+    	// 				)
+    	// 				->where('res_id', $id)
+    	// 				->leftJoin('hr_unit AS u', 'u.hr_unit_id', 'cr.hr_unit_id')
+    	// 				->leftJoin('mr_buyer AS b', 'b.b_id', 'cr.b_id')
+    	// 				->first();
+      // $reseravtion->res_month= date('F', mktime(0, 0, 0, $reseravtion->res_month, 10));
+		  // $ordered= DB::table('mr_order_entry')
+      //               ->where('res_id', $reseravtion->res_id)
+      //               ->select(DB::raw("SUM(order_qty) AS sum"))
+      //               ->first();
+      //   $reseravtion->res_quantity= $reseravtion->res_quantity- $ordered->sum;
+    	$brandList= Brand::pluck('br_name','br_id');
+        $style_order_type= "Bulk";
+    	$styleList= Style::
+                        where('stl_type', "=", $style_order_type)
+                        ->pluck('stl_no', 'stl_id');
+    	$seasonList= Season::pluck('se_name', 'se_id');
+			$prdtypList= ProductType::pluck('prd_type_name', 'prd_type_id');
 
-	    	return view('merch/orders/order_entry_direct', compact('unitList', 'buyerList','prdtypList', 'po_list', 'reseravtion', 'brandList', 'styleList','seasonList'));
-	    }
+    	return view('merch/orders/order_entry_direct', compact('unitList', 'buyerList','prdtypList', 'po_list', 'reseravtion', 'brandList', 'styleList','seasonList'));
+    }
     //season on change style
     public function styleList(Request $request)
     {
@@ -275,67 +278,67 @@ class OrderController extends Controller
         return response()->json(['styleList' => $styleList]);
     }
 
-		public function styleListdirect(Request $request)
-		{
-				// Season List Query
-				// dd($request->all()); exit;
-				// $reseravtion= DB::table('mr_capacity_reservation AS cr')
-				// 								->select(
-				// 										'cr.*',
-				// 										'u.hr_unit_name',
-				// 										'b.b_name'
-				// 								)
-				// 								->where('res_id', $request->id)
-				// 								->leftJoin('hr_unit AS u', 'u.hr_unit_id', 'cr.hr_unit_id')
-				// 								->leftJoin('mr_buyer AS b', 'b.b_id', 'cr.b_id')
-				// 								->first();
-				$style_order_type= "Bulk";
-				$styleList = "<option value=\"\">Select Style Type </option>";
+	public function styleListdirect(Request $request)
+	{
+			// Season List Query
+			// dd($request->all()); exit;
+			// $reseravtion= DB::table('mr_capacity_reservation AS cr')
+			// 								->select(
+			// 										'cr.*',
+			// 										'u.hr_unit_name',
+			// 										'b.b_name'
+			// 								)
+			// 								->where('res_id', $request->id)
+			// 								->leftJoin('hr_unit AS u', 'u.hr_unit_id', 'cr.hr_unit_id')
+			// 								->leftJoin('mr_buyer AS b', 'b.b_id', 'cr.b_id')
+			// 								->first();
+			$style_order_type= "Bulk";
+			$styleList = "<option value=\"\">Select Style Type </option>";
 
-				$styles= Style::where('mr_buyer_b_id', $request->buyer_id)
-												->where('stl_type', "=", $style_order_type)
-												->where('mr_season_se_id', $request->mr_season_se_id)
-												->pluck('stl_no', 'stl_id');
-				foreach ($styles as $key => $value)
-				{
-					$styleList .= "<option value=\"$key\">$value</option>";
+			$styles= Style::where('mr_buyer_b_id', $request->buyer_id)
+											->where('stl_type', "=", $style_order_type)
+											->where('mr_season_se_id', $request->mr_season_se_id)
+											->pluck('stl_no', 'stl_id');
+			foreach ($styles as $key => $value)
+			{
+				$styleList .= "<option value=\"$key\">$value</option>";
+			}
+
+			return response()->json(['styleList' => $styleList]);
+	}
+
+	public function orderQuantityDirect(Request $request)
+	{
+			$reservation = DB::table('mr_capacity_reservation')
+			                  ->select(
+													  'mr_capacity_reservation.res_id as id',
+														'mr_capacity_reservation.res_quantity',
+														'mr_order_entry.*'
+													)
+			                  ->where('hr_unit_id',$request->unit_id)
+                      ->where('b_id',$request->buyer_id)
+												->where('res_month',date("m", strtotime($request->month)))
+												->where('res_year',$request->year)
+												->where('prd_type_id',$request->product_type_id)
+												->leftJoin('mr_order_entry','mr_capacity_reservation.res_id','mr_order_entry.res_id')
+												->get();
+												 	// $reservation->sum('mr_order_entry.order_qty');
+													// $reservation->sum('mr_capacity_reservation.res_quantity');
+												//->first();
+												//dd($reservation);exit;
+				//dd(array_sum(array_column($reservation->toArray(),'order_qty')));exit;
+				$res_id ='';
+				if(isset($reservation[0]->res_quantity)){
+					$res_id = $reservation[0]->id;
+					$response = ($reservation[0]->res_quantity) - (array_sum(array_column($reservation->toArray(),'order_qty')));
+				}else{
+					$response ='err';
 				}
-
-				return response()->json(['styleList' => $styleList]);
-		}
-
-		public function orderQuantityDirect(Request $request)
-		{
-				$reservation = DB::table('mr_capacity_reservation')
-				                  ->select(
-														  'mr_capacity_reservation.res_id as id',
-															'mr_capacity_reservation.res_quantity',
-															'mr_order_entry.*'
-														)
-				                  ->where('hr_unit_id',$request->unit_id)
-                          ->where('b_id',$request->buyer_id)
-													->where('res_month',date("m", strtotime($request->month)))
-													->where('res_year',$request->year)
-													->where('prd_type_id',$request->product_type_id)
-													->leftJoin('mr_order_entry','mr_capacity_reservation.res_id','mr_order_entry.res_id')
-													->get();
-													 	// $reservation->sum('mr_order_entry.order_qty');
-														// $reservation->sum('mr_capacity_reservation.res_quantity');
-													//->first();
-													//dd($reservation);exit;
-					//dd(array_sum(array_column($reservation->toArray(),'order_qty')));exit;
-					$res_id ='';
-					if(isset($reservation[0]->res_quantity)){
-						$res_id = $reservation[0]->id;
-						$response = ($reservation[0]->res_quantity) - (array_sum(array_column($reservation->toArray(),'order_qty')));
-					}else{
-						$response ='err';
-					}
-					$data =[];
-					$data['response'] = $response;
-					$data['res_id'] = $res_id;
-				return response()->json($data);
-		}
+				$data =[];
+				$data['response'] = $response;
+				$data['res_id'] = $res_id;
+			return response()->json($data);
+	}
     //Order Store
     public function orderStore(Request $request)
     {
@@ -351,6 +354,7 @@ class OrderController extends Controller
 			  	"order_qty" => "required|max:11",
 			  	"order_delivery_date" => "required"
     	]);
+    	
     	if($validator->fails()){
     		return back()
     			->withInput()
@@ -422,92 +426,92 @@ class OrderController extends Controller
             }
     	}
     }
-		public function orderStoreDirect(Request $request)
-		{
-			//dd($request->all());exit;
-			// $request->mr_buyer_b_id = $request->b_id;
-			$validator= Validator::make($request->all(),[
-					"res_id" => "required|max:11",
-					"unit_id" => "required|max:11",
-					"b_id" => "required|max:11",
-					// "mr_brand_br_id" => "max:11",
-					"mr_season_se_id" => "required|max:11",
-					"mr_style_stl_id" => "required|max:11",
-					"order_ref_no" => "required|max:60",
-					"order_qty" => "required|max:11",
-					"order_delivery_date" => "required"
-			]);
-			if($validator->fails()){
-				return back()
-					->withInput()
-					->with('error',"Incorrect Input!!");
-			} else {
-						$unit_id= auth()->user()->unit_id();
-						$order_month= date("m", strtotime($request->order_month));
+	public function orderStoreDirect(Request $request)
+	{
+		//dd($request->all());exit;
+		// $request->mr_buyer_b_id = $request->b_id;
+		$validator= Validator::make($request->all(),[
+				"res_id" => "required|max:11",
+				"unit_id" => "required|max:11",
+				"b_id" => "required|max:11",
+				// "mr_brand_br_id" => "max:11",
+				"mr_season_se_id" => "required|max:11",
+				"mr_style_stl_id" => "required|max:11",
+				"order_ref_no" => "required|max:60",
+				"order_qty" => "required|max:11",
+				"order_delivery_date" => "required"
+		]);
+		if($validator->fails()){
+			return back()
+				->withInput()
+				->with('error',"Incorrect Input!!");
+		} else {
+					$unit_id= auth()->user()->unit_id();
+					$order_month= date("m", strtotime($request->order_month));
 
-						//validation order_qty in db
-						$orderQty = $request->order_qty;
-						$getReservation = Reservation::getReservationIdWiseReservation($request->res_id);
-						$reservationQty = $getReservation->res_quantity;
-						$getOrder = OrderEntry::getResIdWiseOrder($request->res_id);
-						$totalOrderQty = $orderQty + $getOrder->sum;
-						// if($totalOrderQty > $reservationQty){
-						// 		return redirect()->back()->with('error', 'Total quantity can not greater than Projected quantity');
-						// }
-						// Generate Order Code
-						$reseravtion= DB::table('mr_capacity_reservation AS cr')
-														->where('cr.res_id', $request->res_id)
-														->select([
-																'u.hr_unit_name',
-																'b.b_name'
-														])
-														->leftJoin('hr_unit AS u', 'u.hr_unit_id', 'cr.hr_unit_id')
-														->leftJoin('mr_buyer AS b', 'b.b_id', 'cr.b_id')
-														->first();
-						$order_code = (new ShortCodeLib)::generate([
-								'table'            => 'mr_order_entry',
-								'column_primary'   => 'order_id',
-								'column_shortcode' => 'order_code',
-								'first_letter'     => $reseravtion->hr_unit_name,
-								'second_letter'    => $reseravtion->b_name
-								]);
-						//... End of Order Code generate
+					//validation order_qty in db
+					$orderQty = $request->order_qty;
+					$getReservation = Reservation::getReservationIdWiseReservation($request->res_id);
+					$reservationQty = $getReservation->res_quantity;
+					$getOrder = OrderEntry::getResIdWiseOrder($request->res_id);
+					$totalOrderQty = $orderQty + $getOrder->sum;
+					// if($totalOrderQty > $reservationQty){
+					// 		return redirect()->back()->with('error', 'Total quantity can not greater than Projected quantity');
+					// }
+					// Generate Order Code
+					$reseravtion= DB::table('mr_capacity_reservation AS cr')
+													->where('cr.res_id', $request->res_id)
+													->select([
+															'u.hr_unit_name',
+															'b.b_name'
+													])
+													->leftJoin('hr_unit AS u', 'u.hr_unit_id', 'cr.hr_unit_id')
+													->leftJoin('mr_buyer AS b', 'b.b_id', 'cr.b_id')
+													->first();
+					$order_code = (new ShortCodeLib)::generate([
+							'table'            => 'mr_order_entry',
+							'column_primary'   => 'order_id',
+							'column_shortcode' => 'order_code',
+							'first_letter'     => $reseravtion->hr_unit_name,
+							'second_letter'    => $reseravtion->b_name
+							]);
+					//... End of Order Code generate
 
-				$data= new OrderEntry();
-				$data->order_code = $order_code;
-				$data->res_id = $request->res_id;
-				$data->unit_id = $request->unit_id;
-				$data->mr_buyer_b_id = $request->b_id;
-				// $data->mr_brand_br_id = $request->mr_brand_br_id;
-				$data->mr_season_se_id = $request->mr_season_se_id;
-				$data->mr_style_stl_id = $request->mr_style_stl_id;
-				$data->order_ref_no = $request->order_ref_no;
-				$data->order_qty = $request->order_qty;
-						$data->order_delivery_date = $request->order_delivery_date;
-						$data->pcd = $request->pcd;
-						$data->created_by = Auth::user()->associate_id;
+			$data= new OrderEntry();
+			$data->order_code = $order_code;
+			$data->res_id = $request->res_id;
+			$data->unit_id = $request->unit_id;
+			$data->mr_buyer_b_id = $request->b_id;
+			// $data->mr_brand_br_id = $request->mr_brand_br_id;
+			$data->mr_season_se_id = $request->mr_season_se_id;
+			$data->mr_style_stl_id = $request->mr_style_stl_id;
+			$data->order_ref_no = $request->order_ref_no;
+			$data->order_qty = $request->order_qty;
+					$data->order_delivery_date = $request->order_delivery_date;
+					$data->pcd = $request->pcd;
+					$data->created_by = Auth::user()->associate_id;
 
-						// If user reloads the page, then it will redirect to purchase order page with last inserted Order Entry data
-						$exists= OrderEntry::where('order_code', $request->order_code)->exists();
-						if($exists){
-							$order_id= OrderEntry::where('order_code', $request->order_code)
-												->pluck('order_id')
-												->first();
-							return redirect("merch/orders/purchase_order/".$order_id)->with('error', 'Order already exists !');
-						} else {
-							if($data->save()){
-						$order_id= $data->id;
-						$this->logFileWrite("Order Created", $order_id);
-						return redirect("merch/orders/order_edit/".$order_id)->with('success', 'Order Saved Successfully!');
+					// If user reloads the page, then it will redirect to purchase order page with last inserted Order Entry data
+					$exists= OrderEntry::where('order_code', $request->order_code)->exists();
+					if($exists){
+						$order_id= OrderEntry::where('order_code', $request->order_code)
+											->pluck('order_id')
+											->first();
+						return redirect("merch/orders/purchase_order/".$order_id)->with('error', 'Order already exists !');
+					} else {
+						if($data->save()){
+					$order_id= $data->id;
+					$this->logFileWrite("Order Created", $order_id);
+					return redirect("merch/orders/order_edit/".$order_id)->with('success', 'Order Saved Successfully!');
+				}
+				else{
+					return back()
+						->withInput()
+						->with("error", "error saving data!!");
+				}
 					}
-					else{
-						return back()
-							->withInput()
-							->with("error", "error saving data!!");
-					}
-						}
-			}
 		}
+	}
     public function getOrderSteps($id,$unit,$buyer){
       $data = [];
       $data['bom'] = DB::table("mr_order_bom_costing_booking")

@@ -26,8 +26,12 @@ function termsCondition(thisvalue){
     
 }
 // on change input cost
-$(document).on("keyup blur change", ".changesNo", function(){
+$(document).on("keyup blur", ".changesNo", function(){
     changeCost($(this), 'input');
+});
+
+$("body").on("change", ".commission, .changesNo, .sp_price", function(){
+    $("#change-flag").val('1');
 });
 
 function changeCost(thisvalue, type) {
@@ -75,8 +79,8 @@ function changeCost(thisvalue, type) {
     tSewFin = parseFloat(parseFloat(finishing) + parseFloat(sewing)).toFixed(6);
     $("#tsewing-finishing").html(tSewFin);
 
-    // order costing qty, value cal
-    if($("#blade_type").val() === 'order'){
+    // order & po costing qty, value cal
+    if($("#blade_type").val() === 'order' || $("#blade_type").val() === 'po'){
         var orderQty = $("#order-qty").val();
         var precost_req_qty = parseFloat(parseFloat(consumption) + parseFloat(comsumptionPer) * parseFloat(orderQty)).toFixed(6);
         var total_value = parseFloat(parseFloat(unitprice)*parseFloat(precost_req_qty)).toFixed(6);
@@ -134,11 +138,13 @@ function calculateFOB(){
 }
 // auto save
 $(document).on('blur','.commission, .changesNo, .sp_price',function(){
-    setTimeout(function(){
-        saveCosting('auto');
-    }, 600)
+    if($("#change-flag").val() === '1'){
+        $("#change-flag").val('0');
+        setTimeout(function(){
+            saveCosting('auto');
+        }, 600)
+    }
 });
-
 
 $(document).on('keyup', 'input, select', function(e) {
     if (e.which == 39) { // right arrow
