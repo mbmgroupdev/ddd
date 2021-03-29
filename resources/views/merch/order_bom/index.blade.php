@@ -50,6 +50,7 @@
                         <form class="form-horizontal" role="form" method="post" id="bomForm">
                             <input type="hidden" name="stl_id" value="{{ $order->mr_style_stl_id }}">
                             <input type="hidden" name="order_id" value="{{ $order->order_id }}">
+                            <input type="hidden" id="change-flag" value="0">
                             {{ csrf_field() }} 
                             <div class="panel-body">
                                 
@@ -400,7 +401,7 @@
       var form = $("#bomForm");
       if (isValid){
          $.ajax({
-            type: "GET",
+            type: "POST",
             url: '{{ url("/merch/order/bom-ajax-store") }}',
             headers: {
                 'X-CSRF-TOKEN': '{{ csrf_token() }}',

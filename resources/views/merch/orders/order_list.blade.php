@@ -86,9 +86,114 @@
         </div><!-- /.page-content -->
     </div>
 </div>
+@include('merch.common.right-modal')
 @push('js')
 
 <script type="text/javascript">
+$(document).on('click', '.add-new', function() {
+    type = $(this).data('type');
+    $('#right_modal_item').modal('show');
+    $('#modal-title-right').html(type);
+    $("#content-result").html(loaderContent);
+    var url = '';
+    var id = $(this).data('orderid');
+    if(type === 'Order Edit'){
+      url = '/merch/orders/'+id+'/edit';
+    }else if(type === 'Order View'){
+      url = '/merch/orders/'+id;
+    }
+    $.ajax({
+        type: "GET",
+        url: "{{ url('/')}}"+url,
+        success: function(response)
+        {
+          // console.log(response);
+          if(response !== 'error'){
+            $('#content-result').html(response);
+            $('.filter').select2({
+                dropdownParent: $('#right_modal_item')
+            });
+          }else{
+            $('#content-result').html('<h4 class="text-center">Something wrong, please close and try again!</h4>');
+          }
+        },
+        error: function (reject) {
+          console.log(reject);
+        }
+    });
+    
+});
+$(document).on('click', '#itemBtn', function(event) {
+  $("#app-loader").show();
+  var curStep = jQuery(this).closest("#itemForm"),
+    curInputs = curStep.find("input[type='text'], input[type='number'],input[type='hidden'],input[type='date'], input[type='month'],input[type='checkbox'],input[type='radio'],textarea,select"),
+    isValid = true;
+    
+  $(".form-group").removeClass("has-error");
+  for (var i = 0; i < curInputs.length; i++) {
+    if (!curInputs[i].validity.valid) {
+      isValid = false;
+      $(curInputs[i]).closest(".form-group").addClass("has-error");
+    }
+  }
+  var verb = 'POST';
+  var pageType = $("#page-type").val();
+  if(pageType === 'order-update'){
+    var orderId = $("#order-id").val();
+    var resQty = $("#res-quantity").val();
+    var poQty = $("#po-qty").val();
+    var orderQty = $("#order_qty").val();
+    if(parseFloat(poQty) > parseFloat(orderQty)){
+      $("#order_qty").notify('Total PO Quantity '+poQty, 'error');
+      $("#app-loader").hide();
+      return false;
+    }
+    if(parseFloat(orderQty) > parseFloat(resQty)){
+      $("#order_qty").notify('Reservation balance '+resQty, 'error');
+      $("#app-loader").hide();
+      return false;
+    }
+    var url = '/merch/orders/'+orderId;
+  }
+  
+  if (isValid){
+     $.ajax({
+        type: verb,
+        url: url,
+        data: curInputs.serialize(), // serializes the form's elements.
+        success: function(response)
+        {
+          $("#app-loader").hide();
+          // console.log(response)
+          $.notify(response.message, response.type);
+          if(response.type === 'success'){
+            setTimeout(function(){
+              window.location.href=response.url;
+            }, 1000);
+          } 
+        },
+        error: function (reject) {
+          $("#app-loader").hide();
+          if( reject.status === 400) {
+              var data = $.parseJSON(reject.responseText);
+              $.notify(data.message, data.type);
+          }else if(reject.status === 422){
+            var data = $.parseJSON(reject.responseText);
+            var errors = data.errors;
+            // console.log(errors);
+            for (var key in errors) {
+              var value = errors[key];
+              $.notify(value[0], 'error');
+            }
+             
+          }
+        }
+     });
+  }else{
+      $("#app-loader").hide();
+      $.notify("Some field are required", 'error');
+  }
+});
 
 $(document).ready(function(){ 
     var searchable = [1,2,6,7];
@@ -99,7 +204,7 @@ $(document).ready(function(){
         '4' :[@foreach($buyerList as $e) <?php echo "'$e'," ?> @endforeach],
         {{-- '5' :[@foreach($brandList as $e) <?php echo "'$e'," ?> @endforeach], --}}
         '5' :[@foreach($seasonList as $e) <?php echo "'$e'," ?> @endforeach],
-        // '5' :[@foreach($styleList as $e) <?php echo "'$e'," ?> @endforeach],
+        
     };
     var exportCol = [0,1,2,3,4,5,6,7];
     var dt = $('#example').DataTable({
@@ -246,6 +351,8 @@ $(document).ready(function(){
    }); 
 
 }); 
+
+
 </script>
 @endpush
 @endsection

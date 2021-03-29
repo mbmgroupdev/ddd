@@ -72,9 +72,6 @@ class ReservationController extends Controller
         $data = $queueData->get();
         $ordered = DB::table('mr_order_entry')
             ->select('res_id', DB::raw("SUM(order_qty) AS qty"))
-            // ->whereIn('unit_id', auth()->user()->unit_permissions())
-            // ->whereIn('mr_buyer_b_id', auth()->user()->buyer_permissions())
-            // ->pluck('sum', 'res_id')
             ->groupBy('res_id')
             ->get()
             ->keyBy('res_id', true);
@@ -129,14 +126,17 @@ class ReservationController extends Controller
                     $flag = 1;
                 }
                 $action_buttons= "<div>
-                    <a href='#' class=\"btn btn-xs btn-success\" data-toggle=\"tooltip\" title=\"Edit Reservation\">
+                    <a class=\"btn btn-xs btn-success add-new text-white\" data-id=\"$data->id\" data-type='Edit reservation' data-toggle=\"tooltip\" title=\"Edit Reservation\">
                         <i class=\"ace-icon fa fa-pencil \"></i>
                     </a> ";
                     if($data->res_quantity > (isset($ordered[$data->id])?($ordered[$data->id]->qty??0):0) && $flag == 0) {
-                        $action_buttons.= "<a href='#' class=\"btn btn-xs add-new btn-primary\" data-toggle='tooltip' title=\"Order Entry\" data-type='order' data-resid=\"$data->id\">
+                        $action_buttons.= "<a class=\"btn btn-xs add-new btn-primary text-white\" data-toggle='tooltip' title=\"Order Entry\" data-type='order' data-resid=\"$data->id\">
                             <i class=\"ace-icon fa fa-cart-plus \"></i>
                         </a>";
                     }
+                    $action_buttons.= "<a class=\"btn btn-xs add-new btn-warning text-white\" data-toggle='tooltip' title=\"Order List\" data-type='Order List' data-resid=\"$data->id\">
+                            <i class=\"ace-icon fa fa-list \"></i>
+                        </a>";
                 $action_buttons.= "</div>";
                 return $action_buttons;
             })
@@ -152,7 +152,8 @@ class ReservationController extends Controller
      */
     public function create()
     {
-        $unitList= Unit::whereIn('hr_unit_id', auth()->user()->unit_permissions())->pluck('hr_unit_name', 'hr_unit_id');
+        $unitList= unit_by_id();
+        $unitList = collect($unitList)->pluck('hr_unit_name','hr_unit_id');
         return view('merch/reservation/create', compact('unitList'));
     }
 
@@ -263,7 +264,17 @@ class ReservationController extends Controller
      */
     public function edit($id)
     {
-        //
+        $unitList= unit_by_id();
+        $unitList = collect($unitList)->pluck('hr_unit_name','hr_unit_id');
+        $buyerList= buyer_by_id();
+        $buyerList = collect($buyerList)->pluck('b_name','b_id');
+        $reservation = Reservation::findOrFail($id);
+        $prdtypList= product_type_by_id();
+        $orderQty = OrderEntry::getOrderQtySumResIdWise($id);
+        $orderQty = $orderQty->qty??0;
+        $prdtypList = collect($prdtypList)->pluck('prd_type_name','prd_type_id');
+
+        return view('merch/reservation/edit', compact('unitList', 'reservation', 'buyerList', 'prdtypList', 'orderQty'));
     }
 
     /**
@@ -275,7 +286,50 @@ class ReservationController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $input = $request->all();
+        $data['type'] = 'error';
+        $yearMonth = explode('-', $input['res_year_month']);
+        $input['res_month'] = $yearMonth[1];
+        $input['res_year'] = $yearMonth[0];
+        // return $input;
+        DB::beginTransaction();
+        try {
+            // check reservation exists
+            $getRes = Reservation::checkReservationIdWise($input);
+            if($getRes != ''){
+                if($getRes->id != $id){
+                    $data['message'] = "Reservation already exists.";
+                    return response()->json($data);
+                }
+                
+            }
+
+            // update reservation
+            $resId = Reservation::where('id', $id)->update([
+                'hr_unit_id'     => $input['hr_unit_id'],
+                'b_id'           => $input['b_id'],
+                'res_month'      => $input['res_month'],
+                'res_year'       => $input['res_year'],
+                'prd_type_id'    => $input['prd_type_id'],
+                'res_quantity'   => $input['res_quantity'],
+                'res_sah'        => $input['res_sah'],
+                'res_sewing_smv' => $input['res_sewing_smv'],
+                'res_status'     => 1,
+                'updated_by'     => auth()->user()->id
+            ]);
+            $data['url'] = url()->previous();
+            $data['message'] = "Reservation Successfully Update.";
+            
+
+            DB::commit();
+            $data['type'] = 'success';
+            return response()->json($data);
+        } catch (\Exception $e) {
+            DB::rollback();
+            $bug = $e->getMessage();
+            $data['message'] = $bug;
+            return response()->json($data);
+        }
     }
 
     /**
@@ -369,6 +423,23 @@ class ReservationController extends Controller
             $bug = $e->getMessage();
             $data['message'] = $bug;
             return response()->json($data);
+        }
+    }
+
+    public function orderList($resId)
+    {
+        try {
+            $reservation = Reservation::findOrFail($resId);
+            $orderQty = OrderEntry::getOrderQtySumResIdWise($resId);
+            $orderQty = $orderQty->qty??0;
+            $getOrder = OrderEntry::getOrderListWithStyleResIdWise($resId);
+            $getBuyer = buyer_by_id();
+            $getUnit = unit_by_id();
+            $getSeason = season_by_id();
+            $getBrand = brand_by_id();
+            return view('merch/reservation/order_list', compact('getOrder', 'getBuyer', 'getUnit', 'getSeason', 'getBrand', 'reservation', 'orderQty'));
+        } catch (\Exception $e) {
+            return 'error';
         }
     }
 }

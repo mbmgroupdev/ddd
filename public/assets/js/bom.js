@@ -26,11 +26,17 @@ $(document).on('click','.add-arrows',function(){
     if(flag === 0){
         html = '<tr id="itemRow_'+catid+'_'+i+'">';
         html += '<td class="right-btn"><a class="btn btn-sm btn-outline-primary arrows-alt" data-toggle="tooltip" data-placement="top" title="" data-original-title="Right Click Action"><i class="las la-arrows-alt"></i></a><div class="context-menu" id="context-menu-file-" style="display:none;position:absolute;z-index:1;"><ul><li><a class="textblack arrows-context add-arrows" data-catid="'+catid+'"><i class="las la-cart-plus"></i> Add Row</a></li><li><a class="textblack arrows-context remove-arrows" data-catid="'+catid+'" ><i class="las la-trash"></i> Remove Row</a></li><li><a class="textblack arrows-context add-new" data-type="item" data-catid="{{ $itemCat->mcat_id }}" id="additem_'+catid+'_'+i+'"><i class="las la-folder-plus"></i> Add New Item</a></li></ul></div></td>';
-        html += '<td><input type="hidden" id="bomitemid_'+catid+'_'+i+'" name="bomitemid[]" value=""><input type="hidden" id="itemcatid_'+catid+'_'+i+'" value="'+catid+'" name="itemcatid[]"><input type="hidden" id="itemid_'+catid+'_'+i+'" value="" name="itemid[]"><input type="hidden" name="stl_bom_id[]" id="stlbomid_'+catid+'_'+i+'" value=""><input type="text" data-category="'+catid+'" data-type="item" name="item[]" id="item_'+catid+'_'+i+'" class="form-control autocomplete_txt items_'+catid+'" autocomplete="off" onClick="this.select()"></td>';
+        html += '<td><input type="hidden" id="bomitemid_'+catid+'_'+i+'" name="bomitemid[]" value=""><input type="hidden" id="itemcatid_'+catid+'_'+i+'" value="'+catid+'" name="itemcatid[]"><input type="hidden" id="itemid_'+catid+'_'+i+'" value="" name="itemid[]">';
+        if($("#blade_type").val() === 'po'){
+            html += '<input type="hidden" name="ord_bom_id[]" id="stlbomid_'+catid+'_'+i+'" value="">';
+        }else{
+            html += '<input type="hidden" name="stl_bom_id[]" id="stlbomid_'+catid+'_'+i+'" value="">';
+        }
+        html += '<input type="text" data-category="'+catid+'" data-type="item" name="item[]" id="item_'+catid+'_'+i+'" class="form-control autocomplete_txt items_'+catid+'" autocomplete="off" onClick="this.select()"></td>';
         html += '<td><input type="text" data-type="description" name="description[]" id="description_'+catid+'_'+i+'" class="form-control" autocomplete="off"></td>';
         html += '<td><select name="color[]" id="color_'+catid+'_'+i+'" class="form-control" data-toggle="tooltip" data-placement="top" title="" data-original-title="this.value"><option value=""> - Select - </option></select></td>';
         html += '<td><input type="text" name="size_width[]" id="sizewidth_'+catid+'_'+i+'" class="form-control" autocomplete="off" ></td>';
-        if($("#blade_type").val() === 'order'){
+        if($("#blade_type").val() === 'order' || $("#blade_type").val() === 'po'){
             html += '<td><input type="hidden" class="dependsid" name="depends_on[]" id="dependson_'+catid+'_'+i+'" value="0"><div class="custom-control custom-checkbox custom-control-inline"><input type="checkbox" class="custom-control-input" id="dependenciescolor_'+catid+'_'+i+'"><label class="custom-control-label" for="dependenciescolor_'+catid+'_'+i+'">Color</label></div><div class="custom-control custom-checkbox custom-control-inline"><input type="checkbox" class="custom-control-input" id="dependenciessize_'+catid+'_'+i+'"><label class="custom-control-label" for="dependenciessize_'+catid+'_'+i+'">Size</label></div></td>';
         }
         html += '<td><input type="hidden" name="supplierid[]" id="supplierid_'+catid+'_'+i+'"><div class="row m-0"><div class="col-9 p-0"><select name="supplier[]" id="supplier_'+catid+'_'+i+'" data-category="'+catid+'" class="form-control supplier" disabled><option value=""> - Select - </option></select></div><div class="col-3 pl-0 pr-0 pt-2"><a class="btn btn-xs btn-primary text-white addSupplier" id="addsupplier_'+catid+'_'+i+'" data-category="'+catid+'" data-toggle="tooltip" data-placement="top" title="" data-original-title="Add New Supplier"><i class="fa fa-plus"></i></a></div></div></td>';
@@ -140,7 +146,7 @@ $(document).on('focus keyup','.autocomplete_txt',function(){
             if(item !== ''){
             	
                 $('#itemid_'+item.mcat_id+'_'+id[2]).val(item.id);
-                if($("#blade_type").val() === 'order'){
+                if($("#blade_type").val() === 'order' || $("#blade_type").val() === 'po'){
                     $('#dependson_'+item.mcat_id+'_'+id[2]).val(item.dependent_on);
                     dependsOnCheck('dependson_'+item.mcat_id+'_'+id[2]);
                 }
@@ -314,6 +320,10 @@ $("body").on("keyup blur", ".changesNo", function(){
 	changesNo($(this));
 });
 
+$("body").on("change", ".changesNo", function(){
+    $("#change-flag").val('1');
+});
+
 function changesNo(e){
     conid = e.attr('id');
     coid = conid.split("_");
@@ -453,9 +463,13 @@ $(document).on('click', '.RemoveBtn_bu', function(){
 
 // auto save
 $(document).on('blur','.changesNo',function(){
-    setTimeout(function(){
-        saveBOM('cost');
-    }, 600)
+    if($("#change-flag").val() === '1'){
+        $("#change-flag").val('0');
+        setTimeout(function(){
+            saveBOM('cost');
+        }, 600)
+    }
+    
 });
 $(document).ready(function() {
     $(".dependsid").each(function(){

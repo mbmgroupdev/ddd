@@ -9,6 +9,7 @@ class MrPoBomOtherCosting extends Model
 {
    protected $table  = 'mr_po_bom_other_costing';
    public $timestamps= false;
+   protected $guarded = [];
 
    public static function storeData($datas, $poId, $clrId){
       foreach ($datas as $data) {

@@ -9,11 +9,11 @@
         font-size: 12px;
         font-weight: bold;
     }
-    #example th:nth-child(2) input{
-      width: 100px !important;
+    #example th:nth-child(2) select{
+      width: 120px !important;
     }
-    #example th:nth-child(3) input{
-      width: 90px !important;
+    #example th:nth-child(3) select{
+      width: 80px !important;
     } 
     #example th:nth-child(5) select{
       width: 80px !important;
@@ -51,7 +51,7 @@
                   <a class="active">Reservation List</a>
               </li>
               <li class="top-nav-btn">
-                <a class="btn btn-sm btn-primary add-new text-white" data-type="reservation"><i class="las la-plus"></i> New Reservation</a>
+                <a class="btn btn-sm btn-primary add-new text-white" data-type="Add reservation"><i class="las la-plus"></i> New Reservation</a>
                 <a href="{{ url('merch/order/order_list')}}" class="btn btn-sm btn-success text-white" data-type="reservation"><i class="las la-list"></i> Order List</a>
               </li>
           </ul><!-- /.breadcrumb -->
@@ -67,7 +67,7 @@
                                 <tr class="success">
                                     <th width="5%">SL.</th>
                                     <th width="10%">Unit</th>
-                                    <th width="10%">Buyer Name</th>
+                                    <th width="8%">Buyer Name</th>
                                     <th width="10%">Month-Year</th>
                                     <th width="10%">Product Type</th>
                                     <th width="5%">SAH</th>
@@ -86,26 +86,7 @@
         </div><!-- /.page-content -->
     </div>
 </div>
-<div class="modal right fade" id="right_modal_item" tabindex="-1" role="dialog" aria-labelledby="right_modal_item">
-  <div class="modal-dialog modal-lg right-modal-width" role="document" > 
-    <div class="modal-content">
-      <div class="modal-header">
-        <a class="view prev_btn" data-toggle="tooltip" data-dismiss="modal" data-placement="top" title="" data-original-title="Back to Report">
-          <i class="las la-chevron-left"></i>
-        </a>
-        <h5 class="modal-title right-modal-title text-center" id="modal-title-right"> &nbsp; </h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="modal-content-result" id="content-result"></div>
-
-      </div>
-      
-    </div>
-  </div>
-</div>
+@include('merch.common.right-modal')
 @push('js')
 
 <script type="text/javascript">
@@ -113,11 +94,17 @@ var loaderContent = '<div class="animationLoading"><div id="container-loader"><d
 $(document).on('click', '.add-new', function() {
     type = $(this).data('type');
     $('#right_modal_item').modal('show');
-    $('#modal-title-right').html(' Add New '+type);
+    $('#modal-title-right').html(type);
     $("#content-result").html(loaderContent);
     var url = '';
-    if(type === 'reservation'){
+    if(type === 'Add reservation'){
       url = '/merch/reservation/create';
+    }else if(type === 'Edit reservation'){
+      var id = $(this).data('id');
+      url = '/merch/reservation/'+id+'/edit';
+    }else if(type === 'Order List'){
+      var id = $(this).data('resid');
+      url = '/merch/reservation/order-list/'+id;
     }else if(type === 'order'){
       var resId = $(this).data('resid');
       url = '/merch/reservation/order-entry/'+resId;
@@ -127,6 +114,7 @@ $(document).on('click', '.add-new', function() {
         url: "{{ url('/')}}"+url,
         success: function(response)
         {
+          // console.log(response);
           if(response !== 'error'){
             $('#content-result').html(response);
             $('.filter').select2({
@@ -156,16 +144,27 @@ $(document).on('click', '#itemBtn', function(event) {
       $(curInputs[i]).closest(".form-group").addClass("has-error");
     }
   }
+  var verb = 'POST';
   var pageType = $("#page-type").val();
   if(pageType === 'reservation-store'){
     var url = '{{ route("reservation.store")}}';
+  }else if(pageType === 'reservation-update'){
+    var resId = $("#res-id").val();
+    var resQty = $("#res-quantity").val();
+    var orderQty = $("#order-qty").val();
+    if(parseFloat(orderQty) > parseFloat(resQty)){
+      $("#res-quantity").notify('This Reservation Already Order Entry '+orderQty, 'error');
+      $("#app-loader").hide();
+      return false;
+    }
+    var url = '/merch/reservation/'+resId;
   }else if(pageType === 'order-store'){
     var url = '{{ url("merch/reservation/order-entry-store")}}';
   }
   
   if (isValid){
      $.ajax({
-        type: "POST",
+        type: verb,
         url: url,
         data: curInputs.serialize(), // serializes the form's elements.
         success: function(response)
