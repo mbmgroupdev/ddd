@@ -1472,6 +1472,8 @@ class OrderPoBookingController extends Controller
 					->groupBy('mr_order_entry_order_id')
 					->pluck('mr_order_entry_order_id','id')
 					->toArray();
+
+					// get order wise po data
 					if(!empty($poBookingDetails)) {
 						foreach($poBookingDetails as $k=>$orderId) {
 							$tableData .= $this->getPoOrderItemForEdit($orderId, $poBooking->mr_supplier_sup_id,$poBooking->unit_id, $request->poBookingId);
@@ -1525,25 +1527,6 @@ class OrderPoBookingController extends Controller
 
 	public function getPoOrderListData()
 	{
-			// ACL
-		/*if(auth()->user()->hasRole('merchandiser')){
-			$lead_associateId[] = auth()->user()->associate_id;
-			$team_members = DB::table('hr_as_basic_info as b')
-			->where('associate_id',auth()->user()->associate_id)
-			->leftJoin('mr_excecutive_team','b.as_id','mr_excecutive_team.team_lead_id')
-			->leftJoin('mr_excecutive_team_members','mr_excecutive_team.id','mr_excecutive_team_members.mr_excecutive_team_id')
-			->pluck('member_id');
-			$team_members_associateId = DB::table('hr_as_basic_info as b')
-			->whereIn('as_id', $team_members)
-			->pluck('associate_id');
-			$team = array_merge($team_members_associateId->toArray(),$lead_associateId);
-		} elseif (auth()->user()->hasRole('merchandising_executive')) {
-			$executive_associateId[] = auth()->user()->associate_id;
-			$team = $executive_associateId;
-		} else {
-			$team =[];
-		}*/
-
 		$team = [];
 
 
@@ -1696,7 +1679,7 @@ class OrderPoBookingController extends Controller
 
 		->get();
 
-		dd($care_label);
+		//dd($care_label);
 
 				// po sub item qty amount
 		$poDataList = DB::table('mr_purchase_order as a')

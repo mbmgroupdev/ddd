@@ -423,7 +423,9 @@ class IncrementController extends Controller
 
         $gazette = [];
 
-        return view('hr.payroll.increment.eligible-list', compact('data','unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area','effective_date','date','request','un','management','worker','last_increment'))->render();
+        $input = $request->all();
+
+        return view('hr.payroll.increment.eligible-list', compact('data','unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area','effective_date','date','request','un','management','worker','last_increment','input'))->render();
 
     }
 
