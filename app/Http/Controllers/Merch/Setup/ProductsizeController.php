@@ -20,14 +20,14 @@ class ProductsizeController extends Controller
        //$buyer=Buyer::pluck('b_name', 'b_id');
        //$brand=Brand::pluck('br_name', 'br_id');
 
-    $b_permissions = explode(',', auth()->user()->buyer_permissions);
+    $b_permissions = auth()->user()->buyer_permissions();
     $buyer        = DB::table('mr_buyer')
     ->whereIn('b_id', $b_permissions)
     ->pluck('b_name', 'b_id')
     ->toArray();
-
        //for product size list
     $Prodsizegroup= ProductSizeGroup::with('buyer')->whereIn('b_id', $b_permissions)->orderBy('id')->get();
+
     $productSizeId = array_column($Prodsizegroup->toArray(), 'id');
     $sizeModalData=array();
     $productSize = DB::table('mr_product_size')->whereIn('mr_product_size_group_id', $productSizeId)->get()->groupBy('mr_product_size_group_id')->toArray();
@@ -199,7 +199,7 @@ class ProductsizeController extends Controller
     $product= ProductSize::get();
     $sizegroup= ProductSizeGroup::pluck('size_grp_name', 'id');
           //$buyer=Buyer::pluck('b_name','b_id');
-    $b_permissions = explode(',', auth()->user()->buyer_permissions);
+    $b_permissions = auth()->user()->buyer_permissions();
     $buyer        = DB::table('mr_buyer')
     ->whereIn('b_id', $b_permissions)
     ->pluck('b_name', 'b_id')
