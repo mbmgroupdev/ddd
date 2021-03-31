@@ -133,77 +133,84 @@ class ProcessUnitWiseSalary implements ShouldQueue
                     $halfCount = 0;
                     $presentOt = 0;
                     $present = 0;
+                    $overtime_rate = 0;
                     if($getPresentOT){
                         $present = $getPresentOT->present??0;
                         $lateCount = $getPresentOT->late??0;
                         $halfCount = $getPresentOT->halfday??0;
+                    }
+
+                    // for ot holder
+
+                    if($getEmployee->as_ot == 1){
                         $presentOt = $getPresentOT->ot??0;
+
+                        // check if friday has extra ot
+                        if($getEmployee->shift_roaster_status == 1 ){
+                            $friday_ot = DB::table('hr_att_special')
+                                            ->where('as_id', $getEmployee->as_id)
+                                            ->where('in_date','>=', $firstDateMonth)
+                                            ->where('in_date','<=', $lastDateMonth)
+                                            ->get()
+                                            ->sum('ot_hour');
+
+                            $presentOt = $presentOt + $friday_ot;
+                        }
+
+                        $diffExplode = explode('.', $presentOt);
+                        $minutes = (isset($diffExplode[1]) ? $diffExplode[1] : 0);
+                        $minutes = floatval('0.'.$minutes);
+                        if($minutes > 0 && $minutes != 1){
+                            $min = (int)round($minutes*60);
+                            $minOT = min_to_ot();
+                            $minutes = $minOT[$min]??0;
+                        }
+
+                        $presentOt = $diffExplode[0]+$minutes;
+                        $overtime_rate = number_format((($getBenefit->ben_basic/208)*2), 2, ".", "");
                     }
 
-                    $diffExplode = explode('.', $presentOt);
-                    $minutes = (isset($diffExplode[1]) ? $diffExplode[1] : 0);
-                    $minutes = floatval('0.'.$minutes);
-                    if($minutes > 0 && $minutes != 1){
-                        $min = (int)round($minutes*60);
-                        $minOT = min_to_ot();
-                        $minutes = $minOT[$min]??0;
-                    }
-
-                    $presentOt = $diffExplode[0]+$minutes;
 
                     
                     
 
                     // check OT roaster employee
-                    $rosterOTCount = HolidayRoaster::where('year', $year)
-                    ->where('month', $month)
-                    ->where('as_id', $getEmployee->associate_id)
-                    ->where('date','>=', $firstDateMonth)
-                    ->where('date','<=', $lastDateMonth)
-                    ->where('remarks', 'OT')
-                    ->get();
-                    $rosterOtData = $rosterOTCount->pluck('date');
+                    $roasterData = HolidayRoaster::select('date','remarks')
+                            ->where('year', $year)
+                            ->where('month', $month)
+                            ->where('as_id', $getEmployee->associate_id)
+                            ->where('date','>=', $firstDateMonth)
+                            ->where('date','<=', $lastDateMonth)
+                            ->get();
+
+                    $rosterOtData = collect($roasterData)
+                        ->where('remarks', 'OT')
+                        ->pluck('date');
 
                     $otDayCount = 0;
-                    $totalOt = count($rosterOTCount);
+                    $totalOt = count($rosterOtData);
                     // return $rosterOTCount;
-                    foreach ($rosterOTCount as $otc) {
-                        $checkAtt = DB::table($this->tableName)
+                    $otDayCount = DB::table($this->tableName)
                         ->where('as_id', $getEmployee->as_id)
-                        ->where('in_date', $otc->date)
-                        ->first();
-                        if($checkAtt != null){
-                            $otDayCount += 1;
-                        }
-                    }
+                        ->whereIn('in_date', $rosterOtData)
+                        ->count();
 
+                    
                     if($getEmployee->shift_roaster_status == 1){
                         // check holiday roaster employee
-                        $getHoliday = HolidayRoaster::where('year', $year)
-                        ->where('month', $month)
-                        ->where('as_id', $getEmployee->associate_id)
-                        ->where('date','>=', $firstDateMonth)
-                        ->where('date','<=', $lastDateMonth)
-                        ->where('remarks', 'Holiday')
-                        ->count();
+                        $getHoliday = collect($roasterData)
+                            ->where('remarks', 'Holiday')
+                            ->count();
                         $getHoliday = $getHoliday + ($totalOt - $otDayCount);
                     }else{
                         // check holiday roaster employee
-                        $RosterHolidayCount = HolidayRoaster::where('year', $year)
-                        ->where('month', $month)
-                        ->where('as_id', $getEmployee->associate_id)
-                        ->where('date','>=', $firstDateMonth)
-                        ->where('date','<=', $lastDateMonth)
-                        ->where('remarks', 'Holiday')
-                        ->count();
+                        $RosterHolidayCount = collect($roasterData)
+                            ->where('remarks', 'Holiday')
+                            ->count();
                         // check General roaster employee
-                        $RosterGeneralCount = HolidayRoaster::where('year', $year)
-                        ->where('month', $month)
-                        ->where('as_id', $getEmployee->associate_id)
-                        ->where('date','>=', $firstDateMonth)
-                        ->where('date','<=', $lastDateMonth)
-                        ->where('remarks', 'General')
-                        ->count();
+                        $RosterGeneralCount = collect($roasterData)
+                            ->where('remarks', 'General')
+                            ->count();
                         
                         // check holiday shift employee
                         $query = YearlyHolyDay::
@@ -235,6 +242,7 @@ class ProcessUnitWiseSalary implements ShouldQueue
                         $getShiftOt = $queryOt->get();
                         $shiftOtCount = $getShiftOt->count();
                         $shiftOtDayCout = 0;
+
                         foreach ($getShiftOt as $shiftOt) {
                             $checkAtt = DB::table($this->tableName)
                             ->where('as_id', $getEmployee->as_id)
@@ -253,17 +261,9 @@ class ProcessUnitWiseSalary implements ShouldQueue
                             $getHoliday = $shiftHolidayCount;
                         }
                     }
+
                     $getHoliday = $getHoliday < 0 ? 0:$getHoliday;
 
-
-                    // get absent employee wise
-                    // $getAbsent = DB::table('hr_absent')
-                    //     ->where('associate_id', $getEmployee->associate_id)
-                    //     ->where('date','>=', $firstDateMonth)
-                    //     ->where('date','<=', $lastDateMonth)
-                    //     ->count();
-
-                    // get leave employee wise
 
                     $leaveCount = DB::table('hr_leave')
                     ->select(
@@ -316,11 +316,6 @@ class ProcessUnitWiseSalary implements ShouldQueue
                         $stamp = 0;
                     }
 
-                    if($getEmployee->as_ot == 1){
-                        $overtime_rate = number_format((($getBenefit->ben_basic/208)*2), 2, ".", "");
-                    } else {
-                        $overtime_rate = 0;
-                    }
                     
                     // get unit wise att bonus calculation 
                     $attBonus = 0;
@@ -421,82 +416,47 @@ class ProcessUnitWiseSalary implements ShouldQueue
                         $tds = 0;
                     }
 
+                    $salary = [
+                        'ot_status' => $getEmployee->as_ot,
+                        'unit_id' => $getEmployee->as_unit_id,
+                        'designation_id' => $getEmployee->as_designation_id,
+                        'sub_section_id' => $getEmployee->as_subsection_id,
+                        'location_id' => $getEmployee->as_location,
+                        'pay_type' => $getBenefit->bank_name,
+                        'gross' => $getBenefit->ben_current_salary,
+                        'basic' => $getBenefit->ben_basic,
+                        'house' => $getBenefit->ben_house_rent,
+                        'medical' => $getBenefit->ben_medical,
+                        'transport' => $getBenefit->ben_transport,
+                        'food' => $getBenefit->ben_food,
+                        'late_count' => $lateCount,
+                        'present' => $present,
+                        'holiday' => $getHoliday,
+                        'absent' => $getAbsent,
+                        'leave' => $leaveCount,
+                        'absent_deduct' => $getAbsentDeduct,
+                        'half_day_deduct' => $getHalfDeduct,
+                        'salary_add_deduct_id' => $deductId,
+                        'salary_payable' => $salaryPayable,
+                        'ot_rate' => $overtime_rate,
+                        'ot_hour' => $presentOt,
+                        'attendance_bonus' => $attBonus,
+                        'production_bonus' => $productionBonus,
+                        'leave_adjust' => $leaveAdjust,
+                        'stamp' => $stamp,
+                        'pay_status' => $payStatus,
+                        'emp_status' => $getEmployee->as_status,
+                        'total_payable' => $totalPayable,
+                        'cash_payable' => $cashPayable,
+                        'bank_payable' => $bankPayable,
+                        'tds' => $tds
+                    ];
+
                     if($getSalary == null){
-                        $salary = [
-                            'as_id' => $getEmployee->associate_id,
-                            'ot_status' => $getEmployee->as_ot,
-                            'unit_id' => $getEmployee->as_unit_id,
-                            'designation_id' => $getEmployee->as_designation_id,
-                            'sub_section_id' => $getEmployee->as_subsection_id,
-                            'location_id' => $getEmployee->as_location,
-                            'pay_type' => $getBenefit->bank_name,
-                            'month' => $month,
-                            'year'  => $year,
-                            'gross' => $getBenefit->ben_current_salary,
-                            'basic' => $getBenefit->ben_basic,
-                            'house' => $getBenefit->ben_house_rent,
-                            'medical' => $getBenefit->ben_medical,
-                            'transport' => $getBenefit->ben_transport,
-                            'food' => $getBenefit->ben_food,
-                            'late_count' => $lateCount,
-                            'present' => $present,
-                            'holiday' => $getHoliday,
-                            'absent' => $getAbsent,
-                            'leave' => $leaveCount,
-                            'absent_deduct' => $getAbsentDeduct,
-                            'half_day_deduct' => $getHalfDeduct,
-                            'salary_add_deduct_id' => $deductId,
-                            'salary_payable' => $salaryPayable,
-                            'ot_rate' => $overtime_rate,
-                            'ot_hour' => $presentOt,
-                            'attendance_bonus' => $attBonus,
-                            'production_bonus' => $productionBonus,
-                            'leave_adjust' => $leaveAdjust,
-                            'stamp' => $stamp,
-                            'pay_status' => $payStatus,
-                            'emp_status' => $getEmployee->as_status,
-                            'total_payable' => $totalPayable,
-                            'cash_payable' => $cashPayable,
-                            'bank_payable' => $bankPayable,
-                            'tds' => $tds
-                        ];
+                        $salary['as_id'] = $getEmployee->associate_id;
                         HrMonthlySalary::insert($salary);
                     }else{
-                        $salary = [
-                            'ot_status' => $getEmployee->as_ot,
-                            'unit_id' => $getEmployee->as_unit_id,
-                            'designation_id' => $getEmployee->as_designation_id,
-                            'sub_section_id' => $getEmployee->as_subsection_id,
-                            'location_id' => $getEmployee->as_location,
-                            'pay_type' => $getBenefit->bank_name,
-                            'gross' => $getBenefit->ben_current_salary,
-                            'basic' => $getBenefit->ben_basic,
-                            'house' => $getBenefit->ben_house_rent,
-                            'medical' => $getBenefit->ben_medical,
-                            'transport' => $getBenefit->ben_transport,
-                            'food' => $getBenefit->ben_food,
-                            'late_count' => $lateCount,
-                            'present' => $present,
-                            'holiday' => $getHoliday,
-                            'absent' => $getAbsent,
-                            'leave' => $leaveCount,
-                            'absent_deduct' => $getAbsentDeduct,
-                            'half_day_deduct' => $getHalfDeduct,
-                            'salary_add_deduct_id' => $deductId,
-                            'salary_payable' => $salaryPayable,
-                            'ot_rate' => $overtime_rate,
-                            'ot_hour' => $presentOt,
-                            'attendance_bonus' => $attBonus,
-                            'production_bonus' => $productionBonus,
-                            'leave_adjust' => $leaveAdjust,
-                            'stamp' => $stamp,
-                            'pay_status' => $payStatus,
-                            'emp_status' => $getEmployee->as_status,
-                            'total_payable' => $totalPayable,
-                            'cash_payable' => $cashPayable,
-                            'bank_payable' => $bankPayable,
-                            'tds' => $tds
-                        ];
+                        
                         HrMonthlySalary::where('id', $getSalary->id)->update($salary);
                     }
                 }
