@@ -146,6 +146,26 @@ if(!function_exists('material_color_by_id')){
     }
 }
 
+if(!function_exists('special_machine_by_id')){
+    function special_machine_by_id()
+    {
+       return  Cache::remember('special_machine_by_id', Carbon::now()->addHour(12), function () {
+            return DB::table('mr_special_machine')->get()->keyBy('spmachine_id')->toArray();
+        });      
+
+    }
+}
+
+if(!function_exists('garment_type_by_id')){
+    function garment_type_by_id()
+    {
+       return  Cache::remember('garment_type_by_id', Carbon::now()->addHour(12), function () {
+            return DB::table('mr_garment_type')->get()->keyBy('gmt_id')->toArray();
+        });      
+
+    }
+}
+
 if(!function_exists('size_by_id')){
     function size_by_id()
     {

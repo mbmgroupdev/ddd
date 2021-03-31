@@ -296,7 +296,9 @@
                         <tr>
                             <td colspan="18" class="text-right" style="
                             position: sticky;background: #fff;bottom: 0;z-index: 100;">
+                                @can('Increment Approval')
                                 <input type="submit" name="" value="{{$set['next']}}" class="btn btn-primary">
+                                @endcan
                             </td>
                         </tr>
                     </tfoot>

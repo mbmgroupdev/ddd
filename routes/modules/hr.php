@@ -492,7 +492,7 @@ Route::get('hr/payroll/increment-employeewise', 'Hr\Payroll\IncrementController@
 Route::post('hr/payroll/increment-action', 'Hr\Payroll\IncrementController@incrementAction');
 
 Route::get('hr/payroll/increment-process', 'Hr\Payroll\IncrementController@process');
-Route::get('hr/payroll/increment-approval', 'Hr\Payroll\IncrementController@approval')->middleware(['permission:Increment Approval']);
+Route::get('hr/payroll/increment-approval', 'Hr\Payroll\IncrementController@approval')->middleware(['permission:Increment Approval|Increment Process']);
 Route::post('hr/payroll/increment/get-approval-data','Hr\Payroll\IncrementController@getApprovalData');
 Route::post('hr/payroll/increment-action-initial', 'Hr\Payroll\IncrementController@incrementActionInitial');
 

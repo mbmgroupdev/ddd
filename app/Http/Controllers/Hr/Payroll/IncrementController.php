@@ -29,7 +29,7 @@ class IncrementController extends Controller
 {
     public function index(Request $request)
     {
-        if(auth()->user()->can('Increment Approval')){
+        if(auth()->user()->can('Increment Approval|Increment Process')){
             return redirect('hr/payroll/increment-approval');
         }else if(auth()->user()->can('Manage Increment')){
             return redirect('hr/payroll/increment-process');
@@ -769,7 +769,7 @@ class IncrementController extends Controller
 
     public function process(Request $request)
     {
-        /*if(auth()->user()->can('Increment Approval')){
+        /*if(auth()->user()->can('Increment Approval|Increment Process')){
             return redirect('hr/payroll/increment-approval');
         }*/
 
@@ -895,16 +895,17 @@ class IncrementController extends Controller
 
     public function getApprovalData(Request $request)
     {
-        if(auth()->user()->can('Increment Approval')){
+        //if(auth()->user()->can('Increment Approval|Increment Process')){
             $set = [];
             $set['type'] = 'Management';
             $set['field'] = 'level_3';
             $set['exfield'] = 'increment_amount';
             $set['extype'] = 'HR Proposed';
             $set['next'] = 'Approve';
-        }else{
+        /*}else{
+            dd('hi');
             return '';
-        }
+        }*/
         /*}else if(auth()->user()->can('Increment Approval Management 2')){*/
             /*$set['type'] = 'Management 2';
             $set['field'] = 'level_2';

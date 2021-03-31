@@ -9,12 +9,20 @@ Route::group(['prefix' => 'merchandising','namespace' => 'Merch'], function(){
 	Route::get('/', 'DashboardController@index');
 });
 
+
+
 /*
 *--------------------------------------------------------------
 * Style
 *--------------------------------------------------------------
 */
 Route::group(['prefix' => 'merch/style','namespace' => 'Merch\Style'], function(){
+	Route::get('/', 'StyleController@showList');
+	Route::get('/create', 'StyleController@showForm');
+
+
+
+
 	Route::get('style_new', 'NewStyleController@showForm');
 	Route::post('check-style-no', 'NewStyleController@checkStlNo');
 	Route::get('sample_season', 'NewStyleController@getSampleByBuyer');
