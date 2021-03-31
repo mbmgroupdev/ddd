@@ -56,7 +56,7 @@ class OrderEntry extends Model
 
     public static function getCheckLastOrderNumber($code)
     {
-        return OrderEntry::select(DB::raw('RIGHT(order_code,3) AS sl' ), )->where('order_code', 'LIKE', $code.'%')->orderBy('sl', 'desc')->pluck('sl')->first();
+        return OrderEntry::select(DB::raw('RIGHT(order_code,3) AS sl' ))->where('order_code', 'LIKE', $code.'%')->orderBy('sl', 'desc')->pluck('sl')->first();
     }
 
     public static function getCheckOrderExists($value)

@@ -11,6 +11,7 @@ use Illuminate\Contracts\Auth\Access\Gate;
 use App\Models\Employee;
 use App\Models\UserActivity;
 use App\Models\UserLog;
+use DB;
 
 class User extends Authenticatable
 {
@@ -110,6 +111,9 @@ class User extends Authenticatable
     public function buyer_permissions()
     {
         $buyers = explode(",", $this->buyer_permissions);
+        if(auth()->user()->hasRole('Super Admin')){
+            return DB::table('mr_buyer')->pluck('b_id')->toArray();
+        }
         return (!empty($buyers[0])?$buyers:[]);
     }
 
