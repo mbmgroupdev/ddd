@@ -193,7 +193,7 @@ Route::group(['prefix' => 'merch','namespace' => 'Merch'], function(){
 	Route::resource('po', 'POController');
 	Route::get('po-list', 'POController@list');
 	Route::get('po-order', 'POController@orderWise');
-	Route::get('po-process-text', 'POController@process');
+	Route::post('po-process-text', 'POController@process');
 	Route::get('po-size-breakdown', 'POController@sizeBreakdown');
 
 	// BOM

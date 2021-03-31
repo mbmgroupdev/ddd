@@ -1,5 +1,5 @@
 <?php
-namespace App\Packages;
+namespace App\Packages\QueryExtra;
 
 /**
  * Run complex queries in Laravel
@@ -10,8 +10,8 @@ namespace App\Packages;
  * @since    2021-03-21
  */
 
-use RakibDevs\QueryExtra\Options\BulkUpdate;
-use RakibDevs\QueryExtra\Traits\ProcessQuery;
+use App\Packages\QueryExtra\Options\BulkUpdate;
+use App\Packages\QueryExtra\Traits\ProcessQuery;
 
 class QueryExtra 
 {

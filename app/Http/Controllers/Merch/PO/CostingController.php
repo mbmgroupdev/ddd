@@ -14,8 +14,9 @@ use App\Models\Merch\PoBOM;
 use App\Models\Merch\PurchaseOrder;
 use App\Models\Merch\SampleStyle;
 use App\Models\Merch\StyleSpecialMachine;
-use Illuminate\Http\Request;
+use App\Packages\QueryExtra\QueryExtra;
 use DB;
+use Illuminate\Http\Request;
 
 class CostingController extends Controller
 {
@@ -85,6 +86,7 @@ class CostingController extends Controller
     	DB::beginTransaction();
     	try {
     		// BOM costing update
+    		$updateCosting = [];
     		for ($i=0; $i < sizeof($input['itemid']); $i++){
     			$itemId = $input['itemid'][$i];
             	if($itemId != null){
@@ -100,30 +102,60 @@ class CostingController extends Controller
             			'precost_freight' => $input['precost_freight'][$i],
             			'precost_unit_price' => $input['precost_unit_price'][$i]
             		];
-            		PoBOM::where('id', $input['bomitemid'][$i])->update($bom);
+            		$updateCosting[] = 
+                    [
+                        'data' => $bom,
+                        'keyval' => $input['bomitemid'][$i]
+                    ];
+            		// PoBOM::where('id', $input['bomitemid'][$i])->update($bom);
             	}
+            }
+            // update mr_po_bom_costing_booking
+            if(count($updateCosting) > 0){
+                (new QueryExtra)
+                ->table('mr_po_bom_costing_booking')
+                ->whereKey('id')
+                ->bulkup($updateCosting);
             }
             
             // mr_po_operation_n_cost - update
-            if(isset($input['order_op_id'])){
-            	for ($s=0; $s < sizeof($input['order_op_id']); $s++) {
+            if(isset($input['op_id'])){
+            	$updateOpCost = [];
+            	for ($s=0; $s < sizeof($input['op_id']); $s++) {
 					
-					MrPoOperationNCost::updateOrCreate(
-					[
-						"id"                      => $request->op_id[$s],
-						"mr_order_entry_order_id" => $request->order_id,
-						"po_id"                   => $request->po_id
-					],
-					[
-						"mr_operation_opr_id" => $request->mr_operation_opr_id[$s],
-						"opr_type" 		      => $request->opr_type[$s],
-						"uom"                 => $request->spuom[$s],
-						"unit_price" 	      => $request->spunitprice[$s]
-					]
-				);
+					// MrPoOperationNCost::updateOrCreate(
+					// [
+					// 	"id"                      => $request->op_id[$s],
+					// 	"mr_order_entry_order_id" => $request->order_id,
+					// 	"po_id"                   => $request->po_id
+					// ],
+					// [
+					// 	"mr_operation_opr_id" => $request->mr_operation_opr_id[$s],
+					// 	"opr_type" 		      => $request->opr_type[$s],
+					// 	"uom"                 => $request->spuom[$s],
+					// 	"unit_price" 	      => $request->spunitprice[$s]
+					// ]);
+					$spItem = [
+						"opr_type" 	 => $request->opr_type[$s],
+						"uom"        => $request->spuom[$s],
+						"unit_price" => $request->spunitprice[$s]
+					];
+					$updateOpCost[] = 
+                    [
+                        'data' => $spItem,
+                        'keyval' => $request->op_id[$s]
+                    ];
 
 					// $this->logFileWrite("Style Operation updated", $request->style_op_id[$s]);
 				}
+
+				// update mr_po_operation_n_cost
+                if(count($updateOpCost) > 0){
+                    (new QueryExtra)
+                    ->table('mr_po_operation_n_cost')
+                    ->whereKey('id')
+                    ->bulkup($updateOpCost);
+                }
             }
             
 			// mr_po_bom_other_costing - insert or Update

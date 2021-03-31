@@ -9,6 +9,7 @@ use App\Models\Merch\OperationCost;
 use App\Models\Merch\SampleStyle;
 use App\Models\Merch\Season;
 use App\Models\Merch\StyleSpecialMachine;
+use App\Packages\QueryExtra\QueryExtra;
 use DB;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
@@ -250,6 +251,7 @@ class BOMController extends Controller
 	    	}
 
     		$sl = 1;
+    		$updateBOM = [];
     		for ($i=0; $i<sizeof($input['itemid']); $i++){
     			$itemId = $input['itemid'][$i];
             	if($itemId != null){
@@ -269,7 +271,13 @@ class BOMController extends Controller
             		];
             		if($input['bomitemid'][$i] != null){ 
             			// update
-            			BomCosting::where('id', $input['bomitemid'][$i])->update($bom);
+            			$updateBOM[] = 
+					    [
+							'data' => $bom,
+							'keyval' => $input['bomitemid'][$i]
+					    ];
+						
+            			// BomCosting::where('id', $input['bomitemid'][$i])->update($bom);
             		}else{
             			// create
             			$bomId = BomCosting::create($bom)->id;
@@ -280,6 +288,15 @@ class BOMController extends Controller
             	}
 	
             }
+
+            // update stl_bom_n_costing
+            if(count($updateBOM) > 0){
+            	(new QueryExtra)
+			    ->table('mr_stl_bom_n_costing')
+			    ->whereKey('id')
+			    ->bulkup($updateBOM);
+            }
+            
 
             //log_file_write("BOM Successfully Save", $input['stl_id']);
             DB::commit();
