@@ -1,6 +1,6 @@
 <?php
 
-namespace RakibDevs\QueryExtra\Exceptions;
+namespace App\Packages\QueryExtra\Exceptions;
 
 use Exception;
 

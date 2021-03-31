@@ -17,6 +17,8 @@ class Employee extends Model
     protected $table = "hr_as_basic_info";
     protected $guarded = [];
 
+    protected $primaryKey = 'as_id';
+
     protected $dates = [
         'as_doj', 'created_at', 'updated_at', 'as_dob'
     ];

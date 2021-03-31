@@ -68,10 +68,11 @@ class AttendaceBulkManualController extends Controller
                 $info = $result['info'];
                 $joinExist = $result['joinExist'];
                 $leftExist = $result['leftExist'];
+                $friday_att = $result['friday_att'];
             }else{
                 $info = 'No result found yet!';
             }
-            return view("hr/timeattendance/attendance_bulk_manual",compact('attendance','info', 'joinExist', 'leftExist', 'shifts'));
+            return view("hr/timeattendance/attendance_bulk_manual",compact('attendance','info', 'joinExist', 'leftExist', 'shifts','friday_att'));
         } catch(\Exception $e) {
             return $e->getMessage();
         }
@@ -693,6 +694,18 @@ class AttendaceBulkManualController extends Controller
                       ->where('hr_yhp_unit', $info->as_unit_id)
                       ->get()
                       ->keyBy('hr_yhp_dates_of_holidays')->toArray();
+
+             // check firday outtime
+            $friday_att = [];
+            if($info->shift_roaster_status == 1 ){
+
+                $friday_att = DB::table('hr_att_special')
+                                ->where('as_id', $info->as_id)
+                                ->where('in_date','>=', $startDay)
+                                ->where('in_date','<=', $endDay)
+                                ->get()
+                                ->keyBy('in_date');
+            }
        
           for($i=$iEx; $i<=$totalDays; $i++) {
             $date       = ($year."-".$month."-".$x);
@@ -857,11 +870,16 @@ class AttendaceBulkManualController extends Controller
           //end of loop
           $info->present    = $total_attends;
           $info->absent     = $absent;
+
+          if(count($friday_att) > 0){
+             $total_ot += collect($friday_att)->sum('ot_hour');
+          }
           $info->ot_hour    = $total_ot;
           $result ['info']  = $info;
           $result ['attendance']    = $attendance;
           $result ['joinExist']     = $joinExist;
           $result ['leftExist']     = $leftExist;
+          $result ['friday_att']    = $friday_att;
           //dd($result);exit;
           return $result;
         }

@@ -489,12 +489,12 @@ class MonthlyActivityReportController extends Controller
         $queryData->leftjoin(DB::raw('(' . $employeeData_sql. ') AS emp'), function($join) use ($employeeData) {
             $join->on('emp.associate_id','s.as_id')->addBinding($employeeData->getBindings());
         });
-        $queryData->leftjoin(DB::raw('(' . $designationData_sql. ') AS deg'), function($join) use ($designationData) {
+        /*$queryData->leftjoin(DB::raw('(' . $designationData_sql. ') AS deg'), function($join) use ($designationData) {
             $join->on('deg.hr_designation_id','emp.as_designation_id')->addBinding($designationData->getBindings());
-        });
-        $queryData->leftjoin(DB::raw('(' . $subSectionDataSql. ') AS subsec'), function($join) use ($subSectionData) {
+        });*/
+        /*$queryData->leftjoin(DB::raw('(' . $subSectionDataSql. ') AS subsec'), function($join) use ($subSectionData) {
             $join->on('subsec.hr_subsec_id','s.sub_section_id')->addBinding($subSectionData->getBindings());
-        });
+        });*/
         $data = $queryData->orderBy('deg.hr_designation_position', 'asc')->get();
 
         return Datatables::of($data)

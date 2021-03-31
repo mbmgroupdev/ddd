@@ -228,167 +228,191 @@
 
                                     <tbody>
                                         @foreach($attendance as $data)
-                                        <tr id="row-{{$data['date']}}">
-                                          <td class="startdate">
-                                            {{ $data['date'] }}
-                                            @if($joinExist)
-                                                @if($data['date'] == $info->as_doj)
-                                                    <span class="label label-success arrowed-right arrowed-in pull-right">Join</span>
+                                            @isset($friday_att[$data['date']])
+
+                                                @php $att = $friday_att[$data['date']];  @endphp
+                                                <tr style="background-color: #fff7d9;">
+                                                    <td>{{ $data['date'] }}</td>
+                                                    <td>P</td>
+                                                    <td>{{ $data['floor'] }}</td>
+                                                    <td>{{ $data['line'] }}</td>
+                                                    <td></td>
+                                                    <td style="text-align: center;">
+                                                        @if($att->in_time != '')
+                                                        {{ date('H:i', strtotime($att->in_time))}}
+                                                        @endif
+                                                    </td>
+                                                    <td style="text-align: center;">
+                                                        @if($att->out_time != '')
+                                                        {{ date('H:i', strtotime($att->out_time))}}
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        {{numberToTimeClockFormat($att->ot_hour)}}
+                                                    </td>
+                                                </tr>
+                                            @endisset
+                                            <tr id="row-{{$data['date']}}">
+                                              <td class="startdate">
+                                                {{ $data['date'] }}
+                                                @if($joinExist)
+                                                    @if($data['date'] == $info->as_doj)
+                                                        <span class="label label-success arrowed-right arrowed-in pull-right">Join</span>
+                                                    @endif
                                                 @endif
-                                            @endif
-                                            @if($leftExist)
-                                                @if($data['date'] == $info->as_status_date)
-                                                    <span class="label label-warning arrowed-right arrowed-in pull-right">
-                                                        @php
-                                                            $flag = '';
-                                                            if($info->as_status === 0) {
-                                                                $flag = 'Delete';
-                                                            } else if($info->as_status === 2) {
-                                                                $flag = 'Resign';
-                                                            } else if($info->as_status === 3) {
-                                                                $flag = 'Terminate';
-                                                            } else if($info->as_status === 4) {
-                                                                $flag = 'Suspend';
-                                                            } else if($info->as_status === 5) {
-                                                                $flag = 'Left';
-                                                            }
-                                                            echo $flag;
-                                                        @endphp
-                                                    </span>
+                                                @if($leftExist)
+                                                    @if($data['date'] == $info->as_status_date)
+                                                        <span class="label label-warning arrowed-right arrowed-in pull-right">
+                                                            @php
+                                                                $flag = '';
+                                                                if($info->as_status === 0) {
+                                                                    $flag = 'Delete';
+                                                                } else if($info->as_status === 2) {
+                                                                    $flag = 'Resign';
+                                                                } else if($info->as_status === 3) {
+                                                                    $flag = 'Terminate';
+                                                                } else if($info->as_status === 4) {
+                                                                    $flag = 'Suspend';
+                                                                } else if($info->as_status === 5) {
+                                                                    $flag = 'Left';
+                                                                }
+                                                                echo $flag;
+                                                            @endphp
+                                                        </span>
+                                                    @endif
                                                 @endif
-                                            @endif
-                                          </td>
-                                            <td @if($data['present_status'] == 'A' || $data['present_status'] == 'Weekend(General) - A') style="background: #ea9d99;color:#000;" @endif>
-                                                @if($data['attPlusOT'])
-                                                   P ( {{ $data['attPlusOT'] }} )
-                                                @else
-                                                    {{ $data['present_status'] }}
-                                                @endif
-                                                
-                                                <input type="hidden" name="status[{{$data['date']}}]" value="{{ $data['present_status'] }}">
-                                                <input type="hidden" id="oldshift-{{ $data['date'] }}" value="{{ $data['shift_id'] }}">
-                                                @php
-                                                    if (strpos($data['in_time'], ':') !== false) {
-                                                        list($one,$two,$three) = array_pad(explode(':',$data['in_time']),3,0);
-                                                        if((int)$one+(int)$two+(int)$three == 0) {
-                                                            $data['in_time'] = null;
-                                                        }
-                                                    }
-                                                    if (strpos($data['out_time'], ':') !== false) {
-                                                        list($one,$two,$three) = array_pad(explode(':',$data['out_time']),3,0);
-                                                        if((int)$one+(int)$two+(int)$three == 0) {
-                                                            $data['out_time'] = null;
-                                                        }
-                                                    }
-                                                    $pStatusCheck = explode(' ', $data['present_status']);
-                                                @endphp
-                                                @if($data['late_status']==1 || ($data['in_time'] == null && $data['out_time'] != null))
-                                                    <span style="height: auto;float:right;" class="label label-warning pull-right">Late</span>
-                                                @endif
-                                                @if($data['remarks']== 'HD')
-                                                    <span style="height: auto;float:right;" class="label label-danger pull-right">Half Day @if($data['late_status']==1) , @endif</span>
-                                                @endif
-                                                @if($data['outside'] != null)
-                                                <span style="height: auto;float:right;cursor:pointer;" class="label label-success pull-right" data-tooltip="{{$data['outside_msg']}}" data-tooltip-location="top">{{$data['outside']}}</span>
-                                                @endif
-                                                @if($data['holiday'] != 1 && count($pStatusCheck) == 1)
-                                                <a class="attendance-rollback btn btn-sm btn-primary pull-right text-white" data-toggle="tooltip" data-placement="top" title="" data-original-title="Attendance reload" data-date="{{ $data['date'] }}" data-asid="{{ $info->as_id }}"><i class="fa fa-undo"></i></a>
-                                                @endif
-                                            </td>
-                                            <td>{{ $data['floor'] }}</td>
-                                            <td>
-                                                {{ $data['line'] }}
-                                            </td>
-                                            <td>
-                                                <div style="position: relative;">
-                                                    <a class="shift_link" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{ $data['shift_id']}}" id="shiftclick-{{$data['date']}}">{{ date('H:i', strtotime($data['shift_start'])) }}
-                                                    - 
+                                              </td>
+                                                <td @if($data['present_status'] == 'A' || $data['present_status'] == 'Weekend(General) - A') style="background: #ea9d99;color:#000;" @endif>
+                                                    @if($data['attPlusOT'])
+                                                       P ( {{ $data['attPlusOT'] }} )
+                                                    @else
+                                                        {{ $data['present_status'] }}
+                                                    @endif
+                                                    
+                                                    <input type="hidden" name="status[{{$data['date']}}]" value="{{ $data['present_status'] }}">
+                                                    <input type="hidden" id="oldshift-{{ $data['date'] }}" value="{{ $data['shift_id'] }}">
                                                     @php
-                                                        
-                                                        $time = $data['shift_end'];
-                                                        $time2 = intdiv($data['shift_break'], 60).':'. ($data['shift_break'] % 60);
-
-                                                        $secs = strtotime($time2)-strtotime("00:00:00");
-                                                        $result = date("H:i",strtotime($time)+$secs);
+                                                        if (strpos($data['in_time'], ':') !== false) {
+                                                            list($one,$two,$three) = array_pad(explode(':',$data['in_time']),3,0);
+                                                            if((int)$one+(int)$two+(int)$three == 0) {
+                                                                $data['in_time'] = null;
+                                                            }
+                                                        }
+                                                        if (strpos($data['out_time'], ':') !== false) {
+                                                            list($one,$two,$three) = array_pad(explode(':',$data['out_time']),3,0);
+                                                            if((int)$one+(int)$two+(int)$three == 0) {
+                                                                $data['out_time'] = null;
+                                                            }
+                                                        }
+                                                        $pStatusCheck = explode(' ', $data['present_status']);
                                                     @endphp
-                                                    {{ $result }}</a>
-                                                    <div class="popover bs-popover-left shiftchange popover-left" role="tooltip" id="popover-{{$data['date']}}" x-placement="left" style="display:none;position:absolute;z-index:1;">
-                                                        <div class="arrow" style="top: 37px;"></div>
-                                                        <h3 class="popover-header"> {{$data['date']}} <i class="fa fa-close popover-close"></i></h3>
-                                                        <div class="popover-body">
-                                                            <br>
-                                                            <div class="form-group has-float-label has-required select-search-group">
-                                                              <select class="form-control capitalize select-search" id="shift-{{$data['date']}}">
-                                                                 
-                                                                 @foreach($shifts as $shift)
-                                                                 @php
-                                                                    $shiftEndTime = $shift->hr_shift_end_time;
-                                                                    $shifttime2 = intdiv($shift->hr_shift_break_time, 60).':'. ($shift->hr_shift_break_time % 60);
+                                                    @if($data['late_status']==1 || ($data['in_time'] == null && $data['out_time'] != null))
+                                                        <span style="height: auto;float:right;" class="label label-warning pull-right">Late</span>
+                                                    @endif
+                                                    @if($data['remarks']== 'HD')
+                                                        <span style="height: auto;float:right;" class="label label-danger pull-right">Half Day @if($data['late_status']==1) , @endif</span>
+                                                    @endif
+                                                    @if($data['outside'] != null)
+                                                    <span style="height: auto;float:right;cursor:pointer;" class="label label-success pull-right" data-tooltip="{{$data['outside_msg']}}" data-tooltip-location="top">{{$data['outside']}}</span>
+                                                    @endif
+                                                    @if($data['holiday'] != 1 && count($pStatusCheck) == 1)
+                                                    <a class="attendance-rollback btn btn-sm btn-primary pull-right text-white" data-toggle="tooltip" data-placement="top" title="" data-original-title="Attendance reload" data-date="{{ $data['date'] }}" data-asid="{{ $info->as_id }}"><i class="fa fa-undo"></i></a>
+                                                    @endif
+                                                </td>
+                                                <td>{{ $data['floor'] }}</td>
+                                                <td>
+                                                    {{ $data['line'] }}
+                                                </td>
+                                                <td>
+                                                    <div style="position: relative;">
+                                                        <a class="shift_link" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{ $data['shift_id']}}" id="shiftclick-{{$data['date']}}">{{ date('H:i', strtotime($data['shift_start'])) }}
+                                                        - 
+                                                        @php
+                                                            
+                                                            $time = $data['shift_end'];
+                                                            $time2 = intdiv($data['shift_break'], 60).':'. ($data['shift_break'] % 60);
 
-                                                                    $secsShift = strtotime($shifttime2)-strtotime("00:00:00");
-                                                                    $hrShiftEnd = date("H:i",strtotime($shiftEndTime)+$secsShift); 
-                                                                 @endphp
-                                                                 <option value="{{ $shift->hr_shift_name }}" @if($shift->hr_shift_name == $data['shift_id']) selected @endif>{{ $shift->hr_shift_name }} ({{ date('H:i', strtotime($shift->hr_shift_start_time)) }} - {{ $hrShiftEnd }})</option>
-                                                                 @endforeach
-                                                              </select>
-                                                              <label for="shift-{{$data['date']}}">Shift</label>
-                                                           </div>
-                                                        </div>
-                                                        <div class="popover-footer">
-                                                            <button type="button" class="btn btn-outline-success btn-sm shift-change-btn" data-status="2" data-eaids="{{ Request::get('associate') }}" data-yearmonth="{{ Request::get('month') }}" data-asid="{{ $info->as_id }}" data-date="{{ $data['date'] }}" style="font-size: 13px; margin-left: 7px; margin-bottom: 8px;"><i class="fa fa-save"></i> Change</button>
+                                                            $secs = strtotime($time2)-strtotime("00:00:00");
+                                                            $result = date("H:i",strtotime($time)+$secs);
+                                                        @endphp
+                                                        {{ $result }}</a>
+                                                        <div class="popover bs-popover-left shiftchange popover-left" role="tooltip" id="popover-{{$data['date']}}" x-placement="left" style="display:none;position:absolute;z-index:1;">
+                                                            <div class="arrow" style="top: 37px;"></div>
+                                                            <h3 class="popover-header"> {{$data['date']}} <i class="fa fa-close popover-close"></i></h3>
+                                                            <div class="popover-body">
+                                                                <br>
+                                                                <div class="form-group has-float-label has-required select-search-group">
+                                                                  <select class="form-control capitalize select-search" id="shift-{{$data['date']}}">
+                                                                     
+                                                                     @foreach($shifts as $shift)
+                                                                     @php
+                                                                        $shiftEndTime = $shift->hr_shift_end_time;
+                                                                        $shifttime2 = intdiv($shift->hr_shift_break_time, 60).':'. ($shift->hr_shift_break_time % 60);
+
+                                                                        $secsShift = strtotime($shifttime2)-strtotime("00:00:00");
+                                                                        $hrShiftEnd = date("H:i",strtotime($shiftEndTime)+$secsShift); 
+                                                                     @endphp
+                                                                     <option value="{{ $shift->hr_shift_name }}" @if($shift->hr_shift_name == $data['shift_id']) selected @endif>{{ $shift->hr_shift_name }} ({{ date('H:i', strtotime($shift->hr_shift_start_time)) }} - {{ $hrShiftEnd }})</option>
+                                                                     @endforeach
+                                                                  </select>
+                                                                  <label for="shift-{{$data['date']}}">Shift</label>
+                                                               </div>
+                                                            </div>
+                                                            <div class="popover-footer">
+                                                                <button type="button" class="btn btn-outline-success btn-sm shift-change-btn" data-status="2" data-eaids="{{ Request::get('associate') }}" data-yearmonth="{{ Request::get('month') }}" data-asid="{{ $info->as_id }}" data-date="{{ $data['date'] }}" style="font-size: 13px; margin-left: 7px; margin-bottom: 8px;"><i class="fa fa-save"></i> Change</button>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </td>
-                                            
+                                                </td>
+                                                
 
-                                            @php
-                                                $disabled_input = '';
-                                                if($data['holiday'] == 1 || $data['present_status']=='Holiday' || $data['present_status']=='Weekend' || $data['present_status']=='Day Off' || strpos($data['present_status'],'Leave')!==false) {
-                                                    $disabled_input = 'readonly="readonly"';
-                                                }
-                                            @endphp
-                                            @if($data['att_id'] != null)
-                                                <td>
-                                                    <input type="hidden" name="old_line[{{$data['att_id']}}]" value="{{ $data['line_id'] }}" >
-                                                    <input type="hidden" name="old_status[{{$data['att_id']}}]" value="{{ $data['present_status'] }}" >
-                                                    <input type="hidden" name="old_date[{{$data['att_id']}}]" value="{{$data['date']}}" >
-                                                    <input type="hidden" name="this_shift_code[{{$data['att_id']}}]" value="{{$data['shift_code']}}" id="shiftcode-{{ $data['date'] }}">
-                                                    <input type="hidden" name="this_shift_id[{{$data['att_id']}}]" value="{{$data['shift_id']}}" id="shiftname-{{ $data['date'] }}">
-                                                    <input type="hidden" name="this_shift_start[{{$data['att_id']}}]" value="{{$data['shift_start']}}" id="shiftstart-{{ $data['date'] }}">
-                                                    <input type="hidden" name="this_shift_end[{{$data['att_id']}}]" value="{{$data['shift_end']}}" id="shiftend-{{ $data['date'] }}">
-                                                    <input type="hidden" name="this_shift_break[{{$data['att_id']}}]" value="{{$data['shift_break']}}" id="shiftbreak-{{ $data['date'] }}">
-                                                    <input type="hidden" name="this_shift_night[{{$data['att_id']}}]" value="{{$data['shift_night']}}" id="shiftnight-{{ $data['date'] }}">
-                                                    <input type="hidden" name="this_bill_eligible[{{$data['att_id']}}]" value="{{$data['bill_eligible']}}" id="billeligible-{{ $data['date'] }}">
-                                                    <input class="intime manual form-control" type="text" name="intime[{{$data['att_id']}}]" id="punchintime-{{ $data['date'] }}" value="{{!empty($data['in_time'])?date("H:i:s", strtotime($data['in_time'])):null}}"   placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}} autocomplete="off">
-                                                </td>
-                                                <td>
-                                                    <input type="text" class="outtime manual form-control" name="outtime[{{$data['att_id']}}]" id="punchouttime-{{ $data['date'] }}" value="{{!empty($data['out_time'])?date("H:i:s", strtotime($data['out_time'])):null}}"  placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}} autocomplete="off">
-                                                </td>
-                                            @else
-                                                <td>
-                                                    <input type="hidden" name="new_line[]" value="{{ $data['line_id'] }}">
-                                                    <input type="hidden" name="new_date[]" value="{{$data['date']}}">
-                                                    <input type="hidden" name="new_shift_id[]" value="{{$data['shift_id']}}" id="shiftname-{{ $data['date'] }}">
-                                                    <input type="hidden" name="new_shift_code[]" value="{{$data['shift_code']}}" id="shiftcode-{{$data['date']}}">
-                                                    <input type="hidden" name="new_shift_start[]" value="{{$data['shift_start']}}" id="shiftstart-{{$data['date']}}">
-                                                    <input type="hidden" name="new_shift_end[]" value="{{$data['shift_end']}}" id="shiftend-{{$data['date']}}">
-                                                    <input type="hidden" name="new_shift_break[]" value="{{$data['shift_break']}}" id="shiftbreak-{{$data['date']}}">
-                                                    <input type="hidden" name="new_shift_night[]" value="{{$data['shift_night']}}" id="shiftnight-{{$data['date']}}">
-                                                    <input type="hidden" name="new_bill_eligible[]" value="{{$data['bill_eligible']}}" id="billeligible-{{$data['date']}}">
+                                                @php
+                                                    $disabled_input = '';
+                                                    if($data['holiday'] == 1 || $data['present_status']=='Holiday' || $data['present_status']=='Weekend' || $data['present_status']=='Day Off' || strpos($data['present_status'],'Leave')!==false) {
+                                                        $disabled_input = 'readonly="readonly"';
+                                                    }
+                                                @endphp
+                                                @if($data['att_id'] != null)
+                                                    <td>
+                                                        <input type="hidden" name="old_line[{{$data['att_id']}}]" value="{{ $data['line_id'] }}" >
+                                                        <input type="hidden" name="old_status[{{$data['att_id']}}]" value="{{ $data['present_status'] }}" >
+                                                        <input type="hidden" name="old_date[{{$data['att_id']}}]" value="{{$data['date']}}" >
+                                                        <input type="hidden" name="this_shift_code[{{$data['att_id']}}]" value="{{$data['shift_code']}}" id="shiftcode-{{ $data['date'] }}">
+                                                        <input type="hidden" name="this_shift_id[{{$data['att_id']}}]" value="{{$data['shift_id']}}" id="shiftname-{{ $data['date'] }}">
+                                                        <input type="hidden" name="this_shift_start[{{$data['att_id']}}]" value="{{$data['shift_start']}}" id="shiftstart-{{ $data['date'] }}">
+                                                        <input type="hidden" name="this_shift_end[{{$data['att_id']}}]" value="{{$data['shift_end']}}" id="shiftend-{{ $data['date'] }}">
+                                                        <input type="hidden" name="this_shift_break[{{$data['att_id']}}]" value="{{$data['shift_break']}}" id="shiftbreak-{{ $data['date'] }}">
+                                                        <input type="hidden" name="this_shift_night[{{$data['att_id']}}]" value="{{$data['shift_night']}}" id="shiftnight-{{ $data['date'] }}">
+                                                        <input type="hidden" name="this_bill_eligible[{{$data['att_id']}}]" value="{{$data['bill_eligible']}}" id="billeligible-{{ $data['date'] }}">
+                                                        <input class="intime manual form-control" type="text" name="intime[{{$data['att_id']}}]" id="punchintime-{{ $data['date'] }}" value="{{!empty($data['in_time'])?date("H:i:s", strtotime($data['in_time'])):null}}"   placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}} autocomplete="off">
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="outtime manual form-control" name="outtime[{{$data['att_id']}}]" id="punchouttime-{{ $data['date'] }}" value="{{!empty($data['out_time'])?date("H:i:s", strtotime($data['out_time'])):null}}"  placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}} autocomplete="off">
+                                                    </td>
+                                                @else
+                                                    <td>
+                                                        <input type="hidden" name="new_line[]" value="{{ $data['line_id'] }}">
+                                                        <input type="hidden" name="new_date[]" value="{{$data['date']}}">
+                                                        <input type="hidden" name="new_shift_id[]" value="{{$data['shift_id']}}" id="shiftname-{{ $data['date'] }}">
+                                                        <input type="hidden" name="new_shift_code[]" value="{{$data['shift_code']}}" id="shiftcode-{{$data['date']}}">
+                                                        <input type="hidden" name="new_shift_start[]" value="{{$data['shift_start']}}" id="shiftstart-{{$data['date']}}">
+                                                        <input type="hidden" name="new_shift_end[]" value="{{$data['shift_end']}}" id="shiftend-{{$data['date']}}">
+                                                        <input type="hidden" name="new_shift_break[]" value="{{$data['shift_break']}}" id="shiftbreak-{{$data['date']}}">
+                                                        <input type="hidden" name="new_shift_night[]" value="{{$data['shift_night']}}" id="shiftnight-{{$data['date']}}">
+                                                        <input type="hidden" name="new_bill_eligible[]" value="{{$data['bill_eligible']}}" id="billeligible-{{$data['date']}}">
 
-                                                    <input class="intime manual form-control" id="punchintime-{{ $data['date'] }}" type="text" name="new_intime[]" value=""  placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}} autocomplete="off">
-                                                </td>
-                                                <td>
-                                                    <input type="text" class="outtime manual form-control" name="new_outtime[]" id="punchouttime-{{ $data['date'] }}" value="" placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}} autocomplete="off">
-                                                </td>
-                                            @endif
-                                            <td id="punchot-{{ $data['date'] }}"> 
-                                                @if($info->as_ot==1)
-                                                    {{ numberToTimeClockFormat($data['overtime_time']) }} 
+                                                        <input class="intime manual form-control" id="punchintime-{{ $data['date'] }}" type="text" name="new_intime[]" value=""  placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}} autocomplete="off">
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" class="outtime manual form-control" name="new_outtime[]" id="punchouttime-{{ $data['date'] }}" value="" placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}} autocomplete="off">
+                                                    </td>
                                                 @endif
-                                            </td>
-                                        </tr>
+                                                <td id="punchot-{{ $data['date'] }}"> 
+                                                    @if($info->as_ot==1)
+                                                        {{ numberToTimeClockFormat($data['overtime_time']) }} 
+                                                    @endif
+                                                </td>
+                                            </tr>
                                         @endforeach
                                     </tbody>
                                     <tfoot style="border-top:2px double #999">
