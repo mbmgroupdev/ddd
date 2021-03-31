@@ -10,7 +10,7 @@
         font-weight: bold;
     }
     #example th:nth-child(2) input{
-      width: 100px !important;
+      width: 80px !important;
     }
     #example th:nth-child(3) select{
       width: 120px !important;
@@ -75,7 +75,7 @@
                             <thead>
                                 <tr class="success">
                                     <th width="5%">SL.</th>
-                                    <th width="10%">MBM Order No</th>
+                                    <th width="10%">Internal Order No</th>
                                     <th width="10%">Unit</th>
                                     <th width="10%">Buyer</th>
                                     <th width="10%">Style No</th>

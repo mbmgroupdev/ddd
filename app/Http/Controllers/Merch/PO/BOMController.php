@@ -14,6 +14,7 @@ use App\Models\Merch\SampleStyle;
 use App\Models\Merch\StyleSpecialMachine;
 use App\Models\Merch\Supplier;
 use App\Models\Merch\SupplierItemType;
+use App\Packages\QueryExtra\QueryExtra;
 use DB;
 use Illuminate\Http\Request;
 
@@ -118,6 +119,7 @@ class BOMController extends Controller
 	    	}
 
     		$sl = 1;
+            $updateBOM = [];
     		for ($i=0; $i<sizeof($input['itemid']); $i++){
     			$itemId = $input['itemid'][$i];
             	if($itemId != null){
@@ -141,7 +143,12 @@ class BOMController extends Controller
             		];
             		if($input['bomitemid'][$i] != null && $itemBomCount > 0){ 
             			// update
-            			PoBOM::where('id', $input['bomitemid'][$i])->update($bom);
+                        $updateBOM[] = 
+                        [
+                            'data' => $bom,
+                            'keyval' => $input['bomitemid'][$i]
+                        ];
+            			// PoBOM::where('id', $input['bomitemid'][$i])->update($bom);
             		}else{
             			// create
             			$bom['created_by'] = auth()->user()->id;
@@ -152,6 +159,14 @@ class BOMController extends Controller
             		$sl++;
             	}
 	
+            }
+
+            // update mr_po_bom_costing_booking
+            if(count($updateBOM) > 0){
+                (new QueryExtra)
+                ->table('mr_po_bom_costing_booking')
+                ->whereKey('id')
+                ->bulkup($updateBOM);
             }
 
             //log_file_write("BOM Successfully Save", $input['stl_id']);

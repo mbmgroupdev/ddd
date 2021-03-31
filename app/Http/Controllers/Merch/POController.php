@@ -114,13 +114,13 @@ class POController extends Controller
             })
             ->addColumn('action', function ($data) {
                 $action_buttons = "<div class=\"btn-group\">
-                    <a href='#' class=\"btn btn-sm btn-secondary\" data-toggle=\"tooltip\" title=\"PO Edit\">
+                    <a href='".url('merch/po/').'/'.$data->po_id.'/edit'."' class=\"btn btn-xs btn-secondary\" data-toggle=\"tooltip\" title=\"PO Edit\">
                     <i class=\"ace-icon fa fa-pencil bigger-120\"></i>
                     </a>
-                    <a href='".url("merch/po-bom/$data->po_id")."' class=\"btn btn-sm btn-primary\" data-toggle=\"tooltip\" title=\"PO BOM\">
+                    <a href='".url("merch/po-bom/$data->po_id")."' class=\"btn btn-xs btn-primary\" data-toggle=\"tooltip\" title=\"PO BOM\">
                     <i class=\"las la-clipboard-list\"></i>
                     </a>
-                    <a href='".url("merch/po-costing/$data->po_id")."' class=\"btn btn-sm btn-warning text-white\" data-toggle=\"tooltip\" title=\"Order Costing\">
+                    <a href='".url("merch/po-costing/$data->po_id")."' class=\"btn btn-xs btn-warning text-white\" data-toggle=\"tooltip\" title=\"Order Costing\">
                     <i class=\"las la-clipboard-list\"></i>
                     </a>
                     
@@ -244,7 +244,31 @@ class POController extends Controller
      */
     public function edit($id)
     {
-        //
+
+        try {
+            $po = PurchaseOrder::findOrFail($id);
+
+            $order = OrderEntry::orderInfoWithStyle($po->mr_order_entry_order_id);
+            if($order == null || $order->style == null){
+                toastr()->error("Order Not Found!");
+                return back();
+            }
+            $sizeGroup= StyleSizeGroup::getSizeGroupIdStyleWise($order->style->stl_id);
+            
+            $getSizeGroup = [];
+            if($sizeGroup != null){
+                $getSizeGroup= ProductSize::getProductSizeGroupIdWiseInfo($sizeGroup);
+            }
+            return $getSizeGroup;
+            $sizeValue = collect($getSizeGroup)->pluck('value','mr_product_pallete_name');
+            $totalPoQty = PurchaseOrder::getPoOrderSumQtyOrderIdWise($order->order_id);
+            $totalPoQty = $totalPoQty??0;
+            return view('merch.po.edit', compact('input', 'order', 'getSizeGroup', 'sizeValue', 'totalPoQty'));
+        } catch (\Exception $e) {
+            $bug = $e->getMessage();
+            toastr()->error($bug);
+            return back();
+        }
     }
 
     /**
@@ -278,10 +302,7 @@ class POController extends Controller
             return back();
         }
         try {
-            $queryData = OrderEntry::with(['style'])
-                ->whereIn('mr_buyer_b_id', auth()->user()->buyer_permissions());
-
-            $order = $queryData->where("order_id", $input['order_id'])->first();
+            $order = OrderEntry::orderInfoWithStyle($input['order_id']);
             if($order == null || $order->style == null){
                 toastr()->error("Order Not Found!");
                 return back();
@@ -309,22 +330,113 @@ class POController extends Controller
         $result['type'] = 'error';
         // return $input;
         try {
-            $data = $input['data'];
-            $checkSpace = str_replace(' ', 'x', $data);
-            $checkNewLine = trim(preg_replace('/\s\s+/', '-', $checkSpace));
-            $checkCharacterRemove = preg_replace('~-{2,}~', '-', $checkNewLine);
-            $checkCharacterRemove = str_replace(array("\n", "\r"), '-', $checkCharacterRemove);
+            if($request->file('file')){
+                $parser = new \Smalot\PdfParser\Parser();
+                $pdf    = $parser->parseFile($request->file('file'));
+                 
+                $data = [];
+                $pages  = $pdf->getPages();
+                $flag = 0;
+                foreach ($pages as $page) {
+                    if(strpos($page->getText(), 'Comp Sizes Comp Qty') !== false){
+                        $variable = $page->getText();
+                        $b = explode('size level', $variable);
+                        $d = $b[1];
+                        if(strpos($d, 'This Purchase Order') !== false){
+                            $l = substr($d, 0, strpos($d, "This Purchase Order"));
+                        }else{
+                            $l = $d;
+                        }
+                        if($l != ' '){
+                            $dataReplace = preg_replace('~-{2,}~', '--', $l);
+                            $dataExlode = explode('--', $dataReplace);
+                            $dataFilter = array_filter(array_map('trim', $dataExlode));
+                            if($flag == 0){
+                                $flag = 1;
+                                $firstIndex = explode(' ', $dataFilter[0]);
+                                $dataFilter[0] = end($firstIndex);
+                                if(count($dataFilter) > 4){
+                                    $newArray = [];
+                                    $firstReInd = $this->replaceVal(count($dataFilter), 5, 1);
+                                    $otherReInd = $firstReInd * 2;
+                                    for ($i=0; $i < count($dataFilter); $i++) { 
+                                        if($i == $firstReInd){
+                                            $firstExlop = explode(' ', $dataFilter[$i]);
+                                            if(count($firstExlop) > 0){
+                                                $newArray[] =($firstExlop[0]);
+                                                array_shift($firstExlop);
+                                                $newArray[] = implode(' ',$firstExlop);
+                                            }else{
+                                                $newArray[] = $dataFilter[$i];
+                                            }
+                                        }elseif($i == $otherReInd){
+                                            $otherReInd = $otherReInd + $firstReInd;
+                                            $otherExlop = explode(' ', $dataFilter[$i]);
+                                            if(count($otherExlop) > 0){
+                                                $lastIn = end($otherExlop);
+                                                array_pop($otherExlop);
+                                                $newArray[] = implode(' ',$otherExlop);
+                                                $newArray[] = $lastIn;
+                                            }else{
+                                                $newArray[] = $dataFilter[$i];
+                                            }
+                                        }else{
+                                            $newArray[] = $dataFilter[$i];
+                                        }
+                                    }
 
-            $textExplode = array_filter(explode('-', $checkCharacterRemove));
-            $arrayDivision = count($textExplode)/2;
-            $arraySeperate = array_chunk($textExplode, $arrayDivision);
-            $arrayCombine = array_combine($arraySeperate[0], $arraySeperate[1]);
-            $result['value'] = $arrayCombine;
+                                    $dataFilter = array_filter($newArray);
+                                }
+                                $fidata = $dataFilter;
+                            }else{
+                                $fidata = $dataFilter;
+                            }
+
+                            $data[] = preg_replace('/\s\s+/', 'x', $fidata);
+                        }
+                    }
+                }
+                $data = array_filter($data); // remove empty array
+
+                $result = [];
+                foreach ($data as $key => $value) {
+                    $arrayDivision = count($value)/4;
+                    $arraySeperate = array_chunk($value, $arrayDivision);
+                    $arrayCombine = array_combine($arraySeperate[1], $arraySeperate[2]);
+                    $result = array_merge($result, $arrayCombine);
+                }
+                $result['value'] = $result;
+
+            }else{
+                $data = $input['pdf_data'];
+                $checkSpace = str_replace(' ', 'x', $data);
+                $checkNewLine = trim(preg_replace('/\s\s+/', '-', $checkSpace));
+                $checkCharacterRemove = preg_replace('~-{2,}~', '-', $checkNewLine);
+                $checkCharacterRemove = str_replace(array("\n", "\r"), '-', $checkCharacterRemove);
+
+                $textExplode = array_filter(explode('-', $checkCharacterRemove));
+                $arrayDivision = count($textExplode)/2;
+                $arraySeperate = array_chunk($textExplode, $arrayDivision);
+                $arrayCombine = array_combine($arraySeperate[0], $arraySeperate[1]);
+                $result['value'] = $arrayCombine;
+            }
+            
             $result['type'] = 'success';
             return $result;
         } catch (\Exception $e) {
             $result['message'] = $e->getMessage();
             return $result;
+        }
+    }
+
+    public function replaceVal($countValue, $inc, $num)
+    {
+        if($countValue == $inc){
+            return $num;
+        }else{
+            $inc = $inc + 4;
+            $num = $num + 1;
+            return $this->replaceVal($countValue, $inc, $num);
         }
     }
 
