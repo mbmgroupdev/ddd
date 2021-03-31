@@ -1,5 +1,5 @@
 <?php
-namespace App\Packages;
+namespace App\Packages\QueryExtra;
 
 /**
  * Run complex queries in Laravel

@@ -10,6 +10,7 @@ use App\Models\Merch\OrderBOM;
 use App\Models\Merch\OrderEntry;
 use App\Models\Merch\Season;
 use App\Models\Merch\Style;
+use App\Packages\QueryExtra\QueryExtra;
 use DB;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
@@ -154,7 +155,7 @@ class BOMController extends Controller
 					$supplierDataSql = $supplierData->toSql();
 					$getSupplier = DB::table('mr_supplier_item_type AS si')
 					->select('s.sup_id', 's.sup_name', 'si.mcat_id')
-					->leftjoin(DB::raw('(' . $supplierDataSql. ') AS s'), function($join) use ($supplierData) {
+					->join(DB::raw('(' . $supplierDataSql. ') AS s'), function($join) use ($supplierData) {
 		                $join->on('s.sup_id','si.mr_supplier_sup_id')->addBinding($supplierData->getBindings());
 		            })
 	            	->whereIn('si.mcat_id', $getCat)
@@ -259,6 +260,7 @@ class BOMController extends Controller
 	    	}
 
     		$sl = 1;
+    		$updateBOM = [];
     		for ($i=0; $i<sizeof($input['itemid']); $i++){
     			$itemId = $input['itemid'][$i];
             	if($itemId != null){
@@ -281,18 +283,29 @@ class BOMController extends Controller
             		];
             		if($input['bomitemid'][$i] != null && $itemBomCount > 0){ 
             			// update
-            			OrderBOM::where('id', $input['bomitemid'][$i])->update($bom);
+            			$updateBOM[] = 
+					    [
+							'data' => $bom,
+							'keyval' => $input['bomitemid'][$i]
+					    ];
+            			// OrderBOM::where('id', $input['bomitemid'][$i])->update($bom);
             		}else{
             			// create
             			$bomId = OrderBOM::create($bom)->id;
             			$data['value'][$i] = $bomId;
             		}
-
-            		// PO create or update before
             		
             		$sl++;
             	}
 	
+            }
+
+            // update mr_order_bom_costing_booking
+            if(count($updateBOM) > 0){
+            	(new QueryExtra)
+			    ->table('mr_order_bom_costing_booking')
+			    ->whereKey('id')
+			    ->bulkup($updateBOM);
             }
 
             //log_file_write("BOM Successfully Save", $input['stl_id']);

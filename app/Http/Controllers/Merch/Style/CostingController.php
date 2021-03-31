@@ -11,6 +11,7 @@ use App\Models\Merch\SampleStyle;
 use App\Models\Merch\Season;
 use App\Models\Merch\Style;
 use App\Models\Merch\StyleSpecialMachine;
+use App\Packages\QueryExtra\QueryExtra;
 use DB;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
@@ -169,6 +170,7 @@ class CostingController extends Controller
     	DB::beginTransaction();
     	try {
     		// BOM costing update
+            $updateCosting = [];
     		for ($i=0; $i < sizeof($input['itemid']); $i++){
     			$itemId = $input['itemid'][$i];
             	if($itemId != null){
@@ -184,30 +186,60 @@ class CostingController extends Controller
             			'precost_freight' => $input['precost_freight'][$i],
             			'precost_unit_price' => $input['precost_unit_price'][$i]
             		];
-            		BomCosting::where('id', $input['bomitemid'][$i])->update($bom);
+
+                    $updateCosting[] = 
+                    [
+                        'data' => $bom,
+                        'keyval' => $input['bomitemid'][$i]
+                    ];
+            		// BomCosting::where('id', $input['bomitemid'][$i])->update($bom);
             	}
+            }
+
+            // update mr_stl_bom_n_costing
+            if(count($updateCosting) > 0){
+                (new QueryExtra)
+                ->table('mr_stl_bom_n_costing')
+                ->whereKey('id')
+                ->bulkup($updateCosting);
             }
             
             // mr_style_operation_n_cost - update
             if(isset($input['style_op_id'])){
+                $updateOpCost = [];
             	for ($s=0; $s < sizeof($input['style_op_id']); $s++) {
 					$spItem = [
 						"style_op_id" => $request->style_op_id[$s],
 						"uom"         => $request->spuom[$s],
 						"unit_price"  => $request->spunitprice[$s]
 					];
-					DB::table("mr_style_operation_n_cost")
-					->where("style_op_id", $request->style_op_id[$s])
-					->update($spItem);
+
+					// DB::table("mr_style_operation_n_cost")
+					// ->where("style_op_id", $request->style_op_id[$s])
+					// ->update($spItem);
+
+                    $updateOpCost[] = 
+                    [
+                        'data' => $spItem,
+                        'keyval' => $request->style_op_id[$s]
+                    ];
 
 					// $this->logFileWrite("Style Operation updated", $request->style_op_id[$s]);
 				}
+
+                // update mr_style_operation_n_cost
+                if(count($updateOpCost) > 0){
+                    (new QueryExtra)
+                    ->table('mr_style_operation_n_cost')
+                    ->whereKey('style_op_id')
+                    ->bulkup($updateOpCost);
+                }
             }
             
 			// mr_stl_bom_other_costing - insert
 			$otherCosting = BomOtherCosting::updateOrCreate(
 				[
-					"mr_style_stl_id" => $request->stl_id,
+					"mr_style_stl_id" => $request->stl_id
 				],
 				[
 					"cm"           	  => $request->cm,

@@ -80,4 +80,21 @@ class OrderEntry extends Model
             ->where("order_id", $id)
             ->first();
     }
+
+    public static function getOrderQtySumResIdWise($resId)
+    {
+        return DB::table('mr_order_entry')
+            ->select('res_id', DB::raw("SUM(order_qty) AS qty"))
+            ->whereIn('mr_buyer_b_id', auth()->user()->buyer_permissions())
+            ->where('res_id', $resId)
+            ->first();
+    }
+
+    public static function getOrderListWithStyleResIdWise($resId)
+    {
+        return OrderEntry::with(['style'])
+            ->whereIn('mr_buyer_b_id', auth()->user()->buyer_permissions())
+            ->where('res_id', $resId)
+            ->get();
+    }
 }

@@ -38,7 +38,7 @@
 
         <div class="page-content">
             <input type="hidden" id="base_url" value="{{ url('/') }}">
-            <input type="hidden" id="blade_type" value="order">
+            <input type="hidden" id="blade_type" value="po">
             <div class="row">
               <div class="col-12">
                 <div class="panel panel-success">
@@ -50,6 +50,8 @@
                         <form class="form-horizontal" role="form" method="post" id="bomForm">
                             <input type="hidden" name="stl_id" value="{{ $order->mr_style_stl_id }}">
                             <input type="hidden" name="order_id" value="{{ $order->order_id }}">
+                            <input type="hidden" name="po_id" value="{{ $po->po_id }}">
+                            <input type="hidden" id="change-flag" value="0">
                             {{ csrf_field() }} 
                             <div class="panel-body">
                                 
@@ -400,7 +402,7 @@
       var form = $("#bomForm");
       if (isValid){
          $.ajax({
-            type: "GET",
+            type: "POST",
             url: '{{ url("/merch/po-bom-ajax-store") }}',
             headers: {
                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -408,22 +410,22 @@
             data: form.serialize(), // serializes the form's elements.
             success: function(response)
             {
-              console.log(response);
-              // if(response.type === 'success'){
-              //   if(savetype =='manual' ){
-              //     $.notify(response.message, response.type);
-              //   }else if(savetype =='cost'){
-              //     $.notify('Saved '+savetype, response.type);
-              //   }else{
-              //     $.notify('Item has been '+savetype, response.type);
-              //   }
-              //   var bomindex = $('input[name="bomitemid[]"]');
-              //   $.each(response.value, function(i, el) {
-              //       var bomid = bomindex[i].getAttribute('id');
-              //       $("#"+bomid).val(el);
-              //   });
+              // console.log(response);
+              if(response.type === 'success'){
+                if(savetype =='manual' ){
+                  $.notify(response.message, response.type);
+                }else if(savetype =='cost'){
+                  $.notify('Saved '+savetype, response.type);
+                }else{
+                  $.notify('Item has been '+savetype, response.type);
+                }
+                var bomindex = $('input[name="bomitemid[]"]');
+                $.each(response.value, function(i, el) {
+                    var bomid = bomindex[i].getAttribute('id');
+                    $("#"+bomid).val(el);
+                });
                  
-              // }
+              }
               $(".app-loader").hide();
             },
             error: function (reject) {

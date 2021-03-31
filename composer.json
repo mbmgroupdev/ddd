@@ -25,7 +25,8 @@
         "spatie/laravel-permission": "^3.13",
         "yajra/laravel-datatables": "^1.5",
         "yajra/laravel-datatables-oracle": "~9.0",
-        "yoeunes/toastr": "^1.2"
+        "yoeunes/toastr": "^1.2",
+        "smalot/pdfparser": "^0.18"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.4",

@@ -183,21 +183,7 @@
                                 </div>
 		                	</div>
 		            	</div>
-		            	@if($order->mr_buyer_b_id == 41)
-		            	<div class="">
-		            		<div class="process w-100">
-		            			<div class="row">
-		            				<div class="col-sm-12">
-		            					<textarea class="form-control" id="process-text" rows="3" placeholder="Paste PDF text copy data..."></textarea>
-		            				</div>
-		            				<div class="col-sm-12">
-		            					<a class="process btn btn-primary btn-sm text-white" onClick="process()"><i class="las la-recycle"></i> Process</a>
-		            				</div>
-		            			</div>
-		            		</div>
-		            	</div>
-		            	<br>
-		            	@endif
+		            	
 		                <div class='row'>
                             <div class='col-sm-12 table-wrapper-scroll-y table-custom-scrollbar' id="po-list-section">
                                 <table class="table table-bordered table-hover table-fixed table-responsive" id="itemList">
@@ -239,6 +225,32 @@
 		                
 		            </div>
 		        </form>
+		        
+        	</div>
+        	<div class="panel">
+        		<div class="panel-body">
+        			@if($order->mr_buyer_b_id == 41)
+	            	<form class="" id="pdfProcess" method="post" enctype="multipart/form-data"> 
+	            		{{ csrf_field() }} 
+	            		<div class="process w-100">
+	            			<div class="row">
+	            				<div class="col-sm-6">
+	            					<textarea class="form-control" id="process-text" name="pdf_data" rows="3" placeholder="Paste PDF text copy data..."></textarea>
+	            				</div>
+	            				<div class="col-sm-2">
+	            					<input type="file" name="file" id="file">
+	            					<input type="hidden" name="b_id" value="{{ $order->mr_buyer_b_id }}">
+	            				</div>
+	            				<div class="col-sm-4">
+	            					<button type="submit" class=" btn btn-primary btn-sm "><i class="las la-recycle"></i> Process</button>
+	            					{{-- <a class="process btn btn-primary btn-sm text-white" onClick="process()"><i class="las la-recycle"></i> Process</a> --}}
+	            				</div>
+	            			</div>
+	            		</div>
+	            	</form>
+	            	<br>
+            		@endif
+        		</div>
         	</div>
         </div>
     	@include('merch.common.right-modal')
@@ -405,36 +417,78 @@
 	    
 	});
 	@if(isset($order) && $order != null)
-	function process(){
+	$.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+	$('#pdfProcess').submit(function(e) {
+		e.preventDefault();
+       	let formData = new FormData(this);
+       	$(".app-loader").show();
+		$.ajax({
+          	type:'POST',
+         	url: "{{ url('/merch/po-process-text')}}",
+           	data: formData,
+           	contentType: false,
+           	processData: false,
+           	success: (response) => {
+           		console.log(response)
+             	$(".app-loader").hide();
+	          	if(response.type !== 'error'){
+	          		var totalQty = 0;
+		            $.each(response.value, function( index, value ) {
+		            	$("#size-"+index).val(value);
+		            	$("#size-"+index).parent().addClass('highlight');
+		            	sizeQty[index] = value;
+					});
+					$(".size-qty").each(function(i, v) {
+				        if($(this).val() != '' )totalQty += parseFloat( $(this).val() ); 
+				    });
+					$("#process-text").val('').focus();
+					$("#file").val('');
+				    $("#totalQty").val(totalQty); 
+		        }else{
+		          	$.notify('Something wrong, please close and try again!', 'error');
+	          	}
+           },
+           error: function(response){
+              console.log(response);
+              
+           }
+       });
+	});
+	/*function process(){
 		var data = $("#process-text").val();
+		var form = $("#pdfProcess");
 		if(data !== null && data !== ''){
 			$(".app-loader").show();
 			$.ajax({
-		        type: "GET",
+		        type: "POST",
+		        headers: {
+                  'X-CSRF-TOKEN': '{{ csrf_token() }}',
+              	},
 		        url: "{{ url('/merch/po-process-text')}}",
-		        data:{
-		        	b_id: "{{ $order->mr_buyer_b_id }}",
-		        	data: data
-		        },
+		        data: form.serialize(),
 		        success: function(response)
 		        {
-		        	// console.log(response)
+		        	console.log(response)
 		        	$(".app-loader").hide();
-		          	if(response.type !== 'error'){
-		          		var totalQty = 0;
-			            $.each(response.value, function( index, value ) {
-			            	$("#size-"+index).val(value);
-			            	$("#size-"+index).parent().addClass('highlight');
-			            	sizeQty[index] = value;
-						});
-						$(".size-qty").each(function(i, v) {
-					        if($(this).val() != '' )totalQty += parseFloat( $(this).val() ); 
-					    });
-						$("#process-text").val('').focus();
-					    $("#totalQty").val(totalQty); 
-			        }else{
-			          	$.notify('Something wrong, please close and try again!', 'error');
-		          	}
+		    //       	if(response.type !== 'error'){
+		    //       		var totalQty = 0;
+			   //          $.each(response.value, function( index, value ) {
+			   //          	$("#size-"+index).val(value);
+			   //          	$("#size-"+index).parent().addClass('highlight');
+			   //          	sizeQty[index] = value;
+						// });
+						// $(".size-qty").each(function(i, v) {
+					 //        if($(this).val() != '' )totalQty += parseFloat( $(this).val() ); 
+					 //    });
+						// $("#process-text").val('').focus();
+					 //    $("#totalQty").val(totalQty); 
+			   //      }else{
+			   //        	$.notify('Something wrong, please close and try again!', 'error');
+		    //       	}
 		        },
 		        error: function (reject) {
 		          console.log(reject);
@@ -443,7 +497,7 @@
 		}else{
 			$("#process-text").notify('Empty text process', 'error');
 		}
-	};
+	};*/
 	@endif
 	function previewPO(){
 		$(".right-modal-width").addClass('preview-small');

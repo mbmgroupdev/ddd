@@ -61,13 +61,13 @@ Route::group(['prefix' => 'merch/style','namespace' => 'Merch\Style'], function(
 	Route::get('/bom-list', 'BOMController@index');
 	Route::get("/bom-list-data", "BOMController@getListData");
 	Route::get('bom/{id}', 'BOMController@show');
-	Route::get('bom-ajax-store', 'BOMController@ajaxStore');
+	Route::post('bom-ajax-store', 'BOMController@ajaxStore');
 
 	// Costing
 	Route::get('/costing-list', 'CostingController@index');
 	Route::get("/costing-list-data", "CostingController@getListData");
 	Route::get('costing/{id}', 'CostingController@show');
-	Route::get('costing-ajax-store', 'CostingController@ajaxStore');
+	Route::post('costing-ajax-store', 'CostingController@ajaxStore');
 });
 
 /*
@@ -114,27 +114,30 @@ Route::group(['prefix' => 'merch/style_costing','namespace' => 'Merch\StyleCosti
 
 /*
 *--------------------------------------------------------------
-* Style
+* Order
 *--------------------------------------------------------------
 */
+Route::group(['prefix' => 'merch','namespace' => 'Merch'], function(){
+	Route::resource('orders', 'OrderController');
+	Route::get('/order/order_list','OrderController@index');
+	Route::get('/order/order_list_data','OrderController@list');
+});
+
 Route::group(['prefix' => 'merch/order','namespace' => 'Merch\Orders'], function(){
 
-	Route::get('/order_list','OrderController@orderList');
-	Route::get('/order_list_data','OrderController@orderListData');
 	Route::get("/delete/{id}", "OrderController@orderDelete");
 	
 	// BOM
 	Route::get('/bom-list', 'BOMController@index');
 	Route::post("/bom-list-data", "BOMController@getListData");
 	Route::get('bom/{id}', 'BOMController@show');
-	Route::get('bom-ajax-store', 'BOMController@ajaxStore');
+	Route::post('bom-ajax-store', 'BOMController@ajaxStore');
 
 	// Costing
 	Route::get('/costing-list', 'CostingController@index');
 	Route::get("/costing-list-data", "CostingController@getListData");
 	Route::get('costing/{id}', 'CostingController@show');
-	Route::get('costing-ajax-store', 'CostingController@ajaxStore');
-
+	Route::post('costing-ajax-store', 'CostingController@ajaxStore');
 
 });
 
@@ -149,6 +152,7 @@ Route::group(['prefix' => 'merch','namespace' => 'Merch'], function(){
 	Route::get('reservation_list_data', 'ReservationController@getData');
 	Route::get('reservation/order-entry/{resid}', 'ReservationController@orderEntry');
 	Route::post('reservation/order-entry-store', 'ReservationController@orderStore');
+	Route::get('reservation/order-list/{resid}', 'ReservationController@orderList');
 });
 
 /*
@@ -189,16 +193,16 @@ Route::group(['prefix' => 'merch','namespace' => 'Merch'], function(){
 	Route::resource('po', 'POController');
 	Route::get('po-list', 'POController@list');
 	Route::get('po-order', 'POController@orderWise');
-	Route::get('po-process-text', 'POController@process');
+	Route::post('po-process-text', 'POController@process');
 	Route::get('po-size-breakdown', 'POController@sizeBreakdown');
 
 	// BOM
 	Route::get('po-bom/{id}', 'PO\BOMController@show');
-	Route::get('po-bom-ajax-store', 'BOMController@ajaxStore');
+	Route::post('po-bom-ajax-store', 'PO\BOMController@ajaxStore');
 
 	// Costing
 	Route::get('po-costing/{id}', 'PO\CostingController@show');
-	// Route::get('costing-ajax-store', 'CostingController@ajaxStore');
+	Route::post('po-costing-ajax-store', 'PO\CostingController@ajaxStore');
 });
 
 /*
@@ -463,19 +467,19 @@ Route::get('merch/reservation/reservation_edit/{res_id}','Merch\Reservation\Rese
 Route::post('merch/reservation/reservation_update','Merch\Reservation\ReservationController@resUpdate');
 
 
-Route::get('merch/orders/order_entry/{res_id}', 'Merch\Orders\OrderController@orderEntry');
+/*Route::get('merch/orders/order_entry/{res_id}', 'Merch\Orders\OrderController@orderEntry');
 Route::get('merch/orders/order_entry_direct', 'Merch\Orders\OrderController@orderEntryDirect');
 Route::get('merch/orders/order_quantity_direct', 'Merch\Orders\OrderController@orderQuantityDirect');
 
-Route::post('merch/orders/order_entry_direct_save', 'Merch\Orders\OrderController@orderStoreDirect');
+Route::post('merch/orders/order_entry_direct_save', 'Merch\Orders\OrderController@orderStoreDirect');*/
 
-Route::post('merch/orders/order_entry', 'Merch\Orders\OrderController@orderStore');
+/*Route::post('merch/orders/order_entry', 'Merch\Orders\OrderController@orderStore');
 Route::get('merch/orders/order_edit/{order_id}', 'Merch\Orders\OrderController@orderEdit');
 Route::post('merch/orders/order_update', 'Merch\Orders\OrderController@orderUpdate');
 Route::get('merch/orders/season_style', 'Merch\Orders\OrderController@styleList');
-Route::get('merch/orders/season_style_direct', 'Merch\Orders\OrderController@styleListdirect');
+Route::get('merch/orders/season_style_direct', 'Merch\Orders\OrderController@styleListdirect');*/
 
-Route::get('merch/order_edit/get_port_country_wise', 'Merch\Orders\OrderController@getCountryPorts');
+/*Route::get('merch/order_edit/get_port_country_wise', 'Merch\Orders\OrderController@getCountryPorts');
 
 Route::get('merch/orders/order_copy/{order_id}', 'Merch\Orders\OrderController@orderCopyForm');
 Route::post('merch/orders/order_copy/{order_id}', 'Merch\Orders\OrderController@orderCopyStore');
@@ -491,7 +495,7 @@ Route::get('merch/orders/get_selected_colors', 'Merch\Orders\OrderController@get
 
 Route::get('merch/orders/po/{order_id}/{po_id}/delete', 'Merch\Orders\OrderController@deletePO');
 
-Route::get('merch/orders/get_po_edit_options', 'Merch\Orders\OrderController@getPoEditOptions');
+Route::get('merch/orders/get_po_edit_options', 'Merch\Orders\OrderController@getPoEditOptions');*/
 //
 /*
 *--------------------------------------------------------------
@@ -509,7 +513,7 @@ Route::get('merch/time_action/tna_order_list',
 Route::post('merch/time_action/tna_order_list_data',
 	'Merch\TimeAction\TnaOrderController@tnaOrderListData');
 Route::get('merch/time_action/tna_order', 'Merch\TimeAction\TnaOrderController@orderForm');
-Route::get('merch/orders/po_edit_modal_data', 'Merch\Orders\OrderController@poEdit');
+// Route::get('merch/orders/po_edit_modal_data', 'Merch\Orders\OrderController@poEdit');
 Route::get('merch/time_action/tna_order_edit/{id}',
 	'Merch\TimeAction\TnaOrderController@tnaOrderEdit');
 Route::post('merch/time_action/tna_order_update',
@@ -519,7 +523,7 @@ Route::get('merch/time_action/tna_order_delete/{id}',
 //TNA Status
 Route::get('merch/time_action/tna_status', 'Merch\TimeAction\TnaStatusController@tnaShowStatus');
 //
-Route::post('merch/orders/purchase_order_update', 'Merch\Orders\OrderController@poUpdate');
+// Route::post('merch/orders/purchase_order_update', 'Merch\Orders\OrderController@poUpdate');
 Route::get('merch/time_action/tna_generate1', 'Merch\TimeAction\TnaOrderController@tnaGenerate1');
 Route::get('merch/time_action/tna_generate', 'Merch\TimeAction\TnaOrderController@tnaGenerate');
 Route::get('merch/time_action/templates_list', 'Merch\TimeAction\TnaOrderController@templatesList');
@@ -573,9 +577,9 @@ Route::get("merch/order_po_booking/confirm/{poBookingId}", "Merch\OrderBooking\O
 Route::post("merch/order_po_booking/confirm_store/{poBookingId}", "Merch\OrderBooking\OrderPoBookingController@confirmStore");
 
 Route::get('merch/order_profile','Merch\OrderProfile\ProfileController@index');
-Route::get('merch/orders/order_profile_data','Merch\OrderProfile\ProfileController@orderProfileData');
-Route::get('merch/orders/order_profile_show/{id}','Merch\OrderProfile\ProfileController@orderProfileShow');
-Route::get('merch/orders/order_profile_pdf/{id}','Merch\OrderProfile\ProfileController@orderProfilePdf');
+// Route::get('merch/orders/order_profile_data','Merch\OrderProfile\ProfileController@orderProfileData');
+// Route::get('merch/orders/order_profile_show/{id}','Merch\OrderProfile\ProfileController@orderProfileShow');
+// Route::get('merch/orders/order_profile_pdf/{id}','Merch\OrderProfile\ProfileController@orderProfilePdf');
 
 /*-------------------order color and size breakdown-------------*/
 Route::get('merch/order_breakdown','Merch\OrderBreakdown\OrderBreakDownController@index');
@@ -688,11 +692,11 @@ Route::post('merch/pi_to_file/update','Merch\PiToFile\PiToFileController@updateP
 
 
 //PO BOM .............
-Route::get('merch/orders/po_bom/{po_id}/{order_id}/{clr_id}/view', 'Merch\POOrderBOM\POOrderBOMController@showFormPOBOM');
-Route::post('merch/po_bom/store', 'Merch\POOrderBOM\POOrderBOMController@storePOData');
-Route::get('merch/orders/po_bom_list', 'Merch\POOrderBOM\POOrderBOMController@poBOMList');
-Route::post('merch/orders/po_bom_list_data', 'Merch\POOrderBOM\POOrderBOMController@poBOMListData');
+// Route::get('merch/orders/po_bom/{po_id}/{order_id}/{clr_id}/view', 'Merch\POOrderBOM\POOrderBOMController@showFormPOBOM');
+// Route::post('merch/po_bom/store', 'Merch\POOrderBOM\POOrderBOMController@storePOData');
+// Route::get('merch/orders/po_bom_list', 'Merch\POOrderBOM\POOrderBOMController@poBOMList');
+// Route::post('merch/orders/po_bom_list_data', 'Merch\POOrderBOM\POOrderBOMController@poBOMListData');
 //PO BOM Costing
 // Route::get("merch/orders/po_costing/{po_id}/{order_id}/create", "Merch\POOrderBOM\POOrderCostingController@");
-Route::get("merch/orders/po_costing/{po_id}/{order_id}/{clr_id}/edit", "Merch\POOrderBOM\POOrderCostingController@editForm");
-Route::post("merch/orders/po_costing/store", "Merch\POOrderBOM\POOrderCostingController@updatePOCosting");
+// Route::get("merch/orders/po_costing/{po_id}/{order_id}/{clr_id}/edit", "Merch\POOrderBOM\POOrderCostingController@editForm");
+// Route::post("merch/orders/po_costing/store", "Merch\POOrderBOM\POOrderCostingController@updatePOCosting");

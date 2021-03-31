@@ -14,6 +14,7 @@ use App\Models\Merch\SampleStyle;
 use App\Models\Merch\StyleSpecialMachine;
 use App\Models\Merch\Supplier;
 use App\Models\Merch\SupplierItemType;
+use App\Packages\QueryExtra\QueryExtra;
 use DB;
 use Illuminate\Http\Request;
 
@@ -95,5 +96,89 @@ class BOMController extends Controller
 		    toastr()->error($bug);
 		    return back();
 		}
+    }
+
+    public function ajaxStore(Request $request)
+    {
+    	$input = $request->all();
+    	$data['type'] = 'error';
+    	$data['value'] = [];
+    	// return $input;
+    	DB::beginTransaction();
+    	try {
+    		// check order exists
+    		$oldItem = array_filter($input['bomitemid'], 'strlen');
+	    	$getItemBom = PoBOM::getPoWiseItem($input['po_id'], ['id']);
+	    	$itemBomCount = count($getItemBom);
+	    	// return $itemBomCount;
+	    	$getBomId = collect($getItemBom->toArray())->pluck('id')->toArray();
+	    	$itemDiff = array_diff($getBomId, $oldItem);
+
+	    	for ($d=0; $d < count($itemDiff); $d++) { 
+	    		PoBOM::whereIn('id', $itemDiff)->delete();
+	    	}
+
+    		$sl = 1;
+            $updateBOM = [];
+    		for ($i=0; $i<sizeof($input['itemid']); $i++){
+    			$itemId = $input['itemid'][$i];
+            	if($itemId != null){
+            		$bom = [
+            			'mr_style_stl_id' => $input['stl_id'],
+            			'mr_material_category_mcat_id' => $input['itemcatid'][$i],
+            			'mr_cat_item_id' => $itemId,
+            			'item_description' => $input['description'][$i],
+            			'clr_id' => $input['color'][$i],
+            			'size' => $input['size_width'][$i],
+            			'mr_supplier_sup_id' => $input['supplierid'][$i],
+            			'mr_article_id' => $input['articleid'][$i],
+            			'uom' => $input['uomname'][$i],
+            			'consumption' => $input['consumption'][$i],
+            			'extra_percent' => $input['extraper'][$i],
+            			'order_id' => $input['order_id'],
+            			'depends_on' => $input['depends_on'][$i],
+            			'sl' => $sl,
+            			'ord_bom_id' => $input['ord_bom_id'][$i],
+            			'po_id' => $input['po_id']
+            		];
+            		if($input['bomitemid'][$i] != null && $itemBomCount > 0){ 
+            			// update
+                        $updateBOM[] = 
+                        [
+                            'data' => $bom,
+                            'keyval' => $input['bomitemid'][$i]
+                        ];
+            			// PoBOM::where('id', $input['bomitemid'][$i])->update($bom);
+            		}else{
+            			// create
+            			$bom['created_by'] = auth()->user()->id;
+            			$bomId = PoBOM::create($bom)->id;
+            			$data['value'][$i] = $bomId;
+            		}
+            		
+            		$sl++;
+            	}
+	
+            }
+
+            // update mr_po_bom_costing_booking
+            if(count($updateBOM) > 0){
+                (new QueryExtra)
+                ->table('mr_po_bom_costing_booking')
+                ->whereKey('id')
+                ->bulkup($updateBOM);
+            }
+
+            //log_file_write("BOM Successfully Save", $input['stl_id']);
+            DB::commit();
+	        $data['type'] = 'success';
+	        $data['message'] = "BOM Successfully Save.";
+	        return response()->json($data);
+    	} catch (\Exception $e) {
+    		DB::rollback();
+    		$bug = $e->getMessage();
+	        $data['message'] = $bug;
+	        return response()->json($data);
+    	}
     }
 }
