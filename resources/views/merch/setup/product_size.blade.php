@@ -84,7 +84,7 @@
     </div>
     
     <div class="page-content">
-      <div class="row">
+      <div class="">
         <div class="panel panel-default">
           <div class="panel-body">
             <div class="col-sm-12 col-xs-12 no-padding">
@@ -142,7 +142,7 @@
                               </div>
 
                               <div class="form-group has-required has-float-label">
-                                <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#sizeModal" style="width: 100%">Select Size Group</button>
+                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#sizeModal" style="width: 100%">Select Size Group</button>
                                 {{-- <label class="col-12 control-label no-padding-right" for="sino" >Size Group<span style="color: red">&#42;</span></label> --}}
                               </div>
                             </div>

@@ -34,8 +34,8 @@
                         <div class="sign-in-detail text-white">
                             <div >
                                 <div class="item login-slider">
-                                    <img src="{{ asset('images/login/1.jpg') }}" class="img-fluid mb-4 radius-10" alt="logo">
-                                    <h4 class="mb-1 text-white">Manage Time & Attendance</h4>
+                                    <img src="{{ asset('images/login/2.jpg') }}" class="img-fluid mb-4 radius-10" alt="logo">
+                                    <h4 class="mb-1 text-white">MBM Group</h4>
                                 </div>
                             </div>
                         </div>
@@ -59,7 +59,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="password">Password</label>
-                                    <a href="{{ route('password.request') }}" class="float-right">Forgot password?</a>
+                                    {{-- <a href="{{ route('password.request') }}" class="float-right">Forgot password?</a> --}}
                                     <input name="password" type="password" class="form-control mb-0 @error('password') is-invalid @enderror" id="password" placeholder="Password" value="{{ old('password') }}">
                                     @error('password')
                                       <span class="invalid-feedback" role="alert">
