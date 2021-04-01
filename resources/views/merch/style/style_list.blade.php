@@ -50,7 +50,7 @@
                       </li>
                       <li class="active">Style List</li>
                       <li class="top-nav-btn">
-                        <a class="btn btn-sm btn-primary" href="{{ url('merch/style/style_new') }}"><i class="las la-plus"></i> New Style</a>
+                        <a class="btn btn-sm btn-primary" href="{{ url('merch/style/create') }}"><i class="las la-plus"></i> New Style</a>
                         </li>
                   </ul><!-- /.breadcrumb -->
        

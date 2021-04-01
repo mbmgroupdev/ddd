@@ -23,8 +23,8 @@
          <a href="#style" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="las la-tshirt"></i><span>Style</span><i class="las la-angle-right iq-arrow-right"></i></a>
          <ul id="style" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
             @if($user->can('New Style') || $user->hasRole('Super Admin'))
-            <li class="@if($segment2 == 'style' && $segment3=='style_new') active @endif">
-               <a  href="{{ url('merch/style/style_new') }}"><i class="las la-folder-plus"></i> New Style</a>
+            <li class="@if($segment2 == 'style' && $segment3=='create') active @endif">
+               <a  href="{{ url('merch/style/create') }}"><i class="las la-folder-plus"></i> New Style</a>
             </li>
             @endif
             @if($user->can('Style List' ) || $user->hasRole('Super Admin'))

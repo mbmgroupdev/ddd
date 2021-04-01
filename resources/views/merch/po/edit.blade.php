@@ -1,5 +1,5 @@
 @extends('merch.layout')
-@section('title', 'Order PO')
+@section('title', 'Order PO Edit')
 @section('main-content')
 @push('css')
 <style>
@@ -32,8 +32,9 @@
               <li>
                   <a href="#">Order</a>
               </li>
-              <li class="active">PO</li>
+              <li class="active">PO Edit</li>
               <li class="top-nav-btn">
+                <a class="btn btn-sm btn-success text-white" href="{{ url('merch/po/create') }}"><i class="las la-plus"></i> Create PO</a>
                 <a class="btn btn-sm btn-primary text-white" href="{{ url('merch/po') }}"><i class="las la-list"></i> PO List</a>
               </li>
           </ul><!-- /.breadcrumb -->
@@ -123,7 +124,7 @@
 		            	<div class="row mb-3">
 		            		<div class="col pr-0">
 		                		<div class="form-group has-float-label has-required mb-0">
-                                	<input type="text" name="po_no" id="po_no" class="form-control " autocomplete="off" onClick="this.select()" value="" placeholder="Enter PO Number" autofocus required>
+                                	<input type="text" name="po_no" id="po_no" class="form-control " autocomplete="off" onClick="this.select()" value="{{ $po->po_no }}" placeholder="Enter PO Number" required>
                                     <label  for="po_no"> PO Number </label>
                                 </div>
 		                	</div>
@@ -132,7 +133,7 @@
                                 	<select name="clr_id" id="color" class="form-control" required>
                                         <option value=""> - Select - </option>
                                         @foreach($getColor as $k => $color)
-                                        <option value="{{ $k }}">{{ $color }}</option>
+                                        <option value="{{ $k }}" @if($po->clr_id == $k) selected @endif>{{ $color }}</option>
                                         @endforeach
                                     </select>
                                     <label  for="color"> Color </label>
@@ -143,7 +144,7 @@
                                 	<select name="po_delivery_country" id="country" class="form-control" required>
                                         <option value=""> - Select - </option>
                                         @foreach($getCountry as $k => $country)
-                                        <option value="{{ $k }}">{{ $country }}</option>
+                                        <option value="{{ $k }}" @if($po->po_delivery_country == $k) selected @endif>{{ $country }}</option>
                                         @endforeach
                                     </select>
                                     <label  for="country"> Country </label>
@@ -151,7 +152,7 @@
 		                	</div>
 		                	<div class="col pr-0">
 		                		<div class="form-group has-float-label has-required select-search-group">
-                                	<select name="port_id" id="port" class="form-control" required disabled>
+                                	<select name="port_id" id="port" class="form-control" required>
                                         <option value=""> - Select - </option>
                                     </select>
                                     <label  for="port"> Port </label>
@@ -159,7 +160,7 @@
 		                	</div>
 		                	<div class="col pr-0">
 		                		<div class="form-group has-float-label mb-0">
-                                	<input type="text" data-type="remarks" name="remarks" id="remarks" class="form-control" autocomplete="off" value="" placeholder="Enter remarks">
+                                	<input type="text" data-type="remarks" name="remarks" id="remarks" class="form-control" autocomplete="off" value="{{ $po->remarks }}" placeholder="Enter remarks" >
                                     <label  for="remarks"> Remarks </label>
                                 </div>
 		                	</div>
@@ -172,32 +173,18 @@
 		                	</div> --}}
 		                	<div class="col pr-0">
 		                		<div class="form-group has-float-label has-required mb-0">
-                                	<input type="date" name="po_ex_fty" id="exfty" class="form-control action-input" value="{{ $order->order_delivery_date??date('Y-m-d')}}" required>
+                                	<input type="date" name="po_ex_fty" id="exfty" class="form-control action-input" value="{{ $po->po_ex_fty??date('Y-m-d')}}" required>
                                     <label  for="exfty"> Ex-fty </label>
                                 </div>
 		                	</div>
 		                	<div class="col">
 		                		<div class="form-group has-float-label has-required mb-0">
-                                	<input type="text" step="any" min="0" name="po_qty" id="quantity" class="form-control changesNo action-input" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="0" required>
+                                	<input type="text" step="any" min="0" name="po_qty" id="quantity" class="form-control changesNo action-input" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="{{ $po->po_qty }}" required>
                                     <label  for="quantity">Po Quantity </label>
                                 </div>
 		                	</div>
 		            	</div>
-		            	@if($order->mr_buyer_b_id == 41)
-		            	<div class="">
-		            		<div class="process w-100">
-		            			<div class="row">
-		            				<div class="col-sm-12">
-		            					<textarea class="form-control" id="process-text" rows="3" placeholder="Paste PDF text copy data..."></textarea>
-		            				</div>
-		            				<div class="col-sm-12">
-		            					<a class="process btn btn-primary btn-sm text-white" onClick="process()"><i class="las la-recycle"></i> Process</a>
-		            				</div>
-		            			</div>
-		            		</div>
-		            	</div>
-		            	<br>
-		            	@endif
+		            	
 		                <div class='row'>
                             <div class='col-sm-12 table-wrapper-scroll-y table-custom-scrollbar' id="po-list-section">
                                 <table class="table table-bordered table-hover table-fixed table-responsive" id="itemList">
@@ -239,6 +226,32 @@
 		                
 		            </div>
 		        </form>
+		        
+        	</div>
+        	<div class="panel">
+        		<div class="panel-body">
+        			@if($order->mr_buyer_b_id == 41)
+	            	<form class="" id="pdfProcess" method="post" enctype="multipart/form-data"> 
+	            		{{ csrf_field() }} 
+	            		<div class="process w-100">
+	            			<div class="row">
+	            				<div class="col-sm-6">
+	            					<textarea class="form-control" id="process-text" name="pdf_data" rows="3" placeholder="Paste PDF text copy data..."></textarea>
+	            				</div>
+	            				<div class="col-sm-2">
+	            					<input type="file" name="file" id="file">
+	            					<input type="hidden" name="b_id" value="{{ $order->mr_buyer_b_id }}">
+	            				</div>
+	            				<div class="col-sm-4">
+	            					<button type="submit" class=" btn btn-primary btn-sm "><i class="las la-recycle"></i> Process</button>
+	            					{{-- <a class="process btn btn-primary btn-sm text-white" onClick="process()"><i class="las la-recycle"></i> Process</a> --}}
+	            				</div>
+	            			</div>
+	            		</div>
+	            	</form>
+	            	<br>
+            		@endif
+        		</div>
         	</div>
         </div>
     	@include('merch.common.right-modal')
@@ -335,11 +348,8 @@
 	        success: function(response)
 	        {
         		$.notify(response.message, response.type);
-	         	// console.log(response);
+	         	console.log(response);
 	          	if(response.type === 'success'){
-	            	// if(savetype =='manual' ){
-	             //  		$.notify(response.message, response.type);
-	            	// }
 	            	$.each(sizeQty, function(i, v) {
 				    	$("#size-"+i).val('0');
 		            	$("#size-"+i).parent().removeClass('highlight');
@@ -347,13 +357,13 @@
 				    });
 				    $("#totalQty").val('0');
 				    $("#total-po-order").val(response.poqty);	
+				   
 				    $("#po_qty_total").html(response.poqty);	
 	          	}
 	          	$(".app-loader").hide();
 	        },
 	        error: function (reject) {
 	          $(".app-loader").hide();
-	          // console.log(reject);
 	          if( reject.status === 400) {
 	              var data = $.parseJSON(reject.responseText);
 	               $.notify(data.message, data.type);
@@ -385,65 +395,54 @@
 
 	    var quantity = $("#quantity").val();
 	    var totalQty = 0;
-	    // if(quantity < total){
-	    // 	$(this).val(0);
-	    // 	$(".size-qty").each(function(i, v) {
-		   //      if($(this).val() != '' )totalQty += parseFloat( $(this).val() ); 
-		   //  });
-	    // 	$("#totalQty").val(totalQty); 
-	    // 	$(this).notify("Total Quantity greater then size quantity!", {
-		   //    type: 'error',
-		   //    allow_dismiss: true,
-		   //    delay: 10,
-		   //    z_index: 1031,
-		   //    timer: 3
-		   // });
-	    // }else{
-	    // 	$("#totalQty").val(total); 
-	    // }
+	    
 	    $("#totalQty").val(total); 
 	    
 	});
 	@if(isset($order) && $order != null)
-	function process(){
-		var data = $("#process-text").val();
-		if(data !== null && data !== ''){
-			$(".app-loader").show();
-			$.ajax({
-		        type: "GET",
-		        url: "{{ url('/merch/po-process-text')}}",
-		        data:{
-		        	b_id: "{{ $order->mr_buyer_b_id }}",
-		        	data: data
-		        },
-		        success: function(response)
-		        {
-		        	// console.log(response)
-		        	$(".app-loader").hide();
-		          	if(response.type !== 'error'){
-		          		var totalQty = 0;
-			            $.each(response.value, function( index, value ) {
-			            	$("#size-"+index).val(value);
-			            	$("#size-"+index).parent().addClass('highlight');
-			            	sizeQty[index] = value;
-						});
-						$(".size-qty").each(function(i, v) {
-					        if($(this).val() != '' )totalQty += parseFloat( $(this).val() ); 
-					    });
-						$("#process-text").val('').focus();
-					    $("#totalQty").val(totalQty); 
-			        }else{
-			          	$.notify('Something wrong, please close and try again!', 'error');
-		          	}
-		        },
-		        error: function (reject) {
-		          console.log(reject);
-		        }
-		    });
-		}else{
-			$("#process-text").notify('Empty text process', 'error');
-		}
-	};
+	$.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+	$('#pdfProcess').submit(function(e) {
+		e.preventDefault();
+       	let formData = new FormData(this);
+       	$(".app-loader").show();
+		$.ajax({
+          	type:'POST',
+         	url: "{{ url('/merch/po-process-text')}}",
+           	data: formData,
+           	contentType: false,
+           	processData: false,
+           	success: (response) => {
+           		console.log(response)
+             	$(".app-loader").hide();
+	          	if(response.type !== 'error'){
+	          		var totalQty = 0;
+		            $.each(response.value, function( index, value ) {
+		            	$("#size-"+index).val(value);
+		            	$("#size-"+index).parent().addClass('highlight');
+		            	sizeQty[index] = value;
+					});
+					$(".size-qty").each(function(i, v) {
+				        if($(this).val() != '' )totalQty += parseFloat( $(this).val() ); 
+				    });
+					$("#process-text").val('').focus();
+					$("#file").val('');
+				    $("#totalQty").val(totalQty); 
+				    $("#quantity").val(totalQty); 
+		        }else{
+		          	$.notify('Something wrong, please close and try again!', 'error');
+	          	}
+           },
+           error: function(response){
+              console.log(response);
+              
+           }
+       });
+	});
+	
 	@endif
 	function previewPO(){
 		$(".right-modal-width").addClass('preview-small');
@@ -452,24 +451,7 @@
 		$('#right_modal_item').modal('show');
 	    $('#modal-title-right').html('Size Group details');
 	    $("#content-result").html(loaderContent);
-	    // $.ajax({
-	    //     type: "GET",
-	    //     url: "{{ url('/')}}"+url,
-	    //     success: function(response)
-	    //     {
-	    //       if(response !== 'error'){
-	    //         $('#content-result').html(response);
-	    //         $('.filter').select2({
-	    //             dropdownParent: $('#right_modal_item')
-	    //         });
-	    //       }else{
-	    //         $('#content-result').html('<h4 class="text-center">Something wrong, please close and try again!</h4>');
-	    //       }
-	    //     },
-	    //     error: function (reject) {
-	    //       console.log(reject);
-	    //     }
-	    // });
+
 	    var data = '<table class="table table-bordered table-hover table-fixed preview-po"><thead><tr><th>Size</th><th>Quantity</th></tr></thead><tbody>';
 	    
 	    $.each(sizeQty, function( index, value ) {

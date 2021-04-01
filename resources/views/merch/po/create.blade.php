@@ -259,6 +259,7 @@
   </div>
 </div>
 @push('js')
+<script src="{{ asset('assets/js/po.js')}}"></script>
 <script type="text/javascript">
 	@if(isset($order) && $order != null)
 	var sizeQty = @json($sizeValue);
@@ -359,6 +360,7 @@
 				    });
 				    $("#totalQty").val('0');
 				    $("#total-po-order").val(response.poqty);	
+				   
 				    $("#po_qty_total").html(response.poqty);	
 	          	}
 	          	$(".app-loader").hide();
@@ -448,6 +450,7 @@
 					$("#process-text").val('').focus();
 					$("#file").val('');
 				    $("#totalQty").val(totalQty); 
+				    $("#quantity").val(totalQty); 
 		        }else{
 		          	$.notify('Something wrong, please close and try again!', 'error');
 	          	}

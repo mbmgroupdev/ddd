@@ -588,7 +588,7 @@ class NewStyleController extends Controller
   # get data
   public function getData()
   {
-    $b_permissions = explode(',', auth()->user()->buyer_permissions);
+    $b_permissions = auth()->user()->buyer_permissions();
 
     $data = DB::table('mr_style AS s')
         ->select(

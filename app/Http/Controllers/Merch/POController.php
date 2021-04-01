@@ -11,7 +11,7 @@ use App\Models\Merch\OrderEntry;
 use App\Models\Merch\OrderOperationNCost;
 use App\Models\Merch\PoBOM;
 use App\Models\Merch\ProductSize;
-use App\Models\Merch\PurchaseOrder;
+
 use App\Models\Merch\StyleSizeGroup;
 use DB;
 use Illuminate\Http\Request;
@@ -247,7 +247,6 @@ class POController extends Controller
 
         try {
             $po = PurchaseOrder::findOrFail($id);
-
             $order = OrderEntry::orderInfoWithStyle($po->mr_order_entry_order_id);
             if($order == null || $order->style == null){
                 toastr()->error("Order Not Found!");
@@ -259,11 +258,11 @@ class POController extends Controller
             if($sizeGroup != null){
                 $getSizeGroup= ProductSize::getProductSizeGroupIdWiseInfo($sizeGroup);
             }
-            return $getSizeGroup;
+            // return $getSizeGroup;
             $sizeValue = collect($getSizeGroup)->pluck('value','mr_product_pallete_name');
             $totalPoQty = PurchaseOrder::getPoOrderSumQtyOrderIdWise($order->order_id);
             $totalPoQty = $totalPoQty??0;
-            return view('merch.po.edit', compact('input', 'order', 'getSizeGroup', 'sizeValue', 'totalPoQty'));
+            return view('merch.po.edit', compact('po', 'order', 'getSizeGroup', 'sizeValue', 'totalPoQty'));
         } catch (\Exception $e) {
             $bug = $e->getMessage();
             toastr()->error($bug);
