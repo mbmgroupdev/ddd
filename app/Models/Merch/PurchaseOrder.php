@@ -21,6 +21,15 @@ class PurchaseOrder extends Model
     	->exists();
     }
 
+    public static function getPoInfoConditionWise($value)
+    {
+        return DB::table('mr_purchase_order')
+        ->where('po_no', $value['po_no'])
+        ->where('po_delivery_country', $value['po_delivery_country'])
+        ->where('clr_id', $value['clr_id'])
+        ->first();
+    }
+
     public static function getPoOrderSumQtyOrderIdWise($orderId)
     {
         return DB::table('mr_purchase_order')

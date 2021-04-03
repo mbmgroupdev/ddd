@@ -91,7 +91,7 @@
 	        		<div class="panel-heading active" role="tab" id="headingOne">
 				        <div class="row">
 				        	<div class="col pr-0">
-				        		<h5 class="panel-title"> Create PO </h5>
+				        		<h5 class="panel-title"> Update PO </h5>
 				        	</div>
 				        	<div class="col pl-0">
 				        		<table class="table m-0">
@@ -117,9 +117,11 @@
 				        </div>
 				    </div>
         			<input type="hidden" name="order_id" value="{{ $order->order_id }}">
+        			<input type="hidden" id="po_id" value="{{ $po->po_id }}">
         			<input type="hidden" id="total-po-order" value="{{ $totalPoQty }}">
         			<input type="hidden" id="total-order-qty" value="{{ $order->order_qty }}">
-		            {{ csrf_field() }} 
+		            <input type="hidden" name="_method" value="PUT">
+    				<input type="hidden" name="_token" value="{{ csrf_token() }}">
 		            <div class="panel-body">
 		            	<div class="row mb-3">
 		            		<div class="col pr-0">
@@ -152,9 +154,10 @@
 		                	</div>
 		                	<div class="col pr-0">
 		                		<div class="form-group has-float-label has-required select-search-group">
-                                	<select name="port_id" id="port" class="form-control" required>
+                                	{{-- <select name="port_id" id="port" class="form-control" required>
                                         <option value=""> - Select - </option>
-                                    </select>
+                                    </select> --}}
+                                    {{ Form::select('port_id', $getPort, $po->port_id, ['placeholder'=>'Select Port', 'id'=>'port', 'class'=> 'form-control', 'required'=>'required']) }}
                                     <label  for="port"> Port </label>
                                 </div>
 		                	</div>
@@ -195,8 +198,8 @@
                                 	</thead>
                                 	<tbody>
                                 		@foreach($getSizeGroup as $size)
-                                		<td style="padding: 3px;">
-                                			<input type="text" step="any" min="0" name="size_group[{{ $size->id }}]" id="size-{{ $size->mr_product_pallete_name }}" class="form-control size-qty action-input" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="0">
+                                		<td style="padding: 3px;" class="@if($size->value > 0) highlight @endif">
+                                			<input type="text" step="any" min="0" name="size_group[{{ $size->id }}]" id="size-{{ $size->mr_product_pallete_name }}" class="form-control size-qty action-input" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="{{ $size->value }}">
                                 		</td>
                                 		@endforeach
                                 	</tbody>
@@ -209,13 +212,13 @@
                         			<div class="col-sm-6"></div>
                         			<div class="col-sm-2">
                         				<div class="form-group has-float-label mb-0">
-		                                	<input type="text" step="any" min="0" name="totalqty" id="totalQty" class="form-control action-input" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="0" readonly>
+		                                	<input type="text" step="any" min="0" name="totalqty" id="totalQty" class="form-control action-input" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="{{ $totalPoValue??0}}" readonly>
 		                                    <label  for="totalQty"> Total Quantity </label>
 		                                </div>
                         			</div>
                         			<div class="col-sm-4">
                         				
-                        				<button type="button" class="btn btn-outline-success btn-lg text-center pull-right poBtn" onClick="savePO('manual')"><i class="fa fa-save"></i> Save</button>
+                        				<button type="button" class="btn btn-outline-success btn-lg text-center pull-right poBtn" onClick="savePO('manual')"><i class="fa fa-save"></i> Update</button>
                         				&nbsp;
                         				<button type="button" class="btn btn-outline-primary btn-lg text-center pull-right poBtn mr-3" onClick="previewPO()"><i class="fa fa-eye"></i> Preview</button>
                         			</div>
@@ -335,30 +338,24 @@
 	  	$(".app-loader").hide();
 	  	return false;
 	  }
-
+	  
 	  var form = $("#poForm");
 	  if (isValid){
 	     $.ajax({
 	        type: "POST",
-	        url: '{{ route("po.store") }}',
+	        url: '/merch/po/'+$("#po_id").val(),
 	        headers: {
 	            'X-CSRF-TOKEN': '{{ csrf_token() }}',
 	        },
 	        data: form.serialize(), // serializes the form's elements.
 	        success: function(response)
 	        {
-        		$.notify(response.message, response.type);
 	         	console.log(response);
+        		$.notify(response.message, response.type);
 	          	if(response.type === 'success'){
-	            	$.each(sizeQty, function(i, v) {
-				    	$("#size-"+i).val('0');
-		            	$("#size-"+i).parent().removeClass('highlight');
-		            	sizeQty[i] = '0';     
-				    });
-				    $("#totalQty").val('0');
-				    $("#total-po-order").val(response.poqty);	
-				   
-				    $("#po_qty_total").html(response.poqty);	
+	            	setTimeout(function() {
+                       window.location.href=response.url;
+                    }, 500);
 	          	}
 	          	$(".app-loader").hide();
 	        },

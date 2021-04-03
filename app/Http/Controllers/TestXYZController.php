@@ -3,17 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Jobs\ProcessUnitWiseSalary;
+use App\Models\Hr\HolidayRoaster;
+use App\Models\Hr\YearlyHolyDay;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Rap2hpoutre\FastExcel\FastExcel;
-use DB;
+
 
 class TestXYZController extends Controller
 {
     public function rfidUpdate()
     {
-    	return $this->otHourCheck();
+    	return $this->extraCheck();
         return "";
     	$data = array();
     	$getBasic = DB::table('hr_as_basic_info')
@@ -56,7 +59,7 @@ class TestXYZController extends Controller
     }
     public function monthlyCheck(){
         
-
+        
         // $user = DB::table('hr_as_basic_info')->where('as_doj', '>=','2021-03-01')->get();
         //     $data = [];
         // foreach ($user as $key => $e) {
@@ -67,23 +70,23 @@ class TestXYZController extends Controller
             
         // }
         // dd($query);
-        // $user = DB::table('hr_as_basic_info')->where('as_doj', '>=','2020-11-01')->get();
-        //     $data = [];
-        // foreach ($user as $key => $e) {
-        //     $query = DB::table('hr_absent')
-        //                               ->where('date', 'like', '2020-11%')
-        //                               ->where('associate_id', $e->associate_id)
-        //                               ->whereDate('date','<',$e->as_doj)
-        //                               ->pluck('id','date');
-        //     if(count($query) > 0){
-        //         $data[$e->associate_id] = $query;
-        //     }
-        // }
-        // dd($data);
+        $user = DB::table('hr_as_basic_info')->where('as_doj', '>=','2021-03-01')->get();
+            $data = [];
+        foreach ($user as $key => $e) {
+            $query = DB::table('hr_absent')
+                                      ->where('date', 'like', '2021-03%')
+                                      ->where('associate_id', $e->associate_id)
+                                      ->where('date','<',$e->as_doj)
+                                      ->pluck('id','date');
+            if(count($query) > 0){
+                $data[$e->associate_id] = $query;
+            }
+        }
+        dd($data);
         // $leave_array = [];
         //         $absent_array = [];
-        //         for($i=1; $i<=12; $i++) {
-        //         $date = date('Y-m-d', strtotime('2020-11-'.$i));
+        //         for($i=1; $i<=31; $i++) {
+        //         $date = date('Y-m-d', strtotime('2021-03-'.$i));
         //         $leave = DB::table('hr_attendance_mbm AS a')
         //                 ->where('a.in_time', 'like', $date.'%')
         //                 // ->where('a.as_id', 8958)
@@ -100,24 +103,24 @@ class TestXYZController extends Controller
         //         dump($leave_array,$absent_array);
         //         dd('end');
 
-                $leave_array = [];
-                $absent_array = [];
-                for($i=1; $i<=31; $i++) {
-                $date = date('Y-m-d', strtotime('2021-03-'.$i));
-                $leave = DB::table('hr_attendance_ceil AS a')
-                        ->whereIn('a.in_date',  ['2021-03-05','2021-03-12','2021-03-19','2021-03-26'])
-                        ->whereIn('b.as_unit_id', [2])
-                        ->where('b.shift_roaster_status', 1)
-                        ->leftJoin('hr_as_basic_info AS b', function($q){
-                            $q->on('a.in_date', 'a.as_id');
-                        })
-                        ->pluck('b.as_id', 'b.associate_id');
-                $leave_array[] = $leave;
+        //         $leave_array = [];
+        //         $absent_array = [];
+        //         for($i=1; $i<=31; $i++) {
+        //         $date = date('Y-m-d', strtotime('2021-03-'.$i));
+        //         $leave = DB::table('hr_attendance_ceil AS a')
+        //                 ->whereIn('a.in_date',  ['2021-03-05','2021-03-12','2021-03-19','2021-03-26'])
+        //                 ->whereIn('b.as_unit_id', [2])
+        //                 ->where('b.shift_roaster_status', 1)
+        //                 ->leftJoin('hr_as_basic_info AS b', function($q){
+        //                     $q->on('a.in_date', 'a.as_id');
+        //                 })
+        //                 ->pluck('b.as_id', 'b.associate_id');
+        //         $leave_array[] = $leave;
                 
                 
-                }
-                dump($leave_array);
-                dd('end');
+        //         }
+        //         dump($leave_array);
+        //         dd('end');
 
                 // $leave_array = [];
                 // $absent_array = [];
@@ -140,8 +143,8 @@ class TestXYZController extends Controller
                 // dd('end');
             // $leave_array = [];
             // $absent_array = [];
-            // for($i=1; $i<=13; $i++) {
-            // $date = date('Y-m-d', strtotime('2020-11-'.$i));
+            // for($i=20; $i<=31; $i++) {
+            // $date = date('Y-m-d', strtotime('2021-03-'.$i));
             // $leave = DB::table('hr_leave AS l')
             //         ->where('l.leave_from', '<=', $date)
             //         ->where('l.leave_to',   '>=', $date)
@@ -157,14 +160,14 @@ class TestXYZController extends Controller
             //         ->whereIn('as_id', $leave)
             //         ->get()->toArray();
             // }
-            // return "done";
+            // // return "done";
             // dump($leave_array,$absent_array);
             // dd('end');
 
             // $leave_array = [];
             // $absent_array = [];
-            // for($i=1; $i<=14; $i++) {
-            // $date = date('Y-m-d', strtotime('2020-11-'.$i));
+            // for($i=1; $i<=31; $i++) {
+            // $date = date('Y-m-d', strtotime('2021-03-'.$i));
             // $leave = DB::table('hr_leave AS l')
             //         ->where('l.leave_from', '<=', $date)
             //         ->where('l.leave_to',   '>=', $date)
@@ -182,63 +185,26 @@ class TestXYZController extends Controller
             // dump($leave_array,$absent_array);
             // dd('end');
 
-
+        
         $leave_array = [];
         $absent_array = [];
         for($i=1; $i<=31; $i++) {
-	        $date = date('Y-m-d', strtotime('2021-03-'.$i));
-	        $leave = DB::table('hr_attendance_cew AS a')
-	                ->where('a.in_time', 'like', $date.'%')
-	                ->leftJoin('hr_as_basic_info AS b', function($q){
-	                    $q->on('b.as_id', 'a.as_id');
-	                })
-	                ->pluck('b.associate_id');
-	        $leave_array[] = $leave;
-	        $getholiday = DB::table('holiday_roaster AS a')
-	        		->select('a.id','b.as_id', 'a.date', 'a.month', 'a.year')
-	        		->leftJoin('hr_as_basic_info AS b', function($q){
-	                    $q->on('b.associate_id', 'a.as_id');
-	                })
-		            ->whereIn('a.as_id', $leave)
-		            ->whereDate('a.date', $date)
-	                ->get();
-            if(count($getholiday) > 0){
-                $absent_array[] = $getholiday;
-            }
-	        // if(count($getholiday) > 0){
-	        // 	$absent_array[] = $getholiday->toArray();
-	        // 	foreach ($getholiday as $value) {
-	        // 		DB::table('holiday_roaster')->where('id', $value->id)->delete();
-	        // 		$queue = (new ProcessUnitWiseSalary('hr_attendance_ceil', '02', 2021, $value->as_id, 28))
-         //                ->onQueue('salarygenerate')
-         //                ->delay(Carbon::now()->addSeconds(2));
-         //                dispatch($queue);
-	        // 	}
-	        // }
-
+            $date = date('Y-m-d', strtotime('2021-03-'.$i));
+            $leave = DB::table('hr_leave AS l')
+                    ->where('l.leave_from', '<=', $date)
+                    ->where('l.leave_to',   '>=', $date)
+                    ->where('l.leave_status', '=', 1)
+                    ->leftJoin('hr_as_basic_info AS b', function($q){
+                        $q->on('b.associate_id', 'l.leave_ass_id');
+                    })
+                    ->pluck('b.associate_id','b.as_id');
+            $leave_array[] = $leave;
+            $absent_array[] = DB::table('hr_absent')
+                    ->whereDate('date', $date)
+                    ->whereIn('associate_id', $leave)
+                    ->get()->toArray();
         }
-
         return $absent_array;
-        
-        // $leave_array = [];
-        // $absent_array = [];
-        // for($i=1; $i<=31; $i++) {
-        //     $date = date('Y-m-d', strtotime('2021-02-'.$i));
-        //     $leave = DB::table('hr_leave AS l')
-        //             ->where('l.leave_from', '<=', $date)
-        //             ->where('l.leave_to',   '>=', $date)
-        //             ->where('l.leave_status', '=', 1)
-        //             ->leftJoin('hr_as_basic_info AS b', function($q){
-        //                 $q->on('b.associate_id', 'l.leave_ass_id');
-        //             })
-        //             ->pluck('b.associate_id','b.as_id');
-        //     $leave_array[] = $leave;
-        //     $absent_array[] = DB::table('hr_absent')
-        //             ->whereDate('date', $date)
-        //             ->whereIn('associate_id', $leave)
-        //             ->get()->toArray();
-        // }
-        // return $absent_array;
         // return ($absent_array);
         // exit;
     }
@@ -748,6 +714,261 @@ class TestXYZController extends Controller
         }
         return (new FastExcel(collect($d)))->download('Attendance History.xlsx');
         return $getAtt;
+    }
+
+    public function accountInfoUpdate()
+    {
+        $data = [];
+        
+        $exist = []; $not = [];
+        foreach ($data as $key => $val) {
+
+            $ben = DB::table('hr_benefits as b')
+                            ->leftJoin('hr_as_basic_info as a','a.associate_id','b.ben_as_id')
+                            ->where('a.as_oracle_code', $key)
+                            ->first();
+            
+            // $up['rock']                
+            $exist[$key] = DB::table('hr_benefits')->where('ben_id', $ben->ben_id)->update($up);
+
+            $tableName = get_att_table($ben->as_unit_id);
+
+            if($ben->as_status == 1){
+
+                $queue = (new ProcessUnitWiseSalary($tableName, '03', '2021', $ben->as_id, '31'))
+                            ->onQueue('salarygenerate')
+                            ->delay(Carbon::now()->addSeconds(2));
+                            dispatch($queue);
+            }else{
+                $not[]=$ben->associate_id;
+            }
+
+        }
+        return $not;
+
+        // $data = [];
+        
+        // $exist = []; $not = [];
+        // foreach ($data as $key => $val) {
+
+        //     $ben = DB::table('hr_benefits as b')
+        //                     ->leftJoin('hr_as_basic_info as a','a.associate_id','b.ben_as_id')
+        //                     ->where('a.as_oracle_code', $key)
+        //                     ->first();
+        //     $up['ben_current_salary'] = $val['New Gross'];
+        //     $up['ben_basic'] = ceil(($val['New Gross']-1850)/1.5);
+        //     $up['ben_house_rent'] = $val['New Gross'] -1850 - $up['ben_basic'];
+
+        //     if($ben->ben_bank_amount > 0){
+        //         $up['ben_bank_amount'] = $val['New Gross'];
+        //         $up['ben_cash_amount'] = 0;
+        //     }else{
+        //         $up['ben_cash_amount'] = $val['New Gross'];
+        //         $up['ben_bank_amount'] = 0;
+        //     }
+
+        //     $exist[$key] = DB::table('hr_benefits')->where('ben_id', $ben->ben_id)->update($up);
+
+        //     $tableName = get_att_table($ben->as_unit_id);
+
+        //     if($ben->as_status == 1){
+
+        //         $queue = (new ProcessUnitWiseSalary($tableName, date('m'), date('Y'), $ben->as_id, date('d')))
+        //                     ->onQueue('salarygenerate')
+        //                     ->delay(Carbon::now()->addSeconds(2));
+        //                     dispatch($queue);
+        //     }else{
+        //         $not[]=$ben->associate_id;
+        //     }
+
+        // }
+        // return $not;
+    }
+
+    public function holidayAttCheck()
+    {
+
+        $getEmployee = DB::table('hr_as_basic_info')
+        ->whereIn('as_unit_id', [1])
+        ->where('as_status', 1)
+        ->where('shift_roaster_status', 0)
+        ->select('associate_id', 'as_id', 'as_unit_id')
+        ->get();
+
+        $data = [];
+        $roasterData = YearlyHolyDay::
+        whereIn('hr_yhp_unit', [1])
+        ->where('hr_yhp_dates_of_holidays','>=', '2021-03-01')
+        ->where('hr_yhp_dates_of_holidays','<=', '2021-03-31')
+        ->where('hr_yhp_open_status', 0)
+        ->get();
+            foreach ($getEmployee as $key => $va) {
+
+                if(count($roasterData) > 0){
+                    foreach ($roasterData as $key => $value) {
+                        // return $va->as_id;
+                        $dat = DB::table('hr_attendance_mbm')
+                            ->where('in_date', $value->hr_yhp_dates_of_holidays)
+                            ->where('as_id', $va->as_id)
+                            ->first();
+                            
+                        if($dat != null){
+                            $data[$va->associate_id] = $dat;
+                        }
+                    }
+                    
+                }
+                
+            }
+        // }
+            $fj = [];
+            foreach ($data as $key => $value) {
+                $fd = HolidayRoaster::select('date','remarks')
+                ->where('as_id', $key)
+                ->where('date','>=', $value->in_date)
+                ->first();
+                if($fd == null){
+                    $fj[] = $value;
+                }
+            }
+        return $fj;
+        $roasterData = HolidayRoaster::select('date','remarks')
+                ->where('year', $year)
+                ->where('month', $month)
+                ->where('as_id', $getEmployee->associate_id)
+                ->where('date','>=', $firstDateMonth)
+                ->where('date','<=', $lastDateMonth)
+                ->get();
+
+        $rosterOtData = collect($roasterData)
+            ->where('remarks', 'OT')
+            ->pluck('date');
+
+        $otDayCount = 0;
+        $totalOt = count($rosterOtData);
+        // return $rosterOTCount;
+        $otDayCount = DB::table($this->tableName)
+            ->where('as_id', $getEmployee->as_id)
+            ->whereIn('in_date', $rosterOtData)
+            ->count();
+
+
+        if($getEmployee->shift_roaster_status == 1){
+            // check holiday roaster employee
+            $getHoliday = collect($roasterData)
+                ->where('remarks', 'Holiday')
+                ->count();
+            $getHoliday = $getHoliday + ($totalOt - $otDayCount);
+        }else{
+            // check holiday roaster employee
+            $RosterHolidayCount = collect($roasterData)
+                ->where('remarks', 'Holiday')
+                ->count();
+            // check General roaster employee
+            $RosterGeneralCount = collect($roasterData)
+                ->where('remarks', 'General')
+                ->count();
+            
+            // check holiday shift employee
+            $query = YearlyHolyDay::
+                where('hr_yhp_unit', $getEmployee->as_unit_id)
+                ->where('hr_yhp_dates_of_holidays','>=', $firstDateMonth)
+                ->where('hr_yhp_dates_of_holidays','<=', $lastDateMonth)
+                ->where('hr_yhp_open_status', 0);
+                if($empdojMonth == $yearMonth){
+                    $query->where('hr_yhp_dates_of_holidays','>=', $empdoj);
+                }
+
+                if(count($rosterOtData) > 0){
+                    $query->whereNotIn('hr_yhp_dates_of_holidays', $rosterOtData);
+                }
+            $shiftHolidayCount = $query->count();
+            // OT check 
+            $queryOt = YearlyHolyDay::
+                where('hr_yhp_unit', $getEmployee->as_unit_id)
+                ->where('hr_yhp_dates_of_holidays','>=', $firstDateMonth)
+                ->where('hr_yhp_dates_of_holidays','<=', $lastDateMonth)
+                ->where('hr_yhp_open_status', 2);
+                if($empdojMonth == $yearMonth){
+                    $query->where('hr_yhp_dates_of_holidays','>=', $empdoj);
+                }
+                
+                if(count($rosterOtData) > 0){
+                    $queryOt->whereNotIn('hr_yhp_dates_of_holidays', $rosterOtData);
+                }
+            $getShiftOt = $queryOt->get();
+            $shiftOtCount = $getShiftOt->count();
+            $shiftOtDayCout = 0;
+
+            foreach ($getShiftOt as $shiftOt) {
+                $checkAtt = DB::table($this->tableName)
+                ->where('as_id', $getEmployee->as_id)
+                ->where('in_date', $shiftOt->hr_yhp_dates_of_holidays)
+                ->first();
+                if($checkAtt != null){
+                    $shiftOtDayCout += 1;
+                }
+            }
+            
+            $shiftHolidayCount = $shiftHolidayCount + ($totalOt - $otDayCount) + ($shiftOtCount - $shiftOtDayCout);
+
+            if($RosterHolidayCount > 0 || $RosterGeneralCount > 0){
+                $getHoliday = ($RosterHolidayCount + $shiftHolidayCount) - $RosterGeneralCount;
+            }else{
+                $getHoliday = $shiftHolidayCount;
+            }
+        }
+
+        $getHoliday = $getHoliday < 0 ? 0:$getHoliday;
+    }
+    public function extraCheck($value='')
+    {
+        $section = section_by_id();
+        $department = department_by_id();
+        // $check = DB::table('hr_attendance_mbm AS a')
+        // ->select('a.as_id', 'b.associate_id', 'b.as_name', 'b.as_section_id', 'b.as_department_id', DB::raw('COUNT(*) AS count'))
+        // ->whereIn('a.in_date', ['2021-03-29', '2021-03-30'])
+        // // ->where('a.as_id', 8958)
+        // ->leftJoin('hr_as_basic_info AS b', function($q){
+        //     $q->on('b.as_id', 'a.as_id');
+        // })
+        // ->groupBy('a.as_id')
+        // ->get();
+
+        $check = DB::table('hr_attendance_mbm AS a')
+        ->select('a.as_id', 'b.associate_id', 'b.as_name', 'b.as_section_id', 'b.as_department_id', DB::raw('COUNT(*) AS count'))
+        ->where('a.hr_shift_code', 'N')
+        ->whereIn('a.in_date', ['2021-03-28'])
+        // ->where('b.as_department_id', 67)
+        ->leftJoin('hr_as_basic_info AS b', function($q){
+            $q->on('b.as_id', 'a.as_id');
+        })
+        ->groupBy('a.as_id')
+        ->pluck('a.as_id');
+        $acheck = DB::table('hr_attendance_mbm AS a')
+        ->select('a.as_id', 'b.associate_id', 'b.as_name', 'b.as_section_id', 'b.as_department_id', DB::raw('COUNT(*) AS count'))
+        ->whereIn('a.in_date', ['2021-03-29'])
+        ->whereIn('a.as_id',$check)
+        ->leftJoin('hr_as_basic_info AS b', function($q){
+            $q->on('b.as_id', 'a.as_id');
+        })
+        ->groupBy('a.as_id')
+        ->get();
+        dd($acheck);
+        $d = [];
+        foreach ($check as $att) {
+            if($att->count == 2){
+                $d[] = array(
+                    'Associate Id' => $att->associate_id,
+                    'Name' => $att->as_name,
+                    'Department' => $department[$att->as_department_id]['hr_department_name']??'',
+                    'Section' => $section[$att->as_section_id]['hr_section_name']??''
+                );
+            }
+        }
+
+        return (new FastExcel(collect($d)))->download('two days att.xlsx');
+        return ($check);
     }
 
 }
