@@ -447,17 +447,27 @@ class BenefitsCalculationController extends Controller
                 ->orderBy('b.id', 'DESC')
                 ->get();
 
+        //$prev_month = Carbon::now()->subMonth()->format('Y-m-t');
+
+        $lock = DB::table('salary_audit')
+                        ->whereIn('unit_id', auth()->user()->unit_permissions())
+                        ->orderBy('id',"DESC")
+                        ->first();
+
+        $lock_date = date('Y-m-t',strtotime($lock->year.'-'.$lock->month.'-01'));
+
         // dd($data);exit;
         return DataTables::of($data)->addIndexColumn()
                 ->editColumn('benefit_on', function($data) use ($benefitType){
                     return $benefitType[$data->benefit_on];
                 })
-                ->addColumn('action', function($data){
+                ->addColumn('action', function($data) use ($lock_date) {
                     $btn = "<div class='text-nowrap'>";
                     
                     $btn .= "<a href=".url('hr/payroll/benefits?associate='.$data->associate_id)." class='btn btn-sm btn-primary' data-toggle='tooltip' title='View' style='margin-top:1px;'>
                         <i class=' fa fa-eye bigger-120'></i></a> ";
-                    if(date('Y-m', strtotime($data->status_date)) == date('Y-m')){
+
+                    if(date('Y-m', strtotime($data->status_date)) == date('Y-m') || $data->status_date > $lock_date){
                         $btn .= "<a class='btn btn-sm btn-danger rollback text-white'  data-associate='".$data->associate_id."' data-name='".$data->as_name."' data-toggle='tooltip' title='Rollback Data' style='margin-top:1px;'><i class='fa fa-undo'></i></a> ";
                     }
                     

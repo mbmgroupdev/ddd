@@ -9,7 +9,7 @@
                 
             </div>
         </div>
-        <div class="col-sm-7">
+        <div class="col-sm-6">
             <p class="text-center"><strong style="font-size: 18px;">
                 @if(isset($un))
                     {{$un}}
@@ -23,9 +23,21 @@
             
         </div>
         <div class="col-sm-2">
+            <div class="form-group has-float-label selet-search-group" >
+                <select id="employee_type" name="employee_type" class="form-control" >
+                    <option>Select Type</option>
+                    <option value="All" @if($input['employee_type'] == 'all')selected @endif>All</option>
+                    <option value="management" @if($input['employee_type'] == 'management')selected @endif>Management & Staff</option>
+                    <option value="worker" @if($input['employee_type'] == 'worker')selected @endif>Worker</option>
+                </select>
+                <label for="employee_type">Employee Type</label>
+            </div>
+        </div>
+        <div class="col-sm-1 pl-0">
             <div class="form-group has-float-label" data-toggle="tooltip" data-placement="top" title="" data-original-title="Changing any value will recalculate increment amount of each employee!">
             <input type="text" class="inc_percent text-center form-control" id="inc_percent" name="inc_percent" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" value="" autocomplete="off"  />
             <label for="inc_percent">Increment %</label>
+            <input type="hidden" id="unit_approv" value="{{$input['unit']}}">
         </div>
         </div>
     </div>
@@ -197,17 +209,7 @@
                                 </p>
                             </td>
 
-                            {{-- <td style="text-align: center;">
-                                @if(in_array($list->associate_id, $gazette))
-                                    {{date('M, y', strtotime($date))}} 
-                                @elseif(date('n', strtotime($date)) == $list->doj_month)
-                                    {{date('M, y', strtotime($date))}}
-                                @elseif(date('n', strtotime($date)) < $list->doj_month )
-                                    {{date('M', strtotime($list->as_doj))}}, {{date('y', strtotime($date. '-1 year'))}}
-                                @else
-                                    {{date('M', strtotime($list->as_doj))}}, {{date('y', strtotime($date))}}
-                                @endif
-                            </td> --}}
+                            
                             <td style="text-align: right;padding-right:10px;">
                                 {{$list->current_salary}}
                             </td>
@@ -230,7 +232,8 @@
                                 @endif
                             </td>
                             <td>
-                                <input type="date" name="increment['{{ $list->id }}']['effective_date']" value="{{ date('Y-m-d')}}">
+                                
+                                <input type="date" min="2020-01-01" name="increment['{{ $list->id }}']['effective_date']" class="form-control" value="@if($list->effective_date != null && $list->effective_date !='0000-00-00'){{$list->effective_date}}@endif">
                             </td>
                             <td style="text-align: right;">
                                 @php 
@@ -238,13 +241,13 @@
                                     $percent = '';
                                     if($proposed){
 
-                                        $percent  = round(($proposed/$list->current_salary)*100,2);
+                                        $percent  = round(($proposed/ ($list->current_salary -1850))*100,2);
                                     }
                                 @endphp
                                 {{ $proposed }}
                             </td>
                             <td style="text-align: center;">
-
+                                {{$percent}}
                             </td>
                             <td style="text-align: center;position: relative;">
                                 <input id="inc_{{$list->associate_id}}" type="text" name="increment['{{ $list->id }}']['amount']" class="form-control text-center increment-amount " style="width:60px;margin:auto;height:25px;font-size: 11px;@if($proposed)border-color:#21C4987F; @endif" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"  data-salary="{{ $list->current_salary }}" value="{{ $proposed??'' }}" data-checked="1">
@@ -296,7 +299,9 @@
                         <tr>
                             <td colspan="18" class="text-right" style="
                             position: sticky;background: #fff;bottom: 0;z-index: 100;">
+                                @can('Increment Approval')
                                 <input type="submit" name="" value="{{$set['next']}}" class="btn btn-primary">
+                                @endcan
                             </td>
                         </tr>
                     </tfoot>

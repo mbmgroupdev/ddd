@@ -44,7 +44,8 @@
                         <div class="col-sm-2 print-hidden">
                             <div class="form-group has-float-label selet-search-group" >
                                 <select id="report_type" name="type" class="form-control" >
-                                    <option value="All" @if($request->type == 'all')selected @endif>Select Type</option>
+                                    <option>Select Type</option>
+                                    <option value="All" @if($request->type == 'all')selected @endif>All</option>
                                     <option value="pending" @if($request->type == 'pending')selected @endif>Pending</option>
                                     <option value="running" @if($request->type == 'running')selected @endif>Running</option>
                                 </select>
@@ -217,10 +218,11 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @php $p = 0; @endphp
                                 @foreach($data as $k => $list)
                                     <tr class="row_{{ $list->associate_id }} row_{{ $list->as_oracle_code }}">
                                         <td style="text-align: center;">
-                                            {{ ($k+1) }}
+                                            {{ (++$p) }}
                                             
                                         </td>
                                         <td>

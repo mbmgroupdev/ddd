@@ -16,6 +16,12 @@ use Validator, Auth, DB, DataTables, stdClass, Cache;
 
 class ReportController extends Controller
 {
+
+    public function machineModuleRedirect()
+    {
+        return redirect('http://123.200.11.74/apex/f?p=128:LOGIN_DESKTOP:451327097048:::::');
+    }
+    
     public function line()
     {
     	$lines = Employee::where('as_line_id', '!=', null)

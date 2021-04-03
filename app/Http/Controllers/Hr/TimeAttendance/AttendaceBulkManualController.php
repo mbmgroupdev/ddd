@@ -146,30 +146,13 @@ class AttendaceBulkManualController extends Controller
         return ($h.'.'.($m =='30'?'50':'00'));
     }
 
-    public function getTableName($unit)
-    {
-        if($unit ==1 || $unit==4 || $unit==5 || $unit==9){
-            $tableName="hr_attendance_mbm";
-        }else if($unit ==2){
-            $tableName="hr_attendance_ceil";
-        }else if($unit ==3){
-            $tableName="hr_attendance_aql";
-        }else if($unit ==6){
-            $tableName="hr_attendance_ho";
-        }else if($unit ==8){
-            $tableName="hr_attendance_cew";
-        }else{
-            $tableName="hr_attendance_mbm";
-        }
-        return $tableName;
-    }
 
     public function bulkManualStore(Request $request)
     {
        
-        $unit=$request->unit_att;
+        $unit = $request->unit_att;
         $info = Employee::where('as_id',$request->ass_id)->first();
-        $tableName= $this->getTableName($unit);
+        $tableName= get_att_table($unit);
         // dd($request->all());
         DB::beginTransaction();
         try {
@@ -260,9 +243,6 @@ class AttendaceBulkManualController extends Controller
                             //check OT hour if out time exist
                             if($intime != null && $outtime != null && $info->as_ot != 0 && $insert['remarks'] != 'DSI'){
                                 $overtimes = EmployeeHelper::daliyOTCalculation($insert['in_time'], $insert['out_time'], $shift_start, $shift_end, $break, $nightFlag, $info->associate_id, $info->shift_roaster_status, $unit);
-                                /*$h = floor($overtimes/60) ? ((floor($overtimes/60)<10)?("0".floor($overtimes/60)):floor($overtimes/60)) : '00';
-                                $m = $overtimes%60 ? (($overtimes%60<10)? ("0".$overtimes%60):($overtimes%60)) : '00';
-                                $insert['ot_hour'] = ($h.'.'.($m =='30'?'50':'00'));*/
                                 $insert['ot_hour'] = $overtimes;
                             }else{
                                 $insert['ot_hour'] = 0;
@@ -568,6 +548,11 @@ class AttendaceBulkManualController extends Controller
             }else{
                 $totalDay = Carbon::parse($yearMonth)->daysInMonth;
             }
+
+            // update friday
+            if(isset($request->friday)){
+                $this->fridayOtUpdate($info, $request->friday);
+            }
             
             $queue = (new ProcessUnitWiseSalary($tableName, $month, $year, $request->ass_id, $totalDay))
             ->onQueue('salarygenerate')
@@ -595,6 +580,56 @@ class AttendaceBulkManualController extends Controller
         ];
         DB::table('event_history')->insert($eventHistory);
         return true;
+    }
+
+    public function fridayOtUpdate($info, $friday)
+    {
+        $shift = collect(shift_by_code())
+            ->where('hr_shift_name','Friday OT')
+            ->first();
+        foreach ($friday as $key => $v) {
+            $shift_start = $key." ".$shift['hr_shift_start_time'];
+            if($v['in_time']){
+                $v['in_time'] = $key." ".$v['in_time'];
+            }
+            if($v['out_time']){
+                $v['out_time'] = $key." ".$v['out_time'];
+            }
+            if($v['in_time']!= null && $v['out_time'] != null){
+                $v['ot_hour'] = $this->fullot($v['in_time'], $shift_start, $v['out_time'],  $shift['hr_shift_break_time']);
+
+            }
+            DB::table('hr_att_special')
+                ->where('as_id',$info->as_id)
+                ->where('in_date',$key)
+                ->update($v);
+        }
+    }
+
+    public function fullot($start, $shift_start, $end, $break)
+    {
+        $start = $start < $shift_start? $shift_start:$start;
+        $diff = (strtotime($end) - (strtotime($start) + ($break*60)))/3600;
+        $diff = $diff < 0 ? 0:$diff;
+
+        $part    = explode('.', $diff);
+        $minutes = (isset($part[1]) ? $part[1] : 0);
+        $minutes = floatval('0.'.$minutes);
+        // return $minutes;
+        if($minutes > 0.16667 && $minutes <= 0.75) $minutes = $minutes;
+        else if($minutes >= 0.75) $minutes = 1;
+        else $minutes = 0;
+        
+        if($minutes > 0 && $minutes != 1){
+            $min = (int)round($minutes*60);
+            $minOT = min_to_ot();
+            $minutes = $minOT[$min]??0;
+        }
+
+        $overtimes = $part[0] + $minutes;
+        $overtimes = number_format((float)$overtimes, 3, '.', '');
+
+        return  $overtimes;
     }
 
     public function empAttendanceByMonth($request)
