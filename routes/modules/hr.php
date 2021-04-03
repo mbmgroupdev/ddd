@@ -492,6 +492,8 @@ Route::get('hr/payroll/increment-employeewise', 'Hr\Payroll\IncrementController@
 Route::post('hr/payroll/increment-action', 'Hr\Payroll\IncrementController@incrementAction');
 
 Route::get('hr/payroll/increment-process', 'Hr\Payroll\IncrementController@process');
+Route::get('hr/payroll/increment-on-process', 'Hr\Payroll\IncrementController@viewOnApproval');
+
 Route::get('hr/payroll/increment-approval', 'Hr\Payroll\IncrementController@approval')->middleware(['permission:Increment Approval|Increment Process']);
 Route::post('hr/payroll/increment/get-approval-data','Hr\Payroll\IncrementController@getApprovalData');
 Route::post('hr/payroll/increment-action-initial', 'Hr\Payroll\IncrementController@incrementActionInitial');
@@ -1400,6 +1402,8 @@ Route::post("hr/operation/attendance-rollback", "Hr\Operation\AttendanceRollback
 
 // attendance undo
 Route::post('hr/operation/attendance-undo', 'Hr\Operation\AttendanceRollbackController@attUndo');
+// friday shift ot update
+Route::post('hr/timeattendance/friday-ot-update', 'Hr\TimeAttendance\FridayShiftController@otUpdate');
 
 //system setting routes
 Route::get('hr/setup/default_system_setting','Hr\Setup\SystemSettingController@showForm');

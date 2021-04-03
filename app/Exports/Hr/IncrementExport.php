@@ -25,6 +25,8 @@ class IncrementExport implements FromView, WithHeadingRow
     	
         if($this->page_type == 'eligible'){
             return view('hr.payroll.increment.excel_eligible',$fields);
+        }else if($this->page_type == 'onapproval'){
+            return view('hr.payroll.increment.excel_on_approval',$fields);
         }
 
     }

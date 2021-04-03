@@ -706,7 +706,7 @@
         if(per){
             $('.increment-amount').each(function( index ) {
                 if($(this).data('checked') == 1){
-                    var t = Math.ceil($(this).data('salary')*(per/100));
+                    var t = Math.ceil(($(this).data('salary') - 1850)*(per/100));
                     $(this).val(t);
                     var sal = $(this).data('salary'),
                     nes = parseInt(sal) + parseInt(t);
@@ -753,8 +753,9 @@
     $(document).on('keyup','.increment-amount',function(){
         // calculate %
         var sal = $(this).data('salary'),
+            bsal= parseInt(sal) - 1850,
             val = $(this).val(),
-            per = parseFloat((val / sal)*100).toFixed(2),
+            per = parseFloat((val / bsal)*100).toFixed(2),
             nes = parseInt(sal) + parseInt(val);
         if(isNaN(val) || val === '' ){
           per = nes = '';
@@ -780,7 +781,8 @@
       }
       getSum();
     }
-    function getApprovalData(unit_id = null)
+
+    function getApprovalData(unit_id = null, employee_type = null)
     {
         $('.app-loader').show();
         $.ajax({
@@ -788,7 +790,8 @@
             url: '{{ url("hr/payroll/increment/get-approval-data") }}',
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             data : {
-                unit : unit_id
+                unit : unit_id,
+                employee_type : employee_type
             },
             success: function(res)
             {
@@ -800,7 +803,12 @@
                  $('.app-loader').hide();
             }
         });   
-    }
+      }
+
+      $(document).on('change','#employee_type', function(){
+
+        getApprovalData($('#unit_approv').val(),$(this).val());
+      })
 
         $(document).ready(function() {
             $('#activityReport').on('submit', function(e) {

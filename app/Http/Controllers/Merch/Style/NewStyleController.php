@@ -151,37 +151,9 @@ class NewStyleController extends Controller
     $data.="</div></div>";
 
     $operationList  = Operation::where("opr_type", 1)->get();
-    $operationData  = '';
-    $tr_end         = 0;
-    $operationData .= '<table class="table table-bordered" style="margin-bottom:0px;">';
-    // $operationData .= '<thead>';
-    // $operationData .= '<tr>';
-    // $operationData .= '<td colspan="3" class="text-center">Operations</td>';
-    // $operationData .= '</tr>';
-    // $operationData .= '</thead>';
-    $operationData .= '<tbody>';
-    foreach ($operationList as $k=>$operation) {
-      if($operation->opr_type==1){
-        if(strlen((string)($k/10)) === 1) {
-          $operationData .= '<tr>';
-          $tr_end = $k+9;
-        }
-
-        $operationData .= '<td style="border-bottom: 1px solid lightgray;">'.$operation->opr_name.'</td>';
-        $operationData .= '<input type="hidden" name="opr_id[]" value="'.$operation->opr_id.'"></input>';
-        $operationData .= '<input type="hidden" name="opr_type[]" value="'.$operation->opr_type.'"></input>';
-
-        if($tr_end == 10) {
-          $operationData .= '</tr>';
-        }
-      }
-    }
-    $operationData .= '</tbody>';
-    $operationData .= '</table>';
-    // $operationData.="</div></div>";
 
     $oputput["moData"]=$data;
-    $oputput["opData"]=$operationData;
+    $oputput["opData"]= view('merch.common.get_default_selected_operation', compact('operationList'))->render();
     return $oputput;
   }
 
@@ -549,7 +521,7 @@ class NewStyleController extends Controller
   # show list
   public function showList()
   {
-    $b_permissions = explode(',', auth()->user()->buyer_permissions);
+    $b_permissions =  auth()->user()->buyer_permissions();
     $buyerList        = DB::table('mr_buyer as b')
     ->whereIn('b.b_id', $b_permissions)
     ->pluck('b.b_name', 'b.b_id')
@@ -565,7 +537,7 @@ class NewStyleController extends Controller
   # get data
   public function getData()
   {
-    $b_permissions = explode(',', auth()->user()->buyer_permissions);
+    $b_permissions = auth()->user()->buyer_permissions();
 
     $data = DB::table('mr_style AS s')
         ->select(
@@ -629,21 +601,18 @@ class NewStyleController extends Controller
                 </a>
                 <a href=".url('merch/style/delete/'.$data->stl_id)." class=\"btn btn-sm btn-danger\" onClick=\"return window.confirm('Are you sure?')\" title=\"Delete\" data-toggle=\"tooltip\" style=\"width:28px;\">
                     <i class=\"ace-icon fa fa-trash bigger-120\"></i>
-                </a>
+                </a>";
 
-                <a href=".url('merch/style/create_bulk/?style_no='.$data->stl_id)." class=\"btn btn-sm btn-warning\" data-toggle=\"tooltip\" title=\"Create Bulk\">
+            if ($data->stl_type == "Bulk"){
+
+                $return .= "<a href='' class=\"btn btn-sm btn-warning\" data-toggle=\"tooltip\" title=\"Create Order\">
                     <i class=\"ace-icon fa fa-archive bigger-120\"></i>
-                </a>"
-                ;
-
-
-                // $return .= "<a href=".url('merch/bom/bom_bulk/'.$data->stl_id)." class=\"btn btn-xs btn-primary\" data-toggle=\"tooltip\" title=\"Create BOM for Bulk\">
-                //     BOM
-                // </a>";
-
-            // $return .= "<a href=".url('merch/stylelibrary/style_details/'.$data->stl_id)." class=\"btn btn-xs btn-success\" data-toggle=\"tooltip\" title=\"View\">
-            //       <i class=\"ace-icon fa fa-eye bigger-120\"></i>
-            //     </a>";
+                </a>";
+            }else{
+                $return .= "<a href=".url('merch/style/create_bulk/?style_no='.$data->stl_id)." class=\"btn btn-sm btn-warning\" data-toggle=\"tooltip\" title=\"Create Bulk\">
+                    <i class=\"ace-icon fa fa-archive bigger-120\"></i>
+                </a>";
+            }
             $return .= "</div>";
 
             return $return;
@@ -683,7 +652,7 @@ class NewStyleController extends Controller
   public function styleDevelopmentEditForm($id)
   {
     //$buyerList        = Buyer::pluck('b_name', 'b_id');
-    $b_permissions    = explode(',', auth()->user()->buyer_permissions);
+    $b_permissions    =  auth()->user()->buyer_permissions();
     $buyerList        = Buyer::whereIn('b_id', $b_permissions)->pluck('b_name', 'b_id')->toArray();
     $productTypeList  = ProductType::pluck('prd_type_name', 'prd_type_id');
     $operationList    = Operation::pluck('opr_name', 'opr_id');
@@ -709,7 +678,6 @@ class NewStyleController extends Controller
                 ->first();
                // dd($style);
     $sampleTypeList   = SampleType::where('b_id',$style->b_id)->pluck('sample_name','sample_id');
-    // $sizegroup        = ProductSize::where('b_id',$style->b_id)->where('size_grp_product_type',$style->prd_type_id)->pluck('mr_product_pallete_name', 'mr_product_size_group_id');
     $season  = Season::where('b_id','=',$style->b_id)->pluck('se_name','se_id');
 
     $styleOps = OperationCost::where('mr_style_stl_id', $id)->pluck('mr_operation_opr_id')->toArray();

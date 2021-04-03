@@ -19,6 +19,7 @@ Route::group(['prefix' => 'merchandising','namespace' => 'Merch'], function(){
 Route::group(['prefix' => 'merch/style','namespace' => 'Merch\Style'], function(){
 	Route::get('/', 'StyleController@showList');
 	Route::get('/create', 'StyleController@showForm');
+	Route::get('/edit/{stl_id}', 'StyleController@editForm');
 
 
 

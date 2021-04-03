@@ -1,5 +1,5 @@
 @extends('merch.layout')
-@section('title', 'Style Create')
+@section('title', 'Style Edit')
 @section('main-content')
 @push('css')
 <style>
@@ -77,7 +77,8 @@
             <li>
                 <a href="#">Style</a>
             </li>
-            <li class="active">Style Create</li>
+            <li class="active">Style Edit</li>
+            <li>{{ $style->stl_type}}</li>
             <li class="top-nav-btn">
                 <a class="btn btn-sm btn-primary" href="{{ url('merch/style/style_list') }}"><i class="las la-list"></i></a>
             </li>
@@ -89,11 +90,14 @@
             <div class="panel-body">
                 
                 <div class="style_section">
-                    {{ Form::open(["url" => "merch/style/style_store", "class"=>"form-horizontal", "files"=>true]) }}
+                    {{ Form::open(["url" => "merch/style/style_update", "class"=>"form-horizontal", "files"=>true]) }}
+                        @csrf
+                       <input type="hidden" name="stl_order_type" id="inlineRadio1" value="Development" data-validation="required" readonly>
+                       <input type="hidden" name="style_id" value="{{ $style->stl_id }}">
                         <div class="row">
                             <div class="col-sm-6">
                                 <input type="hidden" name="stl_order_type" id="inlineRadio1" value="Development" required="required" readonly>
-                                <span style="color: green">* Production Type (Development)</span>
+                                <span style="color: green">* Production Type ({{ $style->stl_type}})</span>
                                 <div class="row mt-3">
                                     
                                     <div class="col-sm-6" id="buyerSection">
@@ -104,24 +108,24 @@
                                         }
                                         @endphp
                                         <div class="form-group has-float-label select-search-group has-required">
-                                            {{ Form::select('b_id', $buyer, isset($bNewId)?$bNewId:null, ['placeholder'=>'Select Buyer', 'class'=> 'col-xs-12 form-control', 'id'=>"b_id", 'required' => 'required']) }}
+                                            {{ Form::select('b_id', $buyer, $style->mr_buyer_b_id, ['placeholder'=>'Select Buyer', 'class'=> 'col-xs-12 form-control', 'id'=>"b_id", 'required' => 'required']) }}
                                             <label for="b_id" >Buyer </label>
 
                                         </div>
                                         <div class="form-group has-float-label select-search-group has-required">
 
-                                            {{ Form::select('mr_brand_br_id', $brand, null, ['id'=> 'mr_brand_br_id', 'placeholder' => 'Select Brand', 'required' => 'required']) }}
+                                            {{ Form::select('mr_brand_br_id', $brand, $style->mr_brand_br_id, ['id'=> 'mr_brand_br_id', 'placeholder' => 'Select Brand', 'required' => 'required']) }}
                                             <label for="mr_brand_br_id" >Brand</label>
                                         </div>
 
                                         <div class="form-group has-float-label select-search-group">
 
-                                            {{ Form::select('prd_type_id', $productType, null, ['placeholder'=>'Select Product Type', 'class'=> 'col-xs-12  form-control', 'id'=>'prd_type_id', 'required' => 'required']) }}
+                                            {{ Form::select('prd_type_id', $productType, $style->prd_type_id, ['placeholder'=>'Select Product Type', 'class'=> 'col-xs-12  form-control', 'id'=>'prd_type_id', 'required' => 'required']) }}
                                             <label for="prd_type_id" > Product Type  </label>
                                         </div>
 
                                         <div class="form-group has-float-label select-search-group">
-                                            {{ Form::select('gmt_id', $garmentsType, null, ['placeholder'=>'Please Select Garments Type', 'id'=>'gmt_id', 'class'=> 'form-control', 'required' => 'required']) }}
+                                            {{ Form::select('gmt_id', $garmentsType, $style->gmt_id, ['placeholder'=>'Please Select Garments Type', 'id'=>'gmt_id', 'class'=> 'form-control', 'required' => 'required']) }}
                                             <label for="gmt_id" > Garments Type  </label>
                                            @hasanyrole("Super Admin|merchandiser")
                                                 <div class="col-sm-1 col-xs-1" style="padding-left: 0px;position: absolute;z-index: 10;top: 3px;right: -10px;">
@@ -135,7 +139,7 @@
 
                                               <div class="row">
                                                   <div class="col-sm-9">
-                                                    {{ Form::select('se_id', [], null, ['placeholder'=>'Please Select season', 'id'=>'se_id', 'class'=> 'form-control col-xs-12 ', 'required' => 'required']) }}
+                                                    {{ Form::select('se_id', $season, $style->mr_season_se_id, ['placeholder'=>'Please Select season', 'id'=>'se_id', 'class'=> 'form-control col-xs-12 ', 'required' => 'required']) }}
                                                 </div>
 
                                                 <div class="col-sm-3 pl-0">
@@ -146,7 +150,7 @@
 
                                         <div class="form-group has-float-label select-search-group has-required">
                                             @php $gender = ['Male'=>'Male','Female'=>'Female']; @endphp
-                                            {{ Form::select('gender', $gender, null, ['placeholder'=>'Please Select Gender', 'id'=>'gender', 'class'=> 'form-control col-xs-12 ', 'required' => 'required']) }}
+                                            {{ Form::select('gender', $gender, $style->gender, ['placeholder'=>'Please Select Gender', 'id'=>'gender', 'class'=> 'form-control col-xs-12 ', 'required' => 'required']) }}
                                             <label for="gender"> Gender  </label>
 
                                         </div>
@@ -159,7 +163,7 @@
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="form-group has-float-label " id="style-form">
-                                            <input type="text" id="stl_no" name="stl_no" placeholder="Enter Style No" class="col-xs-12 form-control" autocomplete="off" />
+                                            <input type="text" id="stl_no" name="stl_no" placeholder="Enter Style No" class="col-xs-12 form-control" autocomplete="off" value="{{ $style->stl_no }}" />
                                             <label for="stl_no" > Style Reference 1 </label>
                                         </div>
                                         <div class="form-group">
@@ -167,18 +171,18 @@
                                         </div>
 
                                         <div class="form-group has-float-label ">
-                                            <input type="text" id="stl_product_name" name="stl_product_name" placeholder="Enter Text" autocomplete="off" class=" form-control"  />
+                                            <input type="text" id="stl_product_name" name="stl_product_name" placeholder="Enter Text" autocomplete="off" class=" form-control" value="{{ $style->stl_product_name }}" />
                                             <label for="stl_product_name" > Style Reference 2</label>
                                         </div>
 
                                         <div class="form-group has-float-label">
-                                            <input type="text" id="stl_smv" name="stl_smv" placeholder="Enter Value" class=" form-control" autocomplete="off" required="number" required-allowing="float"/>
+                                            <input type="text" id="stl_smv" name="stl_smv" placeholder="Enter Value" class=" form-control" autocomplete="off" required="number" required-allowing="float" value="{{ $style->stl_smv }}"/>
                                             <label for="stl_smv" > Sewing SMV </label>
                                         </div>
 
 
                                         <div class="form-group has-float-label ">
-                                            <textarea name="stl_description" id="stl_description" placeholder="Enter Remarks"  class="form-control" ></textarea>
+                                            <textarea name="stl_description" id="stl_description" placeholder="Enter Remarks"  class="form-control" >{!! $style->stl_description !!}</textarea>
                                             <label for="stl_description" > Remarks</label>
                                         </div>
 
@@ -196,13 +200,41 @@
                                 <label> Image  </label>
                                 <div class="image-block mb-3">
                                     <div class="row" id="multi-image-div" style="padding:0;">
-                                        <div class="col-sm-4 multi-image">
-                                            <label class="slide_upload" for="file_image_0">
-                                                <img id="imagepreview_0" src='{{asset('assets/files/style/placeholder.png')}}'>
-                                            </label>
-                                            <input type="file" class="multi-image-input" id="file_image_0" name="style_img_n" onchange="readURL(this,this.id)" style="display:none">
-                                            <input type="hidden" class="setfile" name="style_img" value="/assets/files/style/placeholder.png">
-                                        </div>
+                                        
+                                        @php $cc = 0; @endphp
+                                        @if(count($stlImageGallery)>0)
+                                            @foreach($stlImageGallery as $image)
+                                            @php $cc = $cc+1; @endphp
+                                            <div class="col-sm-4 multi-image">
+                                                <button title="Remove this image!" type="button" class="fa fa-close close-button" onclick="removeImage({{ $image->id }},file_image_{{ $cc }})"></button>
+                                                <label class="slide_upload" for="file_image_{{ $cc }}">
+                                                  <!--  -->
+                                                  <img id="imagepreview_{{ $cc }}" src='{{ url($image->image) }}'>
+                                                </label>
+                                                <input type="file" id="file_image_{{ $cc }}" name="style_img_multi_up[]" onchange="readURL(this,this.id)" style="display:none">
+                                                <input type="hidden" name="img_multi_up[]" value="{{ $image->id }}">
+
+                                                <input type="hidden" name="old_pic" value="{{ url($image->image) }}">
+                                            </div>
+                                            @endforeach
+                                            <div class="col-sm-4 multi-image">
+                                                <label class="slide_upload" for="file_image_{{ ($cc+1) }}">
+                                                  <!--  -->
+                                                  <img id="imagepreview_{{ ($cc+1) }}" src='{{asset('assets/files/style/placeholder.png')}}'>
+                                                </label>
+                                                <input type="file" id="file_image_{{ ($cc+1) }}" name="style_img_multi[]" onchange="readURL(this,this.id)" style="display:none">
+
+                                            </div>
+                                        @else
+                                            <div class="col-sm-4 multi-image">
+                                                <label class="slide_upload" for="file_image_0">
+                                                    <img id="imagepreview_0" src='{{asset('assets/files/style/placeholder.png')}}'>
+                                                </label>
+                                                <input type="file" class="multi-image-input" id="file_image_0" name="style_img_n" onchange="readURL(this,this.id)" style="display:none">
+                                                <input type="hidden" class="setfile" name="style_img" value="/assets/files/style/placeholder.png">
+                                            </div>
+                                        @endif
+                                        
                                     </div>
                                 </div>
                                 <div class="core-selecting-area">
