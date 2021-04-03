@@ -40,14 +40,13 @@ class NewStyleController extends Controller
   # show form
   public function showForm()
   {
-    $b_permissions    = explode(',', auth()->user()->buyer_permissions);
-    $buyerList        = Buyer::whereIn('b_id', $b_permissions)->pluck('b_name', 'b_id')->toArray();
-    $productTypeList  = ProductType::pluck('prd_type_name', 'prd_type_id');
-    $machineList      = Spmachine::pluck('spmachine_name', 'spmachine_id');
-    $garmentsTypeList = GarmentsType::pluck('gmt_name','gmt_id');
-    $country          = Country::pluck('cnt_name','cnt_name');
-    $buyer            = Buyer::pluck('b_name', 'b_id');
-    $brand            = Brand::pluck('br_name', 'br_id');
+    $buyerList        = collect(buyer_by_id())->pluck('b_name', 'b_id')->toArray();
+    $buyer = $buyerList;
+    $productTypeList  = collect(product_type_by_id())->pluck('prd_type_name', 'prd_type_id');
+    $machineList      = collect(special_machine_by_id())->pluck('spmachine_name', 'spmachine_id');
+    $garmentsTypeList = collect(product_type_by_id())->pluck('gmt_name','gmt_id');
+    $country          = collect(country_by_id())->pluck('cnt_name','cnt_name');
+    $brand            = collect(brand_by_id())->pluck('br_name', 'br_id');
 
     return view('merch/style/style_new', compact(
       'buyerList',
@@ -98,39 +97,36 @@ class NewStyleController extends Controller
     return json_encode($data);
   }
 
-  // ajax get size group
-  public function fetchSizeGroup($buyer_id,$productType)
-  {
-    $typeName = ProductType::where('prd_type_id',$productType)->first()->prd_type_name;
-    $sizegroupList = ProductSizeGroup::where('b_id', $buyer_id)->where('size_grp_product_type',$typeName)->pluck('size_grp_name','id');
+    // ajax get size group
+    public function fetchSizeGroup($buyer_id,$productType)
+    {
+        $typeName = collect(product_type_by_id())
+                        ->where('prd_type_id',$productType)
+                        ->first()
+                        ->prd_type_name;
+
+        $sizegroup = ProductSizeGroup::where('b_id', $buyer_id)
+                            ->where('size_grp_product_type',$typeName)
+                            ->get();
+
+        $sizegroupList = collect($sizegroup)
+                            ->pluck('size_grp_name','id');
+        $sizeId =  collect($sizegroup)->pluck('id');
+
+        $sizeList = ProductSize::whereIn('mr_product_size_group_id', $sizeId)
+                        ->get()
+                        ->groupBy('mr_product_size_group_id', true)
+                        ->map(function($q){
+                            return collect($q)
+                                    ->pluck('mr_product_pallete_name')
+                                    ->toArray();
+
+                        });
 
 
-    $data = '<div class="col-sm-12"><div class="checkbox">';
-    if($sizegroupList) {
-      if(count($sizegroupList) > 0) {
-        foreach ($sizegroupList as $key => $value) {
-          $sizeList = ProductSize::where('mr_product_size_group_id',$key)->pluck('mr_product_pallete_name','id');
-          $data.= "<label class='col-sm-2' style='padding:0px;'>
-          <input name='sizeGroups[]' type='checkbox' id='sizeGroups' class='ace' value='".$key."'>
-          <span class='lbl'> ".$value."</span>";
-          if(count($sizeList) > 0) {
-            $data .= '<ul>';
-            foreach($sizeList as $k=>$size) {
-              $data .= "<li>$size</li>";
-            }
-            $data .= '</ul>';
-          }
-          $data .= "</label>";
-        }
-      } else {
-          $data .= '<div class="row"><h4 class="center" style="padding: 15px;">No Size Group Found</h4></div>';
-      }
-      $data.="</div></div>";
-    } else {
-      $data .= '<div class="row"><h4 class="center" style="padding: 15px;">No Size Group Found</h4></div>';
+        $data =  view('merch.common.get_size_by_product', compact('sizegroupList','sizeList'))->render();
+        return Response::json($data);
     }
-    return json_encode($data);
-  }
 
   //Size group Modal Data
   public function getSzGrpModalData(Request $request)
@@ -155,37 +151,9 @@ class NewStyleController extends Controller
     $data.="</div></div>";
 
     $operationList  = Operation::where("opr_type", 1)->get();
-    $operationData  = '';
-    $tr_end         = 0;
-    $operationData .= '<table class="table table-bordered" style="margin-bottom:0px;">';
-    // $operationData .= '<thead>';
-    // $operationData .= '<tr>';
-    // $operationData .= '<td colspan="3" class="text-center">Operations</td>';
-    // $operationData .= '</tr>';
-    // $operationData .= '</thead>';
-    $operationData .= '<tbody>';
-    foreach ($operationList as $k=>$operation) {
-      if($operation->opr_type==1){
-        if(strlen((string)($k/10)) === 1) {
-          $operationData .= '<tr>';
-          $tr_end = $k+9;
-        }
-
-        $operationData .= '<td style="border-bottom: 1px solid lightgray;">'.$operation->opr_name.'</td>';
-        $operationData .= '<input type="hidden" name="opr_id[]" value="'.$operation->opr_id.'"></input>';
-        $operationData .= '<input type="hidden" name="opr_type[]" value="'.$operation->opr_type.'"></input>';
-
-        if($tr_end == 10) {
-          $operationData .= '</tr>';
-        }
-      }
-    }
-    $operationData .= '</tbody>';
-    $operationData .= '</table>';
-    // $operationData.="</div></div>";
 
     $oputput["moData"]=$data;
-    $oputput["opData"]=$operationData;
+    $oputput["opData"]= view('merch.common.get_default_selected_operation', compact('operationList'))->render();
     return $oputput;
   }
 
@@ -375,6 +343,7 @@ class NewStyleController extends Controller
   # store Style data
   public function store(Request $request)
   {
+
     $request->merge([
       'mr_buyer_b_id' => $request->b_id,
       'mr_season_se_id' => $request->se_id,
@@ -389,10 +358,8 @@ class NewStyleController extends Controller
       $failedRules = $validator->failed();
 
       if(isset($failedRules['stl_no']['CompositeUnique'])) {
-        return back()
-        //->withErrors($validator)
-        ->withInput();
         toastr()->error("This value Buyer,Style Reference,Style Type, Product Type,Season already exists!");
+        return back()->withInput();
       }else{
         foreach ($validator->errors()->all() as $message){
             toastr()->error($message);
@@ -403,22 +370,10 @@ class NewStyleController extends Controller
 
     }
     $input = $request->all();
-    // return $input;
+
     DB::beginTransaction();
     try {
-      // get unit from hr_basic table
 
-      $associate_id = auth()->user()->associate_id;
-      $user_basic_info = Employee::select('as_unit_id')->where(['associate_id' => $associate_id])->first();
-
-      if(isset($user_basic_info->as_id)) {
-        $unit_id = $user_basic_info->as_unit_id;
-      } else {
-        // user basic info not found
-        return back()
-        ->withInput();
-        toastr()->error("User unit not found in basic table.");
-      }
 
       $data = new Style;
       // Style Image Upload
@@ -440,12 +395,7 @@ class NewStyleController extends Controller
       } else {
         $stlimg   = $request->style_img;
       }
-      //dd($pdSizeList);exit;
-      //$pdSizeList = DB::table('mr_product_type')->where('');
-      //dd($pdSizeList[9]);exit;
-      //$pd = $request->prd_type_id == 'undefined' ? 0:$request->prd_type_id;
-      // Style Data Store
-      /*$pdSizeList             = ProductType::where('prd_type_id',$request->prd_type_id)->first()->prd_type_name;*/
+
       $data->stl_type         = $request->stl_order_type;
       $data->mr_buyer_b_id    = $request->b_id;
       $data->prd_type_id      = $request->prd_type_id;
@@ -458,9 +408,8 @@ class NewStyleController extends Controller
       $data->stl_year         = $request->stl_year;
       $data->stl_img_link     = $stlimg;     //Image url
       $data->mr_brand_br_id   = $request->mr_brand_br_id;
-      $data->created_by       = (!empty(Auth::id())?(Auth::id()):null);
+      $data->created_by       = auth()->id();
       $data->gender           = $request->gender;
-      $data->unit_id          = $unit_id;
 
       if ($data->save()) {
         $stl_id = $data->id;
@@ -555,11 +504,11 @@ class NewStyleController extends Controller
         //---------------------------------------
 
         DB::commit();
-        return redirect('merch/style/style_new_edit/'.$stl_id);
         toastr()->success("Style Successfuly Created");
+        return redirect('merch/style/style_new_edit/'.$stl_id);
       } else {
-        return back()->withInput();
         toastr()->error("Something Wrong, Please try again");
+        return back()->withInput();
       }
     } catch (\Exception $e) {
       DB::rollback();
@@ -572,7 +521,7 @@ class NewStyleController extends Controller
   # show list
   public function showList()
   {
-    $b_permissions = explode(',', auth()->user()->buyer_permissions);
+    $b_permissions =  auth()->user()->buyer_permissions();
     $buyerList        = DB::table('mr_buyer as b')
     ->whereIn('b.b_id', $b_permissions)
     ->pluck('b.b_name', 'b.b_id')
@@ -588,7 +537,7 @@ class NewStyleController extends Controller
   # get data
   public function getData()
   {
-    $b_permissions = explode(',', auth()->user()->buyer_permissions);
+    $b_permissions = auth()->user()->buyer_permissions();
 
     $data = DB::table('mr_style AS s')
         ->select(
@@ -652,21 +601,18 @@ class NewStyleController extends Controller
                 </a>
                 <a href=".url('merch/style/delete/'.$data->stl_id)." class=\"btn btn-sm btn-danger\" onClick=\"return window.confirm('Are you sure?')\" title=\"Delete\" data-toggle=\"tooltip\" style=\"width:28px;\">
                     <i class=\"ace-icon fa fa-trash bigger-120\"></i>
-                </a>
+                </a>";
 
-                <a href=".url('merch/style/create_bulk/?style_no='.$data->stl_id)." class=\"btn btn-sm btn-warning\" data-toggle=\"tooltip\" title=\"Create Bulk\">
+            if ($data->stl_type == "Bulk"){
+
+                $return .= "<a href='' class=\"btn btn-sm btn-warning\" data-toggle=\"tooltip\" title=\"Create Order\">
                     <i class=\"ace-icon fa fa-archive bigger-120\"></i>
-                </a>"
-                ;
-
-
-                // $return .= "<a href=".url('merch/bom/bom_bulk/'.$data->stl_id)." class=\"btn btn-xs btn-primary\" data-toggle=\"tooltip\" title=\"Create BOM for Bulk\">
-                //     BOM
-                // </a>";
-
-            // $return .= "<a href=".url('merch/stylelibrary/style_details/'.$data->stl_id)." class=\"btn btn-xs btn-success\" data-toggle=\"tooltip\" title=\"View\">
-            //       <i class=\"ace-icon fa fa-eye bigger-120\"></i>
-            //     </a>";
+                </a>";
+            }else{
+                $return .= "<a href=".url('merch/style/create_bulk/?style_no='.$data->stl_id)." class=\"btn btn-sm btn-warning\" data-toggle=\"tooltip\" title=\"Create Bulk\">
+                    <i class=\"ace-icon fa fa-archive bigger-120\"></i>
+                </a>";
+            }
             $return .= "</div>";
 
             return $return;
@@ -706,7 +652,7 @@ class NewStyleController extends Controller
   public function styleDevelopmentEditForm($id)
   {
     //$buyerList        = Buyer::pluck('b_name', 'b_id');
-    $b_permissions    = explode(',', auth()->user()->buyer_permissions);
+    $b_permissions    =  auth()->user()->buyer_permissions();
     $buyerList        = Buyer::whereIn('b_id', $b_permissions)->pluck('b_name', 'b_id')->toArray();
     $productTypeList  = ProductType::pluck('prd_type_name', 'prd_type_id');
     $operationList    = Operation::pluck('opr_name', 'opr_id');
@@ -732,7 +678,6 @@ class NewStyleController extends Controller
                 ->first();
                // dd($style);
     $sampleTypeList   = SampleType::where('b_id',$style->b_id)->pluck('sample_name','sample_id');
-    // $sizegroup        = ProductSize::where('b_id',$style->b_id)->where('size_grp_product_type',$style->prd_type_id)->pluck('mr_product_pallete_name', 'mr_product_size_group_id');
     $season  = Season::where('b_id','=',$style->b_id)->pluck('se_name','se_id');
 
     $styleOps = OperationCost::where('mr_style_stl_id', $id)->pluck('mr_operation_opr_id')->toArray();

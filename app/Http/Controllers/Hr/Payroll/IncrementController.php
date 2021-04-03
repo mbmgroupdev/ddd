@@ -29,7 +29,8 @@ class IncrementController extends Controller
 {
     public function index(Request $request)
     {
-        if(auth()->user()->can('Increment Approval')){
+        
+        if(auth()->user()->canany(['Increment Approval','Increment Process'])){
             return redirect('hr/payroll/increment-approval');
         }else if(auth()->user()->can('Manage Increment')){
             return redirect('hr/payroll/increment-process');
@@ -556,12 +557,25 @@ class IncrementController extends Controller
                      ->where('applied_date','>=', $range_start)
                      ->where('applied_date','<=', $range_end)
                      ->pluck('associate_id')->toArray();
+
             $data = collect($data)->filter(function ($item) use ($inc_month, $prevIncrements) {
                 if($item->month != date('M', strtotime($inc_month)) && (!in_array($item->associate_id, $prevIncrements))){
                     return $item;
                 }
             })->values()->toArray();
 
+        }else{
+            $prevIncrements = DB::table('hr_increment')
+                     //->where('increment_type', 2)
+                     ->where('applied_date','>=', $range_start)
+                     ->where('applied_date','<=', $range_end)
+                     ->pluck('associate_id')->toArray();
+                     
+            $data = collect($data)->filter(function ($item) use ($inc_month, $prevIncrements) {
+                if(!in_array($item->associate_id, $prevIncrements)){
+                    return $item;
+                }
+            })->values()->toArray();
         }
 
         $final_as_id = collect($data)->pluck('associate_id');
@@ -769,7 +783,7 @@ class IncrementController extends Controller
 
     public function process(Request $request)
     {
-        /*if(auth()->user()->can('Increment Approval')){
+        /*if(auth()->user()->canany(['Increment Approval','Increment Process'])){
             return redirect('hr/payroll/increment-approval');
         }*/
 
@@ -838,30 +852,36 @@ class IncrementController extends Controller
 
     public function approval(Request $request)
     {
-        $unitList  = Unit::where('hr_unit_status', '1')
-            ->whereIn('hr_unit_id', auth()->user()->unit_permissions())
-            ->pluck('hr_unit_name', 'hr_unit_id');
-        $floorList= [];
-        $lineList= [];
- 
-        $areaList  = DB::table('hr_area')->where('hr_area_status', '1')->pluck('hr_area_name', 'hr_area_id');
+        if(auth()->user()->canany(['Increment Approval','Increment Process'])){
 
-        $deptList= [];
 
-        $sectionList= [];
+            $unitList  = Unit::where('hr_unit_status', '1')
+                ->whereIn('hr_unit_id', auth()->user()->unit_permissions())
+                ->pluck('hr_unit_name', 'hr_unit_id');
+            $floorList= [];
+            $lineList= [];
+     
+            $areaList  = DB::table('hr_area')->where('hr_area_status', '1')->pluck('hr_area_name', 'hr_area_id');
 
-        $subSectionList= [];
+            $deptList= [];
 
-        $employeeTypes  = EmpType::where('hr_emp_type_status', '1')->pluck('hr_emp_type_name', 'emp_type_id');
-        $employeeTypes[12] = 'Management & Staff';
+            $sectionList= [];
 
-        $data['salaryMin']      = 0;
-        $data['salaryMax']      = 350000;
+            $subSectionList= [];
 
-        $unit_status = $this->getUnitMsg();
-    
+            $employeeTypes  = EmpType::where('hr_emp_type_status', '1')->pluck('hr_emp_type_name', 'emp_type_id');
+            $employeeTypes[12] = 'Management & Staff';
 
-        return view('hr.payroll.increment.approval', compact('unitList','floorList','lineList','areaList','deptList','sectionList','subSectionList', 'data','employeeTypes','unit_status'));
+            $data['salaryMin']      = 0;
+            $data['salaryMax']      = 350000;
+
+            $unit_status = $this->getUnitMsg();
+        
+
+            return view('hr.payroll.increment.approval', compact('unitList','floorList','lineList','areaList','deptList','sectionList','subSectionList', 'data','employeeTypes','unit_status'));
+        }else{
+            return back();
+        }
     }
 
     public function getUnitMsg()
@@ -893,18 +913,103 @@ class IncrementController extends Controller
         return view('hr.payroll.increment.approval_stage',compact('unit','unit_data'))->render();
     }
 
+    public function viewOnApproval(Request $request)
+    {
+        $input = $request->all();
+        $set = [];
+        $set['type'] = 'Management';
+        $set['field'] = 'level_3';
+        $set['exfield'] = 'increment_amount';
+        $set['extype'] = 'HR Proposed';
+        $set['next'] = 'Approve';
+
+
+
+
+        $unit = unit_by_id();
+        $location = location_by_id();
+        $department = department_by_id();
+        $designation = designation_by_id();
+        $section = section_by_id();
+
+        $increment = DB::table('hr_increment_approval as i')
+                    ->leftJoin('hr_as_basic_info as b','i.associate_id', 'b.associate_id')
+                    ->where('i.status', 0)
+                    ->whereNull('level_3_approval')
+                    ->when(isset($request->unit), function($q) use ($request){
+                        if(in_array($request->unit, [1,4,5])){
+                            $q->whereIn('b.as_unit_id',[1,4,5] );
+                        }else{
+                            $q->where('b.as_unit_id', $request->unit);
+                        }
+                    })
+                    ->whereIn('b.as_unit_id',auth()->user()->unit_permissions())
+                    ->whereIn('b.as_location',auth()->user()->location_permissions())
+                    ->get();
+
+        $un = 'Increment on Approval';
+        if(in_array($request->unit, [1,4,5])){
+            $un = 'MBM Garments Ltd.';
+        }else{
+            if($request->unit){
+                $un = $unit[$request->unit]['hr_unit_name'];
+            }
+        }
+
+        $final_as_id = collect($increment)->pluck('associate_id');
+
+        $last_increment = DB::table('hr_increment')
+            ->select('associate_id', 'effective_date','increment_amount')
+            ->whereIn('associate_id', $final_as_id)
+            ->where('status', 1)
+            ->orderBy('effective_date','ASC')
+            ->get();
+
+       $last_increment = collect($last_increment)
+            ->groupBy('associate_id')
+            ->map(function($q){
+                return  collect($q)
+                    ->sortByDesc('effective_date', true)
+                    ->first();
+            });
+
+        $variables = array(
+            'input' => $input,
+            'unit' => $unit,
+            'location' => $location,
+            'department' => $department,
+            'designation' => $designation,
+            'section' => $section,
+            'increment' => $increment,
+            'set' => $set,
+            'last_increment' => $last_increment,
+            'un' => $un
+        );
+
+        if(isset($request->export)){
+            $filename = 'Increment on Approval Eligible - '.$un;
+            $filename .= '.xlsx';
+            return Excel::download(new IncrementExport($variables, 'onapproval'), $filename);
+        }
+
+        return view('hr.payroll.increment.on_approval', $variables);
+    }
+
     public function getApprovalData(Request $request)
     {
-        if(auth()->user()->can('Increment Approval')){
+        $input = $request->all();
+        $input['employee_type'] = isset($request->employee_type)?$request->employee_type:'';
+        //if(auth()->user()->canany(['Increment Approval','Increment Process'])){
             $set = [];
             $set['type'] = 'Management';
             $set['field'] = 'level_3';
             $set['exfield'] = 'increment_amount';
             $set['extype'] = 'HR Proposed';
             $set['next'] = 'Approve';
-        }else{
+        /*}else{
+            dd('hi');
             return '';
-        }
+        }*/
         /*}else if(auth()->user()->can('Increment Approval Management 2')){*/
             /*$set['type'] = 'Management 2';
             $set['field'] = 'level_2';
@@ -952,6 +1057,13 @@ class IncrementController extends Controller
                             $q->where('b.as_unit_id', $request->unit);
                         }
                     })
+                    ->when(isset($request->employee_type), function($q) use($request){
+                        if($request->employee_type == 'worker'){
+                            return $q->where('b.as_emp_type_id',3);
+                        }else if($request->employee_type == 'management'){
+                            return $q->whereIn('b.as_emp_type_id',[1,2]);
+                        }
+                    })
                     ->get();
 
         $un = 'Increment Approval';
@@ -992,7 +1104,7 @@ class IncrementController extends Controller
             ->whereIn('hr_designation_emp_type', [2,3])
             ->pluck('hr_designation_name', 'hr_designation_id');
 
-        return view('hr.payroll.increment.process_approval', compact('unit','location','department','designation','section','increment','set','last_increment','management','worker','un'))->render();
+        return view('hr.payroll.increment.process_approval', compact('unit','location','department','designation','section','increment','set','last_increment','management','worker','un','input'))->render();
         
     }
 
@@ -1202,5 +1314,104 @@ class IncrementController extends Controller
             $detail->save();
        }
 
+    }
+
+
+    public function rollbackIncr()
+    {
+        $increment = DB::table('hr_increment_approval as i')
+                    ->leftJoin('hr_as_basic_info as a','a.associate_id','i.associate_id')
+                    ->select('i.*')
+                    ->where('i.status', 1)
+                    ->whereIn('a.as_emp_type_id',[1,2])
+                    ->get();
+
+        $ids = collect($increment)->pluck('associate_id');
+
+        $benefits = DB::table('hr_benefits as b')
+            ->select('a.as_id','a.as_unit_id','a.as_status','a.as_designation_id','b.*','i.month')
+            ->leftJoin('hr_as_basic_info as a','a.associate_id','b.ben_as_id')
+            ->leftJoin('hr_increment_month as i','i.associate_id','a.associate_id')
+            ->whereIn('b.ben_as_id', $ids)
+            ->get()
+            ->keyBy('ben_as_id');
+
+
+        $ss =  \Cache::remember('salary_structure', 10000000, function () {
+            return DB::table('hr_salary_structure AS s')
+                    ->where('status', 1)
+                    ->select('s.*')
+                    ->orderBy('id', 'DESC')
+                    ->first();
+        }); 
+            
+
+           
+        $allowance = $ss->medical + $ss->transport + $ss->food;
+
+        foreach($increment as $key => $i){
+            $amount = $i->current_salary;
+            $b = $benefits[$i->associate_id];
+            $ben_basic= ceil(($amount - $allowance) / $ss->basic);
+            //$ben_basic= (($amount/100)*$ss->basic);
+            $ben_house_rent = $amount - ($ben_basic + $allowance);
+
+            if($b->ben_bank_amount > 0 && $b->ben_cash_amount > 0){
+                $ben_bank_amount = $b->ben_bank_amount;
+                $ben_cash_amount = $amount - $ben_bank_amount;
+            }else if($b->ben_bank_amount > 0 && $b->ben_cash_amount == 0){
+                if($b->bank_name == 'dbbl'){
+                    $ben_bank_amount = $b->ben_bank_amount;
+                    $ben_cash_amount = $amount - $ben_bank_amount;
+                }else{
+                    $ben_bank_amount = $amount;
+                    $ben_cash_amount = 0; 
+                }
+            }else{
+                $ben_bank_amount = 0;
+                $ben_cash_amount = $amount;
+            }
+
+            DB::table('hr_benefits')
+                ->where('ben_as_id', $i->associate_id)
+                ->update([
+                    'ben_current_salary' => $amount,
+                    'ben_basic' => $ben_basic,
+                    'ben_house_rent' => $ben_house_rent,
+                    'ben_cash_amount' => $ben_cash_amount,
+                    'ben_bank_amount' => $ben_bank_amount
+                ]);
+
+
+        }
+        DB::table('hr_increment_approval')
+            ->whereIn('associate_id',$ids)
+            ->update([
+                'level_3_approval' => null,
+                'level_3_date' => null,
+                'level_3_amount' => null,
+                'status' => 0
+            ]);
+        // delete increment
+        DB::table('hr_increment')
+            ->whereIn('associate_id',$ids)
+            ->where('created_at','>=','2021-04-02')
+            ->delete();
+
+        $pr = DB::table('hr_promotion')
+            ->whereIn('associate_id',$ids)
+            ->where('created_at','>=','2021-03-25')
+            ->get();
+
+        foreach ($pr as $key => $value) {
+            DB::table('hr_as_basic_info')
+                ->where('associate_id', $value->associate_id)
+                ->update(['as_designation_id' => $value->previous_designation_id]);
+
+        }
+        $pr = DB::table('hr_promotion')
+            ->whereIn('associate_id', $ids)
+            ->where('created_at','>=','2021-03-25')
+            ->delete();      
     }
 }

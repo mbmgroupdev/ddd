@@ -238,16 +238,15 @@
                                                     <td>{{ $data['line'] }}</td>
                                                     <td></td>
                                                     <td style="text-align: center;">
-                                                        @if($att->in_time != '')
-                                                        {{ date('H:i', strtotime($att->in_time))}}
-                                                        @endif
+                                                        <input type="text" class="friday form-control" data-date="{{$data['date']}}" name="friday[{{$data['date']}}][in_time]" value="@if($att->in_time != ''){{ date('H:i:s', strtotime($att->in_time))}}@endif ">
                                                     </td>
                                                     <td style="text-align: center;">
-                                                        @if($att->out_time != '')
+                                                        
+                                                        <input type="text" class="friday form-control" data-date="{{$data['date']}}" name="friday[{{$data['date']}}][out_time]" value="@if($att->out_time != '')
                                                         {{ date('H:i', strtotime($att->out_time))}}
-                                                        @endif
+                                                        @endif">
                                                     </td>
-                                                    <td>
+                                                    <td class="fot-{{$data['date']}}">
                                                         {{numberToTimeClockFormat($att->ot_hour)}}
                                                     </td>
                                                 </tr>
@@ -467,50 +466,7 @@
     }
 
     $(document).ready(function(){ 
-        function formatState (state) {
-         //console.log(state.element);
-            if (!state.id) {
-                return state.text;
-            }
-            var $state = $(
-            '<span><img /> <span></span></span>'
-            );
-
-            var targetName = state.text;
-            $state.find("span").text(targetName);
-            return $state;
-        };
-
-        $('select.associates').select2({
-            templateSelection:formatState,
-            placeholder: 'Select Associate\'s ID',
-            ajax: {
-                url: '{{ url("hr/associate-search") }}',
-                dataType: 'json',
-                delay: 250,
-                data: function (params) {
-                    return { 
-                        keyword: params.term
-                    }; 
-                },
-                processResults: function (data) { 
-                    return {
-                        results:  $.map(data, function (item) {
-                            var oCode = '';
-                            if(item.as_oracle_code !== null){
-                                oCode = item.as_oracle_code + ' - ';
-                            }
-                            return {
-                                text: oCode + item.associate_name,
-                                id: item.associate_id,
-                                name: item.associate_name
-                            }
-                        }) 
-                    };
-              },
-              cache: true
-            }
-        });
+        
         // Status Hidden field value change
         $(".manual").on("keyup", function(){ 
             // console.log($(this).val());
@@ -535,13 +491,13 @@
     });
     
     $(document).ready(function() {
-    $(".intime,.outtime").on("keydown", function(event) {
+    $(".intime,.outtime,.friday").on("keydown", function(event) {
         if (event.keyCode === 38 || event.keyCode === 40) {
             event.preventDefault();
         }
      });
 });
-$('.intime,.outtime').datetimepicker({
+$('.intime,.outtime,.friday').datetimepicker({
   format:'HH:mm:ss',
   allowInputToggle: false
 });
@@ -554,26 +510,7 @@ $(function () {
         setTimeout(function () { focusedElement.select(); }, 100);
     });
 });
-/*$(document).ready(function () {
 
-  $('input').keyup(function (e) {
-    e.preventDefault();
-    if (e.which == 39) { // right arrow
-      $(this).closest('td').next().find('input').focus();
-
-    } else if (e.which == 37) { // left arrow
-      $(this).closest('td').prev().find('input').focus();
-
-    } else if (e.which == 40) { // down arrow
-      $(this).closest('tr').next().find('td:eq(' + $(this).closest('td').index() + ')').find('input').focus();
-
-    } else if (e.which == 38) { // up arrow
-      $(this).closest('tr').prev().find('td:eq(' + $(this).closest('td').index() + ')').find('input').focus();
-    }
-  });
-
-
-});*/
 $(document).on("click", ".shift_link", function(e) {
     $(".shiftchange").hide();
     $(this).parent().find('.shiftchange').toggle(100);
@@ -582,6 +519,7 @@ $(document).on("click", ".shift_link", function(e) {
 $(document).on("click", ".popover-close", function(e) {
     $(".shiftchange").hide();
 });
+
 $(document).on('click', '.shift-change-btn', function(event) {
     let date = $(this).data('date');
     let associate = $(this).data('eaids');
@@ -678,7 +616,36 @@ $(document).on('click', '.attendance-rollback', function(event) {
         }
     });
 });
-    
+
+/*$('body').on('focusout', '.friday', function(event) {
+//$('.friday').on('focusout', function(event) {
+    let date = $(this).data('date'),  
+        type = $(this).data('type'),
+        time = $(this).val();
+
+    $.ajax({
+        url : "{{ url('hr/timeattendance/friday-ot-update') }}",
+        type: 'post',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+        },
+        data: {
+           date: date,
+           type: type,
+           time: time
+        },
+        success: function(data)
+        {
+            $.notify("Successfully Undo", 'success');
+        },
+        error: function(reject)
+        {
+           $.notify(reject, 'error');
+        }
+    });
+    return false;
+});
+    */
 </script>
 @endpush
 @endsection

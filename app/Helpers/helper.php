@@ -687,6 +687,7 @@ if(!function_exists('cache_att_all')){
         Cache::put('att_ceil', cache_att_ceil(), 1000000);
         Cache::put('att_mbm2', cache_att_mbm2(), 1000000);
         Cache::put('att_mfw', cache_att_mfw(), 1000000);
+        Cache::put('att_mfw', cache_att_cew(), 1000000);
     }
 }
 
@@ -821,6 +822,20 @@ if(!function_exists('cache_att_ceil')){
             ->groupBy('in_date')->toArray(); 
     }
 }
+
+if(!function_exists('cache_att_cew')){
+    function cache_att_cew()
+    {
+        return DB::table('hr_attendance_cew')
+            ->select('as_id', 'in_date')
+            ->whereMonth('in_date',date('m'))
+            ->whereYear('in_date',date('Y'))
+            ->get()
+            ->groupBy('in_date')->toArray(); 
+    }
+}
+
+
 
 if(!function_exists('cache_monthly_ot')){
     function cache_monthly_ot()

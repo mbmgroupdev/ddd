@@ -136,11 +136,48 @@ if(!function_exists('season_by_id')){
     }
 }
 
+if(!function_exists('sample_type_by_id')){
+    function sample_type_by_id()
+    {
+        $buyer_permissions = auth()->user()->buyer_permissions();
+        $data = Cache::remember('sample_type_by_id', Carbon::now()->addHour(12), function () {
+            return DB::table('mr_sample_type')
+            ->get()->keyBy('sample_id')->toArray();
+        });
+        return collect($data)
+        ->filter(function($q) use ($buyer_permissions){
+            return in_array($q->b_id, $buyer_permissions);
+        })
+        ->values()
+        ->keyBy('sample_id');     
+    }
+}
+
 if(!function_exists('material_color_by_id')){
     function material_color_by_id()
     {
        return  Cache::remember('material_color_by_id', Carbon::now()->addHour(12), function () {
             return DB::table('mr_material_color')->get()->keyBy('clr_id')->toArray();
+        });      
+
+    }
+}
+
+if(!function_exists('special_machine_by_id')){
+    function special_machine_by_id()
+    {
+       return  Cache::remember('special_machine_by_id', Carbon::now()->addHour(12), function () {
+            return DB::table('mr_special_machine')->get()->keyBy('spmachine_id')->toArray();
+        });      
+
+    }
+}
+
+if(!function_exists('garment_type_by_id')){
+    function garment_type_by_id()
+    {
+       return  Cache::remember('garment_type_by_id', Carbon::now()->addHour(12), function () {
+            return DB::table('mr_garment_type')->get()->keyBy('gmt_id')->toArray();
         });      
 
     }

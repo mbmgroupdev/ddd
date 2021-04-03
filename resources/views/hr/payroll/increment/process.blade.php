@@ -21,7 +21,8 @@
 				</li>
 				<li class="active"> Increment Approval </li>
             <li class="top-nav-btn">
-               <a href="{{url('hr/payroll/increment-list')}}" class="btn btn-sm btn-primary pull-right">Increment List</a>
+              <a href="{{url('hr/payroll/increment-on-process')}}" class="btn btn-sm btn-primary pull-right">On Approval</a> &nbsp;
+              <a href="{{url('hr/payroll/increment-list')}}" class="btn btn-sm btn-primary pull-right">Increment List</a>
             </li>
 			  </ul><!-- /.breadcrumb --> 
 		</div>
@@ -641,7 +642,7 @@
         if(per){
             $('.increment-amount').each(function( index ) {
                 if($(this).data('checked') == 1){
-                    var t = Math.ceil($(this).data('salary')*(per/100));
+                    var t = Math.ceil(($(this).data('salary') -1850)*(per/100));
                     $(this).val(t);
                     var sal = $(this).data('salary'),
                     nes = parseInt(sal) + parseInt(t);
@@ -689,7 +690,7 @@
         // calculate %
         var sal = $(this).data('salary'),
             val = $(this).val(),
-            per = parseFloat((val / sal)*100).toFixed(2),
+            per = parseFloat((val / (sal - 1850))*100).toFixed(2),
             nes = parseInt(sal) + parseInt(val);
         if(isNaN(val) || val === '' ){
           per = nes = '';

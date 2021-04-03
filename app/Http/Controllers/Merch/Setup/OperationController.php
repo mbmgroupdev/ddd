@@ -15,22 +15,22 @@ class OperationController extends Controller
 
     public function fetchOperations()
     {
-        $operationData  = '';
         $operationList  = Operation::get();
-        if($operationList) {
+        $operationData = view('merch.common.get_operation', compact('operationList'))->render();
+        /*if($operationList) {
             $operationData= '<div class="col-xs-12"><div class="checkbox">';
             foreach ($operationList as $operation) {
                 $checked="";
-                if($operation->opr_type==1){
+                if($operation->opr_type == 1){
                     $checked.="checked readonly onclick='return false;'";
                 }
-                $operationData.= "<label class='col-sm-2' style='padding:0px;'>
-                            <input name='operations[]' type='checkbox' data-content-type='".$operation->opr_type."' class='ace' value='".$operation->opr_id."'".$checked.">
+                $operationData.= "<label style='padding:0px;'>
+                            <input name='operations[]' type='checkbox' data-content-type='".$operation->opr_type."' value='".$operation->opr_id."'".$checked.">
                             <span class='lbl'>".$operation->opr_name."</span>
                         </label>";
             }
             $operationData.="</div></div>";
-        }
+        }*/
         return json_encode($operationData);
     }
 

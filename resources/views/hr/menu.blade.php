@@ -141,7 +141,7 @@
       </li>
       @endif
 
-      @if(auth()->user()->canany(['Manage Promotion','Manage Increment','Salary Adjustment','End of Job Benefits','Loan List','Assign Benefit','Bank Sheet']) || $user->hasRole('Super Admin'))
+      @if(auth()->user()->canany(['Manage Promotion','Manage Increment','Salary Adjustment','End of Job Benefits','Loan List','Assign Benefit','Bank Sheet','Increment Process']) || $user->hasRole('Super Admin'))
       <li class="@if($segment2 == 'payroll') active @endif">
          <a href="#payroll" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="las la-money-check-alt"></i><span>Payroll</span><i class="las la-angle-right iq-arrow-right"></i></a>
          <ul id="payroll" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
@@ -162,7 +162,7 @@
                <a href="{{ url('hr/payroll/promotion') }}"><i class="las la-chart-line"></i>Promotion</a>
             </li>
             @endif
-            @if($user->can('Manage Increment') || $user->hasRole('Super Admin'))
+            @if($user->canany(['Manage Increment','Increment Process']) || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'increment') active @endif">
                <a href="{{ url('hr/payroll/increment') }}"><i class="las la-chart-area"></i>Increment</a>
             </li>

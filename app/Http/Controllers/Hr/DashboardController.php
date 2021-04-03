@@ -63,8 +63,12 @@ class DashboardController extends Controller
             return cache_att_aql();
         });
 
-        $att_ceil =  Cache::remember('att_ceil', 1000, function () {
+        $att_ceil =  Cache::remember('att_ceil', 10000, function () {
             return cache_att_ceil();
+        });
+
+        $att_cew =  Cache::remember('att_cew', 10000, function () {
+            return cache_att_cew();
         });
         $att_data = array();
         $now = Carbon::now();
@@ -113,13 +117,22 @@ class DashboardController extends Controller
                 $att_data['mbm2'][$thisday] = 0;
             }
 
+            if(isset($att_cew[$thisday])){
+                $cew = collect($att_cew[$thisday])->keyBy('as_id')->keys()->toArray();
+                $res = array_intersect($cew, $per_id);  
+                $att_data['cew'][$thisday] = count($res);
+            }else{
+                $att_data['cew'][$thisday] = 0;
+            }
+
             $now = $now->subDay();
         }
-        $att_data['mbm'] = array_reverse($att_data['mbm']);
         $att_data['ceil'] = array_reverse($att_data['ceil']);
+        $att_data['mbm'] = array_reverse($att_data['mbm']);
         $att_data['aql'] = array_reverse($att_data['aql']);
         $att_data['mbm2'] = array_reverse($att_data['mbm2']);
         $att_data['mfw'] = array_reverse($att_data['mfw']);
+        $att_data['cew'] = array_reverse($att_data['cew']);
         
         return $att_data;
         
