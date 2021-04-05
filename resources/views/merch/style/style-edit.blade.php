@@ -49,7 +49,7 @@
 
 .slide_upload {
     width: auto;
-    height: 140px;
+    height: 100px;
     position: relative;
     cursor: pointer;
     background: #eee;
@@ -205,7 +205,7 @@
                                         @if(count($stlImageGallery)>0)
                                             @foreach($stlImageGallery as $image)
                                             @php $cc = $cc+1; @endphp
-                                            <div class="col-sm-4 multi-image">
+                                            <div class="col-sm-3 multi-image">
                                                 <button title="Remove this image!" type="button" class="fa fa-close close-button" onclick="removeImage({{ $image->id }},file_image_{{ $cc }})"></button>
                                                 <label class="slide_upload" for="file_image_{{ $cc }}">
                                                   <!--  -->
@@ -217,7 +217,7 @@
                                                 <input type="hidden" name="old_pic" value="{{ url($image->image) }}">
                                             </div>
                                             @endforeach
-                                            <div class="col-sm-4 multi-image">
+                                            <div class="col-sm-3 multi-image">
                                                 <label class="slide_upload" for="file_image_{{ ($cc+1) }}">
                                                   <!--  -->
                                                   <img id="imagepreview_{{ ($cc+1) }}" src='{{asset('assets/files/style/placeholder.png')}}'>
@@ -226,7 +226,7 @@
 
                                             </div>
                                         @else
-                                            <div class="col-sm-4 multi-image">
+                                            <div class="col-sm-3 multi-image">
                                                 <label class="slide_upload" for="file_image_0">
                                                     <img id="imagepreview_0" src='{{asset('assets/files/style/placeholder.png')}}'>
                                                 </label>
@@ -823,7 +823,7 @@ $(document).ready(function()
         var selected_size_names = new Array();
         $('#right_modal_item').modal('hide');
         //-------- modal actions ------------------
-        sgmodal.find('.modal-body input[type=checkbox]').each(function(i,v) {
+        sgmodal.find('.modal-body input[type=radio]').each(function(i,v) {
             if ($(this).prop("checked") == true)
             {
 
@@ -903,31 +903,18 @@ $(document).ready(function()
     var smodal = $("#specialMachineModal");
     $("body").on("click", "#specialMachineModalDone", function(e) {
         var data="";
-        var tr_end = 0;
-        data += '<table class="table table-bordered" style="margin-bottom:0px;">';
-        data += '<tbody>';
+        data += '<div class="row" style="padding-left: 15px;" >';
         smodal.find('.modal-body input[type=checkbox]').each(function(i,v) {
-
             if ($(this).prop("checked") == true) {
-                if((i/10) % 1 === 0) {
-                    data += '<tr>';
-                    tr_end = i+9;
-                }
-                //console.log();
-                data += '<td style="border-bottom: 1px solid lightgray;">'+$(this).next().text()+'</td>';
-                data+= '<input type="hidden" name="machine_id[]" value="'+$(this).val()+'"></input>';
-                data+= '<input type="hidden" name="opr_type[]" value="'+$(this).data('content-type')+'"></input>';
-                if(tr_end == 10) {
-                    data += '</tr>';
-                }
-                // data+= '<button type="button" class="btn btn-sm" style="margin:2px; padding:2px;">'+$(this).next().text()+'</button>';
+                data += '<div class="col-sm-3 text-center pr-2 pl-0"><div class="opr-item"><img style="width:60px;" src="'+$(this).data('img-src')+'"><br><span>'+$(this).data('name')+'</span></div>';
+                data+= '<input type="hidden" name="machine_id[]" value="'+$(this).val()+'"></div>';
             }
         });
-        data += '</tbody>';
-        data += '</table>';
+        data += '</div';
         smodal.modal('hide');
         $("#show_selected_machines").html(data);
     });
+
     //Add More  buyer modal
     var data_b = $("#contactPersonData").html();
     $('body').on('click', '.AddBtn_bu', function(){
@@ -1369,7 +1356,7 @@ $(document).ready(function(){
 <script type="text/javascript">
     function appendImageInput(image_load_id) {
       var appendNum = $("#multi-image-div > .multi-image").length;
-      var appednDiv = '<div class="col-sm-4 multi-image">\
+      var appednDiv = '<div class="col-sm-3 multi-image">\
       <button title="Remove this image!" type="button" class="fa fa-close close-button" onclick="$(this).parent().remove();"></button>\
       <label class="slide_upload" for="file_image_'+appendNum+'">\
       <img id="imagepreview_'+appendNum+'" src="{{asset('assets/files/style/placeholder.png')}}">\

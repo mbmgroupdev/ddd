@@ -1404,6 +1404,7 @@ Route::post("hr/operation/attendance-rollback", "Hr\Operation\AttendanceRollback
 Route::post('hr/operation/attendance-undo', 'Hr\Operation\AttendanceRollbackController@attUndo');
 // friday shift ot update
 Route::post('hr/timeattendance/friday-ot-update', 'Hr\TimeAttendance\FridayShiftController@otUpdate');
+Route::post('hr/timeattendance/friday-ot-add', 'Hr\TimeAttendance\FridayShiftController@save');
 
 //system setting routes
 Route::get('hr/setup/default_system_setting','Hr\Setup\SystemSettingController@showForm');

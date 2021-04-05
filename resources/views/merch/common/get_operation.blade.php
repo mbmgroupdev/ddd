@@ -68,7 +68,7 @@
 	@php $selectedOp = $selectedOp??[];  @endphp
 	@foreach($operationList as $key => $operation)
   	<li>
-    	<input type="checkbox" id="check-{{$operation->opr_id}}" name="operations[]" data-content-type="{{$operation->opr_type}}" data-img-src="{{asset($operation->image)}}" data-name="{{$operation->opr_name}}" value="{{$operation->opr_id}}" @if($operation->opr_type == 1 || in_array($operation->opr_type, $selectedOp)) checked @endif @if($operation->opr_type == 1) disabled="disabled" @endif/>
+    	<input type="checkbox" id="check-{{$operation->opr_id}}" name="operations[]" data-content-type="{{$operation->opr_type}}" data-img-src="{{asset($operation->image)}}" data-name="{{$operation->opr_name}}" value="{{$operation->opr_id}}" @if($operation->opr_type == 1 || in_array($operation->opr_id, $selectedOp)) checked @endif @if($operation->opr_type == 1) disabled="disabled" @endif/>
     	<label for="check-{{$operation->opr_id}}">
     		<img src="{{asset($operation->image)}}" /><br>
     		<span>{{$operation->opr_name}}</span>
