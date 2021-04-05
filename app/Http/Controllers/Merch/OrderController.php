@@ -229,16 +229,16 @@ class OrderController extends Controller
             })
             ->addColumn('action', function ($data) {
                 $action_buttons = "<div class=\"btn-group\">
-                    <a href='#' class=\"btn btn-sm btn-secondary add-new\" data-type=\"Order Edit\" data-toggle=\"tooltip\" title=\"Order Edit\" data-orderid=\"$data->order_id\">
+                    <a href='#' class=\"btn btn-xs btn-secondary add-new\" data-type=\"Order Edit\" data-toggle=\"tooltip\" title=\"Order Edit\" data-orderid=\"$data->order_id\">
                     <i class=\"ace-icon fa fa-pencil bigger-120\"></i>
                     </a>
-                    <a href='".url("merch/order/bom/$data->order_id")."' class=\"btn btn-sm btn-primary\" data-toggle=\"tooltip\" title=\"Order BOM\">
+                    <a href='".url("merch/order/bom/$data->order_id")."' class=\"btn btn-xs btn-primary\" data-toggle=\"tooltip\" title=\"Order BOM\">
                     <i class=\"las la-clipboard-list\"></i>
                     </a>
-                    <a href='".url("merch/order/costing/$data->order_id")."' class=\"btn btn-sm btn-warning\" data-toggle=\"tooltip\" title=\"Order Costing\">
+                    <a href='".url("merch/order/costing/$data->order_id")."' class=\"btn btn-xs btn-warning\" data-toggle=\"tooltip\" title=\"Order Costing\">
                     <i class=\"las la-clipboard-list\"></i>
                     </a>
-                    <a href='".url("merch/po-order?order_id=$data->order_id")."' class=\"btn btn-sm btn-success\" data-toggle=\"tooltip\" title=\"Order PO\">
+                    <a href='".url("merch/po-order?order_id=$data->order_id")."' class=\"btn btn-xs btn-success\" data-toggle=\"tooltip\" title=\"Order PO\">
                     <i class=\"las la-shopping-cart\"></i>
                     </a>
                     </div>";

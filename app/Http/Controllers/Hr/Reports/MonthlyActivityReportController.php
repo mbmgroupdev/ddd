@@ -10,6 +10,7 @@ use App\Models\Hr\Location;
 use App\Models\Hr\SalaryAudit;
 use App\Models\Hr\SalaryIndividualAudit;
 use App\Models\Hr\Unit;
+use Carbon\Carbon;
 use DB, DataTables;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -355,8 +356,43 @@ class MonthlyActivityReportController extends Controller
             $data['month'] = date('m', strtotime($input['year_month']));
             $data['year'] = date('Y', strtotime($input['year_month']));
             $salary = HrMonthlySalary::getEmployeeSalaryWithMonthWise($data);
+            // salary adjust
+            $salaryAddDeduct = DB::table('hr_salary_add_deduct')
+                ->where('year', $data['year'])
+                ->where('month', $data['month'])
+                ->where('associate_id', $data['as_id'])
+                ->get()->keyBy('associate_id')->toArray();
+            $firstDateMonth = $data['year'].'-'.$data['month'].'-01';
+            $lastDateMonth = Carbon::parse($firstDateMonth)->endOfMonth()->toDateString();
+
+            $salaryIncrement = DB::table('hr_increment')
+            ->select('associate_id','increment_amount')
+            ->where('associate_id', $data['as_id'])
+            ->where('effective_date','>=',$firstDateMonth)
+            ->where('effective_date','<=', $lastDateMonth)
+            ->get()->keyBy('associate_id')->toArray();
+
+            // salary adjustment 
+            $salaryAdjust = DB::table('hr_salary_adjust_master AS m')
+            ->select(DB::raw("concat(IFNULL(d.date, ''),' ',IFNULL(d.comment, '')) as data"),'m.associate_id','d.*')
+            ->where('m.month', $data['month'])
+            ->where('m.year', $data['year'])
+            ->where('m.associate_id', $data['as_id'])
+            ->leftjoin('hr_salary_adjust_details AS d', 'm.id', 'd.salary_adjust_master_id')
+            ->get()
+            ->groupBy('associate_id', true)
+            ->map(function($q){
+                return collect($q)->groupBy('type')
+                        ->map(function($p){
+                            $s = (object) array();
+                            $s->sum = collect($p)->sum('amount');
+                            $s->days = implode(',', collect($p)->pluck('data')->toArray());
+
+                            return $s;
+                        });
+            });
             // dd($salary->employee['as_doj']);
-            return view('hr.reports.monthly_activity.salary.employee-single-salary', compact('salary'));
+            return view('hr.reports.monthly_activity.salary.employee-single-salary', compact('salary', 'salaryIncrement', 'salaryAdjust', 'salaryAddDeduct'));
         } catch (\Exception $e) {
             $bug = $e->getMessage();
             return $bug;
@@ -489,12 +525,12 @@ class MonthlyActivityReportController extends Controller
         $queryData->leftjoin(DB::raw('(' . $employeeData_sql. ') AS emp'), function($join) use ($employeeData) {
             $join->on('emp.associate_id','s.as_id')->addBinding($employeeData->getBindings());
         });
-        /*$queryData->leftjoin(DB::raw('(' . $designationData_sql. ') AS deg'), function($join) use ($designationData) {
+        $queryData->leftjoin(DB::raw('(' . $designationData_sql. ') AS deg'), function($join) use ($designationData) {
             $join->on('deg.hr_designation_id','emp.as_designation_id')->addBinding($designationData->getBindings());
-        });*/
-        /*$queryData->leftjoin(DB::raw('(' . $subSectionDataSql. ') AS subsec'), function($join) use ($subSectionData) {
+        });
+        $queryData->leftjoin(DB::raw('(' . $subSectionDataSql. ') AS subsec'), function($join) use ($subSectionData) {
             $join->on('subsec.hr_subsec_id','s.sub_section_id')->addBinding($subSectionData->getBindings());
-        });*/
+        });
         $data = $queryData->orderBy('deg.hr_designation_position', 'asc')->get();
 
         return Datatables::of($data)

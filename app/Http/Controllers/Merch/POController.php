@@ -455,20 +455,23 @@ class POController extends Controller
                             }else{
                                 $fidata = $dataFilter;
                             }
-
-                            $data[] = preg_replace('/\s\s+/', 'x', $fidata);
+                            $datasi = preg_replace('/-+/', '', $fidata);
+                            $datarspace = array_map('rtrim', $datasi);
+                            $data[] = preg_replace('/\s\s+/', 'x', $datarspace);
+                            
                         }
                     }
                 }
                 $data = array_filter($data); // remove empty array
-
+                // return $data;
                 $result = [];
                 foreach ($data as $key => $value) {
                     $arrayDivision = count($value)/4;
                     $arraySeperate = array_chunk($value, $arrayDivision);
                     $arrayCombine = array_combine($arraySeperate[1], $arraySeperate[2]);
-                    $result = array_merge($result, $arrayCombine);
+                    $result = array_replace_recursive($result, $arrayCombine);
                 }
+                // return $result;
                 $result['value'] = $result;
 
             }else{

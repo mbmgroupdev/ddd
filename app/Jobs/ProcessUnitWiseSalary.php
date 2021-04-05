@@ -367,16 +367,22 @@ class ProcessUnitWiseSalary implements ShouldQueue
 
                     // leave adjust calculate
                     $salaryAdjust = SalaryAdjustMaster::getCheckEmployeeIdMonthYearWise($getEmployee->associate_id, $month, $year);
+
                     $leaveAdjust = 0.00;
+                    $incrementAdjust = 0;
                     if($salaryAdjust != null){
-                        if(isset($salaryAdjust->salary_adjust)){
-                            foreach ($salaryAdjust->salary_adjust as $leaveAd) {
-                                $leaveAdjust += $leaveAd->amount;
-                            }
-                        }
+                        $adj = DB::table('hr_salary_adjust_details')
+                            ->where('salary_adjust_master_id', $salaryAdjust->id)
+                            ->get();
+
+                        $leaveAdjust = collect($adj)->where('type',1)->sum('amount');
+                        $incrementAdjust = collect($adj)->where('type',3)->sum('amount');
+                        $salaryAdd = collect($adj)->where('type',2)->sum('amount');
+                        
                     }
 
-                    $leaveAdjust = ceil((float)$leaveAdjust);
+                    $leaveAdjust = ceil((float) $leaveAdjust);
+                    $incrementAdjust = ceil((float) $incrementAdjust);
 
                     if(($empdojMonth == $yearMonth && date('d', strtotime($getEmployee->as_doj)) > 1) || $monthDayCount > $this->totalDay || $partial == 1){
                         $perDayGross   = $getBenefit->ben_current_salary/$monthDayCount;
@@ -389,7 +395,7 @@ class ProcessUnitWiseSalary implements ShouldQueue
 
                     $ot = ((float)($overtime_rate) * ($presentOt));
                     
-                    $totalPayable = ceil((float)($salaryPayable + $ot + $deductSalaryAdd + $attBonus + $productionBonus + $leaveAdjust));
+                    $totalPayable = ceil((float)($salaryPayable + $ot + $deductSalaryAdd + $attBonus + $productionBonus + $leaveAdjust + $salaryAdd + $incrementAdjust));
 
                     // cash & bank part
                     $tds = $getBenefit->ben_tds_amount??0;
@@ -454,6 +460,8 @@ class ProcessUnitWiseSalary implements ShouldQueue
 
                     if($getSalary == null){
                         $salary['as_id'] = $getEmployee->associate_id;
+                        $salary['month'] = $month;
+                        $salary['year'] = $year;
                         HrMonthlySalary::insert($salary);
                     }else{
                         

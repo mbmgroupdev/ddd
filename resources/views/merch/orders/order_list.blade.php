@@ -66,7 +66,7 @@
                             <thead>
                                 <tr class="success">
                                     <th width="5%">SL.</th>
-                                    <th width="10%">MBM Order No</th>
+                                    <th width="10%">Internal Order No</th>
                                     <th width="10%">Order Ref. No</th>
                                     <th width="10%">Unit</th>
                                     <th width="10%">Buyer</th>

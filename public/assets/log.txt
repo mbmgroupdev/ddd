@@ -1,3 +1,17 @@
+2021-04-04 18:42:14 "20F025017D" Style Bulk Created 6
+2021-04-04 18:42:00 "20F025017D" Style Size Gruop Created 8
+2021-04-04 18:41:59 "20F025017D" New Style Saved 5
+2021-04-04 15:24:33 "20F025017D" Style Bulk Created 4
+2021-04-04 13:36:20 "20F025017D" Style Wash Inserted 2
+2021-04-04 13:36:20 "20F025017D" Style Wash Inserted 1
+2021-04-04 13:36:20 "20F025017D" Style Size Gruop Created 6
+2021-04-04 13:36:20 "20F025017D" New Style Saved 3
+2021-04-03 15:49:07 "20F025017D" Style and Style related data Updated 3
+2021-04-03 15:49:07 "20F025017D" Style Size Gruop Created 7
+2021-04-03 15:44:38 "20F025017D" Style Wash Inserted 2
+2021-04-03 15:44:38 "20F025017D" Style Wash Inserted 1
+2021-04-03 15:44:38 "20F025017D" Style Size Gruop Created 6
+2021-04-03 15:44:38 "20F025017D" New Style Saved 3
 2021-04-03 14:32:16 "20F025016D" Style Wash Inserted 4
 2021-04-03 14:32:16 "20F025016D" Style Wash Inserted 3
 2021-04-03 14:32:16 "20F025016D" Style Wash Inserted 2

@@ -440,9 +440,12 @@
 	          	if(response.type !== 'error'){
 	          		var totalQty = 0;
 		            $.each(response.value, function( index, value ) {
+		            	value = parseInt(value.replace(/\,/g, ''), 10);
 		            	$("#size-"+index).val(value);
 		            	$("#size-"+index).parent().addClass('highlight');
-		            	sizeQty[index] = value;
+		            	if($("#size-"+index).val()){
+		            		sizeQty[index] = value;
+		            	}
 					});
 					$(".size-qty").each(function(i, v) {
 				        if($(this).val() != '' )totalQty += parseFloat( $(this).val() ); 

@@ -264,7 +264,8 @@ $(document).on('change', '.seasonChange', function(){
         url: '{{ url("/merch/search/ajax-season-wise-style-search") }}',
         data: {
           mr_buyer_b_id: buyerid,
-          mr_season_se_id: $(this).val()
+          mr_season_se_id: $(this).val(),
+          stl_type: 'Bulk'
         },
         success: function(response)
         {
