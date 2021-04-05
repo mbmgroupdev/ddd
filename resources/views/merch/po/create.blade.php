@@ -259,6 +259,7 @@
   </div>
 </div>
 @push('js')
+<script src="{{ asset('assets/js/po.js')}}"></script>
 <script type="text/javascript">
 	@if(isset($order) && $order != null)
 	var sizeQty = @json($sizeValue);
@@ -359,6 +360,7 @@
 				    });
 				    $("#totalQty").val('0');
 				    $("#total-po-order").val(response.poqty);	
+				   
 				    $("#po_qty_total").html(response.poqty);	
 	          	}
 	          	$(".app-loader").hide();
@@ -438,9 +440,12 @@
 	          	if(response.type !== 'error'){
 	          		var totalQty = 0;
 		            $.each(response.value, function( index, value ) {
+		            	value = parseInt(value.replace(/\,/g, ''), 10);
 		            	$("#size-"+index).val(value);
 		            	$("#size-"+index).parent().addClass('highlight');
-		            	sizeQty[index] = value;
+		            	if($("#size-"+index).val()){
+		            		sizeQty[index] = value;
+		            	}
 					});
 					$(".size-qty").each(function(i, v) {
 				        if($(this).val() != '' )totalQty += parseFloat( $(this).val() ); 
@@ -448,6 +453,7 @@
 					$("#process-text").val('').focus();
 					$("#file").val('');
 				    $("#totalQty").val(totalQty); 
+				    $("#quantity").val(totalQty); 
 		        }else{
 		          	$.notify('Something wrong, please close and try again!', 'error');
 	          	}

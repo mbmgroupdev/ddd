@@ -236,6 +236,26 @@ class SalaryProcessController extends Controller
             ->where('effective_date','>=',$firstDateMonth)
             ->where('effective_date','<=', $lastDateMonth)
             ->get()->keyBy('associate_id')->toArray();
+
+            // salary adjustment 
+            $salaryAdjust = DB::table('hr_salary_adjust_master AS m')
+            ->select(DB::raw("concat(IFNULL(d.date, ''),' ',IFNULL(d.comment, '')) as data"),'m.associate_id','d.*')
+            ->where('m.month', $input['month'])
+            ->where('m.year', $input['year'])
+            ->leftjoin('hr_salary_adjust_details AS d', 'm.id', 'd.salary_adjust_master_id')
+            ->get()
+            ->groupBy('associate_id', true)
+            ->map(function($q){
+                return collect($q)->groupBy('type')
+                        ->map(function($p){
+                            $s = (object) array();
+                            $s->sum = collect($p)->sum('amount');
+                            $s->days = implode(',', collect($p)->pluck('data')->toArray());
+
+                            return $s;
+                        });
+            });
+            
             // employee designation
             $designation = designation_by_id();
             $getSection = section_by_id();
@@ -270,9 +290,9 @@ class SalaryProcessController extends Controller
             $pageHead = (object)$pageHead;
             if($input['unit'] == null){
                 
-                $view =  view('hr.operation.salary.load_salary_sheet_unit', compact('uniqueLocation', 'getSalaryList', 'pageHead','locationDataSet', 'info', 'salaryAddDeduct', 'designation', 'getSection', 'input', 'salaryIncrement'))->render();
+                $view =  view('hr.operation.salary.load_salary_sheet_unit', compact('uniqueLocation', 'getSalaryList', 'pageHead','locationDataSet', 'info', 'salaryAddDeduct', 'designation', 'getSection', 'input', 'salaryIncrement', 'salaryAdjust'))->render();
             }else{
-                $view = view('hr.operation.salary.load_salary_sheet', compact('uniqueLocation', 'getSalaryList', 'pageHead','locationDataSet', 'info', 'salaryAddDeduct', 'designation', 'getSection', 'input', 'salaryIncrement'))->render();
+                $view = view('hr.operation.salary.load_salary_sheet', compact('uniqueLocation', 'getSalaryList', 'pageHead','locationDataSet', 'info', 'salaryAddDeduct', 'designation', 'getSection', 'input', 'salaryIncrement', 'salaryAdjust'))->render();
             }
 
             return response(['view' => $view]);
@@ -290,23 +310,7 @@ class SalaryProcessController extends Controller
         $input['year'] = date('Y', strtotime($input['emp_month_year']));
         try {
 
-            // $audit = 1;
-            // $input['unit_id'] = $input['unit'];
-            // $salaryStatus = SalaryAudit::checkSalaryAuditStatus($input);
             
-            // if($salaryStatus == null){
-            //     $audit = 0;
-            // }else{
-            //     if($salaryStatus->initial_audit == null || $salaryStatus->accounts_audit == null || $salaryStatus->management_audit == null){
-            //         $audit = 0;
-            //     }
-            // }
-            
-            // if($audit == 0){
-            //     return view('hr.operation.salary.salary_status', compact('salaryStatus', 'input'));
-            // }
-
-            // $getUnit = Unit::getUnitNameBangla($input['unit']);
             $info = [];
             
             // employee info
@@ -355,6 +359,26 @@ class SalaryProcessController extends Controller
             ->where('effective_date','<=', $lastDateMonth)
             ->get()->keyBy('associate_id')->toArray();
 
+            // salary adjustment 
+            $salaryAdjust = DB::table('hr_salary_adjust_master AS m')
+            ->select(DB::raw("concat(IFNULL(d.date, ''),' ',IFNULL(d.comment, '')) as data"),'m.associate_id','d.*')
+            ->where('m.month', $input['month'])
+            ->where('m.year', $input['year'])
+            ->whereIn('m.associate_id', $employeeAssociates)
+            ->leftjoin('hr_salary_adjust_details AS d', 'm.id', 'd.salary_adjust_master_id')
+            ->get()
+            ->groupBy('associate_id', true)
+            ->map(function($q){
+                return collect($q)->groupBy('type')
+                        ->map(function($p){
+                            $s = (object) array();
+                            $s->sum = collect($p)->sum('amount');
+                            $s->days = implode(',', collect($p)->pluck('data')->toArray());
+
+                            return $s;
+                        });
+            });
+
             // employee designation
             $designation = designation_by_id();
             $getSection = section_by_id();
@@ -379,7 +403,7 @@ class SalaryProcessController extends Controller
             }else{
                 $viewPage = 'hr.operation.salary.load_salary_sheet';
             }
-            return view($viewPage, compact('uniqueLocation', 'getSalaryList', 'pageHead','locationDataSet', 'info', 'salaryAddDeduct', 'designation', 'getSection', 'input', 'salaryIncrement'));
+            return view($viewPage, compact('uniqueLocation', 'getSalaryList', 'pageHead','locationDataSet', 'info', 'salaryAddDeduct', 'designation', 'getSection', 'input', 'salaryIncrement', 'salaryAdjust'));
         } catch (\Exception $e) {
             $bug = $e->getMessage();
             return $bug;

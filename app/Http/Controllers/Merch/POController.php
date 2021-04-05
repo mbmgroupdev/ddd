@@ -10,6 +10,7 @@ use App\Models\Merch\OrderBomOtherCosting;
 use App\Models\Merch\OrderEntry;
 use App\Models\Merch\OrderOperationNCost;
 use App\Models\Merch\PoBOM;
+use App\Models\Merch\PoSizeQty;
 use App\Models\Merch\ProductSize;
 use App\Models\Merch\PurchaseOrder;
 use App\Models\Merch\StyleSizeGroup;
@@ -247,6 +248,9 @@ class POController extends Controller
 
         try {
             $po = PurchaseOrder::findOrFail($id);
+            $getPort = DB::table('cm_port')
+            ->where('cnt_id', $po->po_delivery_country)
+            ->pluck('port_name', 'id');
 
             $order = OrderEntry::orderInfoWithStyle($po->mr_order_entry_order_id);
             if($order == null || $order->style == null){
@@ -259,11 +263,23 @@ class POController extends Controller
             if($sizeGroup != null){
                 $getSizeGroup= ProductSize::getProductSizeGroupIdWiseInfo($sizeGroup);
             }
-            return $getSizeGroup;
+
+            $poSizeQty = PoSizeQty::getPoSizeQtyPoIdWise($id);
+            $poSizeKey = collect($poSizeQty)->keyBy('mr_product_size_id');
+            $getSizeGroup = collect($getSizeGroup)->map(function($size) use ($poSizeKey){
+                if(isset($poSizeKey[$size->id])){
+                    // return ($size);
+                    $size->value = $poSizeKey[$size->id]->qty;
+                }
+
+                return $size;
+            });
+            $totalPoValue = collect($getSizeGroup)->sum('value');
+
             $sizeValue = collect($getSizeGroup)->pluck('value','mr_product_pallete_name');
             $totalPoQty = PurchaseOrder::getPoOrderSumQtyOrderIdWise($order->order_id);
             $totalPoQty = $totalPoQty??0;
-            return view('merch.po.edit', compact('input', 'order', 'getSizeGroup', 'sizeValue', 'totalPoQty'));
+            return view('merch.po.edit', compact('po', 'order', 'getSizeGroup', 'sizeValue', 'totalPoQty', 'totalPoValue', 'getPort'));
         } catch (\Exception $e) {
             $bug = $e->getMessage();
             toastr()->error($bug);
@@ -280,7 +296,55 @@ class POController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $input = $request->all();
+        $data['type'] = 'error';
+        $data['value'] = [];
+        DB::beginTransaction();
+        try {
+            // PO create
+            $checkPo = PurchaseOrder::getPoInfoConditionWise($input);
+            if($checkPo != null){
+                if($checkPo->po_id != $id){
+                    $data['message'] = "PO Already Exists";
+                    return $data;
+                }
+            }
+            // Order BOM other costing
+            $orderOtherCosting = OrderBomOtherCosting::getOrderIdWiseOrderOtherCosting($input['order_id']);
+            // PO create
+            $getPo = PurchaseOrder::findOrFail($id);
+            $getPo->update($input);
+            // mr_po_size_qty update, delete & check
+            
+            foreach ($input['size_group'] as $key => $value) {
+                if($value != "0" && $value != 0){
+                    PoSizeQty::updateOrCreate(
+                        [
+                            'po_id' => $id,
+                            'mr_product_size_id' => $key
+                        ],
+                        [
+                            'qty' => $value
+                        ]
+                    );
+                }else{
+                    DB::table('mr_po_size_qty')
+                    ->where('po_id', $id)
+                    ->where('mr_product_size_id', $key)
+                    ->delete();
+                }
+            }
+            $data['type'] = 'success';
+            $data['message'] = "PO Successfully Update.";
+            $data['url'] = url()->previous();
+            DB::commit();
+            return $data;
+        } catch (\Exception $e) {
+            DB::rollback();
+            $bug = $e->getMessage();
+            $data['message'] = $bug;
+            return response()->json($data);
+        }
     }
 
     /**
@@ -391,20 +455,23 @@ class POController extends Controller
                             }else{
                                 $fidata = $dataFilter;
                             }
-
-                            $data[] = preg_replace('/\s\s+/', 'x', $fidata);
+                            $datasi = preg_replace('/-+/', '', $fidata);
+                            $datarspace = array_map('rtrim', $datasi);
+                            $data[] = preg_replace('/\s\s+/', 'x', $datarspace);
+                            
                         }
                     }
                 }
                 $data = array_filter($data); // remove empty array
-
+                // return $data;
                 $result = [];
                 foreach ($data as $key => $value) {
                     $arrayDivision = count($value)/4;
                     $arraySeperate = array_chunk($value, $arrayDivision);
                     $arrayCombine = array_combine($arraySeperate[1], $arraySeperate[2]);
-                    $result = array_merge($result, $arrayCombine);
+                    $result = array_replace_recursive($result, $arrayCombine);
                 }
+                // return $result;
                 $result['value'] = $result;
 
             }else{

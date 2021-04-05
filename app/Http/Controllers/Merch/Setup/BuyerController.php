@@ -537,7 +537,7 @@ class BuyerController extends Controller
 
 
   public function brand(){
-            $b_permissions = explode(',', auth()->user()->buyer_permissions);
+            $b_permissions = auth()->user()->buyer_permissions();
             $buyers        = DB::table('mr_buyer as b')
                           ->whereIn('b.b_id', $b_permissions)
                           ->pluck('b.b_name', 'b.b_id')
@@ -620,7 +620,7 @@ class BuyerController extends Controller
 
     $brand=Brand::where('br_id', $id)->first();
     // $buyer_name=Buyer::pluck('b_name', 'b_id');
-    $b_permissions = explode(',', auth()->user()->buyer_permissions);
+    $b_permissions = auth()->user()->buyer_permissions();
     $buyer_name    = DB::table('mr_buyer as b')
                           ->whereIn('b.b_id', $b_permissions)
                           ->pluck('b.b_name', 'b.b_id')

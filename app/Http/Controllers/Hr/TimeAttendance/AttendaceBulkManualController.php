@@ -692,7 +692,7 @@ class AttendaceBulkManualController extends Controller
                if($info->as_status == 1){
                   // if rejoin
                   $x = $dateL;
-                  $totalDays = ($totalDays+1) - $x ;
+                  //$totalDays = ($totalDays+1) - $x ;
                 }
 
               // left,terminate,resign, suspend, delete

@@ -557,7 +557,7 @@ class NewStyleController extends Controller
         ->get();
 
     return DataTables::of($data)
-
+        ->addIndexColumn()
         ->editColumn('stl_img_link', function ($data) {
           if($data->stl_img_link == null){
             $imageUrl = "/assets/files/style/empty_style.jpg";

@@ -96,12 +96,14 @@ class AjaxSearchController extends Controller
 
     public function seasonWiseStyle(Request $request)
     {
-        $getStyle = DB::table('mr_style')
-        ->select('stl_id AS id', 'stl_no AS text')
-        ->where('mr_buyer_b_id', $request->mr_buyer_b_id)
-        ->where('mr_season_se_id', $request->mr_season_se_id)
-        ->orderBy('stl_id', 'desc')
-        ->get();
+        $query = DB::table('mr_style')
+            ->select('stl_id AS id', 'stl_no AS text')
+            ->where('mr_buyer_b_id', $request->mr_buyer_b_id)
+            ->where('mr_season_se_id', $request->mr_season_se_id);
+        if(isset($request->stl_type)){
+            $query->where('stl_type', $request->stl_type);
+        }
+        $getStyle = $query->orderBy('stl_id', 'desc')->get();
         
         return $getStyle;
     }

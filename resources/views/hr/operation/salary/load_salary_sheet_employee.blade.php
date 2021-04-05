@@ -306,19 +306,19 @@
                                 <span style="text-align: right;width: 30%; float: right;  white-space: wrap;">
                                     <font style="color:hotpink">{{ Custom::engToBnConvert(number_format($salary->ot_rate,2)) }} </font>
                                 </span>
+                                
+                        </p>
+
+                        <p style="margin:0;padding:0">
+
+                                 
                                 @if($salary->as_ot>0)
-                                <span style="text-align: right;width: 30%; float: right;  white-space: wrap;">
+                                <span style="text-align: right;width: 100%; float: right;  white-space: wrap;">
                                     <font style="color:hotpink"> ({{ $salary->as_ot==1?Custom::engToBnConvert($otHour):Custom::engToBnConvert('00') }}  ঘন্টা)</font>
                                 </span>
                                 @endif
                         </p>
-                        @if($salary->as_ot>0)
-                        <p style="margin:0;padding:0">
-
-                                <span style="text-align: right;width: 65%; float: right;  white-space: wrap;">&nbsp;
-                                </span>
-                        </p>
-                        @endif
+                        
                         <p style="margin:0;padding:0">
 
                             <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">উপস্থিত বোনাস </span>
@@ -335,30 +335,53 @@
                                     <font style="color:hotpink">{{ Custom::engToBnConvert(number_format($salary->production_bonus,2)) }}</font>
                                 </span>
                         </p>
+                        
                         <p style="margin:0;padding:0">
 
-                            <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">বেতন/মজুরী অগ্রিম/সমন্বয়
-
-                                @if(array_key_exists($salary->as_id, $salaryAddDeduct))
-                                    @if($salaryAddDeduct[$salary->as_id]->salary_add_reason != null)
-                                        ({{$salaryAddDeduct[$salary->as_id]->salary_add_reason}})
-                                    @endif
+                            <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">
+                                বেতন/মজুরী অগ্রিম/সমন্বয় 
+                                @if(isset($salaryAdjust[$salary->as_id][2]))
+                                    ( {!! Custom::engToBnConvert($salaryAdjust[$salary->as_id][2]->days??'') !!})
                                 @endif
-
                             </span>
                             <span style="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=
                             </span>
                             <span style="text-align: right;width: 30%; float: right;  white-space: wrap;">
                                 <font style="color:hotpink">
-                                @if(array_key_exists($salary->as_id, $salaryAddDeduct))
-                                    {{ Custom::engToBnConvert(number_format($salaryAddDeduct[$salary->as_id]->salary_add,2)??'0.0') }}
-                                @else
-                                    {{ Custom::engToBnConvert('0.00') }}
-                                @endif
-                            </font>
+
+                                    @php 
+                                    $salaryExtraAdd = 0;
+                                    if(array_key_exists($salary->as_id, $salaryAddDeduct)){
+                                    
+                                        $salaryExtraAdd = $salaryAddDeduct[$salary->as_id]->salary_add??0;
+                                    }
+                                    if(isset($salaryAdjust[$salary->as_id][2])){
+                                        $salaryExtraAdd += $salaryAdjust[$salary->as_id][2]->sum??0;
+                                    }
+                                    @endphp
+                                        
+                                    
+                                   
+
+                                    {{ Custom::engToBnConvert(number_format($salaryExtraAdd,2)??'0.0') }}
+                                </font>
                             </span>
 
                         </p>
+                        @if(isset($salaryAdjust[$salary->as_id][3]))
+                        <p style="margin:0;padding:0">
+
+                            <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">বর্ধিত বেতন সমন্বয়</span>
+                            <span style="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=
+                            </span>
+                            <span style="text-align: right;width: 30%; float: right;  white-space: wrap;">
+                                <font style="color:hotpink">
+                                    {{ Custom::engToBnConvert(number_format($salaryAdjust[$salary->as_id][3]->sum, 2) ??'0.00') }}
+                                </font>
+                            </span>
+
+                        </p>
+                        @endif
 
                         <p style="margin:0;padding:0">
 
