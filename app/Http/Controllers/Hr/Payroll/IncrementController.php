@@ -29,7 +29,7 @@ class IncrementController extends Controller
 {
     public function index(Request $request)
     {
-        
+        $this->rollbackIncr();
         if(auth()->user()->canany(['Increment Approval','Increment Process'])){
             return redirect('hr/payroll/increment-approval');
         }else if(auth()->user()->can('Manage Increment')){
@@ -1216,6 +1216,7 @@ class IncrementController extends Controller
                 if(date('m',strtotime($inc->effective_date)) != date('m')){
                     $this->reflectArear($v->associate_id,$inc->effective_date,$v->level_3_amount,$ben->as_unit_id);
                 }
+                
             }
 
             if($v->designation_id){
@@ -1298,7 +1299,8 @@ class IncrementController extends Controller
         $checkLastLock = monthly_activity_close($checkL);
         $arearMonths = ($checkLastLock == 1)?$arearMonths:($arearMonths - 1);
 
-       if($arearMonths > 1){
+
+       if($arearMonths > 0){
             $master = SalaryAdjustMaster::firstOrNew([
                 'associate_id' => $as_id,
                 'month' => date('m'),

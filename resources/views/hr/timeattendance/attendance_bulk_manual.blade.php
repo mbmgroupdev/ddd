@@ -97,6 +97,17 @@
         .highlight {
             background-color: #ffff99;
         }
+        .fr_link{
+    position: absolute;
+    right: -10px;
+    background: rgb(8 155 171);
+    width: 20px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 5px;
+    color: #fff;
+    top: 25%;
+}
     </style>
 @endpush
 <div class="main-content">
@@ -406,9 +417,32 @@
                                                         <input type="text" class="outtime manual form-control" name="new_outtime[]" id="punchouttime-{{ $data['date'] }}" value="" placeholder="HH:mm:ss" {{$disabled}} {{$disabled_input}} autocomplete="off">
                                                     </td>
                                                 @endif
-                                                <td id="punchot-{{ $data['date'] }}"> 
+                                                <td id="punchot-{{ $data['date'] }}" style="position: relative;"> 
                                                     @if($info->as_ot==1)
                                                         {{ numberToTimeClockFormat($data['overtime_time']) }} 
+                                                    @endif
+
+                                                    {{-- friday ot data --}}
+
+                                                    @if($data['shift_id'] == 'Friday Night' && !isset($friday_att[$data['date']]))
+                                                        <div class="fr_link" data-toggle="tooltip" data-placement="top" title="" data-original-title="Add Friday OT" id="shiftclick-{{$data['date']}}">+</div>
+                                                        <div class="popover bs-popover-left shiftchange popover-left" role="tooltip" id="popover-fr-{{$data['date']}}" x-placement="left" style="display:none;position:absolute;z-index:1;">
+                                                                <div class="arrow" style="top: 37px;"></div>
+                                                                <h3 class="popover-header">Add Friday OT<i class="fa fa-close popover-close"></i></h3>
+                                                                <div class="popover-body">
+                                                                    <div class="form-group has-float-label has-required ">
+                                                                        <input id="fri_in{{$data['date']}}" type="text"  class="manual friday form-control">
+                                                                        <label for="fri_in{{$data['date']}}">In Time</label>
+                                                                    </div>
+                                                                    <div class="form-group has-float-label has-required ">
+                                                                        <input id="fri_out{{$data['date']}}" type="text"  class="manual friday form-control">
+                                                                        <label for="fri_in{{$data['date']}}">Out Time</label>
+                                                                    </div>      
+                                                                </div>
+                                                                <div class="popover-footer">
+                                                                    <button type="button" class="btn btn-outline-success btn-sm ot-add-btn" data-status="2" data-eaids="{{ Request::get('associate') }}" data-yearmonth="{{ Request::get('month') }}" data-asid="{{ $info->as_id }}" data-date="{{ $data['date'] }}" style="font-size: 13px; margin-left: 7px; margin-bottom: 8px;"><i class="fa fa-save"></i> Change</button>
+                                                                </div>
+                                                            </div>
                                                     @endif
                                                 </td>
                                             </tr>
@@ -514,6 +548,13 @@ $(function () {
 $(document).on("click", ".shift_link", function(e) {
     $(".shiftchange").hide();
     $(this).parent().find('.shiftchange').toggle(100);
+    console.log('hi');
+});
+
+$(document).on("click", ".fr_link", function(e) {
+    //$(".shiftchange").hide();
+    $(this).next().toggle(100);
+    console.log('hi');
 });
 
 $(document).on("click", ".popover-close", function(e) {
@@ -646,6 +687,41 @@ $(document).on('click', '.attendance-rollback', function(event) {
     return false;
 });
     */
+
+$(document).on('click', '.ot-add-btn', function(event) {
+    let e = $(this),
+        date = e.data('date'),
+        associate = e.data('eaids'),
+        asid = e.data('asid'),
+        intime = $('#fri_in'+date).val(),
+        outtime = $('#fri_out'+date).val();
+    $('.app-loader').show();
+    $.ajax({
+        url : "{{ url('hr/timeattendance/friday-ot-add') }}",
+        type: 'post',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+        },
+        data: {
+           as_id: asid,
+           date: date,
+           intime:intime,
+           outtime:outtime,
+           associateid: associate
+        },
+        success: function(data)
+        {
+            // console.log(data)
+            $('.app-loader').hide();
+            location.reload();
+        },
+        error: function(reject)
+        {
+           $.notify(reject, 'error');
+        }
+    });
+    
+});
 </script>
 @endpush
 @endsection

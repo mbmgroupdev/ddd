@@ -252,18 +252,11 @@ class NewStyleController extends Controller
 
   public function fetchspecialmechines(Request $request)
   {
-    // Season List Query
-    $machinelist = "";
-    //Spmachine::pluck('spmachine_name', 'spmachine_id');
-    $spmachines= Spmachine::orderBy('spmachine_id', 'desc')->pluck('spmachine_name', 'spmachine_id');
-    foreach ($spmachines as $key => $value)
-    {
-      $machinelist .= "<label class='col-sm-2' style='padding:0px;'>
-      <input name='sp_machine_id[]' type='checkbox' class='ace' value='".$key."'>
-      <span class='lbl'>".$value."</span>
-      </label>";
-    }
-   return Response::json($machinelist);
+    $machineList      = special_machine_by_id();
+    $spSelectedMachine = $request->selected??[];
+
+    $operationData = view('merch.common.get_special_machine', compact('machineList','spSelectedMachine'))->render();
+   return Response::json($operationData);
     // return $machinelist;
   }
 

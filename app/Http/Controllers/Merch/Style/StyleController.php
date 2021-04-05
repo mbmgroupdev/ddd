@@ -54,7 +54,7 @@ class StyleController extends Controller
   	{
 	    $buyerList        = collect(buyer_by_id())->pluck('b_name', 'b_id')->toArray();;
 	    $productType  = collect(product_type_by_id())->pluck('prd_type_name', 'prd_type_id');
-	    $machineList      = special_machine_by_id();
+	    
 	    $garmentsType = collect(garment_type_by_id())->pluck('gmt_name','gmt_id');
 	    $sampleType   = collect(sample_type_by_id())->pluck('sample_name','sample_id');
 	    $brand    		  = collect(brand_by_id())->pluck('br_name', 'br_id');
@@ -97,6 +97,14 @@ class StyleController extends Controller
 	    $operationList = Operation::get();
     
       	$operationData = view('merch.common.get_operation', compact('operationList','selectedOp'))->render();
+
+      	$machineList      = special_machine_by_id();
+      	$spSelectedMachine = DB::table('mr_style_sp_machine')
+      							->where('stl_id', $id)
+      							->pluck('spmachine_id')
+      							->toArray();
+
+      	$operationData = view('merch.common.get_special_machine', compact('machineList','spSelectedMachine'))->render();
 
 
 
