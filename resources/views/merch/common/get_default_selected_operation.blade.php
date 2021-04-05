@@ -2,7 +2,7 @@
 	@foreach($operationList as $key => $operation)
 	<div class="col-sm-3 text-center pr-2 pl-0">
 		<div class="opr-item">
-			<img style="width:60px;" src="{{asset($operation->image)}}">
+			<img style="width:50px;" src="{{asset($operation->image)}}">
 			<br>
 			<span>{{$operation->opr_name}}</span>
 		</div>

@@ -49,7 +49,7 @@
 
 .slide_upload {
     width: auto;
-    height: 140px;
+    height: 100px;
     position: relative;
     cursor: pointer;
     background: #eee;
@@ -196,7 +196,7 @@
                                 <label> Image  </label>
                                 <div class="image-block mb-3">
                                     <div class="row" id="multi-image-div" style="padding:0;">
-                                        <div class="col-sm-4 multi-image">
+                                        <div class="col-sm-3 multi-image">
                                             <label class="slide_upload" for="file_image_0">
                                                 <img id="imagepreview_0" src='{{asset('assets/files/style/placeholder.png')}}'>
                                             </label>
@@ -1337,7 +1337,7 @@ $(document).ready(function(){
 <script type="text/javascript">
     function appendImageInput(image_load_id) {
       var appendNum = $("#multi-image-div > .multi-image").length;
-      var appednDiv = '<div class="col-sm-4 multi-image">\
+      var appednDiv = '<div class="col-sm-3 multi-image">\
       <button title="Remove this image!" type="button" class="fa fa-close close-button" onclick="$(this).parent().remove();"></button>\
       <label class="slide_upload" for="file_image_'+appendNum+'">\
       <img id="imagepreview_'+appendNum+'" src="{{asset('assets/files/style/placeholder.png')}}">\

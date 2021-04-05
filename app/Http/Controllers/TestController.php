@@ -106,7 +106,7 @@ class TestController extends Controller
     {
 
         
-        return $this->newMigrate();
+        return $this->findFriday();
         return $this->testMail();
         
         return '';
@@ -3095,6 +3095,156 @@ class TestController extends Controller
 
         return 'done';
     }
+
+    public function removefriday()
+    {
+        $dt = '2021-03-05';
+        $data = DB::table('hr_shift_roaster')
+            ->where('shift_roaster_month','03')
+            ->where('day_5','Friday Day')
+            ->pluck('shift_roaster_user_id')->toArray();
+
+        $att = DB::table('hr_att_special')
+                ->where('in_date', $dt)
+                ->whereIn('as_id',$data)
+                ->delete();
+    }
+
+    public function findFriday()
+    {
+        $dt = '2021-03-05';
+        $data = DB::table('hr_shift_roaster as h')
+            ->select('b.*')
+            ->leftJoin('hr_as_basic_info as b','b.as_id','h.shift_roaster_user_id')
+            ->where('h.shift_roaster_month','03')
+            ->where('h.day_5','Friday Night')
+            ->get()
+            ->keyBy('as_id');
+
+        $as = collect($data)->pluck('as_id')->toArray();
+
+
+        $att = DB::table('hr_attendance_history')
+                ->where('att_date', $dt)
+                ->whereIn('as_id',$as)
+                ->where('unit',8)
+                ->get();
+
+        $shift = DB::table('hr_shift')
+                        ->where('hr_shift_name', 'Friday OT')
+                        ->where('hr_shift_unit_id', 8)
+                        ->where('ot_status', 1)
+                        ->orderBy('hr_shift_id','DESC')
+                        ->first();
+
+        foreach ($att as $key => $value) {
+            $this->extractSpecialOT($dt, $value->raw_data, $data[$value->as_id], $shift);
+        }
+
+    }
+
+
+
+    public function extractSpecialOT($date, $time, $emp, $shift)
+    {
+        $start = $date." ".$shift->hr_shift_start_time;
+
+        $in_time = Carbon::createFromFormat('Y-m-d H:i:s', $start);
+        $in_time_begin = $in_time->copy()->subHours(2);
+        $in_time_end   = $in_time->copy()->addHours(1);
+
+
+
+        $end   = $date." ".$shift->hr_shift_end_time;
+        $out_time = Carbon::createFromFormat('Y-m-d H:i:s', $end);
+        $out_time_begin = $in_time_end->copy()->addSecond();
+        $out_time_end   = $out_time->copy()->addHours(4);
+
+       
+
+        if($time > $in_time_begin && $time < $out_time_end ){
+
+            $last_punch = DB::table('hr_att_special')
+                            ->where([
+                                'in_date' => $date,
+                                'as_id' => $emp->as_id
+                            ])
+                            ->first();
+            $dt = [];
+
+            if($last_punch){
+                // check in
+                if(($in_time_begin <= $time &&  $in_time_end >= $time) && ($time <= $last_punch->in_time  || $last_punch->in_time == null)){
+                    $dt['in_time'] = $time;
+                    $last_punch->in_time = $time;
+                }else if(($out_time_begin <= $time &&  $out_time_end >= $time) && ($time >= $last_punch->out_time || $last_punch->out_time == null )){
+                    $dt['out_time'] = $time;
+                    $last_punch->out_time = $time;
+                }
+
+                // update ot
+                if($last_punch->in_time != null && $last_punch->out_time != null){
+                    $dt['ot_hour'] = $this->fullot($last_punch->in_time, $start, $last_punch->out_time,  $shift->hr_shift_break_time);
+
+                }
+                if($dt){
+
+                    DB::table('hr_att_special')
+                        ->where('id',$last_punch->id)
+                        ->where('as_id',$emp->as_id)
+                        ->update($dt);
+                }
+
+            }else{
+                $dt = array(
+                    'in_date' => $date,
+                    'as_id' => $emp->as_id,
+                    'hr_shift_code' => $shift->hr_shift_code
+                );
+                if($in_time_begin <= $time &&  $in_time_end >= $time){
+                    $dt['in_time'] = $time;
+                }else if($out_time_begin <= $time &&  $out_time_end >= $time){
+                    $dt['out_time'] = $time;
+                }else{
+                    return 0;
+                }
+                DB::table('hr_att_special')
+                    ->insert($dt);
+            }
+            return 1;
+        }
+
+    }
+
+    public function fullot($start, $shift_start, $end, $break)
+    {
+        $start = $start < $shift_start? $shift_start:$start;
+        $diff = (strtotime($end) - (strtotime($start) + ($break*60)))/3600;
+        $diff = $diff < 0 ? 0:$diff;
+
+        $part    = explode('.', $diff);
+        $minutes = (isset($part[1]) ? $part[1] : 0);
+        $minutes = floatval('0.'.$minutes);
+        // return $minutes;
+        if($minutes > 0.16667 && $minutes <= 0.75) $minutes = $minutes;
+        else if($minutes >= 0.75) $minutes = 1;
+        else $minutes = 0;
+        
+        if($minutes > 0 && $minutes != 1){
+            $min = (int)round($minutes*60);
+            $minOT = min_to_ot();
+            $minutes = $minOT[$min]??0;
+        }
+
+        $overtimes = $part[0] + $minutes;
+        $overtimes = number_format((float)$overtimes, 3, '.', '');
+
+        return  $overtimes;
+    }
+
+
+
+
 
 
 }

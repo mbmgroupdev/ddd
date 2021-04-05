@@ -65,13 +65,13 @@
 	}
 </style>
 <ul class="operation-list">
-	@php $selectedSpOp = $selectedSpOp??[];  @endphp
-	@foreach($spMachineList as $key => $machine)
+	@php $spSelectedMachine = $spSelectedMachine??[];  @endphp
+	@foreach($machineList as $key => $machine)
   	<li>
-    	<input type="checkbox" id="check-{{$machine->opr_id}}" name="operations[]" data-content-type="{{$machine->opr_type}}" data-img-src="{{asset($machine->image)}}" data-name="{{$machine->opr_name}}" value="{{$machine->opr_id}}" @if($machine->opr_type == 1 || in_array($machine->opr_type, $selectedSpOp)) checked @endif @if($machine->opr_type == 1) disabled="disabled" @endif/>
-    	<label for="check-{{$machine->opr_id}}">
+    	<input type="checkbox" id="check-{{$machine->spmachine_id}}" name="operations[]"  data-img-src="{{asset($machine->image)}}" data-name="{{$machine->spmachine_name}}" value="{{$machine->spmachine_id}}" @if(in_array($machine->spmachine_id, $spSelectedMachine)) checked @endif/>
+    	<label for="check-{{$machine->spmachine_id}}">
     		<img src="{{asset($machine->image)}}" /><br>
-    		<span>{{$machine->opr_name}}</span>
+    		<span>{{$machine->spmachine_name}}</span>
     	</label>
   	</li>
   	@endforeach
