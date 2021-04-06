@@ -32,11 +32,10 @@ class SummaryReportController extends Controller
         $reportType = [
             'ot'=>'OT', 
             'working_hour' => 'Working Hour',
-            'leave' => 'Leave'
+            'leave' => 'Leave',
         ];
-        if(array_intersect(auth()->user()->unit_permissions(), [1,4,5])){
-           $reportType['ot_levis'] = 'OT (Levis format)';
-        }
+        $reportType['ot_levis'] = 'OT (Levis format)';
+        
         if(auth()->user()->can('End of Job Benefits')){
            $reportType['left_resign'] = 'Left & Resign';
         }
@@ -283,15 +282,37 @@ class SummaryReportController extends Controller
                     
                 }
             }else if($input['report_type'] == 'recruitment'){
-                if($input['report_format'] == 1 && $input['report_group'] != null){
                     
-                    $attData->select(
-                        'emp.'.$input['report_group'], 
-                        DB::raw('count(*) as total')
-                    )
-                    ->groupBy('emp.'.$input['report_group']);
-                    
+                $attData->select(
+                    'emp.as_id', 'emp.as_gender', 'emp.as_unit_id', 'emp.as_shift_id', 'emp.as_oracle_code', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_contact', 'emp.as_section_id','emp.as_subsection_id','emp.as_status','emp.as_doj'
+                );
+                $getEmployee = $attData->get();
+
+                
+                $totalEmployees = count($getEmployee);
+                if($input['report_group'] != null){
+                    $uniqueGroups = collect($getEmployee)
+                    ->groupBy($input['report_group'], true);
                 }
+                if($input['report_format'] == 1 && $input['report_group'] != null && count($getEmployee) > 0){
+                
+                    $uniqueGroups = $uniqueGroups
+                        ->map(function($q) use($input){
+                        $p = (object)[];
+                        $p->active = collect($q)
+                                        ->where('as_status',1)
+                                        ->count();
+                        $p->left = collect($q)
+                                    ->whereIn('as_status',[2,3,4,5,6,7,8])
+                                    ->count();
+
+                        return $p;
+
+                    })->all();
+                
+                }
+
+                return view('hr.reports.summary.recruitment', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area'));
             }
 
 
@@ -301,6 +322,11 @@ class SummaryReportController extends Controller
                 $attData->orderBy('emp.as_unit_id', 'asc');
             }else{
                 $attData->orderBy($groupBy, 'asc');
+            }
+
+            if($format != null && count($getEmployee) > 0 && $input['report_format'] == 0){
+                $uniqueGroups = collect($getEmployee)->groupBy($request['report_group'],true);
+                
             }
 
 
@@ -325,10 +351,7 @@ class SummaryReportController extends Controller
                 $totalAvgHour = sprintf('%02d Hours, %02d Minutes', $aHours, $aMinutes);
             }
 
-            if($format != null && count($getEmployee) > 0 && $input['report_format'] == 0){
-                $uniqueGroups = collect($getEmployee)->groupBy($request['report_group'],true);
-                
-            }
+            
 
            
             if($input['report_type'] == 'ot'){
@@ -337,8 +360,6 @@ class SummaryReportController extends Controller
                 return view('hr.reports.summary.working_hour_summary', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees', 'totalValue', 'totalAvgHour', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area'));
             }else if($input['report_type'] == 'left_resign'){
                 return view('hr.reports.summary.left_resign', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area'));
-            }else if($input['report_type'] == 'recruitment'){
-                return view('hr.reports.summary.recruitment', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area'));
             }
         } catch (\Exception $e) {
             $bug = $e->getMessage();
@@ -429,6 +450,7 @@ class SummaryReportController extends Controller
             ->groupBy('l.leave_ass_id','leave_type')
             ->get();
 
+
         
         $uniqueGroups = collect($data)
             ->groupBy('associate_id')
@@ -440,29 +462,36 @@ class SummaryReportController extends Controller
                 }
                 return $p; 
             });
-
         $totalEmployees = count($uniqueGroups);
         $uniqueGroups = collect($uniqueGroups)
             ->groupBy($input['report_group'],true);
 
+        
         //dd($uniqueGroups);
 
         $format = $request['report_group'];
         if($input['report_format'] == 1){
             $uniqueGroups = collect($uniqueGroups)
                 ->map(function($q){
-                    $p['emp'] = $q;
-                    $p['Sick'] = 0;
-                    $p['Casual'] = 0;
-                    $p['Earned'] = 0;
-                    $p['Special'] = 0;
+                    $p = (object)[];
+                    $p->emp = $q;
+                    $p->Sick = 0;
+                    $p->Casual = 0;
+                    $p->Earned = 0;
+                    $p->Special = 0;
+                    $p->SickDays = 0;
+                    $p->CasualDays = 0;
+                    $p->EarnedDays = 0;
+                    $p->SpecialDays = 0;
                     foreach ($q as $key => $v) {
-                        $p[$v->leave_type]++;
+                        $p->{$v->leave_type}++;
+                        $p->{$v->leave_type.'Days'} += $v->{$v->leave_type};
                     }
                     return $p;
                 });
 
         }
+
 
         return view('hr.reports.summary.leave', compact('uniqueGroups','input','format', 'totalEmployees', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area'));
 

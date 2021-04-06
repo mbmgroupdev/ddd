@@ -137,6 +137,7 @@ function printEnLetter(letter)
     myWindow.print();
     myWindow.close();
 }
+
 $(document).ready(function(){
     var totalempcount = 0;
     var totalemp = 0;

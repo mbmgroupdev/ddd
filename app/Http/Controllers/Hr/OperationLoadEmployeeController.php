@@ -44,6 +44,12 @@ class OperationLoadEmployeeController extends Controller
             ->when(!empty($input['section']), function ($query) use($input){
                return $query->where('emp.as_section_id', $input['section']);
             })
+            ->when(!empty($input['line']), function ($query) use($input){
+               return $query->where('emp.as_line_id', $input['line']);
+            })
+            ->when(!empty($input['floor']), function ($query) use($input){
+               return $query->where('emp.as_floor_id', $input['floor']);
+            })
             ->when(!empty($input['subsection']), function ($query) use($input){
                return $query->where('emp.as_subsection_id', $input['subsection']);
             });

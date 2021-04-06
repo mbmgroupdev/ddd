@@ -111,7 +111,7 @@ class FileController extends Controller
 	            ->when(!empty($input['doj_to']), function ($q) use($input){
 	               return $q->where('b.as_doj','<=',$input['doj_to']);
 	            })
-	            ->where('b.as_status', 1)
+	            //->where('b.as_status', 1)
 	            ->leftJoin("hr_as_adv_info AS a", "a.emp_adv_info_as_id", "=", "b.associate_id")
 	            ->leftJoin('hr_employee_bengali AS bn', 'bn.hr_bn_associate_id', '=', 'b.associate_id')
 	            ->leftJoin('hr_benefits AS be', 'be.ben_as_id', '=' , 'b.associate_id')

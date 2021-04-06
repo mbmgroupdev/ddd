@@ -560,6 +560,9 @@ class EmployeeHelper
 
 	public static function processPartialSalary($employee, $salary_date, $status)
     {
+    	try{
+
+
         $month = date('m', strtotime($salary_date));
         $year = date('Y', strtotime($salary_date));
         $total_day = date('d', strtotime($salary_date));
@@ -758,6 +761,9 @@ class EmployeeHelper
 
             return '';
 	    }
+		}catch(\Exception $e){
+			DB::table('error')->insert(['msg'=>$employee->associate_id.' '.$e->getMessage()]);
+		}
     }
 
     public static function getHolidayDate($getEmployee, $startDate, $endEnd)
