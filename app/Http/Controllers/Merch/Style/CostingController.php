@@ -129,7 +129,7 @@ class CostingController extends Controller
     public function show(Request $request, $id)
     {
     	try {
-    		$style = Style::getStyleIdWiseStyleInfo($id, ['stl_id', 'mr_buyer_b_id', 'stl_type', 'stl_no', 'stl_product_name', 'stl_description', 'stl_smv', 'stl_img_link', 'stl_status']);
+    		$style = Style::getStyleIdWiseStyleInfo($id, ['stl_id', 'mr_buyer_b_id', 'stl_type', 'stl_no', 'stl_product_name', 'stl_description', 'stl_smv', 'stl_img_link', 'stl_status','bom_status' , 'costing_status']);
 	    	
 			if($style == null){
 				toastr()->error("Style Not Found!");
@@ -253,6 +253,13 @@ class CostingController extends Controller
 
 				]
 			);
+
+            // style update
+            $getStyle = Style::getStyleIdWiseStyleInfo($input['stl_id'], 'costing_status');
+
+            if($input['costing_status'] == 1 && $getStyle->costing_status == 0 ){
+                Style::where('stl_id', $input['stl_id'])->update(['costing_status' => 1]);
+            }
 
             //log_file_write("Costing Successfully Save", $input['stl_id']);
             DB::commit();

@@ -32,7 +32,7 @@
                <a href="{{ url('merch/style/style_list') }}"><i class="las la-list-ol"></i> Style List</a>
             </li>
             @endif
-            @if($user->can('Style List' ) || $user->hasRole('Super Admin'))
+            {{-- @if($user->can('Style List' ) || $user->hasRole('Super Admin'))
             <li class="@if($segment2 == 'style' && $segment3=='create_bulk') active @endif">
                <a href="{{ url('merch/style/create_bulk') }}"><i class="las la-folder-plus"></i></i> Style Bulk</a>
             </li>
@@ -47,7 +47,7 @@
             </li>
             <li class="@if($segment2 == 'style' && $segment3=='costing-list') active @endif">
                <a href="{{ url('/merch/style/costing-list') }}" class="iq-waves-effect"><i class="las la-list-ol"></i><span>Style Costing</span></a>
-            </li>
+            </li> --}}
          </ul>
       </li>
       @endif

@@ -246,3 +246,17 @@ if(!function_exists('merchandisers_team')){
 
     }
 }
+
+if(!function_exists('style_picture')){
+    function style_picture($style)
+    {
+        $default = '/assets/files/style/placeholder.png';
+
+        if($style->stl_img_link != null && file_exists(public_path($style->stl_img_link))){
+            $image = $style->stl_img_link;
+        }else{
+            $image = $default;
+        }
+        return $image;
+    }
+}
