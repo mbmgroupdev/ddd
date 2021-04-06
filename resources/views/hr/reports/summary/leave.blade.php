@@ -236,19 +236,31 @@
 					<table class="table table-bordered table-hover table-head" border="1">
 						<thead>
 							<tr style="text-align: center;">
-								<th>Sl</th>
+								<th rowspan="2">Sl</th>
 								@if($format == 'as_section_id' || $format == 'as_subsection_id')
-								<th>Department Name</th>
+								<th rowspan="2">Department Name</th>
 								@endif
 								@if($format == 'as_subsection_id')
-								<th>Section Name</th>
+								<th rowspan="2">Section Name</th>
 								@endif
-								<th> {{ $head }} {{ $format != 'ot_hour'?'Name':'' }}</th>
-								<th>Casual</th>
-								<th>Sick</th>
-								<th>Earned</th>
-								<th>Special</th>
-								<th>Total</th>
+								<th rowspan="2"> {{ $head }} {{ $format != 'ot_hour'?'Name':'' }}</th>
+								<th colspan="2">Casual</th>
+								<th colspan="2">Sick</th>
+								<th colspan="2">Earned</th>
+								<th colspan="2">Special</th>
+								<th colspan="2">Total</th>
+							</tr>
+							<tr>
+								<th>Emp</th>
+								<th>Days</th>
+								<th>Emp</th>
+								<th>Days</th>
+								<th>Emp</th>
+								<th>Days</th>
+								<th>Emp</th>
+								<th>Days</th>
+								<th>Emp</th>
+								<th>Days</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -334,19 +346,34 @@
 									</a>
 								</td>
 								<td style="text-align: center;">
-									{{$employee['Casual']??''}}
+									{{$employee->Casual??''}}
 								</td>
 								<td style="text-align: center;">
-									{{$employee['Sick']??''}}
+									{{$employee->CasualDays??''}}
 								</td>
 								<td style="text-align: center;">
-									{{$employee['Earned']??''}}
+									{{$employee->Sick??''}}
 								</td>
 								<td style="text-align: center;">
-									{{$employee['Special']??''}}
+									{{$employee->SickDays??''}}
 								</td>
 								<td style="text-align: center;">
-									{{count($employee['emp'])}}
+									{{$employee->Earned??''}}
+								</td>
+								<td style="text-align: center;">
+									{{$employee->EarnedDays??''}}
+								</td>
+								<td style="text-align: center;">
+									{{$employee->Special??''}}
+								</td>
+								<td style="text-align: center;">
+									{{$employee->SpecialDays??''}}
+								</td>
+								<td style="text-align: center;">
+									{{count($employee->emp)}}
+								</td>
+								<td style="text-align: center;">
+									{{ $employee->CasualDays + $employee->SickDays + $employee->EarnedDays + $employee->SpecialDays}}
 								</td>
 							</tr>
 							@endforeach
@@ -362,11 +389,22 @@
 								>
 									Total
 								</td>
-								<td style="text-align: center;"></td>
-								<td style="text-align: center;"></td>
-								<td style="text-align: center;"></td>
-								<td style="text-align: center;"></td>
-								<td style="text-align: center;"></td>
+								@php $all = collect($uniqueGroups)  @endphp
+								<td style="text-align: center;">{{$all->sum('Casual')}}</td>
+								<td style="text-align: center;">{{$all->sum('CasualDays')}}</td>
+								<td style="text-align: center;">{{$all->sum('Sick')}}</td>
+								<td style="text-align: center;">{{$all->sum('SickDays')}}</td>
+								
+								<td style="text-align: center;">{{$all->sum('Earned')}}</td>
+								<td style="text-align: center;">{{$all->sum('EarnedDays')}}</td>
+								<td style="text-align: center;">{{$all->sum('Special')}}</td>
+								<td style="text-align: center;">{{$all->sum('SpecialDays')}}</td>
+								<td style="text-align: center;">
+									{{ $all->sum('Casual') + $all->sum('Sick') + $all->sum('Earned') + $all->sum('Special')}}
+								</td>
+								<td style="text-align: center;">
+									{{ $all->sum('CasualDays') + $all->sum('SickDays') + $all->sum('EarnedDays') + $all->sum('SpecialDays')}}
+								</td>
 							</tr>
 							
 							@else

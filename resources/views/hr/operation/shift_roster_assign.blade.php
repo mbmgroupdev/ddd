@@ -41,13 +41,26 @@
                                     {{ Form::select('unit', $unitList, null, ['placeholder'=>'Select Unit','id'=>'unit_shift', 'class'=> 'form-control', 'required'=> 'required']) }} 
                                     <label  for="unit">Unit </label>
                                 </div>
+                                
                                 <div class="form-group has-float-label select-search-group">
-                                    {{ Form::select('area', $areaList, null, ['placeholder'=>'Select Area','id'=>'area_shift', 'class'=> 'form-control ', 'disabled']) }} 
-                                    <label  for="area">Area </label>
+                                    <select name="floor" class="form-control capitalize select-search" id="floor" disabled >
+                                        <option selected="" value="">Choose...</option>
+                                    </select>
+                                    <label for="floor">Floor</label>
+                                </div>
+                                <div class="form-group has-float-label select-search-group">
+                                    <select name="line" class="form-control capitalize select-search" id="line" disabled >
+                                        <option selected="" value="">Choose...</option>
+                                    </select>
+                                    <label for="line">Line</label>
                                 </div>
                                 
                              </div>
                             <div class="col-sm-3">
+                                <div class="form-group has-float-label select-search-group">
+                                    {{ Form::select('area', $areaList, null, ['placeholder'=>'Select Area','id'=>'area_shift', 'class'=> 'form-control ', 'disabled']) }} 
+                                    <label  for="area">Area </label>
+                                </div>
                                 <div class="form-group has-float-label select-search-group">
                                     <select name="department" id="department_shift" class= "form-control" disabled ><option value="">Select Department</option></select>
                                     <label  for="department">Department </label>
@@ -270,6 +283,9 @@ $(document).ready(function(){
     var subsection = $("select[name=subsection]");
     var area = $("select[name=area]");
     var department = $("select[name=department]");
+    var floor = $("select[name=floor]");
+    var line = $("select[name=line]");
+    var unit = $("select[name=unit]");
     $(".filter").on('click', function(){
         if(unit.val()) {
             loadEmployeeSearchWise();
@@ -302,6 +318,8 @@ $(document).ready(function(){
                 subsection : subsection.val(),
                 area : area.val(),
                 department : department.val(),
+                floor : floor.val(),
+                line : line.val(),
                 status:$("select[name=status]").val()
             },
             success: function(data)
@@ -477,6 +495,43 @@ $(document).ready(function(){
         });
 
     });
+
+    unit.on('change', function() {
+        $( "#floor" ).prop( "disabled", false );
+        ajaxOnChange('{{ url('hr/setup/getFloorListByUnitID') }}', 'get', {unit_id: $(this).val()}, floor);
+        // line
+        $.ajax({
+           url : "{{ url('hr/reports/line_by_unit') }}",
+           type: 'get',
+           data: {unit : $(this).val()},
+           success: function(data)
+           {
+                $('#line').removeAttr('disabled');
+                $("#line").html(data);
+           },
+           error: function(reject)
+           {
+             console.log(reject);
+           }
+        });
+    });
+
+    function ajaxOnChange(ajaxUrl, ajaxType, valueObject, successStoreId) {
+        console.log(successStoreId);
+        $.ajax({
+            url : ajaxUrl,
+            type: ajaxType,
+            data: valueObject,
+            success: function(data)
+            {
+                $(successStoreId).html(data);
+            },
+            error: function()
+            {
+                alert('failed...');
+            }
+        });
+    }
 
     /// Shift List On Unit Selection
 
