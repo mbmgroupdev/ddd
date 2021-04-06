@@ -28,7 +28,7 @@
       width: 110px !important;
     }
     #example th:nth-child(8) input{
-      width: 70px !important;
+      width: 80px !important;
     }
     
     .text-warning {
@@ -67,7 +67,7 @@
                                 <tr class="success">
                                     <th width="5%">SL.</th>
                                     <th width="10%">Unit</th>
-                                    <th width="8%">Buyer Name</th>
+                                    <th width="8%">Buyer</th>
                                     <th width="10%">Month-Year</th>
                                     <th width="10%">Product Type</th>
                                     <th width="5%">SAH</th>

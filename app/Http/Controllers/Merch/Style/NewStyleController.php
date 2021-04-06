@@ -592,9 +592,9 @@ class NewStyleController extends Controller
               </a>';
               // process to order
               if($data->bom_status == 1 && $data->costing_status == 1){
-                $return .= "<a href='' class=\"btn btn-sm btn-success\" data-toggle=\"tooltip\" title=\"Process To Order\">
-                    <i class=\"ace-icon fa fa-archive bigger-120\"></i>
-                </a>";
+                $return .= '<a href="" class="btn btn-sm btn-success" data-toggle="tooltip" title="Process To Order">
+                    <i class="ace-icon fa fa-cart-plus"></i>
+                </a>';
               }
             $return .= "</div>";
 
