@@ -191,7 +191,7 @@
 				            			{{emp_status_name($employee->as_status)}}
 				            		</td>
 
-					            	<td style="text-align: right">{{$employee->as_doj}}</td>
+					            	<td style="text-align: right;white-space: nowrap;">{{$employee->as_doj}}</td>
 				            	<td>
 				            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Yearly Activity Report' ><i class="fa fa-eye"></i></button>
 				            	</td>
@@ -239,14 +239,16 @@
 								<th>Floor</th>
 								@endif
 								<th> {{ $head }} {{ $format != 'ot_hour'?'Name':'' }}</th>
-								<th>Total</th>
+								<th>Active</th>
+								<th>Left Job</th>
+								<th>Total Recruitment</th>
+
 							</tr>
 						</thead>
 						<tbody>
 							@php $i=0;  @endphp
-							@if(count($getEmployee) > 0)
-							@foreach($getEmployee as $employee)
-							@php $group = $employee->$format; @endphp
+							@if(count($uniqueGroups) > 0)
+							@foreach($uniqueGroups as $group => $employee)
 							<tr>
 								<td>{{ ++$i }}</td>
 								@if($format == 'as_section_id' || $format == 'as_subsection_id')
@@ -334,7 +336,13 @@
 									</a>
 								</td>
 								<td style="text-align: center;">
-									{{ $employee->total }}
+									{{$employee->active}}
+								</td>
+								<td style="text-align: center;">
+									{{$employee->left}}
+								</td>
+								<td style="text-align: center;">
+									{{$employee->active + $employee->left}}
 								</td>
 							</tr>
 							@endforeach
@@ -350,6 +358,8 @@
 								>
 									Total
 								</td>
+								<td style="text-align: center;">{{collect($uniqueGroups)->sum('active')}}</td>
+								<td style="text-align: center;">{{collect($uniqueGroups)->sum('left')}}</td>
 								<td style="text-align: center;">{{$totalEmployees}}</td>
 							</tr>
 							

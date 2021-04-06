@@ -292,6 +292,23 @@ class DailyActivityReportController extends Controller
                 $attData = DB::table($tableName)
                 ->where('a.in_date', $request['present_date'])
                 ->whereIn('a.as_id', $absentData);
+            }elseif($input['report_type'] == 'employee'){
+                $emp_day = $request['date'];
+                $attData = DB::table('hr_as_basic_info as emp')
+                    ->where('emp.as_doj','<=',$emp_day)
+                    ->where(function($p) use($emp_day){
+                        $p->where(function($q) use($emp_day){
+                            $q->whereIn('emp.as_status',[2,3,4,5,6,7,8]);
+                            $q->where('emp.as_status_date','>=',$emp_day);
+                        });
+                        $p->orWhere(function($q) use($emp_day){
+                            $q->where('emp.as_status',1);
+                            $q->where(function($j) use($emp_day){
+                                $j->where('emp.as_status_date','<=',$emp_day);
+                                $j->orWhereNull('emp.as_status_date');
+                            });
+                        });
+                    });
             }
             // employee check
             if($input['report_format'] == 0 && !empty($input['employee'])){
@@ -408,6 +425,18 @@ class DailyActivityReportController extends Controller
                 $hours = $totalWorkingMinute == 0?0:floor($totalWorkingMinute / 60);
                 $minutes = $totalWorkingMinute == 0?0:($totalWorkingMinute % 60);
                 $totalValue = sprintf('%02d Hours, %02d Minutes', $hours, $minutes);
+            }elseif($input['report_type'] == 'employee'){
+                if($input['report_format'] == 1 && $input['report_group'] != null){
+                    
+                    $attData->select('emp.'.$input['report_group'], 
+                        DB::raw("COUNT(CASE WHEN as_gender = 'Male' THEN 1 END) AS male"),
+                        DB::raw("COUNT(CASE WHEN as_gender = 'Female' THEN 1 END) AS female"),
+                        DB::raw("COUNT(*) AS total")
+                    )->groupBy('emp.'.$input['report_group']);
+                    
+                }else{
+                    $attData->select('emp.as_id', 'emp.as_gender', 'emp.as_shift_id', 'emp.as_oracle_code','emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_contact', 'emp.as_section_id','emp.as_subsection_id','emp.as_doj');
+                }
             }else{
                 if($input['report_format'] == 1 && $input['report_group'] != null){
                     
@@ -483,6 +512,8 @@ class DailyActivityReportController extends Controller
                 return view('hr.reports.daily_activity.attendance.in_out_mis_report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area', 'uniqueGroupEmp'));
             }elseif($input['report_type'] == 'absent'){
                 return view('hr.reports.daily_activity.attendance.absent_report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area', 'absentShift', 'uniqueGroupEmp'));
+            }elseif($input['report_type'] == 'employee'){
+                return view('hr.reports.daily_activity.attendance.employee', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area', 'uniqueGroupEmp'));
             }elseif($input['report_type'] == 'leave'){
                 return view('hr.reports.daily_activity.attendance.leave_report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area', 'uniqueGroupEmp'));
             }elseif($input['report_type'] == 'working_hour'){
