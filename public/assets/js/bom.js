@@ -26,7 +26,7 @@ $(document).on('click','.add-arrows',function(){
     if(flag === 0){
         html = '<tr id="itemRow_'+catid+'_'+i+'">';
         html += '<td class="right-btn"><a class="btn btn-sm btn-outline-primary arrows-alt" data-toggle="tooltip" data-placement="top" title="" data-original-title="Right Click Action"><i class="las la-arrows-alt"></i></a><div class="context-menu" id="context-menu-file-" style="display:none;position:absolute;z-index:1;"><ul><li><a class="textblack arrows-context add-arrows" data-catid="'+catid+'"><i class="las la-cart-plus"></i> Add Row</a></li><li><a class="textblack arrows-context remove-arrows" data-catid="'+catid+'" ><i class="las la-trash"></i> Remove Row</a></li><li><a class="textblack arrows-context add-new" data-type="item" data-catid="{{ $itemCat->mcat_id }}" id="additem_'+catid+'_'+i+'"><i class="las la-folder-plus"></i> Add New Item</a></li></ul></div></td>';
-        html += '<td><input type="hidden" id="bomitemid_'+catid+'_'+i+'" name="bomitemid[]" value=""><input type="hidden" id="itemcatid_'+catid+'_'+i+'" value="'+catid+'" name="itemcatid[]"><input type="hidden" id="itemid_'+catid+'_'+i+'" value="" name="itemid[]">';
+        html += '<td><input type="hidden" id="bomitemid_'+catid+'_'+i+'" name="bomitemid[]" value=""><input type="hidden" id="itemcatid_'+catid+'_'+i+'" value="'+catid+'" name="itemcatid[]"><input type="hidden" id="itemid_'+catid+'_'+i+'" class="itemid" value="" name="itemid[]">';
         if($("#blade_type").val() === 'po'){
             html += '<input type="hidden" name="ord_bom_id[]" id="stlbomid_'+catid+'_'+i+'" value="">';
         }else{

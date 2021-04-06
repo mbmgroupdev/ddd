@@ -40,8 +40,11 @@
                     </table>
                 </div>
                 <div class="col-sm-2">
-                    <a href="{{ asset(!empty($style->stl_img_link)?$style->stl_img_link:'assets/images/avatars/profile-pic.jpg') }}" target="_blank">
-                        <img class="thumbnail" height="100px" src="{{ asset(!empty($style->stl_img_link)?$style->stl_img_link:'assets/images/avatars/profile-pic.jpg') }}" alt=""/>
+                    @php
+                        $image = style_picture($style);
+                    @endphp
+                    <a href="{{ asset($image) }}" target="_blank">
+                        <img class="thumbnail" height="100px" src="{{ asset($image) }}" alt=""/>
                     </a>
                 </div>
             </div>

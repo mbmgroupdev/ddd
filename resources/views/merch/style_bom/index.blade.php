@@ -30,8 +30,8 @@
               </li>
               <li class="active">Style BOM</li>
               <li class="top-nav-btn">
-                <a href='{{ url("merch/style/costing/$style->stl_id")}}' class="btn btn-outline-success btn-sm pull-right"> <i class="fa fa-plus"></i> Add Costing</a>
-                <a href="{{ url('merch/style/bom-list')}}" target="_blank" class="btn btn-outline-primary btn-sm pull-right"> <i class="fa fa-list"></i> Style BOM List</a> &nbsp;
+                <a href='{{ url("merch/style/costing/$style->stl_id")}}' class="btn btn-outline-success btn-sm pull-right"> @if($style->costing_status == 1) <i class="fa fa-edit"></i> Edit Costing @else <i class="fa fa-plus"></i> Add Costing @endif</a>
+                <a href="{{ url('merch/style/style_list')}}" class="btn btn-outline-primary btn-sm pull-right"> <i class="fa fa-list"></i> Style List</a> &nbsp;
                 </li>
             </ul><!-- /.breadcrumb -->
         </div>
@@ -50,6 +50,7 @@
                         <form class="form-horizontal" role="form" method="post" id="bomForm">
                             <input type="hidden" name="stl_id" value="{{ $style->stl_id }}">
                             <input type="hidden" id="change-flag" value="0">
+                            <input type="hidden" id="bom_status" name="bom_status" value="{{ $style->bom_status}}">
                             {{ csrf_field() }} 
                             <div class="panel-body">
                                 
@@ -103,7 +104,7 @@
                                                         <td>
                                                             <input type="hidden" id="bomitemid_{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" name="bomitemid[]" value="{{ $itemBom->id }}">
                                                             <input type="hidden" id="itemcatid_{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" value="{{ $itemBom->mcat_id }}" name="itemcatid[]">
-                                                            <input type="hidden" id="itemid_{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" value="{{ $itemBom->mr_cat_item_id }}" name="itemid[]">
+                                                            <input type="hidden" id="itemid_{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" value="{{ $itemBom->mr_cat_item_id }}" class="itemid" name="itemid[]">
                                                             <input type="text" data-category="{{ $itemBom->mcat_id }}" data-type="item" name="item[]" id="item_{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" class="form-control autocomplete_txt items-{{ $itemBom->mcat_id}}" autocomplete="off" onClick="this.select()" value="{{ $getItems[$itemBom->mr_cat_item_id]->item_name??'' }}">
                                                         </td>
                                                         <td>
@@ -212,7 +213,7 @@
                                                     <td>
                                                         <input type="hidden" id="bomitemid_{{ $itemCat->mcat_id}}_1" name="bomitemid[]" value="">
                                                         <input type="hidden" id="itemcatid_{{ $itemCat->mcat_id}}_1" value="{{ $itemCat->mcat_id}}" name="itemcatid[]">
-                                                        <input type="hidden" id="itemid_{{ $itemCat->mcat_id}}_1" value="" name="itemid[]">
+                                                        <input type="hidden" id="itemid_{{ $itemCat->mcat_id}}_1" value="" class="itemid" name="itemid[]">
                                                         <input type="text" data-category="{{ $itemCat->mcat_id }}" data-type="item" name="item[]" id="item_{{ $itemCat->mcat_id}}_1" class="form-control autocomplete_txt items-{{ $itemCat->mcat_id}}" autocomplete="off" onClick="this.select()">
                                                     </td>
                                                     <td>
@@ -338,6 +339,7 @@
 <script>
     function saveBOM(savetype) {
         if(savetype =='manual' ) $(".app-loader").show();
+        if(savetype =='manual' ) $('#bom_status').val(1);
         var curStep = $(this).closest("#bomForm"),
           curInputs = curStep.find("input[type='text'],input[type='hidden'],input[type='number'],input[type='date'],input[type='checkbox'],input[type='radio'],textarea,select"),
           isValid = true;
@@ -348,57 +350,69 @@
         //       $(curInputs[i]).closest(".form-group").addClass("has-error");
         //    }
         // }
-        var form = $("#bomForm");
-        if (isValid){
-           $.ajax({
-              type: "POST",
-              url: '{{ url("/merch/style/bom-ajax-store") }}',
-              headers: {
-                  'X-CSRF-TOKEN': '{{ csrf_token() }}',
-              },
-              data: form.serialize(), // serializes the form's elements.
-              success: function(response)
-              {
-                
-                if(response.type === 'success'){
-                  if(savetype =='manual' ){
-                    $.notify(response.message, response.type);
-                  }else if(savetype =='cost'){
-                    $.notify('Saved '+savetype, response.type);
-                  }else{
-                    $.notify('Item has been '+savetype, response.type);
+        var flag = 0;
+        $('.itemid').each(function(i, obj) {
+          if($(this).val().length > 0){
+            flag = 1;
+            return;
+          }
+        });
+        if(flag === 1){
+          var form = $("#bomForm");
+          if (isValid){
+             $.ajax({
+                type: "POST",
+                url: '{{ url("/merch/style/bom-ajax-store") }}',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                },
+                data: form.serialize(), // serializes the form's elements.
+                success: function(response)
+                {
+                  
+                  if(response.type === 'success'){
+                    if(savetype =='manual' ){
+                      $.notify(response.message, response.type);
+                    }else if(savetype =='cost'){
+                      $.notify('Saved '+savetype, response.type);
+                    }else{
+                      $.notify('Item has been '+savetype, response.type);
+                    }
+                    var bomindex = $('input[name="bomitemid[]"]');
+                    $.each(response.value, function(i, el) {
+                        var bomid = bomindex[i].getAttribute('id');
+                        $("#"+bomid).val(el);
+                    });
+                     
                   }
-                  var bomindex = $('input[name="bomitemid[]"]');
-                  $.each(response.value, function(i, el) {
-                      var bomid = bomindex[i].getAttribute('id');
-                      $("#"+bomid).val(el);
-                  });
-                   
-                }
-                $(".app-loader").hide();
-              },
-              error: function (reject) {
-                $(".app-loader").hide();
-                // console.log(reject);
-                if( reject.status === 400) {
+                  $(".app-loader").hide();
+                },
+                error: function (reject) {
+                  $(".app-loader").hide();
+                  // console.log(reject);
+                  if( reject.status === 400) {
+                      var data = $.parseJSON(reject.responseText);
+                       $.notify(data.message, data.type);
+                  }else if(reject.status === 422){
                     var data = $.parseJSON(reject.responseText);
-                     $.notify(data.message, data.type);
-                }else if(reject.status === 422){
-                  var data = $.parseJSON(reject.responseText);
-                  var errors = data.errors;
-                  // console.log(errors);
-                  for (var key in errors) {
-                    var value = errors[key];
-                    $.notify(value[0], 'error');
+                    var errors = data.errors;
+                    // console.log(errors);
+                    for (var key in errors) {
+                      var value = errors[key];
+                      $.notify(value[0], 'error');
+                    }
+                     
                   }
-                   
                 }
-              }
-           });
+             });
+          }else{
+              $(".app-loader").hide();
+              $.notify("Some field are required", 'error');
+          }
         }else{
-            $(".app-loader").hide();
-            $.notify("Some field are required", 'error');
+          $(".app-loader").hide();
         }
+        
     };
 </script>
 @endpush

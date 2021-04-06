@@ -9,30 +9,33 @@
         font-size: 12px;
         font-weight: bold;
     }
-    #example th:nth-child(2) input, #example th:nth-child(4) input{
-      width: 70px !important;
-    }
     #example th:nth-child(3) input{
-      width: 90px !important;
-    } 
-    #example th:nth-child(5) input{
-      width: 120px !important;
+      width: 65px !important;
     }
-    #example th:nth-child(6) input{
+    #example th:nth-child(5) input{
+      width: 85px !important;
+    }
+    #example th:nth-child(4) input{
+      width: 140px !important;
+    } 
+    #example th:nth-child(6) select{
       width: 80px !important;
     }
-    #example th:nth-child(7) select{
+    #example th:nth-child(7) input{
       width: 80px !important;
     }
     #example th:nth-child(8) input{
-      width: 60px !important;
+      width: 120px !important;
     }
     #example th:nth-child(9) input{
-      width: 90px !important;
+      width: 60px !important;
+    }
+    #example th:nth-child(10){
+      width: 60px !important;
     }
 
-    #example th:nth-child(10) input{
-      width: 50px !important;
+    #example th:nth-child(11) input{
+      width: 70px !important;
     }
     
     .text-warning {
@@ -67,12 +70,12 @@
                 <div class="panel-body">
                   <div class="style_section">
                     <div class="col-xs-12 table-responsive worker-list">
-                        <table id="example" class="table table-striped table-bordered" style="display: block;overflow-x: auto;width: 100%;" border="1">
+                        <table id="example" class="table table-striped table-bordered table-head" style="display: block;overflow-x: auto;width: 100%;" border="1">
                             <thead>
                                 <tr>
                                     <th>SL</th>
                                     <th>Image</th>
-                                    <th>Style Type</th>
+                                    {{-- <th>Style Type</th> --}}
                                     <th>Product Type</th>
                                     <th>Style Reference 1</th>
                                     <th>Season</th>
@@ -80,7 +83,7 @@
                                     <th>Brand</th>
                                     <th>Style Reference 2</th>
                                     <th>Sewing</th>
-                                <!-- <th>WASH/pc</th> -->
+                                    <th>FOB</th>
                                     <th>Action</th>
                             </thead>
 
@@ -98,12 +101,12 @@
 <script type="text/javascript">
 
 $(document).ready(function(){ 
-    var searchable = [3,4,5,7,8,9];
-    var selectable = [6];
-    var exportColName = ['Image','Style Type','Product Type','Style Reference 1', 'Season', 'Buyer','Brand','Style Reference 2'];
+    var searchable = [2,3,4,6,7,8];
+    var selectable = [5];
+    var exportColName = ['Image','Product Type','Style Reference 1', 'Season', 'Buyer','Brand','Style Reference 2'];
     var dropdownList = {
 
-        '6' :[@foreach($buyerList as $e) <?php echo "\"$e\"," ?> @endforeach],
+        '5' :[@foreach($buyerList as $e) <?php echo "\"$e\"," ?> @endforeach],
         //'5' :[@foreach($seasonList as $e) <?php echo "\"$e\"," ?> @endforeach]
     };
     var exportCol = [0,1,2,3,4,5,6,7,8];
@@ -197,7 +200,7 @@ $(document).ready(function(){
           columns: [  
                 { data: 'DT_RowIndex', name: 'DT_RowIndex' },
                 {data: 'stl_img_link', name: 'stl_img_link'},
-                {data: 'stl_type',  name: 'stl_type'},
+                // {data: 'stl_type',  name: 'stl_type'},
                 {data: 'prd_type_name',  name: 'prd_type_name'},
                 {data: 'stl_no', name: 'stl_no'},
                 {data: 'se_name', name: 'se_name'},
@@ -205,6 +208,7 @@ $(document).ready(function(){
                 {data: 'br_name', name: 'br_name'},
                 {data: 'stl_product_name',  name: 'stl_product_name'},
                 {data: 'stl_smv', name: 'stl_smv'},
+                {data: 'agent_fob', name: 'agent_fob'},
                 {data: 'action', name: 'action', orderable: false, searchable: false}
             ],
 

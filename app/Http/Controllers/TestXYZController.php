@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Jobs\ProcessUnitWiseSalary;
 use App\Models\Employee;
 use App\Models\Hr\Benefits;
+use App\Models\Hr\Bills;
 use App\Models\Hr\HolidayRoaster;
 use App\Models\Hr\HrMonthlySalary;
 use App\Models\Hr\SalaryAddDeduct;
@@ -21,7 +22,7 @@ class TestXYZController extends Controller
 {
     public function rfidUpdate()
     {
-    	return $this->attSpecialCheck();
+    	return $this->bangleMissingCheck();
         return "";
     	$data = array();
     	$getBasic = DB::table('hr_as_basic_info')
@@ -354,6 +355,176 @@ class TestXYZController extends Controller
     		}
     	}
     	return ($ge);
+    }
+    public function tiffinBillEntry()
+    {
+        $data = ['492',
+            '483',
+            '491',
+            '8286',
+            '471',
+            '501',
+            '494',
+            '493',
+            '52',
+            '482',
+            '488',
+            '9251',
+            '11703',
+            '475',
+            '23',
+            '100',
+            '11454',
+            '40',
+            '80',
+            '76',
+            '65',
+            '73',
+            '72',
+            '8274',
+            '66',
+            '9203',
+            '9169',
+            '34',
+            '79',
+            '98',
+            '67',
+            '8278',
+            '46',
+            '9243',
+            '25',
+            '69',
+            '54',
+            '84',
+            '101',
+            '31',
+            '8154',
+            '22',
+            '8138',
+            '35',
+            '495',
+            '496',
+            '504',
+            '498',
+            '2799',
+            '2813',
+            '2815',
+            '2817',
+            '2822',
+            '2823',
+            '2825',
+            '2826',
+            '2827',
+            '2837',
+            '2846',
+            '2878',
+            '2879',
+            '2889',
+            '2895',
+            '2935',
+            '8254',
+            '8417',
+            '8858',
+            '9124',
+            '9270',
+            '10269',
+            '10657',
+            '11403',
+            '11588',
+            '12385',
+            '2812',
+            '2821',
+            '12406',
+            '12416',
+            '2790',
+            '2797',
+            '2802',
+            '2830',
+            '2839',
+            '2871',
+            '2876',
+            '2881',
+            '2887',
+            '2898',
+            '9123',
+            '10900',
+            '11339',
+            '2906',
+            '2910',
+            '2918',
+            '2872',
+            '2921',
+            '2930',
+            '2891',
+            '2806',
+            '2811',
+            '2832',
+            '2803',
+            '2875',
+            '2859',
+            '2851',
+            '12317',
+            '708',
+            '2783',
+            '621',
+            '592',
+            '679',
+            '11746',
+            '12402',
+            '725',
+            '3732',
+            '11497',
+            '2855',
+            '192',
+            '180',
+            '9072',
+            '12086',
+            '2786',
+            '2771',
+            '14412',
+            '14431',
+            '14258',
+            '14126',
+            '182',
+            '10664',
+            '2883',
+            '2938',
+            '9126',
+            '704'
+        ];
+        $getEmployee = DB::table('hr_as_basic_info AS b')
+        ->select('b.as_id', 'm.in_date')
+        ->join('hr_attendance_mbm AS m', 'b.as_id', 'm.as_id')
+        ->where('m.in_date', '2021-03-12')
+        ->whereIn('b.as_unit_id', [1,4,5])
+        ->whereIn('b.as_id', $data)
+        ->get();
+        // dd($getEmployee);
+        $getBill = DB::table('hr_bill')
+            ->where('bill_date', '2021-03-12')
+            ->get()
+            ->keyBy('as_id');
+        DB::beginTransaction();
+        try {
+            foreach ($getEmployee as $key => $value) {
+                Bills::updateOrCreate([
+                    'as_id' => $value->as_id,
+                    'bill_date' => '2021-03-12'
+                ],
+                [
+                    'bill_type' => ((isset($getBill[$value->as_id]) && $getBill[$value->as_id]->amount == 70)?2:1),
+                    'amount' => 70,
+                    'pay_status' => 0
+                ]);
+            }
+
+            DB::commit();
+            return 'success';
+        } catch (\Exception $e) {
+            DB::rollback();
+            return $e->getMessage();
+        }
+
     }
     
     public function tiffinBillCheck()
@@ -1504,6 +1675,19 @@ class TestXYZController extends Controller
         }
         return $dp;
         
+    }
+
+    public function bangleMissingCheck()
+    {
+        $getEmployee = DB::table('hr_as_basic_info AS b')
+        ->select('b.associate_id')
+        ->join('hr_employee_bengali AS a', 'a.hr_bn_associate_id', 'b.associate_id')
+        ->whereNull('a.hr_bn_associate_name')
+        ->where('as_unit_id', 3)
+        // ->where('as_status', 5)
+        ->get();
+
+        return ($getEmployee);
     }
 
 }

@@ -531,93 +531,76 @@ class NewStyleController extends Controller
   public function getData()
   {
     $b_permissions = auth()->user()->buyer_permissions();
-
+    $getBuyer = buyer_by_id();
+    $getSeason = season_by_id();
+    $getBrand = brand_by_id();
+    $getProductType = product_type_by_id();
     $data = DB::table('mr_style AS s')
-        ->select(
-            "s.stl_id",
-            "s.stl_type",
-            "s.prd_type_id",
-            "s.stl_img_link",
-            "b.b_id",
-            "b.b_name",
-            "s.stl_no",
-            "s.stl_product_name",
-            "s.stl_smv",
-            "br.br_name",
-            "s.mr_season_se_id",
-            "pt.prd_type_name",
-            "se.se_name"
-        )
-        ->leftJoin('mr_buyer AS b', 'b.b_id', '=', 's.mr_buyer_b_id')
-        ->leftJoin('mr_product_type AS pt', 'pt.prd_type_id', '=', 's.prd_type_id')
-        ->leftJoin('mr_season AS se', 'se.se_id', '=', 's.mr_season_se_id')
-        ->leftJoin('mr_brand AS br', 'br.br_id', '=', 's.mr_brand_br_id')
-        ->whereIn('b.b_id', $b_permissions)
+        ->select("s.stl_id", "s.stl_type", "s.prd_type_id", "s.stl_img_link", "s.mr_buyer_b_id", "s.mr_brand_br_id", "s.prd_type_id", "s.stl_no", "s.stl_product_name", "s.stl_smv", "s.mr_season_se_id", 's.stl_year', 's.bom_status', 's.costing_status')
+        ->where('s.stl_type', 'Development')
+        ->whereIn('s.mr_buyer_b_id', $b_permissions)
         ->orderBy('s.stl_id', 'desc')
         ->get();
+    $stlIds = collect($data)->pluck('stl_id');
+    $styleFOB = DB::table('mr_stl_bom_other_costing')
+    ->whereIn('mr_style_stl_id', $stlIds)
+    ->pluck('agent_fob', 'mr_style_stl_id');
 
     return DataTables::of($data)
         ->addIndexColumn()
         ->editColumn('stl_img_link', function ($data) {
-          if($data->stl_img_link == null){
-            $imageUrl = "/assets/files/style/empty_style.jpg";
-          }else{
-            $imageUrl = "/$data->stl_img_link";
-          }
+          $imageUrl = style_picture($data);
           return '<img src="'.url('/').$imageUrl.'" width="30" height="40">';
         })
 
-        ->editColumn('stl_type', function ($data) {
-            if ($data->stl_type == "Bulk")
-            {
-                return "<span class='text-primary'>$data->stl_type</span>";
-            }
-            else
-            {
-                return "<span class='text-warning'>$data->stl_type</span>";
-            }
+        // ->editColumn('stl_type', function ($data) {
+        //   $clas = ($data->stl_type == 'Bulk')?'text-primary':'text-warning';
+        //   return '<span class="'.$clas.'">'.$data->stl_type.'</span>';
+        // })
+        ->editColumn('b_name', function ($data) use ($getBuyer) {
+            return $getBuyer[$data->mr_buyer_b_id]->b_name??'';
         })
-        ->editColumn('b_name', function ($data) {
-            return ($data->b_name);
+        ->editColumn('br_name', function ($data) use ($getBrand) {
+            return $getBrand[$data->mr_brand_br_id]->br_name??'';
         })
-
+        ->editColumn('prd_type_name', function ($data) use ($getProductType) {
+            return $getProductType[$data->prd_type_id]->prd_type_name??'';
+        })
+        ->editColumn('se_name', function ($data) use ($getSeason) {
+            return $getSeason[$data->mr_season_se_id]->se_name.'-'.date('y', strtotime($data->stl_year))??'';
+        })
+        ->editColumn('agent_fob', function ($data) use ($styleFOB) {
+            return $styleFOB[$data->stl_id]??0;
+        })
         ->editColumn('action', function ($data) {
+            $return = '<div class="btn-group" >';
 
-
-            $return = "<div class=\"btn-group\" style=\"width: 150px; \">";
-
-                $return .= "<a href=".url('merch/style/style_new_edit/'.$data->stl_id)." class=\"btn btn-sm btn-primary\" data-toggle=\"tooltip\" title=\"Edit Style\" style=\"width:28px;\">
+              $return .= "<a href=".url('merch/style/style_new_edit/'.$data->stl_id)." class=\"btn btn-sm btn-primary\" data-toggle=\"tooltip\" title=\"Edit Style\">
                     <i class=\"ace-icon fa fa-pencil bigger-120\"></i>
-                </a>
-                <a href=".url('merch/style/style_profile/'.$data->stl_id)." class=\"btn btn-sm btn-info\" data-toggle=\"tooltip\" title=\"Show Style\">
-                    <i class=\"ace-icon fa fa-eye bigger-120\"></i>
-                </a>
-                <a href=".url('merch/style/delete/'.$data->stl_id)." class=\"btn btn-sm btn-danger\" onClick=\"return window.confirm('Are you sure?')\" title=\"Delete\" data-toggle=\"tooltip\" style=\"width:28px;\">
-                    <i class=\"ace-icon fa fa-trash bigger-120\"></i>
-                </a>";
-
-            if ($data->stl_type == "Bulk"){
-
-                $return .= "<a href='' class=\"btn btn-sm btn-warning\" data-toggle=\"tooltip\" title=\"Create Order\">
+              </a>";
+              // BOM
+              $bomStatus = ($data->bom_status == 1)?'Edit Style BOM':'Create Style BOM';
+              $bomClass = ($data->bom_status == 1)?'btn-primary':'btn-warning';
+              $return .= '<a href="'.url('merch/style/bom/'.$data->stl_id).'" class="btn btn-sm text-white '.$bomClass.'" data-toggle="tooltip" title="'.$bomStatus.'">
+                  <i class="las la-clipboard-list"></i>
+              </a>';
+              // Costing
+              $costingStatus = ($data->bom_status == 1)?'Edit Style Costing':'Create Style Costing';
+              $costingClass = ($data->costing_status == 1)?'btn-primary':'btn-warning';
+              $return .= '<a href="'.url('merch/style/costing/'.$data->stl_id).'" class="btn btn-sm text-white '.$costingClass.'" data-toggle="tooltip" title="'.$costingStatus.'">
+                  <i class="las la-file-invoice-dollar"></i>
+              </a>';
+              // process to order
+              if($data->bom_status == 1 && $data->costing_status == 1){
+                $return .= "<a href='' class=\"btn btn-sm btn-success\" data-toggle=\"tooltip\" title=\"Process To Order\">
                     <i class=\"ace-icon fa fa-archive bigger-120\"></i>
                 </a>";
-            }else{
-                $return .= "<a href=".url('merch/style/create_bulk/?style_no='.$data->stl_id)." class=\"btn btn-sm btn-warning\" data-toggle=\"tooltip\" title=\"Create Bulk\">
-                    <i class=\"ace-icon fa fa-archive bigger-120\"></i>
-                </a>";
-            }
+              }
             $return .= "</div>";
 
             return $return;
         })
-        ->rawColumns([
-            'stl_img_link',
-            'stl_type',
-            'se_name',
-            'b_name',
-            'stl_no',
-            'action'
-        ])
+        ->rawColumns(['stl_img_link','se_name','b_name','stl_no','action'])
         ->make(true);
   }
 
