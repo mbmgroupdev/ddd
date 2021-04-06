@@ -27,9 +27,9 @@
               </li>
               <li class="active">Style Costing</li>
               <li class="top-nav-btn">
-                <a href='{{ url("merch/style/bom/$style->stl_id") }}' class="btn btn-outline-primary btn-sm pull-right"> <i class="fa fa-plus"></i> Style BOM</a> &nbsp;
-                <a href="{{ url('merch/style/bom-list')}}" target="_blank" class="btn btn-outline-primary btn-sm pull-right"> <i class="fa fa-list"></i> Style BOM List</a> &nbsp;
-                <a href="{{ url('merch/style/costing-list')}}" target="_blank" class="btn btn-outline-success btn-sm pull-right"> <i class="fa fa-list"></i> Style Costing List</a>
+                <a href='{{ url("merch/style/bom/$style->stl_id") }}' class="btn btn-outline-primary btn-sm pull-right"> @if($style->bom_status == 1) <i class="fa fa-edit"></i> Style BOM @else <i class="fa fa-plus"></i> Style BOM @endif</a> &nbsp;
+                
+                <a href="{{ url('merch/style/style_list')}}" class="btn btn-outline-success btn-sm pull-right"> <i class="fa fa-list"></i> Style List</a>
                 </li>
             </ul><!-- /.breadcrumb -->
         </div>
@@ -48,6 +48,7 @@
                         <form class="form-horizontal" role="form" method="post" id="costingForm">
                             <input type="hidden" name="stl_id" value="{{ $style->stl_id }}">
                             <input type="hidden" id="change-flag" value="0">
+                            <input type="hidden" id="costing_status" name="costing_status" value="{{ $style->costing_status}}">
                             {{ csrf_field() }} 
                             <div class="panel-body">
                                 
@@ -291,17 +292,19 @@
 <script src="{{ asset('assets/js/costing.js')}}"></script>
 <script>
     function saveCosting(savetype) {
-        if(savetype =='manual' ) $(".app-loader").show();
-        var curStep = $(this).closest("#costingForm"),
-          curInputs = curStep.find("input[type='text'],input[type='hidden'],input[type='number'],input[type='date'],input[type='checkbox'],input[type='radio'],textarea,select"),
-          isValid = true;
-        $(".form-group").removeClass("has-error");
-        // for (var i = 0; i < curInputs.length; i++) {
-        //    if (!curInputs[i].validity.valid) {
-        //       isValid = false;
-        //       $(curInputs[i]).closest(".form-group").addClass("has-error");
-        //    }
-        // }
+      if(savetype =='manual' ) $(".app-loader").show();
+      if(savetype =='manual' ) $('#costing_status').val(1);
+      var curStep = $(this).closest("#costingForm"),
+        curInputs = curStep.find("input[type='text'],input[type='hidden'],input[type='number'],input[type='date'],input[type='checkbox'],input[type='radio'],textarea,select"),
+        isValid = true;
+      $(".form-group").removeClass("has-error");
+      // for (var i = 0; i < curInputs.length; i++) {
+      //    if (!curInputs[i].validity.valid) {
+      //       isValid = false;
+      //       $(curInputs[i]).closest(".form-group").addClass("has-error");
+      //    }
+      // }
+      if(parseFloat($("#totalfob").html()) > 0){
         var form = $("#costingForm");
         if (isValid){
            $.ajax({
@@ -358,6 +361,10 @@
               timer: 300
            });
         }
+      }else{
+        $(".app-loader").hide();
+      }
+        
     };
 </script>
 @endpush
