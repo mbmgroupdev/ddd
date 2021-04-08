@@ -28,7 +28,7 @@
       width: 110px !important;
     }
     #example th:nth-child(8) input{
-      width: 70px !important;
+      width: 80px !important;
     }
     
     .text-warning {
@@ -67,14 +67,14 @@
                                 <tr class="success">
                                     <th width="5%">SL.</th>
                                     <th width="10%">Unit</th>
-                                    <th width="8%">Buyer Name</th>
+                                    <th width="8%">Buyer</th>
                                     <th width="10%">Month-Year</th>
                                     <th width="10%">Product Type</th>
                                     <th width="5%">SAH</th>
                                     <th width="10%">Projection</th>
                                     <th width="10%">Confirmed</th>
                                     <th width="10%">Balance</th>
-                                    <th width="5%">Status</th>
+                                    {{-- <th width="5%">Status</th> --}}
                                     <th width="12%">Action</th>
                                 </tr>
                             </thead>
@@ -284,12 +284,11 @@ $(document).on('change', '.seasonChange', function(){
 });
 
 $(document).ready(function(){ 
-    var searchable = [3,6,7];
-    var selectable = [1,2,4];
-    var exportColName = ['Unit Name','Buyer Name','Unit','Month-Year', 'Product Type', 'SAH','Projection','Confirmed', 'Balance', 'Status'];
+    var searchable = [2,3,6,7];
+    var selectable = [1,4];
+    var exportColName = ['Unit Name','Buyer Name','Unit','Month-Year', 'Product Type', 'SAH','Projection','Confirmed', 'Balance'];
     var dropdownList = {
         '1' :[@foreach($unitList as $e) <?php echo "'$e'," ?> @endforeach],
-        '2' :[@foreach($buyerList as $e) <?php echo "'$e'," ?> @endforeach],
         '4' :[@foreach($prdtypList as $e) <?php echo "'$e'," ?> @endforeach]
     };
     var exportCol = [0,1,2,3,4,5,6,7];
@@ -390,7 +389,7 @@ $(document).ready(function(){
             { data: 'projection', name: 'projection' }, 
             { data: 'confirmed', name: 'confirmed' }, 
             { data: 'balance', name: 'balance' }, 
-            { data: 'status', name: 'status' }, 
+            // { data: 'status', name: 'status' }, 
             { data: 'action', name: 'action', orderable: false, searchable: false }
         ],
 

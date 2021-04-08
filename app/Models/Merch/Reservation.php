@@ -35,4 +35,11 @@ class Reservation extends Model
         ->where('prd_type_id', $value['prd_type_id'])
         ->first();
     }
+
+    public static function checkReservationStyleInfoWise($value)
+    {
+        return Reservation::where('b_id', $value['mr_buyer_b_id'])
+        ->where('prd_type_id', $value['prd_type_id'])
+        ->first();
+    }
 }

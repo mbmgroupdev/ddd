@@ -160,6 +160,9 @@
 								<th>Grade</th>
 								<th>Default Shift</th>
 								<th>Last Education</th>
+								<th>Present Address</th>
+								<th>Permanent Address</th>
+								<th>Permanent District</th>
 								<th>Salary</th>
 							</tr>
 						</thead>
@@ -213,8 +216,8 @@ $(document).ready(function()
 		
 
 		
-		var exportColName = ['Sl.','','Associate ID','Name','Designation','Oracle ID','RFID','Date of Join','Unit','Location',  'Floor','Line','Department','Section','Subsection','Employee Type','Gender','Date Of Birth','OT Status','Grade','Shift', 'Education', 'Salary'];
-      	var exportCol = [2,3,4,5,10,11,12,13,14,15];
+		var exportColName = ['Sl.','','Associate ID','Name','Designation','Oracle ID','RFID','Date of Join','Unit','Location',  'Floor','Line','Department','Section','Subsection','Employee Type','Gender','Date Of Birth','OT Status','Grade','Shift', 'Education', 'Present Address', 'Permanent Address', 'Permanent District', 'Salary'];
+      	var exportCol = [2,3,4,5,10,11,12,13,14,15, 16, 17, 18,19,20,21,22,23,24];
 
 	    var dt = $('#dataTables').DataTable({
 
@@ -270,9 +273,10 @@ $(document).ready(function()
 		        {data:'hr_designation_grade', name: 'hr_designation_grade'},
 		        {data:'as_shift_id', name: 'as_shift_id', orderable: false},
 		        {data:'education', name: 'education'},
+		        {data:'present_address', name: 'present_address'},
+		        {data:'permanent_address', name: 'permanent_address'},
+		        {data:'permanent_dist', name: 'permanent_dist'},
 		        {data:'salary', name: 'salary'}
-
-
 
 		    ],
 	        buttons: [   
@@ -300,7 +304,7 @@ $(document).ready(function()
                   header: true,
                   footer: false,
                   exportOptions: {
-                      columns: [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19, 20, 21,22],
+                      columns: [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19, 20, 21,22,23,24,25],
                       format: {
                           header: function ( data, columnIdx ) {
                               return exportColName[columnIdx];
@@ -381,6 +385,7 @@ $(document).ready(function()
 				                $(this).val()
 				            );
 				            column.search(val ? '^'+val+'$' : '', true, false ).draw();
+                        	column.search(val ? val.toUpperCase().replace("'S","").replace( /&/g, '&amp;' ): '', true, false ).draw();
 				            e.stopPropagation();
 				        });
 

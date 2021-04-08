@@ -104,6 +104,30 @@ $(function() {
             cache: true
         }
     });
+    $('select.bulk-style-no').select2({
+        placeholder: 'Select Style No',
+        ajax: {
+            url: baseurl+'merch/search/bulk-style-no',
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return { 
+                    keyword: params.term
+                }; 
+            },
+            processResults: function (data) { 
+                return {
+                    results:  $.map(data, function (item) {
+                        return {
+                            text: item.stl_no,
+                            id: item.stl_id
+                        }
+                    }) 
+                };
+            },
+            cache: true
+        }
+    });
     $('select.users').select2({
         ajax: {
             url: baseurl+'hr/adminstrator/user/search',
