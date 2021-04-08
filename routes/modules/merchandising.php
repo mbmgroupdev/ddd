@@ -158,6 +158,7 @@ Route::group(['prefix' => 'merch/order','namespace' => 'Merch\Orders'], function
 
 Route::group(['prefix' => 'merch','namespace' => 'Merch'], function(){
 	Route::resource('reservation', 'ReservationController');
+	Route::get('reservation/check-reservation', 'ReservationController@checkForOrder');
 	Route::get('reservation_list_data', 'ReservationController@getData');
 	Route::get('reservation/order-entry/{resid}', 'ReservationController@orderEntry');
 	Route::post('reservation/order-entry-store', 'ReservationController@orderStore');
@@ -225,6 +226,7 @@ Route::group(['prefix' => 'merch/search','namespace' => 'Merch\Search'], functio
 	Route::get('ajax-buyer-wise-season-search', 'AjaxSearchController@buyerWiseSeason');
 	Route::get('ajax-season-wise-style-search', 'AjaxSearchController@seasonWiseStyle');
 	Route::get('mbm-order-no', 'AjaxSearchController@orderNo');
+	Route::get('bulk-style-no', 'AjaxSearchController@bulkStyleNo');
 	Route::get('ajax-country-port-search', 'AjaxSearchController@port');
 
 });

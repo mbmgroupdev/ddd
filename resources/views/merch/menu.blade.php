@@ -71,8 +71,8 @@
          <ul id="order" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
             
             @if($user->can('Order Entry' ) || $user->hasRole('Super Admin'))
-            <li class="@if($segment2 == 'order' && $segment3=='order_create') active @endif">
-               <a href="{{ url('merch/order/order_list') }}"><i class="las la-folder-plus"></i> New Order</a>
+            <li class="@if($segment2 == 'orders' && $segment3=='create') active @endif">
+               <a href="{{ url('merch/orders/create') }}"><i class="las la-folder-plus"></i> New Order</a>
             </li>
             @endif
             @if($user->can('Order List' ) || $user->hasRole('Super Admin'))

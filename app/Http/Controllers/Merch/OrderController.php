@@ -36,9 +36,20 @@ class OrderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        if(isset($request->stl_id) && $request->stl_id != ''){
+            $style = Style::getStyleIdWiseStyleInfo($request->stl_id, ['stl_id', 'stl_no', 'prd_type_id', 'mr_season_se_id', 'stl_year', 'mr_brand_br_id', 'mr_buyer_b_id', 'unit_id', 'stl_product_name']);
+            $season = season_by_id();
+            $productType = product_type_by_id();
+            $brand = brand_by_id();
+            // $checkReservation = Reservation::checkReservationOrderEntry($style);
+            // dd($style);
+            $unitList = unit_by_id();
+            $buyerList = buyer_by_id();
+            return view('merch.orders.create_new', compact('style', 'season', 'productType', 'brand', 'unitList', 'buyerList'));
+        }
+        return view('merch.orders.create_new');
     }
 
     /**
