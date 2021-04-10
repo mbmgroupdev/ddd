@@ -129,8 +129,8 @@
                                             <td>{{ $subSection->hr_subsec_name_bn }}</td>
                                             <td>
                                             <div class="btn-group">
-                                                <a type="button" href="{{ url('hr/setup/subsection_update/'.$subSection->hr_subsec_id) }}" class='btn btn-xs btn-primary' data-toggle="tooltip" title="Edit"> <i class="ace-icon fa fa-pencil bigger-120"></i></a>
-                                                <a href="{{ url('hr/setup/subsection/'.$subSection->hr_subsec_id) }}" type="button" class='btn btn-xs btn-danger' data-toggle="tooltip" title="Delete" onclick="return confirm('Are you sure?')"><i class="ace-icon fa fa-trash bigger-120"></i></a>
+                                                {{-- <a type="button" href="{{ url('hr/setup/subsection_update/'.$subSection->hr_subsec_id) }}" class='btn btn-xs btn-primary' data-toggle="tooltip" title="Edit"> <i class="ace-icon fa fa-pencil bigger-120"></i></a> --}}
+                                                {{-- <a href="{{ url('hr/setup/subsection/'.$subSection->hr_subsec_id) }}" type="button" class='btn btn-xs btn-danger' data-toggle="tooltip" title="Delete" onclick="return confirm('Are you sure?')"><i class="ace-icon fa fa-trash bigger-120"></i></a> --}}
                                             </div>
                                         </td>
                                         </tr>
