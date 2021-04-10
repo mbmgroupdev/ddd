@@ -7,6 +7,7 @@ use App\Helpers\EmployeeHelper;
 use App\Http\Controllers\Controller;
 use App\Jobs\ProcessUnitWiseSalary;
 use App\Models\Employee;
+use App\Models\Hr\YearlyHolyDay;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
@@ -79,26 +80,40 @@ class HolidayRosterController extends Controller
 	        			}
 		        		
 		        		if($flag == 0){
+		        			$year = date('Y',strtotime($selectedDate));
+					        $month = date('m',strtotime($selectedDate));
+		        			// check shift employee and already holiday
+		        			$exFlag = 0;
+		        			if($getEmployee->shift_roaster_status == 0 && $type == 'Holiday'){
+					        	$getDayStatus = YearlyHolyDay::getCheckUnitDayWiseHolidayStatusMulti($getEmployee->as_unit_id, date('Y-m-d', strtotime($selectedDate)), [0]);
+		        				
+					        	if($getDayStatus != null){
+					        		
+					        		DB::table('holiday_roaster')->where('date',$selectedDate)->where('as_id',$associate_id)->delete();
+					        		$exFlag = 1;
+					        	}
+					        }
+					        if($exFlag == 0){
+					        	$exist = DB::table('holiday_roaster')->where('date',$selectedDate)->where('as_id',$associate_id)->first();
+					          	
+					          	if($exist){
+					            	DB::table('holiday_roaster')->where('date',$selectedDate)->where('as_id',$associate_id)->update([
+					              		'remarks'=>$type,
+					              		'comment'=>$comment
+					            	]);
+					          	}else{
+					            	DB::table('holiday_roaster')->insert([
+					             		'year'=>$year,
+					             		'month'=>$month,
+					             		'date'=>$selectedDate,
+					             		'as_id'=>$associate_id,
+					             		'remarks'=>$type,
+					             		'comment'=>$comment,
+					             		'status'=>1
+					            	]);
+					          	}
+					        }
 		        			
-		        			$exist = DB::table('holiday_roaster')->where('date',$selectedDate)->where('as_id',$associate_id)->first();
-				          	$year = date('Y',strtotime($selectedDate));
-				          	$month = date('m',strtotime($selectedDate));
-				          	if($exist){
-				            	DB::table('holiday_roaster')->where('date',$selectedDate)->where('as_id',$associate_id)->update([
-				              		'remarks'=>$type,
-				              		'comment'=>$comment
-				            	]);
-				          	}else{
-				            	DB::table('holiday_roaster')->insert([
-				             		'year'=>$year,
-				             		'month'=>$month,
-				             		'date'=>$selectedDate,
-				             		'as_id'=>$associate_id,
-				             		'remarks'=>$type,
-				             		'comment'=>$comment,
-				             		'status'=>1
-				            	]);
-				          	}
 
 				          	$today = date('Y-m-d');
 				          	$yearMonth = $year.'-'.$month;
@@ -153,7 +168,8 @@ class HolidayRosterController extends Controller
 	    } catch (\Exception $e) {
 	        DB::rollback();
 	        $bug = $e->getMessage();
-	        return "error";
+	        // return $bug;
+	        return ["error"];
 	    }
 
     }

@@ -175,7 +175,7 @@
 						    	</div>
 						    	<div class="col-sm-4">
 						    		<div class="form-group has-required has-float-label">
-								        <input type="month" class="form-control" id="month" name="order_year_month" placeholder=" Month-Year"required="required" value="{{ $yearMonth }}"autocomplete="off" />
+								        <input type="month" class="form-control" id="month" name="order_year_month" placeholder=" Month-Year"required="required" value="{{ $yearMonth }}"autocomplete="off" max="{{ $yearMonth }}" />
 								        <label for="month" >Order Year-Month </label>
 								    </div>
 						    	</div>
@@ -290,7 +290,9 @@
 	  $("#order-quantity").val(res_quantity).attr('max', res_quantity);
 	});
 	$(document).on('change', '#res-year-month', function(){
-		$("#month").val($(this).val());
+		$("#month").val($(this).val()).attr({
+		    max: $(this).val()
+		});
 	});
 </script>
 @endpush
