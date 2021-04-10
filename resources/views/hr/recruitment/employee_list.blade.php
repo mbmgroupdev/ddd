@@ -3,59 +3,59 @@
 @section('main-content')
 @push('css')
 <style type="text/css">
-	tr td:nth-child(2){
+	#dataTables tr td:nth-child(2){
 		display: block;
 	    width: 70px !important;
 	}
-	tr th:nth-child(3) input{
+	#dataTables tr th:nth-child(3) input{
 		width: 80px !important;
 	}
-	tr th:nth-child(6) input{
+	#dataTables tr th:nth-child(6) input{
 		width: 70px !important;
 	}
-	tr th:nth-child(7) input{
+	#dataTables tr th:nth-child(7) input{
 		width: 80px !important;
 	}
-	tr th:nth-child(8) input{
+	#dataTables tr th:nth-child(8) input{
 		width: 80px !important;
 	}
-	tr th:nth-child(9) select{
+	#dataTables tr th:nth-child(9) select{
 		width: 70px !important;
 	}
-	tr th:nth-child(10) input{
+	#dataTables tr th:nth-child(10) input{
 		width: 80px !important;
 	}
-	tr th:nth-child(11) select{
+	#dataTables tr th:nth-child(11) select{
 		width: 70px !important;
 	}
-	tr th:nth-child(12) select{
+	#dataTables tr th:nth-child(12) select{
 		width: 60px !important;
 	}
-	tr th:nth-child(13) select{
+	#dataTables tr th:nth-child(13) select{
 		width: 80px !important;
 	}
-	tr th:nth-child(14) select{
+	#dataTables tr th:nth-child(14) select{
 		width: 120px !important;
 	}
-	tr th:nth-child(15) select{
+	#dataTables tr th:nth-child(15) select{
 		width: 180px !important;
 	}
-	tr th:nth-child(16) select{
+	#dataTables tr th:nth-child(16) select{
 		width: 80px !important;
 	}
-	tr th:nth-child(17) select{
+	#dataTables tr th:nth-child(17) select{
 		width: 60px !important;
 	}
-	tr th:nth-child(19) select{
+	#dataTables tr th:nth-child(19) select{
 		width: 60px !important;
 	}
-	tr th:nth-child(18) input{
+	#dataTables tr th:nth-child(18) input{
 		width: 100px !important;
 	}
-	tr th:nth-child(20) input{
+	#dataTables tr th:nth-child(20) input{
 		width: 50px !important;
 	}
-	tr th:nth-child(21) input{
+	#dataTables tr th:nth-child(21) input{
 		width: 150px !important;
 	}
 </style>
@@ -72,6 +72,11 @@
 					<a href="#">Employee</a>
 				</li>
 				<li class="active">Employee List</li>
+				<li class="top-nav-btn">
+					<button class="btn btn-sm btn-primary" id="employee_summary" data-type="employee">
+						<i class="fa fa-grid"></i>
+					</button>
+				</li>
 			</ul><!-- /.breadcrumb -->
 		</div>
 
@@ -174,6 +179,10 @@
 		</div><!-- /.page-content -->
 	</div>
 </div>
+
+{{-- 	include summary --}}
+
+@include('hr.employee.summary.summary-modal')
 @push('js')
 <script type="text/javascript">
 $(document).ready(function()
@@ -384,8 +393,8 @@ $(document).ready(function()
 				            var val = $.fn.dataTable.util.escapeRegex(
 				                $(this).val()
 				            );
-				            column.search(val ? '^'+val+'$' : '', true, false ).draw();
-                        	column.search(val ? val.toUpperCase().replace("'S","").replace( /&/g, '&amp;' ): '', true, false ).draw();
+				            column.search(val ? ('^'+val.replace("'S","").replace( /&/g, '&amp;' )+'$'): '', true, true ).draw();
+
 				            e.stopPropagation();
 				        });
 

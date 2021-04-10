@@ -35,6 +35,7 @@ class ProcessUnitWiseSalary implements ShouldQueue
     public $year;
     public $asId;
     public $totalDay;
+    
     public function __construct($tableName, $month, $year, $asId, $totalDay)
     {
         $this->tableName = $tableName;
