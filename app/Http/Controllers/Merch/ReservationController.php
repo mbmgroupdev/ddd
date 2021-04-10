@@ -34,35 +34,7 @@ class ReservationController extends Controller
     }
     public function getData(){
 
-        if(auth()->user()->hasRole('merchandiser')){
-            $lead_asid = DB::table('hr_as_basic_info as b')
-                ->where('associate_id',auth()->user()->associate_id)
-                ->pluck('as_id');
-            $team_members = DB::table('hr_as_basic_info as b')
-                ->where('associate_id',auth()->user()->associate_id)
-                ->leftJoin('mr_excecutive_team','b.as_id','mr_excecutive_team.team_lead_id')
-                ->leftJoin('mr_excecutive_team_members','mr_excecutive_team.id','mr_excecutive_team_members.mr_excecutive_team_id')
-                ->pluck('member_id');
-            $team = array_merge($team_members->toArray(),$lead_asid->toArray());
-        }elseif (auth()->user()->hasRole('merchandising_executive')) {
-            $executive_associateId[] = auth()->user()->associate_id;
-
-            $teamid = DB::table('hr_as_basic_info as b')
-                ->where('associate_id',auth()->user()->associate_id)
-                ->leftJoin('mr_excecutive_team_members','b.as_id','mr_excecutive_team_members.member_id')
-                ->pluck('mr_excecutive_team_id');
-            $team_lead = DB::table('mr_excecutive_team')
-                ->whereIn('id',$teamid)
-                ->leftJoin('hr_as_basic_info as b','mr_excecutive_team.team_lead_id','b.as_id')
-                ->pluck('associate_id');
-            $team_members_associateId = DB::table('mr_excecutive_team_members')
-                                ->whereIn('mr_excecutive_team_id',$teamid)
-                                ->leftJoin('hr_as_basic_info as b','mr_excecutive_team_members.member_id','b.as_id')
-                               ->pluck('associate_id');
-            $team = array_merge($team_members_associateId->toArray(),$team_lead->toArray());
-        }else{
-            $team =[];
-        }
+        $team =[];
         $queueData = DB::table('mr_capacity_reservation AS cr')
             ->select(
                 'cr.*'
@@ -108,19 +80,6 @@ class ReservationController extends Controller
                 return $data->res_quantity - (isset($ordered[$data->id])?($ordered[$data->id]->qty??0):0);
 
             })
-            // ->addColumn('status', function ($data){
-            //     $yearMonth = $data->res_year.'-'.$data->res_month;
-            //     $resLastMonth = date('Y-m', strtotime('-1 month', strtotime($yearMonth)));
-            //     if(strtotime(date('Y-m')) > strtotime($resLastMonth)){
-            //       $rdata = '<button class="btn btn-xs btn-danger btn-round" rel="tooltip" data-tooltip="Date Expired" data-tooltip-location="top" >
-            //                 Closed</button>';
-
-            //    }else{
-            //         $rdata = '';
-            //    }
-            //    return $rdata;
-
-            // })
             ->addColumn('action', function($data) use ($ordered){
                 $yearMonth = $data->res_year.'-'.$data->res_month;
                 $resLastMonth = date('Y-m', strtotime('-1 month', strtotime($yearMonth)));
@@ -448,6 +407,25 @@ class ReservationController extends Controller
     public function checkForOrder(Request $request)
     {
         $input = $request->all();
-        return $input;
+        try {
+            // check reservation 
+            $reservation = Reservation::getReservationForOrder($input);
+            if($reservation != null){
+                $order = OrderEntry::getResIdWiseOrder($reservation->id);
+                $orderQty = $order->sum??0;
+                $balance = $reservation->res_quantity - $orderQty;
+                $reservationQty = $balance;
+                if($balance >= $input['order_qty']){
+                    $reservationQty = $balance;
+                }
+            }else{
+                $reservationQty = $input['order_qty'];
+            }
+            return view('merch.reservation.for_order', compact('reservation', 'input', 'reservationQty'));
+           
+        } catch (\Exception $e) {
+            // return $e->getMessage();
+            return 'error';
+        }
     }
 }

@@ -245,6 +245,15 @@
           var ret = ((keyCode >= 48 && keyCode <= 57) || specialKeys.indexOf(keyCode) != -1);
           return ret;
       }
+      $(document).ajaxError(function(event, jqxhr, settings, exception) {
+        if (exception == 'Unauthorized') {
+          $.notify("Your session has expired!", 'error');
+          setTimeout(function(){
+            window.location = '{{ url()->full() }}';
+          }, 1000)
+
+        }
+      });
     </script>
     <script src="{{ asset('assets/js/custom.js') }}"></script>
     <script src="{{ asset('js/custom.js') }}"></script>

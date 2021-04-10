@@ -66,7 +66,7 @@
       </li> --}}
       
       @if(auth()->user()->canany([]) || $user->hasRole('Super Admin'))
-      <li class="@if($segment2 == 'order') active @endif">
+      <li class="@if($segment2 == 'orders') active @endif">
          <a href="#order" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="lab la-first-order"></i><span>Order</span><i class="las la-angle-right iq-arrow-right"></i></a>
          <ul id="order" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
             
@@ -76,8 +76,8 @@
             </li>
             @endif
             @if($user->can('Order List' ) || $user->hasRole('Super Admin'))
-            <li class="@if($segment2 == 'order' && $segment3=='order_list') active @endif">
-               <a href="{{ url('merch/order/order_list') }}"><i class="las la-list-ol"></i> Order List</a>
+            <li class="@if($segment2 == 'orders' && $segment3=='') active @endif">
+               <a href="{{ url('merch/orders') }}"><i class="las la-list-ol"></i> Order List</a>
             </li>
             @endif
             

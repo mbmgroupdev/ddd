@@ -216,6 +216,24 @@ class PayslipController extends Controller
                 ->where('month', date('n', strtotime($input['month'])))
                 ->whereIn('associate_id', $employeeAssociates)
                 ->get()->keyBy('associate_id')->toArray();
+            // salary adjustment 
+            $salaryAdjust = DB::table('hr_salary_adjust_master AS m')
+            ->select(DB::raw("concat(IFNULL(d.date, ''),' ',IFNULL(d.comment, '')) as data"),'m.associate_id','d.*')
+            ->where('m.month', $input['month'])
+            ->where('m.year', $input['year'])
+            ->leftjoin('hr_salary_adjust_details AS d', 'm.id', 'd.salary_adjust_master_id')
+            ->get()
+            ->groupBy('associate_id', true)
+            ->map(function($q){
+                return collect($q)->groupBy('type')
+                        ->map(function($p){
+                            $s = (object) array();
+                            $s->sum = collect($p)->sum('amount');
+                            $s->days = implode(',', collect($p)->pluck('data')->toArray());
+
+                            return $s;
+                        });
+            });
             // employee designation
             $designation = designation_by_id();
             // return $designation;
@@ -248,7 +266,7 @@ class PayslipController extends Controller
             $pageHead['totalEmployees'] = $totalEmployees;
             $pageHead = (object)$pageHead;
                 
-            return view('hr.operation.salary.generate_pay_slip', compact('uniqueLocation', 'getSalaryList', 'pageHead','locationDataSet', 'info', 'salaryAddDeduct', 'designation', 'input'));
+            return view('hr.operation.salary.generate_pay_slip', compact('uniqueLocation', 'getSalaryList', 'pageHead','locationDataSet', 'info', 'salaryAddDeduct', 'designation', 'input', 'salaryAdjust'));
           
         } catch (\Exception $e) {
             $bug = $e->getMessage();

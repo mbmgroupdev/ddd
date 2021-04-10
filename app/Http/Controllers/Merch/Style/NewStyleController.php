@@ -545,7 +545,9 @@ class NewStyleController extends Controller
     $styleFOB = DB::table('mr_stl_bom_other_costing')
     ->whereIn('mr_style_stl_id', $stlIds)
     ->pluck('agent_fob', 'mr_style_stl_id');
-
+    $styleOrder = DB::table('mr_order_entry')
+    ->whereIn('mr_style_stl_id', $stlIds)
+    ->pluck('order_id', 'mr_style_stl_id');
     return DataTables::of($data)
         ->addIndexColumn()
         ->editColumn('stl_img_link', function ($data) {
@@ -572,12 +574,18 @@ class NewStyleController extends Controller
         ->editColumn('agent_fob', function ($data) use ($styleFOB) {
             return $styleFOB[$data->stl_id]??0;
         })
-        ->editColumn('action', function ($data) {
+        ->editColumn('action', function ($data) use ($styleOrder) {
             $return = '<div class="btn-group" >';
-
+            if(isset($styleOrder[$data->stl_id])){
+              $return .= "<a class=\"btn btn-sm btn-primary text-white\" data-toggle=\"tooltip\" title=\"Style Copy\">
+                    <i class=\"ace-icon fa fa-copy bigger-120\"></i>
+              </a>";
+            }else{
               $return .= "<a href=".url('merch/style/style_new_edit/'.$data->stl_id)." class=\"btn btn-sm btn-primary\" data-toggle=\"tooltip\" title=\"Edit Style\">
                     <i class=\"ace-icon fa fa-pencil bigger-120\"></i>
               </a>";
+            }
+              
               // BOM
               $bomStatus = ($data->bom_status == 1)?'Edit Style BOM':'Create Style BOM';
               $bomClass = ($data->bom_status == 1)?'btn-primary':'btn-warning';
