@@ -1425,6 +1425,7 @@ Route::post('hr/operation/partial-salary/disburse', 'Hr\Operation\VoucherControl
 
 Route::get('/hr/reports/monthly-ot-report', 'Hr\ReportController@monthlyOT');
 Route::get('/hr/reports/monthly-mmr-report', 'Hr\ReportController@monthlyMMR');
+Route::get('/hr/reports/unit-employee', 'Hr\ReportController@employee');
 
 // monthly analytics
 Route::get('hr/reports/monthly-analytics', 'Hr\Reports\AnalyticsController@index');

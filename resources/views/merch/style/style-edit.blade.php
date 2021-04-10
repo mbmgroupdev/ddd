@@ -889,7 +889,7 @@ $(document).ready(function()
                 if($(this).data('name').toLowerCase() == 'wash'){
                     $(".wash").show();
                 }
-                data += '<div class="col-sm-3 text-center pr-2 pl-0"><div class="opr-item"><img style="width:60px;" src="'+$(this).data('img-src')+'"><br><span>'+$(this).data('name')+'</span></div>';
+                data += '<div class="col-sm-2 text-center pr-2 pl-0"><div class="opr-item"><img style="width:45px;" src="'+$(this).data('img-src')+'"><br><span>'+$(this).data('name')+'</span></div>';
                 data+= '<input type="hidden" name="opr_id[]" value="'+$(this).val()+'">';
                 data+= '<input type="hidden" name="opr_type[]" value="'+$(this).data('content-type')+'"></div>';
             }

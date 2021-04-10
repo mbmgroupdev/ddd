@@ -155,8 +155,8 @@
                                         <td><img src='{{ url("$unit->hr_unit_authorized_signature") }}' alt="Signature" width="60" height="20"></td>
                                         <td>
                                             <div class="btn-group">
-                                                <a type="button" href="{{ url('hr/setup/unit_update/'.$unit->hr_unit_id) }}" class='btn btn-xs btn-primary' data-toggle="tooltip" title="Edit"> <i class="ace-icon fa fa-pencil bigger-120"></i></a>
-                                                <a href="{{ url('hr/setup/unit/'.$unit->hr_unit_id) }}" type="button" class='btn btn-xs btn-danger' data-toggle="tooltip" title="Delete" onclick="return confirm('Are you sure?')"><i class="ace-icon fa fa-trash bigger-120"></i></a>
+                                                {{-- <a type="button" href="{{ url('hr/setup/unit_update/'.$unit->hr_unit_id) }}" class='btn btn-xs btn-primary' data-toggle="tooltip" title="Edit"> <i class="ace-icon fa fa-pencil bigger-120"></i></a>
+                                                <a href="{{ url('hr/setup/unit/'.$unit->hr_unit_id) }}" type="button" class='btn btn-xs btn-danger' data-toggle="tooltip" title="Delete" onclick="return confirm('Are you sure?')"><i class="ace-icon fa fa-trash bigger-120"></i></a> --}}
                                             </div>
                                         </td>
                                     </tr>
