@@ -67,7 +67,7 @@
                                 $otHour = numberToTimeClockFormat($list->ot_hour);
                                 $ot = ((float)($list->ot_rate) * $list->ot_hour);
                                 $ot = number_format((float)$ot, 2, '.', '');
-                                $salaryAdd = ($list->salary_add_deduct_id == null) ? '0.00' : ($salaryAddDeduct[$list->as_id]['salary_add']??'0.00');
+                                //$salaryAdd = ($list->salary_add_deduct_id == null) ? '0.00' : ($salaryAddDeduct[$list->as_id]['salary_add']??'0.00');
                                 // $total = ($list->salary_payable + $ot + $list->attendance_bonus + $salaryAdd);
                                 $totalPayable = $totalPayable + $list->salary_payable;
                                 $attendanceBonus = $attendanceBonus + $list->attendance_bonus;
@@ -171,7 +171,14 @@
                                     <p>অতিরিক্ত কাজের মজুরি &nbsp;&nbsp;&nbsp;</p>
                                     <p>হাজিরা বোনাস&nbsp;&nbsp;&nbsp;</p>
                                     <p>প্রোডাকশন বোনাস&nbsp;&nbsp;&nbsp;</p>
-                                    <p>মজুরি সমন্বয়&nbsp;&nbsp;&nbsp;</p>
+                                    <p>মজুরি সমন্বয়&nbsp;&nbsp;&nbsp;
+                                        @if(isset($salaryAdjust[$list->as_id][2]))
+                                            ( {!! Custom::engToBnConvert($salaryAdjust[$list->as_id][2]->days??'') !!})
+                                        @endif
+                                    </p>
+                                    @if(isset($salaryAdjust[$list->as_id][3]))
+                                    <p>বর্ধিত বেতন সমন্বয়&nbsp;&nbsp;&nbsp;</p>
+                                    @endif
                                     <p>ছুটি সমন্বয়&nbsp;&nbsp;&nbsp;</p>
                                     <p style="border-top:1px solid #999">মোট প্রদেয়&nbsp;&nbsp;&nbsp;</p>
                                 </td>
@@ -198,7 +205,26 @@
                                     <p>&nbsp;&nbsp;&nbsp;{{ Custom::engToBnConvert($ot) }} =/টঃ</p>
                                     <p>&nbsp;&nbsp;&nbsp;{{ Custom::engToBnConvert($list->attendance_bonus) }} =/টঃ</p>
                                     <p>&nbsp;&nbsp;&nbsp;{{ Custom::engToBnConvert($list->production_bonus) }} =/টঃ</p>
-                                    <p>&nbsp;&nbsp;&nbsp;{{ Custom::engToBnConvert($salaryAdd) }} =/টঃ</p>
+                                    <p>&nbsp;&nbsp;&nbsp;
+                                        @php 
+                                            $salaryExtraAdd = 0;
+                                            if(array_key_exists($list->as_id, $salaryAddDeduct)){
+                                            
+                                                $salaryExtraAdd = $salaryAddDeduct[$list->as_id]->salary_add??0;
+                                            }
+                                            if(isset($salaryAdjust[$list->as_id][2])){
+                                                $salaryExtraAdd += $salaryAdjust[$list->as_id][2]->sum??0;
+                                            }
+                                        @endphp
+
+                                        {{ Custom::engToBnConvert(number_format($salaryExtraAdd,2)??'0.0') }}
+
+                                     =/টঃ</p>
+                                    @if(isset($salaryAdjust[$list->as_id][3]))
+                                    <p>&nbsp;&nbsp;&nbsp;
+                                        {{ Custom::engToBnConvert(number_format($salaryAdjust[$list->as_id][3]->sum, 2) ??'0.00') }}
+                                    =/টঃ</p>
+                                    @endif
                                     <p>&nbsp;&nbsp;&nbsp;{{ Custom::engToBnConvert($list->leave_adjust) }} =/টঃ</p>
                                     <p style="border-top:1px solid #999">&nbsp;&nbsp;&nbsp; {{ Custom::engToBnConvert(bn_money($list->total_payable)) }}=/টঃ</p>
                                 </td>

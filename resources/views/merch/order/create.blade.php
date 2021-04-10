@@ -72,15 +72,20 @@
 		          </div>
 		      	</div>
 		      	@if(isset($style) && $style != null)
+		      	@php
+		      		$yearMonth = date('Y-m', strtotime('+1 months'));
+		      	@endphp
 		      	<div class="row">
 		      		<div class="offset-1 col-10">
 						<form class="form-horizontal" id="orderForm" role="form" method="post" >
 						    <input type="hidden" name="_token" value="{{ csrf_token() }}" />
 						    <input type="hidden" id="page-type" value="reservation-store" />
-						    <input type="hidden" name="stl_id" value="{{ $style->stl_id}}">
+						    <input type="hidden" name="mr_style_stl_id" value="{{ $style->stl_id}}">
+						    <input type="hidden" name="mr_season_se_id" value="{{ $style->mr_season_se_id}}">
 						    <input type="hidden" name="unit_id" value="{{ $style->unit_id}}">
 						    <input type="hidden" name="mr_buyer_b_id" value="{{ $style->mr_buyer_b_id}}">
 						    <input type="hidden" name="prd_type_id" value="{{ $style->prd_type_id}}">
+						    <input type="hidden" name="res_id" value="{{ $reservation->id??0}}">
 						    <div class="row">
 						    	<div class="col-sm-4">
 						    		<div class="form-group has-required has-float-label select-search-group">
@@ -125,6 +130,38 @@
 						    </div>
 						    <div class="row">
 						    	<div class="col-sm-4">
+									<div class="form-group has-required has-float-label">
+								        <input type="month" class="form-control" id="res-year-month" name="res_year_month" placeholder=" Month-Year"required="required" value="{{ $yearMonth }}"autocomplete="off" />
+								        <label for="res-year-month" > Reservation Year-Month </label>
+								    </div>
+								</div>
+								<div class="col-sm-4">
+									<div class="form-group has-required has-float-label">
+								        <input type="number" id="res-quantity" name="res_quantity" placeholder="Enter Quantity" class="form-control sah_cal" autocomplete="off" value="0" onClick="this.select()" required min="0" />
+								        <label for="res-quantity" > Reservation Quantity </label>
+								    </div>
+								</div>
+								<div class="col-sm-4">
+									<div class="row">
+										<div class="col">
+											<div class="form-group has-required has-float-label">
+										        <input type="number" id="res-smv" name="res_sewing_smv" placeholder="Enter Sewing SMV " class="form-control sah_cal" autocomplete="off" value="0" step="any" onClick="this.select()" required min="0" />
+										        <label for="res-smv" > Sewing SMV </label>
+										    </div>
+										</div>
+										<div class="col">
+											<div class="form-group has-required has-float-label">
+										        <input type="number" id="sah" name="res_sah" placeholder="Enter SAH" class="form-control" autocomplete="off" step="any" required readonly value="0" min="0" />
+										        <label for="sah" > SAH </label>
+										    </div>
+										</div>
+									</div>
+								</div>
+								
+						    </div>	
+
+						    <div class="row">
+						    	<div class="col-sm-4">
 						    		<div class="form-group has-required has-float-label select-search-group">
 								      <input type="text" name="order_ref_no" class="form-control" id="reference-no" placeholder="Order Reference No" value="" required autocomplete="off" />
 								      <label for="reference-no" > Order Reference No </label>
@@ -136,22 +173,36 @@
 								        <label for="order-quantity" > Order Quantity </label>
 								    </div>
 						    	</div>
-						    	<div class="col-sm-2">
+						    	<div class="col-sm-4">
 						    		<div class="form-group has-required has-float-label">
-								        <input type="month" class="form-control" id="month" name="order_year_month" placeholder=" Month-Year"required="required" value="{{ date('Y-m') }}"autocomplete="off" />
+								        <input type="month" class="form-control" id="month" name="order_year_month" placeholder=" Month-Year"required="required" value="{{ $yearMonth }}"autocomplete="off" />
 								        <label for="month" >Order Year-Month </label>
 								    </div>
 						    	</div>
-						    	<div class="col-sm-2">
-						    		<div class="form-group">
-								        <button class="btn btn-primary pull-right" type="button" id="checkReservation">
-								            <i class="fa fa-search"></i> Reservation
-								        </button>
+						    	
+						    </div>
+						    <div class="row">
+					    		<div class="col-sm-4">
+						    		<div class="form-group has-required has-float-label">
+								        <input type="date" class="form-control" id="pcd-date" name="pcd" placeholder="Enter Planned Cut Date" required="required" value="{{ date('Y-m-d') }}"autocomplete="off" />
+								        <label for="pcd-date" > PCD </label>
 								    </div>
 						    	</div>
-						    </div>
-						    <div id="reservation-info"></div>
-						                                   
+						    	<div class="col-sm-4">
+						    		<div class="form-group has-required has-float-label">
+								        <input type="date" class="form-control" id="delivery-date" name="order_delivery_date" placeholder="Enter Delivery Date"required="required" value="{{ date('Y-m-d') }}"autocomplete="off" />
+								        <label for="delivery-date" > Delivery Date </label>
+								    </div>
+						    	</div>
+						    	<div class="col-sm-4">
+						    		<div class="form-group">
+								        <button class="btn btn-outline-success pull-right" type="button" id="saveBtn">
+								            <i class="fa fa-save"></i> Save
+								        </button>
+								    </div> 
+						    	</div>
+					    	</div>
+						                                
 						</form>
 					</div>
 		      	</div>
@@ -165,7 +216,7 @@
 </div>
 @push('js')
 <script type="text/javascript">
-	$(document).on('click', '#checkReservation', function(event) {
+	$(document).on('click', '#saveBtn', function(event) {
 	  
 	  var curStep = jQuery(this).closest("#orderForm"),
 	    curInputs = curStep.find("input[type='text'], input[type='number'],input[type='hidden'],input[type='date'], input[type='month'],input[type='checkbox'],input[type='radio'],textarea,select"),
@@ -183,26 +234,28 @@
 	  	$("#order-quantity").notify('Order quantity is at least more than 0', 'error');
 	  	return false;
 	  }
+
+	  // check reservation order qty
+	  if($("#order-quantity").val() > $("#res-quantity").val()){
+	  	$("#res-quantity").notify('Order quantity not longer reservation quantity', 'error');
+	  	return false;
+	  }
 	  $("#app-loader").show();
 	  if (isValid){
 	     $.ajax({
-	        type: 'GET',
-	        url: '{{ url("merch/check-reservation") }}',
+	        type: 'POST',
+	        url: '{{ url("merch/orders") }}',
 	        data: curInputs.serialize(), // serializes the form's elements.
 	        success: function(response)
 	        {
 	          $("#app-loader").hide();
 	          console.log(response)
-	          if(response !== 'error'){
-	          	$("#reservation-info").html(response)
-	          }else{
-	          	$.notify('Something Wrong!, please try again', 'error');
-	          }
-	          // if(response.type === 'success'){
-	          //   setTimeout(function(){
-	          //     window.location.href=response.url;
-	          //   }, 1000);
-	          // } 
+	          
+	          if(response.type === 'success'){
+	            setTimeout(function(){
+	              window.location.href=response.url;
+	            }, 1000);
+	          } 
 	        },
 	        error: function (reject) {
 	          $("#app-loader").hide();
@@ -225,6 +278,19 @@
 	      $("#app-loader").hide();
 	      $.notify("Some field are required", 'error');
 	  }
+	});
+	$(document).on('keyup', '.sah_cal', function(){
+	  var res_sewing_smv = parseInt($("#res-smv").val());
+	  var res_quantity= parseInt($("#res-quantity").val());
+	  res_sewing_smv = (isNaN(res_sewing_smv) || res_sewing_smv == '')?'0':res_sewing_smv;
+	  res_quantity = (isNaN(res_quantity) || res_quantity == '')?'0':res_quantity;
+	  var sah = parseFloat((res_sewing_smv*res_quantity)/60).toFixed(2);
+
+	  $("#sah").val(sah);
+	  $("#order-quantity").val(res_quantity).attr('max', res_quantity);
+	});
+	$(document).on('change', '#res-year-month', function(){
+		$("#month").val($(this).val());
 	});
 </script>
 @endpush

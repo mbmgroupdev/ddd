@@ -524,7 +524,13 @@ class EmployeeController extends Controller
                 'sec.hr_section_name',
                 'subsec.hr_subsec_name',
                 'b.as_shift_id',
-                'ben.ben_current_salary'
+                'ben.ben_current_salary',
+                'adv.emp_adv_info_per_vill',
+                'adv.emp_adv_info_per_po',
+                'adv.emp_adv_info_pres_house_no',
+                'adv.emp_adv_info_pres_road',
+                'adv.emp_adv_info_pres_po',
+                'adv.emp_adv_info_per_dist'
             ])
             ->leftJoin('hr_area AS a', 'a.hr_area_id', '=', 'b.as_area_id')
             ->leftJoin('hr_emp_type AS e', 'e.emp_type_id', '=', 'b.as_emp_type_id')
@@ -537,6 +543,7 @@ class EmployeeController extends Controller
             ->leftJoin('hr_section AS sec', 'sec.hr_section_id', '=', 'b.as_section_id')
             ->leftJoin('hr_subsection AS subsec', 'subsec.hr_subsec_id', '=', 'b.as_subsection_id')
             ->leftJoin('hr_benefits AS ben', 'b.associate_id', '=', 'ben.ben_as_id')
+            ->leftJoin('hr_as_adv_info AS adv', 'b.associate_id', '=', 'adv.emp_adv_info_as_id')
             ->where('b.as_status',1)
             ->whereIn('b.as_location', auth()->user()->location_permissions())
             ->where(function ($query) use ($request) {
@@ -558,7 +565,7 @@ class EmployeeController extends Controller
             })
             ->whereNotIn('as_id', auth()->user()->management_permissions())
             ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
-            ->orderBy('dg.hr_designation_position','ASC')
+            ->orderBy('ben.ben_current_salary','DESC')
             ->get();
 
         $perm = false;
@@ -574,6 +581,9 @@ class EmployeeController extends Controller
         ->from(DB::raw('(SELECT * FROM hr_education ORDER BY id DESC) t'))
         ->groupBy('t.education_as_id')
         ->pluck('education_degree_id_1', 'education_as_id');
+        // dis
+        $getDist = DB::table('hr_dist')
+        ->pluck('dis_name', 'dis_id');
 
         return Datatables::of($data)
             ->addIndexColumn()
@@ -624,6 +634,18 @@ class EmployeeController extends Controller
                 return $salary;
                 
             })
+            ->addColumn('permanent_address', function($user){
+                return $user->emp_adv_info_per_vill.', '.$user->emp_adv_info_per_po;
+                
+            })
+            ->addColumn('permanent_dist', function($user) use ($getDist){
+                return $getDist[$user->emp_adv_info_per_dist]??'';
+                
+            })
+            ->addColumn('present_address', function($user){
+                return $user->emp_adv_info_pres_house_no.', '.$user->emp_adv_info_pres_road.', '.$user->emp_adv_info_pres_po;
+                
+            })
             ->editColumn('action', function ($user) use($perm) {
 
                 $return = "<a href=".url('hr/recruitment/employee/show/'.$user->associate_id)." class=\"btn btn-sm btn-success\" data-toggle='tooltip' data-placement='top' title='' data-original-title='View Employee Profile'>
@@ -644,7 +666,10 @@ class EmployeeController extends Controller
                 'action',
                 'as_ot',
                 'education',
-                'salary'
+                'salary',
+                'present_address',
+                'permanent_address',
+                'permanent_dist'
             ])
             ->make(true);
     }

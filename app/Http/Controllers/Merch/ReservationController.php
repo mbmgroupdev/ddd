@@ -24,42 +24,17 @@ class ReservationController extends Controller
      */
     public function index()
     {
-        $unitList= Unit::whereIn('hr_unit_id', auth()->user()->unit_permissions())->pluck('hr_unit_name', 'hr_unit_id');
-        $buyerList= Buyer::whereIn('b_id', auth()->user()->buyer_permissions())->pluck('b_name', 'b_id');
-        $prdtypList= ProductType::pluck('prd_type_name', 'prd_type_id');
+        $unitList = unit_by_id();
+        $unitList = collect($unitList)->pluck('hr_unit_name', 'hr_unit_id');
+        $buyerList = buyer_by_id();
+        $buyerList = collect($buyerList)->pluck('b_name', 'b_id');
+        $prdtypList = product_type_by_id();
+        $prdtypList = collect($prdtypList)->pluck('prd_type_name', 'prd_type_id');
         return view('merch/reservation/index', compact('unitList', 'buyerList', 'prdtypList'));
     }
     public function getData(){
 
-        if(auth()->user()->hasRole('merchandiser')){
-            $lead_asid = DB::table('hr_as_basic_info as b')
-                ->where('associate_id',auth()->user()->associate_id)
-                ->pluck('as_id');
-            $team_members = DB::table('hr_as_basic_info as b')
-                ->where('associate_id',auth()->user()->associate_id)
-                ->leftJoin('mr_excecutive_team','b.as_id','mr_excecutive_team.team_lead_id')
-                ->leftJoin('mr_excecutive_team_members','mr_excecutive_team.id','mr_excecutive_team_members.mr_excecutive_team_id')
-                ->pluck('member_id');
-            $team = array_merge($team_members->toArray(),$lead_asid->toArray());
-        }elseif (auth()->user()->hasRole('merchandising_executive')) {
-            $executive_associateId[] = auth()->user()->associate_id;
-
-            $teamid = DB::table('hr_as_basic_info as b')
-                ->where('associate_id',auth()->user()->associate_id)
-                ->leftJoin('mr_excecutive_team_members','b.as_id','mr_excecutive_team_members.member_id')
-                ->pluck('mr_excecutive_team_id');
-            $team_lead = DB::table('mr_excecutive_team')
-                ->whereIn('id',$teamid)
-                ->leftJoin('hr_as_basic_info as b','mr_excecutive_team.team_lead_id','b.as_id')
-                ->pluck('associate_id');
-            $team_members_associateId = DB::table('mr_excecutive_team_members')
-                                ->whereIn('mr_excecutive_team_id',$teamid)
-                                ->leftJoin('hr_as_basic_info as b','mr_excecutive_team_members.member_id','b.as_id')
-                               ->pluck('associate_id');
-            $team = array_merge($team_members_associateId->toArray(),$team_lead->toArray());
-        }else{
-            $team =[];
-        }
+        $team =[];
         $queueData = DB::table('mr_capacity_reservation AS cr')
             ->select(
                 'cr.*'
@@ -105,19 +80,6 @@ class ReservationController extends Controller
                 return $data->res_quantity - (isset($ordered[$data->id])?($ordered[$data->id]->qty??0):0);
 
             })
-            ->addColumn('status', function ($data){
-                $yearMonth = $data->res_year.'-'.$data->res_month;
-                $resLastMonth = date('Y-m', strtotime('-1 month', strtotime($yearMonth)));
-                if(strtotime(date('Y-m')) > strtotime($resLastMonth)){
-                  $rdata = '<button class="btn btn-xs btn-danger btn-round" rel="tooltip" data-tooltip="Date Expired" data-tooltip-location="top" >
-                            Closed</button>';
-
-               }else{
-                    $rdata = '';
-               }
-               return $rdata;
-
-            })
             ->addColumn('action', function($data) use ($ordered){
                 $yearMonth = $data->res_year.'-'.$data->res_month;
                 $resLastMonth = date('Y-m', strtotime('-1 month', strtotime($yearMonth)));
@@ -125,22 +87,22 @@ class ReservationController extends Controller
                 if(strtotime(date('Y-m')) > strtotime($resLastMonth)){
                     $flag = 1;
                 }
-                $action_buttons= "<div>
-                    <a class=\"btn btn-xs btn-success add-new text-white\" data-id=\"$data->id\" data-type='Edit reservation' data-toggle=\"tooltip\" title=\"Edit Reservation\">
-                        <i class=\"ace-icon fa fa-pencil \"></i>
-                    </a> ";
+                $action_buttons= '<div>
+                    <a class="btn btn-sm btn-primary add-new text-white" data-id="'.$data->id.'" data-type="Edit reservation" data-toggle="tooltip" title="Edit Reservation">
+                        <i class="ace-icon fa fa-pencil"></i>
+                    </a>';
                     if($data->res_quantity > (isset($ordered[$data->id])?($ordered[$data->id]->qty??0):0) && $flag == 0) {
-                        $action_buttons.= "<a class=\"btn btn-xs add-new btn-primary text-white\" data-toggle='tooltip' title=\"Order Entry\" data-type='order' data-resid=\"$data->id\">
-                            <i class=\"ace-icon fa fa-cart-plus \"></i>
-                        </a>";
+                        $action_buttons.= '<a class="btn btn-sm add-new btn-success text-white" data-toggle="tooltip" title="Order Entry" data-type="order" data-resid="'.$data->id.'">
+                            <i class="ace-icon fa fa-cart-plus "></i>
+                        </a>';
                     }
-                    $action_buttons.= "<a class=\"btn btn-xs add-new btn-warning text-white\" data-toggle='tooltip' title=\"Order List\" data-type='Order List' data-resid=\"$data->id\">
-                            <i class=\"ace-icon fa fa-list \"></i>
-                        </a>";
+                    $action_buttons.= '<a class="btn btn-sm add-new btn-secondary text-white" data-toggle="tooltip" title="Order List" data-type="Order List" data-resid="'.$data->id.'">
+                            <i class="ace-icon fa fa-list"></i>
+                        </a>';
                 $action_buttons.= "</div>";
                 return $action_buttons;
             })
-            ->rawColumns(['hr_unit_name', 'b_name', 'month_year', 'prd_type_name', 'res_sah', 'projection', 'confirmed', 'balance','status','action'])
+            ->rawColumns(['hr_unit_name', 'b_name', 'month_year', 'prd_type_name', 'res_sah', 'projection', 'confirmed', 'balance','action'])
             ->make(true);
 
     }
@@ -439,6 +401,30 @@ class ReservationController extends Controller
             $getBrand = brand_by_id();
             return view('merch/reservation/order_list', compact('getOrder', 'getBuyer', 'getUnit', 'getSeason', 'getBrand', 'reservation', 'orderQty'));
         } catch (\Exception $e) {
+            return 'error';
+        }
+    }
+    public function checkForOrder(Request $request)
+    {
+        $input = $request->all();
+        try {
+            // check reservation 
+            $reservation = Reservation::getReservationForOrder($input);
+            if($reservation != null){
+                $order = OrderEntry::getResIdWiseOrder($reservation->id);
+                $orderQty = $order->sum??0;
+                $balance = $reservation->res_quantity - $orderQty;
+                $reservationQty = $balance;
+                if($balance >= $input['order_qty']){
+                    $reservationQty = $balance;
+                }
+            }else{
+                $reservationQty = $input['order_qty'];
+            }
+            return view('merch.reservation.for_order', compact('reservation', 'input', 'reservationQty'));
+           
+        } catch (\Exception $e) {
+            // return $e->getMessage();
             return 'error';
         }
     }

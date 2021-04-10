@@ -134,6 +134,24 @@ class AjaxSearchController extends Controller
         return response()->json($data);
     }
 
+    public function bulkStyleNo(Request $request)
+    {
+        $data = []; 
+        if($request->has('keyword')){
+            $search = $request->keyword;
+            $data = DB::table('mr_style as s')
+                ->select("s.stl_id", 's.stl_no')
+                ->whereIn('s.mr_buyer_b_id', auth()->user()->buyer_permissions())
+                ->where("s.stl_no", "LIKE" , "%{$search}%")
+                ->where('s.bom_status',1)
+                ->where('s.costing_status',1)
+                ->take(10)
+                ->get();
+        }
+
+        return response()->json($data);
+    }
+
     public function port(Request $request)
     {
         $getPort = DB::table('cm_port')

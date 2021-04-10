@@ -1,5 +1,5 @@
 @extends('merch.layout')
-@section('title', 'Reservation List')
+@section('title', 'Order List')
 @section('main-content')
 @push('css')
   <style>
@@ -9,28 +9,33 @@
         font-size: 12px;
         font-weight: bold;
     }
-    #example th:nth-child(2) select{
-      width: 120px !important;
+    #example th:nth-child(2) input{
+      width: 90px !important;
     }
-    #example th:nth-child(3) select{
-      width: 80px !important;
+    #example th:nth-child(3) input{
+      width: 70px !important;
     } 
+    #example th:nth-child(4) select{
+      width: 100px !important;
+    }
     #example th:nth-child(5) select{
-      width: 80px !important;
+      width: 60px !important;
     }
-    #example th:nth-child(6) select{
-      width: 80px !important;
+    #example th:nth-child(6) input{
+      width: 60px !important;
     }
-    /*#example th:nth-child(7) select{
-      width: 80px !important;
-    }*/
     #example th:nth-child(7) input{
-      width: 110px !important;
+      width: 70px !important;
     }
     #example th:nth-child(8) input{
-      width: 80px !important;
+      width: 100px !important;
     }
-    
+    #example th:nth-child(9) input{
+      width: 60px !important;
+    }
+    #example th:nth-child(10) input{
+      width: 60px !important;
+    }
     .text-warning {
         color: #c49090!important;
     }
@@ -48,12 +53,12 @@
                   <a href="#">Merchandising</a>
               </li>
               <li>
-                  <a class="active">Reservation List</a>
+                  <a href="#">Order</a>
               </li>
-              <li class="top-nav-btn">
-                <a class="btn btn-sm btn-primary add-new text-white" data-type="Add reservation"><i class="las la-plus"></i> New Reservation</a>
-                <a href="{{ url('merch/order/order_list')}}" class="btn btn-sm btn-success text-white" data-type="reservation"><i class="las la-list"></i> Order List</a>
-              </li>
+              <li class="active">Order List</li>
+              {{-- <li class="top-nav-btn">
+                <a class="btn btn-sm btn-primary" href="#"><i class="las la-plus"></i> New Order</a>
+              </li> --}}
           </ul><!-- /.breadcrumb -->
 
       </div>
@@ -66,16 +71,17 @@
                             <thead>
                                 <tr class="success">
                                     <th width="5%">SL.</th>
+                                    <th width="10%">Internal Order No</th>
+                                    <th width="10%">Order Ref. No</th>
                                     <th width="10%">Unit</th>
-                                    <th width="8%">Buyer</th>
-                                    <th width="10%">Month-Year</th>
-                                    <th width="10%">Product Type</th>
-                                    <th width="5%">SAH</th>
-                                    <th width="10%">Projection</th>
-                                    <th width="10%">Confirmed</th>
-                                    <th width="10%">Balance</th>
-                                    {{-- <th width="5%">Status</th> --}}
-                                    <th width="12%">Action</th>
+                                    <th width="10%">Buyer</th>
+                                    <th width="10%">Brand</th>
+                                    <th width="10%">Season</th>
+                                    <th width="10%">Style No</th>
+                                    <th width="10%">Quantity</th>
+                                    <th width="10%">Delivery Date</th>
+                                    <th width="10%">FOB</th>
+                                    <th width="8%">Action</th>
                                 </tr>
                             </thead>
 
@@ -90,24 +96,17 @@
 @push('js')
 
 <script type="text/javascript">
-var loaderContent = '<div class="animationLoading"><div id="container-loader"><div id="one"></div><div id="two"></div><div id="three"></div></div><div id="four"></div><div id="five"></div><div id="six"></div></div>';
 $(document).on('click', '.add-new', function() {
     type = $(this).data('type');
     $('#right_modal_item').modal('show');
     $('#modal-title-right').html(type);
     $("#content-result").html(loaderContent);
     var url = '';
-    if(type === 'Add reservation'){
-      url = '/merch/reservation/create';
-    }else if(type === 'Edit reservation'){
-      var id = $(this).data('id');
-      url = '/merch/reservation/'+id+'/edit';
-    }else if(type === 'Order List'){
-      var id = $(this).data('resid');
-      url = '/merch/reservation/order-list/'+id;
-    }else if(type === 'order'){
-      var resId = $(this).data('resid');
-      url = '/merch/reservation/order-entry/'+resId;
+    var id = $(this).data('orderid');
+    if(type === 'Order Edit'){
+      url = '/merch/orders/'+id+'/edit';
+    }else if(type === 'Order View'){
+      url = '/merch/orders/'+id;
     }
     $.ajax({
         type: "GET",
@@ -130,7 +129,6 @@ $(document).on('click', '.add-new', function() {
     });
     
 });
-
 $(document).on('click', '#itemBtn', function(event) {
   $("#app-loader").show();
   var curStep = jQuery(this).closest("#itemForm"),
@@ -146,20 +144,22 @@ $(document).on('click', '#itemBtn', function(event) {
   }
   var verb = 'POST';
   var pageType = $("#page-type").val();
-  if(pageType === 'reservation-store'){
-    var url = '{{ route("reservation.store")}}';
-  }else if(pageType === 'reservation-update'){
-    var resId = $("#res-id").val();
+  if(pageType === 'order-update'){
+    var orderId = $("#order-id").val();
     var resQty = $("#res-quantity").val();
-    var orderQty = $("#order-qty").val();
-    if(parseFloat(orderQty) > parseFloat(resQty)){
-      $("#res-quantity").notify('This Reservation Already Order Entry '+orderQty, 'error');
+    var poQty = $("#po-qty").val();
+    var orderQty = $("#order_qty").val();
+    if(parseFloat(poQty) > parseFloat(orderQty)){
+      $("#order_qty").notify('Total PO Quantity '+poQty, 'error');
       $("#app-loader").hide();
       return false;
     }
-    var url = '/merch/reservation/'+resId;
-  }else if(pageType === 'order-store'){
-    var url = '{{ url("merch/reservation/order-entry-store")}}';
+    if(parseFloat(orderQty) > parseFloat(resQty)){
+      $("#order_qty").notify('Reservation balance '+resQty, 'error');
+      $("#app-loader").hide();
+      return false;
+    }
+    var url = '/merch/orders/'+orderId;
   }
   
   if (isValid){
@@ -201,109 +201,30 @@ $(document).on('click', '#itemBtn', function(event) {
   }
 });
 
-$(document).on('keyup', '.sah_cal', function(){
-  var res_sewing_smv = parseInt($("#res-smv").val());
-  var res_quantity= parseInt($("#res-quantity").val());
-  res_sewing_smv = (isNaN(res_sewing_smv) || res_sewing_smv == '')?'0':res_sewing_smv;
-  res_quantity = (isNaN(res_quantity) || res_quantity == '')?'0':res_quantity;
-  var sah = parseFloat((res_sewing_smv*res_quantity)/60).toFixed(2);
-
-  $("#sah").val(sah);
-  $("#order-quantity").val(res_quantity).attr('max', res_quantity);
-});
-
-$(document).on('change', '#order-check:checkbox', function(){
-    if ($(this).is(':checked')) {
-      $("#season").attr('required', true);
-      $("#reference-no").attr('required', true);
-      $("#style-no").attr('required', true);
-      $("#order-entry-section").show();
-    }else{
-      $("#season").removeAttr('required');
-      $("#reference-no").removeAttr('required');
-      $("#style-no").removeAttr('required').val('').change();
-      $("#order-entry-section").hide();
-
-    }
-});
-
-$(document).on('change', '.buyerChange', function(){
-  $('#season').empty().select2({data: [{id: '', text: ' Select Season'}]}).removeAttr('disabled');
-  $('#style-no').empty().select2({data: [{id: '', text: ' Select Style'}]}).removeAttr('disabled');
-  
-  if($(this).val() !== null && $(this).val() !== ''){
-    var buyerid = $(this).val();
-    $.ajax({
-        type: "GET",
-        url: '{{ url("/merch/search/ajax-buyer-wise-season-search") }}',
-        data: {
-            b_id: $(this).val()
-        },
-        success: function(response)
-        {
-          // console.log(response)
-          if(response.length !== 0){
-            $('#season').select2({
-                data: response
-            }).removeAttr('disabled');
-          }
-        },
-        error: function (reject) {
-          $.notify(reject, 'error')
-        }
-    });
-  }
-});
-
-$(document).on('change', '.seasonChange', function(){
-  $('#style-no').empty().select2({data: [{id: '', text: ' Select Style'}]}).removeAttr('disabled');
-  var buyerid = $('#buyer').val();
-  if($(this).val() !== null && $(this).val() !== '' && buyerid !== ''){
-    $.ajax({
-        type: "GET",
-        url: '{{ url("/merch/search/ajax-season-wise-style-search") }}',
-        data: {
-          mr_buyer_b_id: buyerid,
-          mr_season_se_id: $(this).val(),
-          stl_type: 'Bulk'
-        },
-        success: function(response)
-        {
-          // console.log(response)
-          if(response.length !== 0){
-            $('#style-no').select2({
-                data: response
-            }).removeAttr('disabled');
-          }
-        },
-        error: function (reject) {
-          $.notify(reject, 'error')
-        }
-    });
-  }
-});
-
 $(document).ready(function(){ 
-    var searchable = [2,3,6,7];
-    var selectable = [1,4];
-    var exportColName = ['Unit Name','Buyer Name','Unit','Month-Year', 'Product Type', 'SAH','Projection','Confirmed', 'Balance'];
+    var searchable = [1,2,5,6,7,8,9];
+    var selectable = [3,4,];
+    var exportColName = ['Order No','Order Reference No','Unit','Buyer', 'Brand', 'Season','Style No','Order Qty.', 'Delivery Date', 'FOB'];
     var dropdownList = {
-        '1' :[@foreach($unitList as $e) <?php echo "'$e'," ?> @endforeach],
-        '4' :[@foreach($prdtypList as $e) <?php echo "'$e'," ?> @endforeach]
+        '3' :[@foreach($unitList as $e) <?php echo "'$e'," ?> @endforeach],
+        '4' :[@foreach($buyerList as $e) <?php echo "'$e'," ?> @endforeach],
+        {{-- '5' :[@foreach($brandList as $e) <?php echo "'$e'," ?> @endforeach], --}}
+        {{-- '5' :[@foreach($seasonList as $e) <?php echo "'$e'," ?> @endforeach], --}}
+        
     };
-    var exportCol = [0,1,2,3,4,5,6,7];
+    var exportCol = [0,1,2,3,4,5,6,7,8];
     var dt = $('#example').DataTable({
         order: [], //reset auto order
         processing: true,
         language: {
-          processing: '<i class="fa fa-spinner fa-spin orange bigger-500" style="font-size:60px;margin-top:150px;z-index:100;"></i>'
+          processing: '<i class="fa fa-spinner fa-spin orange bigger-500" style="font-size:60px;margin-top:50px;z-index:100;"></i>'
         },
         responsive: true,
         serverSide: true,
         pagingType: "full_numbers", 
         ajax: {
-           url: '{!! url("merch/reservation_list_data") !!}',
-           type: "GET",
+           url: '{!! url("merch/orders-list-data") !!}',
+           type: "POST",
            headers: {
                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
            } 
@@ -381,15 +302,16 @@ $(document).ready(function(){
         ],
         columns: [  
             { data: 'DT_RowIndex', name: 'DT_RowIndex' },
-            { data: 'hr_unit_name', name: 'hr_unit_name' }, 
-            { data: 'b_name',  name: 'b_name' }, 
-            { data: 'month_year', name: 'month_year' }, 
-            { data: 'prd_type_name', name: 'prd_type_name' }, 
-            { data: 'res_sah', name: 'res_sah' }, 
-            { data: 'projection', name: 'projection' }, 
-            { data: 'confirmed', name: 'confirmed' }, 
-            { data: 'balance', name: 'balance' }, 
-            // { data: 'status', name: 'status' }, 
+            { data: 'order_code', name: 'order_code' },
+            { data: 'order_ref_no', name: 'order_ref_no' },
+            { data: 'hr_unit_name', name: 'hr_unit_name' },
+            { data: 'b_name',  name: 'b_name' },
+            { data: 'br_name', name: 'br_name' },
+            { data: 'se_name', name: 'se_name' },
+            { data: 'stl_no', name: 'stl_no' },
+            { data: 'order_qty', name: 'order_qty' },
+            { data: 'order_delivery_date', name: 'order_delivery_date' },
+            { data: 'fob', name: 'fob' },
             { data: 'action', name: 'action', orderable: false, searchable: false }
         ],
 
@@ -436,6 +358,12 @@ $(document).ready(function(){
    }); 
 
 }); 
+@if(!empty(Request::get('view')))
+var orderId = "{{ Request::get('view') }}";
+setTimeout(function(){
+  $("#order-view-"+orderId+".add-new").click();
+}, 1000)
+@endif
 </script>
 @endpush
 @endsection

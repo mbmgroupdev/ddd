@@ -3,7 +3,13 @@
 namespace App\Http\Controllers\Merch;
 
 use App\Http\Controllers\Controller;
+use App\Models\Merch\BomCosting;
+use App\Models\Merch\BomOtherCosting;
+use App\Models\Merch\OperationCost;
+use App\Models\Merch\OrderBOM;
+use App\Models\Merch\OrderBomOtherCosting;
 use App\Models\Merch\OrderEntry;
+use App\Models\Merch\OrderOperationNCost;
 use App\Models\Merch\PurchaseOrder;
 use App\Models\Merch\Reservation;
 use App\Models\Merch\Style;
@@ -13,6 +19,10 @@ use Yajra\DataTables\DataTables;
 
 class OrderController extends Controller
 {
+    public function __construct()
+    {
+        ini_set('zlib.output_compression', 1);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -25,9 +35,7 @@ class OrderController extends Controller
         $buyerList= buyer_by_id();
         $buyerList= collect($buyerList)->pluck('b_name', 'b_id');
         $brandList= brand_by_id();
-        $seasonList= season_by_id();
-        $seasonList= collect($seasonList)->pluck('se_name', 'se_id');
-        return view("merch/orders/order_list", compact('unitList','buyerList','brandList','seasonList'));
+        return view("merch/order/list", compact('unitList','buyerList','brandList'));
     }
 
 
@@ -36,9 +44,25 @@ class OrderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        if(isset($request->stl_id) && $request->stl_id != ''){
+            $style = Style::getStyleIdWiseStyleInfo($request->stl_id, ['stl_id', 'stl_no', 'prd_type_id', 'mr_season_se_id', 'stl_year', 'mr_brand_br_id', 'mr_buyer_b_id', 'unit_id', 'stl_product_name']);
+            $season = season_by_id();
+            $productType = product_type_by_id();
+            $brand = brand_by_id();
+            $unitList = unit_by_id();
+            $buyerList = buyer_by_id();
+            $reservation = Reservation::getReservationForOrder((array)$style);
+            if($reservation != null){
+                $order = OrderEntry::getResIdWiseOrder($reservation->id);
+                $orderQty = $order->sum??0;
+                $reservation->balance = $reservation->res_quantity - $orderQty;
+            }
+
+            return view('merch.order.create', compact('style', 'season', 'productType', 'brand', 'unitList', 'buyerList', 'reservation'));
+        }
+        return view('merch.order.create');
     }
 
     /**
@@ -49,7 +73,104 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $input = $request->all();
+        $data['type'] = 'error';
+        
+        $input['created_by'] = auth()->user()->id;
+        $input['hr_unit_id'] = $input['unit_id'];
+        $input['b_id'] = $input['mr_buyer_b_id'];
+        // return $input;
+        DB::beginTransaction();
+        try {
+            if($input['res_id'] == 0){
+                // create reservation
+                
+                $resYearMonth = explode('-', $input['res_year_month']);
+                $input['res_month'] = $resYearMonth[1];
+                $input['res_year'] = $resYearMonth[0];
+                
+                $input['res_id'] = Reservation::create($input)->id;
+            }else{
+                // check reservation exists
+                $getRes = Reservation::checkReservationExists($input);
+                if($getRes == true){
+                    $data['message'] = "Reservation already exists.";
+                    return response()->json($data);
+                }
+            }
+            
+            // check & create order base on mr_style_stl_id
+            if($input['mr_style_stl_id'] == null && $input['mr_style_stl_id'] == ''){
+                DB::rollback();
+                $data['message'] = "Style Not Found!";
+                return response()->json($data);
+            }
+            // check order qty > reservation qty
+            if($input['order_qty'] > $input['res_quantity']){
+                DB::rollback();
+                $data['message'] = "Order quantity can't large then Reservation Quantity!";
+                return response()->json($data);
+            }
+            $ordYearMonth = explode('-', $input['order_year_month']);
+            $input['order_month'] = $ordYearMonth[1];
+            $input['order_year'] = $ordYearMonth[0];
+            $input['bom_status'] = 1;
+            $input['costing_status'] = 1;
+            // order entry
+            $input['order_code'] = make_order_number($input, $input['order_year']);
+            
+            $checkOrder = OrderEntry::getCheckOrderExists($input);
+            if($checkOrder == true){
+                DB::rollback();
+                $data['message'] = "Order Already Exists";
+                return response()->json($data);
+            }
+
+            $orderId = OrderEntry::create($input)->order_id;
+            // style BOM & Costing
+            $stlBomCosting = BomCosting::getStyleWiseItem($input['mr_style_stl_id'], 'all');
+
+            // Order BOM create
+            $orderBOMCosting = collect($stlBomCosting)->map(function($q) use ($orderId) {
+                $bomNCosting = collect($q)->toArray();
+                $bomNCosting['stl_bom_id'] = $bomNCosting['id'];
+                $bomNCosting['order_id'] = $orderId;
+                $bomNCosting['created_by'] = auth()->user()->id;
+                unset($bomNCosting['id']);
+                return $bomNCosting;
+            });
+            OrderBOM::insert($orderBOMCosting->toArray());
+            // style Special operation 
+            $getStlSP = OperationCost::getStyleIdWiseSpOperationInfo($input['mr_style_stl_id'], 2)->toArray();
+
+            // order Special operation create
+            $orderSP = collect($getStlSP)->map(function($q) use ($input, $orderId){
+                $sp = collect($q)->toArray();
+                $sp['mr_order_entry_order_id'] = $orderId;
+                unset($sp['style_op_id']);
+                return $sp;
+            });
+            OrderOperationNCost::insert($orderSP->toArray());
+            // style other costing
+            $styleOtherCosting = BomOtherCosting::getStyleIdWiseStyleOtherCosting($input['mr_style_stl_id']);
+            // order other costing create
+            $ordOtherCosting = collect($styleOtherCosting)->toArray();
+            $ordOtherCosting['mr_order_entry_order_id'] = $orderId;
+            unset($ordOtherCosting['id']);
+
+            OrderBomOtherCosting::insert($ordOtherCosting);
+
+            $data['message'] = "Order Entry Successfully.";
+            $data['type'] = 'success';
+            $data['url'] = url("/merch/orders?view=$orderId");
+            DB::commit();
+            return response()->json($data);
+        } catch (\Exception $e) {
+            DB::rollback();
+            $bug = $e->getMessage();
+            $data['message'] = $bug;
+            return response()->json($data);
+        }
     }
 
     /**
@@ -152,68 +273,22 @@ class OrderController extends Controller
 
     public function list()
     {
-        if(auth()->user()->hasRole('merchandiser')){
-            $lead_associateId[] = auth()->user()->associate_id;
-            $team_members = DB::table('hr_as_basic_info as b')
-                ->where('associate_id',auth()->user()->associate_id)
-                ->leftJoin('mr_excecutive_team','b.as_id','mr_excecutive_team.team_lead_id')
-                ->leftJoin('mr_excecutive_team_members','mr_excecutive_team.id','mr_excecutive_team_members.mr_excecutive_team_id')
-                ->pluck('member_id');
-            $team_members_associateId = DB::table('hr_as_basic_info as b')
-                                    ->whereIn('as_id',$team_members)
-                                    ->pluck('associate_id');
-            $team = array_merge($team_members_associateId->toArray(),$lead_associateId);
-
-        }elseif (auth()->user()->hasRole('merchandising_executive')) {
-           $executive_associateId[] = auth()->user()->associate_id;
-
-            $teamid = DB::table('hr_as_basic_info as b')
-                ->where('associate_id',auth()->user()->associate_id)
-                ->leftJoin('mr_excecutive_team_members','b.as_id','mr_excecutive_team_members.member_id')
-                ->pluck('mr_excecutive_team_id');
-            $team_lead = DB::table('mr_excecutive_team')
-                    ->whereIn('id',$teamid)
-                    ->leftJoin('hr_as_basic_info as b','mr_excecutive_team.team_lead_id','b.as_id')
-                    ->pluck('associate_id');
-            $team_members_associateId = DB::table('mr_excecutive_team_members')
-                                    ->whereIn('mr_excecutive_team_id',$teamid)
-                                    ->leftJoin('hr_as_basic_info as b','mr_excecutive_team_members.member_id','b.as_id')
-                                    ->pluck('associate_id');
-            $team = array_merge($team_members_associateId->toArray(),$team_lead->toArray());
-
-        }else{
-            $team =[];
-        }
+        $team =[];
         $getBuyer = buyer_by_id();
         $getUnit = unit_by_id();
         $getSeason = season_by_id();
+        $getBrand = brand_by_id();
         // return $getUnit;
-        $queryData = DB::table('mr_order_entry AS OE')
-            ->select([
-                "OE.order_id",
-                "OE.order_code",
-                "OE.mr_buyer_b_id",
-                "OE.unit_id",
-                "stl.stl_year",
-                "stl.mr_season_se_id",
-                "stl.stl_no",
-                "OE.order_ref_no",
-                "OE.order_qty",
-                "OE.order_delivery_date",
-                "OE.created_by"
-            ])
-            ->whereIn('OE.mr_buyer_b_id', auth()->user()->buyer_permissions());
-            if(!empty($team)){
-                $queryData->whereIn('OE.created_by', $team);
-            }
-            $queryData->leftJoin('mr_style AS stl', 'stl.stl_id', "OE.mr_style_stl_id")
-            ->orderBy('order_id', 'DESC');
-        $data = $queryData->get();
-
+        
+        $data = OrderEntry::getOrderListWithStyleResIdWise();
+        $orderIds = collect($data)->pluck('order_id');
+        $orderFOB = DB::table('mr_order_bom_other_costing')
+        ->whereIn('mr_order_entry_order_id', $orderIds)
+        ->pluck('agent_fob', 'mr_order_entry_order_id');
         return DataTables::of($data)
             ->addIndexColumn()
             ->addColumn('order_code', function ($data){
-                return '<a class="add-new" data-orderid="'.$data->order_id.'" data-type="Order View" data-toggle="tooltip" data-placement="top" title="" data-original-title="Order View">'.$data->order_code.'</a>';
+                return '<a class="add-new" id="order-view-'.$data->order_id.'" data-orderid="'.$data->order_id.'" data-type="Order View" data-toggle="tooltip" data-placement="top" title="" data-original-title="Order View">'.$data->order_code.'</a>';
             })
             ->addColumn('b_name', function ($data) use ($getBuyer){
                 return $getBuyer[$data->mr_buyer_b_id]->b_name??'';
@@ -221,30 +296,51 @@ class OrderController extends Controller
             ->addColumn('hr_unit_name', function ($data) use ($getUnit){
                 return $getUnit[$data->unit_id]['hr_unit_name']??'';
             })
+            ->editColumn('br_name', function ($data) use ($getBrand) {
+                return $getBrand[$data->style->mr_brand_br_id]->br_name??'';
+            })
             ->addColumn('se_name', function ($data) use ($getSeason){
-                return $getSeason[$data->mr_season_se_id]->se_name??''. '-'.$data->stl_year;
+                $seName = $getSeason[$data->style->mr_season_se_id]->se_name??'';
+                return $seName.'-'.date('y', strtotime($data->style->stl_year))??'';
+            })
+            ->addColumn('stl_no', function ($data){
+                return $data->style->stl_no??'';
             })
             ->editColumn('order_delivery_date', function($data){
                 return custom_date_format($data->order_delivery_date);
             })
-            ->addColumn('action', function ($data) {
-                $action_buttons = "<div class=\"btn-group\">
-                    <a href='#' class=\"btn btn-xs btn-secondary add-new\" data-type=\"Order Edit\" data-toggle=\"tooltip\" title=\"Order Edit\" data-orderid=\"$data->order_id\">
-                    <i class=\"ace-icon fa fa-pencil bigger-120\"></i>
-                    </a>
-                    <a href='".url("merch/order/bom/$data->order_id")."' class=\"btn btn-xs btn-primary\" data-toggle=\"tooltip\" title=\"Order BOM\">
-                    <i class=\"las la-clipboard-list\"></i>
-                    </a>
-                    <a href='".url("merch/order/costing/$data->order_id")."' class=\"btn btn-xs btn-warning\" data-toggle=\"tooltip\" title=\"Order Costing\">
-                    <i class=\"las la-clipboard-list\"></i>
-                    </a>
-                    <a href='".url("merch/po-order?order_id=$data->order_id")."' class=\"btn btn-xs btn-success\" data-toggle=\"tooltip\" title=\"Order PO\">
-                    <i class=\"las la-shopping-cart\"></i>
-                    </a>
-                    </div>";
-                return $action_buttons;
+            ->editColumn('fob', function($data) use ($orderFOB) {
+                return $orderFOB[$data->order_id]??0;
             })
-            ->rawColumns(['order_code', 'order_ref_no', 'hr_unit_name', 'b_name', 'se_name', 'stl_no', 'order_qty', 'order_delivery_date', 'action'])
+            ->addColumn('action', function ($data) {
+                $return = '<div class="btn-group" >';
+
+                $return .= "<a href='#' class=\"btn btn-sm btn-secondary add-new\" data-type=\"Order Edit\" data-toggle=\"tooltip\" title=\"Order Edit\" data-orderid=\"$data->order_id\">
+                    <i class=\"ace-icon fa fa-pencil bigger-120\"></i>
+                    </a>";
+                // BOM
+                $bomStatus = ($data->bom_status == 1)?'Edit Order BOM':'Create Order BOM';
+                $bomClass = ($data->bom_status == 1)?'btn-primary':'btn-warning';
+                $return .= '<a href="'.url('merch/order/bom/'.$data->order_id).'" class="btn btn-sm text-white '.$bomClass.'" data-toggle="tooltip" title="'.$bomStatus.'">
+                  <i class="las la-clipboard-list"></i>
+                </a>';
+                // Costing
+                $costingStatus = ($data->bom_status == 1)?'Edit Order Costing':'Create Order Costing';
+                $costingClass = ($data->costing_status == 1)?'btn-primary':'btn-warning';
+                $return .= '<a href="'.url('merch/order/costing/'.$data->order_id).'" class="btn btn-sm text-white '.$costingClass.'" data-toggle="tooltip" title="'.$costingStatus.'">
+                  <i class="las la-file-invoice-dollar"></i>
+                </a>';
+                // process to order
+                if($data->bom_status == 1 && $data->costing_status == 1){
+                    $return .= "<a href='".url("merch/po-order?order_id=$data->order_id")."' class=\"btn btn-sm btn-success\" data-toggle=\"tooltip\" title=\"Order PO\">
+                    <i class=\"las la-shopping-cart\"></i>
+                    </a>";
+                }
+                $return .= "</div>";
+
+                return $return;
+            })
+            ->rawColumns(['order_code', 'order_ref_no', 'hr_unit_name', 'b_name', 'se_name', 'stl_no', 'order_qty', 'order_delivery_date', 'fob', 'action'])
             ->make(true);
     }
 }

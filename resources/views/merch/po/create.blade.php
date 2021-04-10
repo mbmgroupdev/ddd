@@ -254,8 +254,8 @@
         	</div>
         </div>
     	@include('merch.common.right-modal')
+    	@endif
     </div><!-- /.page-content -->
-    @endif
   </div>
 </div>
 @push('js')

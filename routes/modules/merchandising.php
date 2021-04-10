@@ -84,42 +84,42 @@ Route::group(['prefix' => 'merch/style','namespace' => 'Merch\Style'], function(
 * STYLE BOM
 *--------------------------------------------------------------
 */
-Route::group(['prefix' => 'merch/style_bom','namespace' => 'Merch\StyleBOM'], function(){
+// Route::group(['prefix' => 'merch/style_bom','namespace' => 'Merch\StyleBOM'], function(){
 
-	Route::get("/{id}/create", "StyleBomController@showForm");
-	Route::get("/get_item_data", "StyleBomController@getItemData");
-	Route::get("/get_article_by_supplier", "StyleBomController@article");
-	Route::get("/get_composition_by_supplier", "StyleBomController@composition");
-	Route::get("/get_construction_by_supplier", "StyleBomController@construction");
-	Route::post("/{id}/store", "StyleBomController@store");
-	Route::get("/new_article", "StyleBomController@createArticle");
-	Route::get("/new_composition", "StyleBomController@createComposition");
-	Route::get("/new_construction", "StyleBomController@createConstruction");
-	Route::get("/{id}/edit", "StyleBomController@editForm");
-	Route::post("/{id}/update", "StyleBomController@update");
-	Route::get("/{id}/delete", "StyleBomController@destroy");
-	Route::post("/newcolorstore", "StyleBomController@saveNewColor");
+// 	Route::get("/{id}/create", "StyleBomController@showForm");
+// 	Route::get("/get_item_data", "StyleBomController@getItemData");
+// 	Route::get("/get_article_by_supplier", "StyleBomController@article");
+// 	Route::get("/get_composition_by_supplier", "StyleBomController@composition");
+// 	Route::get("/get_construction_by_supplier", "StyleBomController@construction");
+// 	Route::post("/{id}/store", "StyleBomController@store");
+// 	Route::get("/new_article", "StyleBomController@createArticle");
+// 	Route::get("/new_composition", "StyleBomController@createComposition");
+// 	Route::get("/new_construction", "StyleBomController@createConstruction");
+// 	Route::get("/{id}/edit", "StyleBomController@editForm");
+// 	Route::post("/{id}/update", "StyleBomController@update");
+// 	Route::get("/{id}/delete", "StyleBomController@destroy");
+// 	Route::post("/newcolorstore", "StyleBomController@saveNewColor");
 
-	Route::get("/get_composition_by_article", "StyleBomController@compositionByArticle");
-	// Route::post('/ajax_save_supplier', 'StyleBomController@ajaxSaveSupplier');
-	Route::post('/ajax_save_bom_info', 'StyleBomController@ajaxSaveBomInfo');
-	Route::post('/ajax_update_bom_info', 'StyleBomController@ajaxUpdateBomInfo');
+// 	Route::get("/get_composition_by_article", "StyleBomController@compositionByArticle");
+// 	// Route::post('/ajax_save_supplier', 'StyleBomController@ajaxSaveSupplier');
+// 	Route::post('/ajax_save_bom_info', 'StyleBomController@ajaxSaveBomInfo');
+// 	Route::post('/ajax_update_bom_info', 'StyleBomController@ajaxUpdateBomInfo');
 
-});
+// });
 
 /*
 *--------------------------------------------------------------
 * STYLE Costing
 *--------------------------------------------------------------
 */
-Route::group(['prefix' => 'merch/style_costing','namespace' => 'Merch\StyleCosting'], function(){
+/*Route::group(['prefix' => 'merch/style_costing','namespace' => 'Merch\StyleCosting'], function(){
 
 	Route::get("/{id}/create", "StyleCostingController@showForm");
 	Route::post("/{id}/create", "StyleCostingController@store");
 	Route::get("/{id}/edit", "StyleCostingController@editForm");
 	Route::get("/{id}/print", "StyleCostingController@editFormPrint");
 	Route::post("/{id}/edit", "StyleCostingController@update");
-});
+});*/
 
 /*
 *--------------------------------------------------------------
@@ -128,8 +128,9 @@ Route::group(['prefix' => 'merch/style_costing','namespace' => 'Merch\StyleCosti
 */
 Route::group(['prefix' => 'merch','namespace' => 'Merch'], function(){
 	Route::resource('orders', 'OrderController');
-	Route::get('/order/order_list','OrderController@index');
-	Route::get('/order/order_list_data','OrderController@list');
+	Route::post('/orders-list-data','OrderController@list');
+
+	// Route::post('/order-create-n-reservation', 'OrderController@dirOrder');
 });
 
 Route::group(['prefix' => 'merch/order','namespace' => 'Merch\Orders'], function(){
@@ -162,6 +163,7 @@ Route::group(['prefix' => 'merch','namespace' => 'Merch'], function(){
 	Route::get('reservation/order-entry/{resid}', 'ReservationController@orderEntry');
 	Route::post('reservation/order-entry-store', 'ReservationController@orderStore');
 	Route::get('reservation/order-list/{resid}', 'ReservationController@orderList');
+	Route::get('check-reservation', 'ReservationController@checkForOrder');
 });
 
 /*
@@ -169,29 +171,29 @@ Route::group(['prefix' => 'merch','namespace' => 'Merch'], function(){
 * Order BOM
 *--------------------------------------------------------------
 */
-Route::group(['prefix' => 'merch/order_bom','namespace' => 'Merch\OrderBOM'], function(){
-	Route::get("/{id}/create", "OrderBomController@showForm");
-	Route::get("/{id}/create/{po_id}", "OrderBomController@showForm");
-	Route::get("/{id}/preview", "OrderBomController@previewOrder");
-	Route::get("/get_item_data", "OrderBomController@getItemData");
-	Route::post("/{id}/store", "OrderBomController@storeData");
-	Route::post("/{id}/store/{po_id}", "OrderBomController@storeData");
-	Route::get("/get_article_by_supplier", "OrderBomController@article");
-});
+// Route::group(['prefix' => 'merch/order_bom','namespace' => 'Merch\OrderBOM'], function(){
+// 	Route::get("/{id}/create", "OrderBomController@showForm");
+// 	Route::get("/{id}/create/{po_id}", "OrderBomController@showForm");
+// 	Route::get("/{id}/preview", "OrderBomController@previewOrder");
+// 	Route::get("/get_item_data", "OrderBomController@getItemData");
+// 	Route::post("/{id}/store", "OrderBomController@storeData");
+// 	Route::post("/{id}/store/{po_id}", "OrderBomController@storeData");
+// 	Route::get("/get_article_by_supplier", "OrderBomController@article");
+// });
 
 /*
 *--------------------------------------------------------------
 * Order Costing
 *--------------------------------------------------------------
 */
-Route::group(['prefix' => 'merch/order_costing','namespace' => 'Merch\OrderCosting'], function(){
-	Route::get("/{id}/create", "OrderCostingController@showForm");
-	Route::get("/{id}/create/{po_id}", "OrderCostingController@showForm");
-	Route::post("/{id}/create", "OrderCostingController@store");
-	Route::get("/{id}/edit", "OrderCostingController@editForm");
-	Route::get("/{id}/print", "OrderCostingController@editFormPrint");
-	Route::post("/{id}/edit", "OrderCostingController@update");
-});
+// Route::group(['prefix' => 'merch/order_costing','namespace' => 'Merch\OrderCosting'], function(){
+// 	Route::get("/{id}/create", "OrderCostingController@showForm");
+// 	Route::get("/{id}/create/{po_id}", "OrderCostingController@showForm");
+// 	Route::post("/{id}/create", "OrderCostingController@store");
+// 	Route::get("/{id}/edit", "OrderCostingController@editForm");
+// 	Route::get("/{id}/print", "OrderCostingController@editFormPrint");
+// 	Route::post("/{id}/edit", "OrderCostingController@update");
+// });
 
 /*
 *--------------------------------------------------------------
@@ -225,6 +227,7 @@ Route::group(['prefix' => 'merch/search','namespace' => 'Merch\Search'], functio
 	Route::get('ajax-buyer-wise-season-search', 'AjaxSearchController@buyerWiseSeason');
 	Route::get('ajax-season-wise-style-search', 'AjaxSearchController@seasonWiseStyle');
 	Route::get('mbm-order-no', 'AjaxSearchController@orderNo');
+	Route::get('bulk-style-no', 'AjaxSearchController@bulkStyleNo');
 	Route::get('ajax-country-port-search', 'AjaxSearchController@port');
 
 });

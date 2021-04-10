@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Reservation extends Model
 {
     protected $table= 'mr_capacity_reservation';
+    protected $fillable = ['hr_unit_id', 'b_id', 'res_month', 'res_year', 'prd_type_id', 'res_quantity', 'res_sah', 'res_sewing_smv', 'res_status'];
     public $timestamps= false;
-    protected $guarded = [];
 
     public static function getReservationIdWiseReservation($rId)
     {
@@ -33,6 +33,24 @@ class Reservation extends Model
         ->where('res_month', $value['res_month'])
         ->where('res_year', $value['res_year'])
         ->where('prd_type_id', $value['prd_type_id'])
+        ->first();
+    }
+
+    public static function checkReservationStyleInfoWise($value)
+    {
+        return Reservation::where('b_id', $value['mr_buyer_b_id'])
+        ->where('prd_type_id', $value['prd_type_id'])
+        ->first();
+    }
+
+    public static function getReservationForOrder($value)
+    {
+        return Reservation::where('b_id', $value['mr_buyer_b_id'])
+        ->where('hr_unit_id', $value['unit_id'])
+        ->where('prd_type_id', $value['prd_type_id'])
+        ->where('res_year', '>=', date('Y'))
+        ->where('res_month', '>', date('m'))
+        ->orderBy('id', 'desc')
         ->first();
     }
 }

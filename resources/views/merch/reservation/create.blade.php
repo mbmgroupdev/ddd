@@ -5,7 +5,7 @@
   	$prdtypList = collect($prdtypList)->pluck('prd_type_name','prd_type_id');
 @endphp
 <div class="row">
-      <div class="offset-3 col-6">
+    <div class="offset-3 col-6">
 		<form class="form-horizontal" id="itemForm" role="form" method="post" enctype="multipart/form-data">
 		    <input type="hidden" name="_token" value="{{ csrf_token() }}" />
 		    <input type="hidden" id="page-type" value="reservation-store" />
@@ -17,19 +17,39 @@
 				    </div>
 		    	</div>
 		    	<div class="col-sm-6">
-		    		<div class="form-group has-required has-float-label select-search-group">
-				      {{Form::select('b_id', $buyerList, null, [ 'id' => 'buyer', 'placeholder' => 'Select Buyer Name', 'class' => 'form-control filter buyerChange', 'required'])}}
-				      <label for="buyer" > Buyer Name </label>
+		    		<div class="form-group has-required has-float-label">
+				        <input type="month" class="form-control" id="month" name="res_year_month" placeholder=" Month-Year"required="required" value="{{ date('Y-m') }}"autocomplete="off" />
+				        <label for="year-month" >Reservation Year-Month </label>
 				    </div>
 		    	</div>
 		    </div>
 		    <div class="row">
 		    	<div class="col-sm-6">
-		    		<div class="form-group has-required has-float-label">
-				        <input type="month" class="form-control" id="month" name="res_year_month" placeholder=" Month-Year"required="required" value="{{ date('Y-m') }}"autocomplete="off" />
-				        <label for="year-month" > Year-Month </label>
+		    		<div class="form-group has-required has-float-label select-search-group">
+				      {{Form::select('b_id', $buyerList, null, [ 'id' => 'buyer', 'placeholder' => 'Select Buyer Name', 'class' => 'form-control filter buyerChange', 'required'])}}
+				      <label for="buyer" > Buyer Name </label>
 				    </div>
 		    	</div>
+		    	<div class="col-sm-6">
+		    		<div class="row">
+		    			<div class="col-sm-6">
+				    		<div class="form-group has-required has-float-label">
+						        <input type="number" id="res-quantity" name="res_quantity" placeholder="Enter Quantity" class="form-control sah_cal" autocomplete="off" value="0" onClick="this.select()" required min="0" />
+						        <label for="res-quantity" > Quantity </label>
+						    </div>
+				    	</div>
+				    	<div class="col-sm-6">
+				    		<div class="form-group has-required has-float-label">
+						        <input type="number" id="res-smv" name="res_sewing_smv" placeholder="Enter Sewing SMV " class="form-control sah_cal" autocomplete="off" value="0" step="any" onClick="this.select()" required min="0" />
+						        <label for="res-smv" > Sewing SMV </label>
+						    </div>
+				    	</div>
+		    		</div>
+		    	</div>
+		    	
+		    </div>
+		    
+		    <div class="row">
 		    	<div class="col-sm-6">
 		    		<div class="form-group has-required has-float-label select-search-group">
 				      {{Form::select('prd_type_id', $prdtypList, null, [ 'id' => 'product-type', 'placeholder' => 'Select Product Type Name', 'class' => 'form-control filter', 'required'])}}
@@ -37,22 +57,8 @@
 				      
 				    </div>
 		    	</div>
-		    </div>
-		    
-		    <div class="row">
-		    	<div class="col-sm-4">
-		    		<div class="form-group has-required has-float-label">
-				        <input type="number" id="res-quantity" name="res_quantity" placeholder="Enter Quantity" class="form-control sah_cal" autocomplete="off" value="0" onClick="this.select()" required min="0" />
-				        <label for="res-quantity" > Quantity </label>
-				    </div>
-		    	</div>
-		    	<div class="col-sm-4">
-		    		<div class="form-group has-required has-float-label">
-				        <input type="number" id="res-smv" name="res_sewing_smv" placeholder="Enter Sewing SMV " class="form-control sah_cal" autocomplete="off" value="0" step="any" onClick="this.select()" required min="0" />
-				        <label for="res-smv" > Sewing SMV </label>
-				    </div>
-		    	</div>
-		    	<div class="col-sm-4">
+		    	
+		    	<div class="col-sm-6">
 				    <div class="form-group has-required has-float-label">
 				        <input type="number" id="sah" name="res_sah" placeholder="Enter SAH" class="form-control" autocomplete="off" step="any" required readonly value="0" min="0" />
 				        <label for="sah" > SAH </label>
@@ -67,12 +73,7 @@
 		    </div>
 		    <div id="order-entry-section" style="display: none">
 		    	<div class="row">
-		    		<div class="col-sm-6">
-			    		<div class="form-group has-required has-float-label select-search-group">
-					      {{Form::select('mr_season_se_id', [], null, [ 'id' => 'season', 'placeholder' => 'Select Season Name', 'class' => 'form-control filter seasonChange', 'readonly'])}}
-					      <label for="season" > Season Name </label>
-					    </div>
-			    	</div>
+		    		
 			    	<div class="col-sm-6">
 			    		<div class="form-group has-required has-float-label">
 					        <input type="text" id="reference-no" name="order_ref_no" placeholder="Enter Reference No" class="form-control" autocomplete="off" />
@@ -83,7 +84,7 @@
 		    	<div class="row">
 		    		<div class="col-sm-6">
 			    		<div class="form-group has-required has-float-label select-search-group">
-					      {{Form::select('mr_style_stl_id', [], null, [ 'id' => 'style-no', 'placeholder' => 'Select Style Number', 'class' => 'form-control filter', 'readonly'])}}
+					      {{Form::select('mr_style_stl_id', [], null, [ 'id' => 'style-no', 'placeholder' => 'Select Style Number', 'class' => ' form-control filter', 'readonly'])}}
 					      <label for="style-no" > Style Number </label>
 					    </div>
 			    	</div>
