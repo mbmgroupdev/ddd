@@ -6,8 +6,9 @@ use DB;
 class OrderEntry extends Model
 {
     protected $table= 'mr_order_entry';
+    protected $primaryKey = 'order_id';
+    protected $fillable = ['order_code', 'res_id', 'unit_id', 'mr_buyer_b_id', 'mr_brand_br_id', 'order_month', 'order_year', 'mr_season_se_id', 'mr_style_stl_id', 'order_ref_no', 'order_qty', 'order_delivery_date', 'order_status', 'order_entry_source', 'pcd', 'bom_status', 'costing_status', 'created_by', 'updated_by'];
     public $timestamps= false;
-    // protected $with= ['style'];
 
     public static function getResIdWiseOrder($rId)
     {
@@ -90,11 +91,14 @@ class OrderEntry extends Model
             ->first();
     }
 
-    public static function getOrderListWithStyleResIdWise($resId)
+    public static function getOrderListWithStyleResIdWise($resId=null)
     {
-        return OrderEntry::with(['style'])
-            ->whereIn('mr_buyer_b_id', auth()->user()->buyer_permissions())
-            ->where('res_id', $resId)
-            ->get();
+        $query = OrderEntry::with(['style'])
+            ->whereIn('mr_buyer_b_id', auth()->user()->buyer_permissions());
+        if($resId != null){
+            $query->where('res_id', $resId);
+        }
+        $data = $query->orderBy('order_id', 'DESC')->get();
+        return $data;
     }
 }

@@ -19,7 +19,7 @@
 		    	<div class="col-sm-6">
 		    		<div class="form-group has-required has-float-label">
 				        <input type="month" class="form-control" id="month" name="res_year_month" placeholder=" Month-Year"required="required" value="{{ date('Y-m') }}"autocomplete="off" />
-				        <label for="year-month" > Year-Month </label>
+				        <label for="year-month" >Reservation Year-Month </label>
 				    </div>
 		    	</div>
 		    </div>
@@ -73,12 +73,7 @@
 		    </div>
 		    <div id="order-entry-section" style="display: none">
 		    	<div class="row">
-		    		<div class="col-sm-6">
-			    		<div class="form-group has-required has-float-label select-search-group">
-					      {{Form::select('mr_season_se_id', [], null, [ 'id' => 'season', 'placeholder' => 'Select Season Name', 'class' => 'form-control filter seasonChange', 'readonly'])}}
-					      <label for="season" > Season Name </label>
-					    </div>
-			    	</div>
+		    		
 			    	<div class="col-sm-6">
 			    		<div class="form-group has-required has-float-label">
 					        <input type="text" id="reference-no" name="order_ref_no" placeholder="Enter Reference No" class="form-control" autocomplete="off" />
@@ -89,7 +84,7 @@
 		    	<div class="row">
 		    		<div class="col-sm-6">
 			    		<div class="form-group has-required has-float-label select-search-group">
-					      {{Form::select('mr_style_stl_id', [], null, [ 'id' => 'style-no', 'placeholder' => 'Select Style Number', 'class' => 'form-control filter', 'readonly'])}}
+					      {{Form::select('mr_style_stl_id', [], null, [ 'id' => 'style-no', 'placeholder' => 'Select Style Number', 'class' => ' form-control filter', 'readonly'])}}
 					      <label for="style-no" > Style Number </label>
 					    </div>
 			    	</div>

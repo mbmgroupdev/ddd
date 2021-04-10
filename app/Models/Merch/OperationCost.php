@@ -32,4 +32,12 @@ class OperationCost extends Model
 			->where("oc.opr_type", $oprType)
 			->get();
     }
+
+    public static function getStyleIdWiseSpOperationInfo($stlId, $oprType)
+    {
+        return DB::table("mr_style_operation_n_cost AS oc")
+            ->where("oc.mr_style_stl_id", $stlId)
+            ->where("oc.opr_type", $oprType)
+            ->get();
+    }
 }
