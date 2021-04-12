@@ -52,7 +52,7 @@
               </li>
               <li class="top-nav-btn">
                 <a class="btn btn-sm btn-primary add-new text-white" data-type="Add reservation"><i class="las la-plus"></i> New Reservation</a>
-                <a href="{{ url('merch/order/order_list')}}" class="btn btn-sm btn-success text-white" data-type="reservation"><i class="las la-list"></i> Order List</a>
+                <a href="{{ url('merch/orders')}}" class="btn btn-sm btn-success text-white" data-type="reservation"><i class="las la-list"></i> Order List</a>
               </li>
           </ul><!-- /.breadcrumb -->
 
@@ -105,7 +105,7 @@ $(document).on('click', '.add-new', function() {
     }else if(type === 'Order List'){
       var id = $(this).data('resid');
       url = '/merch/reservation/order-list/'+id;
-    }else if(type === 'order'){
+    }else if(type === 'Order Entry'){
       var resId = $(this).data('resid');
       url = '/merch/reservation/order-entry/'+resId;
     }
@@ -164,7 +164,7 @@ $(document).on('click', '#itemBtn', function(event) {
     var resId = $("#res-id").val();
     url = '/merch/reservation/'+resId;
   }else if(pageType === 'order-store'){
-    url = '{{ url("merch/reservation/order-entry-store")}}';
+    url = '{{ url("/merch/orders") }}';
   }
   // console.log(url);
   if (isValid){

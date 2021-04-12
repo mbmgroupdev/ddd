@@ -56,9 +56,9 @@
                   <a href="#">Order</a>
               </li>
               <li class="active">Order List</li>
-              {{-- <li class="top-nav-btn">
-                <a class="btn btn-sm btn-primary" href="#"><i class="las la-plus"></i> New Order</a>
-              </li> --}}
+              <li class="top-nav-btn">
+                <a class="btn btn-sm btn-primary text-white" href="{{ url('merch/orders/create') }}"><i class="las la-plus"></i> Create Order</a>
+              </li>
           </ul><!-- /.breadcrumb -->
 
       </div>

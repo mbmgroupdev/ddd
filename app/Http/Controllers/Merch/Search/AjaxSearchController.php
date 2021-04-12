@@ -96,20 +96,7 @@ class AjaxSearchController extends Controller
     }
     public function buyerStlSeason(Request $request)
     {
-        $season = DB::table('mr_season');
-        $season_sql = $season->toSql();
-
-        $getSeason = DB::table('mr_style AS stl')
-        ->select(DB::raw('CONCAT_WS("-", se_id, stl_year) AS id'), DB::raw('CONCAT_WS("-", se_name, stl_year) AS text'))
-        ->leftjoin(DB::raw('(' . $season_sql. ') AS s'), function($join) use ($season) {
-            $join->on('stl.mr_season_se_id','s.se_id')->addBinding($season->getBindings());
-        })
-        ->where('s.b_id', $request->b_id)
-        ->orderBy('text', 'desc')
-        ->groupBy('text')
-        ->get();
-
-        return $getSeason;
+        return Style::getSeasonStyleBuyerIdWise($request->b_id);
     }
 
     public function seasonWiseStyle(Request $request)

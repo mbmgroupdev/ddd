@@ -2,7 +2,7 @@
   <div class="modal-dialog modal-lg right-modal-width" role="document" > 
     <div class="modal-content">
       <div class="modal-header">
-        <a class="view prev_btn" data-toggle="tooltip" data-dismiss="modal" data-placement="top" title="" data-original-title="Back to Report">
+        <a class="view prev_btn" data-toggle="tooltip" data-dismiss="modal" data-placement="top" title="" data-original-title="Back">
           <i class="las la-chevron-left"></i>
         </a>
         <h5 class="modal-title right-modal-title text-center" id="modal-title-right"> &nbsp; </h5>

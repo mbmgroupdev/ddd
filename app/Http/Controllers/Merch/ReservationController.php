@@ -35,21 +35,8 @@ class ReservationController extends Controller
     public function getData(){
 
         $team =[];
-        $queueData = DB::table('mr_capacity_reservation AS cr')
-            ->select(
-                'cr.*'
-            )
-            ->whereIn('cr.b_id', auth()->user()->buyer_permissions());
-            if(!empty($team)){
-                $queueData->whereIn('cr.res_created_by', $team);
-            }
-            $queueData->orderBy('cr.id', 'DESC');
-        $data = $queueData->get();
-        $ordered = DB::table('mr_order_entry')
-            ->select('res_id', DB::raw("SUM(order_qty) AS qty"))
-            ->groupBy('res_id')
-            ->get()
-            ->keyBy('res_id', true);
+        $data = Reservation::getReservationData($team);
+        $ordered = OrderEntry::getReservationWiseOrderQty();
         // dd($ordered);
         $getUnit = unit_by_id();
         $getBuyer = buyer_by_id();
@@ -92,7 +79,7 @@ class ReservationController extends Controller
                         <i class="ace-icon fa fa-pencil"></i>
                     </a>';
                     if($data->res_quantity > (isset($ordered[$data->id])?($ordered[$data->id]->qty??0):0) && $flag == 0) {
-                        $action_buttons.= '<a class="btn btn-sm add-new btn-success text-white" data-toggle="tooltip" title="Order Entry" data-type="order" data-resid="'.$data->id.'">
+                        $action_buttons.= '<a class="btn btn-sm add-new btn-success text-white" data-toggle="tooltip" title="Order Entry" data-type="Order Entry" data-resid="'.$data->id.'">
                             <i class="ace-icon fa fa-cart-plus "></i>
                         </a>';
                     }
@@ -250,23 +237,15 @@ class ReservationController extends Controller
     public function orderEntry($resid)
     {
         try {
-            $reservation = DB::table('mr_capacity_reservation')
-                        ->where('id', $resid)
-                        ->first();
+            $reservation = Reservation::getReservationIdWiseReservation($resid);
             $reservation->res_month = date('F', mktime(0, 0, 0, $reservation->res_month, 10));
 
-            $ordered = DB::table('mr_order_entry')
-                        ->where('res_id', $resid)
-                        ->select(DB::raw("SUM(order_qty) AS sum"))
-                        ->first();
-            $reservation->res_quantity = $reservation->res_quantity - $ordered->sum;
-            $brandList = Brand::where('b_id', $reservation->b_id)->pluck('br_name','br_id');
+            $ordered = OrderEntry::getOrderQtySumResIdWise($resid);
+            $reservation->res_quantity = $reservation->res_quantity - $ordered->qty;
 
-            $styleList = Style::where('mr_buyer_b_id', $reservation->b_id)
-                        ->where('stl_type', "Bulk")
-                        ->pluck('stl_no', 'stl_id');
-            $seasonList= Season::where('b_id', $reservation->b_id)->pluck('se_name', 'se_id');
-            return view('merch/order/res_order', compact('reservation', 'brandList', 'styleList', 'seasonList'));
+            $seasonList = Style::getSeasonStyleBuyerIdWise($reservation->b_id);
+            $seasonList = collect($seasonList)->pluck('text', 'id');
+            return view('merch/order/res_order', compact('reservation', 'seasonList'));
         } catch (\Exception $e) {
             return 'error';
         }

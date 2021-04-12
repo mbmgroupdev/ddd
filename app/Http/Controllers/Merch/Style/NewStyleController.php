@@ -530,17 +530,12 @@ class NewStyleController extends Controller
   # get data
   public function getData()
   {
-    $b_permissions = auth()->user()->buyer_permissions();
     $getBuyer = buyer_by_id();
     $getSeason = season_by_id();
     $getBrand = brand_by_id();
     $getProductType = product_type_by_id();
-    $data = DB::table('mr_style AS s')
-        ->select("s.stl_id", "s.stl_type", "s.prd_type_id", "s.stl_img_link", "s.mr_buyer_b_id", "s.mr_brand_br_id", "s.prd_type_id", "s.stl_no", "s.stl_product_name", "s.stl_smv", "s.mr_season_se_id", 's.stl_year', 's.bom_status', 's.costing_status')
-        ->where('s.stl_type', 'Development')
-        ->whereIn('s.mr_buyer_b_id', $b_permissions)
-        ->orderBy('s.stl_id', 'desc')
-        ->get();
+
+    $data = Style::getStyleInfo(["stl_id", "stl_type", "prd_type_id", "stl_img_link", "mr_buyer_b_id", "mr_brand_br_id", "prd_type_id", "stl_no", "stl_product_name", "stl_smv", "mr_season_se_id", 'stl_year', 'bom_status', 'costing_status']);
     $stlIds = collect($data)->pluck('stl_id');
     $styleFOB = DB::table('mr_stl_bom_other_costing')
     ->whereIn('mr_style_stl_id', $stlIds)
@@ -581,7 +576,7 @@ class NewStyleController extends Controller
                     <i class=\"ace-icon fa fa-copy bigger-120\"></i>
               </a>";
             }else{
-              $return .= "<a href=".url('merch/style/style_new_edit/'.$data->stl_id)." class=\"btn btn-sm btn-primary\" data-toggle=\"tooltip\" title=\"Edit Style\">
+              $return .= "<a href=".url('merch/style/edit/'.$data->stl_id)." class=\"btn btn-sm btn-primary\" data-toggle=\"tooltip\" title=\"Edit Style\">
                     <i class=\"ace-icon fa fa-pencil bigger-120\"></i>
               </a>";
             }
