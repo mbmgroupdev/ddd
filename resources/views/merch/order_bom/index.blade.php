@@ -31,7 +31,7 @@
               <li class="active">Order BOM</li>
               <li class="top-nav-btn">
                 <a href='{{ url("merch/order/costing/$order->order_id")}}' class="btn btn-outline-success btn-sm pull-right"> <i class="fa fa-plus"></i> Add Costing</a>
-                <a href="{{ url('merch/order/bom-list')}}" target="_blank" class="btn btn-outline-primary btn-sm pull-right"> <i class="fa fa-list"></i> Order BOM List</a> &nbsp;
+                <a href="{{ url('merch/orders')}}" target="_blank" class="btn btn-outline-primary btn-sm pull-right"> <i class="fa fa-list"></i> Order List</a> &nbsp;
                 </li>
             </ul><!-- /.breadcrumb -->
         </div>

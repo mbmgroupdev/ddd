@@ -6,10 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\Hr\Unit;
 use App\Models\Merch\Brand;
 use App\Models\Merch\Buyer;
+use App\Models\Merch\OperationCost;
 use App\Models\Merch\OrderBOM;
 use App\Models\Merch\OrderEntry;
+use App\Models\Merch\SampleStyle;
 use App\Models\Merch\Season;
 use App\Models\Merch\Style;
+use App\Models\Merch\StyleSpecialMachine;
 use App\Packages\QueryExtra\QueryExtra;
 use DB;
 use Illuminate\Http\Request;
@@ -204,27 +207,10 @@ class BOMController extends Controller
 	            		}
 	            	}
 				}
-				// sample
-				$samples = DB::table("mr_stl_sample AS ss")
-			    	->select(DB::raw("GROUP_CONCAT(st.sample_name SEPARATOR ', ') AS name"))
-			    	->leftJoin("mr_sample_type AS st", "st.sample_id", "ss.sample_id")
-			    	->where("ss.stl_id", $order->mr_style_stl_id)
-			    	->first();
-
-		        //operations
-			    $operations = DB::table("mr_style_operation_n_cost AS oc")
-			    	->select("o.opr_name")
-			    	->select(DB::raw("GROUP_CONCAT(o.opr_name SEPARATOR ', ') AS name"))
-			    	->leftJoin("mr_operation AS o", "o.opr_id", "oc.mr_operation_opr_id")
-			    	->where("oc.mr_style_stl_id", $order->mr_style_stl_id)
-			    	->first();
-
-		        //machines
-			    $machines = DB::table("mr_style_sp_machine AS sm")
-			    	->select(DB::raw("GROUP_CONCAT(m.spmachine_name SEPARATOR ', ') AS name"))
-			    	->leftJoin("mr_special_machine AS m", "m.spmachine_id", "sm.spmachine_id")
-			    	->where("sm.stl_id", $order->mr_style_stl_id)
-			    	->first();
+				
+			    $samples = SampleStyle::getStyleIdWiseSampleName($order->mr_style_stl_id);
+			    $operations = OperationCost::getStyleIdWiseOperationCostName($order->mr_style_stl_id);
+			    $machines = StyleSpecialMachine::getStyleIdWiseSpMachineName($order->mr_style_stl_id);
 			    $getColor = DB::table("mr_material_color")->select('clr_id AS id', 'clr_name AS text')->get();
 			    $itemCategory = item_category_by_id();
 			    $getUnit = unit_by_id();

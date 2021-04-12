@@ -104,9 +104,6 @@ class OrderController extends Controller
                 $input['res_year'] = $resYearMonth[0];
                 
                 $input['res_id'] = Reservation::create($input)->id;
-            }else{
-                
-                
             }
             
             // check & create order base on mr_style_stl_id

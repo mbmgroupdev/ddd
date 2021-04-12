@@ -32,38 +32,13 @@
                <a href="{{ url('merch/style/style_list') }}"><i class="las la-list-ol"></i> Style List</a>
             </li>
             @endif
-            {{-- @if($user->can('Style List' ) || $user->hasRole('Super Admin'))
-            <li class="@if($segment2 == 'style' && $segment3=='create_bulk') active @endif">
-               <a href="{{ url('merch/style/create_bulk') }}"><i class="las la-folder-plus"></i></i> Style Bulk</a>
-            </li>
-            @endif
-            @if($user->can('Style List' ) || $user->hasRole('Super Admin'))
-            <li class="@if($segment2 == 'style' && $segment3=='style_copy_search') active @endif">
-               <a href="{{ url('merch/style/style_copy_search') }}"><i class="las la-folder-plus"></i></i> Style Copy</a>
-            </li>
-            @endif
-            <li class="@if($segment2 == 'style' && $segment3=='bom-list') active @endif">
-               <a href="{{ url('/merch/style/bom-list') }}" class="iq-waves-effect"><i class="las la-list-ol"></i><span>Style BOM</span></a>
-            </li>
-            <li class="@if($segment2 == 'style' && $segment3=='costing-list') active @endif">
-               <a href="{{ url('/merch/style/costing-list') }}" class="iq-waves-effect"><i class="las la-list-ol"></i><span>Style Costing</span></a>
-            </li> --}}
          </ul>
       </li>
       @endif
-      {{-- <li class="{{ $segment2 == 'style_bom'?'active':'' }}">
-         <a href="{{ url('/merch/style_bom') }}" class="iq-waves-effect"><i class="las la-list-ol"></i><span>Style BOM</span></a>
-      </li>
-      <li class="{{ $segment2 == 'style_costing'?'active':'' }}">
-         <a href="{{ url('/merch/style_costing') }}" class="iq-waves-effect"><i class="las la-list-ol"></i><span>Style Costing</span></a>
-      </li> --}}
+      
       <li class="{{ $segment2 == 'reservation'?'active':'' }}">
          <a href="{{ url('merch/reservation')}}" class="iq-waves-effect"><i class="las la-list-ol"></i><span>Reservation</span></a>
       </li>
-
-      {{-- <li class="{{ $segment2 == 'order'?'active':'' }}">
-         <a href="{{ url('merch/order/order_list')}}" class="iq-waves-effect"><i class="lab la-first-order"></i><span>Order</span></a>
-      </li> --}}
       
       @if(auth()->user()->canany([]) || $user->hasRole('Super Admin'))
       <li class="@if($segment2 == 'orders') active @endif">
@@ -93,7 +68,7 @@
                <a  href="{{ url('merch/po/create')}}"><i class="las la-folder-plus"></i> Create PO</a>
             </li>
             
-            <li class="@if($segment2 == 'po') active @endif">
+            <li class="@if($segment2 == 'po' && $segment3=='') active @endif">
                <a href="{{ url('merch/po')}}"><i class="las la-list-ol"></i> PO List</a>
             </li>
             

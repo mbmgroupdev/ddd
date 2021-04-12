@@ -27,10 +27,10 @@
               </li>
               <li class="active">Order Costing</li>
               <li class="top-nav-btn">
-                <a href='{{ url("merch/style/costing/$order->mr_style_stl_id") }}' class="btn btn-outline-primary btn-sm pull-right" target="_blank"> <i class="fa fa-eye"></i> Style Costing</a> &nbsp;
+                
                 <a href='{{ url("merch/order/bom/$order->order_id") }}' class="btn btn-outline-primary btn-sm pull-right"> <i class="fa fa-plus"></i> Order BOM</a> &nbsp;
-                <a href="{{ url('merch/order/bom-list')}}" target="_blank" class="btn btn-outline-primary btn-sm pull-right"> <i class="fa fa-list"></i> Order BOM List</a> &nbsp;
-                <a href="{{ url('merch/order/costing-list')}}" target="_blank" class="btn btn-outline-success btn-sm pull-right"> <i class="fa fa-list"></i> Order Costing List</a>
+                <a href="{{ url('merch/orders')}}" class="btn btn-outline-primary btn-sm pull-right"> <i class="fa fa-list"></i> Order List</a> &nbsp;
+                
                 </li>
             </ul><!-- /.breadcrumb -->
         </div>

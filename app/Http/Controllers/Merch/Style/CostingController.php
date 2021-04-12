@@ -265,6 +265,7 @@ class CostingController extends Controller
             DB::commit();
 	        $data['type'] = 'success';
 	        $data['message'] = "Costing Successfully Save.";
+            $data['url'] = url()->previous();
 	        return response()->json($data);
     	} catch (\Exception $e) {
     		DB::rollback();

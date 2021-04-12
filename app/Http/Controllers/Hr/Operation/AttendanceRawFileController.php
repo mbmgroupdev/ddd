@@ -35,7 +35,7 @@ class AttendanceRawFileController extends Controller
         }
 
     	$input = $request->all();
-    	if(!in_array($input['unit'], [1,4,5])){
+    	if(!in_array($input['unit'], [1,4,5,3])){
     		toastr()->error('Coming Soon!');
     		return back();
     	}
@@ -61,30 +61,30 @@ class AttendanceRawFileController extends Controller
     		if($diff == 0){
     			// single date in time get
     			if($this->checkDateWiseAttendanceExist($tableName, $diffDate[0]) > 0){
-    				$attData[] = $this->getAttendanceDataDateWise($tableName, $diffDate[0], 'in_time');
+    				$attData[] = $this->getAttendanceDataDateWise($tableName, $diffDate[0], 'in_time', $input['unit']);
     			}
     		}elseif($diff == 1){
     			// first date out time get
     			if($this->checkDateWiseAttendanceExist($tableName, $diffDate[0]) > 0){
-    				$attData[] = $this->getAttendanceDataDateWise($tableName, $diffDate[0], 'out_time');
+    				$attData[] = $this->getAttendanceDataDateWise($tableName, $diffDate[0], 'out_time', $input['unit']);
     			}
     			// last date in time get
     			if($this->checkDateWiseAttendanceExist($tableName, $diffDate[1]) > 0){
-    				$attData[] = $this->getAttendanceDataDateWise($tableName, $diffDate[1], 'in_time');
+    				$attData[] = $this->getAttendanceDataDateWise($tableName, $diffDate[1], 'in_time', $input['unit']);
     			}
     		}elseif($diff > 1){
     			// first date out time get
     			if($this->checkDateWiseAttendanceExist($tableName, $diffDate[0]) > 0){
-	    			$attData[] = $this->getAttendanceDataDateWise($tableName, $diffDate[0], 'out_time');
+	    			$attData[] = $this->getAttendanceDataDateWise($tableName, $diffDate[0], 'out_time', $input['unit']);
 	    		}
 
     			for ($i=1; $i < $diff; $i++) { 
 	    			// middle date in time and out time  get
 	    			if($this->checkDateWiseAttendanceExist($tableName, $diffDate[$i]) > 0){
 		    			// first date in time get
-	    				$attData[] = $this->getAttendanceDataDateWise($tableName, $diffDate[$i], 'in_time');
+	    				$attData[] = $this->getAttendanceDataDateWise($tableName, $diffDate[$i], 'in_time', $input['unit']);
 	    				// last date out time get
-	    				$attData[] = $this->getAttendanceDataDateWise($tableName, $diffDate[$i], 'out_time');
+	    				$attData[] = $this->getAttendanceDataDateWise($tableName, $diffDate[$i], 'out_time', $input['unit']);
 	    			}
 	    			
     			}
@@ -128,7 +128,7 @@ class AttendanceRawFileController extends Controller
 
     }
 
-    public function getAttendanceDataDateWise($tableName, $date, $parameter)
+    public function getAttendanceDataDateWise($tableName, $date, $parameter, $unit)
     {
     	// employee info
 		$employeeData = DB::table('hr_as_basic_info');
@@ -146,8 +146,12 @@ class AttendanceRawFileController extends Controller
     	}
     	$data = $queue->get();
 
-    	$data = collect($data)->map(function($row) {
-            return "12".date('Ymd', strtotime($row->in_date)).''.date('His', strtotime($row->parameter)).''.$row->as_rfid_code.':';
+    	$data = collect($data)->map(function($row) use ($unit){
+            if($unit == 1){
+                return "12".date('Ymd', strtotime($row->in_date)).''.date('His', strtotime($row->parameter)).''.$row->as_rfid_code.':';
+            }else if($unit == 3){
+                return "02".date('Ymd', strtotime($row->in_date)).date('His', strtotime($row->parameter)).$row->as_rfid_code;
+            }
         });
     	return $data;
 

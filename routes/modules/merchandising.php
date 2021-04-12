@@ -33,7 +33,7 @@ Route::group(['prefix' => 'merch/style','namespace' => 'Merch\Style'], function(
 	Route::get("delete/{id}", "NewStyleController@styleDelete");
 	Route::get('sample_garments', 'NewStyleController@garmentsList');
 
-	Route::get('style_list_data', 'NewStyleController@getData');
+	Route::post('style_list_data', 'NewStyleController@getData');
 	Route::get('style_new_edit/{stl_id}', 'NewStyleController@styleDevelopmentEditForm');
 	Route::post('style_update', 'NewStyleController@styleUpdate');
 
@@ -169,8 +169,6 @@ Route::group(['prefix' => 'merch/search','namespace' => 'Merch\Search'], functio
 *--------------------------------------------------------------
 */
 Route::get('merch/page-content-load', 'Merch\PageContentController@index');
-
-
 /*
 *--------------------------------------------------------------
 * Setup
