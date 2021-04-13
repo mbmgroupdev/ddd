@@ -288,6 +288,12 @@
             </li>
             @endif
 
+            @if($user->can('Bonus') || $user->hasRole('Super Admin'))
+            <li class="@if($segment3 == 'bonus') active @endif">
+               <a href="{{ url('hr/operation/bonus') }}"><i class="las la-file-invoice-dollar"></i>Bonus</a>
+            </li>
+            @endif
+
             @if($user->can('Tiffin/Dinner') || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'tiffin-dinner') active @endif">
                <a href="{{ url('hr/operation/tiffin-dinner') }}"><i class="las la-address-card"></i>Tiffin/Dinner Bill</a>
