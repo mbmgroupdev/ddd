@@ -357,7 +357,7 @@
             @endif
 
             @if($user->can('Attendance Report'))
-            <li class="@if($segment3 == 'daily-attendance-activity') active @endif"><a href="{{ url('hr/reports/daily-attendance-activity') }}"><i class="las la-fingerprint"></i>Daily Attendance</a></li>
+            <li class="@if($segment3 == 'daily-attendance-activity') active @endif"><a href="{{ url('hr/reports/daily-attendance-activity') }}"><i class="las la-fingerprint"></i>Daily Report</a></li>
             
             @endif
             @if($user->can('Attendance Consecutive Report') || $user->hasRole('Super Admin'))

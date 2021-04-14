@@ -14,9 +14,11 @@
 		            
 		            <table class="table no-border f-16" border="0">
 		            	<tr>
-		            		<td>
-		            		@if($input['unit'] != null)
-	            				Unit <b>: {{ $input['unit'] == 145?'MBM + MBF + MBM 2':$unit[$input['unit']]['hr_unit_name'] }}</b> <br>
+		            		<td style="width: 33%;">
+		            		@if(isset($input['unit']))
+			            		@if($input['unit'] != null)
+		            				Unit <b>: {{ $input['unit'] == 145?'MBM + MBF + MBM 2':$unit[$input['unit']]['hr_unit_name'] }}</b> <br>
+			        			@endif
 		        			@endif
 		        			@if($input['location'] != null)
 		        				Location <b>: {{ $location[$input['location']]['hr_location_name'] }}</b> <br>
@@ -34,17 +36,22 @@
 		                			<b>: {{ $section[$input['section']]['hr_section_name'] }}</b>
 		                		@endif
 		            		</td>
-		            		<td>
+		            		<td style="width: 33%;text-align: center;">
 		            			  Date <b>: {{ $input['date']}} </b> <br>
 		            			@if($input['otnonot'] != null)
 		                			<b> OT </b> 
 		                			<b>: @if($input['otnonot'] == 0) No @else Yes @endif </b> <br>
 		                		@endif
+		                		@if($input['report_format'] == 1)
+		                			Male: <b>{{collect($getEmployee)->sum('male')}}</b>
+		                			Female: <b>{{collect($getEmployee)->sum('female')}}</b>
+		                			@endif
 		                		Total  
-		                			<b>: {{ $totalEmployees }}</b>
+		                			<b>: {{ $totalEmployees }}</b><br>
+		                			
 		                		
 		            		</td>
-		            		<td>
+		            		<td style="width: 33%;text-align: right;">
 		            			@if($input['subSection'] != null)
 		            			Sub-section <b>: {{ $subSection[$input['subSection']]['hr_subsec_name'] }}</b><br>
 		            			@endif
@@ -67,7 +74,9 @@
 		        @else
 		        <div class="page-header-summery">
         			<h2>Employeee  Summary Report </h2>
+        			@if(isset($input['unit']))
         			<h4>Unit: {{ $unit[$input['unit']]['hr_unit_name'] }}</h4>
+        			@endif
         			@if($input['area'] != null)
         			<h4>Area: {{ $area[$input['area']]['hr_area_name'] }}</h4>
         			@endif
@@ -137,7 +146,6 @@
 			                @endif
 			                <tr>
 			                    <th width="2%">Sl</th>
-			                    <th>Photo</th>
 			                    <th width="10%">Associate ID</th>
 			                    <th width="16%">Name & Phone</th>
 			                    <th width="8%">Oracle ID</th>
@@ -161,7 +169,6 @@
 				            	@if($head == '')
 				            	<tr>
 				            		<td>{{ ++$i }}</td>
-					            	<td><img src="{{ emp_profile_picture($employee) }}" class='small-image min-img-file'></td>
 					            	<td>
 					            		<a class="job_card" data-name="{{ $employee->as_name }}" data-associate="{{ $employee->associate_id }}" data-month-year="{{ $month }}" data-toggle="tooltip" data-placement="top" title="" data-original-title="Job Card">{{ $employee->associate_id }}</a>
 					            	</td>
@@ -186,7 +193,6 @@
 				            	@if($group == $employee->$format)
 				            	<tr>
 				            		<td>{{ ++$i }}</td>
-					            	<td><img src="{{ emp_profile_picture($employee) }}" class='small-image' style="height: 40px; width: auto;"></td>
 					            	<td>
 					            		<a class="job_card" data-name="{{ $employee->as_name }}" data-associate="{{ $employee->associate_id }}" data-month-year="{{ $month }}" data-toggle="tooltip" data-placement="top" title="" data-original-title="Job Card">{{ $employee->associate_id }}</a>
 					            	</td>
@@ -210,10 +216,10 @@
 				            @endforeach
 				            @else
 					            <tr>
-					            	<td colspan="11" class="text-center">No   Employee Found!</td>
+					            	<td colspan="10" class="text-center">No   Employee Found!</td>
 					            </tr>
 				            @endif
-				            <tr style="border:0 !important;"><td colspan="14" style="border: 0 !important;height: 20px;"></td> </tr>
+				            <tr style="border:0 !important;"><td colspan="13" style="border: 0 !important;height: 20px;"></td> </tr>
 			            </tbody>
 					@endforeach
 					</table>
@@ -288,8 +294,11 @@
 									$body = $section[$group]['hr_section_name']??'';
 									$exPar = '&selected='.$section[$group]['hr_section_id']??'';
 								}elseif($format == 'as_subsection_id'){
+								    $body = '';$exPar =''; 
+								    if(isset($subSection[$group])){
 									$body = $subSection[$group]['hr_subsec_name']??'';
 									$exPar = '&selected='.$subSection[$group]['hr_subsec_id']??'';
+									}
 								}else{
 									$body = 'N/A';
 								}
@@ -343,6 +352,12 @@
 								</td>
 							</tr>
 							@endforeach
+							<tr style="text-align: center;">
+								<th colspan="@if($format == 'as_section_id' || $format == 'as_floor_id' )3 @else {{ ($format == 'as_subsection_id')?'4':'2'}} @endif">Total</th>
+								<th>{{collect($getEmployee)->sum('male')}}</th>
+								<th>{{collect($getEmployee)->sum('female')}}</th>
+								<th>{{collect($getEmployee)->sum('total')}}</th>
+							</tr>
 							@else
 							<tr>
 				            	<td colspan="{{ ($format == 'as_subsection_id' || $format == 'as_subsection_id')?'7':'5'}}" class="text-center">No   Employee Found!</td>

@@ -5,6 +5,8 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use App\Contracts\Merch\PoBomInterface;
 use App\Repository\Merch\PoBomRepository;
+use App\Contracts\Hr\EmployeeInterface;
+use App\Repository\Hr\EmployeeRepository;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -16,6 +18,7 @@ class RepositoryServiceProvider extends ServiceProvider
     public function register() 
     { 
         $this->app->bind(PoBomInterface::class, PoBomRepository::class);
+        $this->app->bind(EmployeeInterface::class, EmployeeRepository::class);
     }
 
     /**

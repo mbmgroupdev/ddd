@@ -178,6 +178,7 @@
                                                             'employee' => 'Employee', 
                                                             'present'=>'Present', 
                                                             'absent'=>'Absent', 
+                                                            'shift'=>'Assigned Shift', 
                                                             'before_absent_after_present'=>'Present After Being Absent', 
                                                             'in_out_missing'=>'In/Out Missing',
                                                             'leave'=>'Leave'
@@ -448,7 +449,7 @@ $(document).ready(function(){
       }
       var form = $("#activityReport");
       var flag = 0;
-      if(type !== 'executive_attendance'){
+      if(type !== 'executive_attendance' && type !== 'employee'){
         if(unit === '' ){
             flag = 1;
             $.notify('Please Select Unit', 'error');

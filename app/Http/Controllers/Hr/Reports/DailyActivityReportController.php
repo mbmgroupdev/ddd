@@ -13,9 +13,19 @@ use Box\Spout\Writer\Style\StyleBuilder;
 use DB;
 use Illuminate\Http\Request;
 use Rap2hpoutre\FastExcel\FastExcel;
+use App\Contracts\Hr\EmployeeInterface;
+use App\Repository\Hr\EmployeeRepository;
 
 class DailyActivityReportController extends Controller
 {
+
+    protected $employee;
+  
+    public function __construct(EmployeeRepository $employee)
+    {
+        $this->employee = $employee;
+    }
+
     public function beforeAfterStatus()
     {
         $unitList  = Unit::where('hr_unit_status', '1')
@@ -236,7 +246,7 @@ class DailyActivityReportController extends Controller
 
 
             if($input['report_type'] == 'missing_token'){
-                return $this->getatttoken($request, $input);
+                return $this->getatttoken($input, $request);
             }
 
             if($input['report_type'] == 'two_day_att' || $input['report_type'] == 'executive_attendance'){
@@ -245,6 +255,10 @@ class DailyActivityReportController extends Controller
 
             if($input['report_type'] == 'att_statistics'){
                 return $this->attStatistics($input,$request);
+            }
+
+            if($input['report_type'] == 'shift'){
+                return $this->getShiftEmployee($input,$request);
             }
 
             $getEmployee = array();
@@ -294,9 +308,12 @@ class DailyActivityReportController extends Controller
                 ->whereIn('a.as_id', $absentData);
             }elseif($input['report_type'] == 'employee'){
                 $emp_day = $request['date'];
-                $attData = DB::table('hr_as_basic_info as emp')
-                    ->where('emp.as_doj','<=',$emp_day)
-                    ->where(function($p) use($emp_day){
+                $attData = DB::table('hr_as_basic_info as emp');
+                if($emp_day == date('Y-m-d')){
+                    $attData->where('emp.as_status',1);
+                }else{
+                    $attData->where('emp.as_doj','<=',$emp_day)
+                        ->where(function($p) use($emp_day){
                         $p->where(function($q) use($emp_day){
                             $q->whereIn('emp.as_status',[2,3,4,5,6,7,8]);
                             $q->where('emp.as_status_date','>=',$emp_day);
@@ -309,6 +326,7 @@ class DailyActivityReportController extends Controller
                             });
                         });
                     });
+                }
             }
             // employee check
             if($input['report_format'] == 0 && !empty($input['employee'])){
@@ -802,63 +820,7 @@ class DailyActivityReportController extends Controller
         $subSection = subSection_by_id();
         $area = area_by_id();
         
-        $getEmployee = DB::table('hr_as_basic_info')
-            ->select('as_id', 'as_gender', 'associate_id', 'as_line_id', 'as_unit_id','as_designation_id','as_oracle_code', 'as_department_id', 'as_floor_id', 'as_pic', 'as_name', 'as_contact', 'as_section_id','as_subsection_id')
-            ->whereIn('as_unit_id', auth()->user()->unit_permissions())
-            ->whereIn('as_location', auth()->user()->location_permissions())
-            ->when(!empty($input['unit']), function ($query) use($input){
-                if($input['unit'] == 145){
-                    return $query->whereIn('as_unit_id',[1, 4, 5]);
-                }else{
-                    return $query->where('as_unit_id',$input['unit']);
-                }
-            })
-            ->when(!empty($input['location']), function ($query) use($input){
-               return $query->where('as_location',$input['location']);
-            })
-            ->when(!empty($input['area']), function ($query) use($input){
-               return $query->where('as_area_id',$input['area']);
-            })
-            ->when(!empty($input['department']), function ($query) use($input){
-               return $query->where('as_department_id',$input['department']);
-            })
-            ->when(!empty($input['line_id']), function ($query) use($input){
-               return $query->where('as_line_id', $input['line_id']);
-            })
-            ->when(!empty($input['floor_id']), function ($query) use($input){
-               return $query->where('as_floor_id',$input['floor_id']);
-            })
-            ->when($request['otnonot']!=null, function ($query) use($input){
-               return $query->where('as_ot',$input['otnonot']);
-            })
-            ->when(!empty($input['section']), function ($query) use($input){
-               return $query->where('as_section_id', $input['section']);
-            })
-            ->when(!empty($input['subSection']), function ($query) use($input){
-               return $query->where('as_subsection_id', $input['subSection']);
-            })
-            ->when(!empty($input['selected']), function ($query) use($input){
-                if($input['report_group'] != 'as_line_id' && $input['report_group'] != 'as_floor_id'){
-                    if($input['selected'] == 'null'){
-                        return $query->whereNull($input['report_group']);
-                    }else{
-                        return $query->where($input['report_group'], $input['selected']);
-                    }
-                }
-            })
-            ->where(function($q) use ($date){
-                $q->where(function($qa) use ($date){
-                    $qa->where('as_status',1);
-                    $qa->where('as_doj' , '<=', $date);
-                });
-                $q->orWhere(function($qa) use ($date){
-                    $qa->whereIn('as_status',[2,3,4,5,6,7,8]);
-                    $qa->where('as_status_date' , '>', $date);
-                });
-
-            })
-            ->orderBy('temp_id', 'ASC')
-            ->get();
+        $getEmployee = $this->employee->getEmployees($input,$date);
 
 
 
@@ -955,49 +917,81 @@ class DailyActivityReportController extends Controller
         return view('hr.reports.daily_activity.attendance.att_statistics', compact('avail','uniqueGroups', 'getEmployee', 'input', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area','pr','ab','lv','do','format','date','avail_as','count'));
     }
 
+
+    public function getShiftEmployee($input, $request)
+    {
+        $date = $request['date']??date('Y-m-d');
+        $day = 'day_'.((int)date('d',strtotime($date)));
+        $format = $request['report_group']??'';
+        $shift_id = isset($request['shift_id'])?$request['shift_id']:null;
+
+        $unit = unit_by_id();
+        $location = location_by_id();
+        $line = line_by_id();
+        $floor = floor_by_id();
+        $department = department_by_id();
+        $designation = designation_by_id();
+        $section = section_by_id();
+        $subSection = subSection_by_id();
+        $area = area_by_id();
+
+
+        $employees = $this->employee->getEmployees($input, $date);
+        $associates = collect($employees)->pluck('associate_id'); 
+
+        $changed = DB::table('hr_shift_roaster')
+            ->where('shift_roaster_month', date('n',strtotime($date)))
+            ->where('shift_roaster_year', date('Y',strtotime($date)))
+            ->whereIn('shift_roaster_associate_id', $associates)
+            ->pluck($day, 'shift_roaster_associate_id');
+        
+        $employees = collect($employees)
+            ->map(function($q) use($changed){
+                if(isset($changed[$q->associate_id])){
+                    $q->as_shift_id = $changed[$q->associate_id] != null?$changed[$q->associate_id]:$q->as_shift_id;
+                }
+                return $q;
+                
+            });
+        if($shift_id != ''){
+            $employees = collect($employees)
+                ->where('as_shift_id', $shift_id)
+                ->all();
+        }
+
+        $totalEmployees = count($employees);
+            
+        $employees = collect($employees)   
+            ->sortBy('as_shift_id')
+            ->groupBy('as_shift_id')
+            ->all();
+
+        if($input['report_format'] == 1){
+            $employees = collect($employees)
+                ->map(function($q){
+                    $p = (object)[];
+                    $p->male = collect($q)->where('as_gender','Male')->count();
+                    $p->female = collect($q)->where('as_gender','Female')->count();
+                    return $p;
+                });
+
+
+        }
+        ini_set('zlib.output_compression', 1);
+
+        return view('hr.reports.daily_activity.attendance.assigned_shift', compact('employees', 'totalEmployees', 'input', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area','date','format'))->render();
+    }
+
    
 
 
-    public function getatttoken($input,$request)
+    public function getatttoken($input, $request)
     {
 
-        $associates = DB::table('hr_as_basic_info')
-                        ->whereIn('as_unit_id', auth()->user()->unit_permissions())
-                        ->whereIn('as_location', auth()->user()->location_permissions())
-                        ->when(!empty($input['unit']), function ($query) use($input){
-                            if($input['unit'] == 145){
-                                return $query->whereIn('as_unit_id',[1, 4, 5]);
-                            }else{
-                                return $query->where('as_unit_id',$input['unit']);
-                            }
-                        })
-                        ->when(!empty($input['location']), function ($query) use($input){
-                           return $query->where('as_location',$input['location']);
-                        })
-                        ->when(!empty($input['area']), function ($query) use($input){
-                           return $query->where('as_area_id',$input['area']);
-                        })
-                        ->when(!empty($input['department']), function ($query) use($input){
-                           return $query->where('as_department_id',$input['department']);
-                        })
-                        ->when(!empty($input['line_id']), function ($query) use($input){
-                           return $query->where('as_line_id', $input['line_id']);
-                        })
-                        ->when(!empty($input['floor_id']), function ($query) use($input){
-                           return $query->where('as_floor_id',$input['floor_id']);
-                        })
-                        ->when($request['otnonot']!=null, function ($query) use($input){
-                           return $query->where('as_ot',$input['otnonot']);
-                        })
-                        ->when(!empty($input['section']), function ($query) use($input){
-                           return $query->where('as_section_id', $input['section']);
-                        })
-                        ->when(!empty($input['subSection']), function ($query) use($input){
-                           return $query->where('as_subsection_id', $input['subSection']);
-                        })
-                        ->pluck('associate_id')->toArray();
+        $associates = $this->employee->getEmployees($input, $request['date'])
+                            ->pluck('associate_id');
 
-
+        //dd($associates);
         $tableName = get_att_table($request['unit']).' AS a';
 
         $unit = unit_by_id();
@@ -1030,6 +1024,8 @@ class DailyActivityReportController extends Controller
 
         return view('hr.common.in_out_token', compact('attData','unit','department','designation','section','request'));
     }
+
+
 
     public function activityProcess($input)
     {

@@ -109,8 +109,8 @@
 			</div>
 			<div class="content_list_section" >
 				@if($input['report_format'] == 0)
-					@foreach($uniqueGroups as $group => $employees)
-					
+					@foreach($getEmployee as $group => $employees)
+					@php dd($employees) @endphp
 					<table class="table table-bordered table-hover table-head table-responsive" border="1">
 						<thead>
 							@if(count($employees) > 0)

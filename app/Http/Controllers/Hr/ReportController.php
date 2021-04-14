@@ -391,6 +391,126 @@ class ReportController extends Controller
         return (new FastExcel(collect($excel)))->download('Unit employee.xlsx');
     }
 
+
+    public function designation(Request $request)
+    {
+        $input = $request->all();
+        $emp_day = date('Y-m-d');
+        $data = DB::table('hr_as_basic_info as emp')
+                    ->select('emp.as_unit_id','emp.as_department_id','emp.as_designation_id',
+                        DB::raw("COUNT(*) AS total"),
+                        DB::raw("SUM(ben.ben_current_salary) AS total_amount")
+                    )
+                    ->where('emp.as_doj','<=',$emp_day)
+                    /*->where(function($p) use($emp_day){
+                        $p->where(function($q) use($emp_day){
+                            $q->whereIn('emp.as_status',[2,3,4,5,6,7,8]);
+                            $q->where('emp.as_status_date','>=',$emp_day);
+                        });
+                        $p->orWhere(function($q) use($emp_day){
+                            $q->where('emp.as_status',1);
+                            $q->where(function($j) use($emp_day){
+                                $j->where('emp.as_status_date','<=',$emp_day);
+                                $j->orWhereNull('emp.as_status_date');
+                            });
+                        });
+                    })*/
+                    ->whereIn('emp.as_unit_id', auth()->user()->unit_permissions())
+                    ->whereIn('emp.as_location', auth()->user()->location_permissions())
+                    ->where('emp.as_status', 1)
+                    //->whereIn('emp.as_emp_type_id', [1,2])
+                    /*->when(!empty($input['unit']), function ($query) use($input){
+                        if($input['unit'] == 145){
+                            return $query->whereIn('emp.as_unit_id',[1, 4, 5]);
+                        }else{
+                            return $query->where('emp.as_unit_id',$input['unit']);
+                        }
+                    })
+                    ->when(!empty($input['location']), function ($query) use($input){
+                       return $query->where('emp.as_location',$input['location']);
+                    })
+                    ->when(!empty($input['area']), function ($query) use($input){
+                       return $query->where('emp.as_area_id',$input['area']);
+                    })
+                    ->when(!empty($input['department']), function ($query) use($input){
+                       return $query->where('emp.as_department_id',$input['department']);
+                    })
+                    ->when(!empty($input['line_id']), function ($query) use($input){
+                       return $query->where('emp.as_line_id', $input['line_id']);
+                    })
+                    ->when(!empty($input['floor_id']), function ($query) use($input){
+                       return $query->where('emp.as_floor_id',$input['floor_id']);
+                    })
+                    ->when($request['otnonot']!=null, function ($query) use($input){
+                       return $query->where('emp.as_ot',$input['otnonot']);
+                    })
+                    ->when(!empty($input['section']), function ($query) use($input){
+                       return $query->where('emp.as_section_id', $input['section']);
+                    })
+                    ->when(!empty($input['subSection']), function ($query) use($input){
+                       return $query->where('emp.as_subsection_id', $input['subSection']);
+                    })*/
+                    ->leftJoin('hr_benefits as ben','ben.ben_as_id', 'emp.associate_id')
+                    ->groupBy('emp.as_unit_id','emp.as_department_id','emp.as_designation_id')
+                    ->get();
+
+        $data = collect($data)
+                    ->groupBy('as_department_id', true)
+                    ->map(function($q){
+                        return collect($q)->groupBy('as_designation_id')
+                            ->map(function($p){
+                                return collect($p)->keyBy('as_unit_id', true);   
+                            });
+
+                    })->all();
+
+        //dd($data);
+
+        $dept = department_by_id();
+        $des = designation_by_id();
+
+        //return view('hr.employee.summary.summary-employee', compact('data','dept'))->render();
+        $unit = [
+            '1' => 'MBM',
+            '2' => 'CEIL',
+            '3' => 'AQL',
+            '4' => 'MFW',
+            '5' => 'MBM-2',
+            '8' => 'CEW'
+        ];
+        $excel = [];
+        foreach ($data as $key => $value) {
+            // designation
+            foreach ($value as $k => $v) {
+                $excel[$key.'-'.$k]['Department']  = $dept[$key]['hr_department_name'];
+                $excel[$key.'-'.$k]['Designation'] = isset($des[$k])?$des[$k]['hr_designation_name']:'';
+                $excel[$key.'-'.$k]['CEIL'] = 0;
+                $excel[$key.'-'.$k]['CEIL Amount'] = 0;
+                $excel[$key.'-'.$k]['MBM'] = 0;
+                $excel[$key.'-'.$k]['MBM Amount'] = 0;
+                $excel[$key.'-'.$k]['MBM-2'] = 0;
+                $excel[$key.'-'.$k]['MBM-2 Amount'] = 0;
+                $excel[$key.'-'.$k]['MFW'] = 0;
+                $excel[$key.'-'.$k]['MFW Amount'] = 0;
+                $excel[$key.'-'.$k]['AQL'] = 0;
+                $excel[$key.'-'.$k]['AQL Amount'] = 0;        
+                $excel[$key.'-'.$k]['CEW'] = 0;
+                $excel[$key.'-'.$k]['CEW Amount'] = 0;
+                foreach ($v as $k1 => $u) {
+                    
+                    $p = $unit[$k1];
+                    $excel[$key.'-'.$k][$p] += $u->total;
+                    $excel[$key.'-'.$k][$p.' Amount'] += $u->total_amount;
+                }
+            }
+        }
+
+        
+
+        return (new FastExcel(collect($excel)))->download('Unit employee.xlsx');
+    }
+
+
     
 
 

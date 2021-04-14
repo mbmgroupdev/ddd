@@ -22,6 +22,8 @@
         $attendanceBonus = 0;
         $sl = 0;
     @endphp
+    <center>@if($input['employee_status'] == 5) লেফট শীট
+                                @endif</center>
     @foreach($uniqueLocation as $locKey=>$location)
         @php
             $pageKey = 0;
