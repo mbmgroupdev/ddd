@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Hr\Operation;
 
 use App\Http\Controllers\Controller;
 use App\Models\Hr\BonusType;
+use App\Models\Hr\BonusRule;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -17,9 +18,16 @@ class BonusController extends Controller
 
 	protected $bonus_type;
 
-	protected $special;
+	protected $special_rule;
 
-	protected $ben_percent;
+	protected $bonus_percent;
+
+	protected $bonus_amount;
+
+	public function __construct()
+	{
+		ini_set('zlib.output_compression', 1);
+	}
 
     public function index()
     {
@@ -30,29 +38,58 @@ class BonusController extends Controller
     public function process(Request $request)
     {
     	$input = $request->all();
-    	$input['report_format'] = 0;
-    	$input['pay_status'] = 'all';
-    	$directRule = '';
-    	$specialRule = '';
 
-    	$unit = unit_by_id();
-        $location = location_by_id();
-        $line = line_by_id();
-        $floor = floor_by_id();
-        $department = department_by_id();
-        $designation = designation_by_id();
-        $section = section_by_id();
-        $subSection = subSection_by_id();
-        $area = area_by_id();
+    	$input['report_format'] = $input['report_format']??1;
+    	$input['pay_status']    = $input['pay_status']??'all';
+    	$input['report_group'] = $input['report_group']??'as_department_id';
 
-    	$this->cutoff_date = $request->cutoff_date;
-    	$this->ben_percent = 100;
-    	$this->eligible_doj = Carbon::parse($request->cutoff_date)
+    	$this->special_rule  = $request->special_rule??null;
+    	$this->cutoff_date   = $request->cut_date;
+    	$this->bonus_percent = $request->bonus_percent??null;
+    	$this->bonus_amount  = $request->bonus_amount??null;
+    	$this->eligible_doj  = Carbon::parse($request->cut_date)
     		 					->subMonths(3)->toDateString();
 
-    	$eligible_list = $this->getBonusEligible($input);
+    	return $this->getBonusEligibleList($input);
+    }
 
-    	return view('hr.operation.bonus.index', compact('bonusType'));
+    protected function getBonusEligibleList($input)
+    {
+    	$data = $this->getBonusEligible($input);
+
+    	$com['summary'] 	= $this->makeSummary($data);
+
+    	$list = collect($data)
+        	->groupBy($input['report_group'],true);
+
+        if($input['report_format'] == 1){
+        	$list = $list->map(function($q){
+        		$q = collect($q);
+		    	$sum  = (object)[];
+		    	$sum->ot 		= $q->where('as_ot', 1)->count();
+		    	$sum->ot_amount 	= $q->where('as_ot', 1)->sum('bonus_amount');
+		    	$sum->nonot 			= $q->where('as_ot', 0)->count();
+		    	$sum->nonot_amount 	= $q->where('as_ot', 0)->sum('bonus_amount');
+		    	return $sum;
+		    })->all();
+        }
+
+
+        $com['uniqueGroup'] = $list;
+    	$com['input']		= $input;
+    	$com['format']		= $input['report_group'];
+    	$com['unit'] 		= unit_by_id();
+        $com['location'] 	= location_by_id();
+        $com['line'] 		= line_by_id();
+        $com['floor'] 		= floor_by_id();
+        $com['department'] 	= department_by_id();
+        $com['designation'] = designation_by_id();
+        $com['section'] 	= section_by_id();
+        $com['subSection'] 	= subSection_by_id();
+        $com['area'] 		= area_by_id();
+
+        return view('hr.operation.bonus.bonus_eligible_list',$com)->render();
+
     }
 
     protected function getBonusEligible($input)
@@ -65,7 +102,14 @@ class BonusController extends Controller
     			'ben.*'
     		)
     		->leftJoin('hr_benefits as ben', 'e.associate_id', 'ben.ben_as_id')
-    		->whereIn('e.as_status',[1,6]) //maternity & active
+    		->where(function($q) use ($input){
+    			if($input['emp_type'] == 'maternity'){
+    				$q->where('e.as_status',6);
+    			}else{
+    				$q->whereIn('e.as_status',[1,6]); //maternity & active
+    			}
+    		})
+    		
     		->whereIn('e.as_unit_id', auth()->user()->unit_permissions())
             ->whereIn('e.as_location', auth()->user()->location_permissions())
             ->when(!empty($input['unit']), function ($query) use($input){
@@ -108,27 +152,148 @@ class BonusController extends Controller
                     }
                 }
             })
+            ->when(empty($this->special_rule), function($q){
+            	$q->where('e.as_doj','<=', $this->eligible_doj);
+            })
+            ->orderBy('ben.ben_current_salary','DESC')
             ->get();
 
         $from = Carbon::parse($this->cutoff_date);
-        $percent = $this->ben_percent/100;
+        $percent = $this->bonus_percent/100;
 
-        return collect($data)
+        
+
+        $data = collect($data)
         	->map(function($q) use($from, $percent){
         		$q->month = Carbon::parse($q->as_doj)->diffInMonths($from);
         		$bonus_month = $q->month > 12?12:$q->month;
-    			$q->amount = ceil(($q->ben_basic/12)*$bonus_month*$percent);
+        		if($percent!=null){
+	    			$q->bonus_amount = ceil(($q->ben_basic/12)*$bonus_month*$percent);
+        		}else{
+        			$q->bonus_amount = $this->bonus_amount;
+        		}
+        		$q->pay_status = 1;
+        		$q->bank_payable = $q->bonus_amount;
+        		$q->cash_payable = $q->bonus_amount;
+        		$q->stamp = 10;
+        		// map based on custom rule
         		return $q;
-        	})
-        	->filter(function($q){
-        		return $q->month >= 3;
-        	})->values()->all()
-        	->groupBy('as_department_id');
+        	});
+
+        //return only below 12 month
+        if($input['emp_type'] == 'partial'){
+        	$data =	collect($data)->filter(function($q){
+	        		return $q->month < 12;
+	        })->values();
+        }
+        // custom filter for custom rule
+        if($this->special_rule){	
+	        $data =	collect($data)->filter(function($q){
+	        		return $q->month >= 3;
+	        })->values();
+        }
+
+        return $data;
     }
 
 
-    protected function storeRule()
+    protected function makeSummary($data)
     {
+    	$data = collect($data);
+    	$sum  = (object)[];
+    	$sum->maternity 		= $data->where('as_status', 6)->count();
+    	$sum->maternity_amount 	= $data->where('as_status', 6)->sum('bonus_amount');
+    	$sum->active 			= $data->where('as_status', 1)->count();
+    	$sum->active_amount 	= $data->where('as_status', 1)->sum('bonus_amount');
+    	$sum->ot 				= $data->where('as_ot', 1)->count();
+    	$sum->ot_amount 		= $data->where('as_ot', 1)->sum('bonus_amount');
+    	$sum->nonot 			= $data->where('as_ot', 0)->count();
+    	$sum->nonot_amount 		= $data->where('as_ot', 0)->sum('bonus_amount');
+    	$sum->partial 			= $data->where('month','<' ,12)->count();
+    	$sum->partial_amount 	= $data->where('month','<' ,12)->sum('bonus_amount');
 
+    	return $sum;
     }
+
+
+    protected function storeRule($request)
+    {
+    	$rule = new BonusRule();
+    	$rule->unit_id = auth()->user()->unit_permissions()[0];
+     	$rule->bonus_type_id = 1;
+     	$rule->bonus_year = date('Y', strtotime($request->cut_date));
+     	$rule->amount = $request->bonus_amount;
+     	$rule->percent_of_basic = $request->bonus_percent;
+     	$rule->cutoff_date = $request->cut_date;
+     	if($request->special_rule){
+
+	     	$rule->special_rule = json_encode($request->special_rule);
+     	}
+     	$rule->created_by = auth()->id();
+     	$rule->save();
+
+     	return $rule;
+    }
+
+    protected function formatData($data, $rule_id)
+    {
+    	$insert = [];
+
+    	foreach ($data as $k => $v) {
+    		$insert[$k] = [
+    			'unit_id' => $v->as_unit_id,
+    			'bonus_rule_id' => $rule_id,
+    			'associate_id' => $v->associate_id,
+    			'bonus_amount' => $v->bonus_amount,
+    			'gross_salary' => $v->ben_current_salary,
+    			'basic' => $v->ben_basic,
+    			'medical' => $v->ben_medical,
+    			'transport' => $v->ben_transport,
+    			'duration' => $v->month,
+    			'stamp' => 10,
+    			'pay_status' => 1,
+    			'emp_status' => $v->as_status,
+    			'net_payable' => ($v->bonus_amount - 10),
+    			'subsection_id' => $v->as_subsection_id,
+    			'designation_id' => $v->as_designation_id,
+    			'ot_status' => $v->as_ot,
+    		];
+    	}
+    	return $insert;
+    }
+
+    public function toAproval(Request $request)
+    {
+    	
+    	$rule = $this->storeRule($request);
+
+    	$input['report_format'] = $input['report_format']??1;
+    	$input['pay_status']    = $input['pay_status']??'all';
+    	$input['report_group'] = $input['report_group']??'as_department_id';
+    	$input['emp_type'] = $input['emp_type']??'all';
+
+    	$this->special_rule  = $request->special_rule??null;
+    	$this->cutoff_date   = $request->cut_date;
+    	$this->bonus_percent = $request->bonus_percent??null;
+    	$this->bonus_amount  = $request->bonus_amount??null;
+    	$this->eligible_doj  = Carbon::parse($request->cut_date)
+    		 					->subMonths(3)->toDateString();
+
+    	$data = $this->getBonusEligible($input);
+    	$processdData = $this->formatData($data, $rule->id);
+    	
+    	$chunk = collect($processdData)
+    				->chunk(300);
+
+
+    	foreach ($chunk as $key => $n) {
+    		
+    		DB::table('hr_bonus_sheet')->insert(collect($n)->toArray());
+    	}
+
+    	return 'success';
+    	
+    }
+
+
 }

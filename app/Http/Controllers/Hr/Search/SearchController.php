@@ -36,23 +36,23 @@ class SearchController extends Controller
             // return $input;
             $data['type'] = 'error';
             
-            if($input['type'] == 'designation'){
+            if($input['type'] == 'as_designation_id'){
                 $query = DB::table('hr_designation')
                 ->select('hr_designation_id AS id', 'hr_designation_name AS text')
                 ->where('hr_designation_name', 'LIKE', '%'.$request->keyvalue.'%');
-            }elseif($input['type'] == 'department'){
+            }elseif($input['type'] == 'as_department_id'){
                 $query = DB::table('hr_department')
                 ->select('hr_department_id AS id', 'hr_department_name AS text')
                 ->where('hr_department_name', 'LIKE', '%'.$request->keyvalue.'%');
-            }elseif($input['type'] == 'section'){
+            }elseif($input['type'] == 'as_section_id'){
                 $query = DB::table('hr_section')
                 ->select('hr_section_id AS id', 'hr_section_name AS text')
                 ->where('hr_section_name', 'LIKE', '%'.$request->keyvalue.'%');
-            }elseif($input['type'] == 'sub_section'){
+            }elseif($input['type'] == 'as_subsection_id'){
                 $query = DB::table('hr_subsection')
                 ->select('hr_subsec_id AS id', 'hr_subsec_name AS text')
                 ->where('hr_subsec_name', 'LIKE', '%'.$request->keyvalue.'%');
-            }elseif($input['type'] == 'employee'){
+            }elseif($input['type'] == 'associate_id'){
                 $query = DB::table('hr_as_basic_info')
                 ->select('as_id AS id', DB::raw('CONCAT_WS(" - ", associate_id, as_name) AS text'))
                 ->where('as_status', [1,6])

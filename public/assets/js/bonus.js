@@ -89,7 +89,9 @@ function loadContent(type, typeText){
 }
 
 function entryRow(type, index){
-	return '<tr><td><button class="btn btn-sm btn-outline-danger delete removeRow" type="button" id="delete'+type+index+'"><i class="las la-trash"></i></button></td><td><input type="hidden" data-type="'+type+'" value="" name="id_'+type+'[]" id="id_'+type+'_'+index+'"><input type="text" data-type="'+type+'" name="'+type+'[]" id="'+type+'_'+index+'" class="form-control autocomplete_txt" autocomplete="off"></td><td><input type="number" step="any" min="0" value="0" name="eligible_'+type+'[]" id="eligible'+type+'_'+index+'" class="form-control changesNo" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()"></td><td><input type="number" step="any" min="0" value="0" name="amount_'+type+'[]" id="amount'+type+'_'+index+'" class="form-control changesNo" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()"></td><td><input type="number" step="any" min="0" value="0" name="basic_'+type+'[]" id="basic'+type+'_'+index+'" class="form-control changesNo" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()"></td><td><input type="date" value="" name="cutdate_'+type+'[]" id="cut'+type+'_'+index+'" class="form-control"></td></tr>';
+	return '<tr><td><button class="btn btn-sm btn-outline-danger delete removeRow" type="button" id="delete'+
+    type+index+'"><i class="las la-trash"></i></button></td><td><input type="hidden" data-type="'+
+    type+'"  value="" name="special_rule['+type+']['+index+'][id]" id="id_'+type+'_'+index+'"><input type="text" data-id="'+index+'" data-type="'+type+'" name="'+type+'[]" id="'+type+'_'+index+'" class="form-control autocomplete_txt" autocomplete="off"></td><td><input type="number" step="any" min="0" value="0" name="special_rule['+type+']['+index+'][month]" id="eligible'+type+'_'+index+'" class="form-control changesNo" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()"></td><td><input type="number" step="any" min="0" value="0" name="special_rule['+type+']['+index+'][amount]" id="amount'+type+'_'+index+'" class="form-control changesNo" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()"></td><td><input type="number" step="any" min="0" value="0" name="special_rule['+type+']['+index+'][basic_percent]" id="basic'+type+'_'+index+'" class="form-control changesNo" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()"></td><td><input type="date" value="" name="special_rule['+type+']['+index+'][cutoff_date]" id="cut'+type+'_'+index+'" class="form-control"></td></tr>';
 }
 
 $(document).on('focus keyup','.autocomplete_txt',function(){
@@ -130,20 +132,20 @@ $(document).on('focus keyup','.autocomplete_txt',function(){
         autoFocus: true,            
         minLength: 0,
         select: function( event, ui ) {
-            var item = ui.item.data;
-            id_arr = $(this).attr('id');
-            type_arr = $(this).data('type');
-            eligibleMonth = $("#eligible-month").val();
-            bonusAmount = $("#bonus_amount").val();
-            bonusPercent = $("#bonus_percent").val();
+            var item = ui.item.data,
+            id = $(this).data('id'),
+            type_arr = $(this).data('type'),
+            eligibleMonth = $("#eligible-month").val(),
+            bonusAmount = $("#bonus_amount").val(),
+            bonusPercent = $("#bonus_percent").val(),
             cutDate = $("#cut_date").val();
-            id = id_arr.split("_");
-            $("#id_"+type_arr+'_'+id[1]).val(item.id);
-            $("#eligible"+type_arr+'_'+id[1]).val(item.id);
-            $("#eligible"+type_arr+'_'+id[1]).val(eligibleMonth);
-            $("#amount"+type_arr+'_'+id[1]).val(bonusAmount);
-            $("#basic"+type_arr+'_'+id[1]).val(bonusPercent);
-            $("#cut"+type_arr+'_'+id[1]).val(cutDate);
+            console.log("#id_"+type_arr+'_'+id);
+            $("#id_"+type_arr+'_'+id).val(item.id);
+            $("#eligible"+type_arr+'_'+id).val(item.id);
+            $("#eligible"+type_arr+'_'+id).val(eligibleMonth);
+            $("#amount"+type_arr+'_'+id).val(bonusAmount);
+            $("#basic"+type_arr+'_'+id).val(bonusPercent);
+            $("#cut"+type_arr+'_'+id).val(cutDate);
         }               
     });
 });
