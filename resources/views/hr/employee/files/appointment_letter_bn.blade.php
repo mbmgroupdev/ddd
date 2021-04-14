@@ -32,6 +32,7 @@
             	$des['grade'] = '';
             	$un['name'] = '';
             	$un['address'] = '';
+                $un['signature'] = '';
             	if(isset($designation[$emp->as_designation_id])){
             		$des['bn'] = $designation[$emp->as_designation_id]['hr_designation_name_bn'];
             		$des['en'] = $designation[$emp->as_designation_id]['hr_designation_name'];
@@ -39,7 +40,9 @@
             	}
             	if(isset($unit[$emp->as_unit_id])){
             		$un['name'] = $unit[$emp->as_unit_id]['hr_unit_name_bn'];
-            		$un['address'] = $unit[$emp->as_unit_id]['hr_unit_address_bn'];
+                    $un['address'] = $unit[$emp->as_unit_id]['hr_unit_address_bn'];
+            		$un['signature'] = $unit[$emp->as_unit_id]['hr_unit_authorized_signature'];
+
             	}
 
             @endphp
@@ -182,9 +185,14 @@
                     <p>ধন্যবাদান্তে</p>
                     <p>সংশ্লিষ্ট ব্যবস্থাপক</p>
                 </div>
-                <div style="width: 50%;text-align: right">
+                <div style="width: 50%;text-align: right;position: relative;">
+                    @if($emp->as_unit_id == 2)
+                        <img style="height: 40px;position: absolute;top: -35px;" src="{{asset($un['signature'])}}">
+                    @endif
                     ----------------<br>
+
                     কারখানা কর্তৃপক্ষ
+
                 </div>
             </div>
             

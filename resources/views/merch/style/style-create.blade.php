@@ -190,6 +190,15 @@
                                         
                                         
                                     </div>
+                                    <div class="col-sm-12">
+                                        <div class="form-group " >
+                                            <button type="button" class="btn btn-primary btn-sm"  data-toggle="modal" id="sizeGroupModalId" data-target="#sizeGroupModal" style="border-radius: 5px;">Select Size Group</button>
+                                            @hasanyrole("Super Admin|merchandiser")
+                                                <a id="size-group-buyer" href="{{ url('/merch/setup/productsize?buyer=&&p_type=')}}" target="_blank" class="addart btn btn-sm btn-info" ><i class="fa fa-plus"></i></a>
+                                            @endhasanyrole
+                                        </div>
+                                        <div  id="show_selected_size_group" ></div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-sm-6 ">
@@ -224,13 +233,7 @@
                                         <div  id="show_selected_machines" ></div>
                                     </div>
 
-                                    <div class="form-group " >
-                                        <button type="button" class="btn btn-primary btn-sm"  data-toggle="modal" id="sizeGroupModalId" data-target="#sizeGroupModal" style="border-radius: 5px;">Select Size Group</button>
-                                        @hasanyrole("Super Admin|merchandiser")
-                                            <a id="size-group-buyer" href="{{ url('/merch/setup/productsize?buyer=&&p_type=')}}" target="_blank" class="addart btn btn-sm btn-info" ><i class="fa fa-plus"></i></a>
-                                        @endhasanyrole
-                                    </div>
-                                    <div  id="show_selected_size_group" ></div>
+                                    
                                 </div>
                             </div>
                             
@@ -791,7 +794,7 @@ $(document).ready(function()
         var selected_size_names = new Array();
         $('#right_modal_item').modal('hide');
         //-------- modal actions ------------------
-        sgmodal.find('.modal-body input[type=checkbox]').each(function(i,v) {
+        sgmodal.find('.modal-body input[type=radio]').each(function(i,v) {
             if ($(this).prop("checked") == true)
             {
 

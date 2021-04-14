@@ -452,7 +452,11 @@ Route::get('hr/operation/pay-tiffin-dinner-bill-excel', 'Hr\Operation\BillOperat
 
 // Bonus section
 Route::get('hr/operation/bonus', 'Hr\Operation\BonusController@index');
+
+Route::get('hr/operation/bonus-process', 'Hr\Operation\BonusController@process');
+
 Route::get('hr/search-type', 'Hr\Search\SearchController@type');
+
 
 //---------Hr/ Payroll-----------//
 Route::get('hr/payroll/bank-sheet', 'Hr\Payroll\BankSheetController@index');
@@ -1430,6 +1434,7 @@ Route::post('hr/operation/partial-salary/disburse', 'Hr\Operation\VoucherControl
 Route::get('/hr/reports/monthly-ot-report', 'Hr\ReportController@monthlyOT');
 Route::get('/hr/reports/monthly-mmr-report', 'Hr\ReportController@monthlyMMR');
 Route::get('/hr/reports/unit-employee', 'Hr\ReportController@employee');
+Route::get('/hr/reports/unit-designation', 'Hr\ReportController@designation');
 
 // monthly analytics
 Route::get('hr/reports/monthly-analytics', 'Hr\Reports\AnalyticsController@index');

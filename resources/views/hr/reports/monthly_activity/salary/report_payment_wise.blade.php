@@ -117,6 +117,10 @@
 		                		Payment Type 
 		                			<b class="capitalize">: {{ $input['pay_status'] }}</b> <br>
 		                		@endif
+		                		@if($input['employee_status'] != null)
+		                		Status
+		                			<b class="capitalize">: {{ emp_status_name($input['employee_status'] )}}</b> <br>
+		                		@endif
 		            		</td>
 		            	</tr>
 		            	

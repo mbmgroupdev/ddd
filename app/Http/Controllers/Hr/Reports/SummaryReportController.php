@@ -290,6 +290,7 @@ class SummaryReportController extends Controller
 
                 
                 $totalEmployees = count($getEmployee);
+                
                 if($input['report_group'] != null){
                     $uniqueGroups = collect($getEmployee)
                     ->groupBy($input['report_group'], true);
@@ -324,17 +325,21 @@ class SummaryReportController extends Controller
                 $attData->orderBy($groupBy, 'asc');
             }
 
+          
+
+           if($input['report_group'] == 'as_subsection_id'){
+                $attData->orderBy('emp.as_section_id', 'asc');
+            } 
+
+            $getEmployee = $attData->get();
+
             if($format != null && count($getEmployee) > 0 && $input['report_format'] == 0){
                 $uniqueGroups = collect($getEmployee)->groupBy($request['report_group'],true);
                 
             }
 
 
-            if($input['report_group'] == 'as_subsection_id'){
-                $attData->orderBy('emp.as_section_id', 'asc');
-            } 
-
-            $getEmployee = $attData->get();
+            
 
 
             if($input['report_format'] == 1 && $input['report_group'] != null){
