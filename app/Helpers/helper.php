@@ -17,6 +17,7 @@ use App\Models\Hr\Leave;
 use App\Models\District;
 use App\Models\Upazilla;
 use App\Models\UserLog;
+use App\Models\Hr\BonusType;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
@@ -244,18 +245,9 @@ if(!function_exists('log_file_write')){
 
     function log_file_write($message, $event_id)
     {
-        /*$directory = 'assets/logs/'.date("Y").'/'.date("m").'/'.date("d").'/';
-        $file = 'assets/logs/'.date("Y").'/'.date("m").'/'.date("d").'/hr_log.txt';
-        //If the directory doesn't already exists.
-        if(!is_dir($directory)){
-            //Create our directory.
-            mkdir($directory, 755, true);
-        }
-        if ( !unlink( $file ) ) {
-          chmod($file, 0755);
-        }
-        $log_message = date("Y-m-d H:i:s")." \"".Auth()->user()->associate_id."\" ".$message." ".$event_id.PHP_EOL;
-        $log_message .= file_get_contents($file);*/
+        $log_message = date("Y-m-d H:i:s")." \"".auth()->user()->associate_id."\" ".$message." ".$event_id.PHP_EOL;
+        $log_message .= file_get_contents("assets/log.txt");
+        file_put_contents("assets/log.txt", $log_message);
 
         // store user log
         $logs = UserLog::where('log_as_id', auth()->id())->orderBy('updated_at','ASC')->get();
@@ -1102,7 +1094,15 @@ if(!function_exists('upzila_by_id')){
     }
 }
 
+if(!function_exists('bonus_type_by_id')){
+    function bonus_type_by_id()
+    {
+       return  Cache::remember('bonus_type_by_id', Carbon::now()->addHour(12), function () {
+            return BonusType::get()->keyBy('id')->toArray();
+        });      
 
+    }
+}
 
 
 

@@ -1,3 +1,11 @@
+2021-04-14 12:37:24 "20F025017D" Bonus Type Updated Successfully 
+2021-04-14 12:27:29 "20F025017D" Bonus Type Deleted 4
+2021-04-14 12:27:24 "20F025017D" Bonus Type Updated Successfully 
+2021-04-14 12:27:17 "20F025017D" Bonus Type "demo" added 4
+2021-04-14 12:19:59 "20F025017D" Bonus Type Deleted 3
+2021-04-14 12:19:52 "20F025017D" Bonus Type Updated Successfully 
+2021-04-14 12:19:43 "20F025017D" Bonus Type Updated Successfully 
+2021-04-14 12:16:30 "20F025017D" Bonus Type "demo" added 3
 2021-04-11 14:16:20 "20F025017D" Style and Style related data Updated 8
 2021-04-11 14:16:20 "20F025017D" Style Size Gruop Created 14
 2021-04-11 14:15:23 "20F025017D" New Style Saved 8

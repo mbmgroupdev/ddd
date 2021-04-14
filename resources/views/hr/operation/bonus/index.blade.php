@@ -2,6 +2,7 @@
 @section('title', 'Bonus Set')
 @section('main-content')
 @push('css')
+    <link href="{{ asset('assets/css/jquery-ui.min.css') }}" rel="stylesheet">
     <style>
         .close-button {
             content: "X";
@@ -21,10 +22,10 @@
             color: #fff;
             cursor: pointer;
         }
-        .form-section{
+        /*.form-section{
             height: calc(100vh - 275px);
-        }
-        #appendType{
+        }*/
+        /*#appendType{
             position: absolute;
             overflow: auto;
             background: #fff;
@@ -38,7 +39,7 @@
             width: 100%;
             bottom: 0;
             padding-top: 15px;
-        }
+        }*/
     </style>
 @endpush
 <div class="main-content">
@@ -62,14 +63,14 @@
                     <div class="panel-heading"><h6>Bonus</h6></div> 
                     <div class="panel-body">
                         <div class="row">
-                            <div class="offset-sm-3 col-sm-6">
+                            <div class="offset-sm-2 col-sm-8">
         
                                 <div class="form-section">
                                     <div class="form-group has-required has-float-label select-search-group">
                                         {{ Form::select('type_id', $bonusType, null, ['placeholder'=>'Select Bonus', 'id'=>'bonus_for', 'class'=> 'form-control', 'required'=>'required']) }}
                                         <label for="bonus_for">Bonus for </label>
                                     </div>
-                                    
+                                    <input type="hidden" name="eligible_month" id="eligible-month" value="0">
                                     <div class="row">
                                         <div class="col-sm-4">
                                             <div class="form-group has-float-label">
@@ -165,81 +166,20 @@
     </div> {{-- Main-content-inner-end --}}
 </div> {{-- Main-content --}}
 @push('js')
+<script src="{{ asset('assets/js/jquery-ui.js')}}"></script>
+<script src="{{ asset('assets/js/moment.min.js')}}"></script>
+<script src="{{ asset('assets/js/bonus.js')}}"></script>
 <script type="text/javascript">
-    $(document).on('click','#specialCheck',function(){
-      if ($(this).is(":checked")) {
-        $("#syncBtn").show();
-        $("#appendType").show();
-      }else{
-        $("#syncBtn").hide();
-        $("#appendType").hide();
-      }
-    });
-    $(document).on('click', '#sync-type', function () {
-        var type = $("#type-for").val();
-        var typeText = $("#type-for option:selected" ).text();
-        // console.log(type)
-        if(type !== '' && type !== null){
-            if($('#'+type).length && $('#'+type).val().length){
-                $.notify(typeText+' Already Exists', 'error');
-            }else{
-                var typeWisePrepend = loadContent(type, typeText);
-                $("#appendType").prepend(typeWisePrepend);
-                $("#targettype").append('<input type="hidden" name="'+type+'" id="'+type+'" value="'+type+'">');   
+    var bonus_type = @json(bonus_type_by_id());
+    $(document).on('change', '#bonus_for', function(event) {
+        var bonus_for = $(this).val();
+        var eligibleMonth = 0;
+        if(bonus_for !== '' && bonus_for !== null){
+            if(bonus_type[bonus_for]){
+                eligibleMonth = bonus_type[bonus_for].eligible_month;
             }
-            
-
         }
-    });
-    function loadContent(type, typeText){
-        var html = '';
-        var i=$('table tr').length;
-        html += '<div class="row"><div class="col-sm-12 table-wrapper-scroll-y table-custom-scrollbar"><table class="table table-bordered table-hover table-fixed" id="itemList"><button title="Remove this!" type="button" class="fa fa-close close-button" onclick="$(this).parent().remove();"></button><thead><tr class="text-center active"><th width="2%"><button class="btn btn-sm btn-outline-success addmore" type="button"><i class="las la-plus-circle"></i></button></th><th width="38%">'+typeText+' Name</th><th width="20%"> Eligible Month</th><th width="20%">Amount</th><th width="20%">Or, % of Basic</th></tr></thead><tbody><tr><td><button class="btn btn-sm btn-outline-danger delete" type="button" id="deleteItem1" onClick="deleteItem(this.id)"><i class="las la-trash"></i></button></td><td><input type="text" data-type="'+type+'" name="'+type+'[]" id="designation_1" class="form-control autocomplete_txt" autocomplete="off"></td><td><input type="number" step="any" min="0" value="0" name="special_tiffin[]" id="tiffin_1" class="form-control changesNo" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()"></td><td><input type="number" step="any" min="0" value="0" name="special_tiffin[]" id="tiffin_1" class="form-control changesNo" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()"></td><td><input type="number" step="any" min="0" value="0" name="special_dinner[]" id="dinner_1" class="form-control changesNo" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()"></td></tr></tbody></table></div></div>';
-            i++;
-        return html;
-    }
-    $(document).on('focus keyup','.autocomplete_txt',function(){
-        type = $(this).data('type');
-        typeId = $(this).attr('id');
-        console.log(type);
-        // inputIdSplit = typeId.split("_");
-
-        // if(type =='designation' )autoTypeNo=0;  
-        
-        // $(this).autocomplete({
-        //     source: function( request, response ) {
-        //         $.ajax({
-        //             url : base_url+'/hr/search-designation',
-        //             //dataType: "json",
-        //             method: 'get',
-        //             data: {
-        //               keyvalue: request.term
-        //             },
-        //              success: function( data ) {
-        //                  response( $.map( data, function( item ) {
-        //                     if(type =='designation') autoTypeShow = item.name;
-        //                     return {
-        //                         label: item.name,
-        //                         value: item.name,
-        //                         data : item
-        //                     }
-        //                 }));
-        //             }
-        //         });
-        //     },
-        //     autoFocus: true,            
-        //     minLength: 0,
-        //     select: function( event, ui ) {
-        //         var item = ui.item.data;                        
-        //         id_arr = $(this).attr('id');
-        //         id = id_arr.split("_");
-        //         $('#designation_'+id[1]).val(item.designation);
-        //         setTimeout(function() { 
-        //             $(".addmore").click();
-        //             $('#tiffin_'+id[1]).focus().select(); 
-        //         }, 200);
-        //     }               
-        // });
+        $('#eligible-month').val(eligibleMonth);
     });
 </script>
 @endpush
