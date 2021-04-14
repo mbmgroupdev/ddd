@@ -4,6 +4,7 @@ namespace App\Models\Merch;
 
 use App\Models\Merch\Reservation;
 use Illuminate\Database\Eloquent\Model;
+use DB;
 
 class Reservation extends Model
 {
@@ -52,5 +53,17 @@ class Reservation extends Model
         ->where('res_month', '>', date('m'))
         ->orderBy('id', 'desc')
         ->first();
+    }
+
+    public static function getReservationData($team=null)
+    {
+        $queueData = DB::table('mr_capacity_reservation AS cr')
+            ->whereIn('cr.b_id', auth()->user()->buyer_permissions());
+            if(!empty($team)){
+                $queueData->whereIn('cr.res_created_by', $team);
+            }
+            $queueData->orderBy('cr.id', 'DESC');
+        $data = $queueData->get();
+        return $data;
     }
 }

@@ -61,7 +61,7 @@
               </li>
               <li class="active">PO List</li>
               <li class="top-nav-btn">
-                <a class="btn btn-sm btn-primary add-new text-white" href="{{ url('merch/po/create') }}"><i class="las la-plus"></i> Create PO</a>
+                <a class="btn btn-sm btn-primary text-white" href="{{ url('merch/po/create') }}"><i class="las la-plus"></i> Create PO</a>
               </li>
           </ul><!-- /.breadcrumb -->
 

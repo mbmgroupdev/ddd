@@ -34,7 +34,7 @@
               </li>
               <li class="active">Create</li>
               <li class="top-nav-btn">
-                <a class="btn btn-sm btn-primary text-white" href="{{ url('merch/order/order_list') }}"><i class="las la-list"></i> Order List</a>
+                <a class="btn btn-sm btn-primary text-white" href="{{ url('merch/orders') }}"><i class="las la-list"></i> Order List</a>
               </li>
           </ul><!-- /.breadcrumb -->
 
@@ -74,6 +74,13 @@
 		      	@if(isset($style) && $style != null)
 		      	@php
 		      		$yearMonth = date('Y-m', strtotime('+1 months'));
+		      		$resYearMonth = $yearMonth;
+		      		$attr = '';
+					if($reservation != null){
+						$attr = 'readonly';
+						$resYearMonth = $reservation->res_year.'-'.$reservation->res_month;
+						$resYearMonth = date('Y-m', strtotime($resYearMonth));
+					}
 		      	@endphp
 		      	<div class="row">
 		      		<div class="offset-1 col-10">
@@ -131,13 +138,13 @@
 						    <div class="row">
 						    	<div class="col-sm-4">
 									<div class="form-group has-required has-float-label">
-								        <input type="month" class="form-control" id="res-year-month" name="res_year_month" placeholder=" Month-Year"required="required" value="{{ $yearMonth }}"autocomplete="off" />
+								        <input type="month" class="form-control" id="res-year-month" name="res_year_month" placeholder=" Month-Year" required="required" value="{{ $resYearMonth }}"autocomplete="off" {{ $attr }} />
 								        <label for="res-year-month" > Reservation Year-Month </label>
 								    </div>
 								</div>
 								<div class="col-sm-4">
 									<div class="form-group has-required has-float-label">
-								        <input type="number" id="res-quantity" name="res_quantity" placeholder="Enter Quantity" class="form-control sah_cal" autocomplete="off" value="0" onClick="this.select()" required min="0" />
+								        <input type="number" id="res-quantity" name="res_quantity" placeholder="Enter Quantity" class="form-control sah_cal" autocomplete="off" value="{{ $reservation->balance??0 }}" onClick="this.select()" required min="0" {{ $attr }} />
 								        <label for="res-quantity" > Reservation Quantity </label>
 								    </div>
 								</div>
@@ -145,13 +152,13 @@
 									<div class="row">
 										<div class="col">
 											<div class="form-group has-required has-float-label">
-										        <input type="number" id="res-smv" name="res_sewing_smv" placeholder="Enter Sewing SMV " class="form-control sah_cal" autocomplete="off" value="0" step="any" onClick="this.select()" required min="0" />
+										        <input type="number" id="res-smv" name="res_sewing_smv" placeholder="Enter Sewing SMV " class="form-control sah_cal" autocomplete="off" value="{{ $reservation->res_sewing_smv??0 }}" step="any" onClick="this.select()" required min="0" {{ $attr }} />
 										        <label for="res-smv" > Sewing SMV </label>
 										    </div>
 										</div>
 										<div class="col">
 											<div class="form-group has-required has-float-label">
-										        <input type="number" id="sah" name="res_sah" placeholder="Enter SAH" class="form-control" autocomplete="off" step="any" required readonly value="0" min="0" />
+										        <input type="number" id="sah" name="res_sah" placeholder="Enter SAH" class="form-control" autocomplete="off" step="any" required readonly value="{{ $reservation->res_sah??0 }}" min="0" {{ $attr }} />
 										        <label for="sah" > SAH </label>
 										    </div>
 										</div>
@@ -169,13 +176,13 @@
 						    	</div>
 						    	<div class="col-sm-4">
 						    		<div class="form-group has-required has-float-label">
-								        <input type="number" id="order-quantity" name="order_qty" placeholder="Enter Order Quantity" class="form-control" autocomplete="off" value="0" onClick="this.select()" required min="0" />
-								        <label for="order-quantity" > Order Quantity </label>
+								        <input type="number" id="order-qty" name="order_qty" placeholder="Enter Order Quantity" class="form-control" autocomplete="off" value="0" onClick="this.select()" required min="0" />
+								        <label for="order-qty" > Order Quantity </label>
 								    </div>
 						    	</div>
 						    	<div class="col-sm-4">
 						    		<div class="form-group has-required has-float-label">
-								        <input type="month" class="form-control" id="month" name="order_year_month" placeholder=" Month-Year"required="required" value="{{ $yearMonth }}"autocomplete="off" />
+								        <input type="month" class="form-control" id="month" name="order_year_month" placeholder=" Month-Year"required="required" value="{{ $yearMonth }}"autocomplete="off" @if($reservation != null) max="{{ $resYearMonth }}" @endif />
 								        <label for="month" >Order Year-Month </label>
 								    </div>
 						    	</div>
@@ -229,14 +236,15 @@
 	      $(curInputs[i]).closest(".form-group").addClass("has-error");
 	    }
 	  }
+
 	  // check order qty
-	  if($("#order-quantity").val() < 1){
-	  	$("#order-quantity").notify('Order quantity is at least more than 0', 'error');
+	  if($("#order-qty").val() < 1){
+	  	$("#order-qty").notify('Order quantity is at least more than 0', 'error');
 	  	return false;
 	  }
 
 	  // check reservation order qty
-	  if($("#order-quantity").val() > $("#res-quantity").val()){
+	  if($("#order-qty").val() > $("#res-quantity").val()){
 	  	$("#res-quantity").notify('Order quantity not longer reservation quantity', 'error');
 	  	return false;
 	  }
@@ -287,10 +295,12 @@
 	  var sah = parseFloat((res_sewing_smv*res_quantity)/60).toFixed(2);
 
 	  $("#sah").val(sah);
-	  $("#order-quantity").val(res_quantity).attr('max', res_quantity);
+	  $("#order-qty").val(res_quantity).attr('max', res_quantity);
 	});
 	$(document).on('change', '#res-year-month', function(){
-		$("#month").val($(this).val());
+		$("#month").val($(this).val()).attr({
+		    max: $(this).val()
+		});
 	});
 </script>
 @endpush

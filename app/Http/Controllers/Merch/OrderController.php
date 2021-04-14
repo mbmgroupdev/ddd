@@ -77,26 +77,33 @@ class OrderController extends Controller
         $data['type'] = 'error';
         
         $input['created_by'] = auth()->user()->id;
-        $input['hr_unit_id'] = $input['unit_id'];
-        $input['b_id'] = $input['mr_buyer_b_id'];
+        if(!isset($input['hr_unit_id'])){
+            $input['hr_unit_id'] = $input['unit_id'];
+        }else{
+            $input['unit_id'] = $input['hr_unit_id'];
+        }
+        if(!isset($input['b_id'])){
+            $input['b_id'] = $input['mr_buyer_b_id'];
+        }else{
+            $input['mr_buyer_b_id'] = $input['b_id'];
+        }
         // return $input;
         DB::beginTransaction();
         try {
+
             if($input['res_id'] == 0){
-                // create reservation
-                
-                $resYearMonth = explode('-', $input['res_year_month']);
-                $input['res_month'] = $resYearMonth[1];
-                $input['res_year'] = $resYearMonth[0];
-                
-                $input['res_id'] = Reservation::create($input)->id;
-            }else{
                 // check reservation exists
                 $getRes = Reservation::checkReservationExists($input);
                 if($getRes == true){
                     $data['message'] = "Reservation already exists.";
                     return response()->json($data);
                 }
+                // create reservation
+                $resYearMonth = explode('-', $input['res_year_month']);
+                $input['res_month'] = $resYearMonth[1];
+                $input['res_year'] = $resYearMonth[0];
+                
+                $input['res_id'] = Reservation::create($input)->id;
             }
             
             // check & create order base on mr_style_stl_id
@@ -183,7 +190,7 @@ class OrderController extends Controller
     {
         $order = OrderEntry::orderInfoWithStyle($id);
         $pagesize = '';
-        return view('merch.orders.show', compact('order', 'pagesize'));
+        return view('merch.order.show', compact('order', 'pagesize'));
     }
 
     /**
@@ -206,7 +213,7 @@ class OrderController extends Controller
             $poQty = PurchaseOrder::getPoOrderSumQtyOrderIdWise($id);
             $poQty = $poQty??0;
 
-            return view('merch.orders.edit', compact('order', 'unitList', 'buyerList', 'poQty', 'resQty', 'seasonList'));
+            return view('merch.order.edit', compact('order', 'unitList', 'buyerList', 'poQty', 'resQty', 'seasonList'));
         } catch (\Exception $e) {
             return 'error';
         }

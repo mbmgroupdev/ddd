@@ -27,6 +27,9 @@
               </li>
               <li class="active">Style Costing</li>
               <li class="top-nav-btn">
+                @if($style->bom_status == 1 && $style->costing_status == 1)
+                <a href='{{ url("merch/orders/create?stl_id=$style->stl_id")}}' class="btn btn-outline-success btn-sm pull-right"> <i class="ace-icon fa fa-cart-plus"></i> Process To Order</a>  &nbsp; 
+                @endif
                 <a href='{{ url("merch/style/bom/$style->stl_id") }}' class="btn btn-outline-primary btn-sm pull-right"> @if($style->bom_status == 1) <i class="fa fa-edit"></i> Style BOM @else <i class="fa fa-plus"></i> Style BOM @endif</a> &nbsp;
                 
                 <a href="{{ url('merch/style/style_list')}}" class="btn btn-outline-success btn-sm pull-right"> <i class="fa fa-list"></i> Style List</a>
@@ -319,9 +322,12 @@
                 // console.log(response);
                 if(response.type === 'success'){
                   if(savetype =='manual' ){
-                      $.notify(response.message, response.type);
+                    $.notify(response.message, response.type);
+                    setTimeout(function(){
+                      window.location.href=response.url;
+                    }, 500);
                   }else{
-                      $.notify('Costing Save '+savetype, response.type);
+                    $.notify('Costing Save '+savetype, response.type);
                   }
                 }else{
                   $.notify(response.message, response.type);

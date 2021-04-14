@@ -52,7 +52,7 @@
               </li>
               <li class="top-nav-btn">
                 <a class="btn btn-sm btn-primary add-new text-white" data-type="Add reservation"><i class="las la-plus"></i> New Reservation</a>
-                <a href="{{ url('merch/order/order_list')}}" class="btn btn-sm btn-success text-white" data-type="reservation"><i class="las la-list"></i> Order List</a>
+                <a href="{{ url('merch/orders')}}" class="btn btn-sm btn-success text-white" data-type="reservation"><i class="las la-list"></i> Order List</a>
               </li>
           </ul><!-- /.breadcrumb -->
 
@@ -105,7 +105,7 @@ $(document).on('click', '.add-new', function() {
     }else if(type === 'Order List'){
       var id = $(this).data('resid');
       url = '/merch/reservation/order-list/'+id;
-    }else if(type === 'order'){
+    }else if(type === 'Order Entry'){
       var resId = $(this).data('resid');
       url = '/merch/reservation/order-entry/'+resId;
     }
@@ -145,23 +145,28 @@ $(document).on('click', '#itemBtn', function(event) {
     }
   }
   var verb = 'POST';
+  var url = '';
   var pageType = $("#page-type").val();
+  var resQty = $("#res-quantity").val();
+  var orderQty = $("#order-qty").val();
+  if(parseFloat(orderQty) > parseFloat(resQty)){
+    $("#res-quantity").notify('This Reservation Already Order Entry '+orderQty, 'error');
+    $("#app-loader").hide();
+    return false;
+  }
   if(pageType === 'reservation-store'){
-    var url = '{{ route("reservation.store")}}';
+    if ($('#order-check').is(':checked')) {
+      url = '{{ url("/merch/orders") }}';
+    }else{
+      url = '{{ route("reservation.store")}}';
+    }
   }else if(pageType === 'reservation-update'){
     var resId = $("#res-id").val();
-    var resQty = $("#res-quantity").val();
-    var orderQty = $("#order-qty").val();
-    if(parseFloat(orderQty) > parseFloat(resQty)){
-      $("#res-quantity").notify('This Reservation Already Order Entry '+orderQty, 'error');
-      $("#app-loader").hide();
-      return false;
-    }
-    var url = '/merch/reservation/'+resId;
+    url = '/merch/reservation/'+resId;
   }else if(pageType === 'order-store'){
-    var url = '{{ url("merch/reservation/order-entry-store")}}';
+    url = '{{ url("/merch/orders") }}';
   }
-  
+  // console.log(url);
   if (isValid){
      $.ajax({
         type: verb,
@@ -170,7 +175,7 @@ $(document).on('click', '#itemBtn', function(event) {
         success: function(response)
         {
           $("#app-loader").hide();
-          // console.log(response)
+          console.log(response)
           $.notify(response.message, response.type);
           if(response.type === 'success'){
             setTimeout(function(){
@@ -209,7 +214,7 @@ $(document).on('keyup', '.sah_cal', function(){
   var sah = parseFloat((res_sewing_smv*res_quantity)/60).toFixed(2);
 
   $("#sah").val(sah);
-  $("#order-quantity").val(res_quantity).attr('max', res_quantity);
+  $("#order-qty").val(res_quantity).attr('max', res_quantity);
 });
 
 $(document).on('change', '#order-check:checkbox', function(){
@@ -235,7 +240,7 @@ $(document).on('change', '.buyerChange', function(){
     var buyerid = $(this).val();
     $.ajax({
         type: "GET",
-        url: '{{ url("/merch/search/ajax-buyer-wise-season-search") }}',
+        url: '{{ url("/merch/search/ajax-buyer-wise-style-season-search") }}',
         data: {
             b_id: $(this).val()
         },
@@ -257,6 +262,9 @@ $(document).on('change', '.buyerChange', function(){
 
 $(document).on('change', '.seasonChange', function(){
   $('#style-no').empty().select2({data: [{id: '', text: ' Select Style'}]}).removeAttr('disabled');
+  $("#brand").val('');
+  $("#style-ref-2").val('');
+  $("#mr_season_se_id").val('');
   var buyerid = $('#buyer').val();
   if($(this).val() !== null && $(this).val() !== '' && buyerid !== ''){
     $.ajax({
@@ -283,6 +291,38 @@ $(document).on('change', '.seasonChange', function(){
   }
 });
 
+$(document).on('change', '.style-no', function(){
+  $("#brand").val('');
+  $("#style-ref-2").val('');
+  $("#mr_season_se_id").val('');
+  if($(this).val() !== null && $(this).val() !== ''){
+    $.ajax({
+        type: "GET",
+        url: '{{ url("/merch/search/ajax-style-wise-info") }}',
+        data: {
+          stl_id: $(this).val(),
+          key:['mr_brand_br_id', 'stl_product_name', 'mr_season_se_id']
+        },
+        success: function(response)
+        {
+          // console.log(response)
+          if(response.length !== 0){
+            $("#brand").val(response.brand);
+            $("#style-ref-2").val(response.stl_product_name);
+            $("#mr_season_se_id").val(response.mr_season_se_id);
+          }
+        },
+        error: function (reject) {
+          $.notify(reject, 'error')
+        }
+    });
+  }
+});
+$(document).on('change', '#res-year-month', function(){
+  $("#month").val($(this).val()).attr({
+    max: $(this).val()
+  });
+});
 $(document).ready(function(){ 
     var searchable = [2,3,6,7];
     var selectable = [1,4];

@@ -287,7 +287,7 @@ class JobCardController extends Controller
                         }
                     } else {
                         if($holidayRoaster['remarks'] == 'Holiday') {
-                            $attendance[$i]['present_status'] = "Day Off";
+                            $attendance[$i]['present_status'] = ($info->shift_roaster_status == 1)?"Day Off":"Weekend";
                             if($holidayRoaster['comment'] != null) {
                                 $attendance[$i]['present_status'] .= ' - '.$holidayRoaster['comment'];
                             }

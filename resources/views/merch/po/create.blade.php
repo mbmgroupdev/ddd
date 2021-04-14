@@ -34,7 +34,8 @@
               </li>
               <li class="active">PO</li>
               <li class="top-nav-btn">
-                <a class="btn btn-sm btn-primary text-white" href="{{ url('merch/po') }}"><i class="las la-list"></i> PO List</a>
+                <a class="btn btn-sm btn-primary text-white" href="{{ url('merch/po') }}"><i class="las la-list"></i> PO List</a> &nbsp;
+                <a class="btn btn-sm btn-success text-white" href="{{ url('merch/orders') }}"><i class="las la-list"></i> Order List</a>
               </li>
           </ul><!-- /.breadcrumb -->
 

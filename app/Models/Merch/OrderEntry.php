@@ -25,25 +25,6 @@ class OrderEntry extends Model
         return $this->belongsTo('App\Models\Merch\Style', 'mr_style_stl_id', 'stl_id');
     }
 
-    // public  function brand()
-    // {
-    //     return $this->belongsTo('App\Models\Merch\Brand', 'mr_brand_br_id', 'br_id');
-    // }
-
-    // public  function unit()
-    // {
-    //     return $this->belongsTo('App\Models\Hr\Unit', 'unit_id', 'hr_unit_id');
-    // }
-
-    // public  function season()
-    // {
-    //     return $this->belongsTo('App\Models\Merch\Season', 'mr_season_se_id', 'se_id');
-    // }
-
-    // public  function buyer()
-    // {
-    //     return $this->belongsTo('App\Models\Merch\Buyer', 'mr_buyer_b_id', 'b_id');
-    // }
 
     public  function order_costing()
     {
@@ -100,5 +81,14 @@ class OrderEntry extends Model
         }
         $data = $query->orderBy('order_id', 'DESC')->get();
         return $data;
+    }
+
+    public static function getReservationWiseOrderQty()
+    {
+        return DB::table('mr_order_entry')
+            ->select('res_id', DB::raw("SUM(order_qty) AS qty"))
+            ->groupBy('res_id')
+            ->get()
+            ->keyBy('res_id', true);
     }
 }

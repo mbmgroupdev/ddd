@@ -121,7 +121,7 @@ $(document).ready(function(){
           pagingType: "full_numbers", 
           ajax: {
                url: '{!! url("merch/style/style_list_data") !!}',
-               type: "GET",
+               type: "POST",
                headers: {
                      'X-CSRF-TOKEN': '{{ csrf_token() }}'
                } 

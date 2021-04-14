@@ -4,7 +4,7 @@ Route::group(['prefix' => 'hr','namespace' => 'Hr'], function(){
 	Route::get('/', 'DashboardController@index');
 
 
-	// Adminstrator 
+	// Administrator 
 	Route::group(['prefix' => 'adminstrator','namespace' => 'Adminstrator'], function(){
 		Route::get('users', 'UserController@index');
 		Route::post('user/list', 'UserController@getUserList');
@@ -449,6 +449,9 @@ Route::get('hr/operation/filter-wise-tiffin-dinner-bill-sheet', 'Hr\Operation\Bi
 Route::post('hr/operation/review-tiffin-dinner-bill', 'Hr\Operation\BillOperationController@review');
 Route::post('hr/operation/pay-tiffin-dinner-bill', 'Hr\Operation\BillOperationController@pay');
 Route::get('hr/operation/pay-tiffin-dinner-bill-excel', 'Hr\Operation\BillOperationController@excel');
+
+// Bonus section
+Route::get('hr/operation/bonus', 'Hr\Operation\BonusController@index');
 
 //---------Hr/ Payroll-----------//
 Route::get('hr/payroll/bank-sheet', 'Hr\Payroll\BankSheetController@index');
@@ -1302,7 +1305,7 @@ Route::get('hr/operation/location_change/reject/{id}', 'Hr\Operation\LocationCha
 Route::get('hr/operation/location_change/entry', 'Hr\Operation\LocationChangeController@showForm')->middleware(['permission:Manage Outside']);
 Route::post('hr/operation/location_change/entry', 'Hr\Operation\LocationChangeController@storeData')->middleware(['permission:Manage Outside']);
 
-//------Bouns Type Library
+//------Bonus Type Library
 Route::get('hr/setup/bonus_type', 'Hr\Setup\BonusTypeController@index');
 Route::post('hr/setup/bonus_type_save', 'Hr\Setup\BonusTypeController@entrySave');
 Route::get('hr/setup/bonus_type_edit', 'Hr\Setup\BonusTypeController@editDataFetch');

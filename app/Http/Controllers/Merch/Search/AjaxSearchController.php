@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Merch\Search;
 
 use App\Http\Controllers\Controller;
+use App\Models\Merch\Style;
 use App\Models\Merch\Supplier;
 use DB;
 use Illuminate\Http\Request;
@@ -93,15 +94,28 @@ class AjaxSearchController extends Controller
         
         return $getSeason;
     }
+    public function buyerStlSeason(Request $request)
+    {
+        return Style::getSeasonStyleBuyerIdWise($request->b_id);
+    }
 
     public function seasonWiseStyle(Request $request)
     {
+        $seasonIdYear = explode('-', $request->mr_season_se_id);
+        $seasonId = $seasonIdYear[0]; 
+        $year = $seasonIdYear[1]; 
+        $status = 0;
+        if(isset($request->stl_type) && $request->stl_type == 'Bulk'){
+            $status = 1;
+        }
         $query = DB::table('mr_style')
             ->select('stl_id AS id', 'stl_no AS text')
             ->where('mr_buyer_b_id', $request->mr_buyer_b_id)
-            ->where('mr_season_se_id', $request->mr_season_se_id);
+            ->where('mr_season_se_id', $seasonId)
+            ->where('stl_year', $year);
         if(isset($request->stl_type)){
-            $query->where('stl_type', $request->stl_type);
+            $query->where('bom_status', $status);
+            $query->where('costing_status', $status);
         }
         $getStyle = $query->orderBy('stl_id', 'desc')->get();
         
@@ -161,5 +175,16 @@ class AjaxSearchController extends Controller
         ->get();
         
         return $getPort;
+    }
+
+    public function styleInfo(Request $request)
+    {
+        // return $request->all();
+        $getStyle = Style::getStyleIdWiseStyleInfo($request->stl_id, $request->key);
+        if(in_array('mr_brand_br_id', $request->key)){
+            $brand = brand_by_id();
+            $getStyle->brand = $brand[$getStyle->mr_brand_br_id]->br_name??'';
+        }
+        return response()->json($getStyle);
     }
 }
