@@ -452,6 +452,7 @@ Route::get('hr/operation/pay-tiffin-dinner-bill-excel', 'Hr\Operation\BillOperat
 
 // Bonus section
 Route::get('hr/operation/bonus', 'Hr\Operation\BonusController@index');
+Route::get('hr/search-type', 'Hr\Search\SearchController@type');
 
 //---------Hr/ Payroll-----------//
 Route::get('hr/payroll/bank-sheet', 'Hr\Payroll\BankSheetController@index');

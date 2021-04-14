@@ -33,39 +33,26 @@
                         <div class="panel panel-info">
                             <div class="panel-heading"><h6>Bonus Library</h6></div> 
                             <div class="panel-body">
-                                <div class="col-sm-12">
-                
-                                    <div class="form-group has-required has-float-label">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group has-required has-float-label">
                                         </label>
-                                        <input type="text" name="bonus_type_name" id="bonus_type_name" class="form-control" required="required" placeholder="Enter Bonus for">
-                                        <label for="bonus_type_name">Bonus for 
-                                    </div>
-                                    {{-- <div class="form-group has-required has-float-label">
-                                        <input type="month" name="month" id="month" class="form-control" placeholder="Month" required="required" value="{{date('Y-m')}}">
-                                        <label>Month </label>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-sm-6">
-                                            
-                                            <div class="form-group  has-float-label">
-                                                <input type="text" name="bonus_amount" id="bonus_amount"  placeholder="Enter"  class="form-control in_h" >
-                                                <label >Amount </label>
-                                            </div>
+                                            <input type="text" name="bonus_type_name" id="bonus_type_name" class="form-control" required="required" placeholder="Enter Bonus for">
+                                            <label for="bonus_type_name">Bonus for </label>
                                         </div>
-                                        <div class="col-sm-6">
-                                            
-                                            <div class="form-group  has-float-label">
-                                                <input type="text" name="bonus_percent" id="bonus_percent"  placeholder="% of Basic"  class="form-control in_h" >
-                                                <label >OR, % of Basic </label>
-                                            </div>
-                                        </div>
-                                    </div> --}}
-                                    <div class="form-group">
-                                        <button class="btn btn-primary" type="submit">
-                                            <i class=" fa fa-check"></i> Save
-                                        </button>
-                                            
                                     </div>
+                                    <div class="col">
+                                        <div class="form-group has-required has-float-label">
+                                            <input type="number" name="eligible_month" id="eligible_month" placeholder="Enter Number of Eligible Month" value="" min="0" class="form-control" required>
+                                            <label for="eligible_month">Eligible Month </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-primary" type="submit">
+                                        <i class=" fa fa-check"></i> Save
+                                    </button>
+                                        
                                 </div>
                                 
                             </div>
@@ -79,11 +66,8 @@
                             <table id="global-datatable" class="table table-striped table-bordered" style="display: block;overflow-x: auto;width: 100%;" >
                                 <thead>
                                     <th width="10%">SL.</th>
-                                    <th width="80%">Bonus for</th>
-                                    {{-- <th width="20%">Month</th>
-                                    <th width="20%">Year</th>
-                                    <th width="20%">Amount</th>
-                                    <th width="20%">%of Basic</th> --}}
+                                    <th width="50%">Bonus for</th>
+                                    <th width="20%">Eligible Month</th>
                                     <th width="30%">Action</th>
                                 </thead>
                                 <tbody>
@@ -94,10 +78,8 @@
                                             <tr>
                                                 <td>{{ ++$i }}</td>
                                                 <td>{{$bt->bonus_type_name}}</td>
-                                                {{-- <td>{{$bt->month}}</td>
-                                                <td>{{$bt->year}}</td>
-                                                <td>{{$bt->amount}}</td>
-                                                <td>{{$bt->percent_of_basic}}</td> --}}
+                                                <td>{{$bt->eligible_month}}</td>
+                                                
                                                 <td>
                                                     <div class="button-group">
                                                         
@@ -127,39 +109,30 @@
                 <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="edit-modal-label">Edit Data</h5>
+                            <h5 class="modal-title" id="edit-modal-label">Edit Bonus</h5>
                         </div>
                         <div class="modal-body" id="attachment-body-content">
-                            <div class="row" style="padding: 4px;">
+                            <div class="" style="padding: 4px;">
                             {{Form::open(['url'=>'hr/setup/bonus_type_update', 'class'=>'form-horizontal']) }}
                                 <input type="hidden" name="id" id="edit_id">
-                                <div class="col-sm-12">
+                                <div class="">
                 
-                                    <div class="form-group has-required has-float-label">
-                                        </label>
-                                        <input type="text" name="bonus_type_name" id="edit_bonus_type_name"  class="form-control" required="required" placeholder="Enter Bonus for">
-                                        <label for="edit_bonus_type_name">Bonus for 
-                                    </div>
-                                    {{-- <div class="form-group has-required has-float-label">
-                                        <input type="month" name="month" id="month" class="form-control" placeholder="Month" required="required" name="edit_month" id="edit_month" value="{{date('Y-m')}}">
-                                        <label>Month </label>
-                                    </div>
+                                    
                                     <div class="row">
-                                        <div class="col-sm-6">
-                                            
-                                            <div class="form-group  has-float-label">
-                                                <input type="text" name="bonus_amount" name="edit_bonus_amount" id="edit_bonus_amount"    placeholder="Enter"  class="form-control in_h" >
-                                                <label >Amount </label>
+                                        <div class="col">
+                                            <div class="form-group has-required has-float-label">
+                                            </label>
+                                                <input type="text" name="bonus_type_name" id="edit_bonus_type_name" class="form-control" required="required" placeholder="Enter Bonus for">
+                                                <label for="edit_bonus_type_name">Bonus for </label>
                                             </div>
                                         </div>
-                                        <div class="col-sm-6">
-                                            
-                                            <div class="form-group  has-float-label">
-                                                <input type="text" name="edit_bonus_percent" id="edit_bonus_percent"  placeholder="% of Basic"  class="form-control in_h" >
-                                                <label >OR, % of Basic </label>
+                                        <div class="col">
+                                            <div class="form-group has-required has-float-label">
+                                                <input type="number" name="eligible_month" id="edit_eligible_month" placeholder="Enter Number of Eligible Month" value="" min="0" class="form-control" required>
+                                                <label for="edit_eligible_month">Eligible Month </label>
                                             </div>
                                         </div>
-                                    </div> --}}
+                                    </div>
                                     <div class="form-group">
                                         <button class="btn btn-primary" type="submit">
                                             <i class=" fa fa-check"></i> Update
@@ -180,63 +153,24 @@
 @push('js')
 <script type="text/javascript">
     $(document).ready(function(){
-        // $('body').on('keyup', '#bonus_amount', function(){
-        //     $('#bonus_percent').val(null);
-        //     if($('#bonus_amount').val() < 0){
-        //         $('#bonus_amount').val(0);
-        //     }
-        // });
-        // $('body').on('keyup', '#bonus_percent', function(){
-        //     $('#bonus_amount').val(null);
-
-        //     if($('#bonus_percent').val() > 100){
-        //         $('#bonus_percent').val(100);
-        //     }
-        //     if($('#bonus_percent').val() < 0){
-        //         $('#bonus_percent').val(0);
-        //     }
-        // });
-
-
         $('body').on('click', '.edit_modal_button', function(){
-                var bt_id = $(this).parent().find('#edit_data_id').val();
-                // console.log(bt_id );
-                // var months = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
-                // var selectedMonthName = months[value['month']];
-                $.ajax({
-                    url: "{{url('hr/setup/bonus_type_edit')}}",
-                    type: 'GET',
-                    dataType: 'json',
-                    data: {bt_id: bt_id},
-                    success: function(data){
-                          $("#edit_id").val(data.id);
-                          $("#edit_bonus_type_name").val(data.bonus_type_name);
-                          // $("#edit_month").val(data.month); 
-                          // $("#edit_year").val(data.year); 
-                          // $("#edit_bonus_amount").val(data.amount); 
-                          // $("#edit_bonus_percent").val(data.percent_of_basic); 
+            var bt_id = $(this).parent().find('#edit_data_id').val();
+            // console.log(bt_id );
+            // var months = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
+            // var selectedMonthName = months[value['month']];
+            $.ajax({
+                url: "{{url('hr/setup/bonus_type_edit')}}",
+                type: 'GET',
+                dataType: 'json',
+                data: {bt_id: bt_id},
+                success: function(data){
+                      $("#edit_id").val(data.id);
+                      $("#edit_bonus_type_name").val(data.bonus_type_name);
+                      $("#edit_eligible_month").val(data.eligible_month); 
 
-                    }
-                });     
+                }
+            });     
         });
-
-        /*$('body').on('keyup', '#edit_bonus_amount', function(){
-            $('#edit_bonus_percent').val(null);
-            if($('#edit_bonus_amount').val() < 0){
-                $('#edit_bonus_amount').val(0);
-            }
-        });
-        $('body').on('keyup', '#edit_bonus_percent', function(){
-            $('#edit_bonus_amount').val(null);
-
-            if($('#edit_bonus_percent').val() > 100){
-                $('#edit_bonus_percent').val(100);
-            }
-            if($('#edit_bonus_percent').val() < 0){
-                $('#edit_bonus_percent').val(0);
-            }
-        });*/
-
     });
 
 </script>
