@@ -58,13 +58,16 @@
         </div>
 
         <div class="page-content"> 
-            <form>
+            <form id="bonus-procesor" method="post">
+                @csrf
                 <div class="panel panel-info">
                     <div class="panel-heading"><h6>Bonus</h6></div> 
                     <div class="panel-body">
                         <div class="row">
                             <div class="offset-sm-2 col-sm-8">
-        
+                                <input type="hidden" id="report_format" name="report_format">
+                                <input type="hidden" id="emp_type" name="emp_type" value="all">
+                                <input type="hidden" id="report_group" name="report_group">
                                 <div class="form-section">
                                     <div class="form-group has-required has-float-label select-search-group">
                                         {{ Form::select('type_id', $bonusType, null, ['placeholder'=>'Select Bonus', 'id'=>'bonus_for', 'class'=> 'form-control', 'required'=>'required']) }}
@@ -123,11 +126,11 @@
                                                     <div class="form-group has-required has-float-label select-search-group">
                                                         <select name="" id="type-for" class="form-control">
                                                             <option value=""> - Select - </option>
-                                                            <option value="department"> Department</option>
-                                                            <option value="designation"> Designation</option>
-                                                            <option value="section"> Section</option>
-                                                            <option value="sub_section"> Sub Section</option>
-                                                            <option value="employee"> Employee</option>
+                                                            <option value="as_department_id"> Department</option>
+                                                            <option value="as_designation_id"> Designation</option>
+                                                            <option value="as_section_id"> Section</option>
+                                                            <option value="as_subsection_id"> Sub Section</option>
+                                                            <option value="associate_id"> Employee</option>
                                                         </select>
                                                         <label for="type-for">Type </label>
                                                     </div>
@@ -162,9 +165,10 @@
                 </div>
             </form>
             
-        </div> {{-- Page-Content-end --}}
-    </div> {{-- Main-content-inner-end --}}
-</div> {{-- Main-content --}}
+        </div> 
+        <div id="bonus-eligible-list"></div>
+    </div> 
+</div> 
 @push('js')
 <script src="{{ asset('assets/js/jquery-ui.js')}}"></script>
 <script src="{{ asset('assets/js/moment.min.js')}}"></script>
@@ -180,6 +184,82 @@
             }
         }
         $('#eligible-month').val(eligibleMonth);
+    });
+
+    $(document).on('submit','#bonus-procesor',function(e){
+        e.preventDefault();
+        generateBonus();
+    });
+
+    $(document).on('change','#empType', function(){
+        $('#emp_type').val($(this).val());
+        generateBonus();
+    });
+
+    $(document).on('change','#reportGroupHead', function(){
+        $('#report_group').val($(this).val());
+        generateBonus();
+    });
+
+    $(document).on('click','.grid_view', function(){
+        generateBonus('report_format',1);
+    });
+
+    $(document).on('click','.list_view', function(){
+        generateBonus('report_format',0);
+    });
+
+    function generateBonus(type = null, val = null)
+    {
+        $('.app-loader').show();
+
+        
+        // append to the report_group
+        if(type == 'report_format'){$('#report_format').val(val)};
+
+        var data = $('#bonus-procesor').serializeArray();
+
+        $.ajax({
+           url : "{{ url('hr/operation/bonus-process') }}",
+           type: 'post',
+           data: data,
+           success: function(data)
+           {
+                $('#bonus-procesor').hide();
+                $('#bonus-eligible-list').html(data);
+                $('.app-loader').hide();
+           },
+           error: function(reject)
+           {
+                $('.app-loader').hide();
+           }
+        });
+    }
+
+    $(document).on('click','#back-button' ,function(){
+        $('#bonus-procesor').show();
+        $('#bonus-eligible-list').html('');
+    });
+
+    $(document).on('click','#approval' ,function(){
+        $('.app-loader').show();
+        var data = $('#bonus-procesor').serializeArray();
+
+        $.ajax({
+           url : "{{ url('hr/operation/bonus-to-aproval') }}",
+           type: 'post',
+           data: data,
+           success: function(data)
+           {
+                $('#bonus-procesor').hide();
+                $('#bonus-eligible-list').html(data);
+                $('.app-loader').hide();
+           },
+           error: function(reject)
+           {
+                $('.app-loader').hide();
+           }
+        });
     });
 </script>
 @endpush
