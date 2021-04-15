@@ -58,7 +58,7 @@ $(document).on('click','#specialCheck',function(){
 $(document).on('click', '#sync-type', function () {
     var type = $("#type-for").val();
     var typeText = $("#type-for option:selected" ).text();
-    console.log(type)
+    // console.log(type)
     if(type !== '' && type !== null){
         if($('#target-'+type).length && $('#target-'+type).val().length){
             $.notify(typeText+' Already Exists', 'error');
@@ -139,7 +139,7 @@ $(document).on('focus keyup','.autocomplete_txt',function(){
             bonusAmount = $("#bonus_amount").val(),
             bonusPercent = $("#bonus_percent").val(),
             cutDate = $("#cut_date").val();
-            console.log("#id_"+type_arr+'_'+id);
+            // console.log("#id_"+type_arr+'_'+id);
             $("#id_"+type_arr+'_'+id).val(item.id);
             $("#eligible"+type_arr+'_'+id).val(item.id);
             $("#eligible"+type_arr+'_'+id).val(eligibleMonth);
