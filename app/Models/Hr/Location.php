@@ -4,6 +4,7 @@ namespace App\Models\Hr;
 
 use App\Models\Hr\Location;
 use Illuminate\Database\Eloquent\Model;
+use DB;
 
 class Location extends Model
 {
@@ -35,4 +36,11 @@ class Location extends Model
  		return $locationName;
 
  	}
+
+    public static function getUnitWiseLocation($unitId)
+    {
+        return DB::table('hr_location')
+        ->where('hr_location_unit_id', $unitId)
+        ->first();
+    }
 }

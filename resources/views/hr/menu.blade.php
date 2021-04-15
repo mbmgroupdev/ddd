@@ -386,6 +386,9 @@
             <li class="@if($segment3 == 'monthly-attendance-activity') active @endif"><a href="{{ url('hr/reports/monthly-attendance-activity') }}"><i class="las la-fingerprint"></i>Monthly Attendance</a></li>
             <li class="@if($segment3 == 'monthly-salary') active @endif"><a href="{{ url('hr/reports/monthly-salary') }}"><i class="las la-fingerprint"></i>Monthly Salary</a></li>
             @endif
+            @if($user->can('Bonus') || $user->hasRole('Super Admin'))
+            <li class="@if($segment3 == 'bonus') active @endif"><a href="{{ url('hr/reports/bonus') }}"><i class="las la-fingerprint"></i>Bonus</a></li>
+            @endif
             @if($user->can('Monthly OT') || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'monthly-ot-report') active @endif"><a href="{{ url('hr/reports/monthly-ot-report') }}"><i class="las la-fingerprint"></i>Monthly OT</a></li>
             @endif

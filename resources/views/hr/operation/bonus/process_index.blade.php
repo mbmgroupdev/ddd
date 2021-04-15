@@ -26,11 +26,17 @@
                         <div class="iq-card @if($bonus->approved_at != null)  bg-primary text-white @endif">
                             <div class="iq-card-body border text-center rounded">
                                <span class="font-size-16 text-uppercase">{{ $bonusType[$bonus->bonus_type_id]['bonus_type_name']??'' }} - {{ $bonus->bonus_year }}</span>
-                               <h2 class="mb-4 display-3 font-weight-bolder "><small class="font-size-14 text-muted">{{ $unit[$bonus->unit_id]['hr_unit_name']??''}}</small></h2>
+                               <h2 class="mb-4 display-3 font-weight-bolder "><small class="font-size-14 text-muted @if($bonus->approved_at != null) text-white @endif">{{ $unit[$bonus->unit_id]['hr_unit_name']??''}}</small></h2>
                                <ul class="list-unstyled line-height-4 mb-0">
                                   
                                </ul>
+                               @if($bonus->approved_at != null)
+                               <p>Authorized by <br>
+                                     &nbsp; &nbsp; -  Md. Ali Zinnah
+                               </p>
+                               @else
                                <a href='{{ url("hr/operation/bonus-sheet-process-for-approval?bonus_sheet=$bonus->id")}}' class="btn btn-primary mt-5">Get Sheet</a>
+                               @endif
                             </div>
                         </div>
                     </div>
