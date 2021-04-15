@@ -24,6 +24,8 @@ class BonusController extends Controller
 
 	protected $bonus_amount;
 
+	protected $unit_permissions;
+
 
 
 	public function __construct()
@@ -400,26 +402,130 @@ class BonusController extends Controller
     public function disburse(Request $request)
     {
     	try {
-            
-            $data['unitList']      = collect(unit_by_id())
-                		->pluck('hr_unit_name', 'hr_unit_id');
-            $data['locationList']  = Location::where('hr_location_status', '1')
-            ->whereIn('hr_location_id', auth()->user()->location_permissions())
-            ->orderBy('hr_location_name', 'desc')
-            ->pluck('hr_location_name', 'hr_location_id');
 
-            $data['areaList']      = Area::where('hr_area_status', '1')->pluck('hr_area_name', 'hr_area_id');
-            $data['floorList']     = Floor::getFloorList();
-            $data['deptList']      = Department::getDeptList();
-            $data['sectionList']   = Section::getSectionList();
-            $data['subSectionList']= Subsection::getSubSectionList();
-            $data['salaryMin']     = Benefits::getSalaryRangeMin();
-            $data['salaryMax']     = Benefits::getSalaryRangeMax();
-            $data['getYear']       = HrMonthlySalary::select('year')->distinct('year')->orderBy('year', 'desc')->pluck('year');
-            return view('hr.operation.salary.index', $data);
+            $data['year'] = DB::table('hr_bonus_rule as br')
+            			->whereIn('br.unit_id',auth()->user()->unit_permissions())
+            			->distinct()
+            			->pluck('bonus_year','bonus_year');
+
+            $data['bonus_type'] = collect(bonus_type_by_id())->pluck('bonus_type_name', 'id')->toArray(); 
+            $data['unit'] 		= unit_by_id(); 
+
+            $data['unitList']      = collect(unit_by_id())
+                		->pluck('hr_unit_name', 'hr_unit_id')
+                		->toArray();
+            $data['locationList']  = collect(location_by_id())
+            ->pluck('hr_location_name', 'hr_location_id')
+            ->toArray();
+
+            $data['areaList']  = collect(area_by_id())
+            ->pluck('hr_area_name', 'hr_area_id')
+            ->toArray();
+
+            
+            $data['salaryMin']     = 0;
+            $data['salaryMax']     = 350000;
+
+
+            return view('hr.operation.bonus.bonus_disburse', $data);
+
         } catch(\Exception $e) {
             return $e->getMessage();
         }
+    }
+
+    // get unit wise bonus rules
+    protected function getRuleId($bonus_type, $year)
+    {
+    	return DB::table('hr_bonus_rule')
+    			->where('bonus_type_id', $bonus_type)
+    			->where('bonus_year', $year)
+    			->whereIn('unit_id',auth()->user()->unit_permissions())
+    			->pluck('id');
+    }
+
+    protected function getBonusList($input)
+    {
+    	$rule_id = $this->getRuleId($input['bonus_type'],$input['bonus_year']);
+
+    	return DB::table('hr_bonus_sheet as bns')
+    			->select('bns.*','sub.*','e.as_name','e.as_gender','b.hr_bn_associate_name','e.as_doj','e.temp_id','e.as_oracle_code')
+    			->whereIn('bns.bonus_rule_id',$rule_id)
+    			->whereIn('bns.unit_id',auth()->user()->unit_permissions())
+    			->whereIn('bns.location_id',auth()->user()->location_permissions())
+    			->leftJoin('hr_as_basic_info as e','e.associate_id','bns.associate_id')
+    			->leftJoin('hr_subsection as sub','bns.subsection_id', 'sub.hr_subsec_id')
+    			->leftJoin('hr_employee_bengali as b','b.hr_bn_associate_id', 'bns.associate_id')
+    			->when(!empty($input['unit']), function ($query) use($input){
+	                if($input['unit'] == 145){
+	                    return $query->whereIn('bns.unit_id',[1, 4, 5]);
+	                }else{
+	                    return $query->where('bns.unit_id',$input['unit']);
+	                }
+	            })
+	            ->when(!empty($input['as_id']), function ($query) use($input){
+	               return $query->whereIn('bns.associate_id',$input['as_id']);
+	            })
+	            ->when(!empty($input['location']), function ($query) use($input){
+	               return $query->where('bns.location_id',$input['location']);
+	            })
+	            ->when(!empty($input['line_id']), function ($query) use($input){
+	               return $query->where('e.as_line_id', $input['line_id']);
+	            })
+	            ->when(!empty($input['floor_id']), function ($query) use($input){
+	               return $query->where('e.as_floor_id',$input['floor_id']);
+	            })
+	            ->when(!empty($input['otnonot']), function ($query) use($input){
+	               return $query->where('bns.ot_status',$input['otnonot']);
+	            })
+	            ->when(!empty($input['area']), function ($query) use($input){
+	               return $query->where('sub.hr_subsec_area_id',$input['area']);
+	            })
+	            ->when(!empty($input['department']), function ($query) use($input){
+	               return $query->where('sub.hr_subsec_department_id',$input['department']);
+	            })
+	            ->when(!empty($input['section']), function ($query) use($input){
+	               return $query->where('sub.hr_subsec_section_id', $input['section']);
+	            })
+	            ->when(!empty($input['subSection']), function ($query) use($input){
+	               return $query->where('bns.subsection_id', $input['subSection']);
+	            })
+	            ->orderBy('e.as_oracle_sl')
+	            ->orderBy('e.temp_id')
+	            ->get();
+    }
+
+    public function unitWiseBonusSheet(Request $request)
+    {
+    	
+    	$input = $request->all();
+    	$bonusList =  $this->getBonusList($input);
+    	$com['bonusList'] =  collect($bonusList)
+    					->groupBy('unit_id',true)
+    					->map(function($q){
+    						return collect($q)->groupBy('location_id',true)
+    								->map(function($p){
+    									return collect($p)->chunk(10);
+    								});
+    					})
+    					->all();
+
+    	$com['unit'] 		= unit_by_id();
+        $com['location'] 	= location_by_id();
+        $com['line'] 		= line_by_id();
+        $com['floor'] 		= floor_by_id();
+        $com['department'] 	= department_by_id();
+        $com['designation'] = designation_by_id();
+        $com['section'] 	= section_by_id();
+        $com['subSection'] 	= subSection_by_id();
+        $com['area'] 		= area_by_id();
+
+        ini_set('zlib.output_compression', 1);
+        return view('hr.operation.bonus.bonus_sheet_unit', $com)->render();
+
+
+
+
     }
 
 }

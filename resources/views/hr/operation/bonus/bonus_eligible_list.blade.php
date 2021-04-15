@@ -16,10 +16,10 @@
 					<div class="col-4 pr-0">
 						<div class="form-group has-float-label select-search-group mb-0">
                             <?php
-                                $emptype = ['all'=>'All','maternity'=>'Maternity','partial'=>'Partial'];
+                                $emptype = ['all'=>'All','maternity'=>'Maternity','partial'=>'Less than a Year'];
                             ?>
                             {{ Form::select('empType', $emptype, $input['emp_type'], ['class'=>'form-control capitalize', 'id'=>'empType']) }}
-                            <label for="empType">Employee Type</label>
+                            <label for="empType">Bonus Type</label>
                         </div>
 					</div>
                     <div class="col-5 pr-0">
@@ -57,6 +57,7 @@
 				.table th, .table td {
     				padding: 5px;
     			}
+    			.amount{text-align: right;width: 100px;display: inline-block;}
 			</style>
 			<div class="page-header">
 	            
@@ -64,45 +65,55 @@
 	            	<div class="col-sm-12 mb-3">
 	            		<h5 style="margin:5px 10px; font-weight: bold; text-align: center;text-decoration: underline;">Bonus Eligble List</h5>
 	            	</div>
-	            	<div class="col-sm-3">
+	            	<div class="col-sm-4">
 	            		<div class="row">
-	            			<div class="col-5">OT</div>
-	            			<div class="col-7">: {{bn_money($summary->ot_amount)}} ({{$summary->ot}})</div>
-	            			<div class="col-5">NonOT</div>
-	            			<div class="col-7">: {{bn_money($summary->nonot_amount)}} ({{$summary->nonot}})</div>
+	            			<div class="col-6">OT Employee</div>
+	            			<div class="col-6">: <span class="amount" >{{$summary->ot}}</span></div>
+	            			<div class="col-6">Non-OT Employee</div>
+	            			<div class="col-6">: <span class="amount" >{{$summary->nonot}}</span></div>
+	            			<div class="col-12"><hr style="margin: 0"></div>
+	            			<div class="col-6"><b>Total Employee</b></div>
+	            			<div class="col-6">: <span class="amount" ><b>{{$summary->active + $summary->maternity}}</b></span></div>
+	            			<div class="col-6">OT Employee Bonus</div>
+	            			<div class="col-6">: <span class="amount" >৳ {{bn_money($summary->ot_amount)}}</span> </div>
+	            			
+	            			<div class="col-6">Non-OT Employee Bonus</div>
+	            			<div class="col-6">:<span class="amount" >৳ {{bn_money($summary->nonot_amount)}} </span></div>
+	            			<div class="col-12"><hr style="margin: 0"></div>
+	            			<div class="col-6"><b>Total Bonus</b></div>
+	            			<div class="col-6">: <span class="amount" ><b>৳ {{bn_money($summary->active_amount + $summary->maternity_amount)}}</b></div>
 	            		</div>
 	            	</div>
-	            	<div class="col-sm-3 pr-0">
+	            	<div class="col-sm-4 pr-0">
 	            		<div class="row">
-	            			<div class="col-5">Active</div>
-	            			<div class="col-7">: {{bn_money($summary->active_amount)}} ({{$summary->active}})</div>
-	            			<div class="col-5">Maternity</div>
-	            			<div class="col-7">: {{bn_money($summary->maternity_amount)}} ({{$summary->maternity}})</div>
+	            			<div class="col-7">Active Employee</div>
+	            			<div class="col-5">: <span class="amount" >{{$summary->active}}</span></div>
+	            			<div class="col-7">Maternity Employee</div>
+	            			<div class="col-5">: <span class="amount" >{{$summary->maternity}}</span></div>
+	            			<div class="col-7">Active Employee Bonus</div>
+	            			<div class="col-5">: <span class="amount" >৳ {{bn_money($summary->active_amount)}}</span></div>
+	            			
+	            			<div class="col-7">Maternity Employee Bonus</div>
+	            			<div class="col-5">: <span class="amount" >৳ {{bn_money($summary->maternity_amount)}}</span> </div>
+
 	            		</div>
 	            	</div>
-	            	<div class="col-sm-3 pr-0">
+	            	<div class="col-sm-4 pr-0">
 	            		<div class="row">
-	            			<div class="col-7">Partial (< 12 Month)</div>
-	            			<div class="col-5">: {{$summary->partial}}</div>
-	            			<div class="col-7">Partial Amount</div>
-	            			<div class="col-5">: {{bn_money($summary->partial_amount)}} </div>
-	            		</div>
-	            	</div>
-	            	
-	            	<div class="col-sm-3">
-	            		<div class="row">
-	            			<div class="col-6">Total Employee</div>
-	            			<div class="col-6">: {{$summary->active + $summary->maternity}}</div>
-	            			<div class="col-6">Total Amount</div>
-	            			<div class="col-6">: {{bn_money($summary->active_amount + $summary->maternity_amount)}}</div>
-	            			<br>
-	            			<br>
-	            			<div class="text-center d-block w-100">
-	            				
-		            			<button id="approval" class="btn btn-primary btn-sm ">Proceed to Aproval</button>
+	            			<div class="col-7">Less than a year Employee</div>
+	            			<div class="col-5">: <span class="amount" >{{$summary->partial}}</span></div>
+	            			<div class="col-7">Less than a year Bonus Amount</div>
+	            			<div class="col-5">: <span class="amount" >৳ {{bn_money($summary->partial_amount)}}</span> </div>
+	            			<div class="col-12">
+			            		<div class="text-right d-block w-100 pr-3">
+			            			<br><br>
+			            			<button id="approval" class="btn btn-primary btn-sm ">Proceed to Aproval</button>
+		            			</div>
 	            			</div>
 	            		</div>
 	            	</div>
+	            	
+	            	
 	            </div>
 	        </div>
 			<input type="hidden" id="reportFormat" value="{{$input['report_format']}}">
