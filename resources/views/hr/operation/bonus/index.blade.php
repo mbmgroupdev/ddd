@@ -69,48 +69,37 @@
                                 <input type="hidden" id="emp_type" name="emp_type" value="all">
                                 <input type="hidden" id="report_group" name="report_group">
                                 <div class="form-section">
-                                    <div class="form-group has-required has-float-label select-search-group">
-                                        {{ Form::select('type_id', $bonusType, null, ['placeholder'=>'Select Bonus', 'id'=>'bonus_for', 'class'=> 'form-control', 'required'=>'required']) }}
-                                        <label for="bonus_for">Bonus for </label>
-                                    </div>
+                                    
                                     <input type="hidden" name="eligible_month" id="eligible-month" value="0">
                                     <div class="row">
-                                        <div class="col-sm-4">
+                                        <div class="col-sm-3 pr-0">
+                                            <div class="form-group has-required has-float-label select-search-group">
+                                                {{ Form::select('type_id', $bonusType, null, ['placeholder'=>'Select Bonus', 'id'=>'bonus_for', 'class'=> 'form-control', 'required'=>'required']) }}
+                                                <label for="bonus_for">Bonus for </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3 pr-0">
                                             <div class="form-group has-float-label">
                                                 <input type="text" name="bonus_amount" id="bonus_amount" placeholder="Enter" class="form-control" >
                                                 <label for="bonus_amount">Amount </label>
                                             </div>
                                         </div>
-                                        <div class="col-sm-4">
+                                        <div class="col-sm-3 pr-0">
                                             <div class="form-group  has-float-label">
                                                 <input type="text" name="bonus_percent" id="bonus_percent" placeholder="% of Basic"  class="form-control" >
                                                 <label for="bonus_percent">OR, % of Basic </label>
                                             </div>
                                         </div>
-                                        <div class="col-sm-4">
+                                        <div class="col-sm-3 pr-0">
                                             <div class="form-group has-required has-float-label">
                                                 <input type="date" name="cut_date" id="cut_date" placeholder="Cut of Date" value="{{ date('Y-m-d') }}"  class="form-control" required>
                                                 <label for="cut_date">Cut of Date </label>
                                             </div>
                                         </div>
                                     </div>
-                                    {{-- <div class="row">
-                                        <div class="col-sm-6">
-                                            <div class="form-group has-required has-float-label">
-                                                <input type="number" name="eligible_month" id="eligible_month" placeholder="Enter Number of Eligible Month" value="" min="0" class="form-control" required>
-                                                <label for="eligible_month">Eligible Month </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <div class="form-group has-required has-float-label">
-                                                <input type="date" name="cut_date" id="cut_date" placeholder="Cut of Date" value="{{ date('Y-m-d') }}"  class="form-control" required>
-                                                <label for="cut_date">Cut of Date </label>
-                                            </div>
-                                        </div>
-                                        
-                                    </div> --}}
+                                    
                                     <div class="row">
-                                      <div class="col">
+                                      <div class="offset-sm-5 col-sm-2">
                                         <div class="custom-control custom-switch">
                                           <input name="special" type="checkbox" class="custom-control-input" id="specialCheck">
                                           <label class="custom-control-label" for="specialCheck">Advanced</label>
@@ -122,7 +111,7 @@
                                       <div class="col-sm-12">
                                         <div class="specialsection" id="special-section">
                                             <div class="row">
-                                                <div class="col-sm-8">
+                                                <div class="offset-sm-2 col-sm-6">
                                                     <div class="form-group has-required has-float-label select-search-group">
                                                         <select name="" id="type-for" class="form-control">
                                                             <option value=""> - Select - </option>
@@ -135,7 +124,7 @@
                                                         <label for="type-for">Type </label>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-4" id="syncBtn" style="display: none">
+                                                <div class="col-sm-2" id="syncBtn" style="display: none">
                                                     <div class="form-group">
                                                         <button class="btn btn-outline-primary" type="button" id="sync-type">
                                                             <i class="las la-sync"></i>
