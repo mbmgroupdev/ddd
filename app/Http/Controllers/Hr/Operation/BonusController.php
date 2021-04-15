@@ -297,5 +297,42 @@ class BonusController extends Controller
     	
     }
 
+    public function approvalProcess()
+    {
+    	try {
+    		$unitBonus = BonusRule::orderBy('id', 'desc')->get();
+    		$bonusType = bonus_type_by_id();
+    		$unit = unit_by_id();
+    		return view('hr/operation/bonus/process_index', compact('unitBonus', 'bonusType', 'unit'));
+    	} catch (\Exception $e) {
+    		toastr()->error($e->getMessage());
+    		return back();
+    	}
+    }
+
+    public function approvalSheet(Request $request)
+    {
+    	$input = $request->all();
+    	// return $input;
+    	try {
+    		$bonusSheet = BonusRule::findOrFail($input['bonus_sheet']);
+    		if($bonusSheet == null){
+    			toastr()->error("Sheet Not Found!");
+    			return back();
+    		}
+    		$unitList = unit_by_id();
+    		$unitList = collect($unitList)->pluck('hr_unit_name', 'hr_unit_id');
+    		$locationList = location_by_id();
+    		$locationList = collect($locationList)->pluck('hr_location_name', 'hr_location_id');
+    		$areaList = area_by_id();
+    		$areaList = collect($areaList)->pluck('hr_area_name', 'hr_area_id');
+    		$salaryMin = 0;
+    		$salaryMax = 350000;
+    		return view('hr/operation/bonus/process_report', compact('bonusSheet', 'unitList', 'locationList', 'input', 'areaList', 'salaryMin', 'salaryMax'));
+    	} catch (\Exception $e) {
+    		toastr()->error($e->getMessage());
+    		return back();
+    	}
+    }
 
 }
