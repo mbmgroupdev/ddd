@@ -64,7 +64,7 @@
                     <div class="panel-heading text-center"><h6>Bonus</h6></div> 
                     <div class="panel-body">
                         <div class="row justify-content-center">
-                            <div class="col-sm-6">
+                            <div class="col-sm-7">
                                 <input type="hidden" id="report_format" name="report_format">
                                 <input type="hidden" id="emp_type" name="emp_type" value="all">
                                 <input type="hidden" id="report_group" name="report_group">
@@ -78,10 +78,11 @@
                                                 <label for="bonus_for">Bonus for </label>
                                             </div>
                                         </div>
+                                        
                                         <div class="col-sm-6">
-                                            <div class="form-group has-float-label">
-                                                <input type="text" name="bonus_amount" id="bonus_amount" placeholder="Enter" class="form-control" >
-                                                <label for="bonus_amount">Amount </label>
+                                            <div class="form-group has-required has-float-label">
+                                                <input type="date" name="cut_date" id="cut_date" placeholder="Cut of Date" value="{{ date('Y-m-d') }}"  class="form-control" required>
+                                                <label for="cut_date">Cut of Date </label>
                                             </div>
                                         </div>
                                     </div>
@@ -93,11 +94,12 @@
                                             </div>
                                         </div>
                                         <div class="col-sm-6">
-                                            <div class="form-group has-required has-float-label">
-                                                <input type="date" name="cut_date" id="cut_date" placeholder="Cut of Date" value="{{ date('Y-m-d') }}"  class="form-control" required>
-                                                <label for="cut_date">Cut of Date </label>
+                                            <div class="form-group has-float-label">
+                                                <input type="text" name="bonus_amount" id="bonus_amount" placeholder="Enter" class="form-control" >
+                                                <label for="bonus_amount">Amount </label>
                                             </div>
                                         </div>
+                                        
                                     </div>
                                     
                                     <div class="row">
@@ -121,7 +123,7 @@
                                                             <option value="as_designation_id"> Designation</option>
                                                             <option value="as_section_id"> Section</option>
                                                             <option value="as_subsection_id"> Sub Section</option>
-                                                            <option value="associate_id"> Employee</option>
+                                                            <option value="as_id"> Employee</option>
                                                         </select>
                                                         <label for="type-for">Type </label>
                                                     </div>
