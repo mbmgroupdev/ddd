@@ -455,6 +455,8 @@ Route::get('hr/operation/bonus', 'Hr\Operation\BonusController@index');
 
 Route::post('hr/operation/bonus-process', 'Hr\Operation\BonusController@process');
 Route::post('hr/operation/bonus-to-aproval', 'Hr\Operation\BonusController@toAproval');
+Route::get('hr/operation/bonus-disburse', 'Hr\Operation\BonusController@disburse');
+Route::get('hr/operation/bonus-disburse-sheet', 'Hr\Operation\BonusController@disburseSheet');
 // bonus sheet approval process
 Route::get('hr/operation/bonus-sheet-process', 'Hr\Operation\BonusController@approvalProcess');
 Route::get('hr/operation/bonus-sheet-process-for-approval', 'Hr\Operation\BonusController@approvalSheet');
