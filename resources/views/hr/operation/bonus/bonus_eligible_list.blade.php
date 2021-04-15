@@ -118,7 +118,7 @@
 	        </div>
 			<input type="hidden" id="reportFormat" value="{{$input['report_format']}}">
 			@if($input['report_format'] == 0)
-				<table class="table table-bordered table-hover table-head table-responsive" style="width:100%;border:0 !important;margin-bottom:0;font-size:14px;text-align:left" border="1" cellpadding="5">
+				<table class="table table-bordered table-hover table-head" style="width:100%;border:0 !important;margin-bottom:0;font-size:14px;text-align:left" border="1" cellpadding="5">
 				@foreach($uniqueGroup as $group => $employees)
 				
 					<thead>
@@ -159,17 +159,17 @@
 		                
 		                @endif
 		                <tr>
-		                    <th>Sl</th>
-		                    <th>Associate ID</th>
-		                    <th>Name</th>
-		                    <th>Designation</th>
-		                    <th>Department</th>
-		                    <th>DOJ</th>
-		                    <th>Gross</th>
-		                    <th>Basic</th>
-		                    <th>Month</th>
-		                    <th>Stamp</th>
-		                    <th>Bonus Amount</th>
+		                    <th width="5%">Sl</th>
+		                    <th width="8%">Associate ID</th>
+		                    <th width="10%">Name</th>
+		                    <th width="11%">Designation</th>
+		                    <th width="14%">Department</th>
+		                    <th width="10%">DOJ</th>
+		                    <th width="10%">Gross</th>
+		                    <th width="10%">Basic</th>
+		                    <th width="6%">Month</th>
+		                    <th width="6%">Stamp</th>
+		                    <th width="10%">Bonus Amount</th>
 		                </tr>
 		            </thead>
 		            <tbody>
@@ -339,3 +339,34 @@
 		</div>
 	</div>
 </div>
+
+<script>
+	var mainurl = '/hr/operation/bonus-process?';
+    function selectedGroup(e, body){
+    	// console.log(body)
+    	var part = e;
+    	var input = @json($urldata);
+    	var pareUrl = input+part;
+    	$('#right_modal_jobcard').modal('show');
+	    $('#modal-title-right').html(body+' Report');
+	    $("#content-result").html(loaderContent);
+    	$.ajax({
+            url: mainurl+pareUrl,
+            data: {
+                body: body
+            },
+            type: "POST",
+            success: function(response){
+            	// console.log(response);
+                if(response !== 'error'){
+                	setTimeout(function(){
+                		$("#content-result").html(response);
+                	}, 1000);
+                }else{
+                	console.log(response);
+                }
+            }
+        });
+
+    }
+</script>

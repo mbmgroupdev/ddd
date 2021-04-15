@@ -162,6 +162,7 @@
         <div id="bonus-eligible-list"></div>
     </div> 
 </div> 
+@include('common.right-modal')
 @push('js')
 <script src="{{ asset('assets/js/jquery-ui.js')}}"></script>
 <script src="{{ asset('assets/js/moment.min.js')}}"></script>
@@ -254,6 +255,8 @@
            }
         });
     });
+
+    
 </script>
 @endpush
 @endsection

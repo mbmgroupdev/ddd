@@ -54,7 +54,9 @@ class BonusController extends Controller
     	$this->bonus_type    = $this->getBonusType($request->type_id);
     	$this->eligible_doj  = Carbon::parse($request->cut_date)
     		 					->subMonths(3)->toDateString();
-
+        if(!empty($input['selected'])){
+            $input['report_format'] = 0;
+        }
     	return $this->getBonusEligibleList($input);
     }
 
@@ -167,6 +169,7 @@ class BonusController extends Controller
             })
             ->orderBy('ben.ben_current_salary','DESC')
             ->get();
+
 
         $from = Carbon::parse($this->cutoff_date);
         $percent = $this->bonus_percent/100;

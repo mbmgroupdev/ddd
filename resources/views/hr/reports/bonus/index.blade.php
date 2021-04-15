@@ -1,5 +1,5 @@
 @extends('hr.layout')
-@section('title', 'Bonus Sheet')
+@section('title', 'Bonus Report')
 
 @section('main-content')
 @push('css')
@@ -44,7 +44,7 @@
                 <li>
                     <a href="#">Bonus</a>
                 </li>
-                <li class="active"> Bonus Sheet</li>
+                <li class="active"> Bonus Report</li>
             </ul>
         </div>
         @php
@@ -59,7 +59,7 @@
                         <div class="panel">
                             <div class="panel-heading">
                                 <h6>
-                                  Bonus Sheet Approval Process
+                                  Bonus Report
                                   {{-- <a class="btn btn-primary pull-right" href="{{ url('hr/operation/salary-generate') }}"><i class="fa fa-eye"></i> Bonus Process</a> --}}
                                 </h6>
                             </div>
@@ -161,7 +161,7 @@
                                     <div class="col-3">
                                         
                                         <div class="form-group has-float-label has-required select-search-group">
-                                          {{ Form::select('sheet_id', $bonusSheet, Request::get('sheet_id')??null, ['placeholder'=>'Select Report Type ', 'class'=>'form-control capitalize select-search', 'id'=>'reportType']) }}
+                                          {{ Form::select('sheet_id', $bonusSheet, Request::get('sheet_id')??null, ['placeholder'=>'Select Report Type ', 'class'=>'form-control capitalize select-search', 'id'=>'reportType', 'required']) }}
                                             <label for="reportType">Report Type</label>
                                         </div>
                                         <div class="form-group has-float-label has-required select-search-group">
@@ -301,7 +301,7 @@
         var format = $('input[name="report_format"]').val();
         var form = $("#activityReport");
         var flag = 0;
-        if(sheetId === ''){
+        if(sheetId === '' && sheetId === null){
           flag = 1;
         }
         
