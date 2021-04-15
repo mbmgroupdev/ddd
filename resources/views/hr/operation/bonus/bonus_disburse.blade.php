@@ -121,6 +121,7 @@
                                     <div class="panel-body pb-0">
                                         <div class="row">
                                             <div class="col-3">
+                                              
                                                 <div class="form-group has-float-label select-search-group">
                                                     <select name="unit" class="form-control capitalize select-search" id="unit" >
 
@@ -216,10 +217,7 @@
                                                     </div>
                                                   </div>
                                                 </div>
-                                                <div class="form-group has-float-label has-required">
-                                                  <input type="number" class="perpage form-control" id="perpage" name="perpage" placeholder="Per Page" required="required" value="6" min="0" autocomplete="off" />
-                                                  <label for="perpage">Per Page</label>
-                                                </div>
+                                                
                                                 <div class="form-group has-float-label select-search-group">
                                                     <?php
                                                       $payType = ['cash'=>'Cash', 'rocket'=>'Rocket', 'bKash'=>'bKash', 'dbbl'=>'Duch-Bangla Bank Limited.'];
@@ -227,20 +225,6 @@
                                                     {{ Form::select('pay_status', $payType, null, ['placeholder'=>'Select Payment Type', 'class'=>'form-control capitalize select-search', 'id'=>'paymentType']) }}
                                                     <label for="paymentType">Payment Type</label>
                                                 </div>
-                                            </div>
-                                            <div class="col-3">
-                                                <div class="form-group has-float-label has-required">
-                                                  <input type="month" class="report_date form-control" id="month" name="month_year" placeholder=" Month-Year"required="required" value="{{ date('Y-m', strtotime('-1 month')) }}"autocomplete="off" />
-                                                  <label for="month">Month</label>
-                                                </div>
-                                                <div class="form-group has-float-label select-search-group">
-                                                    <?php
-                                                      $status = ['1'=>'Active','25' => 'Left & Resign','2'=>'Resign','3'=>'Terminate','4'=>'Suspend','5'=>'Left', '6'=> 'Maternity'];
-                                                    ?>
-                                                    {{ Form::select('employee_status', $status, 1, ['placeholder'=>'Select Employee Status ', 'class'=>'form-control capitalize select-search', 'id'=>'estatus']) }}
-                                                    <label for="estatus">Status</label>
-                                                </div>
-                                                
                                                 <div class="form-group has-float-label select-search-group">
                                                     <?php
                                                       $status = ['0'=>'No','1'=>'Yes'];
@@ -248,6 +232,26 @@
                                                     {{ Form::select('disbursed', $status, null, ['placeholder'=>'Select Salary Status ', 'class'=>'form-control capitalize select-search', 'id'=>'disbursed']) }}
                                                     <label for="disbursed">Disbursed</label>
                                                 </div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="form-group has-float-label select-search-group">
+                                                  {{ Form::select('bonus_type', $bonus_type, null, ['placeholder'=>'Select Bonus Type', 'class'=>'form-control capitalize select-search', 'id'=>'bonusFor']) }}
+                                                    <label for="bonusFor">Bonus For</label>
+                                                </div>
+                                                
+                                                <div class="form-group has-float-label select-search-group">
+                                                  {{ Form::select('bonus_year', $year, null, ['placeholder'=>'Select Year', 'class'=>'form-control capitalize select-search', 'id'=>'bonusFor']) }}
+                                                    <label for="bonusFor">Year</label>
+                                                </div>
+                                                <div class="form-group has-float-label select-search-group">
+                                                    <?php
+                                                      $status = ['1'=>'Active', '6'=> 'Maternity'];
+                                                    ?>
+                                                    {{ Form::select('employee_status', $status, 1, ['placeholder'=>'Select Employee Status ', 'class'=>'form-control capitalize select-search', 'id'=>'estatus']) }}
+                                                    <label for="estatus">Status</label>
+                                                </div>
+                                                
+                                                
                                                 <div class="form-group">
                                                   <button onclick="multiple()" class="btn btn-primary nextBtn btn-lg pull-right" type="button" id="unitFromBtn"><i class="fa fa-save"></i> Generate</button>
                                                 </div>
@@ -368,49 +372,6 @@
         return flug1;
     }
 
-    function formatState (state) {
-        //console.log(state.element);
-        if (!state.id) {
-            return state.text;
-        }
-        var baseUrl = "/user/pages/images/flags";
-        var $state = $(
-        '<span><img /> <span></span></span>'
-        );
-        // Use .text() instead of HTML string concatenation to avoid script injection issues
-        var targetName = state.name;
-        $state.find("span").text(targetName);
-        // $state.find("img").attr("src", baseUrl + "/" + state.element.value.toLowerCase() + ".png");
-        return $state;
-    };
-
-    $('select.associates').select2({
-        templateSelection:formatState,
-        placeholder: 'Select Name or Associate\'s ID',
-        ajax: {
-            url: '{{ url("hr/associate-search") }}',
-            dataType: 'json',
-            delay: 250,
-            data: function (params) {
-                return {
-                    keyword: params.term
-                };
-            },
-            processResults: function (data) {
-                return {
-                    results:  $.map(data, function (item) {
-                        return {
-                            text: $("<span><img src='"+(item.as_pic ==null?'/assets/images/avatars/profile-pic.jpg':item.as_pic)+"' height='50px' width='auto'/> " + item.associate_name + "</span>"),
-                            id: item.associate_id,
-                            name: item.associate_name
-                        }
-                    })
-                };
-          },
-          cache: true
-        }
-    });
-
     // Reuseable ajax function
     function ajaxOnChange(ajaxUrl, ajaxType, valueObject, successStoreId) {
         $.ajax({
@@ -525,49 +486,36 @@
     //multiple salary sheet
     function multiple() {
         var form = $("#unitWiseSalary");
-        var unit = $("#unit").val();
-        var location = $('select[name="location"]').val();
-        var month = $("#month").val();
-        if((unit !== '' || location !== '') && month !== ''){
-            $("#result-process-bar").show();
-            $("#result-show").html(loader);
-            $('#setFlug').val(0);
-            processbar(0);
+        var year = $('#bonus_year').val();
+        var bonus_type = $("#bonus_type").val();
+        if(year !== '' && bonus_type !== ''){
+            $(".app-loader").show();
             $.ajax({
                 type: "get",
-                url: '{{ url("hr/operation/unit-wise-salary-sheet")}}',
+                url: '{{ url("hr/operation/unit-wise-bonus-sheet")}}',
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
                 },
-                data: form.serialize(), // serializes the form's elements.
-                dataType: "json",
+                data: form.serialize(), 
                 success: function(response)
                 {
-                  // console.log(response);
-                  if(response.view !== 'error'){
-                      $('#setFlug').val(1); 
-                      processbar('success');
-                      setTimeout(() => {
-                          $("#result-show").html(response.view);
-                      }, 1000);
-                  }else{
-                      $('#setFlug').val(2); 
-                      processbar('error');
-                  }
+
+                  setTimeout(() => {
+                      $("#result-show").html(response);
+                      $("#result-process-bar").show()
+                      $(".app-loader").hide();
+                  }, 500);
+
+                  
                 },
                 error: function (reject) {
-                    processbar('error');
-                    $('#setFlug').val(2); 
+                  $(".app-loader").hide();
                 }
             });
         }else{
             $("#result-process-bar").hide();
-            if((unit === '' || location === '')){
-                $.notify("Select Unit Or Location", 'error');
-            }
-            if(month === ''){
-                $.notify("Please Select Month", 'error');
-            }
+            $.notify("Select Bonus tpe and year", 'error');
+            
         }
     }
 
