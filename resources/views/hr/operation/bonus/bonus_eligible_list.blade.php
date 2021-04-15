@@ -1,9 +1,6 @@
 <div class="panel">
 	<div class="panel-body">
 		<div class="row">
-			<div class="col-sm-12">
-				<h5 style="margin:4px 10px; font-weight: bold; text-align: center;text-decoration: underline;">Bonus Eligble List</h5>
-			</div>
 			<div class="col-sm-5">
 				<button class="btn btn-sm btn-danger" id="back-button" data-toggle="tooltip" data-placement="top" title="" data-original-title="Back to bous rule" title="back">
 					<i class="fa fa-arrow-left"></i></button>
@@ -38,11 +35,11 @@
                     </div>
                     <div class="col-3 pl-0">
                       <div class="text-right">
-                        <a class="btn view grid_view no-padding" data-toggle="tooltip" data-placement="top" title="" data-original-title="Summary Report View" id="1">
-                          <i class="las la-th-large"></i>
+                        <a class="btn view grid_view no-padding " data-toggle="tooltip" data-placement="top" title="" data-original-title="Summary Report View" id="1">
+                          <i class="las la-th-large @if($input['report_format'] == 1) btn-primary @endif"></i>
                         </a>
-                        <a class="btn view list_view no-padding" data-toggle="tooltip" data-placement="top" title="" data-original-title="Details Report View" id="0">
-                          <i class="las la-list-ul"></i>
+                        <a class="btn view list_view no-padding " data-toggle="tooltip" data-placement="top" title="" data-original-title="Details Report View" id="0">
+                          <i class="las la-list-ul @if($input['report_format'] == 0) btn-primary @endif"></i>
                         </a>
                         
                       </div>
@@ -64,6 +61,9 @@
 			<div class="page-header">
 	            
 	            <div class="row page-data">
+	            	<div class="col-sm-12 mb-3">
+	            		<h5 style="margin:5px 10px; font-weight: bold; text-align: center;text-decoration: underline;">Bonus Eligble List</h5>
+	            	</div>
 	            	<div class="col-sm-3">
 	            		<div class="row">
 	            			<div class="col-5">OT</div>
