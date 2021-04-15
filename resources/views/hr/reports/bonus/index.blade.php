@@ -156,15 +156,13 @@
                                         
                                         <input type="hidden" id="reportformat" name="report_format" value="{{ $reFor }}">
                                         <input type="hidden" id="reportGroup" name="report_group" value="{{ $reGro }}">
-                                        <input type="hidden" name="group_unit" value="{{ $bonusSheet->unit_id}}">
-                                        <input type="hidden" name="sheet_id" value="{{ $bonusSheet->id}}">
                                         
                                     </div>
                                     <div class="col-3">
                                         
-                                        <div class="form-group has-float-label has-required">
-                                          <input type="month" class="report_date form-control" id="report-date" name="month" placeholder=" Month-Year"required="required" value="{{ date('Y-m', strtotime($bonusSheet->cutoff_date)) }}"autocomplete="off" readonly>
-                                          <label for="report-date">Month</label>
+                                        <div class="form-group has-float-label has-required select-search-group">
+                                          {{ Form::select('sheet_id', $bonusSheet, Request::get('sheet_id')??null, ['placeholder'=>'Select Report Type ', 'class'=>'form-control capitalize select-search', 'id'=>'reportType']) }}
+                                            <label for="reportType">Report Type</label>
                                         </div>
                                         <div class="form-group has-float-label has-required select-search-group">
                                             <?php
@@ -187,35 +185,7 @@
                                     </div>   
                                 </div>
                                 
-                                <div class="row">
-                                  <div id="exampleModalCenteredScrollable" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenteredScrollableTitle" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
-                                       <div class="modal-content">
-                                        <form class="form-horizontal" role="form" action="#" id="auditBonus">
-                                          <div class="modal-header">
-                                             <h5 class="modal-title" id="exampleModalCenteredScrollableTitle"><strong>{{ $bonusType[$bonusSheet->bonus_type_id]['bonus_type_name']??'' }}- {{ $bonusSheet->bonus_year }}</strong> Bonus for {{ $unitList[$bonusSheet->unit_id]??'' }}</h5>
-                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                             <span aria-hidden="true">×</span>
-                                             </button>
-                                          </div>
-                                          <div class="modal-body">
-                                            <h4>Bonus process  </h4>
-                                              <p class="text-muted">-by {{ Auth::user()->name }}</p>
-                                            <div class="custom-control custom-switch text-center mb-3">
-                                              <input name="status" type="checkbox" class="custom-control-input " id="status" value="1" checked>
-                                              <label class="custom-control-label" for="status">Confirm</label>
-                                           </div>
-                                           <input type="hidden" name="unitId" value="{{ $bonusSheet->unit_id }}">
-                                          </div>
-                                          <div class="modal-footer">
-                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                             <button type="button" id="auditBonus" class="btn btn-primary auditbtn">Save</button>
-                                          </div>
-                                        </form>
-                                       </div>
-                                    </div>
-                                 </div> 
-                                </div>
+                              
 
                             </div>
                             <div class="single-employee-search" id="single-employee-search" style="display: none;">
@@ -243,12 +213,9 @@
                                   <i class="fa fa-file-excel-o"></i>
                                 </button>
                               </span>
-                              @php
-                                $month = date('Y-m', strtotime($bonusSheet->cutoff_date));
-                                $unit = $bonusSheet->unit_id;
-                              @endphp
+                             
                               <div class="salary-section text-left inline">
-                                <button type="button" data-toggle="modal" data-target="#exampleModalCenteredScrollable" class="btn btn-outline-success" data-toggle="tooltip" data-placement="top" title="" data-original-title="Bonus Approval Process" ><i class="fa fa-save"></i> Bonus Process</button>
+                                
                                 
                               </div>
                             </div>
@@ -260,13 +227,7 @@
                             <div class="col-5">
                               <div class="row">
                                 <div class="col-4 pr-0">
-                                  {{-- <div class="form-group has-float-label select-search-group mb-0">
-                                      <?php
-                                          $emptype = ['all'=>'All','maternity'=>'Maternity','partial'=>'Partial'];
-                                      ?>
-                                      {{ Form::select('empType', $emptype, 'all', ['class'=>'form-control capitalize', 'id'=>'empType']) }}
-                                      <label for="empType">Employee Type</label>
-                                  </div> --}}
+                                  
                                 </div>
                                 <div class="col-5 pr-0">
                                   <div class="format">
@@ -299,7 +260,7 @@
                     </div>
                     <div class="iq-card-body no-padding">
                       <div class="result-data" id="result-data">
-                        <div class="panel"><div class="panel-body"><p style="text-align:center;margin:100px;"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>
+                        
                       </div>
                     </div>
                  </div>
@@ -313,11 +274,7 @@
 @push('js')
 <script src="{{ asset('assets/js/moment.min.js')}}"></script>
 <script type="text/javascript">
-   
-  $(document).ready(function(){   
-      @if($bonusSheet->cutoff_date != null && $bonusSheet->unit_id != null)
-        bonusProcess();
-      @endif 
+ 
       $('#activityReport').on('submit', function(e) {
         e.preventDefault();
         bonusProcess();
@@ -339,14 +296,12 @@
         // console.log(loader)
         $("#result-data").html(loaderContent);
         $("#single-employee-search").hide();
-        var unit = $('select[name="unit"]').val();
-        var area = $('select[name="area"]').val();
-        var month = $('input[name="month"]').val();
-        var stauts = $('input[name="employee_status"]').val();
+        
+        var sheetId = $('input[name="sheet_id"]').val();
         var format = $('input[name="report_format"]').val();
         var form = $("#activityReport");
         var flag = 0;
-        if(month === '' || stauts === ''){
+        if(sheetId === ''){
           flag = 1;
         }
         
@@ -482,48 +437,6 @@
          });
       });
 
-      // $('#reportFormat').on("change", function(){
-      //   $('input[name="employee"]').val('');
-      // });
-
-      $('#auditBonus').on("click", function(){
-
-          var status = 0;
-          if ($("#status").is(":checked")) { 
-            status = 1;
-          }
-          var sheetId = $('input[name="sheet_id"]').val();
-          // console.log(month);
-        
-          $('.auditbtn').attr('disabled','disabled');
-          $.ajax({
-           url : "{{ url('hr/operation/bonus-audit') }}",
-           type: 'post',
-           headers: {
-              'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            },
-           data: {
-             status: status,
-             id: sheetId
-
-           },
-           success: function(data)
-           {
-            console.log(data);
-              $.notify(data.message, data.type);
-              if(data.type === 'success'){
-                window.location.href = data.url;
-              }
-           },
-           error: function(reject)
-           {
-             $.notify(data.message, data.type);
-           }
-         });
-         
-      });
-     
-  });
   
 </script>
 @endpush

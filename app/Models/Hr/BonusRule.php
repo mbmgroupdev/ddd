@@ -19,5 +19,16 @@ class BonusRule extends Model
     	->get();
     }
 
+    public static function getApprovalGroupBonusList()
+    {
+    	return DB::table('hr_bonus_rule AS r')
+		->select('r.id', DB::raw('CONCAT_WS(" - ", bonus_type_name, bonus_year) AS text'))
+		->join('hr_bonus_type AS b', 'r.bonus_type_id', 'b.id')
+    	->whereNotNull('r.approved_at')
+    	->orderBy('r.id', 'desc')
+    	->groupBy('text')
+    	->get();
+    }
+
     
 }
