@@ -2,9 +2,9 @@
 	<div class="panel-body">
 		@php
 			$urldata = http_build_query($input) . "\n";
-			$groupUnit = ($input['group_unit']??$input['unit']);
+			$groupUnit = ($input['group_unit']??($input['unit']??''));
 		@endphp
-		<div class="content_list_section">
+		<div class="content_list_section"  id="report_section">
 			<style type="text/css">
 				.page-data{
 				    border: 1px solid #d1d1d1;
@@ -23,20 +23,20 @@
 	            <table class="table no-border f-14" border="0" style="width:100%;margin-bottom:0;font-size:14px;text-align:left"  cellpadding="5">
 	            	<tr>
 	            		<td width="25%">
-		            		Active <b>: {{ $summary->active }} Employee</b> <br>
-		            		Amount <b>: ৳</b> <br>
+		            		Active Employee <b>: {{ $summary->active }} </b> <br>
+		            		Amount <b>: {{ $summary->active_amount }} ৳</b> <br>
 	            		</td>
 	            		<td width="25%">
-		            		Partial (< 12 Month) <b>: Employee</b> <br>
-		            		Amount <b>: ৳</b> <br>
+		            		Partial Employee (< 12 Month) <b>: {{ $summary->partial }}</b> <br>
+		            		Amount <b>: {{ $summary->partial_amount }} ৳</b> <br>
 	            		</td>
 	            		<td width="25%">
-		            		Maternity <b>: Employee</b> <br>
-		            		Amount <b>: ৳</b> <br>
+		            		Maternity Employee <b>: {{ $summary->maternity }}</b> <br>
+		            		Amount <b>: {{ $summary->maternity_amount }} ৳</b> <br>
 	            		</td>
 	            		<td width="25%">
-		            		Total <b>: Employee</b> <br>
-		            		Amount <b>: ৳</b> <br>
+		            		Total Employee <b>: {{ $totalEmployees }}</b> <br>
+		            		Amount <b>: {{ $totalAmount }} ৳</b> <br>
 	            		</td>
 	            		
 	            	</tr>
@@ -46,7 +46,7 @@
 	        </div>
 			<input type="hidden" id="reportFormat" value="{{$input['report_format']}}">
 			@if($input['report_format'] == 0)
-				<table class="table table-bordered table-hover table-head table-responsive" style="width:100%;border:0 !important;margin-bottom:0;font-size:14px;text-align:left" border="1" cellpadding="5">
+				<table class="table table-bordered table-hover table-head" style="width:100%;border:0 !important;margin-bottom:0;font-size:14px;text-align:left" border="1" cellpadding="5">
 				@foreach($uniqueGroupEmp as $group => $employees)
 				
 					<thead>
@@ -87,17 +87,17 @@
 		                
 		                @endif
 		                <tr>
-		                    <th>Sl</th>
-		                    <th>Associate ID</th>
-		                    <th>Name</th>
-		                    <th>Designation</th>
-		                    <th>Department</th>
-		                    <th>DOJ</th>
-		                    <th>Gross</th>
-		                    <th>Basic</th>
-		                    <th>Month</th>
-		                    <th>Stamp</th>
-		                    <th>Bonus Amount</th>
+		                    <th width="5%">Sl</th>
+		                    <th width="8%">Associate ID</th>
+		                    <th width="10%">Name</th>
+		                    <th width="11%">Designation</th>
+		                    <th width="14%">Department</th>
+		                    <th width="10%">DOJ</th>
+		                    <th width="10%">Gross</th>
+		                    <th width="10%">Basic</th>
+		                    <th width="6%">Month</th>
+		                    <th width="6%">Stamp</th>
+		                    <th width="10%">Bonus Amount</th>
 		                </tr>
 		            </thead>
 		            <tbody>
@@ -118,11 +118,10 @@
 				            	<td style="white-space: nowrap;">{{$employee->as_doj}}</td>
 				            	<td>{{$employee->gross_salary }}</td>
 				            	<td>{{$employee->basic}}</td>
-				            	<td>
+				            	<td class="@if($employee->duration < 12) highlight @endif">
 				            		@if($employee->duration < 12)
 				            			{{$employee->duration}}/12
-				            		@else
-				            			12/12
+				            		
 				            		@endif
 				            	</td>
 				            	
@@ -264,21 +263,20 @@
 	</div>
 </div>
 
-
-
 <script>
 	@if(auth()->user()->hasRole('Buyer Mode'))
-    	var mainurl = '/hrm/reports/group-salary-sheet-details?';
+    	var mainurl = '/hrm/reports/bonus-report?';
     @else
-    	var mainurl = '/hr/reports/group-salary-sheet-details?';
+    	var mainurl = '/hr/reports/bonus-report?';
     @endif
     function selectedGroup(e, body){
+    	// console.log(body)
     	var part = e;
     	var input = @json($urldata);
     	var pareUrl = input+part;
-    	$("#modal-title-right").html(' '+body+' Salary Details');
-    	$('#right_modal_lg').modal('show');
-    	$("#content-result").html(loaderContent);
+    	$('#right_modal_jobcard').modal('show');
+	    $('#modal-title-right').html(body+' Report');
+	    $("#content-result").html(loaderContent);
     	$.ajax({
             url: mainurl+pareUrl,
             data: {
@@ -297,20 +295,5 @@
             }
         });
 
-    }
-    function printDiv(divName)
-    {   
-        var mywindow=window.open('','','width=800,height=800');
-        
-        mywindow.document.write('<html><head><title>Print Contents</title>');
-        mywindow.document.write('<style>@page {size: landscape; color: color;} </style>');
-        mywindow.document.write('</head><body>');
-        mywindow.document.write(document.getElementById(divName).innerHTML);
-        mywindow.document.write('</body></html>');
-
-        mywindow.document.close();  
-        mywindow.focus();           
-        mywindow.print();
-        mywindow.close();
     }
 </script>

@@ -143,7 +143,18 @@ class BonusSheetController extends Controller
             ->when(!empty($input['subSection']), function ($query) use($input){
                return $query->where('s.subsection_id', $input['subSection']);
             })
+            ->when(!empty($input['selected']), function ($query) use($input){
+            	
+                if($input['selected'] == 'null'){
+                    return $query->whereNull($input['report_group']);
+                }else{
+                    return $query->where('emp.'.$input['report_group'], $input['selected']);
+                }
+            })
             ->orderBy('emp.as_department_id', 'ASC');
+            if(!empty($input['selected'])){
+            	$input['report_format'] = 0;
+            }
             $queryData->leftjoin(DB::raw('(' . $employeeData_sql. ') AS emp'), function($join) use ($employeeData) {
                 $join->on('emp.associate_id','s.associate_id')->addBinding($employeeData->getBindings());
             });
@@ -156,8 +167,8 @@ class BonusSheetController extends Controller
             $queryData->leftjoin(DB::raw('(' . $subSectionDataSql. ') AS subsec'), function($join) use ($subSectionData) {
                 $join->on('subsec.hr_subsec_id','s.subsection_id')->addBinding($subSectionData->getBindings());
             });
-            
-
+            // dd($input);
+            $queryGet = clone $queryData;
             
             if(($input['report_format'] == 1 || $input['report_format'] == 2) && $input['report_group'] != null){
                 $queryData->select(DB::raw('count(*) as total'), DB::raw('sum(net_payable) as groupTotal'),DB::raw('COUNT(CASE WHEN s.ot_status = 1 THEN s.ot_status END) AS ot, COUNT(CASE WHEN s.ot_status = 0 THEN s.ot_status END) AS nonot'), DB::raw('sum(cash_payable) as groupCashSalary'),DB::raw('sum(stamp) as groupStamp'), DB::raw('sum(bank_payable) as groupBankSalary'), DB::raw("SUM(IF(ot_status=0,net_payable,0)) AS totalNonOt"), DB::raw("SUM(IF(ot_status=1,net_payable,0)) AS totalOt"));
@@ -182,13 +193,12 @@ class BonusSheetController extends Controller
                 }
             }else{
                 $queryData->select('s.unit_id AS as_unit_id','s.associate_id', 's.designation_id AS as_designation_id','subsec.hr_subsec_area_id AS as_area_id', 'subsec.hr_subsec_department_id AS as_department_id', 'subsec.hr_subsec_section_id AS as_section_id', 's.subsection_id AS as_subsection_id','deg.hr_designation_position','deg.hr_designation_name', 'ben.bank_no','emp.as_id','emp.as_gender', 'emp.as_oracle_code', 'emp.as_line_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_doj', 's.net_payable', 's.bank_payable', 's.cash_payable', 's.stamp', 's.pay_status', 's.gross_salary', 's.basic', 's.duration', 's.bonus_amount');
-                
             }
 
             $getEmployee = $queryData->orderBy('s.bonus_amount', 'desc')->get();
             
             if($input['report_format'] == 1 && $input['report_group'] != null){
-                $totalSalary = round(array_sum(array_column($getEmployee->toArray(),'groupTotal')));
+                $totalAmount = round(array_sum(array_column($getEmployee->toArray(),'groupTotal')));
                 $totalCashSalary = round(array_sum(array_column($getEmployee->toArray(),'groupCashSalary')));
                 $totalBankSalary = round(array_sum(array_column($getEmployee->toArray(),'groupBankSalary')));
                 $totalStamp = round(array_sum(array_column($getEmployee->toArray(),'groupStamp')));
@@ -196,7 +206,7 @@ class BonusSheetController extends Controller
                
             }else{
                 $datas = collect($getEmployee);
-                $totalSalary = round($datas->sum("net_payable"));
+                $totalAmount = round($datas->sum("net_payable"));
                 $totalCashSalary = round($datas->sum("cash_payable"));
                 $totalBankSalary = round($datas->sum("bank_payable"));
                 $totalStamp = round($datas->sum("stamp"));
@@ -217,11 +227,10 @@ class BonusSheetController extends Controller
                 $uniqueGroupEmp = collect($getEmployee)->groupBy($request['report_group'],true);
             }
 
-            $summary 	= $this->makeSummary($getEmployee);
-
-
+            $summary 	= $this->makeSummary($queryGet->get());
+            // dd($summary);
             // return $getEmployee;
-            $view = view('hr.reports.bonus.report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalSalary', 'totalEmployees','totalCashSalary', 'totalBankSalary', 'totalStamp', 'uniqueGroupEmp', 'location', 'unit', 'area', 'department', 'designation', 'section', 'subsection','summary', 'bonusType', 'bonusSheet'))->render();
+            $view = view('hr.reports.bonus.report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalAmount', 'totalEmployees','totalCashSalary', 'totalBankSalary', 'totalStamp', 'uniqueGroupEmp', 'location', 'unit', 'area', 'department', 'designation', 'section', 'subsection','summary', 'bonusType', 'bonusSheet'))->render();
             return $view;
         } catch (\Exception $e) {
             return $e->getMessage();
@@ -232,16 +241,16 @@ class BonusSheetController extends Controller
     {
     	$data = collect($data);
     	$sum  = (object)[];
-    	$sum->maternity 		= $data->where('as_status', 6)->count();
-    	$sum->maternity_amount 	= $data->where('as_status', 6)->sum('bonus_amount');
-    	$sum->active 			= $data->where('as_status', 1)->count();
-    	$sum->active_amount 	= $data->where('as_status', 1)->sum('bonus_amount');
+    	$sum->maternity 		= $data->where('emp_status', 6)->count();
+    	$sum->maternity_amount 	= $data->where('emp_status', 6)->sum('bonus_amount');
+    	$sum->active 			= $data->where('emp_status', 1)->count();
+    	$sum->active_amount 	= $data->where('emp_status', 1)->sum('bonus_amount');
     	$sum->ot 				= $data->where('as_ot', 1)->count();
     	$sum->ot_amount 		= $data->where('as_ot', 1)->sum('bonus_amount');
     	$sum->nonot 			= $data->where('as_ot', 0)->count();
     	$sum->nonot_amount 		= $data->where('as_ot', 0)->sum('bonus_amount');
-    	$sum->partial 			= $data->where('month','<' ,12)->count();
-    	$sum->partial_amount 	= $data->where('month','<' ,12)->sum('bonus_amount');
+    	$sum->partial 			= $data->where('duration','<' ,12)->count();
+    	$sum->partial_amount 	= $data->where('duration','<' ,12)->sum('bonus_amount');
 
     	return $sum;
     }
