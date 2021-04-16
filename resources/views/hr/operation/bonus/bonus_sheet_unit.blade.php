@@ -8,7 +8,7 @@
     <div class="page-header" style="text-align:left;border-bottom:2px double #666">
 
         <h2 style="margin:4px 10px; font-weight: bold;  text-align: center; color: #FF00FF">উৎসব বোনাস প্রদানের শীট </h2>
-        <h3 style="margin:4px 10px; text-align: center; color: #FF00FF"></h3>
+        <h3 style="margin:4px 10px; text-align: center; color: #FF00FF">{{$bonusType->bonus_type_name}}, {{$input['bonus_year']}}</h3>
         
     </div>
     <!-- unit loop -->
@@ -29,7 +29,6 @@
                                     {{$location[$l]['hr_location_name']??''}}
 
                                 </font></h5>
-                                <h5 style="margin:4px 5px; font-size: 12px; color: #FF00FF"><font style="font-weight: bold; font-size: 12px;">তারিখঃ </h5>
                             </td>
                             <td>
                                 <h5 style="margin:4px 5px; font-size: 10px; text-align: right; color: #FF00FF"><font style="font-weight: bold;">পাতা নং # {{eng_to_bn(++$pageno)}}</font></h5>
@@ -62,10 +61,10 @@
                             </td>
                             <td>
                                 <p style="margin: 0px; padding: 0px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font>{{ !empty($emp->hr_bn_associate_name)?$emp->hr_bn_associate_name:null }}</font></p>
-                                <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                     {{$designation[$emp->designation_id]['hr_designation_name_bn']}}
                                 </p>
-                                <p style="margin: 0px; padding: 0px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ !empty($emp->as_doj)?(eng_to_bn(date('d-m-Y', strtotime($emp->as_doj)))):null }}
+                                <p style="margin: 0px; padding: 0px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; যোগদানের তারিখঃ {{ !empty($emp->as_doj)?(eng_to_bn(date('d-m-Y', strtotime($emp->as_doj)))):null }}
                                 </p>
 
                                 <p style="margin: 0px; padding: 0px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp(<?php echo str_replace($en, $bn, floor($emp->duration/12))  ?> বৎসর <?php echo str_replace($en, $bn, ($emp->duration%12))  ?> মাস)</p>

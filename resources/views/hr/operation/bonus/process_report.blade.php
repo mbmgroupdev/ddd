@@ -199,7 +199,7 @@
                                              </button>
                                           </div>
                                           <div class="modal-body">
-                                            <h4>Bonus process  </h4>
+                                            <h4>Bonus Approve  </h4>
                                               <p class="text-muted">-by {{ Auth::user()->name }}</p>
                                             <div class="custom-control custom-switch text-center mb-3">
                                               <input name="status" type="checkbox" class="custom-control-input " id="status" value="1" checked>
@@ -247,10 +247,7 @@
                                 $month = date('Y-m', strtotime($bonusSheet->cutoff_date));
                                 $unit = $bonusSheet->unit_id;
                               @endphp
-                              <div class="salary-section text-left inline">
-                                <button type="button" data-toggle="modal" data-target="#exampleModalCenteredScrollable" class="btn btn-outline-success" data-toggle="tooltip" data-placement="top" title="" data-original-title="Bonus Approval Process" ><i class="fa fa-save"></i> Bonus Process</button>
-                                
-                              </div>
+                              
                             </div>
                             <div class="col-2 text-center">
                               <h4 class="card-title capitalize inline">

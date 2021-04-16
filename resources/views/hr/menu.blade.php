@@ -300,6 +300,10 @@
             </li>
             @endif
 
+            <li class="@if($segment3 == 'bonus-disburse') active @endif">
+               <a href="{{ url('hr/operation/bonus-disburse') }}"><i class="las la-file-invoice-dollar"></i>Bonus Disburse</a>
+            </li>
+
             @if($user->can('Tiffin/Dinner') || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'tiffin-dinner') active @endif">
                <a href="{{ url('hr/operation/tiffin-dinner') }}"><i class="las la-address-card"></i>Tiffin/Dinner Bill</a>

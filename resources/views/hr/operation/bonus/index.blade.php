@@ -75,38 +75,49 @@
                                         <div class="col-sm-6 pr-0">
                                             <div class="form-group has-required has-float-label select-search-group">
                                                 {{ Form::select('type_id', $bonusType, null, ['placeholder'=>'Select Bonus', 'id'=>'bonus_for', 'class'=> 'form-control', 'required'=>'required']) }}
-                                                <label for="bonus_for">Bonus for </label>
+                                                <label for="bonus_for">Bonus Type </label>
                                             </div>
                                         </div>
                                         
                                         <div class="col-sm-6">
                                             <div class="form-group has-required has-float-label">
                                                 <input type="date" name="cut_date" id="cut_date" placeholder="Cut of Date" value="{{ date('Y-m-d') }}"  class="form-control" required>
-                                                <label for="cut_date">Cut of Date </label>
+                                                <label for="cut_date">Bonus Date </label>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-sm-6 pr-0">
-                                            <div class="form-group  has-float-label">
-                                                <input type="text" name="bonus_percent" id="bonus_percent" placeholder="% of Basic"  class="form-control" >
-                                                <label for="bonus_percent">OR, % of Basic </label>
+                                            <label>Amount Type</label><br>
+                                            <div class="custom-control custom-radio custom-control-inline">
+                                               <input type="radio" id="per_of_basic" name="bonus_amont_type" class="bonus_amont_type custom-control-input" value="percent" checked>
+                                               <label class="custom-control-label" for="per_of_basic"> % of Basic </label>
                                             </div>
+                                            <div class="custom-control custom-radio custom-control-inline">
+                                               <input type="radio" id="fixed_amount" name="bonus_amont_type" class="bonus_amont_type custom-control-input" value="fixed">
+                                               <label class="custom-control-label" for="fixed_amount"> Fixed Amount </label>
+                                            </div>
+                                            
                                         </div>
                                         <div class="col-sm-6">
-                                            <div class="form-group has-float-label">
+                                            <div class="form-group  has-float-label" id="target-per-of-basic">
+                                                <input type="text" name="bonus_percent" id="bonus_percent" placeholder="% of Basic"  class="form-control" >
+                                                <label for="bonus_percent"> % of Basic </label>
+                                            </div>
+                                            <div class="form-group has-float-label" id="target-fix-amount" style="display: none;">
                                                 <input type="text" name="bonus_amount" id="bonus_amount" placeholder="Enter" class="form-control" >
-                                                <label for="bonus_amount">Amount </label>
+                                                <label for="bonus_amount">Fixed Amount </label>
                                             </div>
                                         </div>
                                         
                                     </div>
                                     
                                     <div class="row">
-                                      <div class="col-sm-3">
+                                      <div class="col-sm-12"><hr></div>
+                                      <div class="col-sm-5">
                                         <div class="custom-control custom-switch">
                                           <input name="special" type="checkbox" class="custom-control-input" id="specialCheck">
-                                          <label class="custom-control-label" for="specialCheck">Advanced</label>
+                                          <label class="custom-control-label" for="specialCheck">Apply Special Rule</label>
                                         </div>
                                       </div>
                                     </div>
@@ -188,6 +199,15 @@
     $(document).on('change','#empType', function(){
         $('#emp_type').val($(this).val());
         generateBonus();
+            if($(this).val() == 'all'){
+                $('#approval').show();
+                $('#proceed-help-text').hide();
+            }else{
+                $('#approval').hide();
+                $('#proceed-help-text').show();
+            }
+            console.log($(this).val());
+        
     });
 
     $(document).on('change','#reportGroupHead', function(){
@@ -255,6 +275,21 @@
            }
         });
     });
+
+    $(document).on('change','.bonus_amont_type', function(){
+        if($(this).val() == 'percent'){
+            $('#target-per-of-basic').show();
+            $('#target-fix-amount').hide();
+            $('#bonus_amount').val('');
+        }else{
+            $('#target-per-of-basic').hide();
+            $('#target-fix-amount').show();
+            $('#bonus_percent').val('');
+        }
+
+    });
+
+
 
     
 </script>
