@@ -22,24 +22,44 @@
             color: #fff;
             cursor: pointer;
         }
-        /*.form-section{
-            height: calc(100vh - 275px);
-        }*/
-        /*#appendType{
-            position: absolute;
-            overflow: auto;
-            background: #fff;
-            height: 300px;
-            padding: 15px;
-            margin-bottom: 30px; 
+        .rule-section{
+            position: relative;
         }
-        .process-btn{
-            position: absolute;
+        .iq-header{
+            border-bottom: 1px solid #ccc;
+        }
+        .iq-card-spacial{
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 5px 10px;
+            margin: 10px 0px;
+            position: relative;
+        }
+        .iq-sp-body{
+            padding: 10px 5px;
+        }
+        .iq-sp-head{
+            top: -10px;
+            left: 15px;
+            outline: none;
             background: #fff;
+            position: absolute;
+        }
+        .iq-sp-head p{
+            margin-bottom: 0;
+            font-size: 14px;
+            padding: 0px 5px;
+        }
+        .rule-overlay{
             width: 100%;
-            bottom: 0;
-            padding-top: 15px;
-        }*/
+            height: 100%;
+            position: absolute;
+            background: #ffffff;
+            top: 0px;
+            opacity: .7;
+            z-index: 4;
+            border-radius: 5px;
+        }
     </style>
 @endpush
 <div class="main-content">
@@ -61,10 +81,10 @@
             <form id="bonus-procesor" method="post">
                 @csrf
                 <div class="panel panel-info">
-                    <div class="panel-heading text-center"><h6>Bonus</h6></div> 
+                    <div class="panel-heading"><h6>Bonus</h6></div> 
                     <div class="panel-body">
                         <div class="row justify-content-center">
-                            <div class="col-sm-7">
+                            <div class="col-sm-8">
                                 <input type="hidden" id="report_format" name="report_format">
                                 <input type="hidden" id="emp_type" name="emp_type" value="all">
                                 <input type="hidden" id="report_group" name="report_group">
@@ -72,14 +92,40 @@
                                     
                                     <input type="hidden" name="eligible_month" id="eligible-month" value="0">
                                     <div class="row">
-                                        <div class="col-sm-6 pr-0">
+                                        <div class="col-sm-4 pr-0">
+                                            <div class="custom-control custom-radio custom-control-inline"></div>
                                             <div class="form-group has-required has-float-label select-search-group">
                                                 {{ Form::select('type_id', $bonusType, null, ['placeholder'=>'Select Bonus', 'id'=>'bonus_for', 'class'=> 'form-control', 'required'=>'required']) }}
                                                 <label for="bonus_for">Bonus Type </label>
                                             </div>
                                         </div>
-                                        
-                                        <div class="col-sm-6">
+                                        <div class="col-sm-4 pr-0">
+                                            <div class="row">
+                                                <div class="col-sm-12 pr-0">
+                                                    {{-- <label>Amount Type</label><br> --}}
+                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                       <input type="radio" id="per_of_basic" name="bonus_amont_type" class="bonus_amont_type custom-control-input" value="percent" checked>
+                                                       <label class="custom-control-label" for="per_of_basic"> % of Basic </label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                       <input type="radio" id="fixed_amount" name="bonus_amont_type" class="bonus_amont_type custom-control-input" value="fixed">
+                                                       <label class="custom-control-label" for="fixed_amount"> Fixed Amount </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    <div class="form-group  has-float-label" id="target-per-of-basic" style="margin-top: 3px;">
+                                                        <input type="text" name="bonus_percent" id="bonus_percent" placeholder="% of Basic"  class="form-control" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" >
+                                                        <label for="bonus_percent"> % of Basic </label>
+                                                    </div>
+                                                    <div class="form-group has-float-label" id="target-fix-amount" style="display: none;margin-top: 3px;">
+                                                        <input type="text" name="bonus_amount" id="bonus_amount" placeholder="Enter" class="form-control" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" >
+                                                        <label for="bonus_amount">Fixed Amount </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4 pr-0">
+                                            <div class="custom-control custom-radio custom-control-inline"></div>
                                             <div class="form-group has-required has-float-label">
                                                 <input type="date" name="cut_date" id="cut_date" placeholder="Cut of Date" value="{{ date('Y-m-d') }}"  class="form-control" required>
                                                 <label for="cut_date">Bonus Date </label>
@@ -87,75 +133,130 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-sm-6 pr-0">
-                                            <label>Amount Type</label><br>
-                                            <div class="custom-control custom-radio custom-control-inline">
-                                               <input type="radio" id="per_of_basic" name="bonus_amont_type" class="bonus_amont_type custom-control-input" value="percent" checked>
-                                               <label class="custom-control-label" for="per_of_basic"> % of Basic </label>
-                                            </div>
-                                            <div class="custom-control custom-radio custom-control-inline">
-                                               <input type="radio" id="fixed_amount" name="bonus_amont_type" class="bonus_amont_type custom-control-input" value="fixed">
-                                               <label class="custom-control-label" for="fixed_amount"> Fixed Amount </label>
-                                            </div>
-                                            
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <div class="form-group  has-float-label" id="target-per-of-basic">
-                                                <input type="text" name="bonus_percent" id="bonus_percent" placeholder="% of Basic"  class="form-control" >
-                                                <label for="bonus_percent"> % of Basic </label>
-                                            </div>
-                                            <div class="form-group has-float-label" id="target-fix-amount" style="display: none;">
-                                                <input type="text" name="bonus_amount" id="bonus_amount" placeholder="Enter" class="form-control" >
-                                                <label for="bonus_amount">Fixed Amount </label>
-                                            </div>
-                                        </div>
-                                        
-                                    </div>
-                                    
-                                    <div class="row">
-                                      <div class="col-sm-12"><hr></div>
+                                      <div class="col-sm-12"><hr class="mt-0"></div>
                                       <div class="col-sm-5">
                                         <div class="custom-control custom-switch">
                                           <input name="special" type="checkbox" class="custom-control-input" id="specialCheck">
-                                          <label class="custom-control-label" for="specialCheck">Apply Special Rule</label>
+                                          <label class="custom-control-label" for="specialCheck">Advanced</label>
                                         </div>
                                       </div>
                                     </div>
-                                    <br>
-                                    <div class="row">
-                                      <div class="col-sm-12">
-                                        <div class="specialsection" id="special-section">
-                                            <div class="row">
-                                                <div class="col-sm-6">
-                                                    <div class="form-group has-required has-float-label select-search-group">
-                                                        <select name="" id="type-for" class="form-control">
-                                                            <option value=""> - Select - </option>
-                                                            <option value="as_department_id"> Department</option>
-                                                            <option value="as_designation_id"> Designation</option>
-                                                            <option value="as_section_id"> Section</option>
-                                                            <option value="as_subsection_id"> Sub Section</option>
-                                                            <option value="as_id"> Employee</option>
-                                                        </select>
-                                                        <label for="type-for">Type </label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-2" id="syncBtn" style="display: none">
-                                                    <div class="form-group">
-                                                        <button class="btn btn-outline-primary" type="button" id="sync-type">
-                                                            <i class="las la-sync"></i>
-                                                        </button> 
-                                                    </div>
-                                                </div>
+                                    <div class="rule-section">
+                                        <div class="iq-card-spacial pb-0">
+                                            <div class="iq-sp-head">
+                                                <p class="card-title">Special </p>
                                             </div>
-                                            <div id="appendType"></div>
-                                        
+                                            <div class="iq-sp-body pb-0">
+                                               <div class="row">
+                                                    <div class="offset-sm-3 col-sm-9">
+                                                        <div class="specialsection" id="special-section">
+                                                            <div class="row">
+                                                                <div class="col-sm-6">
+                                                                    <div class="form-group has-required has-float-label select-search-group">
+                                                                        <select name="" id="special-type-for" class="form-control">
+                                                                            <option value=""> - Select - </option>
+                                                                            <option value="as_department_id"> Department</option>
+                                                                            <option value="as_designation_id"> Designation</option>
+                                                                            <option value="as_section_id"> Section</option>
+                                                                            <option value="as_subsection_id"> Sub Section</option>
+                                                                            <option value="as_id"> Employee</option>
+                                                                        </select>
+                                                                        <label for="special-type-for">Type </label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-2" >
+                                                                    <div class="form-group">
+                                                                        <button class="btn btn-outline-primary sync-type" data-category="special" type="button" id="special-sync-type">
+                                                                            <i class="las la-sync"></i>
+                                                                        </button> 
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div id="special-targettype"></div>
+                                                <div id="special-appendType" class="appendType"></div>
+                                            </div>
+                                        </div><div class="iq-card-spacial pb-0">
+                                            <div class="iq-sp-head">
+                                                <p class="card-title">Partial </p>
+                                            </div>
+                                            <div class="iq-sp-body pb-0">
+                                               <div class="row">
+                                                    <div class="offset-sm-3 col-sm-9">
+                                                        <div class="partialsection" id="partial-section">
+                                                            <div class="row">
+                                                                <div class="col-sm-6">
+                                                                    <div class="form-group has-required has-float-label select-search-group">
+                                                                        <select name="" id="partial-type-for" class="form-control">
+                                                                            <option value=""> - Select - </option>
+                                                                            <option value="as_department_id"> Department</option>
+                                                                            <option value="as_designation_id"> Designation</option>
+                                                                            <option value="as_section_id"> Section</option>
+                                                                            <option value="as_subsection_id"> Sub Section</option>
+                                                                            <option value="as_id"> Employee</option>
+                                                                        </select>
+                                                                        <label for="partial-type-for">Type </label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-2" >
+                                                                    <div class="form-group">
+                                                                        <button class="btn btn-outline-primary sync-type" data-category="partial" type="button" id="partial-sync-type">
+                                                                            <i class="las la-sync"></i>
+                                                                        </button> 
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div id="partial-targettype"></div>
+                                                <div id="partial-appendType" class="appendType"></div>
+                                            </div>
                                         </div>
-                                      </div>
+                                        <div class="iq-card-spacial pb-0">
+                                            <div class="iq-sp-head">
+                                                <p class="card-title">Excluding </p>
+                                            </div>
+                                            <div class="iq-sp-body pb-0">
+                                               <div class="row">
+                                                    <div class="offset-sm-3 col-sm-9">
+                                                        <div class="excludingsection" id="excluding-section">
+                                                            <div class="row">
+                                                                <div class="col-sm-6">
+                                                                    <div class="form-group has-required has-float-label select-search-group">
+                                                                        <select name="" id="excluding-type-for" class="form-control">
+                                                                            <option value=""> - Select - </option>
+                                                                            <option value="as_department_id"> Department</option>
+                                                                            <option value="as_designation_id"> Designation</option>
+                                                                            <option value="as_section_id"> Section</option>
+                                                                            <option value="as_subsection_id"> Sub Section</option>
+                                                                            <option value="as_id"> Employee</option>
+                                                                        </select>
+                                                                        <label for="excluding-type-for">Type </label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-2" >
+                                                                    <div class="form-group">
+                                                                        <button class="btn btn-outline-primary sync-type" data-category="excluding" type="button" id="excluding-sync-type">
+                                                                            <i class="las la-sync"></i>
+                                                                        </button> 
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div id="excluding-targettype"></div>
+                                                <div id="excluding-appendType" class="appendType"></div>
+                                            </div>
+                                        </div>
+                                        <div class="rule-overlay" id="rule-overlay"></div>
                                     </div>
-                                    <div id="targettype"></div>
                                 </div>
                                 <div class="process-btn">
-                                    <div class="form-group">
+                                    <div class="form-group pull-right">
                                         <button class="btn btn-primary" type="submit">
                                             <i class=" fa fa-check"></i> Generate
                                         </button>
