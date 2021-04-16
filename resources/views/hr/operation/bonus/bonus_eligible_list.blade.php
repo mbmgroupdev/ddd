@@ -8,7 +8,7 @@
 					$urldata = http_build_query($input) . "\n";
 				@endphp
 				<button class="btn btn-sm btn-primary hidden-print" onclick="printDiv('content_list_section')" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report" ><i class="las la-print"></i> </button>
-				<a href='{{ url("hr/reports/summary/excel?$urldata")}}' target="_blank" class="btn btn-sm btn-primary hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download" ><i class="fa fa-file-excel-o"></i></a>
+				{{-- <a href='{{ url("hr/reports/summary/excel?$urldata")}}' target="_blank" class="btn btn-sm btn-primary hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download" ><i class="fa fa-file-excel-o"></i></a> --}}
 			</div>
 			<div class="col-sm-2"></div>
 			<div class="col-sm-5">
@@ -47,7 +47,7 @@
                   </div>
 			</div>
 		</div>
-		<div class="content_list_section">
+		<div id="content_list_section" class="content_list_section">
 			<style type="text/css">
 				.page-data{
 				    border: 1px solid #d1d1d1;
@@ -58,6 +58,30 @@
     				padding: 5px;
     			}
     			.amount{text-align: right;width: 100px;display: inline-block;}
+
+			</style>
+			<style type="text/css" media="print">
+				.col-sm-12 {
+				    flex: 0 0 100%;
+				    max-width: 100%;
+				}
+				#approval, #proceed-help-text"{
+					display: none;
+				}
+				.col-sm-4{
+					flex: 0 0 33.3333333333%;
+    				max-width: 33.3333333333%;
+				}
+				.row{
+					    display: flex;
+					    flex-wrap: wrap;
+					    margin-right: -15px;
+					    margin-left: -15px;
+				}
+				.col-6{
+					flex: 0 0 50%;
+    				max-width: 50%;
+				}
 			</style>
 			<div class="page-header">
 	            
@@ -107,8 +131,10 @@
 	            			<div class="col-12">
 			            		<div class="text-right d-block w-100 pr-3">
 			            			<br><br>
-			            			<button id="approval" class="btn btn-primary btn-sm ">Proceed to Aproval</button>
+			            			<button id="approval" class="btn btn-primary btn-sm" @if($input['emp_type'] != 'all') style="display: none;" @endif >Proceed to Aproval</button>
+			            			<p id="proceed-help-text" class="text-danger" @if($input['emp_type'] == 'all') style="display: none;" @endif>To proceed for Approval, please select Bonus Type <b>All</b>  </p>
 		            			</div>
+
 	            			</div>
 	            		</div>
 	            	</div>

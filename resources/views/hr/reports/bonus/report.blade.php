@@ -14,31 +14,37 @@
 				.table th, .table td {
     				padding: 5px;
     			}
+    			.amount{text-align: right;width: 100px;display: inline-block;float: right;padding-right: 20px;}
 			</style>
 			<div class="page-header report_section">
 				
 				<h3 style="font-weight: bold; text-align: center;"> {{ $unit[$groupUnit]['hr_unit_name']??'' }} </h3> 
 				<h3 style=" text-align: center;">{{ $bonusType[$bonusSheet->bonus_type_id]['bonus_type_name']??''}}-{{ $bonusSheet->bonus_year }} @if($input['report_format'] == 0) Details @else Summary @endif Report </h3>
 					
-	            <table class="table no-border f-14" border="0" style="width:100%;margin-bottom:0;font-size:14px;text-align:left"  cellpadding="5">
+	            <table class="table no-border f-14" border="0" style="width:100%;margin-bottom:0;font-size:14px;text-align:left;"  cellpadding="5">
 	            	<tr>
-	            		<td width="25%">
-		            		Active Employee <b>: {{ $summary->active }} </b> <br>
-		            		Amount <b>: {{ $summary->active_amount }} ৳</b> <br>
-	            		</td>
-	            		<td width="25%">
-		            		Partial Employee (< 12 Month) <b>: {{ $summary->partial }}</b> <br>
-		            		Amount <b>: {{ $summary->partial_amount }} ৳</b> <br>
-	            		</td>
-	            		<td width="25%">
-		            		Maternity Employee <b>: {{ $summary->maternity }}</b> <br>
-		            		Amount <b>: {{ $summary->maternity_amount }} ৳</b> <br>
-	            		</td>
-	            		<td width="25%">
-		            		Total Employee <b>: {{ $totalEmployees }}</b> <br>
-		            		Amount <b>: {{ $totalAmount }} ৳</b> <br>
+	            		<td width="25%" style="vertical-align: top;">
+		            		Active Employee <b>: <span class="amount" >{{ $summary->active }} </span> </b> <br>
+		            		Amount <b>: <span class="amount" >৳ {{ bn_money($summary->active_amount) }}</span> </b> <br>
 	            		</td>
 	            		
+	            		<td width="25%" style="vertical-align: top;">
+		            		Maternity Employee <b>:<span class="amount" > {{ $summary->maternity }}</span></b> <br>
+		            		Amount <b>: <span class="amount" >৳ {{ bn_money($summary->maternity_amount) }}</span> </b> <br>
+	            		</td>
+	            		<td width="25%" style="vertical-align: top;">
+		            		Total Employee <b>: <span class="amount" >{{ $totalEmployees }}</span></b> <br>
+		            		Amount <b>: <span class="amount" >৳ {{ bn_money($totalAmount) }}</span> </b> <br>
+	            		</td>
+	            		<td width="25%" style="vertical-align: top;">
+		            		Less than a year  <b>: <span class="amount" >{{ $summary->partial }}</span></b> <br>
+		            		Amount <b>: <span class="amount" >৳ {{ bn_money($summary->partial_amount) }}</span> </b> <br>
+		            		<br>
+		            		<div class="salary-section text-right ">
+                                <button type="button" data-toggle="modal" data-target="#exampleModalCenteredScrollable" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="" data-original-title="Bonus Approval Process" ><i class="fa fa-save"></i> Approve Bonus</button>
+                                
+                              </div>
+	            		</td>
 	            	</tr>
 	            	
 	            </table>

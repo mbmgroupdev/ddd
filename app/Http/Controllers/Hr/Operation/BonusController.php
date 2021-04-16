@@ -402,7 +402,6 @@ class BonusController extends Controller
     public function disburse(Request $request)
     {
     	try {
-
             $data['year'] = DB::table('hr_bonus_rule as br')
             			->whereIn('br.unit_id',auth()->user()->unit_permissions())
             			->distinct()
@@ -495,10 +494,12 @@ class BonusController extends Controller
 	            ->get();
     }
 
-    public function unitWiseBonusSheet(Request $request)
+    public function bonusSheet(Request $request)
     {
     	
     	$input = $request->all();
+    	$com['input'] 	  = $input;
+    	$com['bonusType'] = $this->getBonusType($input['bonus_type']);
     	$bonusList =  $this->getBonusList($input);
     	$com['bonusList'] =  collect($bonusList)
     					->groupBy('unit_id',true)
@@ -522,10 +523,6 @@ class BonusController extends Controller
 
         ini_set('zlib.output_compression', 1);
         return view('hr.operation.bonus.bonus_sheet_unit', $com)->render();
-
-
-
-
     }
 
 }

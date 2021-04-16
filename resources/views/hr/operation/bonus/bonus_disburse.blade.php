@@ -71,26 +71,25 @@
                                   <div class="panel">
                                         <div class="panel-body">
                                             <div class="row">
-                                                <div class="col-sm-6">
+                                                <div class="col-sm-5">
                                                     <div class="form-group has-float-label has-required select-search-group">
                                                         {{ Form::select('as_id[]', [],'', ['id'=>'as_id', 'class'=> 'allassociates form-control select-search no-select', 'multiple'=>"multiple",'style', 'data-validation'=>'required']) }}
                                                         <label for="as_id">Employees</label>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-2">
+                                                <div class="col-sm-3">
                                                   <div class="form-group has-float-label select-search-group">
-                                                    <select name="formattype" class="form-control capitalize select-search" id="formattype" >
-                                                        <option value="0" selected>Single</option>
-                                                        <option value="1">Combine</option>
-                                                    </select>
-                                                    <label for="formattype">Format</label>
-                                                  </div>
+                                                  {{ Form::select('bonus_type', $bonus_type, null, ['placeholder'=>'Select Bonus Type', 'class'=>'form-control capitalize select-search', 'id'=>'bonusForSngle']) }}
+                                                    <label for="bonusForSngle">Bonus Type</label>
+                                                </div>
+                                                
+                                                
                                                 </div>
                                                 <div class="col-sm-2">
-                                                    <div class="form-group has-float-label has-required">
-                                                      <input type="month" class="report_date form-control" id="emp-month" name="emp_month_year" placeholder=" Month-Year"required="required" value="{{ date('Y-m', strtotime('-1 month')) }}"autocomplete="off" />
-                                                      <label for="emp-month">Month</label>
-                                                    </div>
+                                                    <div class="form-group has-float-label select-search-group">
+                                                  {{ Form::select('bonus_year', $year, null, ['placeholder'=>'Select Year', 'class'=>'form-control capitalize select-search', 'id'=>'bonusYearSingle']) }}
+                                                    <label for="bonusYearSingle">Year</label>
+                                                </div>
                                                 </div>
                                                 <div class="col-sm-2">
                                                     <button onclick="individual()" type="button" class="btn btn-primary btn-sm" id="individualBtn"><i class="fa fa-save"></i> Generate</button>
@@ -236,12 +235,12 @@
                                             <div class="col-3">
                                                 <div class="form-group has-float-label select-search-group">
                                                   {{ Form::select('bonus_type', $bonus_type, null, ['placeholder'=>'Select Bonus Type', 'class'=>'form-control capitalize select-search', 'id'=>'bonusFor']) }}
-                                                    <label for="bonusFor">Bonus For</label>
+                                                    <label for="bonusFor">Bonus Type</label>
                                                 </div>
                                                 
                                                 <div class="form-group has-float-label select-search-group">
-                                                  {{ Form::select('bonus_year', $year, null, ['placeholder'=>'Select Year', 'class'=>'form-control capitalize select-search', 'id'=>'bonusFor']) }}
-                                                    <label for="bonusFor">Year</label>
+                                                  {{ Form::select('bonus_year', $year, null, ['placeholder'=>'Select Year', 'class'=>'form-control capitalize select-search', 'id'=>'bonusYear']) }}
+                                                    <label for="bonusYear">Year</label>
                                                 </div>
                                                 <div class="form-group has-float-label select-search-group">
                                                     <?php
@@ -484,10 +483,31 @@
     }
 
     //multiple salary sheet
-    function multiple() {
+    function multiple() 
+    {
         var form = $("#unitWiseSalary");
-        var year = $('#bonus_year').val();
-        var bonus_type = $("#bonus_type").val();
+        var year = $('#bonusYear').val();
+        var bonus_type = $("#bonusFor").val();
+        
+        disburseSheet(form,year,bonus_type);
+    }
+
+    function individual() 
+    {
+        var form = $("#employeeWiseSalary");
+        var year = $('#bonusYearSingle').val();
+        var bonus_type = $("#bonusForSngle").val();
+        
+        
+        if(employee.length === 0){
+            $.notify("Please Select At Least One Employee", 'error');
+        }else{
+            disburseSheet(form,year,bonus_type);
+        }
+    }
+
+    function disburseSheet(form, year, bonus_type)
+    {
         if(year !== '' && bonus_type !== ''){
             $(".app-loader").show();
             $.ajax({

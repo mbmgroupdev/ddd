@@ -27,15 +27,18 @@
                             <div class="iq-card-body border text-center rounded">
                                <span class="font-size-16 text-uppercase">{{ $bonusType[$bonus->bonus_type_id]['bonus_type_name']??'' }} - {{ $bonus->bonus_year }}</span>
                                <h2 class=" display-3 font-weight-bolder "><small class="font-size-14 text-muted @if($bonus->approved_at != null) text-white @endif">{{ $unit[$bonus->unit_id]['hr_unit_name']??''}}</small></h2>
-                                <ul class="list-unstyled line-height-2 mb-0">
-                                    @if($bonus->amount != null && $bonus->amount > 0)
-                                    <li> Bonus Amount : {{ $bonusType[$bonus->bonus_type_id]['eligible_month'] }}</li>
-                                    @else
-                                    <li> Basic : {{ $bonus->percent_of_basic }} %</li>
-                                    @endif
-                                    <li> Eligible Month : {{ $bonusType[$bonus->bonus_type_id]['eligible_month'] }}</li>
-                                    <li> Cut of Date : {{ $bonus->cutoff_date }}</li>
-                                </ul>
+                               <div class="text-left">
+                                  <u><b>Rules</b></u>
+                                  <ul class="list-unstyled line-height-2 mb-0">
+                                      @if($bonus->amount != null && $bonus->amount > 0)
+                                      <li class="@if($bonus->approved_at != null) text-white @endif"> Bonus Amount : {{ $bonusType[$bonus->bonus_type_id]['eligible_month'] }}</li>
+                                      @else
+                                      <li class="@if($bonus->approved_at != null) text-white @endif"> Basic : {{ $bonus->percent_of_basic }} %</li>
+                                      @endif
+                                      <li class="@if($bonus->approved_at != null) text-white @endif"> Eligible Month : {{ $bonusType[$bonus->bonus_type_id]['eligible_month'] }}</li>
+                                      <li class="@if($bonus->approved_at != null) text-white @endif"> Bonus Date : {{ $bonus->cutoff_date }}</li>
+                                  </ul>
+                                </div>
                                @if($bonus->approved_at != null)
                                <p>Authorized by <br>
                                      &nbsp; &nbsp; -  Md. Ali Zinnah

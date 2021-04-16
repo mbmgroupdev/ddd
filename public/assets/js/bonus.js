@@ -78,7 +78,7 @@ function loadContent(type, typeText){
     html += '<table class="table table-bordered table-hover table-fixed '+type+'" id="itemList">';
     html += '<button title="Remove this!" data-type="'+type+'" type="button" class="fa fa-close close-button removeContent"></button>';
     html += '<thead>';
-    html += '<tr class="text-center active"><th width="2%"><button class="btn btn-sm btn-outline-success addmore" data-type="'+type+'" type="button"><i class="las la-plus-circle"></i></button></th><th width="38%">'+typeText+' Name</th><th width="20%"> Eligible Month</th><th width="20%">Amount</th><th width="20%">Or, % of Basic</th><th width="20%">Cut of Date</th></tr>';
+    html += '<tr class="text-center active"><th width="2%"><button class="btn btn-sm btn-outline-success addmore" data-type="'+type+'" type="button"><i class="las la-plus-circle"></i></button></th><th width="38%">'+typeText+' Name</th><th width="20%"> Eligible Month</th><th width="20%">Amount</th><th width="20%">Or, % of Basic</th><th width="20%">Bonus Date</th></tr>';
     html += '</thead>';
     html += '<tbody>';
     html += entryRow(type, 0);
