@@ -4,16 +4,17 @@ var base_url = $("#base_url").val();
 var i=$('table tr').length;
 $(document).on('click', '.addmore',function(){
 	let moretype = $(this).data('type');
-	var i=$('table.'+moretype+' tbody tr').length;
+    let morecategory = $(this).data('category');
+	var i=$('table.'+morecategory+moretype+' tbody tr').length;
 	// check exists empty item
 	var lastId = i-1;
-	var lastItem = $('#'+moretype+'_'+lastId).val();
+	var lastItem = $('#name-'+morecategory+'-'+moretype+'-'+lastId).val();
 	if(lastItem !== ''){
-		var rowIndex = entryRow(moretype, i);
-		$('table.'+moretype+' tbody').append(rowIndex);
+		var rowIndex = entryRow(morecategory, moretype, i);
+		$('table.'+morecategory+moretype+' tbody').append(rowIndex);
 		i++;
 	}else{
-		$('#'+moretype+'_'+lastId).focus();
+		$('#name-'+morecategory+'-'+moretype+'-'+lastId).focus();
 	}
 	
 });
@@ -25,14 +26,28 @@ $(document).on('click', '.removeRow', function(){
 
 $(document).on('click', '.removeContent', function(){
 	let retype = $(this).data('type');
-	$("#target-"+retype).remove();
+    let recategory = $(this).data('category');
+	$("#"+recategory+"target-"+retype).remove();
 	$(this).parent().parent().remove();	
 });
 
 
-$(document).on('change keyup blur','.changesNo',function(e){
+$(document).on('change keyup','.changesNo',function(e){
 	id_arr = $(this).attr('id');
-	id = id_arr.split("_");
+	id = id_arr.split("-");
+    var extra = id_arr.split("-");
+    extra.shift();
+    var extraid = extra.join('-');
+    
+    if($(this).val() > 0){
+        if(id[0] === 'amount'){
+            $("#basic-"+extraid).val(0);
+        }
+
+        if(id[0] === 'basic'){
+            $("#amount-"+extraid).val(0);
+        }
+    }
 
 });
 //It restrict the non-numbers
@@ -46,52 +61,70 @@ function IsNumeric(e) {
 }
 $(document).on('click','#specialCheck',function(){
   if ($(this).is(":checked")) {
-    $("#syncBtn").show();
-    // $("#type-for").attr('disabled', 'false');
-    $("#appendType").show();
+    isValid = true;
+
+    if($("#bonus_for").val() === '' || ($("#bonus_percent").val() === '' && $("#bonus_percent").val() === '')){
+        $.notify('Fill-up required field!', 'error');
+        setTimeout(function() {
+            $("#specialCheck").click();
+        }, 500);
+    }else{
+        $(".rule-overlay").hide();
+        $(".appendType").show();
+    }
+    
   }else{
-    $("#syncBtn").hide();
-    // $("#type-for").attr('disabled', 'true');
-    $("#appendType").hide();
+    $(".rule-overlay").show();
+    $(".appendType").hide();
   }
 });
-$(document).on('click', '#sync-type', function () {
-    var type = $("#type-for").val();
-    var typeText = $("#type-for option:selected" ).text();
+$(document).on('click', '.sync-type', function () {
+    var category = $(this).data('category');
+    var type = $("#"+category+"-type-for").val();
+    var typeText = $("#"+category+"-type-for option:selected" ).text();
     // console.log(type)
     if(type !== '' && type !== null){
-        if($('#target-'+type).length && $('#target-'+type).val().length){
+        if($("#"+category+"target-"+type).length && $("#"+category+"target-"+type).val().length){
             $.notify(typeText+' Already Exists', 'error');
         }else{
-            var typeWisePrepend = loadContent(type, typeText);
-            $("#appendType").prepend(typeWisePrepend);
-            $("#targettype").append('<input type="hidden" name="'+type+'" id="target-'+type+'" value="'+type+'">');   
+            var typeWisePrepend = loadContent(category, type, typeText);
+            $("#"+category+"-appendType").prepend(typeWisePrepend);
+            $("#"+category+"-targettype").append('<input type="hidden" name="'+type+'" id="'+category+'target-'+type+'" value="'+type+'">');   
         }
         
 
     }
 });
 
-function loadContent(type, typeText){
+function loadContent(category, type, typeText){
     var html = '';
     html += '<div class="row"><div class="col-sm-12 table-wrapper-scroll-y table-custom-scrollbar">';
-    html += '<table class="table table-bordered table-hover table-fixed '+type+'" id="itemList">';
-    html += '<button title="Remove this!" data-type="'+type+'" type="button" class="fa fa-close close-button removeContent"></button>';
-    html += '<thead>';
-    html += '<tr class="text-center active"><th width="2%"><button class="btn btn-sm btn-outline-success addmore" data-type="'+type+'" type="button"><i class="las la-plus-circle"></i></button></th><th width="38%">'+typeText+' Name</th><th width="20%"> Eligible Month</th><th width="20%">Amount</th><th width="20%">Or, % of Basic</th><th width="20%">Bonus Date</th></tr>';
-    html += '</thead>';
+    html += '<table class="table table-bordered table-hover table-fixed '+category+type+'" id="itemList-"'+category+type+'>';
+    html += '<button title="Remove this!" data-type="'+type+'" data-category="'+category+'" type="button" class="fa fa-close close-button removeContent"></button>';
+    html += '<thead><tr class="text-center active">';
+    html += '<th width="2%"><button class="btn btn-sm btn-outline-success addmore" data-type="'+type+'" data-category="'+category+'" type="button"><i class="las la-plus-circle"></i></button></th><th width="38%">'+typeText+' Name</th>';
+    if(category !== 'excluding'){
+        html += '<th width="20%"> Eligible Month</th><th width="20%">Amount</th><th width="20%">Or, % of Basic</th><th width="20%">Bonus Date</th>';
+    }
+    
+    html += '</tr></thead>';
     html += '<tbody>';
-    html += entryRow(type, 0);
+    html += entryRow(category, type, 0);
     html += '</tbody>';
     html += '</table>';
     html += '</div></div>';
     return html;
 }
 
-function entryRow(type, index){
-	return '<tr><td><button class="btn btn-sm btn-outline-danger delete removeRow" type="button" id="delete'+
-    type+index+'"><i class="las la-trash"></i></button></td><td><input type="hidden" data-type="'+
-    type+'"  value="" name="special_rule['+type+']['+index+'][id]" id="id_'+type+'_'+index+'"><input type="text" data-id="'+index+'" data-type="'+type+'" name="'+type+'[]" id="'+type+'_'+index+'" class="form-control autocomplete_txt" autocomplete="off"></td><td><input type="number" step="any" min="0" value="0" name="special_rule['+type+']['+index+'][month]" id="eligible'+type+'_'+index+'" class="form-control changesNo" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()"></td><td><input type="number" step="any" min="0" value="0" name="special_rule['+type+']['+index+'][amount]" id="amount'+type+'_'+index+'" class="form-control changesNo" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()"></td><td><input type="number" step="any" min="0" value="0" name="special_rule['+type+']['+index+'][basic_percent]" id="basic'+type+'_'+index+'" class="form-control changesNo" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()"></td><td><input type="date" value="" name="special_rule['+type+']['+index+'][cutoff_date]" id="cut'+type+'_'+index+'" class="form-control"></td></tr>';
+function entryRow(category, type, index){
+    var raw = '';
+	raw += '<tr><td><button class="btn btn-sm btn-outline-danger delete removeRow" type="button" id="delete'+
+    type+index+'"><i class="las la-trash"></i></button></td><td><input type="hidden" data-type="'+type+'" data-category="'+category+'" value="" name="'+category+'_rule['+type+']['+index+'][id]" id="id-'+category+'-'+type+'-'+index+'"><input type="text" data-id="'+index+'" data-type="'+type+'" data-category="'+category+'" name="'+type+'[]" id="name-'+category+'-'+type+'-'+index+'" class="form-control autocomplete_txt" autocomplete="off"></td>';
+    if(category !== 'excluding'){
+        raw += '<td><input type="number" step="any" min="0" value="0" name="'+category+'_rule['+type+']['+index+'][month]" id="eligible-'+category+'-'+type+'-'+index+'" class="form-control changesNo" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()"></td><td><input type="number" step="any" min="0" value="0" name="'+category+'_rule['+type+']['+index+'][amount]" id="amount-'+category+'-'+type+'-'+index+'" class="form-control changesNo" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()"></td><td><input type="number" step="any" min="0" value="0" name="'+category+'_rule['+type+']['+index+'][basic_percent]" id="basic-'+category+'-'+type+'-'+index+'" class="form-control changesNo" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()"></td><td><input type="date" value="" name="'+category+'_rule['+type+']['+index+'][cutoff_date]" id="cut-'+category+'-'+type+'-'+index+'" class="form-control"></td>';
+    }
+    raw += '</tr>';
+    return raw;
 }
 
 $(document).on('focus keyup','.autocomplete_txt',function(){
@@ -99,7 +132,7 @@ $(document).on('focus keyup','.autocomplete_txt',function(){
     typeId = $(this).attr('id');
 
     // console.log(type);
-    inputIdSplit = typeId.split("_");
+    inputIdSplit = typeId.split("-");
 
     $(this).autocomplete({
         source: function( request, response ) {
@@ -135,17 +168,17 @@ $(document).on('focus keyup','.autocomplete_txt',function(){
             var item = ui.item.data,
             id = $(this).data('id'),
             type_arr = $(this).data('type'),
+            category_arr = $(this).data('category'),
             eligibleMonth = $("#eligible-month").val(),
             bonusAmount = $("#bonus_amount").val(),
             bonusPercent = $("#bonus_percent").val(),
             cutDate = $("#cut_date").val();
-            // console.log("#id_"+type_arr+'_'+id);
-            $("#id_"+type_arr+'_'+id).val(item.id);
-            $("#eligible"+type_arr+'_'+id).val(item.id);
-            $("#eligible"+type_arr+'_'+id).val(eligibleMonth);
-            $("#amount"+type_arr+'_'+id).val(bonusAmount);
-            $("#basic"+type_arr+'_'+id).val(bonusPercent);
-            $("#cut"+type_arr+'_'+id).val(cutDate);
+            // console.log("#id_"+category_arr+'-'+type_arr+'-'+id);
+            $("#id-"+category_arr+'-'+type_arr+'-'+id).val(item.id);
+            $("#eligible-"+category_arr+'-'+type_arr+'-'+id).val(eligibleMonth);
+            $("#amount-"+category_arr+'-'+type_arr+'-'+id).val(bonusAmount);
+            $("#basic-"+category_arr+'-'+type_arr+'-'+id).val(bonusPercent);
+            $("#cut-"+category_arr+'-'+type_arr+'-'+id).val(cutDate);
         }               
     });
 });
