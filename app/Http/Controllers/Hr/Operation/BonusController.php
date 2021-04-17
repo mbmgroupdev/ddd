@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Hr\Operation;
 use App\Http\Controllers\Controller;
 use App\Models\Hr\BonusType;
 use App\Models\Hr\BonusRule;
+use App\Exports\Hr\BonusExport;
+
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -368,6 +371,13 @@ class BonusController extends Controller
         $com['subSection'] 	= subSection_by_id();
         $com['area'] 		= area_by_id();
 
+        // export data based on filter
+        if(isset($input['export'])){
+            $filename = 'Bonus Eligible List - ';
+            $filename .= '.xlsx';
+            return Excel::download(new BonusExport($com, 'eligible'), $filename);
+        }
+
         return view('hr.operation.bonus.bonus_eligible_list',$com)->render();
 
     }
@@ -464,8 +474,9 @@ class BonusController extends Controller
 
     public function toAproval(Request $request)
     {
+        DB::beginTransaction();
     	try{
-
+            $input = $request->all();
             // set rules
             $this->setRule($request);
 
@@ -483,20 +494,30 @@ class BonusController extends Controller
 		    	$processdData = $this->formatData($data, $rule->id);
 		    	
 		    	$chunk = collect($processdData)
-		    				->chunk(300);
+		    				->chunk(200);
 
 
 		    	foreach ($chunk as $key => $n) {		
-		    		DB::table('hr_bonus_sheet')->insert(collect($n)->toArray());
+		    		DB::table('hr_bonus_sheet')->insertOrIgnore(collect($n)->toArray());
 		    	}
-		    	return 'Bonus sheet has been proceed to Approval';
+                DB::commit();
+		    	return response([
+                    'success' =>  1,
+                    'msg' => 'Bonus sheet has been proceed to Approval'
+                ]);
 	    	}
-
-	    	return 'Failed to proceed for Approval';
+            DB::rollback();
+            return response([
+                    'success' =>  0,
+                    'msg' => 'Failed to proceed for Approval!'
+                ]);
 
 	    } catch(\Exception $e){
-
-	    	return $e->getMessage();
+            DB::rollback();
+            return response([
+                    'success' =>  0,
+                    'msg' => $e->getMessage()
+                ]);
 	    }
 
     	
