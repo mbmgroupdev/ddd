@@ -335,7 +335,7 @@
 
         $.ajax({
            url : "{{ url('hr/operation/bonus-process') }}",
-           type: 'post',
+           type: 'get',
            data: data,
            success: function(data)
            {
@@ -365,9 +365,16 @@
            data: data,
            success: function(data)
            {
-                $('#bonus-procesor').hide();
-                $('#bonus-eligible-list').html(data);
-                $('.app-loader').hide();
+                if(data.success == 1){
+                    $('#bonus-procesor').hide();
+                    $('.app-loader').hide();  
+                    $.notify(data.msg,'success');
+                    window.location.href = "{{url('hr/operation/bonus-sheet-process')}}";
+                }else{
+                    $('#bonus-procesor').hide();
+                    $('.app-loader').hide();  
+                    $.notify(data.msg,'error');
+                }
            },
            error: function(reject)
            {
