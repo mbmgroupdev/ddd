@@ -381,11 +381,11 @@
         if($(this).val() == 'percent'){
             $('#target-per-of-basic').show();
             $('#target-fix-amount').hide();
-            $('#bonus_amount').val('');
+            $('#bonus_amount').val(0);
         }else{
             $('#target-per-of-basic').hide();
             $('#target-fix-amount').show();
-            $('#bonus_percent').val('');
+            $('#bonus_percent').val(0);
         }
 
     });

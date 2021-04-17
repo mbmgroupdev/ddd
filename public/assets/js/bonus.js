@@ -32,21 +32,43 @@ $(document).on('click', '.removeContent', function(){
 });
 
 
-$(document).on('change keyup','.changesNo',function(e){
+$(document).on('blur','.changesNo',function(e){
 	id_arr = $(this).attr('id');
 	id = id_arr.split("-");
     var extra = id_arr.split("-");
     extra.shift();
     var extraid = extra.join('-');
-    
+    var flag = 0;
+    var changeField = '';
     if($(this).val() > 0){
         if(id[0] === 'amount'){
-            $("#basic-"+extraid).val(0);
+            var gobal = $("#bonus_amount").val();
+            changeField = "basic-"+extraid;
+        }
+        if(id[0] === 'basic'){
+            var gobal = $("#bonus_percent").val();
+            changeField = "amount-"+extraid;
+        }
+        if(id[0] === 'amount' || id[0] === 'basic'){
+            // special
+            if(id[1] === 'special' && parseFloat($(this).val()) < parseFloat(gobal)){
+                flag = 1;
+                $("#"+id_arr).notify('Always better than actual');
+                $(this).val(gobal);
+            }
+
+            if(id[1] === 'partial' && parseFloat($(this).val()) > parseFloat(gobal)){
+                flag = 1;
+                $("#"+id_arr).notify('Always less than actual');
+                $(this).val(gobal);
+            }
+
+            if(flag === 0){
+                $("#"+changeField).val(0);
+            }
+
         }
 
-        if(id[0] === 'basic'){
-            $("#amount-"+extraid).val(0);
-        }
     }
 
 });
@@ -63,7 +85,7 @@ $(document).on('click','#specialCheck',function(){
   if ($(this).is(":checked")) {
     isValid = true;
 
-    if($("#bonus_for").val() === '' || ($("#bonus_percent").val() === '' && $("#bonus_percent").val() === '')){
+    if($("#bonus_for").val() === '' || ($("#bonus_percent").val() === '' && $("#bonus_amount").val() === '')){
         $.notify('Fill-up required field!', 'error');
         setTimeout(function() {
             $("#specialCheck").click();
@@ -118,8 +140,8 @@ function loadContent(category, type, typeText){
 
 function entryRow(category, type, index){
     var raw = '';
-	raw += '<tr><td><button class="btn btn-sm btn-outline-danger delete removeRow" type="button" id="delete'+
-    type+index+'"><i class="las la-trash"></i></button></td><td><input type="hidden" data-type="'+type+'" data-category="'+category+'" value="" name="'+category+'_rule['+type+']['+index+'][id]" id="id-'+category+'-'+type+'-'+index+'"><input type="text" data-id="'+index+'" data-type="'+type+'" data-category="'+category+'" name="'+type+'[]" id="name-'+category+'-'+type+'-'+index+'" class="form-control autocomplete_txt" autocomplete="off"></td>';
+	raw += '<tr><td><div id="stack-'+category+'-'+type+'"></div><button class="btn btn-sm btn-outline-danger delete removeRow" type="button" id="delete'+
+    type+index+'"><i class="las la-trash"></i></button></td><td><input type="hidden" data-type="'+type+'" data-category="'+category+'" value="" name="'+category+'_rule['+type+']['+index+'][id]" id="id-'+category+'-'+type+'-'+index+'"><input type="text" data-id="'+index+'" data-type="'+type+'" data-category="'+category+'" name="'+type+'[]" id="name-'+category+'-'+type+'-'+index+'" class="form-control autocomplete_txt" autocomplete="off" placeholder="Type Search and enter/selected"></td>';
     if(category !== 'excluding'){
         raw += '<td><input type="number" step="any" min="0" value="0" name="'+category+'_rule['+type+']['+index+'][month]" id="eligible-'+category+'-'+type+'-'+index+'" class="form-control changesNo" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()"></td><td><input type="number" step="any" min="0" value="0" name="'+category+'_rule['+type+']['+index+'][amount]" id="amount-'+category+'-'+type+'-'+index+'" class="form-control changesNo" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()"></td><td><input type="number" step="any" min="0" value="0" name="'+category+'_rule['+type+']['+index+'][basic_percent]" id="basic-'+category+'-'+type+'-'+index+'" class="form-control changesNo" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()"></td><td><input type="date" value="" name="'+category+'_rule['+type+']['+index+'][cutoff_date]" id="cut-'+category+'-'+type+'-'+index+'" class="form-control"></td>';
     }
@@ -173,12 +195,20 @@ $(document).on('focus keyup','.autocomplete_txt',function(){
             bonusAmount = $("#bonus_amount").val(),
             bonusPercent = $("#bonus_percent").val(),
             cutDate = $("#cut_date").val();
-            // console.log("#id_"+category_arr+'-'+type_arr+'-'+id);
-            $("#id-"+category_arr+'-'+type_arr+'-'+id).val(item.id);
-            $("#eligible-"+category_arr+'-'+type_arr+'-'+id).val(eligibleMonth);
-            $("#amount-"+category_arr+'-'+type_arr+'-'+id).val(bonusAmount);
-            $("#basic-"+category_arr+'-'+type_arr+'-'+id).val(bonusPercent);
-            $("#cut-"+category_arr+'-'+type_arr+'-'+id).val(cutDate);
+            if($("#store-"+type_arr+'-'+item.text).length && $("#store-"+type_arr+'-'+item.text).val().length){
+                var category_check = $("#store-"+type_arr+'-'+item.text).data('category');
+                $('#name-'+category_arr+'-'+type_arr+'-'+id).notify('Already Exists in '+category_check+' section', 'error');
+                setTimeout(function(){
+                    $('#name-'+category_arr+'-'+type_arr+'-'+id).val('');
+                }, 400);
+            }else{
+                $("#id-"+category_arr+'-'+type_arr+'-'+id).val(item.id);
+                $("#eligible-"+category_arr+'-'+type_arr+'-'+id).val(eligibleMonth);
+                $("#amount-"+category_arr+'-'+type_arr+'-'+id).val(bonusAmount);
+                $("#basic-"+category_arr+'-'+type_arr+'-'+id).val(bonusPercent);
+                $("#cut-"+category_arr+'-'+type_arr+'-'+id).val(cutDate);
+                $("#stack-"+category_arr+'-'+type_arr).append('<input type="hidden" data-category="'+category_arr+'" id="store-'+type_arr+'-'+item.text+'" value="'+item.id+'">');   
+            }
         }               
     });
 });
