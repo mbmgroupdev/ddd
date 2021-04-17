@@ -87,6 +87,7 @@
                             <div class="col-sm-8">
                                 <input type="hidden" id="report_format" name="report_format">
                                 <input type="hidden" id="emp_type" name="emp_type" value="all">
+                                <input type="hidden" id="pay_type" name="pay_type" value="all">
                                 <input type="hidden" id="report_group" name="report_group">
                                 <div class="form-section">
                                     
@@ -300,14 +301,12 @@
     $(document).on('change','#empType', function(){
         $('#emp_type').val($(this).val());
         generateBonus();
-            if($(this).val() == 'all'){
-                $('#approval').show();
-                $('#proceed-help-text').hide();
-            }else{
-                $('#approval').hide();
-                $('#proceed-help-text').show();
-            }
-            console.log($(this).val());
+        
+    });
+
+    $(document).on('change','#paymentType', function(){
+        $('#pay_type').val($(this).val());
+        generateBonus();
         
     });
 

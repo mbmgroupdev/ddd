@@ -243,16 +243,73 @@ class BonusController extends Controller
                     $q->bonus_amount = ceil(($q->ben_basic/12)*$bonus_month*$percent);
                 }
 
+                // modify amount based on pay type
+                $q->pay_status = 1; // cash pay
+                if($q->ben_bank_amount != 0 && $q->ben_cash_amount != 0){
+                    $q->pay_status = 3; // partial pay
+                }elseif($q->ben_bank_amount != 0){
+                    $q->pay_status = 2; // bank pay
+                }
+
+                if($q->ben_cash_amount == 0 && $q->as_emp_type_id == 3){
+                    $q->stamp = 0;
+                }
+
+                $q->net_payable = $q->bonus_amount - $q->stamp;
+
+                if($q->pay_status == 1){
+                    $q->cash_payable = $q->net_payable;
+                    $q->bank_payable = 0; 
+                    $q->bank_name    = null;
+                }elseif($q->pay_status == 2){
+                    $q->cash_payable = 0;
+                    $q->bank_payable = $q->net_payable;
+                    $q->bank_name    = $q->bank_name; 
+                }else{
+                    $q->bank_name    = $q->bank_name; 
+                    if($q->ben_bank_amount <= ($q->net_payable)){
+                        $q->cash_payable = ($q->net_payable) - $q->ben_bank_amount;
+                        $q->bank_payable = $q->ben_bank_amount;
+                    }else{
+                        $q->cash_payable = 0;
+                        $q->bank_payable = ($q->net_payable);
+                    }
+                }
+
                 return $q;
             });
 
+        $data = $this->filter($data, $input);
+
+        return $data;
+    }
+
+    protected function filter($data, $input)
+    {
         //return only below 12 month
-        if($input['emp_type'] == 'partial'){
-            $data = collect($data)->filter(function($q){
-                    return $q->month < 12;
+        $pay_type = $input['pay_type'];
+        $emp_type = $input['emp_type'];
+
+        if($emp_type != 'all' ||  $pay_type != 'all'){
+            $data = collect($data)->filter(function($q) use ($pay_type, $emp_type){
+                    $p_con = true; $e_con = true;
+                    // employee type
+                    if($emp_type == 'lessyear') $e_con = $q->month < 12;
+                    else if($emp_type == 'partial') $e_con = $q->type == 'partial';
+                    else if($emp_type == 'special') $e_con = $q->type == 'special';
+                    else if($emp_type == 'maternity') $e_con = $q->as_status == 6;
+
+                    // pay type
+                    if($pay_type == 'dbbl') $p_con = $q->bank_name == 'dbbl';
+                    else if($pay_type == 'rocket') $p_con = $q->bank_name == 'rocket';
+                    else if($pay_type == 'cash') $p_con = $q->bank_name == null;
+
+                   
+
+                    return $p_con && $e_con;
             })->values();
         }
-        // apply custom filter for custom rule
+        // apply custom filter on bonus date for custom rule
         if($this->special_rule || $this->partial_rule){ 
             $data = collect($data)->filter(function($q) use ($special, $partial){
                     $status = $q->month >= $this->bonus_type->eligible_month;
@@ -273,6 +330,7 @@ class BonusController extends Controller
         }
 
         return $data;
+
     }
 
     protected function getBonusEligibleList($input)
@@ -327,7 +385,24 @@ class BonusController extends Controller
     	$sum->nonot 			= $data->where('as_ot', 0)->count();
     	$sum->nonot_amount 		= $data->where('as_ot', 0)->sum('bonus_amount');
     	$sum->partial 			= $data->where('month','<' ,12)->count();
-    	$sum->partial_amount 	= $data->where('month','<' ,12)->sum('bonus_amount');
+        $sum->partial_amount    = $data->where('month','<' ,12)->sum('bonus_amount');
+        $sum->stamp             = $data->sum('stamp');
+        $cash = $data->where('cash_payable', '>', 0);
+        $sum->cash_emp          = $cash->count();
+        $sum->cash_amount       = $cash->sum('cash_payable');
+
+    	 
+        $group = collect($data)
+                    ->whereIn('pay_status', [2,3])
+                    ->groupBy('bank_name', true)
+                    ->map(function($q){
+                        $p = (object)[];
+                        $p->emp = collect($q)->count();
+                        $p->amount = collect($q)->sum('bank_payable');
+                        return $p;
+                    })->all();
+        $sum->payment_group = $group;
+       
 
     	return $sum;
     }
@@ -373,10 +448,12 @@ class BonusController extends Controller
     			'food' => $v->ben_food,
     			'duration' => $v->month,
     			'stamp' => 10,
-    			'pay_status' => 1,
+    			'pay_status' => $v->pay_status,
     			'emp_status' => $v->as_status,
-    			'net_payable' => ($v->bonus_amount - 10),
-    			'cash_payable' => ($v->bonus_amount - 10),
+    			'net_payable' => $v->net_payable,
+                'cash_payable' => $v->cash_payable,
+                'bank_payable' => $v->bank_payable,
+    			'bank_name' => $v->bank_name,
     			'subsection_id' => $v->as_subsection_id,
     			'designation_id' => $v->as_designation_id,
     			'ot_status' => $v->as_ot,
