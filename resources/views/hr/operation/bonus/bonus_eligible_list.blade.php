@@ -10,7 +10,7 @@
 					<i class="fa fa-arrow-left"></i></button>
 				
 				<button class="btn btn-sm btn-primary hidden-print" onclick="printDiv('content_list_section')" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report" ><i class="las la-print"></i> </button>
-				{{-- <a href='{{ url("hr/reports/summary/excel?$urldata")}}' target="_blank" class="btn btn-sm btn-primary hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download" ><i class="fa fa-file-excel-o"></i></a> --}}
+				<a href='{{ url("hr/operation/bonus-process?$urldata&export=excel")}}' target="_blank" class="btn btn-sm btn-primary hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download" ><i class="fa fa-file-excel-o"></i></a>
 			</div>
 			<div class="col-sm-2">
 				<div class="form-group has-float-label select-search-group mb-0">
@@ -237,7 +237,7 @@
 		                	@if($head != '')
 		                	<tr>
 			                    <th colspan="2">{{ $head }}</th>
-			                    <th colspan="10">{{ $body }}</th>
+			                    <th colspan="13">{{ $body }}</th>
 		                    </tr>
 		                    @endif
 		                
@@ -251,9 +251,13 @@
 		                    <th width="10%">DOJ</th>
 		                    <th width="10%">Gross</th>
 		                    <th width="10%">Basic</th>
+		                    <th width="6%">Type</th>
 		                    <th width="6%">Month</th>
-		                    <th width="6%">Stamp</th>
 		                    <th width="10%">Bonus Amount</th>
+		                    <th width="10%">Bank Amount</th>
+		                    <th width="10%">Cash Amount</th>
+		                    <th width="6%">Stamp</th>
+		                    <th width="6%">Net Payable</th>
 		                </tr>
 		            </thead>
 		            <tbody>
@@ -274,21 +278,23 @@
 				            	<td style="white-space: nowrap;">{{$employee->as_doj}}</td>
 				            	<td>{{$employee->ben_current_salary}}</td>
 				            	<td>{{$employee->ben_basic}}</td>
+				            	<td>@if($employee->type != 'normal') {{$employee->type }} @endif</td>
 				            	<td>
 				            		@if($employee->month < 12)
 				            			{{$employee->month}}/12
 				            		@endif
 				            	</td>
-				            	
-				            	
-				            	<td>{{$employee->stamp }}</td>
 				            	<td>{{$employee->bonus_amount }}</td>
+				            	<td>{{$employee->bank_payable }}</td>
+				            	<td>{{$employee->cash_payable }}</td>
+				            	<td>{{$employee->stamp }}</td>
+				            	<td>{{$employee->net_payable }}</td>
 			            	</tr>
 			            	
 			            @endforeach
 		            @else
 			            <tr>
-			            	<td colspan="13" class="text-center">No Employee Found!</td>
+			            	<td colspan="16" class="text-center">No Employee Found!</td>
 			            </tr>
 		            @endif
 		            	<tr style="border:0 !important;"><td colspan="16" style="border: 0 !important;height: 20px;"></td> </tr>

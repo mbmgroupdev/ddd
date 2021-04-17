@@ -453,7 +453,7 @@ Route::get('hr/operation/pay-tiffin-dinner-bill-excel', 'Hr\Operation\BillOperat
 // Bonus section
 Route::get('hr/operation/bonus', 'Hr\Operation\BonusController@index');
 
-Route::post('hr/operation/bonus-process', 'Hr\Operation\BonusController@process');
+Route::get('hr/operation/bonus-process', 'Hr\Operation\BonusController@process');
 Route::post('hr/operation/bonus-to-aproval', 'Hr\Operation\BonusController@toAproval');
 Route::get('hr/operation/bonus-disburse', 'Hr\Operation\BonusController@disburse');
 Route::get('hr/operation/unit-wise-bonus-sheet', 'Hr\Operation\BonusController@bonusSheet');
