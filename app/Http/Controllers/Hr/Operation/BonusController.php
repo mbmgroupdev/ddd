@@ -22,7 +22,7 @@ class BonusController extends Controller
 
     protected $partial_rule;
 
-	protected $exclude;
+	protected $excluding_rule;
 
 	protected $bonus_percent;
 
@@ -47,6 +47,7 @@ class BonusController extends Controller
     {
     	$input = $request->all();
 
+
     	$input['report_format'] = $input['report_format']??1;
     	$input['pay_status']    = $input['pay_status']??'all';
     	$input['report_group'] = $input['report_group']??'as_department_id';
@@ -63,7 +64,7 @@ class BonusController extends Controller
     {
         $this->special_rule  = $request->special_rule??null;
         $this->partial_rule  = $request->partial_rule??null;
-        $this->exclude       = $request->exclude??null;
+        $this->excluding_rule= $request->excluding_rule??null;
         $this->cutoff_date   = $request->cut_date;
         $this->bonus_percent = $request->bonus_percent??null;
         $this->bonus_amount  = $request->bonus_amount??null;
@@ -159,8 +160,13 @@ class BonusController extends Controller
                     }
                 }
             })
-            ->when(empty($this->special_rule), function($q){
+            ->when(empty($this->special_rule) && empty($this->partial_rule), function($q){
                 $q->where('e.as_doj','<=', $this->eligible_doj);
+            })
+            ->when(!empty($this->excluding_rule), function($q){
+                foreach ($this->excluding_rule as $key => $t) {
+                    $q->whereNotIn($key, $t);
+                }
             })
             ->orderBy('ben.ben_current_salary','DESC')
             ->get();
@@ -330,9 +336,9 @@ class BonusController extends Controller
     protected function storeRule($request)
     {
         // make all rules in a json
-        $rules['special_rule'] = $request->special_rule??null;
-        $rules['partial_rule'] = $request->partial_rule??null;
-        $rules['exclude']       = $request->exclude??null;
+        $rules['special_rule']      = $request->special_rule??null;
+        $rules['partial_rule']      = $request->partial_rule??null;
+        $rules['excluding_rule']    = $request->excluding_rule??null;
 
     	$rule = new BonusRule();
     	$rule->unit_id = auth()->user()->unit_permissions()[0];
@@ -358,7 +364,8 @@ class BonusController extends Controller
     			'location_id' => $v->as_location,
     			'bonus_rule_id' => $rule_id,
     			'associate_id' => $v->associate_id,
-    			'bonus_amount' => $v->bonus_amount,
+                'bonus_amount' => $v->bonus_amount,
+    			'type' => $v->type,
     			'gross_salary' => $v->ben_current_salary,
     			'basic' => $v->ben_basic,
     			'medical' => $v->ben_medical,
