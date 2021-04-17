@@ -18,7 +18,11 @@ class BonusController extends Controller
 
 	protected $bonus_type;
 
-	protected $special_rule;
+    protected $special_rule;
+
+    protected $partial_rule;
+
+	protected $exclude;
 
 	protected $bonus_percent;
 
@@ -46,83 +50,74 @@ class BonusController extends Controller
     	$input['report_format'] = $input['report_format']??1;
     	$input['pay_status']    = $input['pay_status']??'all';
     	$input['report_group'] = $input['report_group']??'as_department_id';
-
-    	$this->special_rule  = $request->special_rule??null;
-    	$this->cutoff_date   = $request->cut_date;
-    	$this->bonus_percent = $request->bonus_percent??null;
-    	$this->bonus_amount  = $request->bonus_amount??null;
-    	$this->bonus_type    = $this->getBonusType($request->type_id);
-    	$this->eligible_doj  = Carbon::parse($request->cut_date)
-    		 					->subMonths(3)->toDateString();
         if(!empty($input['selected'])){
             $input['report_format'] = 0;
         }
+
+    	$this->setRule($request);
+
     	return $this->getBonusEligibleList($input);
     }
 
-    protected function getBonusEligibleList($input)
+    protected function setRule($request)
     {
-    	$data = $this->getBonusEligible($input);
+        $this->special_rule  = $request->special_rule??null;
+        $this->partial_rule  = $request->partial_rule??null;
+        $this->exclude       = $request->exclude??null;
+        $this->cutoff_date   = $request->cut_date;
+        $this->bonus_percent = $request->bonus_percent??null;
+        $this->bonus_amount  = $request->bonus_amount??null;
+        $this->bonus_type    = $this->getBonusType($request->type_id);
+        $this->eligible_doj  = Carbon::parse($request->cut_date)
+                                ->subMonths(3)->toDateString();
+    }
 
-    	$com['summary'] 	= $this->makeSummary($data);
-
-    	$list = collect($data)
-        	->groupBy($input['report_group'],true);
-
-        if($input['report_format'] == 1){
-        	$list = $list->map(function($q){
-        		$q = collect($q);
-		    	$sum  = (object)[];
-		    	$sum->ot 		= $q->where('as_ot', 1)->count();
-		    	$sum->ot_amount 	= $q->where('as_ot', 1)->sum('bonus_amount');
-		    	$sum->nonot 			= $q->where('as_ot', 0)->count();
-		    	$sum->nonot_amount 	= $q->where('as_ot', 0)->sum('bonus_amount');
-		    	return $sum;
-		    })->all();
-        }
-
-
-        $com['uniqueGroup'] = $list;
-    	$com['input']		= $input;
-    	$com['format']		= $input['report_group'];
-    	$com['unit'] 		= unit_by_id();
-        $com['location'] 	= location_by_id();
-        $com['line'] 		= line_by_id();
-        $com['floor'] 		= floor_by_id();
-        $com['department'] 	= department_by_id();
-        $com['designation'] = designation_by_id();
-        $com['section'] 	= section_by_id();
-        $com['subSection'] 	= subSection_by_id();
-        $com['area'] 		= area_by_id();
-
-        return view('hr.operation.bonus.bonus_eligible_list',$com)->render();
-
+    protected function organiseRule($rule)
+    {
+        $special = collect($rule)
+            ->map(function($q){
+                return collect($q)->map(function($p){
+                    $p['basic_percent'] = $p['basic_percent']/100;
+                    return $p;
+                })->keyBy('id');
+            })->all();
+        return  collect($special)->toArray();
     }
 
     protected function getBonusType($id)
     {
-    	return BonusType::where('id',$id)->first();
+        return BonusType::where('id',$id)->first();
+    }
+
+    // get unit wise bonus rules
+    protected function getRuleId($bonus_type, $year)
+    {
+        return DB::table('hr_bonus_rule')
+                ->where('bonus_type_id', $bonus_type)
+                ->where('bonus_year', $year)
+                ->whereIn('unit_id',auth()->user()->unit_permissions())
+                ->pluck('id');
     }
 
     protected function getBonusEligible($input)
     {
 
-    	DB::statement( DB::raw('SET @cutoff_date = "'.$this->cutoff_date.'"'));
-    	$data =  DB::table('hr_as_basic_info as e')
-    		->select(
-    			'e.*',
-    			'ben.*'
-    		)
-    		->leftJoin('hr_benefits as ben', 'e.associate_id', 'ben.ben_as_id')
-    		->where(function($q) use ($input){
-    			if($input['emp_type'] == 'maternity'){
-    				$q->where('e.as_status',6);
-    			}else{
-    				$q->whereIn('e.as_status',[1,6]); //maternity & active
-    			}
-    		})
-    		
-    		->whereIn('e.as_unit_id', auth()->user()->unit_permissions())
+        DB::statement( DB::raw('SET @cutoff_date = "'.$this->cutoff_date.'"'));
+        $data =  DB::table('hr_as_basic_info as e')
+            ->select(
+                'e.*',
+                'ben.*'
+            )
+            ->leftJoin('hr_benefits as ben', 'e.associate_id', 'ben.ben_as_id')
+            ->where(function($q) use ($input){
+                if($input['emp_type'] == 'maternity'){
+                    $q->where('e.as_status',6);
+                }else{
+                    $q->whereIn('e.as_status',[1,6]); //maternity & active
+                }
+            })
+            
+            ->whereIn('e.as_unit_id', auth()->user()->unit_permissions())
             ->whereIn('e.as_location', auth()->user()->location_permissions())
             ->when(!empty($input['unit']), function ($query) use($input){
                 if($input['unit'] == 145){
@@ -165,7 +160,7 @@ class BonusController extends Controller
                 }
             })
             ->when(empty($this->special_rule), function($q){
-            	$q->where('e.as_doj','<=', $this->eligible_doj);
+                $q->where('e.as_doj','<=', $this->eligible_doj);
             })
             ->orderBy('ben.ben_current_salary','DESC')
             ->get();
@@ -174,79 +169,144 @@ class BonusController extends Controller
         $from = Carbon::parse($this->cutoff_date);
         $percent = $this->bonus_percent/100;
         $special = [];
+        $partial = [];
+
         if($this->special_rule){
-	        $special = collect($this->special_rule)
-	        	->map(function($q){
-	        		return collect($q)->map(function($p){
-		        		$p['basic_percent'] = $p['basic_percent']/100;
-		        		return $p;
-	        		})->keyBy('id');
-	        	})->all();
-	        $special = collect($special)->toArray();
-	    }
+            $special = $this->organiseRule($this->special_rule);
+        }
+        if($this->partial_rule){
+            $partial = $this->organiseRule($this->partial_rule);
+        }
 
 
 
         $data = collect($data)
-        	->map(function($q) use($from, $percent, $special){
-        		$q->stamp = 10;
-        		$fixed_amount = $this->bonus_amount;
-        		
-        		// amount based on custom rule
+            ->map(function($q) use($from, $percent, $special, $partial){
+                $q->stamp = 10;
+                $q->type = 'normal';
+                $fixed_amount = $this->bonus_amount;
+                
+                // amount based on special rule
 
-        		if($this->special_rule){
-        			foreach ($special as $key => $v) {
-        				if (isset($v[$q->{$key}])) {
-        					$rule = $v[$q->{$key}];
-        					if($rule['cutoff_date'] && $rule['cutoff_date'] != $this->cutoff_date){
-        						$from = Carbon::parse($rule['cutoff_date']);
-        					}
-        					if($rule['basic_percent'] != null){
-        						$percent = $rule['basic_percent'];
-			        		}else{
-			        			$fixed_amount = $rule['amount'];
-			        		}
-        					
-        				}
-        			}
-        		}
-        		// get month
-        		$q->month = Carbon::parse($q->as_doj)->diffInMonths($from);
-        		$bonus_month = $q->month > 12?12:$q->month;
+                if($this->special_rule){
+                    foreach ($special as $key => $v) {
+                        if (isset($v[$q->{$key}])) {
+                            $rule = $v[$q->{$key}];
+                            if($rule['cutoff_date'] && $rule['cutoff_date'] != $this->cutoff_date){
+                                $from = Carbon::parse($rule['cutoff_date']);
+                            }
+                            if($rule['basic_percent'] != null){
+                                $percent = $rule['basic_percent'];
+                            }else{
+                                $fixed_amount = $rule['amount'];
+                            }
+                            $q->type = 'special';
+                            
+                        }
+                    }
+                }
 
-        		// get bonus amount
-        		if($fixed_amount > 0){
-        			$q->bonus_amount = $fixed_amount;
-        		}else{
-	    			$q->bonus_amount = ceil(($q->ben_basic/12)*$bonus_month*$percent);
-        		}
+                // amount based on partial rule
 
-        		return $q;
-        	});
+                if($this->partial_rule){
+                    foreach ($partial as $key => $v) {
+                        if (isset($v[$q->{$key}])) {
+                            $rule = $v[$q->{$key}];
+                            if($rule['cutoff_date'] && $rule['cutoff_date'] != $this->cutoff_date){
+                                $from = Carbon::parse($rule['cutoff_date']);
+                            }
+                            if($rule['basic_percent'] != null){
+                                $percent = $rule['basic_percent'];
+                            }else{
+                                $fixed_amount = $rule['amount'];
+                            }
+                            $q->type = 'partial';
+                            
+                        }
+                    }
+                }
+
+                // get month
+                $q->month = Carbon::parse($q->as_doj)->diffInMonths($from);
+                $bonus_month = $q->month > 12?12:$q->month;
+
+                // get bonus amount
+                if($fixed_amount > 0){
+                    $q->bonus_amount = $fixed_amount;
+                }else{
+                    $q->bonus_amount = ceil(($q->ben_basic/12)*$bonus_month*$percent);
+                }
+
+                return $q;
+            });
 
         //return only below 12 month
         if($input['emp_type'] == 'partial'){
-        	$data =	collect($data)->filter(function($q){
-	        		return $q->month < 12;
-	        })->values();
+            $data = collect($data)->filter(function($q){
+                    return $q->month < 12;
+            })->values();
         }
         // apply custom filter for custom rule
-        if($this->special_rule){	
-	        $data =	collect($data)->filter(function($q) use ($special){
-	        		$status = $q->month >= $this->bonus_type->eligible_month;
-	        		foreach ($special as $key => $v) {
-	        			if (isset($v[$q->{$key}])) {
-        					$rule = $v[$q->{$key}];
-        					$status = $q->month >= $rule['month'];
-        				}
-	        		}
-	        		return $status;
-	        })->values();
+        if($this->special_rule || $this->partial_rule){ 
+            $data = collect($data)->filter(function($q) use ($special, $partial){
+                    $status = $q->month >= $this->bonus_type->eligible_month;
+                    foreach ($special as $key => $v) {
+                        if (isset($v[$q->{$key}])) {
+                            $rule = $v[$q->{$key}];
+                            $status = $q->month >= $rule['month'];
+                        }
+                    }
+                    foreach ($partial as $key => $v) {
+                        if (isset($v[$q->{$key}])) {
+                            $rule = $v[$q->{$key}];
+                            $status = $q->month >= $rule['month'];
+                        }
+                    }
+                    return $status;
+            })->values();
         }
 
         return $data;
     }
 
+    protected function getBonusEligibleList($input)
+    {
+    	$data = $this->getBonusEligible($input);
+
+    	$com['summary'] 	= $this->makeSummary($data);
+
+    	$list = collect($data)
+        	->groupBy($input['report_group'],true);
+
+        if($input['report_format'] == 1){
+        	$list = $list->map(function($q){
+        		$q = collect($q);
+		    	$sum  = (object)[];
+		    	$sum->ot 		= $q->where('as_ot', 1)->count();
+		    	$sum->ot_amount 	= $q->where('as_ot', 1)->sum('bonus_amount');
+		    	$sum->nonot 			= $q->where('as_ot', 0)->count();
+		    	$sum->nonot_amount 	= $q->where('as_ot', 0)->sum('bonus_amount');
+		    	return $sum;
+		    })->all();
+        }
+
+
+        $com['uniqueGroup'] = $list;
+    	$com['input']		= $input;
+    	$com['format']		= $input['report_group'];
+    	$com['unit'] 		= unit_by_id();
+        $com['location'] 	= location_by_id();
+        $com['line'] 		= line_by_id();
+        $com['floor'] 		= floor_by_id();
+        $com['department'] 	= department_by_id();
+        $com['designation'] = designation_by_id();
+        $com['section'] 	= section_by_id();
+        $com['subSection'] 	= subSection_by_id();
+        $com['area'] 		= area_by_id();
+
+        return view('hr.operation.bonus.bonus_eligible_list',$com)->render();
+
+    }
 
     protected function makeSummary($data)
     {
@@ -269,6 +329,11 @@ class BonusController extends Controller
 
     protected function storeRule($request)
     {
+        // make all rules in a json
+        $rules['special_rule'] = $request->special_rule??null;
+        $rules['partial_rule'] = $request->partial_rule??null;
+        $rules['exclude']       = $request->exclude??null;
+
     	$rule = new BonusRule();
     	$rule->unit_id = auth()->user()->unit_permissions()[0];
      	$rule->bonus_type_id = $request->type_id;
@@ -276,9 +341,7 @@ class BonusController extends Controller
      	$rule->amount = $request->bonus_amount;
      	$rule->percent_of_basic = $request->bonus_percent;
      	$rule->cutoff_date = $request->cut_date;
-     	if($request->special_rule){
-	     	$rule->special_rule = json_encode($request->special_rule);
-     	}
+	    $rule->special_rule = json_encode($rules);
      	$rule->created_by = auth()->id();
      	$rule->save();
 
@@ -319,6 +382,9 @@ class BonusController extends Controller
     {
     	try{
 
+            // set rules
+            $this->setRule($request);
+
 	    	$rule = $this->storeRule($request);
 	    	if($rule->id){
 
@@ -327,13 +393,7 @@ class BonusController extends Controller
 		    	$input['report_group'] = $input['report_group']??'as_department_id';
 		    	$input['emp_type'] = $input['emp_type']??'all';
 
-		    	$this->special_rule  = $request->special_rule??null;
-		    	$this->cutoff_date   = $request->cut_date;
-		    	$this->bonus_percent = $request->bonus_percent??null;
-		    	$this->bonus_amount  = $request->bonus_amount??null;
-		    	$this->bonus_type    = $this->getBonusType($request->type_id);
-		    	$this->eligible_doj  = Carbon::parse($request->cut_date)
-		    		 					->subMonths(3)->toDateString();
+
 
 		    	$data = $this->getBonusEligible($input);
 		    	$processdData = $this->formatData($data, $rule->id);
@@ -342,8 +402,7 @@ class BonusController extends Controller
 		    				->chunk(300);
 
 
-		    	foreach ($chunk as $key => $n) {
-		    		
+		    	foreach ($chunk as $key => $n) {		
 		    		DB::table('hr_bonus_sheet')->insert(collect($n)->toArray());
 		    	}
 		    	return 'Bonus sheet has been proceed to Approval';
@@ -433,15 +492,7 @@ class BonusController extends Controller
         }
     }
 
-    // get unit wise bonus rules
-    protected function getRuleId($bonus_type, $year)
-    {
-    	return DB::table('hr_bonus_rule')
-    			->where('bonus_type_id', $bonus_type)
-    			->where('bonus_year', $year)
-    			->whereIn('unit_id',auth()->user()->unit_permissions())
-    			->pluck('id');
-    }
+    
 
     protected function getBonusList($input)
     {
