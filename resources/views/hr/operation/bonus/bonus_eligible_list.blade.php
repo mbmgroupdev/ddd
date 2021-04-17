@@ -1,22 +1,38 @@
+@php
+	$urldata = http_build_query($input) . "\n";
+@endphp
 <div class="panel">
 	<div class="panel-body">
+		@if(!isset($input['selected']))
 		<div class="row">
 			<div class="col-sm-5">
 				<button class="btn btn-sm btn-danger" id="back-button" data-toggle="tooltip" data-placement="top" title="" data-original-title="Back to bous rule" title="back">
 					<i class="fa fa-arrow-left"></i></button>
-				@php
-					$urldata = http_build_query($input) . "\n";
-				@endphp
+				
 				<button class="btn btn-sm btn-primary hidden-print" onclick="printDiv('content_list_section')" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report" ><i class="las la-print"></i> </button>
 				{{-- <a href='{{ url("hr/reports/summary/excel?$urldata")}}' target="_blank" class="btn btn-sm btn-primary hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download" ><i class="fa fa-file-excel-o"></i></a> --}}
 			</div>
-			<div class="col-sm-2"></div>
+			<div class="col-sm-2">
+				<div class="form-group has-float-label select-search-group mb-0">
+                    <?php
+                        $paymentType = ['all'=>'All','cash' => 'Cash','dbbl'=>'DBBL','rocket'=>'Rocket'];
+                    ?>
+                    {{ Form::select('paymentType', $paymentType, $input['pay_type']??null, ['class'=>'form-control capitalize', 'id'=>'paymentType']) }}
+                    <label for="paymentType">Payment Type</label>
+                </div>
+			</div>
 			<div class="col-sm-5">
 				<div class="row">
 					<div class="col-4 pr-0">
 						<div class="form-group has-float-label select-search-group mb-0">
                             <?php
-                                $emptype = ['all'=>'All','maternity'=>'Maternity','partial'=>'Less than a Year'];
+                                $emptype = [
+                                	'all'=>'All',
+                                	'maternity'=>'Maternity',
+                                	'lessyear'=>'Less than a Year',
+                                	'partial' => 'Partial',
+                                	'special' => 'Special'
+                                ];
                             ?>
                             {{ Form::select('empType', $emptype, $input['emp_type'], ['class'=>'form-control capitalize', 'id'=>'empType']) }}
                             <label for="empType">Bonus Type</label>
@@ -47,6 +63,7 @@
                   </div>
 			</div>
 		</div>
+		@endif
 		<div id="content_list_section" class="content_list_section">
 			<style type="text/css">
 				.page-data{
@@ -73,14 +90,17 @@
     				max-width: 33.3333333333%;
 				}
 				.row{
-					    display: flex;
-					    flex-wrap: wrap;
-					    margin-right: -15px;
-					    margin-left: -15px;
+				    display: flex;
+				    flex-wrap: wrap;
+				    margin-right: -15px;
+				    margin-left: -15px;
 				}
 				.col-6{
 					flex: 0 0 50%;
     				max-width: 50%;
+				}
+				.p-3{
+					padding: 3rem;
 				}
 			</style>
 			<div class="page-header">
@@ -88,58 +108,96 @@
 	            <div class="row page-data">
 	            	<div class="col-sm-12 mb-3">
 	            		<h5 style="margin:5px 10px; font-weight: bold; text-align: center;text-decoration: underline;">Bonus Eligble List</h5>
-	            	</div>
-	            	<div class="col-sm-4">
-	            		<div class="row">
-	            			<div class="col-6">OT Employee</div>
-	            			<div class="col-6">: <span class="amount" >{{$summary->ot}}</span></div>
-	            			<div class="col-6">Non-OT Employee</div>
-	            			<div class="col-6">: <span class="amount" >{{$summary->nonot}}</span></div>
-	            			<div class="col-12"><hr style="margin: 0"></div>
-	            			<div class="col-6"><b>Total Employee</b></div>
-	            			<div class="col-6">: <span class="amount" ><b>{{$summary->active + $summary->maternity}}</b></span></div>
-	            			<div class="col-6">OT Employee Bonus</div>
-	            			<div class="col-6">: <span class="amount" >৳ {{bn_money($summary->ot_amount)}}</span> </div>
-	            			
-	            			<div class="col-6">Non-OT Employee Bonus</div>
-	            			<div class="col-6">:<span class="amount" >৳ {{bn_money($summary->nonot_amount)}} </span></div>
-	            			<div class="col-12"><hr style="margin: 0"></div>
-	            			<div class="col-6"><b>Total Bonus</b></div>
-	            			<div class="col-6">: <span class="amount" ><b>৳ {{bn_money($summary->active_amount + $summary->maternity_amount)}}</b></div>
-	            		</div>
-	            	</div>
-	            	<div class="col-sm-4 pr-0">
-	            		<div class="row">
-	            			<div class="col-7">Active Employee</div>
-	            			<div class="col-5">: <span class="amount" >{{$summary->active}}</span></div>
-	            			<div class="col-7">Maternity Employee</div>
-	            			<div class="col-5">: <span class="amount" >{{$summary->maternity}}</span></div>
-	            			<div class="col-7">Active Employee Bonus</div>
-	            			<div class="col-5">: <span class="amount" >৳ {{bn_money($summary->active_amount)}}</span></div>
-	            			
-	            			<div class="col-7">Maternity Employee Bonus</div>
-	            			<div class="col-5">: <span class="amount" >৳ {{bn_money($summary->maternity_amount)}}</span> </div>
+	            	
+		            	<table border="0" width="100%" class="p-3">
+		            		@php
+		            			$dbbl = '';
+		            		@endphp
+		            		<tr>
+		            			<td style="width: 20%">Active Employee</td>
+		            			<td style="width:13.3333%">: <span class="amount" >{{$summary->active}}</span></td>
+		            			<td style="width: 20%">Cash Employee</td>
+		            			<td style="width:13.3333%">: <span class="amount" >{{$summary->cash_emp}}</span></td>
+		            			<td style="width: 20%">OT Employee</td>
+		            			<td style="width:13.3333%">: <span class="amount" >{{$summary->ot}}</span></td>
+		            		</tr>
+		            		<tr style="font-weight: bold;">
+		            			<td style="width: 20%">Active Amount</td>
+		            			<td style="width:13.3333%">: <span class="amount" >৳ {{bn_money($summary->active_amount)}}</span></td>
+		            			<td style="width: 20%">Cash Amount</td>
+		            			<td style="width:13.3333%">: <b><span class="amount" >৳ {{bn_money($summary->cash_amount)}}</td>
+		            			<td style="width: 20%;font-weight:  normal;">Non-OT Employee</td>
+		            			<td style="width:13.3333%;font-weight:  normal;">: <span class="amount" >{{$summary->nonot}}</span></td>
+		            		</tr >
+		            		<tr>
+		            			<td style="width: 20%">Maternity Employee</td>
+		            			<td style="width:13.3333%">: <span class="amount" >{{$summary->maternity}}</span></td>
+		            			<td style="width: 20%">DBBL Employee</td>
+		            			<td style="width:13.3333%">: <span class="amount" >
+		            				@isset($summary->payment_group['dbbl'])
+		            				{{($summary->payment_group['dbbl']?$summary->payment_group['dbbl']->emp:0)}}
+		            				@endisset
+		            			</span></td>
+		            			<td style="width: 20%"><b>Total Employee</b></td>
+		            			<td style="width:13.3333%">: <span class="amount" ><b>{{$summary->active + $summary->maternity}}</td>
+		            		</tr>
+		            		<tr style="font-weight: bold;">
+		            			<td style="width: 20%">Maternity Amount</td>
+		            			<td style="width:13.3333%">: <span class="amount" >৳ {{bn_money($summary->maternity_amount)}}</span> </td>
+		            			<td style="width: 20%">DBBL Amount</td>
+		            			<td style="width:13.3333%">: <span class="amount" >
+		            				@isset($summary->payment_group['dbbl'])
+		            				{{($summary->payment_group['dbbl']?$summary->payment_group['dbbl']->amount:0)}}
+		            				@endisset
+		            			</td>
+		            			<td style="width: 20%;font-weight:  normal;">OT Employee Bonus</td>
+		            			<td style="width:13.3333%;font-weight:  normal;">: <span class="amount" >৳ {{bn_money($summary->ot_amount)}}</span> </td>
+		            		</tr>
+		            		<tr>
+		            			<td style="width: 20%">Less Than a Year Employee</td>
+		            			<td style="width:13.3333%">: <span class="amount" >{{$summary->partial}}</span></td>
+		            			<td style="width: 20%">Rocket Employee</td>
+		            			<td style="width:13.3333%">: <span class="amount" >
+		            				@isset($summary->payment_group['rocket'])
+		            				{{($summary->payment_group['rocket']?$summary->payment_group['rocket']->emp:0)}}
+		            				@endisset
+		            			</span></td>
+		            			
+		            			<td style="width: 20%">Non-OT Employee Bonus</td>
+		            			<td style="width:13.3333%">: <span class="amount" >৳ {{bn_money($summary->nonot_amount)}}</span> </td>
+		            		</tr>
+		            		<tr style="font-weight: bold;">
+		            			<td style="width: 20%">Less Than a Year Amount</td>
+		            			<td style="width:13.3333%">: <span class="amount" >৳ {{bn_money($summary->partial_amount)}}</span> </td>
+		            			<td style="width: 20%"><b>Rocket Amount</td>
+		            			<td style="width:13.3333%">: <span class="amount" >
+		            				@isset($summary->payment_group['rocket'])
+		            				{{($summary->payment_group['rocket']?$summary->payment_group['rocket']->amount:0)}}
+		            				@endisset
+		            			</td>
+		            			<td style="width: 20%"><b>Total  Bonus</b></td>
+		            			<td style="width:13.3333%">: <span class="amount" ><b>{{$summary->active_amount + $summary->maternity_amount}}</td>
+		            			
+		            		</tr>
+		            		<tr>
+		            			<td colspan="2"></td>
+		            			<td style="width: 20%"><b>Stamp Amount</b></td>
+		            			<td style="width:13.3333%">: <b><span class="amount" >৳ {{bn_money($summary->stamp)}}</span></b></span> </td>
+		            			<td colspan="2"></td>
+		            		</tr>
 
-	            		</div>
-	            	</div>
-	            	<div class="col-sm-4 pr-0">
-	            		<div class="row">
-	            			<div class="col-7">Less than a year Employee</div>
-	            			<div class="col-5">: <span class="amount" >{{$summary->partial}}</span></div>
-	            			<div class="col-7">Less than a year Bonus Amount</div>
-	            			<div class="col-5">: <span class="amount" >৳ {{bn_money($summary->partial_amount)}}</span> </div>
+		            	</table>
+		            	@if(!isset($input['selected']))
 	            			<div class="col-12">
 			            		<div class="text-right d-block w-100 pr-3">
-			            			<br><br>
-			            			<button id="approval" class="btn btn-primary btn-sm" @if($input['emp_type'] != 'all') style="display: none;" @endif >Proceed to Aproval</button>
-			            			<p id="proceed-help-text" class="text-danger" @if($input['emp_type'] == 'all') style="display: none;" @endif>To proceed for Approval, please select Bonus Type <b>All</b>  </p>
+			            			
+			            			<button id="approval" class="btn btn-primary btn-sm" @if($input['emp_type'] == 'all' && $input['pay_type'] == 'all') @else style="display: none;" @endif >Proceed to Aproval</button>
+			            			<p id="proceed-help-text" class="text-danger" @if($input['emp_type'] == 'all' && $input['pay_type'] == 'all' )style="display: none;" @endif>To proceed for Approval, please select Payment Type and Bonus Type <b>All</b>  </p>
 		            			</div>
 
 	            			</div>
-	            		</div>
+	            		@endif
 	            	</div>
-	            	
-	            	
 	            </div>
 	        </div>
 			<input type="hidden" id="reportFormat" value="{{$input['report_format']}}">
