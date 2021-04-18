@@ -71,7 +71,7 @@
                     <a href="#"> Human Resource </a>
                 </li> 
                 <li>
-                    <a href="#"> Operation </a>
+                    <a href="#"> Payroll </a>
                 </li>
                 <li class="active">Bonus</li>
             </ul><!-- /.breadcrumb --> 
@@ -88,6 +88,7 @@
                                 <input type="hidden" id="report_format" name="report_format">
                                 <input type="hidden" id="emp_type" name="emp_type" value="all">
                                 <input type="hidden" id="pay_type" name="pay_type" value="all">
+                                <input type="hidden" id="otnonot" name="otnonot" value="">
                                 <input type="hidden" id="report_group" name="report_group">
                                 <div class="form-section">
                                     
@@ -98,6 +99,13 @@
                                             <div class="form-group has-required has-float-label select-search-group">
                                                 {{ Form::select('type_id', $bonusType, null, ['placeholder'=>'Select Bonus', 'id'=>'bonus_for', 'class'=> 'form-control', 'required'=>'required']) }}
                                                 <label for="bonus_for">Bonus Type </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4 pr-0">
+                                            <div class="custom-control custom-radio custom-control-inline"></div>
+                                            <div class="form-group has-required has-float-label">
+                                                <input type="date" name="cut_date" id="cut_date" placeholder="Cut of Date" value="{{ date('Y-m-d') }}"  class="form-control" required>
+                                                <label for="cut_date">Bonus Date </label>
                                             </div>
                                         </div>
                                         <div class="col-sm-4 pr-0">
@@ -115,7 +123,7 @@
                                                 </div>
                                                 <div class="col-sm-12">
                                                     <div class="form-group  has-float-label" id="target-per-of-basic" style="margin-top: 3px;">
-                                                        <input type="text" name="bonus_percent" id="bonus_percent" placeholder="% of Basic"  class="form-control" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" >
+                                                        <input type="text" name="bonus_percent" id="bonus_percent" placeholder="% of Basic"  class="form-control" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" max="999">
                                                         <label for="bonus_percent"> % of Basic </label>
                                                     </div>
                                                     <div class="form-group has-float-label" id="target-fix-amount" style="display: none;margin-top: 3px;">
@@ -125,13 +133,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-sm-4 pr-0">
-                                            <div class="custom-control custom-radio custom-control-inline"></div>
-                                            <div class="form-group has-required has-float-label">
-                                                <input type="date" name="cut_date" id="cut_date" placeholder="Cut of Date" value="{{ date('Y-m-d') }}"  class="form-control" required>
-                                                <label for="cut_date">Bonus Date </label>
-                                            </div>
-                                        </div>
+                                        
                                     </div>
                                     <div class="row">
                                       <div class="col-sm-12"><hr class="mt-0"></div>
@@ -309,6 +311,11 @@
         generateBonus();
         
     });
+    $(document).on('change','#otnonotStatus', function(){
+        $('#otnonot').val($(this).val());
+        generateBonus();
+        
+    });
 
     $(document).on('change','#reportGroupHead', function(){
         $('#report_group').val($(this).val());
@@ -369,7 +376,7 @@
                     $('#bonus-procesor').hide();
                     $('.app-loader').hide();  
                     $.notify(data.msg,'success');
-                    window.location.href = "{{url('hr/operation/bonus-sheet-process')}}";
+                    window.location.href = "{{url('hr/payroll/bonus-sheet-process')}}";
                 }else{
                     $('#bonus-procesor').hide();
                     $('.app-loader').hide();  

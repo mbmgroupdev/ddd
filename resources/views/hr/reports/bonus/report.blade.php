@@ -4,6 +4,7 @@
 			$urldata = http_build_query($input) . "\n";
 			$groupUnit = ($input['group_unit']??($input['unit']??''));
 		@endphp
+		{{-- <a href='{{ url("hr/reports/bonus-report?$urldata&export=excel")}}' target="_blank" class="btn btn-sm btn-info hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download" style="position: absolute; top: 16px; left: 65px;"><i class="fa fa-file-excel-o"></i></a> --}}
 		<div class="content_list_section"  id="report_section">
 			<style type="text/css">
 				.page-data{
@@ -20,41 +21,108 @@
 				
 				<h3 style="font-weight: bold; text-align: center;"> {{ $unit[$groupUnit]['hr_unit_name']??'' }} </h3> 
 				<h3 style=" text-align: center;">{{ $bonusType[$bonusSheet->bonus_type_id]['bonus_type_name']??''}}-{{ $bonusSheet->bonus_year }} @if($input['report_format'] == 0) Details @else Summary @endif Report </h3>
-					
-	            <table class="table no-border f-14" border="0" style="width:100%;margin-bottom:0;font-size:14px;text-align:left;"  cellpadding="5">
-	            	<tr>
-	            		<td width="25%" style="vertical-align: top;">
-		            		Active Employee <b>: <span class="amount" >{{ $summary->active }} </span> </b> <br>
-		            		Amount <b>: <span class="amount" >৳ {{ bn_money($summary->active_amount) }}</span> </b> <br>
-	            		</td>
-	            		
-	            		<td width="25%" style="vertical-align: top;">
-		            		Maternity Employee <b>:<span class="amount" > {{ $summary->maternity }}</span></b> <br>
-		            		Amount <b>: <span class="amount" >৳ {{ bn_money($summary->maternity_amount) }}</span> </b> <br>
-	            		</td>
-	            		<td width="25%" style="vertical-align: top;">
-		            		Total Employee <b>: <span class="amount" >{{ $totalEmployees }}</span></b> <br>
-		            		Amount <b>: <span class="amount" >৳ {{ bn_money($totalAmount) }}</span> </b> <br>
-	            		</td>
-	            		<td width="25%" style="vertical-align: top;">
-		            		Less than a year  <b>: <span class="amount" >{{ $summary->partial }}</span></b> <br>
-		            		Amount <b>: <span class="amount" >৳ {{ bn_money($summary->partial_amount) }}</span> </b> <br>
-		            		<br>
-		            		<div class="salary-section text-right ">
-                                <button type="button" data-toggle="modal" data-target="#exampleModalCenteredScrollable" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="" data-original-title="Bonus Approval Process" ><i class="fa fa-save"></i> Approve Bonus</button>
-                                
-                              </div>
-	            		</td>
-	            	</tr>
-	            	
-	            </table>
-	            
+				
+	            <table border="0" width="100%" class="p-3">
+            		<tr>
+            			<td style="width: 20%">Active Employee</td>
+            			<td style="width:13.3333%; padding-right:32px;">: <span class="amount" >{{$summary->active}}</span></td>
+            			<td style="width: 20%">Cash Employee</td>
+            			<td style="width:13.3333%; padding-right:32px;">: <span class="amount" >{{$summary->cash_emp}}</span></td>
+            			<td style="width: 20%">OT Employee</td>
+            			<td style="width:13.3333%; padding-right:32px;">: <span class="amount" >{{$summary->ot}}</span></td>
+            		</tr>
+            		<tr style="font-weight: bold;">
+            			<td style="width: 20%">Active Amount</td>
+            			<td style="width:13.3333%; padding-right:32px;">: <span class="amount" >৳ {{bn_money($summary->active_amount)}}</span></td>
+            			<td style="width: 20%">Cash Amount</td>
+            			<td style="width:13.3333%; padding-right:32px;">: <b><span class="amount" >৳ {{bn_money($summary->cash_amount)}}</td>
+            			<td style="width: 20%;font-weight:  normal;">Non-OT Employee</td>
+            			<td style="width:13.3333%; padding-right:32px;;font-weight:  normal;">: <span class="amount" >{{$summary->nonot}}</span></td>
+            		</tr >
+            		<tr>
+            			<td style="width: 20%">Maternity Employee</td>
+            			<td style="width:13.3333%; padding-right:32px;">: <span class="amount" >{{$summary->maternity}}</span></td>
+            			<td style="width: 20%">DBBL Employee</td>
+            			<td style="width:13.3333%; padding-right:32px;">: <span class="amount" >
+            				@if(isset($summary->payment_group['dbbl']))
+            					{{($summary->payment_group['dbbl']?$summary->payment_group['dbbl']->emp:0)}}
+            				@else
+            					0
+            				@endif
+            			</span></td>
+            			<td style="width: 20%"><b>Total Employee</b></td>
+            			<td style="width:13.3333%; padding-right:32px;">: <span class="amount" ><b>{{$summary->active + $summary->maternity}}</td>
+            		</tr>
+            		<tr style="font-weight: bold;">
+            			<td style="width: 20%">Maternity Amount</td>
+            			<td style="width:13.3333%; padding-right:32px;">: <span class="amount" >৳ {{bn_money($summary->maternity_amount)}}</span> </td>
+            			<td style="width: 20%">DBBL Amount</td>
+            			<td style="width:13.3333%; padding-right:32px;">: <span class="amount" >
+            				৳
+            				@if(isset($summary->payment_group['dbbl']))
+            				 	{{bn_money($summary->payment_group['dbbl']?$summary->payment_group['dbbl']->amount:0)}}
+            				@else
+            					0
+            				@endif
+            			</td>
+            			<td style="width: 20%;font-weight:  normal;">OT Employee Bonus</td>
+            			<td style="width:13.3333%; padding-right:32px;;font-weight:  normal;">: <span class="amount" >৳ {{bn_money($summary->ot_amount)}}</span> </td>
+            		</tr>
+            		<tr>
+            			<td style="width: 20%">Less Than a Year Employee</td>
+            			<td style="width:13.3333%; padding-right:32px;">: <span class="amount" >{{$summary->partial}}</span></td>
+            			<td style="width: 20%">Rocket Employee</td>
+            			<td style="width:13.3333%; padding-right:32px;">: <span class="amount" >
+            				
+            				@if(isset($summary->payment_group['rocket']))
+            				 {{($summary->payment_group['rocket']?$summary->payment_group['rocket']->emp:0)}}
+            				@else
+            				0
+            				@endif
+            			</span></td>
+            			
+            			<td style="width: 20%">Non-OT Employee Bonus</td>
+            			<td style="width:13.3333%; padding-right:32px;">: <span class="amount" >৳ {{bn_money($summary->nonot_amount)}}</span> </td>
+            		</tr>
+            		<tr style="font-weight: bold;">
+            			<td style="width: 20%">Less Than a Year Amount</td>
+            			<td style="width:13.3333%; padding-right:32px;">: <span class="amount" >৳ {{bn_money($summary->partial_amount)}}</span> </td>
+            			<td style="width: 20%"><b>Rocket Amount</td>
+            			<td style="width:13.3333%; padding-right:32px;">: <span class="amount" >
+            				৳
+            				@if(isset($summary->payment_group['rocket']))
+            				 {{bn_money($summary->payment_group['rocket']?$summary->payment_group['rocket']->amount:0)}}
+            				@else
+            				0
+            				@endif
+            			</td>
+            			<td style="width: 20%"><b>Total Bonus</b></td>
+            			<td style="width:13.3333%; padding-right:32px;">: <span class="amount" ><b>৳ {{bn_money($summary->active_amount + $summary->maternity_amount)}}</td>
+            			
+            		</tr>
+            		<tr>
+            			<td colspan="2"></td>
+            			<td style="width: 20%"><b>Stamp Amount</b></td>
+            			<td style="width:13.3333%; padding-right:32px;">: <b><span class="amount" >৳ {{bn_money($summary->stamp)}}</span></b></span> </td>
+            			<td colspan="2"></td>
+            		</tr>
+
+            	</table>
+            	@if(!isset($input['selected']) && $bonusSheet->approved_by == null && auth()->user()->can('Bonus Approval'))
+    			<div class="col-12">
+            		<div class="salary-section text-right ">
+                        <button type="button" data-toggle="modal" data-target="#exampleModalCenteredScrollable" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="" data-original-title="Bonus Approval Process" ><i class="fa fa-save"></i> Approve Bonus</button>
+                        
+                    </div>
+
+    			</div>
+	            @endif
 	        </div>
 			<input type="hidden" id="reportFormat" value="{{$input['report_format']}}">
 			@if($input['report_format'] == 0)
 				<table class="table table-bordered table-hover table-head" style="width:100%;border:0 !important;margin-bottom:0;font-size:14px;text-align:left" border="1" cellpadding="5">
 				@foreach($uniqueGroupEmp as $group => $employees)
-				
+		
 					<thead>
 						@if(count($employees) > 0)
 		                
@@ -87,7 +155,7 @@
 		                	@if($head != '')
 		                	<tr>
 			                    <th colspan="2">{{ $head }}</th>
-			                    <th colspan="10">{{ $body }}</th>
+			                    <th colspan="12">{{ $body }}</th>
 		                    </tr>
 		                    @endif
 		                
@@ -102,8 +170,11 @@
 		                    <th width="10%">Gross</th>
 		                    <th width="10%">Basic</th>
 		                    <th width="6%">Month</th>
-		                    <th width="6%">Stamp</th>
 		                    <th width="10%">Bonus Amount</th>
+		                    <th width="6%">Stamp</th>
+		                    <th width="10%">Cash Amount</th>
+			                <th width="10%">Bank Amount</th>
+			                <th width="10%">Net Payable</th>
 		                </tr>
 		            </thead>
 		            <tbody>
@@ -131,15 +202,17 @@
 				            		@endif
 				            	</td>
 				            	
-				            	
-				            	<td>{{$employee->stamp }}</td>
 				            	<td>{{$employee->bonus_amount }}</td>
+				            	<td>{{$employee->stamp }}</td>
+				            	<td>{{$employee->cash_payable }}</td>
+				            	<td>{{$employee->bank_payable }}</td>
+				            	<td>{{$employee->net_payable }}</td>
 			            	</tr>
 			            	
 			            @endforeach
 		            @else
 			            <tr>
-			            	<td colspan="13" class="text-center">No Employee Found!</td>
+			            	<td colspan="14" class="text-center">No Employee Found!</td>
 			            </tr>
 		            @endif
 		            	<tr style="border:0 !important;"><td colspan="16" style="border: 0 !important;height: 20px;"></td> </tr>
@@ -250,12 +323,17 @@
 							<td style="text-align: right;padding-right: 5px;">
 								{{ $employee->groupTotal }}
 							</td>
-							
-							
 						</tr>
 						@endforeach
-						
-						
+						<tr>
+							<td colspan="2" class="text-center"> <b>Total</b> </td>
+							<td class="text-center"><b>{{$summary->nonot}}</b></td>
+							<td class="text-right"><b>{{bn_money($summary->nonot_amount)}}</b></td>
+							<td class="text-center"><b>{{$summary->ot}}</b></td>
+							<td class="text-right"><b>{{bn_money($summary->ot_amount)}}</b></td>
+							<td class="text-center"><b>{{$summary->active + $summary->maternity}}</b></td>
+							<td class="text-right"><b>{{$summary->active_amount + $summary->maternity_amount}}</b></td>
+						</tr>
 						@else
 						<tr>
 			            	<td colspan="8" class="text-center">No Data Found!</td>

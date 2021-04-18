@@ -168,16 +168,22 @@
                                         </div>
                                         <div class="form-group has-float-label has-required select-search-group">
                                             <?php
-                                              $status = ['all'=>'All', 'active'=>'Active','maternity'=>'Maternity','partial'=>'Partial'];
+                                              $bonusStatus = [
+                                                'all'=>'All',
+                                                'maternity'=>'Maternity',
+                                                'lessyear'=>'Less than a Year',
+                                                'partial' => 'Partial',
+                                                'special' => 'Special'
+                                              ];
                                             ?>
-                                            {{ Form::select('emp_type', $status, 'all', ['placeholder'=>'Select Employee Status ', 'class'=>'form-control capitalize select-search', 'id'=>'estatus', 'required']) }}
-                                            <label for="estatus">Employee Status</label>
+                                            {{ Form::select('emp_type', $bonusStatus, 'all', ['placeholder'=>'Select Bonus type ', 'class'=>'form-control capitalize select-search', 'id'=>'estatus', 'required']) }}
+                                            <label for="estatus">Bonus type</label>
                                         </div>
-                                        <div class="form-group has-float-label select-search-group">
+                                        <div class="form-group has-float-label has-required select-search-group">
                                             <?php
-                                              $payType = ['all'=>'All'];
+                                              $payType = ['all'=>'All','cash' => 'Cash','dbbl'=>'DBBL','rocket'=>'Rocket'];
                                             ?>
-                                            {{ Form::select('pay_status', $payType, 'all', ['placeholder'=>'Select Payment Type', 'class'=>'form-control capitalize select-search', 'id'=>'paymentType', 'readonly']) }}
+                                            {{ Form::select('pay_status', $payType, 'all', ['placeholder'=>'Select Payment Type', 'class'=>'form-control capitalize select-search', 'id'=>'paymentType', 'required']) }}
                                             <label for="paymentType">Payment Type</label>
                                         </div>
                                         <div class="form-group">
@@ -202,7 +208,7 @@
                                             <h4>Bonus Approve  </h4>
                                               <p class="text-muted">-by {{ Auth::user()->name }}</p>
                                             <div class="custom-control custom-switch text-center mb-3">
-                                              <input name="status" type="checkbox" class="custom-control-input " id="status" value="1" checked>
+                                              <input name="status" type="checkbox" class="custom-control-input" id="status" value="1" checked>
                                               <label class="custom-control-label" for="status">Confirm</label>
                                            </div>
                                            <input type="hidden" name="unitId" value="{{ $bonusSheet->unit_id }}">
@@ -238,8 +244,8 @@
                           <div class="row">
                             <div class="col-5">
                               <span id="result-section-btn" style="display: none; ">
-                                {{-- <button class="btn btn-sm btn-primary hidden-print" onclick="printDiv('report_section')" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report"><i class="las la-print"></i> </button>
-                                <button class="btn btn-sm btn-info hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download">
+                                <button class="btn btn-sm btn-primary hidden-print" onclick="printDiv('report_section')" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report"><i class="las la-print"></i> </button>
+                                {{-- <button class="btn btn-sm btn-info hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download">
                                   <i class="fa fa-file-excel-o"></i>
                                 </button> --}}
                               </span>
@@ -257,13 +263,7 @@
                             <div class="col-5">
                               <div class="row">
                                 <div class="col-4 pr-0">
-                                  {{-- <div class="form-group has-float-label select-search-group mb-0">
-                                      <?php
-                                          $emptype = ['all'=>'All','maternity'=>'Maternity','partial'=>'Partial'];
-                                      ?>
-                                      {{ Form::select('empType', $emptype, 'all', ['class'=>'form-control capitalize', 'id'=>'empType']) }}
-                                      <label for="empType">Employee Type</label>
-                                  </div> --}}
+                                  
                                 </div>
                                 <div class="col-5 pr-0">
                                   <div class="format">
