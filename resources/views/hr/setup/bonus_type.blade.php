@@ -28,25 +28,21 @@
 
             @include('inc/message')
             <div class="row">
-                <div class="col-sm-6">
+                <div class="col-sm-5">
                     {{Form::open(['url'=>'hr/setup/bonus_type_save', 'class'=>'form-horizontal']) }}
                         <div class="panel panel-info">
                             <div class="panel-heading"><h6>Bonus Library</h6></div> 
                             <div class="panel-body">
-                                <div class="row">
-                                    <div class="col">
-                                        <div class="form-group has-required has-float-label">
-                                        </label>
-                                            <input type="text" name="bonus_type_name" id="bonus_type_name" class="form-control" required="required" placeholder="Enter Bonus for">
-                                            <label for="bonus_type_name">Bonus for </label>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="form-group has-required has-float-label">
-                                            <input type="number" name="eligible_month" id="eligible_month" placeholder="Enter Number of Eligible Month" value="" min="0" class="form-control" required>
-                                            <label for="eligible_month">Eligible Month </label>
-                                        </div>
-                                    </div>
+                                
+                                <div class="form-group has-required has-float-label">
+                                </label>
+                                    <input type="text" name="bonus_type_name" id="bonus_type_name" class="form-control" required="required" placeholder="Enter Bonus for">
+                                    <label for="bonus_type_name">Bonus Title </label>
+                                </div>
+                                <div class="form-group has-required has-float-label">
+                                    <input type="number" name="eligible_month" id="eligible_month" placeholder="Enter Number of  Month" value="" min="0" max="12" class="form-control" required>
+                                    <label for="eligible_month">Provison Period (No. of Month)</label>
+                                    <p class="text-muted">Employee will eligible for bonus after provision period</p>
                                 </div>
                                 <div class="form-group">
                                     <button class="btn btn-primary" type="submit">
@@ -59,16 +55,16 @@
                         </div>
                     {{Form::close()}}
                 </div>
-                <div class="col-sm-6">
+                <div class="col-sm-7">
                     
                     <div class="panel panel-info pb-3">
                         <div class="panel-body">
-                            <table id="global-datatable" class="table table-striped table-bordered" style="display: block;overflow-x: auto;width: 100%;" >
+                            <table id="global-datatable" class="table table-striped table-bordered tale-responsive" style="display: block;overflow-x: auto;width: 100%;" >
                                 <thead>
                                     <th width="10%">SL.</th>
-                                    <th width="50%">Bonus for</th>
-                                    <th width="20%">Eligible Month</th>
-                                    <th width="30%">Action</th>
+                                    <th width="20%">Bonus Title</th>
+                                    <th>Rules</th>
+                                    <th width="20%">Action</th>
                                 </thead>
                                 <tbody>
                                     @php $i = 0; @endphp
@@ -78,7 +74,7 @@
                                             <tr>
                                                 <td>{{ ++$i }}</td>
                                                 <td>{{$bt->bonus_type_name}}</td>
-                                                <td>{{$bt->eligible_month}}</td>
+                                                <td>Provision Period: {{$bt->eligible_month}} Month</td>
                                                 
                                                 <td>
                                                     <div class="button-group">
@@ -122,14 +118,14 @@
                                         <div class="col">
                                             <div class="form-group has-required has-float-label">
                                             </label>
-                                                <input type="text" name="bonus_type_name" id="edit_bonus_type_name" class="form-control" required="required" placeholder="Enter Bonus for">
-                                                <label for="edit_bonus_type_name">Bonus for </label>
+                                                <input type="text" name="bonus_type_name" id="edit_bonus_type_name" class="form-control" required="required" placeholder="Enter Bonus title">
+                                                <label for="edit_bonus_type_name">Bonus Title </label>
                                             </div>
                                         </div>
                                         <div class="col">
                                             <div class="form-group has-required has-float-label">
-                                                <input type="number" name="eligible_month" id="edit_eligible_month" placeholder="Enter Number of Eligible Month" value="" min="0" class="form-control" required>
-                                                <label for="edit_eligible_month">Eligible Month </label>
+                                                <input type="number" name="eligible_month" id="edit_eligible_month" placeholder="Enter Number of Month" value="" min="0" class="form-control" required>
+                                                <label for="edit_eligible_month">Provision Period (No. of Month) </label>
                                             </div>
                                         </div>
                                     </div>

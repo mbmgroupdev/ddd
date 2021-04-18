@@ -281,6 +281,14 @@
 <script src="{{ asset('assets/js/moment.min.js')}}"></script>
 <script src="{{ asset('assets/js/bonus.js')}}"></script>
 <script type="text/javascript">
+    $(document).on('keyup','#bonus_percent', function(){
+        if($(this).val() == '' || parseInt($(this).val()) < 1000){
+
+        }else{
+            $(this).val('');
+            $(this).notify('Maximum value is 999');
+        }
+    });
     var bonus_type = @json(bonus_type_by_id());
     $(document).on('change', '#bonus_for', function(event) {
         var bonus_for = $(this).val();
@@ -295,8 +303,11 @@
 
     $(document).on('submit','#bonus-procesor',function(e){
         e.preventDefault();
+        var r = confirm("Bonus is "+$('#bonus_percent').val()+" % of basic. Do you want to continue?");
+        if (r == true) {
         
-        generateBonus();
+            generateBonus();
+        }
     });
 
     $(document).on('change','#empType', function(){
@@ -326,29 +337,31 @@
 
     function generateBonus(type = null, val = null)
     {
-        $('.app-loader').show();
-
         
-        // append to the report_group
-        if(type == 'report_format'){$('#report_format').val(val)};
+            $('.app-loader').show();
 
-        var data = $('#bonus-procesor').serializeArray();
+            
+            // append to the report_group
+            if(type == 'report_format'){$('#report_format').val(val)};
 
-        $.ajax({
-           url : "{{ url('hr/operation/bonus-process') }}",
-           type: 'get',
-           data: data,
-           success: function(data)
-           {
-                $('#bonus-procesor').hide();
-                $('#bonus-eligible-list').html(data);
-                $('.app-loader').hide();
-           },
-           error: function(reject)
-           {
-                $('.app-loader').hide();
-           }
-        });
+            var data = $('#bonus-procesor').serializeArray();
+
+            $.ajax({
+               url : "{{ url('hr/operation/bonus-process') }}",
+               type: 'get',
+               data: data,
+               success: function(data)
+               {
+                    $('#bonus-procesor').hide();
+                    $('#bonus-eligible-list').html(data);
+                    $('.app-loader').hide();
+               },
+               error: function(reject)
+               {
+                    $('.app-loader').hide();
+               }
+            });
+
     }
 
     $(document).on('click','#back-button' ,function(){
