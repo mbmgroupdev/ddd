@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Hr\Reports;
 
 use App\Http\Controllers\Controller;
+use App\Models\Hr\Benefits;
 use App\Models\Hr\BonusRule;
 use App\Models\Hr\Location;
 use DB;
@@ -26,7 +27,7 @@ class BonusSheetController extends Controller
 		$areaList = area_by_id();
 		$areaList = collect($areaList)->pluck('hr_area_name', 'hr_area_id');
 		$salaryMin = 0;
-		$salaryMax = 350000;
+		$salaryMax = Benefits::getSalaryRangeMax();
 		return view('hr.reports.bonus.index', compact('bonusSheet', 'unitList', 'locationList', 'areaList', 'salaryMin', 'salaryMax'));
 	}
 
@@ -105,9 +106,13 @@ class BonusSheetController extends Controller
                return $query->where('s.location_id',$input['location']);
             })
             ->when(!empty($input['emp_type'] && $input['emp_type'] != 'all'), function ($query) use($input){
-            	if($input['emp_type'] == 'partial'){
+            	if($input['emp_type'] == 'lessyear'){
             		return $query->where('s.duration', '<', 12);
-            	}
+            	}elseif($input['emp_type'] == 'partial'){
+                    return $query->where('s.type', 'partial');
+                }elseif($input['emp_type'] == 'special'){
+                    return $query->where('s.type', 'special');
+                }
             	$status = 6;
             	if($input['emp_type'] == 'active'){
             		$status = 1;
@@ -228,8 +233,7 @@ class BonusSheetController extends Controller
             }
 
             $summary 	= $this->makeSummary($queryGet->get());
-            // dd($summary);
-            // return $getEmployee;
+            
             $view = view('hr.reports.bonus.report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalAmount', 'totalEmployees','totalCashSalary', 'totalBankSalary', 'totalStamp', 'uniqueGroupEmp', 'location', 'unit', 'area', 'department', 'designation', 'section', 'subsection','summary', 'bonusType', 'bonusSheet'))->render();
             return $view;
         } catch (\Exception $e) {
@@ -240,19 +244,36 @@ class BonusSheetController extends Controller
     protected function makeSummary($data)
     {
     	$data = collect($data);
-    	$sum  = (object)[];
-    	$sum->maternity 		= $data->where('emp_status', 6)->count();
-    	$sum->maternity_amount 	= $data->where('emp_status', 6)->sum('bonus_amount');
-    	$sum->active 			= $data->where('emp_status', 1)->count();
-    	$sum->active_amount 	= $data->where('emp_status', 1)->sum('bonus_amount');
-    	$sum->ot 				= $data->where('as_ot', 1)->count();
-    	$sum->ot_amount 		= $data->where('as_ot', 1)->sum('bonus_amount');
-    	$sum->nonot 			= $data->where('as_ot', 0)->count();
-    	$sum->nonot_amount 		= $data->where('as_ot', 0)->sum('bonus_amount');
-    	$sum->partial 			= $data->where('duration','<' ,12)->count();
-    	$sum->partial_amount 	= $data->where('duration','<' ,12)->sum('bonus_amount');
+        $sum  = (object)[];
+        $sum->maternity         = $data->where('emp_status', 6)->count();
+        $sum->maternity_amount  = $data->where('emp_status', 6)->sum('bonus_amount');
+        $sum->active            = $data->where('emp_status', 1)->count();
+        $sum->active_amount     = $data->where('emp_status', 1)->sum('bonus_amount');
+        $sum->ot                = $data->where('ot_status', 1)->count();
+        $sum->ot_amount         = $data->where('ot_status', 1)->sum('bonus_amount');
+        $sum->nonot             = $data->where('ot_status', 0)->count();
+        $sum->nonot_amount      = $data->where('ot_status', 0)->sum('bonus_amount');
+        $sum->partial           = $data->where('duration','<' ,12)->count();
+        $sum->partial_amount    = $data->where('duration','<' ,12)->sum('bonus_amount');
+        $sum->stamp             = $data->sum('stamp');
+        $cash = $data->where('cash_payable', '>', 0);
+        $sum->cash_emp          = $cash->count();
+        $sum->cash_amount       = $cash->sum('cash_payable');
 
-    	return $sum;
+         
+        $group = collect($data)
+                    ->whereIn('pay_status', [2,3])
+                    ->groupBy('bank_name', true)
+                    ->map(function($q){
+                        $p = (object)[];
+                        $p->emp = collect($q)->count();
+                        $p->amount = collect($q)->sum('bank_payable');
+                        return $p;
+                    })->all();
+        $sum->payment_group = $group;
+       
+
+        return $sum;
     }
 
     public function audit(Request $request)
@@ -271,7 +292,7 @@ class BonusSheetController extends Controller
 
     		$data['type'] = 'success';
             $data['message'] = 'Process Successfully Done';
-            $data['url'] = url('hr/operation/bonus-sheet-process');
+            $data['url'] = url('hr/payroll/bonus-sheet-process');
             return $data;
     	} catch (\Exception $e) {
     		DB::rollback();

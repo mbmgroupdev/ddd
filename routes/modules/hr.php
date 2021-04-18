@@ -451,14 +451,14 @@ Route::post('hr/operation/pay-tiffin-dinner-bill', 'Hr\Operation\BillOperationCo
 Route::get('hr/operation/pay-tiffin-dinner-bill-excel', 'Hr\Operation\BillOperationController@excel');
 
 // Bonus section
-Route::get('hr/operation/bonus', 'Hr\Operation\BonusController@index');
+Route::get('hr/payroll/bonus', 'Hr\Operation\BonusController@index');
 
 Route::get('hr/operation/bonus-process', 'Hr\Operation\BonusController@process');
 Route::post('hr/operation/bonus-to-aproval', 'Hr\Operation\BonusController@toAproval');
-Route::get('hr/operation/bonus-disburse', 'Hr\Operation\BonusController@disburse');
+Route::get('hr/payroll/bonus-disburse', 'Hr\Operation\BonusController@disburse');
 Route::get('hr/operation/unit-wise-bonus-sheet', 'Hr\Operation\BonusController@bonusSheet');
 // bonus sheet approval process
-Route::get('hr/operation/bonus-sheet-process', 'Hr\Operation\BonusController@approvalProcess');
+Route::get('hr/payroll/bonus-sheet-process', 'Hr\Operation\BonusController@approvalProcess');
 Route::get('hr/operation/bonus-sheet-process-for-approval', 'Hr\Operation\BonusController@approvalSheet');
 // bonus audit
 Route::post('hr/operation/bonus-audit', 'Hr\Reports\BonusSheetController@audit');

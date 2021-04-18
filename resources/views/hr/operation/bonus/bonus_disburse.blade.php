@@ -48,7 +48,7 @@
                     <a href="#">Human Resource</a>
                 </li>
                 <li>
-                    <a href="#">Operation</a>
+                    <a href="#">Payroll</a>
                 </li>
                 <li class="active"> Bonus Disburse</li>
             </ul>

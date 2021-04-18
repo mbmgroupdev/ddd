@@ -5,13 +5,21 @@
 	<div class="panel-body">
 		@if(!isset($input['selected']))
 		<div class="row">
-			<div class="col-sm-5">
+			<div class="col-sm-3">
 				<button class="btn btn-sm btn-danger" id="back-button" data-toggle="tooltip" data-placement="top" title="" data-original-title="Back to bous rule" title="back">
 					<i class="fa fa-arrow-left"></i></button>
 				
 				<button class="btn btn-sm btn-primary hidden-print" onclick="printDiv('content_list_section')" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report" ><i class="las la-print"></i> </button>
 				<a href='{{ url("hr/operation/bonus-process?$urldata&export=excel")}}' target="_blank" class="btn btn-sm btn-primary hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download" ><i class="fa fa-file-excel-o"></i></a>
 			</div>
+			<div class="col-sm-2">
+				<div class="form-group has-float-label select-search-group">
+	         
+	                {{ Form::select('otnonot', [0=>'Non-OT', 1=>'OT'], $input['otnonot']??null, ['class'=>'form-control capitalize', 'id'=>'otnonotStatus', 'placeholder'=>'Select OT/Non-OT']) }}
+	                <label for="otnonotStatus">OT/Non-OT</label>
+	            </div>
+			</div>
+			
 			<div class="col-sm-2">
 				<div class="form-group has-float-label select-search-group mb-0">
                     <?php
@@ -107,7 +115,7 @@
 	            
 	            <div class="row page-data">
 	            	<div class="col-sm-12 mb-3">
-	            		<h5 style="margin:5px 10px; font-weight: bold; text-align: center;text-decoration: underline;">Bonus Eligble List</h5>
+	            		<h5 style="margin:5px 10px; font-weight: bold; text-align: center;text-decoration: underline;">Bonus Eligible List</h5>
 	            	
 		            	<table border="0" width="100%" class="p-3">
 		            		@php
@@ -146,9 +154,12 @@
 		            			<td style="width:13.3333%">: <span class="amount" >৳ {{bn_money($summary->maternity_amount)}}</span> </td>
 		            			<td style="width: 20%">DBBL Amount</td>
 		            			<td style="width:13.3333%">: <span class="amount" >
-		            				@isset($summary->payment_group['dbbl'])
-		            				{{($summary->payment_group['dbbl']?$summary->payment_group['dbbl']->amount:0)}}
-		            				@endisset
+		            				৳
+		            				@if(isset($summary->payment_group['dbbl']))
+		            				{{bn_money($summary->payment_group['dbbl']?$summary->payment_group['dbbl']->amount:0)}}
+		            				@else
+		            				0
+		            				@endif
 		            			</td>
 		            			<td style="width: 20%;font-weight:  normal;">OT Employee Bonus</td>
 		            			<td style="width:13.3333%;font-weight:  normal;">: <span class="amount" >৳ {{bn_money($summary->ot_amount)}}</span> </td>
@@ -171,12 +182,15 @@
 		            			<td style="width:13.3333%">: <span class="amount" >৳ {{bn_money($summary->partial_amount)}}</span> </td>
 		            			<td style="width: 20%"><b>Rocket Amount</td>
 		            			<td style="width:13.3333%">: <span class="amount" >
-		            				@isset($summary->payment_group['rocket'])
-		            				{{($summary->payment_group['rocket']?$summary->payment_group['rocket']->amount:0)}}
-		            				@endisset
+		            				৳
+		            				@if(isset($summary->payment_group['rocket']))
+		            				{{bn_money($summary->payment_group['rocket']?$summary->payment_group['rocket']->amount:0)}}
+		            				@else
+		            				0
+		            				@endif
 		            			</td>
 		            			<td style="width: 20%"><b>Total  Bonus</b></td>
-		            			<td style="width:13.3333%">: <span class="amount" ><b>{{$summary->active_amount + $summary->maternity_amount}}</td>
+		            			<td style="width:13.3333%">: <span class="amount" ><b>৳ {{bn_money($summary->active_amount + $summary->maternity_amount)}}</td>
 		            			
 		            		</tr>
 		            		<tr>
@@ -187,12 +201,12 @@
 		            		</tr>
 
 		            	</table>
-		            	@if(!isset($input['selected']))
+		            	@if(!isset($input['selected']) && auth()->user()->can('Bonus Process'))
 	            			<div class="col-12">
 			            		<div class="text-right d-block w-100 pr-3">
 			            			
-			            			<button id="approval" class="btn btn-primary btn-sm" @if($input['emp_type'] == 'all' && $input['pay_type'] == 'all') @else style="display: none;" @endif >Proceed to Aproval</button>
-			            			<p id="proceed-help-text" class="text-danger" @if($input['emp_type'] == 'all' && $input['pay_type'] == 'all' )style="display: none;" @endif>To proceed for Approval, please select Payment Type and Bonus Type <b>All</b>  </p>
+			            			<button id="approval" class="btn btn-primary btn-sm" @if($input['emp_type'] == 'all' && $input['pay_type'] == 'all' && $input['otnonot'] == null) @else style="display: none;" @endif >Proceed to Approval</button>
+			            			<p id="proceed-help-text" class="text-danger" @if($input['emp_type'] == 'all' && $input['pay_type'] == 'all' && $input['otnonot'] == null )style="display: none;" @endif>To proceed for Approval, please select Payment Type, OT/Non-OT and Bonus Type <b>All</b>  </p>
 		            			</div>
 
 	            			</div>
@@ -254,9 +268,9 @@
 		                    <th width="6%">Type</th>
 		                    <th width="6%">Month</th>
 		                    <th width="10%">Bonus Amount</th>
-		                    <th width="10%">Bank Amount</th>
-		                    <th width="10%">Cash Amount</th>
 		                    <th width="6%">Stamp</th>
+		                    <th width="10%">Cash Amount</th>
+		                    <th width="10%">Bank Amount</th>
 		                    <th width="6%">Net Payable</th>
 		                </tr>
 		            </thead>
@@ -285,9 +299,9 @@
 				            		@endif
 				            	</td>
 				            	<td>{{$employee->bonus_amount }}</td>
-				            	<td>{{$employee->bank_payable }}</td>
-				            	<td>{{$employee->cash_payable }}</td>
 				            	<td>{{$employee->stamp }}</td>
+				            	<td>{{$employee->cash_payable }}</td>
+				            	<td>{{$employee->bank_payable }}</td>
 				            	<td>{{$employee->net_payable }}</td>
 			            	</tr>
 			            	
@@ -445,7 +459,7 @@
             data: {
                 body: body
             },
-            type: "POST",
+            type: "GET",
             success: function(response){
             	// console.log(response);
                 if(response !== 'error'){

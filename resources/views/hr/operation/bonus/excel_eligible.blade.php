@@ -7,7 +7,7 @@
 	<table class="table table-bordered table-hover table-head" style="width:100%;border:0 !important;margin-bottom:0;font-size:14px;text-align:left" border="1" cellpadding="5">
 	@foreach($uniqueGroup as $group => $employees)	
 		<thead>
-			@if(count($employees) > 0)
+			@if(count($employees) > 0 && $format != 'as_unit_id')
             
             	@php
 					if($format == 'as_unit_id'){
@@ -38,17 +38,19 @@
             	@if($head != '')
             	<tr>
                     <th colspan="2">{{ $head }}</th>
-                    <th colspan="10">{{ $body }}</th>
+                    <th colspan="12">{{ $body }}</th>
                 </tr>
                 @endif
             
             @endif
             <tr>
                 <th >Sl</th>
+                <th >Unit</th>
                 <th >Associate ID</th>
                 <th >Name</th>
                 <th >Designation</th>
                 <th >Department</th>
+                <th >OT/Non OT</th>
                 <th >Status</th>
                 <th >DOJ</th>
                 <th >Gross</th>
@@ -56,9 +58,9 @@
                 <th >Type</th>
                 <th >Month</th>
                 <th >Bonus Amount</th>
-                <th >Bank Amount</th>
-                <th >Cash Amount</th>
                 <th >Stamp</th>
+                <th >Cash Amount</th>
+                <th >Bank Amount</th>
                 <th >Net Payable</th>
             </tr>
         </thead>
@@ -73,10 +75,12 @@
             	<tr>
             		<td>{{ ++$i }}</td>
 	            	
+	            	<td>{{ $unit[$employee->as_unit_id]['hr_unit_short_name']??'' }}</td>
 	            	<td>{{ $employee->associate_id }}</td>
 	            	<td><b>{{ $employee->as_name }}</b></td>
 	            	<td>{{ $designation[$employee->as_designation_id]['hr_designation_name']??'' }}</td>
 	            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
+	            	<td>{{ $employee->as_ot == 1?'OT':'Non OT' }}</td>
 	            	<td>{{emp_status_name($employee->as_status)}}</td>
 	            	<td>{{$employee->as_doj}}</td>
 	            	<td>{{$employee->ben_current_salary}}</td>
@@ -88,9 +92,9 @@
 	            		@endif
 	            	</td>
 	            	<td>{{$employee->bonus_amount }}</td>
-	            	<td>{{$employee->bank_payable }}</td>
-	            	<td>{{$employee->cash_payable }}</td>
 	            	<td>{{$employee->stamp }}</td>
+	            	<td>{{$employee->cash_payable }}</td>
+	            	<td>{{$employee->bank_payable }}</td>
 	            	<td>{{$employee->net_payable }}</td>
             	</tr>
             	
