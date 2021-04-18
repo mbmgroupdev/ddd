@@ -13,7 +13,7 @@
                     <a href="#"> Human Resource </a>
                 </li> 
                 <li>
-                    <a href="#"> Operation </a>
+                    <a href="#"> Payroll </a>
                 </li>
                 <li class="active">Bonus Process</li>
             </ul><!-- /.breadcrumb --> 
@@ -34,25 +34,36 @@
                                     @if($bonus->amount != null && $bonus->amount > 0)
                                     <li class="@if($bonus->approved_at != null) text-white @endif"> Bonus Amount : {{ $bonusType[$bonus->bonus_type_id]['eligible_month'] }}</li>
                                     @else
-                                    <li class="@if($bonus->approved_at != null) text-white @endif"> Basic : {{ $bonus->percent_of_basic }} %</li>
+                                    <li class="@if($bonus->approved_at != null) text-white @endif"> Basic : {{ $bonus->percent_of_basic }}%</li>
                                     @endif
                                     <li class="@if($bonus->approved_at != null) text-white @endif"> Eligible Month : {{ $bonusType[$bonus->bonus_type_id]['eligible_month'] }}</li>
                                     <li class="@if($bonus->approved_at != null) text-white @endif"> Bonus Date : {{ $bonus->cutoff_date }}</li>
                                 </ul>
                               </div>
                              @if($bonus->approved_at != null)
-                             <p>Authorized by <br>
-                                   &nbsp; &nbsp; -  Md. Ali Zinnah
-                             </p>
+                              <p>Authorized by <br>
+                                   &nbsp; &nbsp; -  {{ $getUser[$bonus->approved_by]->name?? ''}}
+                              </p>
+                               @if(auth()->user()->can('Bonus Sheet'))
+                               <a href='{{ url("hr/payroll/bonus-disburse")}}' class="btn btn-dark mt-2">Get Disburse</a>
+                               @endif
                              @else
-                             <a href='{{ url("hr/operation/bonus-sheet-process-for-approval?bonus_sheet=$bonus->id")}}' class="btn btn-primary mt-5">Get Process</a>
+                               @if(auth()->user()->can('Bonus Approval'))
+                               <a href='{{ url("hr/operation/bonus-sheet-process-for-approval?bonus_sheet=$bonus->id")}}' class="btn btn-primary mt-5">Get Process</a>
+                                @endif
                              @endif
                           </div>
                       </div>
                   </div>
               @endforeach
               @else
-
+              <div class="col">
+                <div class="panel w-100">
+                  <div class="panel-body">
+                      <h4 class="text-center">No Process Found!</h4>
+                  </div>
+                </div>
+              </div>
               @endif
            </div>
             

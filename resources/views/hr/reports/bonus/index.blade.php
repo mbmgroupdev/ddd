@@ -166,16 +166,22 @@
                                         </div>
                                         <div class="form-group has-float-label has-required select-search-group">
                                             <?php
-                                              $status = ['all'=>'All', 'active'=>'Active','maternity'=>'Maternity','partial'=>'Partial'];
+                                              $bonusStatus = [
+                                                'all'=>'All',
+                                                'maternity'=>'Maternity',
+                                                'lessyear'=>'Less than a Year',
+                                                'partial' => 'Partial',
+                                                'special' => 'Special'
+                                              ];
                                             ?>
-                                            {{ Form::select('emp_type', $status, 'all', ['placeholder'=>'Select Employee Status ', 'class'=>'form-control capitalize select-search', 'id'=>'estatus', 'required']) }}
-                                            <label for="estatus">Employee Status</label>
+                                            {{ Form::select('emp_type', $bonusStatus, 'all', ['placeholder'=>'Select Bonus type ', 'class'=>'form-control capitalize select-search', 'id'=>'estatus', 'required']) }}
+                                            <label for="estatus">Bonus type</label>
                                         </div>
-                                        <div class="form-group has-float-label select-search-group">
+                                        <div class="form-group has-float-label has-required select-search-group">
                                             <?php
-                                              $payType = ['all'=>'All'];
+                                              $payType = ['all'=>'All','cash' => 'Cash','dbbl'=>'DBBL','rocket'=>'Rocket'];
                                             ?>
-                                            {{ Form::select('pay_status', $payType, 'all', ['placeholder'=>'Select Payment Type', 'class'=>'form-control capitalize select-search', 'id'=>'paymentType', 'readonly']) }}
+                                            {{ Form::select('pay_status', $payType, 'all', ['placeholder'=>'Select Payment Type', 'class'=>'form-control capitalize select-search', 'id'=>'paymentType', 'required']) }}
                                             <label for="paymentType">Payment Type</label>
                                         </div>
                                         <div class="form-group">
@@ -209,9 +215,9 @@
                             <div class="col-5">
                               <span id="result-section-btn" style="display: none; ">
                                 <button class="btn btn-sm btn-primary hidden-print" onclick="printDiv('report_section')" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report"><i class="las la-print"></i> </button>
-                                <button class="btn btn-sm btn-info hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download">
+                                {{-- <button class="btn btn-sm btn-info hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download">
                                   <i class="fa fa-file-excel-o"></i>
-                                </button>
+                                </button> --}}
                               </span>
                              
                               <div class="salary-section text-left inline">

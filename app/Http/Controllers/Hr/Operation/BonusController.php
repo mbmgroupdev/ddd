@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Hr\Operation;
 
-use App\Http\Controllers\Controller;
-use App\Models\Hr\BonusType;
-use App\Models\Hr\BonusRule;
 use App\Exports\Hr\BonusExport;
-
-use Maatwebsite\Excel\Facades\Excel;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Models\Hr\Benefits;
+use App\Models\Hr\BonusRule;
+use App\Models\Hr\BonusType;
+use App\User;
 use Carbon\Carbon;
-
 use DB;
+use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class BonusController extends Controller
 {
@@ -145,7 +145,7 @@ class BonusController extends Controller
             ->when(!empty($input['floor_id']), function ($query) use($input){
                return $query->where('e.as_floor_id',$input['floor_id']);
             })
-            ->when(!empty($input['otnonot']), function ($query) use($input){
+            ->when(isset($input['otnonot']) && $input['otnonot'] !=null, function ($query) use($input){
                return $query->where('e.as_ot',$input['otnonot']);
             })
             ->when(!empty($input['section']), function ($query) use($input){
@@ -270,13 +270,19 @@ class BonusController extends Controller
                     $q->bank_name    = $q->bank_name; 
                 }else{
                     $q->bank_name    = $q->bank_name; 
-                    if($q->ben_bank_amount <= ($q->net_payable)){
-                        $q->cash_payable = ($q->net_payable) - $q->ben_bank_amount;
-                        $q->bank_payable = $q->ben_bank_amount;
-                    }else{
-                        $q->cash_payable = 0;
-                        $q->bank_payable = ($q->net_payable);
-                    }
+                    // if($q->ben_bank_amount <= ($q->net_payable)){
+                    //     $bankParcent = round(($q->ben_bank_amount/$q->ben_current_salary)*100, 2);
+                    //     $netPayBank = ceil(($q->net_payable/100)*$bankParcent);
+                    //     $q->bank_payable = $netPayBank;
+                    //     $q->cash_payable = ($q->net_payable) - $netPayBank;
+                    // }else{
+                    //     $q->cash_payable = 0;
+                    //     $q->bank_payable = ($q->net_payable);
+                    // }
+                    $bankParcent = round(($q->ben_bank_amount/$q->ben_current_salary)*100, 2);
+                    $netPayBank = ceil(($q->net_payable/100)*$bankParcent);
+                    $q->bank_payable = $netPayBank;
+                    $q->cash_payable = ($q->net_payable) - $netPayBank;
                 }
 
                 return $q;
@@ -457,7 +463,7 @@ class BonusController extends Controller
     			'transport' => $v->ben_transport,
     			'food' => $v->ben_food,
     			'duration' => $v->month,
-    			'stamp' => 10,
+    			'stamp' => $v->stamp,
     			'pay_status' => $v->pay_status,
     			'emp_status' => $v->as_status,
     			'net_payable' => $v->net_payable,
@@ -527,9 +533,14 @@ class BonusController extends Controller
     {
     	try {
     		$unitBonus = BonusRule::orderBy('id', 'desc')->get();
+            $approvUser = collect($unitBonus)->pluck('approved_by')->toArray();
+            $getUser = [];
+            if(count(array_filter($approvUser)) > 0){
+                $getUser = User::select('id', 'name')->whereIn('id', $approvUser)->get()->keyBy('id');
+            }
     		$bonusType = bonus_type_by_id();
     		$unit = unit_by_id();
-    		return view('hr/operation/bonus/process_index', compact('unitBonus', 'bonusType', 'unit'));
+    		return view('hr/operation/bonus/process_index', compact('unitBonus', 'bonusType', 'unit', 'getUser'));
     	} catch (\Exception $e) {
     		toastr()->error($e->getMessage());
     		return back();
@@ -553,7 +564,7 @@ class BonusController extends Controller
     		$areaList = area_by_id();
     		$areaList = collect($areaList)->pluck('hr_area_name', 'hr_area_id');
     		$salaryMin = 0;
-    		$salaryMax = 350000;
+    		$salaryMax = Benefits::getSalaryRangeMax();
 
     		return view('hr/operation/bonus/process_report', compact('bonusSheet', 'unitList', 'locationList', 'input', 'areaList', 'salaryMin', 'salaryMax'));
 
@@ -587,7 +598,7 @@ class BonusController extends Controller
 
             
             $data['salaryMin']     = 0;
-            $data['salaryMax']     = 350000;
+            $data['salaryMax']     = Benefits::getSalaryRangeMax();
 
 
             return view('hr.operation.bonus.bonus_disburse', $data);

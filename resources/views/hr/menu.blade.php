@@ -141,7 +141,7 @@
       </li>
       @endif
 
-      @if(auth()->user()->canany(['Manage Promotion','Manage Increment','Salary Adjustment','End of Job Benefits','Loan List','Assign Benefit','Bank Sheet','Increment Process']) || $user->hasRole('Super Admin'))
+      @if(auth()->user()->canany(['Manage Promotion','Manage Increment','Salary Adjustment','End of Job Benefits','Loan List','Assign Benefit','Bank Sheet','Increment Process','Bonus Sheet','Bonus','Bonus Process']) || $user->hasRole('Super Admin'))
       <li class="@if($segment2 == 'payroll') active @endif">
          <a href="#payroll" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="las la-money-check-alt"></i><span>Payroll</span><i class="las la-angle-right iq-arrow-right"></i></a>
          <ul id="payroll" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
@@ -170,6 +170,22 @@
             @if($user->can('Salary Adjustment') || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'monthly-salary-adjustment-list') active @endif">
                <a href="{{ url('hr/payroll/monthly-salary-adjustment-list') }}"><i class="las la-funnel-dollar"></i>Salary Adjustment</a>
+            </li>
+            @endif
+            @if($user->can('Bonus') || $user->hasRole('Super Admin'))
+            <li class="@if($segment3 == 'bonus') active @endif">
+               <a href="{{ url('hr/payroll/bonus') }}"><i class="las la-file-invoice-dollar"></i>Bonus</a>
+            </li>
+            @endif
+
+            @if($user->can('Bonus Process') || $user->hasRole('Super Admin'))
+            <li class="@if($segment3 == 'bonus-sheet-process') active @endif">
+               <a href="{{ url('hr/payroll/bonus-sheet-process') }}"><i class="las la-file-invoice-dollar"></i>Bonus Process</a>
+            </li>
+            @endif
+            @if($user->can('Bonus Sheet') || $user->hasRole('Super Admin'))
+            <li class="@if($segment3 == 'bonus-disburse') active @endif">
+               <a href="{{ url('hr/payroll/bonus-disburse') }}"><i class="las la-file-invoice-dollar"></i>Bonus Disburse</a>
             </li>
             @endif
             @if($user->can('End of Job Benefits') || $user->hasRole('Super Admin'))
@@ -226,7 +242,7 @@
       @endif
 
 
-      @if(auth()->user()->canany(['Define Shift Roster','Job Card','Attendance Operation','Employee Shift Assign','Shift Assign','Holiday Roster','Yearly Holiday','Payslip','Salary Sheet','Bonus Sheet','Retirement','Earn Leave Payment','Maternity Payment','Station Card','Salary Generate - HR','Salary Audit - Audit','Salary Verify - Accounts','Salary Confirmation - Management']) || $user->hasRole('Super Admin'))
+      @if(auth()->user()->canany(['Define Shift Roster','Job Card','Attendance Operation','Employee Shift Assign','Shift Assign','Holiday Roster','Yearly Holiday','Payslip','Salary Sheet','Retirement','Earn Leave Payment','Maternity Payment','Station Card','Salary Generate - HR','Salary Audit - Audit','Salary Verify - Accounts','Salary Confirmation - Management']) || $user->hasRole('Super Admin'))
       <li class="@if($segment2 == 'operation') active @endif">
          <a href="#operation" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="las la-tools"></i><span>Operation</span><i class="las la-angle-right iq-arrow-right"></i></a>
          <ul id="operation" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
@@ -287,22 +303,6 @@
                <a href="{{ url('hr/operation/payslip') }}"><i class="las la-address-card"></i>Payslip</a>
             </li>
             @endif
-
-            @if($user->can('Bonus') || $user->hasRole('Super Admin'))
-            <li class="@if($segment3 == 'bonus') active @endif">
-               <a href="{{ url('hr/operation/bonus') }}"><i class="las la-file-invoice-dollar"></i>Bonus</a>
-            </li>
-            @endif
-
-            @if($user->can('Bonus Process') || $user->hasRole('Super Admin'))
-            <li class="@if($segment3 == 'bonus-sheet-process') active @endif">
-               <a href="{{ url('hr/operation/bonus-sheet-process') }}"><i class="las la-file-invoice-dollar"></i>Bonus Process</a>
-            </li>
-            @endif
-
-            <li class="@if($segment3 == 'bonus-disburse') active @endif">
-               <a href="{{ url('hr/operation/bonus-disburse') }}"><i class="las la-file-invoice-dollar"></i>Bonus Disburse</a>
-            </li>
 
             @if($user->can('Tiffin/Dinner') || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'tiffin-dinner') active @endif">
