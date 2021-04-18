@@ -295,6 +295,7 @@
 
     $(document).on('submit','#bonus-procesor',function(e){
         e.preventDefault();
+        
         generateBonus();
     });
 
