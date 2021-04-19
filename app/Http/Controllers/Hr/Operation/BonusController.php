@@ -187,12 +187,13 @@ class BonusController extends Controller
             $partial = $this->organiseRule($this->partial_rule);
         }
 
-
+        $previousData = $this->previousYearData($this->bonus_type->id, $this->cutoff_date);
 
         $data = collect($data)
-            ->map(function($q) use($from, $percent, $special, $partial){
+            ->map(function($q) use($from, $percent, $special, $partial, $previousData){
                 $q->stamp = 10;
                 $q->type = 'normal';
+                $q->override = 0;
                 $fixed_amount = $this->bonus_amount;
                 
                 // amount based on special rule
@@ -245,7 +246,11 @@ class BonusController extends Controller
                 }else{
                     $q->bonus_amount = ceil(($q->ben_basic/12)*$bonus_month*$percent);
                 }
-
+                // check previous year bonus
+                if(isset($previousData[$q->associate_id]) && $previousData[$q->associate_id] > $q->bonus_amount){
+                    $q->override = 1;
+                    $q->bonus_amount = $previousData[$q->associate_id];
+                }
                 // modify amount based on pay type
                 $q->pay_status = 1; // cash pay
                 if($q->ben_bank_amount != 0 && $q->ben_cash_amount != 0){
@@ -340,6 +345,27 @@ class BonusController extends Controller
 
         return $data;
 
+    }
+
+    protected function previousYearData($typeId, $cutOfDate)
+    {
+        $previousData = array();
+        $previousYear = date('Y', strtotime('-1 year', strtotime($cutOfDate)) );
+        // 
+        $sheetId = DB::table('hr_bonus_rule')
+        ->where('bonus_type_id', $typeId)
+        ->where('bonus_year', $previousYear)
+        ->pluck('id')
+        ->first();
+
+        if($sheetId != null){
+            $previousData = DB::table('hr_bonus_sheet')
+            ->where('bonus_rule_id', $sheetId)
+            ->whereIn('unit_id', auth()->user()->unit_permissions())
+            ->pluck('bonus_amount', 'associate_id');
+        }
+        return $previousData;
+        
     }
 
     protected function getBonusEligibleList($input)
@@ -473,6 +499,7 @@ class BonusController extends Controller
     			'subsection_id' => $v->as_subsection_id,
     			'designation_id' => $v->as_designation_id,
     			'ot_status' => $v->as_ot,
+                'override' => $v->override
     		];
     	}
     	return $insert;
@@ -532,7 +559,7 @@ class BonusController extends Controller
     public function approvalProcess()
     {
     	try {
-    		$unitBonus = BonusRule::orderBy('id', 'desc')->get();
+    		$unitBonus = BonusRule::getBonusList();
             $approvUser = collect($unitBonus)->pluck('approved_by')->toArray();
             $getUser = [];
             if(count(array_filter($approvUser)) > 0){
@@ -583,6 +610,7 @@ class BonusController extends Controller
                     ->join('hr_bonus_type AS b', 'r.bonus_type_id', 'b.id')
                     ->join('hr_unit AS u', 'r.unit_id', 'u.hr_unit_id')
                     ->whereIn('r.unit_id', auth()->user()->unit_permissions())
+                    ->where('r.status', 1)
                     ->pluck('text', 'id');
 
             $data['unit'] 		= unit_by_id(); 
@@ -688,7 +716,7 @@ class BonusController extends Controller
                             ->first();
 
         $com['eligible_date'] =  Carbon::parse($com['rules']->cutoff_date)
-                                ->subMonths(3)->toDateString();
+                                ->subMonths($com['rules']->eligible_month)->toDateString();
 
     	$bonusList =  $this->getBonusList($input);
     	$com['bonusList'] =  collect($bonusList)
@@ -711,7 +739,6 @@ class BonusController extends Controller
         $com['subSection'] 	= subSection_by_id();
         $com['area'] 		= area_by_id();
 
-        ini_set('zlib.output_compression', 1);
         return view('hr.operation.bonus.bonus_sheet_unit', $com)->render();
     }
 

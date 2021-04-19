@@ -36,7 +36,7 @@
                                     @else
                                     <li class="@if($bonus->approved_at != null) text-white @endif"> Basic : {{ $bonus->percent_of_basic }}%</li>
                                     @endif
-                                    <li class="@if($bonus->approved_at != null) text-white @endif"> Eligible Month : {{ $bonusType[$bonus->bonus_type_id]['eligible_month'] }}</li>
+                                    <li class="@if($bonus->approved_at != null) text-white @endif"> Last Eligible Date : {{ \Carbon\Carbon::parse($bonus->cutoff_date)->subMonths($bonusType[$bonus->bonus_type_id]['eligible_month'])->toDateString()  }}</li>
                                     <li class="@if($bonus->approved_at != null) text-white @endif"> Bonus Date : {{ $bonus->cutoff_date }}</li>
                                 </ul>
                               </div>

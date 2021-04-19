@@ -302,7 +302,7 @@
 				            	<td>{{$employee->stamp }}</td>
 				            	<td>{{$employee->cash_payable }}</td>
 				            	<td>{{$employee->bank_payable }}</td>
-				            	<td>{{$employee->net_payable }}</td>
+				            	<td @if($employee->override == 1) style="background: yellow;" @endif>{{$employee->net_payable }}</td>
 			            	</tr>
 			            	
 			            @endforeach

@@ -197,7 +197,7 @@ class BonusSheetController extends Controller
                     $queryData->groupBy('emp.'.$input['report_group']);
                 }
             }else{
-                $queryData->select('s.unit_id AS as_unit_id','s.associate_id', 's.designation_id AS as_designation_id','subsec.hr_subsec_area_id AS as_area_id', 'subsec.hr_subsec_department_id AS as_department_id', 'subsec.hr_subsec_section_id AS as_section_id', 's.subsection_id AS as_subsection_id','deg.hr_designation_position','deg.hr_designation_name', 'ben.bank_no','emp.as_id','emp.as_gender', 'emp.as_oracle_code', 'emp.as_line_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_doj', 's.net_payable', 's.bank_payable', 's.cash_payable', 's.stamp', 's.pay_status', 's.gross_salary', 's.basic', 's.duration', 's.bonus_amount');
+                $queryData->select('s.unit_id AS as_unit_id','s.associate_id', 's.designation_id AS as_designation_id','subsec.hr_subsec_area_id AS as_area_id', 'subsec.hr_subsec_department_id AS as_department_id', 'subsec.hr_subsec_section_id AS as_section_id', 's.subsection_id AS as_subsection_id','deg.hr_designation_position','deg.hr_designation_name', 'ben.bank_no','emp.as_id','emp.as_gender', 'emp.as_oracle_code', 'emp.as_line_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_doj', 's.net_payable', 's.bank_payable', 's.cash_payable', 's.stamp', 's.pay_status', 's.gross_salary', 's.basic', 's.duration', 's.bonus_amount', 's.override');
             }
 
             $getEmployee = $queryData->orderBy('s.bonus_amount', 'desc')->get();
