@@ -86,12 +86,6 @@
                                                 
                                                 </div>
                                                 <div class="col-sm-2">
-                                                    <div class="form-group has-float-label select-search-group">
-                                                  {{ Form::select('bonus_year', $year, null, ['placeholder'=>'Select Year', 'class'=>'form-control capitalize select-search', 'id'=>'bonusYearSingle']) }}
-                                                    <label for="bonusYearSingle">Year</label>
-                                                </div>
-                                                </div>
-                                                <div class="col-sm-2">
                                                     <button onclick="individual()" type="button" class="btn btn-primary btn-sm" id="individualBtn"><i class="fa fa-save"></i> Generate</button>
                                                     
                                                 </div>
@@ -239,14 +233,10 @@
                                                 </div>
                                                 
                                                 <div class="form-group has-float-label select-search-group">
-                                                  {{ Form::select('bonus_year', $year, null, ['placeholder'=>'Select Year', 'class'=>'form-control capitalize select-search', 'id'=>'bonusYear']) }}
-                                                    <label for="bonusYear">Year</label>
-                                                </div>
-                                                <div class="form-group has-float-label select-search-group">
                                                     <?php
                                                       $status = ['1'=>'Active', '6'=> 'Maternity'];
                                                     ?>
-                                                    {{ Form::select('employee_status', $status, 1, ['placeholder'=>'Select Employee Status ', 'class'=>'form-control capitalize select-search', 'id'=>'estatus']) }}
+                                                    {{ Form::select('employee_status', $status, null, ['placeholder'=>'Select Employee Status ', 'class'=>'form-control capitalize select-search', 'id'=>'estatus']) }}
                                                     <label for="estatus">Status</label>
                                                 </div>
                                                 
@@ -349,15 +339,7 @@
 
 <script>
     var _token = $('input[name="_token"]').val();
-    function printDiv(divName)
-    { 
-        var myWindow=window.open('','','width=800,height=800');
-        myWindow.document.write(document.getElementById(divName).innerHTML); 
-        myWindow.document.close();
-        myWindow.focus();
-        myWindow.print();
-        myWindow.close();
-    }
+    
     // show error message
     function errorMsgRepeter(id, check, text){
         var flug1 = false;
@@ -433,69 +415,20 @@
         ajaxOnChange('{{ url('hr/setup/getSubSectionListBySectionID') }}', 'get', {area_id: area.val(), department_id: department.val(), section_id: $(this).val()}, subSection);
     });
 
-    //individual salary sheet
-    function individual() {
-        var form = $("#employeeWiseSalary");
-        var employee = $("#as_id").val();
-        var month = $("#emp-month").val();
-        
-        if(employee.length > 0 && month !== ''){
-            $('.app-loader').show()
-            $("#result-process-bar").show();
-            $('#setFlug').val(0);
-            processbar(0);
-            $.ajax({
-                type: "get",
-                url: '{{ url("hr/operation/employee-wise-salary-sheet")}}',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                },
-                data: form.serialize(), // serializes the form's elements.
-                success: function(response)
-                {
-                    if(response !== 'error'){
-                        setTimeout(() => {
-                            $('#setFlug').val(1); 
-                            processbar('success');
-                            $("#result-show").html(response);
-                            $('.app-loader').hide();
-                        }, 1000);
-                    }else{
-                        $('#setFlug').val(2); 
-                        $('.app-loader').hide();
-                        processbar('error');
-                    }
-                },
-                error: function (reject) {
-                    processbar('error');
-                    $('#setFlug').val(2); 
-                }
-            });
-        }else{
-            $("#result-process-bar").hide();
-            if(employee.length === 0){
-                $.notify("Please Select At Least One Employee", 'error');
-            }
-            if(month === null){
-                $.notify("Please Select Month", 'error');
-            }
-        }
-    }
+    
 
     //multiple salary sheet
     function multiple() 
     {
         var form = $("#unitWiseSalary");
-        var year = $('#bonusYear').val();
         var bonus_type = $("#bonusFor").val();
         
-        disburseSheet(form,year,bonus_type);
+        disburseSheet(form,bonus_type);
     }
 
     function individual() 
     {
         var form = $("#employeeWiseSalary");
-        var year = $('#bonusYearSingle').val();
         var bonus_type = $("#bonusForSngle").val();
         
         
@@ -506,9 +439,9 @@
         }
     }
 
-    function disburseSheet(form, year, bonus_type)
+    function disburseSheet(form,  bonus_type)
     {
-        if(year !== '' && bonus_type !== ''){
+        if( bonus_type !== ''){
             $(".app-loader").show();
             $.ajax({
                 type: "get",
@@ -534,56 +467,12 @@
             });
         }else{
             $("#result-process-bar").hide();
-            $.notify("Select Bonus tpe and year", 'error');
+            $.notify("Select Bonus type ", 'error');
             
         }
     }
 
-    var incValue = 1;
     
-    function processbar(percentage) {
-        var setFlug = $('#setFlug').val();
-        if(parseInt(setFlug) === 1){
-            var percentageVaule = 99;
-            $('#progress-bar').html(percentageVaule+'%');
-            $('#progress-bar').css({width: percentageVaule+'%'});
-            $('#progress-bar').attr('aria-valuenow', percentageVaule+'%');
-            setTimeout(() => {
-                percentageVaule = 0;
-                percentage = 0;
-                $('#progress-bar').html(percentageVaule+'%');
-                $('#progress-bar').css({width: percentageVaule+'%'});
-                $('#progress-bar').attr('aria-valuenow', percentageVaule+'%');
-                //$("#result-process-bar").css('display', 'none');
-            }, 1000);
-        }else if(parseInt(setFlug) === 2){
-            console.log('error');
-        }else{
-            // set percentage in progress bar
-            percentage = parseFloat(parseFloat(percentage) + parseFloat(incValue)).toFixed(2);
-            $('#progress-bar').html(percentage+'%');
-            $('#progress-bar').css({width: percentage+'%'});
-            $('#progress-bar').attr('aria-valuenow', percentage+'%');
-            if(percentage < 40 ){
-                incValue = 1;
-                // processbar(percentage);
-            }else if(percentage < 60){
-                incValue = 0.8;
-            }else if(percentage < 75){
-                incValue = 0.5;
-            }else if(percentage < 85){
-                incValue = 0.2;
-            }else if(percentage < 98){
-                incValue = 0.1;
-            }else{
-                return false;
-            }
-            setTimeout(() => {
-                processbar(percentage);
-            }, 1000);
-        }
-
-    }
     
     
     

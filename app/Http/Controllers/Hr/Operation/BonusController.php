@@ -577,12 +577,14 @@ class BonusController extends Controller
     public function disburse(Request $request)
     {
     	try {
-            $data['year'] = DB::table('hr_bonus_rule as br')
-            			->whereIn('br.unit_id',auth()->user()->unit_permissions())
-            			->distinct()
-            			->pluck('bonus_year','bonus_year');
 
-            $data['bonus_type'] = collect(bonus_type_by_id())->pluck('bonus_type_name', 'id')->toArray(); 
+            $data['bonus_type'] = DB::table('hr_bonus_rule AS r')
+                    ->select('r.id', DB::raw('CONCAT_WS(" - ",hr_unit_short_name, bonus_type_name, bonus_year) AS text'))
+                    ->join('hr_bonus_type AS b', 'r.bonus_type_id', 'b.id')
+                    ->join('hr_unit AS u', 'r.unit_id', 'u.hr_unit_id')
+                    ->whereIn('r.unit_id', auth()->user()->unit_permissions())
+                    ->pluck('text', 'id');
+
             $data['unit'] 		= unit_by_id(); 
 
             $data['unitList']      = collect(unit_by_id())
@@ -612,11 +614,9 @@ class BonusController extends Controller
 
     protected function getBonusList($input)
     {
-    	$rule_id = $this->getRuleId($input['bonus_type'],$input['bonus_year']);
-
     	return DB::table('hr_bonus_sheet as bns')
     			->select('bns.*','sub.*','e.as_name','e.as_gender','b.hr_bn_associate_name','e.as_doj','e.temp_id','e.as_oracle_code')
-    			->whereIn('bns.bonus_rule_id',$rule_id)
+    			->where('bns.bonus_rule_id',$input['bonus_type'])
     			->whereIn('bns.unit_id',auth()->user()->unit_permissions())
     			->whereIn('bns.location_id',auth()->user()->location_permissions())
     			->leftJoin('hr_as_basic_info as e','e.associate_id','bns.associate_id')
@@ -656,17 +656,40 @@ class BonusController extends Controller
 	            ->when(!empty($input['subSection']), function ($query) use($input){
 	               return $query->where('bns.subsection_id', $input['subSection']);
 	            })
+                ->when(!empty($input['employee_status']), function ($query) use($input){
+                   return $query->where('bns.emp_status', $input['employee_status']);
+                })
+                
+                ->when(!empty($input['pay_status']), function($query) use ($input){
+
+                    if($input['pay_status'] == 'cash'){
+                       return $query->where('bns.cash_payable', '>', 0);
+                    }else{
+                        return $query->where('bns.bank_name', $input['pay_status']);
+                    }
+
+
+                })
 	            ->orderBy('e.as_oracle_sl')
 	            ->orderBy('e.temp_id')
 	            ->get();
+
+
     }
 
     public function bonusSheet(Request $request)
     {
-    	
     	$input = $request->all();
     	$com['input'] 	  = $input;
-    	$com['bonusType'] = $this->getBonusType($input['bonus_type']);
+        $com['rules']     = DB::table('hr_bonus_rule as r')
+                            ->select('b.bonus_type_name','b.eligible_month', 'r.*')
+                            ->join('hr_bonus_type AS b', 'r.bonus_type_id', 'b.id')
+                            ->where('r.id', $input['bonus_type'])
+                            ->first();
+
+        $com['eligible_date'] =  Carbon::parse($com['rules']->cutoff_date)
+                                ->subMonths(3)->toDateString();
+
     	$bonusList =  $this->getBonusList($input);
     	$com['bonusList'] =  collect($bonusList)
     					->groupBy('unit_id',true)
