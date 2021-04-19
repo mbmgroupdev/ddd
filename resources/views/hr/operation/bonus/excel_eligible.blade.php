@@ -62,6 +62,7 @@
                 <th >Cash Amount</th>
                 <th >Bank Amount</th>
                 <th >Net Payable</th>
+                <th >Override</th>
             </tr>
         </thead>
         <tbody>
@@ -96,6 +97,7 @@
 	            	<td>{{$employee->cash_payable }}</td>
 	            	<td>{{$employee->bank_payable }}</td>
 	            	<td>{{$employee->net_payable }}</td>
+	            	<td>{{$employee->override }}</td>
             	</tr>
             	
             @endforeach

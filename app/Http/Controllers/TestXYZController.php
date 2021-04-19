@@ -22,7 +22,7 @@ class TestXYZController extends Controller
 {
     public function rfidUpdate()
     {
-    	return $this->employeeInfo();
+    	return $this->bonusUploadExcel();
         return "";
     	$data = array();
     	$getBasic = DB::table('hr_as_basic_info')
@@ -1676,5 +1676,196 @@ class TestXYZController extends Controller
             );
         }
         return (new FastExcel(collect($d)))->download('Employee History(CEW).xlsx');
+    }
+
+    public function bonusUploadExcel()
+    {
+        $getData = array(
+            '90A100367N' => 138490,
+            '97K027020E' => 50633,
+            '18J020019C' => 24205,
+            '99L027005E' => 33490,
+            '98A027034E' => 47419,
+            '96G027033E' => 29276,
+            '18L000003A' => 49205,
+            '16J020004C' => 48490,
+            '97K027024E' => 25990,
+            '93A027031E' => 38490,
+            '89E100353N' => 61348,
+            '18C000021A' => 10633,
+            '97G020005C' => 35276,
+            '90F000233A' => 19205,
+            '91F101871N' => 36490,
+            '12M027043E' => 27776,
+            '17K065013K' => 7776,
+            '88F100364N' => 57776,
+            '97M027028E' => 27133,
+            '92D100357N' => 56348,
+            '98H700019P' => 21133,
+            '13A027027E' => 20990,
+            '07K090008M' => 25490,
+            '90L100356N' => 50276,
+            '98B027008E' => 25276,
+            '98B000015A' => 14562,
+            '11D025001D' => 28490,
+            '12C025004D' => 28490,
+            '00C100365N' => 18419,
+            '92E075035L' => 18276,
+            '12L700036P' => 18205,
+            '03D500191O' => 12919,
+            '97F020003C' => 22776,
+            '89K101862N' => 22776,
+            '94C500151O' => 27633,
+            '97L100037N' => 14740,
+            '92D100361N' => 42062,
+            '99D000235A' => 12062,
+            '96E700032P' => 13919,
+            '18C100009N' => 14919,
+            '12L000078A' => 16348,
+            '97E000136A' => 11348,
+            '04G090006M' => 25276,
+            '01K100011N' => 19205,
+            '89L101861N' => 13098,
+            '09G100052N' => 13990,
+            '00J100033N' => 13990,
+            '05E000010A' => 10990,
+            '93G500159O' => 20633,
+            '92H101947N' => 18633,
+            '11L000018A' => 10633,
+            '97K090007M' => 30490,
+            '94G500185O' => 16348,
+            '99E100003N' => 30276,
+            '91G100047N' => 14776,
+            '18G075002L' => 27776,
+            '97K000142A' => 9562,
+            '98D500245O' => 14419,
+            '15L100039N' => 11348,
+            '18J090005M' => 24205,
+            '00M027030E' => 19205,
+            '05G500162O' => 14205,
+            '03F000144A' => 9205,
+            '98L500189O' => 14133,
+            '08C101858N' => 13990,
+            '16K000052A' => 6901,
+            '99E101863N' => 13883,
+            '03G100006N' => 18848,
+            '11B027029E' => 18848,
+            '92G100049N' => 15848,
+            '10L000031A' => 13848,
+            '98J500166O' => 15848,
+            '01H100360N' => 13776,
+            '00M027026E' => 18633,
+            '11C100063N' => 13562,
+            '90L500160O' => 68490,
+            '12D101942N' => 13490,
+            '06D075026L' => 15812,
+            '13G700013P' => 10276,
+            '08E500163O' => 13205,
+            '93F101865N' => 10205,
+            '00D101922N' => 23133,
+            '99D100051N' => 13133,
+            '16E020001C' => 8133,
+            '09G000402A' => 12776,
+            '10D075011L' => 15633,
+            '11F000139A' => 7562,
+            '05H500170O' => 15490,
+            '06H700027P' => 10419,
+            '98G065010K' => 17276,
+            '17G000037A' => 5187,
+            '98J000081A' => 22062,
+            '89L700029P' => 17062,
+            '11G027018E' => 11705,
+            '12L101936N' => 9709,
+            '97G065014K' => 16562,
+            '15D000033A' => 9562,
+            '18F000451A' => 6348,
+            '02G101316N' => 16348,
+            '13L700028P' => 11348,
+            '18G100370N' => 36348,
+            '89H101307N' => 26348,
+            '10K075006L' => 21205,
+            '99G100333N' => 25990,
+            '05G500173O' => 15991,
+            '98G101924N' => 10990,
+            '96E100030N' => 13705,
+            '12J020012C' => 25633,
+            '10L000030A' => 10633,
+            '11L000049A' => 10633,
+            '02G075032L' => 15348,
+            '96E500154O' => 25348,
+            '08E090002M' => 20276,
+            '18D100008N' => 9919,
+            '06E500188O' => 14919,
+            '17J000023A' => 9919,
+            '18J090003M' => 20633,
+            '07L065015K' => 14633,
+            '12E101933N' => 9615,
+            '94H065002K' => 19562,
+            '12G700031P' => 9562,
+            '17J000012A' => 9562,
+            '16K000013A' => 9562,
+            '14M027009E' => 9562,
+            '11J700030P' => 9348,
+            '98C100372N' => 34240,
+            '18L500195O' => 24205,
+            '08F700020P' => 14205,
+            '18D100022N' => 9205,
+            '89E100032N' => 17205,
+            '00J075030L' => 14205,
+            '15H075008L' => 18848,
+            '04G700021P' => 13490,
+            '89L700007P' => 33133,
+            '10F020020C' => 12990,
+            '16C101948N' => 6776,
+            '08G106854N' => 103133
+        );
+    
+        $getId = array_keys($getData);
+        $getEmployee = DB::table('hr_as_basic_info AS b')
+        ->join('hr_benefits AS ben', 'b.associate_id', 'ben.ben_as_id')
+        ->whereIn('b.associate_id', $getId)
+        ->get();
+        $insert = [];
+        foreach ($getEmployee as $emp) {
+            $bonus_amount = $getData[$emp->associate_id]??0;
+            $from = '2021-05-14';
+            $month = Carbon::parse($emp->as_doj)->diffInMonths($from);
+            $bonus_month = $month > 12?12:$month;
+            $stamp = 10;
+            $netPayable = $bonus_amount - $stamp;
+            $insert[$emp->associate_id] = [
+                'unit_id' => $emp->as_unit_id,
+                'location_id' => $emp->as_location,
+                'bonus_rule_id' => 1,
+                'associate_id' => $emp->associate_id,
+                'bonus_amount' => $bonus_amount,
+                'type' => 'normal',
+                'gross_salary' => $emp->ben_current_salary,
+                'basic' => $emp->ben_basic,
+                'medical' => $emp->ben_medical,
+                'transport' => $emp->ben_transport,
+                'food' => $emp->ben_food,
+                'duration' => $bonus_month,
+                'stamp' => $stamp,
+                'pay_status' => 1,
+                'emp_status' => 1,
+                'net_payable' => $netPayable,
+                'cash_payable' => $netPayable,
+                'bank_payable' => 0,
+                'override' => 1,
+                'bank_name' => null,
+                'subsection_id' => $emp->as_subsection_id,
+                'designation_id' => $emp->as_designation_id,
+                'ot_status' => $emp->as_ot
+            ];
+        }
+        if(count($insert) > 0){
+            $chunk = collect($insert)->chunk(200);
+            foreach ($chunk as $key => $n) {        
+                DB::table('hr_bonus_sheet')->insertOrIgnore(collect($n)->toArray());
+            }
+        }
+
+        return 'success';
     }
 }

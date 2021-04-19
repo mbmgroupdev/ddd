@@ -11,12 +11,21 @@ class BonusRule extends Model
 
     protected $guarded = ['id'];
 
-    public static function getNonApprovalBonusList()
+    public static function getBonusList()
     {
     	return DB::table('hr_bonus_rule')
-    	->whereNull('approved_at')
+        ->where('status', 1)
     	->orderBy('id', 'desc')
     	->get();
+    }
+
+    public static function getNonApprovalBonusList()
+    {
+        return DB::table('hr_bonus_rule')
+        ->whereNull('approved_at')
+        ->where('status', 1)
+        ->orderBy('id', 'desc')
+        ->get();
     }
 
     public static function getApprovalGroupBonusList()
@@ -27,6 +36,7 @@ class BonusRule extends Model
 		->whereIn('r.unit_id', auth()->user()->unit_permissions())
     	->whereNotNull('r.approved_at')
     	->orderBy('r.id', 'desc')
+        ->where('r.status', 1)
     	->groupBy('text')
     	->get();
     }
@@ -38,6 +48,7 @@ class BonusRule extends Model
 		->join('hr_bonus_type AS b', 'r.bonus_type_id', 'b.id')
 		->whereIn('r.unit_id', auth()->user()->unit_permissions())
     	->orderBy('r.id', 'desc')
+        ->where('r.status', 1)
     	->groupBy('text')
     	->get();
     }
