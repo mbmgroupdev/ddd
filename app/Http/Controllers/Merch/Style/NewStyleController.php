@@ -62,14 +62,14 @@ class NewStyleController extends Controller
   public function fetchWashGroup(Request $request)
   {
     $washCategoryList = WashCategory::get();
-    $data = '<div class="col-sm-12"><div class="checkbox">';
+    $data = '<div class="col-sm-12 mb-3"><div class="checkbox"><div class="row">';
     if($washCategoryList) {
       if(count($washCategoryList) > 0) {
         foreach ($washCategoryList as $key => $value) {
-          $data.= "<label class='col-sm-2' style='padding:0px;'>
+          $data.= "<label class='col-sm-3' style='padding:0px;'>
           <span class='lbl'> ".$value->category_name."</span>";
           if(count($value->mr_wash_type) > 0) {
-            $data .= '<ul>';
+            $data .= '<ul class="pl-2">';
             foreach($value->mr_wash_type as $k=>$wash) {
               $checked = '';
               if(!empty($request->checkedWash)) {
@@ -90,7 +90,7 @@ class NewStyleController extends Controller
       } else {
           $data .= '<div class="row"><h4 class="center" style="padding: 15px;">No Wash Group Found</h4></div>';
       }
-      $data.="</div></div>";
+      $data.="</div></div></div>";
     } else {
       $data .= '<div class="row"><h4 class="center" style="padding: 15px;">No Wash Group Found</h4></div>';
     }
@@ -390,6 +390,7 @@ class NewStyleController extends Controller
       }
 
       $data->stl_type         = $request->stl_order_type;
+      $data->unit_id          = auth()->user()->unit_permissions()[0];
       $data->mr_buyer_b_id    = $request->b_id;
       $data->prd_type_id      = $request->prd_type_id;
       $data->stl_product_name = $this->quoteReplaceHtmlEntry($request->stl_product_name);
@@ -486,19 +487,10 @@ class NewStyleController extends Controller
           $this->logFileWrite("Style Wash Inserted", DB::getPdo()->lastInsertId());
         }
 
-        //------------store history--------------
-        // StyleHistory::insert([
-        //  "stl_id" => $stl_id,
-        //  "stl_history_desc" => "Create",
-        //  "stl_history_ip"   => $request->ip(),
-        //  "stl_history_mac"  => $this->GetMAC(),
-        //  "stl_history_userid" => auth()->user()->associate_id,
-        // ]);
-        //---------------------------------------
 
         DB::commit();
         toastr()->success("Style Successfuly Created");
-        return redirect('merch/style/style_new_edit/'.$stl_id);
+        return redirect('merch/style/style_list');
       } else {
         toastr()->error("Something Wrong, Please try again");
         return back()->withInput();
@@ -1182,7 +1174,7 @@ class NewStyleController extends Controller
       $this->logFileWrite("Style and Style related data Updated", $request->style_id );
       toastr()->success('Style Update Successfuly');
       DB::commit();
-      return redirect('merch/style/style_new_edit/'.$request->style_id)->with('success', 'Updated Successful.');
+      return back()->with('success', 'Updated Successful.');
       // return back()->with('success', 'Updated Successful.');
     } catch (\Exception $e) {
       DB::rollback();

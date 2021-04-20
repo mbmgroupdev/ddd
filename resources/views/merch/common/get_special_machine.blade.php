@@ -68,7 +68,7 @@
 	@php $spSelectedMachine = $spSelectedMachine??[];  @endphp
 	@foreach($machineList as $key => $machine)
   	<li>
-    	<input type="checkbox" id="check-{{$machine->spmachine_id}}" name="operations[]"  data-img-src="{{asset($machine->image)}}" data-name="{{$machine->spmachine_name}}" value="{{$machine->spmachine_id}}" @if(in_array($machine->spmachine_id, $spSelectedMachine)) checked @endif/>
+    	<input type="checkbox" id="check-{{$machine->spmachine_id}}" name="sp_machine_id[]"  data-img-src="{{asset($machine->image)}}" data-name="{{$machine->spmachine_name}}" value="{{$machine->spmachine_id}}" @if(in_array($machine->spmachine_id, $spSelectedMachine)) checked @endif/>
     	<label for="check-{{$machine->spmachine_id}}">
     		<img src="{{asset($machine->image)}}" /><br>
     		<span>{{$machine->spmachine_name}}</span>

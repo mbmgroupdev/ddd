@@ -94,7 +94,7 @@ class StyleController extends Controller
 	    $selectedOp = collect($operationList)->pluck('opr_id')->toArray();
 
 	    //Operation List Show in Modal
-	    $operationList = Operation::get();
+	     $operationList = Operation::get();
     
       	$operationData = view('merch.common.get_operation', compact('operationList','selectedOp'))->render();
 
@@ -104,7 +104,7 @@ class StyleController extends Controller
       							->pluck('spmachine_id')
       							->toArray();
 
-      	$operationData = view('merch.common.get_special_machine', compact('machineList','spSelectedMachine'))->render();
+      	$spSelectedMachineData = view('merch.common.get_special_machine', compact('machineList','spSelectedMachine'))->render();
 
 
 
@@ -127,12 +127,7 @@ class StyleController extends Controller
 	                        ])
 	                        ->get();
       $tr_end1           = 0;
-      $selectedWahsData .= '<table class="table" style="margin-top: 30px;">';
-      $selectedWahsData .= '<thead>';
-      $selectedWahsData .= '<tr>';
-      $selectedWahsData .= '<td colspan="3" class="text-center">Wash</td>';
-      $selectedWahsData .= '</tr>';
-      $selectedWahsData .= '</thead>';
+      $selectedWahsData .= '<table class="table">';
       $selectedWahsData .= '<tbody>';
       // dd($selectedWashes);
       foreach ($selectedWashes as $k=>$selW) {
@@ -142,7 +137,7 @@ class StyleController extends Controller
         }
 
         $selectedWahsData .= '<td style="border-bottom: 1px solid lightgray;">'.$selW->wash_name.'</td>';
-        $selectedWahsData .= '<input type="hidden" name="wash[]" value="'.$selW->mr_wash_type_id.'"></input>';
+        $selectedWahsData .= '<input class="washType" type="hidden" name="wash[]" value="'.$selW->mr_wash_type_id.'"></input>';
 
         if($tr_end1 == 3 || $tr_end1 == 6 || $tr_end1 == 9) {
           $selectedWahsData .= '</tr>';
@@ -297,6 +292,7 @@ class StyleController extends Controller
       'productType',
       'operationList',
       'machineList',
+      'spSelectedMachine',
       'garmentsType',
       'sizegroupList',
       'sampleType',
@@ -311,6 +307,7 @@ class StyleController extends Controller
       'stlImageGallery',
       'operationData',
       'selectedOpData',
+      'spSelectedMachineData',
       'washData',
       'selectedWahsData',
       'sizeGroupDatatoShow',
