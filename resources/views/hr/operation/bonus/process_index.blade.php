@@ -40,18 +40,20 @@
                                     <li class="@if($bonus->approved_at != null) text-white @endif"> Bonus Date : {{ $bonus->cutoff_date }}</li>
                                 </ul>
                               </div>
-                             @if($bonus->approved_at != null)
-                              <p>Authorized by <br>
-                                   &nbsp; &nbsp; -  {{ $getUser[$bonus->approved_by]->name?? ''}}
-                              </p>
-                               @if(auth()->user()->can('Bonus Sheet'))
-                               <a href='{{ url("hr/payroll/bonus-disburse")}}' class="btn btn-dark mt-2">Get Disburse</a>
-                               @endif
-                             @else
-                               @if(auth()->user()->can('Bonus Approval'))
-                               <a href='{{ url("hr/operation/bonus-sheet-process-for-approval?bonus_sheet=$bonus->id")}}' class="btn btn-primary mt-5">Get Process</a>
+                              @if($bonus->approved_at != null)
+                                <p>Authorized by <br>
+                                     &nbsp; &nbsp; -  {{ $getUser[$bonus->approved_by]->name?? ''}}
+                                </p>
+                                @if(auth()->user()->can('Bonus Sheet'))
+                                <a href='{{ url("hr/payroll/bonus-disburse")}}' class="btn btn-dark mt-2"Get Disburse</a>
                                 @endif
-                             @endif
+                              @else
+                                @if(auth()->user()->can('Bonus Approval'))
+                                <a href='{{ url("hr/operation/bonus-sheet-process-for-approval?bonus_sheet=$bonus->id")}}' class="btn btn-primary mt-5">Get Process</a>
+                                @else
+                                <a class="btn btn-primary mt-5">Pending for Approval</a>
+                                @endif
+                              @endif
                           </div>
                       </div>
                   </div>
