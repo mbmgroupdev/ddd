@@ -1,3 +1,21 @@
+2021-04-21 03:48:02 "20F025016D" Style and Style related data Updated 3
+2021-04-21 03:48:02 "20F025016D" Style Size Gruop Created 13
+2021-04-21 03:47:48 "20F025016D" Style and Style related data Updated 3
+2021-04-21 03:47:48 "20F025016D" Style Size Gruop Created 12
+2021-04-21 03:47:37 "20F025016D" Style and Style related data Updated 3
+2021-04-21 03:47:37 "20F025016D" Style Size Gruop Created 11
+2021-04-21 03:47:26 "20F025016D" Style and Style related data Updated 3
+2021-04-21 03:47:26 "20F025016D" Style Size Gruop Created 10
+2021-04-21 03:47:10 "20F025016D" Style and Style related data Updated 3
+2021-04-21 03:47:10 "20F025016D" Style Size Gruop Created 9
+2021-04-21 03:47:04 "20F025016D" Style and Style related data Updated 3
+2021-04-21 03:47:04 "20F025016D" Style Size Gruop Created 8
+2021-04-21 03:46:26 "20F025016D" Style and Style related data Updated 3
+2021-04-21 03:46:26 "20F025016D" Style Size Gruop Created 7
+2021-04-21 02:16:21 "20F025016D" Style Wash Inserted 2
+2021-04-21 02:16:21 "20F025016D" Style Wash Inserted 1
+2021-04-21 02:16:21 "20F025016D" Style Size Gruop Created 6
+2021-04-21 02:16:20 "20F025016D" New Style Saved 3
 2021-04-15 08:28:18 "20F025017D" User information updated 41
 2021-04-14 12:37:24 "20F025017D" Bonus Type Updated Successfully 
 2021-04-14 12:27:29 "20F025017D" Bonus Type Deleted 4

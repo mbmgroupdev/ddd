@@ -42,5 +42,5 @@
             <h4 class="center" style="padding: 15px;">No Size Group Found</h4>
         </div>
     @endif
-    <button type="button" id="sizeGroupModalDone" class="btn btn-primary btn-sm">Done</button>
+    <button type="button" id="sizeGroupModalDone" class="btn btn-success btn-sm">Done</button>
 </div>
