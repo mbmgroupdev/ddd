@@ -151,10 +151,11 @@
 
                                         </div>
                                         <div class="form-group">
-                                            <button class="btn btn-primary" type="submit">
-                                                Create  &nbsp;
+                                            <button style="width: 100px;" class="btn btn-success" type="submit">
+                                                Save  &nbsp;
                                             </button>
                                         </div>
+                                        
 
                                     </div>
                                     <div class="col-sm-6">
@@ -189,15 +190,11 @@
                                         </div>
                                         
                                         
+                                        
                                     </div>
                                     <div class="col-sm-12">
-                                        <div class="form-group " >
-                                            <button type="button" class="btn btn-primary btn-sm"  data-toggle="modal" id="sizeGroupModalId" data-target="#sizeGroupModal" style="border-radius: 5px;">Select Size Group</button>
-                                            @hasanyrole("Super Admin|merchandiser")
-                                                <a id="size-group-buyer" href="{{ url('/merch/setup/productsize?buyer=&&p_type=')}}" target="_blank" class="addart btn btn-sm btn-info" ><i class="fa fa-plus"></i></a>
-                                            @endhasanyrole
-                                        </div>
-                                        <div  id="show_selected_size_group" ></div>
+                                        
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -217,7 +214,7 @@
                                 <div class="core-selecting-area">
                                     <div class="form-group">
                                         <button type="button" class="btn btn-primary btn-sm" id="operationModalId" data-toggle="modal" data-target="#operationModal" style="width:145px;border-radius: 5px;">Select Operation</button>
-                                        <div  id="show_selected_operations" >
+                                        <div  id="show_selected_operations" class="mb-3" >
                                         </div>
                                     </div>
                                     <div class="form-group has-float-label  wash" style="display:none;">
@@ -226,12 +223,20 @@
                                             <a href="{{ url('merch/setup/wash_type') }}" class="btn btn-sm btn-info" target="_blank"><i class="fa fa-plus"></i></a>
                                         @endhasanyrole
                                     </div>
-                                    <div  id="show_selected_wash_type"></div>
+                                    <div  id="show_selected_wash_type" class="mb-3"></div>
 
-                                    <div class="form-group ">
+                                    <div class="form-group mb-3">
                                         <button type="button" class="btn btn-primary btn-sm" id="specialMachineModalId" data-toggle="modal" data-target="#specialMachineModal" style="width:145px;border-radius: 5px;">Special Machine</button>
-                                        <div  id="show_selected_machines" ></div>
                                     </div>
+                                    <div  id="show_selected_machines" class="mb-3"></div>
+                                    <div class="form-group " >
+                                            <button type="button" class="btn btn-primary btn-sm"  data-toggle="modal" id="sizeGroupModalId" data-target="#sizeGroupModal" style="border-radius: 5px;">Select Size Group</button>
+                                            @hasanyrole("Super Admin|merchandiser")
+                                                <a id="size-group-buyer" href="{{ url('/merch/setup/productsize?buyer=&&p_type=')}}" target="_blank" class="addart btn btn-sm btn-info" ><i class="fa fa-plus"></i></a>
+                                            @endhasanyrole
+                                        </div>
+                                        <div  id="show_selected_size_group" ></div>
+                                    
 
                                     
                                 </div>
@@ -574,17 +579,7 @@ $(document).ready(function()
     });
 
     $('#specialMachineModalId').on('click', function() {
-      setTimeout(function() {
-          $('input[name="machine_id[]"]').each(function(){
-           var selectedmachine = $(this).val();
-           $('input[name="sp_machine_id[]"]').each(function(){
-             if (selectedmachine == $(this).val())
-             {
-                $(this).prop("checked",true) ;
-            }
-        });
-       });
-      }, 1000);
+      
         //if(loadedop) return;
         $.ajax({
             url : "{{ url('merch/style/fetchspecialmechines') }}",
@@ -600,6 +595,17 @@ $(document).ready(function()
             }
         });
         loadedop = true;
+        setTimeout(function() {
+          $('input[name="machine_id[]"]').each(function(){
+           var selectedmachine = $(this).val();
+           $('input[name="sp_machine_id[]"]').each(function(){
+             if (selectedmachine == $(this).val())
+             {
+                $(this).prop("checked",true) ;
+            }
+        });
+       });
+      }, 1000);
     });
     // Size Group Add through ajax
     $('#new_size_group').on('show.bs.modal', function (e) {
@@ -846,6 +852,7 @@ $(document).ready(function()
         data += '</tbody>';
         data += '</table>';
         wmodal.modal('hide');
+        console.log(data);
         $("#show_selected_wash_type").html(data);
     });
 
@@ -875,27 +882,16 @@ $(document).ready(function()
     $("body").on("click", "#specialMachineModalDone", function(e) {
         var data="";
         var tr_end = 0;
-        data += '<table class="table table-bordered" style="margin-bottom:0px;">';
-        data += '<tbody>';
+        data += '<div class="row " style="padding-left: 15px;" >';
         smodal.find('.modal-body input[type=checkbox]').each(function(i,v) {
-
+           
             if ($(this).prop("checked") == true) {
-                if((i/10) % 1 === 0) {
-                    data += '<tr>';
-                    tr_end = i+9;
-                }
-                //console.log();
-                data += '<td style="border-bottom: 1px solid lightgray;">'+$(this).next().text()+'</td>';
-                data+= '<input type="hidden" name="machine_id[]" value="'+$(this).val()+'"></input>';
-                data+= '<input type="hidden" name="opr_type[]" value="'+$(this).data('content-type')+'"></input>';
-                if(tr_end == 10) {
-                    data += '</tr>';
-                }
-                // data+= '<button type="button" class="btn btn-sm" style="margin:2px; padding:2px;">'+$(this).next().text()+'</button>';
+                data += '<div class="col-sm-2 text-center pr-2 pl-0"><div class="opr-item"><img style="width:45px;" src="'+$(this).data('img-src')+'"><br><span>'+$(this).data('name')+'</span></div>';
+                data+= '<input type="hidden" name="machine_id[]" value="'+$(this).val()+'">';
+                data+= '<input type="hidden" name="opr_type[]" value="'+$(this).data('content-type')+'"></div>';
             }
         });
-        data += '</tbody>';
-        data += '</table>';
+        data += '</div>';
         smodal.modal('hide');
         $("#show_selected_machines").html(data);
     });

@@ -136,10 +136,10 @@
 
                                         <div class="form-group has-float-label">
                                             <label for="se_id"> Season  </label>
-
+                                          
                                               <div class="row">
                                                   <div class="col-sm-9">
-                                                    {{ Form::select('se_id', $season, $style->mr_season_se_id, ['placeholder'=>'Please Select season', 'id'=>'se_id', 'class'=> 'form-control col-xs-12 ', 'required' => 'required']) }}
+                                                    {{ Form::select('se_id', $season, $style->mr_season_se_id, ['placeholder'=>'Please Select season', 'id'=>'se_id', 'class'=> 'form-control  ', 'required' => 'required']) }}
                                                 </div>
 
                                                 <div class="col-sm-3 pl-0">
@@ -155,8 +155,8 @@
 
                                         </div>
                                         <div class="form-group">
-                                            <button class="btn btn-primary" type="submit">
-                                                Create  &nbsp;
+                                            <button class="btn btn-success" type="submit">
+                                                Update  &nbsp;
                                             </button>
                                         </div>
 
@@ -241,19 +241,32 @@
                                     <div class="form-group">
                                         <button type="button" class="btn btn-primary btn-sm" id="operationModalId" data-toggle="modal" data-target="#operationModal" style="width:145px;border-radius: 5px;">Select Operation</button>
                                         <div  id="show_selected_operations" >
+                                            {!!$selectedOpData!!}
                                         </div>
                                     </div>
-                                    <div class="form-group has-float-label  wash" style="display:none;">
+                                    <div class="form-group has-float-label  wash" @if($selectedWahsData == null)style="display:none;" @endif>
                                         <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" id="washTypeModalId" data-target="#washTypeSelectModal" style="border-radius: 5px;">Select Wash Type</button>
                                         @hasanyrole("Super Admin|merchandiser")
                                             <a href="{{ url('merch/setup/wash_type') }}" class="btn btn-sm btn-info" target="_blank"><i class="fa fa-plus"></i></a>
                                         @endhasanyrole
                                     </div>
-                                    <div  id="show_selected_wash_type"></div>
+                                    <div  id="show_selected_wash_type">
+                                        {!! $selectedWahsData !!}
+                                    </div>
 
                                     <div class="form-group ">
                                         <button type="button" class="btn btn-primary btn-sm" id="specialMachineModalId" data-toggle="modal" data-target="#specialMachineModal" style="width:145px;border-radius: 5px;">Special Machine</button>
-                                        <div  id="show_selected_machines" ></div>
+                                        <div  id="show_selected_machines" >
+                                            <div class="row " style="padding-left: 15px;" >
+                                                @foreach($machineList as $k => $v)
+                                                    @if(in_array($v->spmachine_id, $spSelectedMachine))
+                                                <div class="col-sm-2 text-center pr-2 pl-0"><div class="opr-item"><img style="width:45px;" src="{{asset($v->image)}}"><br><span>{{$v->spmachine_name}}</span></div>
+                                                        <input type="hidden" name="machine_id[]" value="{{$v->spmachine_id}}"></div>
+                                                    @endif
+                                                @endforeach
+                                        </div>
+                                            
+                                        </div>
                                     </div>
 
                                     <div class="form-group " >
@@ -262,7 +275,9 @@
                                             <a id="size-group-buyer" href="{{ url('/merch/setup/productsize?buyer=&&p_type=')}}" target="_blank" class="addart btn btn-sm btn-info" ><i class="fa fa-plus"></i></a>
                                         @endhasanyrole
                                     </div>
-                                    <div  id="show_selected_size_group" ></div>
+                                    <div  id="show_selected_size_group" >
+                                        {!! $sizeGroupDatatoShow !!}
+                                    </div>
                                 </div>
                             </div>
                             
@@ -439,7 +454,9 @@
         <h4 class="modal-title">Wash Type</h4>
     </div>
     <div class="modal-body" style="padding:0 15px">
-        <div class="row" id="washTypeModalBody" style="padding: 20px;"></div>
+        <div class="row" id="washTypeModalBody" style="padding: 20px;">
+            {!!$washData!!}
+        </div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
@@ -704,34 +721,7 @@ $(document).ready(function()
         });
     });
 
-    // Load Size Group Modal Data on Buyer Select
-
-
-    var b_id = $('#b_id :selected').val();
-
-    if(b_id != ''){
-         // Action Element list
-         $.ajax({
-           url : "{{ url('merch/style/get_sz_grp_modal_data') }}",
-           type: 'get',
-           data: {b_id: b_id},
-           success: function(data)
-            {
-                 $("#show_selected_operations").html(data.opData);
-            },
-            error: function()
-            {
-            }
-        });
-         $("#new_session_btn_id").show();
-     } else {
-         // $("#addListToModal").html("<span>No Size group, Please Select Buyer</span>");
-         $("#new_session_btn_id").hide();
-         $('#se_id')
-         .empty()
-         .append('<option value="" selected="selected">Please Select Season</option>');
-         $("#show_selected_size_group").html("");
-     }
+   
      $("#b_id").on("change",function(){
 
         $("#addListToModal").html("<span>No Size group, Please Select Buyer</span>");
@@ -751,8 +741,7 @@ $(document).ready(function()
                 },
                 error: function()
                 {
-                   // $("#addListToModal").html("<span>No Size group, Please Select Buyer</span>");
-               }
+                }
            });
             $("#new_session_btn_id").show();
         } else {
@@ -903,14 +892,17 @@ $(document).ready(function()
     var smodal = $("#specialMachineModal");
     $("body").on("click", "#specialMachineModalDone", function(e) {
         var data="";
-        data += '<div class="row" style="padding-left: 15px;" >';
+        var tr_end = 0;
+        data += '<div class="row " style="padding-left: 15px;" >';
         smodal.find('.modal-body input[type=checkbox]').each(function(i,v) {
+           
             if ($(this).prop("checked") == true) {
-                data += '<div class="col-sm-3 text-center pr-2 pl-0"><div class="opr-item"><img style="width:60px;" src="'+$(this).data('img-src')+'"><br><span>'+$(this).data('name')+'</span></div>';
-                data+= '<input type="hidden" name="machine_id[]" value="'+$(this).val()+'"></div>';
+                data += '<div class="col-sm-2 text-center pr-2 pl-0"><div class="opr-item"><img style="width:45px;" src="'+$(this).data('img-src')+'"><br><span>'+$(this).data('name')+'</span></div>';
+                data+= '<input type="hidden" name="machine_id[]" value="'+$(this).val()+'">';
+                data+= '<input type="hidden" name="opr_type[]" value="'+$(this).data('content-type')+'"></div>';
             }
         });
-        data += '</div';
+        data += '</div>';
         smodal.modal('hide');
         $("#show_selected_machines").html(data);
     });
@@ -940,7 +932,7 @@ $(document).ready(function()
            success: function(response)
            {
                action_element.html(response.samplelist);
-               action_season.html(response.selist);
+               //action_season.html(response.selist);
                action_size.html(response.sizelist);
            },
            error: function()

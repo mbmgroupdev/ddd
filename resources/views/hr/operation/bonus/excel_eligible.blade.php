@@ -38,7 +38,7 @@
             	@if($head != '')
             	<tr>
                     <th colspan="2">{{ $head }}</th>
-                    <th colspan="12">{{ $body }}</th>
+                    <th colspan="13">{{ $body }}</th>
                 </tr>
                 @endif
             
@@ -47,6 +47,7 @@
                 <th >Sl</th>
                 <th >Unit</th>
                 <th >Associate ID</th>
+                <th >Oracle ID</th>
                 <th >Name</th>
                 <th >Designation</th>
                 <th >Department</th>
@@ -78,6 +79,7 @@
 	            	
 	            	<td>{{ $unit[$employee->as_unit_id]['hr_unit_short_name']??'' }}</td>
 	            	<td>{{ $employee->associate_id }}</td>
+	            	<td>{{ $employee->as_oracle_code }}</td>
 	            	<td><b>{{ $employee->as_name }}</b></td>
 	            	<td>{{ $designation[$employee->as_designation_id]['hr_designation_name']??'' }}</td>
 	            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
