@@ -304,9 +304,9 @@
             </li>
             @endif
 
-            @if($user->can('Tiffin/Dinner') || $user->hasRole('Super Admin'))
-            <li class="@if($segment3 == 'tiffin-dinner') active @endif">
-               <a href="{{ url('hr/operation/tiffin-dinner') }}"><i class="las la-address-card"></i>Tiffin/Dinner Bill</a>
+            @if($user->can('Bill Announcement') || $user->hasRole('Super Admin'))
+            <li class="@if($segment3 == 'bill-announcement') active @endif">
+               <a href="{{ url('hr/operation/bill-announcement') }}"><i class="las la-address-card"></i>Bill Announcement</a>
             </li>
             @endif
            {{-- @if($user->can('Bonus Sheet') || $user->hasRole('Super Admin'))

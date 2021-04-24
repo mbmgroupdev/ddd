@@ -24,7 +24,7 @@ class TestXYZController extends Controller
 {
     public function rfidUpdate()
     {
-    	return $this->shiftAssigned();
+    	return $this->billEntry();
         return "";
     	$data = array();
     	$getBasic = DB::table('hr_as_basic_info')
@@ -358,35 +358,45 @@ class TestXYZController extends Controller
     	}
     	return ($ge);
     }
-    public function tiffinBillEntry()
+    public function billEntry()
     {
         $data = [];
-        $getEmployee = DB::table('hr_as_basic_info AS b')
-        ->select('b.as_id', 'm.in_date')
-        ->join('hr_attendance_mbm AS m', 'b.as_id', 'm.as_id')
-        ->where('m.in_date', '2021-03-12')
-        ->whereIn('b.as_unit_id', [1,4,5])
-        ->whereIn('b.as_id', $data)
+        $date = '2021-04-15';
+        // $getEmployee = DB::table('hr_as_basic_info AS b')
+        // ->select('b.as_id', 'm.in_date', 'm.out_time', 'm.hr_shift_code', 's.hr_shift_night_flag')
+        // ->join('hr_attendance_mbm AS m', 'b.as_id', 'm.as_id')
+        // ->join('hr_shift AS s', 'm.hr_shift_code', 's.hr_shift_code')
+        // ->where('m.in_date', $date)
+        // ->whereIn('b.as_unit_id', [1,4,5])
+        // ->where('s.hr_shift_night_flag',0)
+        // ->get();
+
+        $getTable = DB::table('hr_attendance_mbm AS m')
+        ->select('m.as_id', 'm.in_date', 'm.out_time', 'm.hr_shift_code', 's.hr_shift_night_flag')
+        ->join('hr_shift AS s', 'm.hr_shift_code', 's.hr_shift_code')
+        ->where('m.in_date', $date)
+        ->where('s.hr_shift_night_flag',0)
         ->get();
-        // dd($getEmployee);
-        $getBill = DB::table('hr_bill')
-            ->where('bill_date', '2021-03-12')
-            ->get()
-            ->keyBy('as_id');
+
         DB::beginTransaction();
+        $insert = [];
         try {
-            foreach ($getEmployee as $key => $value) {
-                Bills::updateOrCreate([
+            foreach ($getTable as $key => $value) {
+                $insert[$value->as_id] = [
                     'as_id' => $value->as_id,
-                    'bill_date' => '2021-03-12'
-                ],
-                [
-                    'bill_type' => ((isset($getBill[$value->as_id]) && $getBill[$value->as_id]->amount == 70)?2:1),
-                    'amount' => 70,
+                    'bill_date' => $date,
+                    'bill_type' => 4,
+                    'amount' => 30,
                     'pay_status' => 0
-                ]);
+                ];
             }
 
+            if(count($insert) > 0){
+                $chunk = collect($insert)->chunk(200);
+                foreach ($chunk as $key => $n) {        
+                    DB::table('hr_bill')->insertOrIgnore(collect($n)->toArray());
+                }
+            }
             DB::commit();
             return 'success';
         } catch (\Exception $e) {

@@ -1177,5 +1177,11 @@ function monthly_navbar($yearMonth){
     }
     return $months;
 }
+if(!function_exists('bill_type_by_id')){
+    function bill_type_by_id()
+    {
+        return ['1'=>'Tiffin','2'=>'Dinner', '3'=>'Lunch', '4'=>'Iftar'];
+    }
+}
 
 

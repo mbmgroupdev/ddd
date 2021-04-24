@@ -15,19 +15,22 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class BillOperationController extends Controller
 {
+    public function __construct()
+    {
+        ini_set('zlib.output_compression', 1);
+    }
     public function index()
     {
     	try {
-            $data['unitList']      = Unit::where('hr_unit_status', '1')
-                ->whereIn('hr_unit_id', auth()->user()->unit_permissions())
-                ->orderBy('hr_unit_name', 'desc')
-                ->pluck('hr_unit_name', 'hr_unit_id');
-            $data['locationList']  = Location::where('hr_location_status', '1')
-            ->whereIn('hr_location_id', auth()->user()->location_permissions())
-            ->orderBy('hr_location_name', 'desc')
-            ->pluck('hr_location_name', 'hr_location_id');
-            $data['areaList']      = Area::where('hr_area_status', '1')->pluck('hr_area_name', 'hr_area_id');
-            $data['departmentList'] = Department::where('hr_department_status', '1')->pluck('hr_department_name', 'hr_department_id');
+            $unit = unit_by_id();
+            $data['unitList'] = collect($unit)->pluck('hr_unit_name', 'hr_unit_id');
+            $location = location_by_id();
+            $data['locationList']  = collect($location)->pluck('hr_location_name', 'hr_location_id');
+            $area = area_by_id();
+            $data['areaList']      = collect($area)->pluck('hr_area_name', 'hr_area_id');
+            $department = department_by_id();
+            $data['departmentList'] = collect($department)->pluck('hr_department_name', 'hr_department_id');
+            $data['billType'] = bill_type_by_id();
             return view('hr.operation.bill.index', $data);
         } catch(\Exception $e) {
             return back()->with('error', $e->getMessage());
@@ -42,7 +45,7 @@ class BillOperationController extends Controller
     	$input['subSection'] = $input['subSection']??'';
         $input['area'] = $input['area']??'';
         $input['location'] = $input['location']??'';
-        ini_set('zlib.output_compression', 1);
+        
     	try {
             if($input['date_type'] == 'month'){
                 $input['from_date'] = $input['month_year'].'-01';
@@ -183,7 +186,6 @@ class BillOperationController extends Controller
     	if(count($input['pay_id']) == 0){
     		return 'warning';
     	}
-        ini_set('zlib.output_compression', 1);
     	try {
             if($input['date_type'] == 'month'){
                 $input['from_date'] = $input['month_year'].'-01';

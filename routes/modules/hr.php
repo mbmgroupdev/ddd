@@ -443,12 +443,12 @@ Route::get('hr/operation/unit-wise-pay-slip', 'Hr\Reports\PayslipController@unit
 //Raw Punch Data
 Route::get('hr/timeattendance/raw_punch', 'Hr\TimeAttendance\RawPunchController@rawPunch');
 
-// tiffin-dinner operation
-Route::get('hr/operation/tiffin-dinner', 'Hr\Operation\BillOperationController@index');
-Route::get('hr/operation/filter-wise-tiffin-dinner-bill-sheet', 'Hr\Operation\BillOperationController@filterWise');
-Route::post('hr/operation/review-tiffin-dinner-bill', 'Hr\Operation\BillOperationController@review');
-Route::post('hr/operation/pay-tiffin-dinner-bill', 'Hr\Operation\BillOperationController@pay');
-Route::get('hr/operation/pay-tiffin-dinner-bill-excel', 'Hr\Operation\BillOperationController@excel');
+// bill-announcement operation
+Route::get('hr/operation/bill-announcement', 'Hr\Operation\BillOperationController@index');
+Route::get('hr/operation/filter-wise-bill-announcement-sheet', 'Hr\Operation\BillOperationController@filterWise');
+Route::post('hr/operation/review-bill-announcement', 'Hr\Operation\BillOperationController@review');
+Route::post('hr/operation/pay-bill-announcement', 'Hr\Operation\BillOperationController@pay');
+Route::get('hr/operation/pay-bill-announcement-excel', 'Hr\Operation\BillOperationController@excel');
 
 // Bonus section
 Route::get('hr/payroll/bonus', 'Hr\Operation\BonusController@index');
