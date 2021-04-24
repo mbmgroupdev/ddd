@@ -334,7 +334,7 @@
                                     <tr>
                                         <td colspan="15" class="text-right" style="
                                         position: sticky;background: #fff;bottom: 0;z-index: 100;">
-                                            <input type="submit" name="" value="Proceed" class="btn btn-primary submission-button">
+                                            <button id="submission-button" type="button" class="btn btn-primary submission-button">Proceed</button>
                                         </td>
                                     </tr>
                                 </tfoot>

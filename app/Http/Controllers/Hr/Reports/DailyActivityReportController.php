@@ -261,6 +261,17 @@ class DailyActivityReportController extends Controller
                 return $this->getShiftEmployee($input,$request);
             }
 
+            $unit = unit_by_id();
+            $location = location_by_id();
+            $line = line_by_id();
+            $floor = floor_by_id();
+            $department = department_by_id();
+            $designation = designation_by_id();
+            $section = section_by_id();
+            $subSection = subSection_by_id();
+            $area = area_by_id();
+            $uniqueGroupEmp = [];
+
             $getEmployee = array();
             $data = array();
             $format = $request['report_group'];
@@ -385,15 +396,58 @@ class DailyActivityReportController extends Controller
                 $attData->leftjoin(DB::raw('(' . $employeeData_sql. ') AS emp'), function($join) use ($employeeData) {
                     $join->on('a.associate_id', '=', 'emp.associate_id')->addBinding($employeeData->getBindings());
                 });
-                $absentEmpA = $attData->pluck('emp.associate_id');
+                $getEmployee = $attData->get();
+                $absentEmpA = collect($getEmployee)->pluck('associate_id');
                 $day= date('j', strtotime($request['date']));
                 $month= date('m', strtotime($request['date']));
                 $year= date('Y', strtotime($request['date']));
+
                 $absentShift = DB::table('hr_shift_roaster')
                 ->where('shift_roaster_month', $month)
                 ->where('shift_roaster_year', $year)
                 ->whereIn('shift_roaster_associate_id', $absentEmpA)
                 ->pluck('day_'.$day, 'shift_roaster_associate_id');
+
+                // map with current shift
+                $getEmployee = collect($getEmployee)->map(function($q) use ($absentShift){
+                    if(isset($absentShift[$q->associate_id])){
+                        if($absentShift[$q->associate_id] != null){
+                            $q->as_shift_id = $absentShift[$q->associate_id];
+                        }
+                    }
+                    return $q;
+                });
+
+                $selshift = collect($getEmployee)
+                            ->unique('as_shift_id')
+                            ->pluck('as_shift_id')->toArray();
+
+                $input['filter_shift'] = $selshift;
+
+                // if selected shift
+                if(isset($request->filter_shift)){
+                    $input['filter_shift'] = $request->filter_shift;
+                    $getEmployee = collect($getEmployee)->filter(function($q) use ($input){
+                        return in_array($q->as_shift_id, $input['filter_shift']);
+                    })->values();
+
+                }
+
+                $totalEmployees = collect($getEmployee)->count();
+                //dd($input['report_format'], $format);
+                if($format != null && count($getEmployee) > 0){
+                    $uniqueGroupEmp = collect($getEmployee)->groupBy($request['report_group'],true);
+
+                }
+
+
+
+                 return view('hr.reports.daily_activity.attendance.absent_report', compact('format', 'getEmployee', 'input', 'totalEmployees', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area', 'absentShift', 'uniqueGroupEmp','selshift'));
+
+
+
+
+                // return absent data
             }elseif($input['report_type'] == 'leave'){
                 $attData->leftjoin(DB::raw('(' . $employeeData_sql. ') AS emp'), function($join) use ($employeeData) {
                     $join->on('l.leave_ass_id', '=', 'emp.associate_id')->addBinding($employeeData->getBindings());
@@ -492,6 +546,9 @@ class DailyActivityReportController extends Controller
                 $aMinutes = $avgMin == 0?0:($avgMin % 60);
                 $totalAvgHour = sprintf('%02d Hours, %02d Minutes', $aHours, $aMinutes);
             }
+
+           
+
             if($format != null && count($getEmployee) > 0 && $input['report_format'] == 0){
                 $getEmployeeArray = $getEmployee->toArray();
                 $formatBy = array_column($getEmployeeArray, $request['report_group']);
@@ -500,20 +557,7 @@ class DailyActivityReportController extends Controller
                     $uniqueGroups = ['all'];
                     // $format = '';
                 }
-            }
 
-            $unit = unit_by_id();
-            $location = location_by_id();
-            $line = line_by_id();
-            $floor = floor_by_id();
-            $department = department_by_id();
-            $designation = designation_by_id();
-            $section = section_by_id();
-            $subSection = subSection_by_id();
-            $area = area_by_id();
-            $uniqueGroupEmp = [];
-
-            if($format != null && count($getEmployee) > 0 && $input['report_format'] == 0){
                 if($request['report_group'] == 'ot_hour'){
                     $uniqueGroupEmp = collect($getEmployee)->groupBy(function ($item) {
                             return (string) $item->ot_hour;
@@ -528,8 +572,6 @@ class DailyActivityReportController extends Controller
                 return view('hr.reports.daily_activity.attendance.ot_report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees','totalValue', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area', 'uniqueGroupEmp'));
             }elseif($input['report_type'] == 'in_out_missing'){
                 return view('hr.reports.daily_activity.attendance.in_out_mis_report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area', 'uniqueGroupEmp'));
-            }elseif($input['report_type'] == 'absent'){
-                return view('hr.reports.daily_activity.attendance.absent_report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area', 'absentShift', 'uniqueGroupEmp'));
             }elseif($input['report_type'] == 'employee'){
                 return view('hr.reports.daily_activity.attendance.employee', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalEmployees', 'unit', 'location', 'line', 'floor', 'department', 'designation', 'section', 'subSection', 'area', 'uniqueGroupEmp'));
             }elseif($input['report_type'] == 'leave'){

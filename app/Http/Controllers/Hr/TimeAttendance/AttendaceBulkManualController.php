@@ -658,55 +658,49 @@ class AttendaceBulkManualController extends Controller
           $info->section = $getSection[$info->as_section_id]['hr_section_name']??'';
           $info->designation = $getDesignation[$info->as_designation_id]['hr_designation_name']??'';
 
-          $date       = ($year."-".$month."-"."01");
-          $startDay   = date('Y-m-d', strtotime($date));
-          $endDay     = date('Y-m-t', strtotime($date));
-          $toDay      = date('Y-m-d');
-          //If end date is after current date then end day will be today
-          if($endDay>$toDay) {
-            $endDay= $toDay;
-          }
           $tableName= get_att_table($info->as_unit_id).' AS a';
-          $associate= $info->associate_id;
-          $totalDays  = (date('d', strtotime($endDay))-date('d', strtotime($startDay)));
-          $total_attends  = 0; $absent = 0; $x=1; $total_ot = 0;
-          $attendance=[];
-          // join exist this month
-          $iEx = 0;
-          $joinExist = false;
-          if($info->as_doj != null) {
-            $yearE = date('Y', strtotime($info->as_doj ));
-            $monthE = date('m', strtotime($info->as_doj ));
-            $dateE = date('d', strtotime($info->as_doj ));
-            if($year == $yearE && $month == $monthE) {
-              $iEx = ((int) $dateE )-1;
-              $joinExist = true;
-              $x = $dateE;
-            }
-          }
-          
-          $leftExist = false;
-          if($info->as_status_date != null) {
-            list($yearL,$monthL,$dateL) = explode('-',$info->as_status_date);
-            if($year == $yearL && $month == $monthL) {
-               if($info->as_status == 1){
-                  // if rejoin
-                  $x = $dateL;
-                  //$totalDays = ($totalDays+1) - $x ;
-                }
 
-              // left,terminate,resign, suspend, delete
-              if(in_array($info->as_status,[0,2,3,4,5])!=false) {
-                  if($joinExist == false) {
-                    $iEx = 1;
-                  } else {
-                    $iEx = $iEx+1;
-                  }
-                  $leftExist = true;
-                  $totalDays = $dateL;
-              }
+          $date       = ($year."-".$month."-"."01");
+            $startDay   = date('Y-m-d', strtotime($date));
+            $endDay     = date('Y-m-t', strtotime($date));
+            $toDay      = date('Y-m-d');
+
+            $endDay = $endDay > $toDay?$toDay:$endDay;
+
+            $associate= $info->associate_id;
+
+            
+            $total_attends  = 0; $absent = 0; $total_ot = 0;$iEx = 0;
+            $attendance=[];
+            // join exist this month
+            $joinExist = false;
+            if($info->as_doj != null) {
+                list($yearE,$monthE,$dateE) = explode('-',$info->as_doj);
+                if($year == $yearE && $month == $monthE) {
+                    $joinExist = true;
+                    $startDay = $info->as_doj;
+                }
             }
-          }
+
+            $leftExist = false;
+            if($info->as_status_date != null) {
+                list($yearL,$monthL,$dateL) = explode('-',$info->as_status_date);
+                if($year == $yearL && $month == $monthL) {
+                    // if rejoin
+                    if($info->as_status == 1){
+                        $startDay = $info->as_status_date;
+                    }
+
+                    // left,terminate,resign, suspend, delete
+                    if(in_array($info->as_status,[0,2,3,4,5]) != false) {      
+                        $leftExist = true;
+                        $endDay = $info->as_status_date;
+                    }
+                }
+            }
+
+            $totalDays  = date('j', strtotime($endDay));
+            $iEx        = date('j', strtotime($startDay));
 
           $floor = $getFloor[$info->as_floor_id]['hr_floor_name']??'';
           $line = $getLine[$info->as_line_id]['hr_line_name']??'';
@@ -743,12 +737,11 @@ class AttendaceBulkManualController extends Controller
             }
        
           for($i=$iEx; $i<=$totalDays; $i++) {
-            $date       = ($year."-".$month."-".$x);
+            $date       = ($year."-".$month."-".$i);
             $thisDay   = date('Y-m-d', strtotime($date));
 
             //shift in time
-            $shift_day= "day_".(int)$x;
-            $x++;
+            $shift_day= "day_".(int)$i;
             //get shift code from shift roaster
 
             $shift_code = DB::table('hr_shift_roaster')

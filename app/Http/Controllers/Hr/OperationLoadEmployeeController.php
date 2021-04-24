@@ -26,6 +26,8 @@ class OperationLoadEmployeeController extends Controller
     		->where('emp.as_status', 1)
     		->where('emp.as_unit_id', $input['unit'])
     		->whereNotNull('emp.as_shift_id')
+            ->whereIn('emp.as_unit_id', auth()->user()->unit_permissions())
+            ->whereIn('emp.as_location', auth()->user()->location_permissions())
     		->when(!empty($input['area']), function ($query) use($input){
                return $query->where('emp.as_area_id',$input['area']);
             })

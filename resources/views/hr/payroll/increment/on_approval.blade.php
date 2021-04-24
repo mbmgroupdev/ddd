@@ -162,7 +162,7 @@
                                     <th rowspan="2">DOJ</th>
                                     <th rowspan="2">Present <br> Salary</th>
                                     <th colspan="2" style="white-space: nowrap;">Last Increment</th>
-                                    
+                                    <th rowspan="2">Type</th>
                                     <th colspan="4" style="white-space: nowrap;">{{$set['extype']}}</th>
                                     <th rowspan="2">Effective <br> Date</th>
                                     <th rowspan="2" class="disburse-button" width="40" >
@@ -233,6 +233,13 @@
                                                 @if($incr->effective_date)
                                                     {{date('d-M-y',strtotime($incr->effective_date))}}
                                                 @endif
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($list->increment_type == 2)
+                                                Yearly
+                                            @elseif($list->increment_type == 3)
+                                                Special
                                             @endif
                                         </td>
                                         
