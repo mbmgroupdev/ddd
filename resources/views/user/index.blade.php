@@ -2,11 +2,25 @@
 @section('title', 'User Dashboard')
 @section('main-content')
 @push('css')
+  
   <style>
     .avatar-130 {
       border-radius: 10% !important;
       object-fit: contain !important;
     }
+    .future-services { margin-bottom: 45px; }
+    .iq-fancy-box { box-shadow: 0 0px 90px 0 rgba(0, 0, 0, .04); position: relative; top: 0; -webkit-transition: all 0.5s ease-out 0s; -moz-transition: all 0.5s ease-out 0s; -ms-transition: all 0.5s ease-out 0s; -o-transition: all 0.5s ease-out 0s; transition: all 0.5s ease-out 0s; padding: 50px 30px; overflow: hidden; position: relative; margin-bottom: 30px; -webkit-border-radius: 0; -moz-border-radius: 0; border-radius: 0; }
+    .iq-fancy-box .iq-icon { font-size: 36px; border-radius: 90px; display: inline-block; height: 86px; width: 86px; margin-bottom: 15px; line-height: 86px; text-align: center; color: #ffffff; background: #089bab; -webkit-transition: all .5s ease-out 0s; -moz-transition: all .5s ease-out 0s; -ms-transition: all .5s ease-out 0s; -o-transition: all .5s ease-out 0s; transition: all .5s ease-out 0s; }
+    .iq-fancy-box:hover { box-shadow: 0 44px 98px 0 rgba(0, 0, 0, .12); top: -8px; }
+    .iq-fancy-box .fancy-content h4 { z-index: 9; position: relative; padding-bottom: 5px }
+    .iq-fancy-box .fancy-content p { margin-bottom: 0 }
+    .iq-fancy-box .future-img i { font-size: 45px; color: #089bab; }
+    .feature-effect-box { box-shadow: 0px 7px 22px 0px rgba(0, 0, 0, 0.06); padding: 10px 15px; margin-bottom: 30px; position: relative; top: 0; -webkit-transition: all 0.3s ease-in-out; -o-transition: all 0.3s ease-in-out; -ms-transition: all 0.3s ease-in-out; -webkit-transition: all 0.3s ease-in-out; }
+    .feature-effect-box:hover { top: -10px }
+    .feature-effect-box .feature-i { margin-right: 10px; width: 60px; padding: 18px 18px; padding-bottom: 12px;border-radius: 50%;  display: inline-block;}
+    .feature-effect-box .feature-i i{ font-size: 25px;}
+    .feature-effect-box .feature-icon { display: inline-block; }
+    .title-box { margin-bottom: 30px;}
   </style>
 @endpush
    @php $user = auth()->user(); @endphp
@@ -34,14 +48,14 @@
                         @endif
                      </div>
                      @php $last_login = $user->lastlogin(); @endphp
-                     @if($last_login)
+                     {{-- @if($last_login)
                      <ul class="doctoe-sedual d-flex align-items-center justify-content-between p-0 mt-4 mb-0">
                         <li class="text-center">
                            <h6 class="text-primary">Last Logged In </h6>
                            <span>{{$last_login->login_at->diffForHumans() }}</span>
                         </li>
                      </ul>
-                     @endif
+                     @endif --}}
                   </div>
                </div>
             </div>
@@ -73,6 +87,59 @@
                </div>
             </div>
          </div>
+         <div class="col-sm-12">
+            <div class="panel iq-card-block iq-card-stretch iq-card-height" style="height: calc(100% - 10px);">
+               <div class="panel-heading d-flex justify-content-between">
+                     <h6 >My Leave - {{ date('Y') }}</h6>
+               </div>
+               <div class="panel-body">
+                 <ul class="speciality-list m-0 p-0">
+                    @if(count($leaves) >0 )
+                       @foreach($leaves as $key => $lv)
+                      <li class="d-flex mb-4 align-items-center">
+                         <div class="user-img img-fluid">
+                          @if($lv->leave_status==1)
+                               <a href="#" class="iq-bg-success">
+                                <i class="las f-18 la-check-circle"></i>
+                             </a>
+                           @else
+                               <a href="#" class="iq-bg-danger">
+                                <i class="las f-18 la-times-circle"></i>
+                             </a>
+                           @endif
+                          
+                          </div>
+                         <div class="media-support-info ml-3">
+                            <h6>{{$lv->leave_type}} Leave</h6>
+                            <p class="mb-0">
+                            @if($lv->leave_from != $lv->leave_to)
+                                {{$lv->leave_from->format('d M, Y')}} - {{$lv->leave_to->format('d M, Y')}}
+                             @else
+                                {{$lv->leave_from->format('d M, Y')}}
+                             @endif
+                             </p>
+                         </div>
+                      </li>
+                      @endforeach
+                    @else
+                       <li class="d-flex mb-4 align-items-center">
+                         <div class="user-img img-fluid">
+                             <a href="#" class="iq-bg-danger">
+                                <i class="las f-18 la-times-circle"></i>
+                             </a>
+                          </div>
+                         <div class="media-support-info ml-3">
+                            <h6>No leave record!</h6>
+                            <p class="mb-0">
+                             ------------
+                             </p>
+                         </div>
+                      </li>
+                    @endif
+                 </ul>
+              </div>
+            </div>
+         </div>
       </div>
       <div class="col-lg-8 pl-0">
          <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
@@ -90,113 +157,116 @@
                         </div>
                     </div>
                 </div>   
-                  <div class="col-lg-7">
+                  <div class="col-lg-12">
                      <div class="iq-card">
                         <div class="iq-card-header d-flex justify-content-between p-0 bg-white">
                            <div class="iq-header-title">
-                              <h4 class="card-title text-primary border-left-heading">Attendance History</h4>
+                              <h4 class="card-title text-primary border-left-heading">HR Shortcut Link </h4>
                            </div>
                         </div>
                         <div class="iq-card-body p-0">
-                           <div id="patient-chart-2"></div>
-                        </div>
-                     </div>
-                  </div>
-                  <div class="col-lg-5">
-
-                     <div class="iq-card mb-0">
-                        <div class="iq-card-header d-flex justify-content-between p-0 bg-white">
-                           <div class="iq-header-title">
-                              <h4 class="card-title text-primary border-left-heading">My Leave - {{ date('Y') }}</h4>
-                           </div>
-                        </div>
-                        <div class="iq-card-body p-0">
-                           <ul class="speciality-list m-0 p-0">
-                              @if(count($leaves) >0 )
-                                 @foreach($leaves as $key => $lv)
-                                <li class="d-flex mb-4 align-items-center">
-                                   <div class="user-img img-fluid">
-                                    @if($lv->leave_status==1)
-                                         <a href="#" class="iq-bg-success">
-                                          <i class="las f-18 la-check-circle"></i>
-                                       </a>
-                                     @else
-                                         <a href="#" class="iq-bg-danger">
-                                          <i class="las f-18 la-times-circle"></i>
-                                       </a>
-                                     @endif
-                                    
-                                    </div>
-                                   <div class="media-support-info ml-3">
-                                      <h6>{{$lv->leave_type}} Leave</h6>
-                                      <p class="mb-0">
-                                      @if($lv->leave_from != $lv->leave_to)
-                                          {{$lv->leave_from->format('d M, Y')}} - {{$lv->leave_to->format('d M, Y')}}
-                                       @else
-                                          {{$lv->leave_from->format('d M, Y')}}
-                                       @endif
-                                       </p>
-                                   </div>
-                                </li>
-                                @endforeach
-                              @else
-                                 <li class="d-flex mb-4 align-items-center">
-                                   <div class="user-img img-fluid">
-                                       <a href="#" class="iq-bg-danger">
-                                          <i class="las f-18 la-times-circle"></i>
-                                       </a>
-                                    </div>
-                                   <div class="media-support-info ml-3">
-                                      <h6>No leave record!</h6>
-                                      <p class="mb-0">
-                                       ------------
-                                       </p>
-                                   </div>
-                                </li>
-                              @endif
-                           </ul>
-                        </div>
-                     </div>
-                  </div>
-                  <!-- <div class="col-md-6">
-                     <div class="iq-card">
-                        <div class="iq-card-header d-flex justify-content-between p-0 bg-white">
-                           <div class="iq-header-title">
-                              <h4 class="card-title text-primary">Heart Rate</h4>
-                           </div>
-                        </div>
-                        <div class="iq-card-body p-0">
-                           <div class="d-flex align-items-center">
-                              <div class="mr-3">
-                                 <h4 class="">75 bpm</h4>
-                                 <p class="mb-0 text-primary">Health Zone</p>
+                          <div class="hr-section">
+                            <section id="features">
+                              <div class="container-fluid p-0">
+                                 
+                                  <div class="row">
+                                      <div class="col-lg-4 pr-0">
+                                        <a href="{{ url('hr/reports/daily-attendance-activity') }}">
+                                          <div class="feature-effect-box wow fadeInUp" data-wow-duration="0.4s">
+                                              <div class="feature-i iq-bg-success">
+                                                <i class="lar la-chart-bar"></i>
+                                              </div>
+                                              <div class="feature-icon">
+                                                  <h5>Daily Report</h5>
+                                              </div>
+                                          </div>
+                                        </a>
+                                      </div>
+                                      <div class="col-lg-4 pr-0">
+                                        <a href="{{ url('hr/reports/summary') }}">
+                                          <div class="feature-effect-box wow fadeInUp" data-wow-duration="0.6s">
+                                              <div class="feature-i iq-bg-warning">
+                                                <i class="lab la-buffer"></i>
+                                              </div>
+                                              <div class="feature-icon">
+                                                  <h5>Summary Report</h5>
+                                              </div>
+                                          </div>
+                                        </a>
+                                      </div>
+                                      {{-- <div class="col-lg-4">
+                                        <a href="{{ url('mmr-report') }}">
+                                          <div class="feature-effect-box wow fadeInUp" data-wow-duration="0.8s">
+                                              <div class="feature-i iq-bg-info">
+                                                <i class="las la-chart-line"></i>
+                                              </div>
+                                              <div class="feature-icon">
+                                                  <h5>MMR Report</h5>
+                                              </div>
+                                          </div>
+                                        </a>
+                                      </div> --}}
+                                      <div class="col-lg-4">
+                                        <a href="{{ url('hr/reports/attendance-consecutive') }}">
+                                          <div class="feature-effect-box wow fadeInUp" data-wow-duration="1s">
+                                              <div class="feature-i iq-bg-danger">
+                                                <i class="las la-project-diagram"></i>
+                                              </div>
+                                              <div class="feature-icon">
+                                                  <h5>Consecutive</h5>
+                                              </div>
+                                          </div>
+                                        </a>
+                                      </div>
+                                      <div class="col-lg-4 pr-0">
+                                        <a href="{{ url('hr/reports/salary') }}">
+                                          <div class="feature-effect-box wow fadeInUp" data-wow-duration="0.4s">
+                                            <div class="feature-i iq-bg-primary">
+                                              <i class="las la-file-invoice-dollar"></i>
+                                            </div>
+                                              <div class="feature-icon">
+                                                  <h5>Salary</h5>
+                                              </div>
+                                          </div>
+                                        </a>
+                                      </div>
+                                      <div class="col-lg-4 pr-0">
+                                        <a href="{{ url('hr/operation/job_card') }}">
+                                          <div class="feature-effect-box wow fadeInUp" data-wow-duration="0.4s">
+                                            <div class="feature-i iq-bg-info">
+                                              <i class="las la-id-card"></i>
+                                            </div>
+                                              <div class="feature-icon">
+                                                  <h5>Job Card</h5>
+                                              </div>
+                                          </div>
+                                        </a>
+                                      </div>
+                                      <div class="col-lg-4">
+                                        <a href="{{ url('hr/employee/list') }}">
+                                          <div class="feature-effect-box wow fadeInUp" data-wow-duration="0.4s">
+                                            <div class="feature-i iq-bg-success">
+                                              <i class="las la-users"></i>
+                                            </div>
+                                              <div class="feature-icon">
+                                                  <h5>Employee</h5>
+                                              </div>
+                                          </div>
+                                        </a>
+                                      </div>
+                                      
+                                  </div>
                               </div>
-                              <div class="rounded-circle iq-card-icon iq-bg-primary"><i class="ri-windy-fill"></i></div>
-                           </div>
+                            </section>
+                          </div>
                         </div>
                      </div>
                   </div>
-                  <div class="col-md-6">
-                     <div class="iq-card">
-                        <div class="iq-card-header d-flex justify-content-between p-0 bg-white">
-                           <div class="iq-header-title">
-                              <h4 class="card-title text-primary">Water Balance</h4>
-                           </div>
-                        </div>
-                        <div class="iq-card-body p-0">
-                           <div class="d-flex align-items-center">
-                              <div class="mr-3 text-left">
-                                 <p class="mb-0">Drunk</p>
-                                 <h4 class="">1250 ml/ 2000 ml</h4>
-                              </div>
-                              <div class="rounded-circle iq-card-icon iq-bg-primary"><i class="ri-add-fill"></i></div>
-                           </div>
-                        </div>
-                     </div>
-                  </div> -->
+                  
                </div>
             </div>
          </div>
       </div>
    </div>
+   
 @endsection

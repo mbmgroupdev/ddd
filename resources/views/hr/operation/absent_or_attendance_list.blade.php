@@ -33,7 +33,7 @@
                     <form class="" role="form" id="attendanceReport" method="get" action="#"> 
                         <div class="panel">
                             
-                            <div class="panel-body pb-0">
+                            <div class="panel-body">
                                 <div class="row">
                                       <div class="col-3">
                                         <div class="form-group has-required has-float-label  select-search-group">
@@ -111,6 +111,7 @@
                                             </div>
                                           </div>
                                         </div>
+                                        
                                         <div class="form-group has-float-label has-required">
                                           <input type="number" class="form-control" id="consecutive_day" name="consecutive_day" placeholder="Consecutive Day" required="required" value="10" autocomplete="off" />
                                           <label for="consecutive_day">Consecutive Day</label>
@@ -141,7 +142,13 @@
                                             </div>
                                           </div>
                                         </div>
-                                        
+                                        <div class="form-group has-float-label has-required select-search-group">
+                                            <?php
+                                              $status = ['1'=>'Active','2'=>'Resign','3'=>'Terminate','4'=>'Suspend','5'=>'Left', '6'=>'Maternity'];
+                                            ?>
+                                            {{ Form::select('status', $status, 1, ['placeholder'=>'Select Employee Status ', 'class'=>'form-control capitalize select-search', 'id'=>'status', 'required']) }}
+                                            <label for="status">Status</label>
+                                        </div>
                                         <div class="form-group">
                                           <button class="btn btn-primary nextBtn btn-lg pull-right" type="submit" id="attendanceReport"><i class="fa fa-save"></i> Generate</button>
                                         </div>
@@ -381,6 +388,7 @@
           d.min_salary = $("#min_salary").val(),
           d.max_salary = $("#max_salary").val()
           d.consecutive_day = $("#consecutive_day").val()
+          d.status = $("#status").val()
 
         },
         type: "get",
@@ -388,7 +396,6 @@
           'X-CSRF-TOKEN': '{{ csrf_token() }}'
         }
       },
-
       dom: 'lBfrtip',
       buttons: [
         {

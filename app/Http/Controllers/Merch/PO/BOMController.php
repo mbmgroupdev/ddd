@@ -113,7 +113,6 @@ class BOMController extends Controller
 	    	// return $itemBomCount;
 	    	$getBomId = collect($getItemBom->toArray())->pluck('id')->toArray();
 	    	$itemDiff = array_diff($getBomId, $oldItem);
-
 	    	for ($d=0; $d < count($itemDiff); $d++) { 
 	    		PoBOM::whereIn('id', $itemDiff)->delete();
 	    	}
@@ -160,7 +159,6 @@ class BOMController extends Controller
             	}
 	
             }
-
             // update mr_po_bom_costing_booking
             if(count($updateBOM) > 0){
                 (new QueryExtra)
@@ -168,7 +166,6 @@ class BOMController extends Controller
                 ->whereKey('id')
                 ->bulkup($updateBOM);
             }
-
             //log_file_write("BOM Successfully Save", $input['stl_id']);
             DB::commit();
 	        $data['type'] = 'success';

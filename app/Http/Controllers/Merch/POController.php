@@ -121,8 +121,8 @@ class POController extends Controller
                     <a href='".url("merch/po-bom/$data->po_id")."' class=\"btn btn-xs btn-primary\" data-toggle=\"tooltip\" title=\"PO BOM\">
                     <i class=\"las la-clipboard-list\"></i>
                     </a>
-                    <a href='".url("merch/po-costing/$data->po_id")."' class=\"btn btn-xs btn-warning text-white\" data-toggle=\"tooltip\" title=\"Order Costing\">
-                    <i class=\"las la-clipboard-list\"></i>
+                    <a href='".url("merch/po-costing/$data->po_id")."' class=\"btn btn-xs btn-primary text-white\" data-toggle=\"tooltip\" title=\"PO Costing\">
+                    <i class=\"las la-file-invoice-dollar\"></i>
                     </a>
                     
                     </div>";

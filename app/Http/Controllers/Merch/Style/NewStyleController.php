@@ -572,7 +572,7 @@ class NewStyleController extends Controller
                     <i class=\"ace-icon fa fa-pencil bigger-120\"></i>
               </a>";
             }
-              
+            if(!isset($styleOrder[$data->stl_id])){ 
               // BOM
               $bomStatus = ($data->bom_status == 1)?'Edit Style BOM':'Create Style BOM';
               $bomClass = ($data->bom_status == 1)?'btn-primary':'btn-warning';
@@ -585,6 +585,7 @@ class NewStyleController extends Controller
               $return .= '<a href="'.url('merch/style/costing/'.$data->stl_id).'" class="btn btn-sm text-white '.$costingClass.'" data-toggle="tooltip" title="'.$costingStatus.'">
                   <i class="las la-file-invoice-dollar"></i>
               </a>';
+            }
               // process to order
               if($data->bom_status == 1 && $data->costing_status == 1){
                 $return .= '<a href="'.url('merch/orders/create?stl_id='.$data->stl_id).'" class="btn btn-sm btn-success" data-toggle="tooltip" title="Process To Order">

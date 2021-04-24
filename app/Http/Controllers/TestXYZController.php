@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\ProcessAttendanceOuttime;
 use App\Jobs\ProcessUnitWiseSalary;
 use App\Models\Employee;
 use App\Models\Hr\Benefits;
@@ -11,6 +12,7 @@ use App\Models\Hr\HolidayRoaster;
 use App\Models\Hr\HrMonthlySalary;
 use App\Models\Hr\SalaryAddDeduct;
 use App\Models\Hr\SalaryAdjustMaster;
+use App\Models\Hr\ShiftRoaster;
 use App\Models\Hr\YearlyHolyDay;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -22,7 +24,7 @@ class TestXYZController extends Controller
 {
     public function rfidUpdate()
     {
-    	return $this->bonusUploadExcel();
+    	return $this->shiftAssigned();
         return "";
     	$data = array();
     	$getBasic = DB::table('hr_as_basic_info')
@@ -1868,4 +1870,150 @@ class TestXYZController extends Controller
 
         return 'success';
     }
+
+    public function checkFunction()
+    {
+        $shiftOuttime = date('Y-m-d H:i', strtotime('2021-04-15 16:00:00'));
+        $outtimePunch = date('Y-m-d H:i', strtotime('2021-04-15 23:15:00'));
+        $shiftBreak = 60;
+        // check add
+        // $shiftOutTime = Carbon::createFromFormat('Y-m-d H:i:s', $outtimePunch);
+        $shiftAddBreak = Carbon::parse($shiftOuttime)->addMinutes($shiftBreak);
+        $shiftAddSixH = Carbon::parse($shiftAddBreak)->addHours(6);
+        $shiftAddSevenH = Carbon::parse($shiftAddBreak)->addHours(7);
+        $extraBreakMin = 0;
+        if((strtotime($outtimePunch) > strtotime(date('Y-m-d H:i', strtotime($shiftAddSixH))))){
+            $extraBreakMin = $shiftBreak;
+            if(strtotime($outtimePunch) < strtotime(date('Y-m-d H:i', strtotime($shiftAddSevenH)))){
+                $extraBreakMin = (strtotime($outtimePunch) - strtotime(date('Y-m-d H:i', strtotime($shiftAddSixH))))/60;
+            }
+        }
+        return $extraBreakMin;
+        return strtotime(date('Y-m-d H:i', strtotime($shiftAddSevenH)));
+        return date('Y-m-d H:i', strtotime($shiftAddSixH));
+        $today = '2021-04-15';
+        $extraMin = 0;
+        if(strtotime($outtimePunch) > strtotime(date('Y-m-d H:i', strtotime($today.' 18:00:00')))){
+            $extraMin = 60;
+            if(strtotime($outtimePunch) < strtotime(date('Y-m-d H:i', strtotime($today.' 19:00:00')))){
+                $extraMin = (strtotime($outtimePunch) - strtotime(date('Y-m-d H:i', strtotime($today.' 18:00:00'))))/60;
+            }
+        }
+        return $extraMin;
+    }
+    public function jobcardupdate()
+    {
+        /*$id = DB::table('hr_monthly_salary as s')
+                ->leftJoin('hr_as_basic_info as b','s.as_id','b.associate_id')
+                ->where('s.month', '03')
+                ->where('s.year', 2021)
+                ->where('b.as_ot', 1)
+                //->where('s.ot_hour','>', 0)
+                ->pluck('b.as_id');*/
+                
+        // $id = DB::table('hr_as_basic_info')
+        //     ->whereIn('as_unit_id', [2])->where('as_status', 1)->pluck('as_unit_id','as_id');
+        // foreach($id as $k => $i)   {   
+        //     $tb = 'hr_attendance_ceil';
+        //     // $tb = get_att_table($i);
+        //     $data = DB::table($tb)
+        //         ->where('in_date','2021-04-14')
+        //         // ->where('in_date','<=','2021-04-13')
+        //         ->where('remarks', '!=', 'DSI')
+        //         ->whereNotNull('in_time')
+        //         ->whereNotNull('out_time')
+        //         ->where('as_id', $k)
+        //         ->get();
+        
+        //     foreach ($data as $key => $v) 
+        //     {
+        //         if($v->in_time && $v->out_time){
+        //             $queue = (new ProcessAttendanceOuttime($tb, $k, $i))
+        //                     ->delay(Carbon::now()->addSeconds(2));
+        //                     dispatch($queue);
+        //         }
+
+                
+
+                
+        //     }
+        // }
+            $tb = 'hr_attendance_mbm';
+            // $tb = get_att_table($i);
+            $data = DB::table($tb)
+                ->where('in_date','2021-04-15')
+                // ->where('in_date','<=','2021-04-13')
+                ->where('remarks', '!=', 'DSI')
+                ->whereNotNull('in_time')
+                ->whereNotNull('out_time')
+                ->get();
+        
+            foreach ($data as $key => $v) 
+            {
+                if($v->in_time && $v->out_time){
+                    $queue = (new ProcessAttendanceOuttime($tb, $v->id, 1))
+                            ->delay(Carbon::now()->addSeconds(2));
+                            dispatch($queue);
+                } 
+            }
+        return count($data);
+
+    }
+
+    public function shiftAssigned()
+    {
+        $year = 2021;
+        $month = '04';
+        $getEmployee = DB::table('hr_as_basic_info')
+        ->where('as_unit_id', 2)
+        ->where('as_location', 7)
+        ->where('as_status', 1)
+        ->get();
+        $empIds = collect($getEmployee)->pluck('associate_id');
+
+        $roster = DB::table('hr_shift_roaster')
+        ->whereIn('shift_roaster_associate_id', $empIds)
+        ->where('shift_roaster_year', $year)
+        ->where('shift_roaster_month', $month)
+        ->get()
+        ->keyBy('shift_roaster_associate_id');
+        // return ($roster);
+        $insert = [];
+        $update = [];
+        foreach ($getEmployee as $key => $emp) {
+            $shift = 'Ramadan Day Early First';
+            
+            if(isset($roster[$emp->associate_id])){
+                $update[$emp->associate_id] = DB::table('hr_shift_roaster')
+                ->where('shift_roaster_id', $roster[$emp->associate_id]->shift_roaster_id)
+                // ->first();
+                ->update(['day_24' => $shift, 'day_25' => $shift, 'day_26' => $shift, 'day_27' => $shift, 'day_28' => $shift, 'day_29' => $shift, 'day_30' => $shift]);
+            }else{
+                $insert[$emp->associate_id] = [
+                    'shift_roaster_associate_id' => $emp->associate_id,
+                    'shift_roaster_user_id' => $emp->as_id,
+                    'shift_roaster_year' => $year,
+                    'shift_roaster_month' => $month,
+                    'day_24' => $shift,
+                    'day_25' => $shift,
+                    'day_26' => $shift,
+                    'day_27' => $shift,
+                    'day_28' => $shift,
+                    'day_29' => $shift,
+                    'day_30' => $shift
+                ];
+                
+            }
+        }
+        // return $update;
+        if(count($insert) > 0){
+            $chunk = collect($insert)->chunk(200);
+            foreach ($chunk as $key => $n) {        
+                DB::table('hr_shift_roaster')->insertOrIgnore(collect($n)->toArray());
+            }
+        }
+
+        return 'success';
+        
+    } 
 }

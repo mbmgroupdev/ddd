@@ -244,7 +244,7 @@
 	  }
 
 	  // check reservation order qty
-	  if($("#order-qty").val() > $("#res-quantity").val()){
+	  if(parseInt($("#order-qty").val()) > parseInt($("#res-quantity").val())){
 	  	$("#res-quantity").notify('Order quantity not longer reservation quantity', 'error');
 	  	return false;
 	  }
