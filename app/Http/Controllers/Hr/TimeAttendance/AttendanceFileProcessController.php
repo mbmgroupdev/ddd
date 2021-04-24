@@ -72,8 +72,9 @@ class AttendanceFileProcessController extends Controller
         $unit = $input['unit'];
         $totalRow = count($input['getdata']) - 1;
         $rowData = [];
-        try {
-            foreach($input['getdata'] as $key => $value) {
+        foreach($input['getdata'] as $key => $value) 
+        {
+            try {
                 $lineData = $value;
                 $rfid="";
                 $checktime = null;
@@ -294,7 +295,6 @@ class AttendanceFileProcessController extends Controller
                         if($shift){
 
                             $att = $this->attendanceCrud($checktime, $shift,$tableName, $as_info, $checkHolidayFlag, $unit, $day_of_date, $month, $year, $unitId, $checkLeaveFlag);
-
                             
                             if($fileDate == ''){
                                 $fileDate[] = $today;
@@ -318,22 +318,24 @@ class AttendanceFileProcessController extends Controller
                     }
                     //break;
                 }
-            }
+            
             $data['msg'] = $msg;
 
-            return $data;
-        } catch (\Exception $e) {
-            $data['status'] = 'error';
-            $data['result'] = $e->getMessage();
-            //return $e->getMessage();
-            return $data;
+            
+            } catch (\Exception $e) {
+                //$data['status'] = 'error';
+                $data['msg'] = $value." - ".$e->getMessage();
+            }
         }
+
+        return $data;
     }
 
     public function attendanceCrud($checktime, $shift, $tableName, $as_info, $checkHolidayFlag, $unit, $day_of_date, $month, $year, $unitId, $checkLeaveFlag)
     {
 
         try {
+
             $shift_name         = $shift->hr_shift_name;
             $shift_code         = $shift->hr_shift_code;
             $shift_start_time   = $shift->hr_shift_start_time;
@@ -349,6 +351,8 @@ class AttendanceFileProcessController extends Controller
             $data = [];
             $punch_date = date('Y-m-d', strtotime($checktime));
 
+
+
             $shift_start = $punch_date." ".$shift_start_time;
             $shift_end = $punch_date." ".$shift_end_time;
             $shift_in_time = Carbon::createFromFormat('Y-m-d H:i:s', $shift_start);
@@ -357,6 +361,8 @@ class AttendanceFileProcessController extends Controller
             if($shift_out_time < $shift_in_time){
                 $shift_out_time = $shift_out_time->copy()->addDays(1);
             }
+
+
 
             //shift start range
             $shift_start_begin = $shift_in_time->copy()->subHours(2); // 2 hour
@@ -382,6 +388,7 @@ class AttendanceFileProcessController extends Controller
             ->where('as_id', $as_info->as_id)
             ->where('in_date', '=', $check_time->format('Y-m-d'))
             ->first();
+
             if($last_punch){
                 if((($shift_start_begin >= $last_punch->in_time || $last_punch->in_time >= $shift_start_end)  && $last_punch->in_time != null) || $last_punch->remarks == 'DSI'){
                     if($last_punch->out_time != null){   
@@ -405,6 +412,8 @@ class AttendanceFileProcessController extends Controller
 
                 }
             }
+
+
             if($shift_start_begin <= $check_time && $check_time <= $shift_start_end  && $checkHolidayFlag == 0 && $checkLeaveFlag == 0){
                 // $checkInTimeFlag = 0;
                 if(empty($last_punch)){
@@ -441,7 +450,10 @@ class AttendanceFileProcessController extends Controller
                 }
 
             }
+                
+                
             else if(($shift_end_begin <= $check_time) && ($check_time <= $shift_end_end)  && $checkHolidayFlag == 0 && $checkLeaveFlag == 0){
+
                 if(!empty($last_punch)){
                     $punchId = $last_punch->id;
                     // $checkOutTimeFlag = 0;
@@ -503,6 +515,8 @@ class AttendanceFileProcessController extends Controller
                 }
             }
             else{
+
+
 
                 // if friday night check att exist in morning
                 // check if shift has times
@@ -599,6 +613,8 @@ class AttendanceFileProcessController extends Controller
                 ->where('in_date', $check_time->copy()->subDays(1)->format('Y-m-d'))
                 ->orderBy('id', "DESC")
                 ->first();
+
+
                 // return $check_time->copy()->subDays(1)->format('Y-m-d');
                 $outPunchDate = $punch_date;
                 if($last_punch != null){
@@ -653,10 +669,13 @@ class AttendanceFileProcessController extends Controller
 
 
                     }
+                    // elinate out timeif out of range
                     if(($shift_end_begin_new >= $last_punch->out_time || $last_punch->out_time >= $shift_end_end_new ) && $last_punch->out_time != null){
+
                         if($last_punch->in_time != null){ 
                             DB::table($tableName)->where('id', $last_punch->id)->update([
                                 'out_time' => null, 'ot_hour' => 0]);
+
                         }else{
                             DB::table($tableName)->where('id', $last_punch->id)->delete();
                         }
@@ -665,9 +684,12 @@ class AttendanceFileProcessController extends Controller
 
                     }
                 }
+
                 if($shift_end_begin_new <= $check_time && $check_time <= $shift_end_end_new){
 
                     if(!empty($last_punch)){
+                    
+
                         $punchId = $last_punch->id;
                         // $checkOutTimeFlag = 0;
                         if($last_punch->out_time == null){
@@ -678,6 +700,7 @@ class AttendanceFileProcessController extends Controller
                                 'out_unit' => $unit
                             ]);
 
+                            
 
                             // $checkOutTimeFlag = 1;
                         }else{
@@ -715,6 +738,7 @@ class AttendanceFileProcessController extends Controller
                         }
                     }
                 }elseif(!empty($last_punch) && $check_time <= $shift_end_end_new && ($checkHolidayFlag == 1 || $checkLeaveFlag == 1)){
+                    
                     $punchId = $last_punch->id;
                     DB::table($tableName)
                     ->where('id', $last_punch->id)

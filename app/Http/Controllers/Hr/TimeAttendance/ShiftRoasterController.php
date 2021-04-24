@@ -1081,6 +1081,8 @@ class ShiftRoasterController extends Controller
                      })
                      ->whereNotNull('b.as_shift_id')
                      ->where('b.as_unit_id', $request->unit_id)
+                     ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
+                     ->whereIn('b.as_location', auth()->user()->location_permissions())
                      ->where('b.as_status', 1)
                      ->get();
 
@@ -1107,11 +1109,6 @@ class ShiftRoasterController extends Controller
                 if(isset($shifts[$key])){
 
                     $value = $shifts[$key];
-                    /*$cBreak = $hours = intdiv($value->hr_shift_break_time, 60).':'. ($value->hr_shift_break_time % 60);
-                    $cBreak = strtotime(date("H:i", strtotime($cBreak)));
-                    $cShifEnd = strtotime(date("H:i", strtotime($value->hr_shift_end_time)));*/
-                    // $cBreak = ($value->hr_shift_break_time % 60);
-                    //$minute = $cShifEnd + $cBreak;
                     $shiftEndTime = \Carbon\Carbon::parse($input['searchDate'].' '.$value->hr_shift_end_time)->addMinutes($value->hr_shift_break_time)->format('H:i:s'); //gmdate("H:i:s",$minute);
                     
                     $defaultEmployee = 0;
