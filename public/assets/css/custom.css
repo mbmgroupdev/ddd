@@ -1250,3 +1250,13 @@ div.dataTables_wrapper div.dataTables_processing {
 input[type="checkbox"] {
     cursor: pointer;
 }
+.nav-year {
+    font-size: 13px;
+    font-weight: bold;
+    color: #9c9c9c;
+    padding: 1px 8px;
+    border-radius: 10px;
+    margin: 0 2px;
+    background: #eff7f8;
+    display: inline-block;
+}

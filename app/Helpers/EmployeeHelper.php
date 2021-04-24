@@ -57,35 +57,54 @@ class EmployeeHelper
 			    $dayname = Carbon::parse($intimePunch)->format('l');
 			    $employee = Employee::where('associate_id', $eAsId)->first();
 
-			    if(date('H:i:s', strtotime($shiftIntime)) < date('H:i:s', strtotime('14:00:00'))  && $dayname == 'Friday' && in_array($eUnit, [1,4,5])){
-			    	$shiftBreak = 90;
-			    	/*224 = security, 350/428 = cook*/
-			    	if($employee->as_designation_id == 224 || $employee->as_designation_id == 350 || $employee->as_designation_id == 428){
-			    		$shiftBreak = 30;
+			    if(strtotime($today) < strtotime('2021-04-13')){
+    			    if(date('H:i:s', strtotime($shiftIntime)) < date('H:i:s', strtotime('14:00:00'))  && $dayname == 'Friday' && in_array($eUnit, [1,4,5])){
+    			    	$shiftBreak = 90;
+    			    	/*224 = security, 350/428 = cook*/
+    			    	if($employee->as_designation_id == 224 || $employee->as_designation_id == 350 || $employee->as_designation_id == 428){
+    			    		$shiftBreak = 30;
+    			    	}
+    			    }
+			    }else{
+			        if(date('H:i:s', strtotime($shiftIntime)) < date('H:i:s', strtotime('14:00:00'))  && $dayname == 'Friday'){
+    			    	$shiftBreak = 60;
+    			    	/*224 = security*/
+    			    	if($employee->as_designation_id == 224 && in_array($eUnit, [1,4,5])){
+    			    		$shiftBreak = 30;
+    			    	}
+    			    }
+			    }
+			    
+			    $extraBreakMin = 0;
+		    	if(!in_array($eUnit, [1,4,5,8])){
+		    		$shiftAddBreak = Carbon::parse($shiftOuttime)->addMinutes($shiftBreak);
+		    		$shiftAddSixH = Carbon::parse($shiftAddBreak)->addHours(7);
+		    		$shiftAddSevenH = Carbon::parse($shiftAddBreak)->addHours(8);
+		    		 
+			        if((strtotime($outtimePunch) > strtotime(date('Y-m-d H:i', strtotime($shiftAddSixH))))){
+			    		$extraBreakMin = $shiftBreak;
+			    		if(strtotime($outtimePunch) < strtotime(date('Y-m-d H:i', strtotime($shiftAddSevenH)))){
+			                $extraBreakMin = (strtotime($outtimePunch) - strtotime(date('Y-m-d H:i', strtotime($shiftAddSixH))))/60;
+			            }
 			    	}
 			    }
 
-			    $checkBillHour = (strtotime($outtimePunch) - strtotime($shiftIntime))/3600;
-			    $breakCount = 0;
-			    $breakDiff = 0;
-			    if($checkBillHour > 6){
-			    	$breakCount = 1;
+			    $shiftBreak = $shiftBreak + $extraBreakMin;
+
+			    if(strtotime($today) > strtotime('2021-04-13') && $shiftNight == 0){
+			    	$extraMin = 0;
+			    	if((strtotime($outtimePunch) > strtotime(date('Y-m-d H:i', strtotime($today.' 18:00:00'))) && !in_array($eUnit, [8]))){
+			    		$extraMin = 60;
+			    		if(strtotime($outtimePunch) < strtotime(date('Y-m-d H:i', strtotime($today.' 19:00:00')))){
+			                $extraMin = (strtotime($outtimePunch) - strtotime(date('Y-m-d H:i', strtotime($today.' 18:00:00'))))/60;
+			            }
+			    	}
+
+			    	$shiftBreak = $shiftBreak + (int)$extraMin;
 			    }
-
-			    if(!in_array($eUnit, [1,4,5])){
-			    	$otDiff = ((strtotime($outtimePunch) - (strtotime($shiftOuttime) + ($shiftBreak*60))))/3600;
-			    	if($otDiff > 0){
-						$breakDiff = $otDiff/(6+($shiftBreak/60)); // 6 hour before start break eligible
-					}
-			    }
-
-			    $shiftBreak = $shiftBreak * ((int)$breakDiff + $breakCount);
-
+			    
 			    $otCheck = HolidayRoaster::getHolidayYearMonthAsIdDateWiseRemark($year, $month, $eAsId, $today, 'OT');
-			    // if($otCheck != null && (date('H:i:s', strtotime($shiftIntime)) < date('H:i:s', strtotime('09:00:00')) && date('H:i:s', strtotime($outTimeEx[1])) < date('H:i:s', strtotime('13:30:00')))){
-			    // 	$shiftBreak = 0;
-			    // }
-
+			    
 			    if($otCheck == null && $eSRStatus == 0){
 			      $otCheck = YearlyHolyDay::getCheckUnitDayWiseHolidayStatus($eUnit, $today, 2);
 			    }

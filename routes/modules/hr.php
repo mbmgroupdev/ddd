@@ -1096,6 +1096,9 @@ Route::post('hr/reports/save_salary_sheet_unit_wise', 'Hr\Reports\SalarySheetCon
 Route::get('hr/reports/salary_sheet_unit_wise_day', 'Hr\Reports\SalarySheetController@salarySheetUnitWiseday');
 
 Route::post('hr/reports/save_salary_sheet_unit_wise_data', 'Hr\Reports\SalarySheetController@saveSalarySheetUnitData');*/
+// salary
+Route::get('hr/reports/salary', 'Hr\Reports\SalaryReportController@index');
+Route::get('hr/reports/salary-report', 'Hr\Reports\SalaryReportController@report');
 // warning notice
 Route::get('hr/operation/warning-notice', 'Hr\Operation\WarningNoticeController@index');
 Route::post('hr/operation/warning-notice-first', 'Hr\Operation\WarningNoticeController@firstStep');
