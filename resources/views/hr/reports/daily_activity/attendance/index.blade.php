@@ -68,6 +68,7 @@
             <div class="row">
                 <div class="col-12">
                     <form class="" role="form" id="activityReport" method="get" action="#"> 
+                        <div class="shift-filter-copy" style="display: none;"></div>
                         <div class="panel">
                             <div class="panel-body pb-0">
                               @php
@@ -396,6 +397,20 @@ $(document).ready(function(){
       e.preventDefault();
       activityProcess();
     });
+
+    $(document).on('click','#shiftDropdown', function(){
+        $('.shift-filter').toggle();
+    });
+    $(document).on('click','#filter-by-shift', function(){
+        var ins = '';
+        $('.shift-checkbox').each(function(){
+            if($(this).prop('checked') == true){
+                ins +='<input type="hidden" name="filter_shift[]" value="'+$(this).val()+'">';
+            }
+        })
+        $('.shift-filter-copy').html(ins);
+        activityProcess();
+    });
     $(".next_btn").click(function(event) {
       var date = $('input[name="date"]').val();
       var type = $('select[name="report_type"]').val();
@@ -527,6 +542,7 @@ $(document).ready(function(){
     });
     // change unit
     $('#unit').on("change", function(){
+        $('.shift-filter-copy').html('');
         $.ajax({
             url : "{{ url('hr/attendance/floor_by_unit') }}",
             type: 'get',

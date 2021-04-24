@@ -139,21 +139,17 @@ class JobCardController extends Controller
             $associate= $info->associate_id;
 
             
-            $total_attends  = 0; $absent = 0; $x=1; $total_ot = 0;
+            $total_attends  = 0; $absent = 0; $total_ot = 0;$iEx = 0;
             $attendance=[];
             // join exist this month
-            $iEx = 0;
             $joinExist = false;
             if($info->as_doj != null) {
                 list($yearE,$monthE,$dateE) = explode('-',$info->as_doj);
                 if($year == $yearE && $month == $monthE) {
-                    $iEx = $dateE-1;
                     $joinExist = true;
-                    $x = $dateE;
                     $startDay = $info->as_doj;
                 }
             }
-
 
             $leftExist = false;
             if($info->as_status_date != null) {
@@ -161,20 +157,19 @@ class JobCardController extends Controller
                 if($year == $yearL && $month == $monthL) {
                     // if rejoin
                     if($info->as_status == 1){
-                        $x = $dateL;
                         $startDay = $info->as_status_date;
                     }
 
                     // left,terminate,resign, suspend, delete
-                    if(in_array($info->as_status,[0,2,3,4,5])!=false) {
-                        $iEx = $joinExist == false ? 1: ($iEx+1);        
+                    if(in_array($info->as_status,[0,2,3,4,5]) != false) {      
                         $leftExist = true;
                         $endDay = $info->as_status_date;
                     }
                 }
             }
 
-            $totalDays  = (date('d', strtotime($endDay)) - date('d', strtotime($startDay))) + 1;
+            $totalDays  = date('j', strtotime($endDay));
+            $iEx        = date('j', strtotime($startDay));
 
 
             $floor = $getFloor[$info->as_floor_id]['hr_floor_name']??'';
@@ -217,8 +212,8 @@ class JobCardController extends Controller
                                 ->keyBy('in_date');
             }
                   
-            for($i=$iEx; $i<=$totalDays; $i++) {
-                $date      = ($year."-".$month."-".$x++);
+            for($i= $iEx; $i <= $totalDays; $i++) {
+                $date      = ($year."-".$month."-".$i);
                 $thisDay   = date('Y-m-d', strtotime($date));
 
 

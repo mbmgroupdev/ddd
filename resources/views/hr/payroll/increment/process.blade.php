@@ -308,8 +308,9 @@
 
 
     
-    $(document).on('submit','#increment-action', function(e) {
-        e.preventDefault();
+    $(document).on('click','#submission-button', function(e) {
+
+      if (confirm("Want to proceed?")) {
         $('.app-loader').show();
         var data = $('#increment-action').getForm2obj();
 
@@ -357,6 +358,7 @@
             $('.app-loader').hide();
             $.notify('Increment saved successfully!','success');
         })
+      }
         
     });
 

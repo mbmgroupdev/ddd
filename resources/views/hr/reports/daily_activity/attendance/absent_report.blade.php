@@ -1,5 +1,34 @@
+<style type="text/css">
+	.shift-filter{
+		position: absolute;
+	    display: none;
+	    right: 95px;
+	    background: #e8f3f2;
+	    padding: 10px 20px;
+	    border-radius: 5px;
+	    top: 15px;
+	    border: 1px solid #d1d1d1;
+	    z-index: 10;
+	    width: 200px;
+	}
+</style>
 <div class="panel">
 	<div class="panel-body">
+		<button id="shiftDropdown" class="btn btn-outline-primary hidden-print" data-toggle="tooltip" data-placement="top" title="" data-original-title="Filter Shift" style="position: absolute; top: 15px; right: 300px;"><i class="fa fa-filter"></i></button>
+		<div class="shift-filter" >
+			<center><b class="mb-2">Shifts</b></center>
+			@foreach($selshift as $key => $sf)
+          	<div class="custom-control custom-checkbox">
+              	<input type="checkbox" class="custom-control-input shift-checkbox" id="shift_{{$key}}" name="filter_shift[]" value="{{$sf}}" 
+              		@if(in_array($sf, $input['filter_shift'])) 
+              			checked 
+              		@endif >
+              	<label class="custom-control-label" for="shift_{{$key}}">{{$sf}}</label>
+           	</div>
+           	@endforeach
+
+           <center><button id="filter-by-shift" class="btn btn-sm btn-success mt-2">Filter</button></center>	
+       </div>
 		<div class="report_section" id="report_section">
 			@php
 				$formatHead = explode('_',$format);
@@ -131,7 +160,7 @@
 								@endphp
 			                	@if($head != '')
 			                    <th colspan="2">{{ $head }}</th>
-			                    <th colspan="9">{{ $body }}</th>
+			                    <th colspan="11">{{ $body }}</th>
 			                    @endif
 			                </tr>
 			                @endif
@@ -270,14 +299,13 @@
 								<th>Section Name</th>
 								@endif
 								<th> {{ $head }} Name</th>
-								<th>Employee</th>
+								<th style="text-align: center;">Employee</th>
 							</tr>
 						</thead>
 						<tbody>
 							@php $i=0; @endphp
-							@if(count($getEmployee) > 0)
-							@foreach($getEmployee as $employee)
-							@php $group = $employee->$format; @endphp
+							@if(count($uniqueGroupEmp) > 0)
+							@foreach($uniqueGroupEmp as $group => $employee)
 							@php
 								if($format == 'as_unit_id'){
 									if($group == 145){
@@ -350,8 +378,8 @@
 									
 									{{ ($body == null)?'N/A':$body }}
 								</td>
-								<td>
-									{{ $employee->total }}
+								<td style="text-align: center;">
+									{{ count($employee) }}
 								</td>
 							</tr>
 							@endforeach
