@@ -26,7 +26,7 @@ class User extends Authenticatable
         'name', 'associate_id', 'email', 'password','unit_id', 'unit_permissions', 'buyer_permissions','buyer_template_permission','management_restriction'
     ];
 
-    protected $with = ['employee'];
+    // protected $with = ['employee'];
 
     /**
      * The attributes that should be hidden for arrays.
@@ -74,7 +74,7 @@ class User extends Authenticatable
 
     public function permitted_associate()
     {
-        return Employee::whereIn('as_unit_id', $this->unit_permissions())
+        return DB::table('hr_as_basic_info')->whereIn('as_unit_id', $this->unit_permissions())
             ->whereIn('as_location', $this->location_permissions())
             ->where('as_status', 1)
             ->pluck('associate_id');
@@ -82,7 +82,7 @@ class User extends Authenticatable
 
     public function permitted_all()
     {
-        return Employee::whereIn('as_unit_id', $this->unit_permissions())
+        return DB::table('hr_as_basic_info')->whereIn('as_unit_id', $this->unit_permissions())
             ->whereIn('as_location', $this->location_permissions())
             ->whereIn('as_status',  [1,2,3,4,5,6,7,8])
             ->pluck('associate_id');
@@ -90,7 +90,7 @@ class User extends Authenticatable
 
     public function permitted_asid()
     {
-        return Employee::whereIn('as_unit_id', $this->unit_permissions())
+        return DB::table('hr_as_basic_info')->whereIn('as_unit_id', $this->unit_permissions())
             ->whereIn('as_location', $this->location_permissions())
             ->where('as_status', [1,2,3,4,5,6,7,8])
             ->pluck('as_id');

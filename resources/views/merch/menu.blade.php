@@ -78,7 +78,7 @@
       @if(auth()->user()->canany([]) || $user->hasRole('Super Admin'))
 
       <li class="@if($segment2 == 'order_tna') active @endif">
-         <a href="#time_action" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="las la-business-time"></i><span>Time and Action</span><i class="las la-angle-right iq-arrow-right"></i></a>
+         <a href="#time_action" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false" style="color: #c9c9c9;"><i class="las la-business-time"></i><span>Time and Action</span><i class="las la-angle-right iq-arrow-right"></i></a>
          <ul id="time_action" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
             @if($user->can('New Style') || $user->hasRole('Super Admin'))
             <li class="@if($segment2 == 'order_tna' && $segment3=='style_new') active @endif">
@@ -106,7 +106,7 @@
       </li> --}}
       
       <li class="{{ $segment2 == 'order-breakdown'?'active':'' }}">
-         <a href="#" class="iq-waves-effect"><i class="las la-list-ol"></i><span>Order Breakdown</span></a>
+         <a href="#" class="iq-waves-effect" style="color: #c9c9c9;"><i class="las la-list-ol"></i><span>Order Breakdown</span></a>
       </li>
       @if(auth()->user()->canany([]) || $user->hasRole('Super Admin'))
 
@@ -130,7 +130,7 @@
       @if(auth()->user()->canany([]) || $user->hasRole('Super Admin'))
 
       <li class="@if($segment2 == 'pi') active @endif">
-         <a href="#pi" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="las la-shopping-bag"></i><span>PI</span><i class="las la-angle-right iq-arrow-right"></i></a>
+         <a href="#pi" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false" style="color: #c9c9c9;"><i class="las la-shopping-bag"></i><span>PI</span><i class="las la-angle-right iq-arrow-right"></i></a>
          <ul id="pi" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
             @if($user->can('New Style') || $user->hasRole('Super Admin'))
             <li class="@if($segment2 == 'style' && $segment3=='style_new') active @endif">
@@ -147,12 +147,12 @@
       
       @endif
       <li class="{{ $segment2 == 'costing-compare'?'active':'' }}">
-         <a href="#" class="iq-waves-effect"><i class="las la-list-ol"></i><span>Costing Compare</span></a>
+         <a href="#" class="iq-waves-effect" style="color: #c9c9c9;"><i class="las la-list-ol"></i><span>Costing Compare</span></a>
       </li>
       @if(auth()->user()->canany([]) || $user->hasRole('Super Admin'))
 
       <li class="@if($segment2 == 'sales-contract') active @endif">
-         <a href="#sales_contract" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="las la-address-book"></i><span>Sales Contract</span><i class="las la-angle-right iq-arrow-right"></i></a>
+         <a href="#sales_contract" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false" style="color: #c9c9c9;"><i class="las la-address-book"></i><span>Sales Contract</span><i class="las la-angle-right iq-arrow-right"></i></a>
          <ul id="sales_contract" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
             @if($user->can('New Style') || $user->hasRole('Super Admin'))
             <li class="@if($segment2 == 'style' && $segment3=='style_new') active @endif">
@@ -168,8 +168,8 @@
       </li>
       
       @endif
-      <li class="{{ $segment2 == 'reports'?'active':'' }}">
-         <a href="#" class="iq-waves-effect"><i class="las la-file-invoice"></i><span>Reports</span></a>
+      <li class="{{ $segment2 == 'reports'?'active':'' }}" >
+         <a href="#" class="iq-waves-effect" style="color: #c9c9c9;"><i class="las la-file-invoice"></i><span>Reports</span></a>
       </li>
       @if(auth()->user()->canany([]) || $user->hasRole('Super Admin'))
 

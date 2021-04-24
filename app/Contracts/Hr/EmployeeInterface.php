@@ -6,4 +6,6 @@ use Illuminate\Support\Collection;
 interface EmployeeInterface
 {
    public function getEmployees($input, $date);
+   
+   public function getEmployeesByStatus($input);
 }

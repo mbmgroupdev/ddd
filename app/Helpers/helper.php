@@ -652,7 +652,7 @@ if(!function_exists('employee_count')){
     function employee_count()
     {
 
-        return Employee::select(
+        return DB::table('hr_as_basic_info')->select(
                 DB::raw("
                   COUNT(CASE WHEN as_gender = 'Male' THEN as_id END) AS males,
                   COUNT(CASE WHEN as_gender = 'Female' THEN as_id END) AS females,
@@ -1159,6 +1159,23 @@ function displayBetweenTwoDates($date1, $date2, $format = 'Y-m-d' ) {
 function numberToMonth($val)
 {
     return date("F", mktime(0, 0, 0, $val, 10));
+}
+
+function monthly_navbar($yearMonth){
+    $date = Carbon::parse($yearMonth);
+    $now = Carbon::now();
+    if($date->diffInMonths($now) <= 6 ){
+        $max = Carbon::now();
+    }else{
+        $max = $date->addMonths(6);
+    }
+    $months = [];
+    $months[date('Y-m')] = 'Current';
+    for ($i=1; $i <= 9 ; $i++) { 
+        $months[$max->format('Y-m')] = $max->format('M, y');
+        $max = $max->subMonth(1);
+    }
+    return $months;
 }
 
 
