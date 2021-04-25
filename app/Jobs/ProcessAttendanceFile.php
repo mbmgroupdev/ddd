@@ -121,7 +121,7 @@ class ProcessAttendanceFile implements ShouldQueue
                     if(strtotime($getEmpAtt->out_time) > $shiftElig){
                         $bill = EmployeeHelper::dailyBillCalculation($getEmployee->as_ot, $getEmployee->as_unit_id, $getEmpAtt->in_date, $getEmpAtt->as_id, $this->shiftNightFlag, $getEmployee->as_designation_id);
                     }else{
-                        $getBill = Bills::where('as_id', $getEmpAtt->as_id)->where('bill_date', $getEmpAtt->in_date)->first();
+                        $getBill = Bills::where('as_id', $getEmpAtt->as_id)->where('bill_type', '!=', 4)->where('bill_date', $getEmpAtt->in_date)->first();
                         if($getBill != null){
                             Bills::where('id', $getBill->id)->delete();
                         }
