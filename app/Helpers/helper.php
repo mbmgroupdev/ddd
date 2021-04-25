@@ -834,7 +834,7 @@ if(!function_exists('cache_monthly_ot')){
     {
         return Cache::remember('monthly_ot', 10000, function  (){
             
-            return HrMonthlySalary::selectRaw(
+            return DB::table('hr_monthly_salary')->selectRaw(
                 'as_id, ot_hour, CONCAT(year,"-",month) as ym'
             )
             ->get()
@@ -849,7 +849,7 @@ if(!function_exists('cache_monthly_salary')){
     {
         return Cache::remember('monthly_salary', 10000, function  (){
             
-            return HrMonthlySalary::selectRaw(
+            return DB::table('hr_monthly_salary')->selectRaw(
                 'as_id, salary_payable, (ot_hour*ot_rate) as ot, CONCAT(year,"-",month) as ym'
             )
             ->get()

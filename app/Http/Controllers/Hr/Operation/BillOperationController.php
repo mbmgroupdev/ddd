@@ -132,7 +132,7 @@ class BillOperationController extends Controller
             }
 	        $listData = clone $queryData;
 	        $queryData->select('emp.as_doj', 'emp.as_ot', 'emp.as_designation_id', 'emp.as_section_id', 'emp.as_location', 'bemp.hr_bn_associate_name', 'emp.as_oracle_code', 'emp.as_unit_id','emp.as_id','emp.associate_id', DB::raw('sum(amount) as totalAmount'), DB::raw('count(*) as totalDay'), DB::raw("SUM(IF(pay_status=0,1,0)) AS dueDay"), DB::raw("SUM(IF(pay_status=0,amount,0)) AS dueAmount"))->groupBy('emp.as_id');
-	        $getBillList = $queryData->orderBy('emp.as_oracle_sl', 'asc')->get();
+	        $getBillList = $queryData->orderBy('emp.as_oracle_sl', 'asc')->orderBy('emp.temp_id', 'asc')->get();
 	        $totalAmount =  $getBillList->sum('dueAmount');
             $employeeKey = array_column($getBillList->toArray(), 'as_id');
 
@@ -226,7 +226,7 @@ class BillOperationController extends Controller
     		
 	        $queryData->select('ben.bank_no','emp.as_doj', 'emp.as_ot', 'emp.as_designation_id', 'emp.as_section_id', 'emp.as_location', 'bemp.hr_bn_associate_name', 'emp.as_oracle_code', 'emp.as_unit_id','emp.as_id','emp.associate_id', DB::raw('sum(amount) as totalAmount'), DB::raw('count(*) as totalDay'), DB::raw("SUM(IF(pay_status=0,1,0)) AS dueDay"), DB::raw("SUM(IF(pay_status=0,amount,0)) AS dueAmount"))->groupBy('emp.as_id');
 	        $totalAmount =  array_sum(array_column($queryData->get()->toArray(),'dueAmount'));
-	        $getBillList = $queryData->orderBy('emp.as_oracle_sl', 'asc')->get();
+	        $getBillList = $queryData->orderBy('emp.as_oracle_sl', 'asc')->orderBy('emp.temp_id', 'asc')->get();
 
             $getBillLists = $listData->select('s.*')->orderBy('s.bill_date', 'asc')->get()->groupBy('as_id',true);
             $totalEmployees = count($getBillLists);

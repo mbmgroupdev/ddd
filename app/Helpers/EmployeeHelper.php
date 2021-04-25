@@ -74,12 +74,19 @@ class EmployeeHelper
     			    	}
     			    }
 			    }
-			    
+
+			    $checkBillHour = (strtotime($outtimePunch) - strtotime($shiftIntime))/3600;
+			    $breakCount = 0;
+			    if($checkBillHour > 6){
+			    	$breakCount = 1;
+			    }
+
+			    $shiftBreak = ($shiftBreak * $breakCount);
 			    $extraBreakMin = 0;
 		    	if(!in_array($eUnit, [1,4,5,8])){
 		    		$shiftAddBreak = Carbon::parse($shiftOuttime)->addMinutes($shiftBreak);
-		    		$shiftAddSixH = Carbon::parse($shiftAddBreak)->addHours(7);
-		    		$shiftAddSevenH = Carbon::parse($shiftAddBreak)->addHours(8);
+		    		$shiftAddSixH = Carbon::parse($shiftAddBreak)->addHours(8);
+		    		$shiftAddSevenH = Carbon::parse($shiftAddBreak)->addHours(9);
 		    		 
 			        if((strtotime($outtimePunch) > strtotime(date('Y-m-d H:i', strtotime($shiftAddSixH))))){
 			    		$extraBreakMin = $shiftBreak;
@@ -93,12 +100,22 @@ class EmployeeHelper
 
 			    if(strtotime($today) > strtotime('2021-04-13') && $shiftNight == 0){
 			    	$extraMin = 0;
-			    	if((strtotime($outtimePunch) > strtotime(date('Y-m-d H:i', strtotime($today.' 18:00:00'))) && !in_array($eUnit, [8]))){
+			    	$breakStartTime = strtotime(date('Y-m-d H:i', strtotime($today.' 18:00:00')));
+			    	$breakEndTime = strtotime(date('Y-m-d H:i', strtotime($today.' 19:00:00')));
+			    	if(in_array($eUnit, [1,4,5])){
+			    		if(strtotime($today) > strtotime('2021-04-20')){
+			    			$breakStartTime = strtotime(date('Y-m-d H:i', strtotime($today.' 18:15:00')));
+			    			$breakEndTime = strtotime(date('Y-m-d H:i', strtotime($today.' 19:15:00')));
+			    		}
+			    	}
+
+			    	if((strtotime($outtimePunch) > $breakStartTime && !in_array($eUnit, [8]))){
 			    		$extraMin = 60;
-			    		if(strtotime($outtimePunch) < strtotime(date('Y-m-d H:i', strtotime($today.' 19:00:00')))){
-			                $extraMin = (strtotime($outtimePunch) - strtotime(date('Y-m-d H:i', strtotime($today.' 18:00:00'))))/60;
+			    		if(strtotime($outtimePunch) < $breakEndTime){
+			                $extraMin = (strtotime($outtimePunch) - $breakStartTime)/60;
 			            }
 			    	}
+			    	
 
 			    	$shiftBreak = $shiftBreak + (int)$extraMin;
 			    }
