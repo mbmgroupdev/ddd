@@ -642,6 +642,7 @@ class BonusController extends Controller
 
     protected function getBonusList($input)
     {
+        $input['otnonot'] = isset($input['otnonot'])?$input['otnonot']:null;
     	return DB::table('hr_bonus_sheet as bns')
     			->select('bns.*','sub.*','e.as_name','e.as_gender','b.hr_bn_associate_name','e.as_doj','e.temp_id','e.as_oracle_code')
     			->where('bns.bonus_rule_id',$input['bonus_type'])
@@ -669,8 +670,8 @@ class BonusController extends Controller
 	            ->when(!empty($input['floor_id']), function ($query) use($input){
 	               return $query->where('e.as_floor_id',$input['floor_id']);
 	            })
-	            ->when(!empty($input['otnonot']), function ($query) use($input){
-	               return $query->where('bns.ot_status',$input['otnonot']);
+	            ->when($input['otnonot'] != null, function ($query) use($input){
+	               return $query->where('bns.ot_status', $input['otnonot']);
 	            })
 	            ->when(!empty($input['area']), function ($query) use($input){
 	               return $query->where('sub.hr_subsec_area_id',$input['area']);
@@ -686,6 +687,12 @@ class BonusController extends Controller
 	            })
                 ->when(!empty($input['employee_status']), function ($query) use($input){
                    return $query->where('bns.emp_status', $input['employee_status']);
+                })
+                ->when(!empty($input['min_sal']), function ($query) use($input){
+                   return $query->where('bns.gross_salary','>=' ,$input['min_sal']);
+                })
+                ->when(!empty($input['max_sal']), function ($query) use($input){
+                   return $query->where('bns.gross_salary','<=', $input['max_sal']);
                 })
                 
                 ->when(!empty($input['pay_status']), function($query) use ($input){
@@ -705,6 +712,7 @@ class BonusController extends Controller
 
     }
 
+
     public function bonusSheet(Request $request)
     {
     	$input = $request->all();
@@ -719,15 +727,18 @@ class BonusController extends Controller
                                 ->subMonths($com['rules']->eligible_month)->toDateString();
 
     	$bonusList =  $this->getBonusList($input);
+        $per_page = ($request->per_page??10);
     	$com['bonusList'] =  collect($bonusList)
     					->groupBy('unit_id',true)
-    					->map(function($q){
+    					->map(function($q) use ($per_page){
     						return collect($q)->groupBy('location_id',true)
-    								->map(function($p){
-    									return collect($p)->chunk(10);
+    								->map(function($p) use ($per_page) {
+    									return collect($p)->chunk($per_page);
     								});
     					})
     					->all();
+
+        $com['previousData'] = $this->previousYearData($com['rules']->bonus_type_id, $com['rules']->cutoff_date);
 
     	$com['unit'] 		= unit_by_id();
         $com['location'] 	= location_by_id();

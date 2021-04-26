@@ -4,7 +4,7 @@
 			$urldata = http_build_query($input) . "\n";
 			$groupUnit = ($input['group_unit']??($input['unit']??''));
 		@endphp
-		{{-- <a href='{{ url("hr/reports/bonus-report?$urldata&export=excel")}}' target="_blank" class="btn btn-sm btn-info hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download" style="position: absolute; top: 16px; left: 65px;"><i class="fa fa-file-excel-o"></i></a> --}}
+		 <a href='{{ url("hr/reports/bonus-report?$urldata&export=excel")}}' target="_blank" class="btn btn-sm btn-info hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download" style="position: absolute; top: 16px; left: 65px;"><i class="fa fa-file-excel-o"></i></a> 
 		<div class="content_list_section"  id="report_section">
 			<style type="text/css">
 				.page-data{

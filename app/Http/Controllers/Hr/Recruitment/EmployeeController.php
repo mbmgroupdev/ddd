@@ -544,7 +544,6 @@ class EmployeeController extends Controller
             ->leftJoin('hr_subsection AS subsec', 'subsec.hr_subsec_id', '=', 'b.as_subsection_id')
             ->leftJoin('hr_benefits AS ben', 'b.associate_id', '=', 'ben.ben_as_id')
             ->leftJoin('hr_as_adv_info AS adv', 'b.associate_id', '=', 'adv.emp_adv_info_as_id')
-            ->where('b.as_status',1)
             ->whereIn('b.as_location', auth()->user()->location_permissions())
             ->where(function ($query) use ($request) {
                 if($request->otnonot != null){
@@ -552,6 +551,11 @@ class EmployeeController extends Controller
                 }
                 if($request->emp_type != ""){
                     $query->where('b.as_emp_type_id', '=', $request->emp_type);
+                }
+                if($request->as_status == 6){
+                    $query->where('b.as_status', '=', $request->as_status);
+                }else{
+                    $query->where('b.as_status', '=', 1); 
                 }
                 if($request->doj_from != ""){
                     $query->where('b.as_doj', '>=', $request->doj_from);

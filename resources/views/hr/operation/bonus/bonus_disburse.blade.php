@@ -239,6 +239,13 @@
                                                     {{ Form::select('employee_status', $status, null, ['placeholder'=>'Select Employee Status ', 'class'=>'form-control capitalize select-search', 'id'=>'estatus']) }}
                                                     <label for="estatus">Status</label>
                                                 </div>
+                                                <div class="form-group">
+                                                    <div class="form-group has-float-label">
+                                                        <input id="per_page" type="number" min="1" max="10" name="per_page" class="form-control" value="10">
+                                                        <label for="per_page">Per Page</label>
+                                                    </div>
+                                                        
+                                                </div>
                                                 
                                                 
                                                 <div class="form-group">
