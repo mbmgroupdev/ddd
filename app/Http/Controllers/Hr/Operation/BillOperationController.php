@@ -60,7 +60,7 @@ class BillOperationController extends Controller
             $employeeBanData = DB::table('hr_employee_bengali');
             $employeeBanDataSql = $employeeBanData->toSql();
 
-	        $queryData = DB::table('hr_bill as s')
+	        $queryData = DB::table('hr_bill_extra as s')
 	        ->whereBetween('s.bill_date', [$input['from_date'],$input['to_date']])
             ->whereIn('emp.as_unit_id', auth()->user()->unit_permissions())
             ->whereIn('emp.as_location', auth()->user()->location_permissions())
@@ -133,7 +133,7 @@ class BillOperationController extends Controller
 	        $listData = clone $queryData;
 	        $queryData->select('emp.as_doj', 'emp.as_ot', 'emp.as_designation_id', 'emp.as_section_id', 'emp.as_location', 'bemp.hr_bn_associate_name', 'emp.as_oracle_code', 'emp.as_unit_id','emp.as_id','emp.associate_id', DB::raw('sum(amount) as totalAmount'), DB::raw('count(*) as totalDay'), DB::raw("SUM(IF(pay_status=0,1,0)) AS dueDay"), DB::raw("SUM(IF(pay_status=0,amount,0)) AS dueAmount"))->groupBy('emp.as_id');
 	        $getBillList = $queryData->orderBy('emp.as_oracle_sl', 'asc')->orderBy('emp.temp_id', 'asc')->get();
-	        $totalAmount =  $getBillList->sum('dueAmount');
+	        $totalAmount =  $getBillList->sum('totalAmount');
             $employeeKey = array_column($getBillList->toArray(), 'as_id');
 
             $getBillLists = $listData->select('s.*')->orderBy('s.bill_date', 'asc')->get()->groupBy('as_id',true);
@@ -203,7 +203,7 @@ class BillOperationController extends Controller
             $benefitData = DB::table('hr_benefits');
             $benefitData_sql = $benefitData->toSql();
 
-	        $queryData = DB::table('hr_bill as s')
+	        $queryData = DB::table('hr_bill_extra as s')
 	        ->whereBetween('s.bill_date', [$input['from_date'],$input['to_date']])
             ->whereIn('emp.as_unit_id', auth()->user()->unit_permissions())
             ->whereIn('emp.as_location', auth()->user()->location_permissions())
@@ -265,7 +265,7 @@ class BillOperationController extends Controller
     	}
     	DB::beginTransaction();
     	try {
-	        $queryData = DB::table('hr_bill')
+	        $queryData = DB::table('hr_bill_extra')
 	        ->whereBetween('bill_date', [$input['from_date'],$input['to_date']])
             ->where('pay_status', 0)
             ->when(!empty($input['bill_type']), function ($query) use($input){
@@ -298,5 +298,27 @@ class BillOperationController extends Controller
             $data['msg'] = $e->getMessage();
             return $data;
         }
+    }
+
+    public function summaryReport()
+    {
+        $getEmployee = DB::table('hr_as_basic_info AS b')
+        ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
+        ->whereIn('b.as_location', auth()->user()->location_permissions())
+        ->where('b.as_status', 1)
+        ->pluck('as_id');
+
+        $getBill = DB::table('hr_bill_extra')
+        ->whereIn('as_id', $getEmployee)
+        ->whereBetween('bill_date', ['2021-04-15', '2021-04-22'])
+        ->where('bill_type', 4)
+        ->get();
+
+        $getEmployeeWise = collect($getBill)->groupBy('as_id', true);
+        dd($getEmployeeWise);
+    }
+    public function summaryCalculation($data)
+    {
+        # code...
     }
 }

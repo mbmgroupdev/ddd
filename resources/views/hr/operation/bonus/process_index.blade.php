@@ -45,7 +45,7 @@
                                      &nbsp; &nbsp; -  {{ $getUser[$bonus->approved_by]->name?? ''}}
                                 </p>
                                 @if(auth()->user()->can('Bonus Sheet'))
-                                <a href='{{ url("hr/payroll/bonus-disburse")}}' class="btn btn-dark mt-2"Get Disburse</a>
+                                <a href='{{ url("hr/payroll/bonus-disburse")}}' class="btn btn-dark mt-2">Get Disburse</a>
                                 @endif
                               @else
                                 @if(auth()->user()->can('Bonus Approval'))

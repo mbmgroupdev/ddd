@@ -22,7 +22,7 @@ class TestXYZController extends Controller
 {
     public function rfidUpdate()
     {
-        //return $this->workFromHomeBill();
+        return $this->summaryReport();
         return "";
         $data = array();
         $getBasic = DB::table('hr_as_basic_info')
@@ -359,7 +359,20 @@ class TestXYZController extends Controller
         }
         return ($ge);
     }
-    
+    public function indiviBillEntry(){
+        $date = '2021-04-';
+        for($i=14; $i<=24; $i++){
+            DB::table('hr_bill')
+            ->insert([
+                'as_id' => 2990,
+                'bill_date' => $date.$i,
+                'bill_type' => 4,
+                'amount' => 30,
+                'pay_status' => 0
+            ]);
+        }
+        return 'success';
+    }
     public function billEntry()
     {
         $data = [];
@@ -554,6 +567,40 @@ class TestXYZController extends Controller
         ->update(['pay_status' => 1]);
         return $getBill;
 
+    }
+    public function summaryReport()
+    {
+        $getEmployee = DB::table('hr_as_basic_info AS b')
+        ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
+        ->whereIn('b.as_location', auth()->user()->location_permissions())
+        ->where('b.as_status', 1)
+        ->get()
+        ->keyBy('as_id');
+
+        $empId = collect($getEmployee)->pluck('as_id');
+
+        $getBill = DB::table('hr_bill')
+        ->select(DB::raw('sum(amount) AS empTotal'), 'as_id')
+        ->whereIn('as_id', $empId)
+        ->whereBetween('bill_date', ['2021-04-15', '2021-04-22'])
+        ->where('bill_type', 4)
+        ->groupBy('as_id')
+        ->get();
+       
+        $getB = collect($getBill)->map(function($q) use ($getEmployee){
+            $q->as_ot      = $getEmployee[$q->as_id]->as_ot;
+            return $q;
+        });
+
+        $data = collect($getB);
+        $sum  = (object)[];
+        $sum->totalAmount      = $data->sum('empTotal');
+        $sum->totalEmp      = $data->count();
+        $sum->otEmpAmount      = $data->where('as_ot', 1)->sum('empTotal');
+        $sum->nonOtEmpAmount      = $data->where('as_ot', 0)->sum('empTotal');
+        $sum->otEmp      = $data->where('as_ot', 1)->count();
+        $sum->nonOtEmp      = $data->where('as_ot', 0)->count();
+        print_r($sum);exit;
     }
     public function employeeCheck()
     {

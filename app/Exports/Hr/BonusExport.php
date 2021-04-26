@@ -27,6 +27,8 @@ class BonusExport implements FromView, WithHeadingRow
             return view('hr.operation.bonus.excel_eligible',$fields);
         }else if($this->page_type == 'onapproval'){
             return view('hr.payroll.increment.excel_on_approval',$fields);
+        }else if($this->page_type == 'report'){
+            return view('hr.reports.bonus.excel',$fields);
         }
 
     }

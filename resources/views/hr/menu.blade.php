@@ -359,7 +359,7 @@
       @endif
 
 
-      @if(auth()->user()->canany(['Monthly OT','Monthly MMR','Shift Roster','Monthly Increment','Attendance Summary Report','Fixed Salary Sheet','Manual Attendance Report', 'Attendance Report','Outside List','Attendance Consecutive Report','Event History','Group Attendance','Leave Log', 'Salary Report', 'Summary Report']) || $user->hasRole('Super Admin'))
+      @if(auth()->user()->canany(['Monthly OT','Monthly MMR','Shift Roster','Monthly Increment','Attendance Summary Report','Fixed Salary Sheet','Manual Attendance Report', 'Attendance Report','Outside List','Attendance Consecutive Report','Event History','Group Attendance','Leave Log', 'Salary Report','Bonus Report', 'Summary Report']) || $user->hasRole('Super Admin'))
       <li class="@if($segment2 == 'reports') active @endif">
          <a href="#report" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="las la-file-invoice"></i><span>Reports</span><i class="las la-angle-right iq-arrow-right"></i></a>
          <ul id="report" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
@@ -390,7 +390,7 @@
             <li class="@if($segment3 == 'monthly-attendance-activity') active @endif"><a href="{{ url('hr/reports/monthly-attendance-activity') }}"><i class="las la-fingerprint"></i>Monthly Attendance</a></li>
             <li class="@if($segment3 == 'monthly-salary') active @endif"><a href="{{ url('hr/reports/monthly-salary') }}"><i class="las la-fingerprint"></i>Monthly Salary</a></li>
             @endif
-            @if($user->can('Bonus') || $user->hasRole('Super Admin'))
+            @if($user->can('Bonus Report') || $user->can('Bonus') || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'bonus') active @endif"><a href="{{ url('hr/reports/bonus') }}"><i class="las la-fingerprint"></i>Bonus</a></li>
             @endif
             @if($user->can('Monthly OT') || $user->hasRole('Super Admin'))
