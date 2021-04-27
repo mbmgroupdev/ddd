@@ -15,19 +15,22 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class BillOperationController extends Controller
 {
+    public function __construct()
+    {
+        ini_set('zlib.output_compression', 1);
+    }
     public function index()
     {
     	try {
-            $data['unitList']      = Unit::where('hr_unit_status', '1')
-                ->whereIn('hr_unit_id', auth()->user()->unit_permissions())
-                ->orderBy('hr_unit_name', 'desc')
-                ->pluck('hr_unit_name', 'hr_unit_id');
-            $data['locationList']  = Location::where('hr_location_status', '1')
-            ->whereIn('hr_location_id', auth()->user()->location_permissions())
-            ->orderBy('hr_location_name', 'desc')
-            ->pluck('hr_location_name', 'hr_location_id');
-            $data['areaList']      = Area::where('hr_area_status', '1')->pluck('hr_area_name', 'hr_area_id');
-            $data['departmentList'] = Department::where('hr_department_status', '1')->pluck('hr_department_name', 'hr_department_id');
+            $unit = unit_by_id();
+            $data['unitList'] = collect($unit)->pluck('hr_unit_name', 'hr_unit_id');
+            $location = location_by_id();
+            $data['locationList']  = collect($location)->pluck('hr_location_name', 'hr_location_id');
+            $area = area_by_id();
+            $data['areaList']      = collect($area)->pluck('hr_area_name', 'hr_area_id');
+            $department = department_by_id();
+            $data['departmentList'] = collect($department)->pluck('hr_department_name', 'hr_department_id');
+            $data['billType'] = bill_type_by_id();
             return view('hr.operation.bill.index', $data);
         } catch(\Exception $e) {
             return back()->with('error', $e->getMessage());
@@ -42,7 +45,7 @@ class BillOperationController extends Controller
     	$input['subSection'] = $input['subSection']??'';
         $input['area'] = $input['area']??'';
         $input['location'] = $input['location']??'';
-        ini_set('zlib.output_compression', 1);
+        
     	try {
             if($input['date_type'] == 'month'){
                 $input['from_date'] = $input['month_year'].'-01';
@@ -57,7 +60,7 @@ class BillOperationController extends Controller
             $employeeBanData = DB::table('hr_employee_bengali');
             $employeeBanDataSql = $employeeBanData->toSql();
 
-	        $queryData = DB::table('hr_bill as s')
+	        $queryData = DB::table('hr_bill_extra as s')
 	        ->whereBetween('s.bill_date', [$input['from_date'],$input['to_date']])
             ->whereIn('emp.as_unit_id', auth()->user()->unit_permissions())
             ->whereIn('emp.as_location', auth()->user()->location_permissions())
@@ -129,8 +132,8 @@ class BillOperationController extends Controller
             }
 	        $listData = clone $queryData;
 	        $queryData->select('emp.as_doj', 'emp.as_ot', 'emp.as_designation_id', 'emp.as_section_id', 'emp.as_location', 'bemp.hr_bn_associate_name', 'emp.as_oracle_code', 'emp.as_unit_id','emp.as_id','emp.associate_id', DB::raw('sum(amount) as totalAmount'), DB::raw('count(*) as totalDay'), DB::raw("SUM(IF(pay_status=0,1,0)) AS dueDay"), DB::raw("SUM(IF(pay_status=0,amount,0)) AS dueAmount"))->groupBy('emp.as_id');
-	        $getBillList = $queryData->orderBy('emp.as_oracle_sl', 'asc')->get();
-	        $totalAmount =  $getBillList->sum('dueAmount');
+	        $getBillList = $queryData->orderBy('emp.as_oracle_sl', 'asc')->orderBy('emp.temp_id', 'asc')->get();
+	        $totalAmount =  $getBillList->sum('totalAmount');
             $employeeKey = array_column($getBillList->toArray(), 'as_id');
 
             $getBillLists = $listData->select('s.*')->orderBy('s.bill_date', 'asc')->get()->groupBy('as_id',true);
@@ -183,7 +186,6 @@ class BillOperationController extends Controller
     	if(count($input['pay_id']) == 0){
     		return 'warning';
     	}
-        ini_set('zlib.output_compression', 1);
     	try {
             if($input['date_type'] == 'month'){
                 $input['from_date'] = $input['month_year'].'-01';
@@ -201,7 +203,7 @@ class BillOperationController extends Controller
             $benefitData = DB::table('hr_benefits');
             $benefitData_sql = $benefitData->toSql();
 
-	        $queryData = DB::table('hr_bill as s')
+	        $queryData = DB::table('hr_bill_extra as s')
 	        ->whereBetween('s.bill_date', [$input['from_date'],$input['to_date']])
             ->whereIn('emp.as_unit_id', auth()->user()->unit_permissions())
             ->whereIn('emp.as_location', auth()->user()->location_permissions())
@@ -224,7 +226,7 @@ class BillOperationController extends Controller
     		
 	        $queryData->select('ben.bank_no','emp.as_doj', 'emp.as_ot', 'emp.as_designation_id', 'emp.as_section_id', 'emp.as_location', 'bemp.hr_bn_associate_name', 'emp.as_oracle_code', 'emp.as_unit_id','emp.as_id','emp.associate_id', DB::raw('sum(amount) as totalAmount'), DB::raw('count(*) as totalDay'), DB::raw("SUM(IF(pay_status=0,1,0)) AS dueDay"), DB::raw("SUM(IF(pay_status=0,amount,0)) AS dueAmount"))->groupBy('emp.as_id');
 	        $totalAmount =  array_sum(array_column($queryData->get()->toArray(),'dueAmount'));
-	        $getBillList = $queryData->orderBy('emp.as_oracle_sl', 'asc')->get();
+	        $getBillList = $queryData->orderBy('emp.as_oracle_sl', 'asc')->orderBy('emp.temp_id', 'asc')->get();
 
             $getBillLists = $listData->select('s.*')->orderBy('s.bill_date', 'asc')->get()->groupBy('as_id',true);
             $totalEmployees = count($getBillLists);
@@ -263,7 +265,7 @@ class BillOperationController extends Controller
     	}
     	DB::beginTransaction();
     	try {
-	        $queryData = DB::table('hr_bill')
+	        $queryData = DB::table('hr_bill_extra')
 	        ->whereBetween('bill_date', [$input['from_date'],$input['to_date']])
             ->where('pay_status', 0)
             ->when(!empty($input['bill_type']), function ($query) use($input){
@@ -296,5 +298,27 @@ class BillOperationController extends Controller
             $data['msg'] = $e->getMessage();
             return $data;
         }
+    }
+
+    public function summaryReport()
+    {
+        $getEmployee = DB::table('hr_as_basic_info AS b')
+        ->whereIn('b.as_unit_id', auth()->user()->unit_permissions())
+        ->whereIn('b.as_location', auth()->user()->location_permissions())
+        ->where('b.as_status', 1)
+        ->pluck('as_id');
+
+        $getBill = DB::table('hr_bill_extra')
+        ->whereIn('as_id', $getEmployee)
+        ->whereBetween('bill_date', ['2021-04-15', '2021-04-22'])
+        ->where('bill_type', 4)
+        ->get();
+
+        $getEmployeeWise = collect($getBill)->groupBy('as_id', true);
+        dd($getEmployeeWise);
+    }
+    public function summaryCalculation($data)
+    {
+        # code...
     }
 }

@@ -38,13 +38,14 @@
         <input type="hidden" value="{{ $input['date_type']}}" name="date_type">
         <input type="hidden" value="{{ $input['month_year']}}" name="month_year">
         <input type="hidden" value="{{ $input['pay_status']}}" name="pay_status">
+        @php
+            $pageKey = 0;
+        @endphp
         @foreach($uniqueUnit as $key=>$unit)
-            @php
-                $pageKey = 0;
-            @endphp
+            
             @foreach($getBillDataSet as $key=>$lists)
                 @php
-                    $pageKey += 1;
+                    ++$pageKey;
                     $getUnitHead = $getUnit[$unit]['hr_unit_name_bn']??'';
                 @endphp
                 
@@ -71,8 +72,10 @@
                                         টিফিন
                                         @elseif($input['bill_type'] == 2)
                                         ডিনার
-                                        @else
-                                        টিফিন / ডিনার 
+                                        @elseif($input['bill_type'] == 3)
+                                        লাঞ্চ
+                                        @elseif($input['bill_type'] == 4)
+                                        ইফতার
                                         @endif 
                                         বিল
                                         
@@ -165,17 +168,7 @@
                                                                 $singDate = date('d', strtotime($dateList->bill_date));
                                                             @endphp
                                                             {{ Custom::engToBnConvert($singDate) }}
-                                                            {{-- <span style="text-align: left; width: 40%; float: left;  white-space: wrap; {{ $dateList->pay_status ==0?'color:hotpink':'' }}" >
-                                                                @php
-                                                                    $singDate = date('d', strtotime($dateList->bill_date));
-                                                                @endphp
-                                                                {{ Custom::engToBnConvert($singDate) }}
-                                                            </span>
-                                                            <span style ="text-align: right;width: 10%; float: left;white-space: wrap; {{ $dateList->pay_status ==0?'color:hotpink':'' }}" >=
-                                                            </span>
-                                                            <span style="text-align: right;width: 50%; float: right;  white-space: wrap; {{ $dateList->pay_status ==0?'color:hotpink':'' }}" >
-                                                                <font > {{ Custom::engToBnConvert($dateList->amount) }}</font>
-                                                            </span> --}}
+                                                            
 
                                                         </p>
                                                         @endforeach
@@ -189,16 +182,11 @@
                                             </td>
                                             <td>
                                                 <p style="margin:0;padding:0">
-                                                    {{-- <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">মোট দিন
-                                                    </span>
-                                                    <span style ="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=
-                                                    </span> --}}
+                                                    
                                                     <span style="text-align: right;width: 30%; float: right;  white-space: wrap;">
                                                         <font style="color:hotpink;" > {{ Custom::engToBnConvert($list->totalDay) }}</font>
                                                     </span>
-
                                                 </p>
-                                                
                                                 
                                             </td>
                                             

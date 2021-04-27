@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Hr\Reports;
 
+use App\Exports\Hr\BonusExport;
 use App\Http\Controllers\Controller;
 use App\Models\Hr\Benefits;
 use App\Models\Hr\BonusRule;
 use App\Models\Hr\Location;
+use Maatwebsite\Excel\Facades\Excel;
 use DB;
 use Illuminate\Http\Request;
 
@@ -55,9 +57,9 @@ class BonusSheetController extends Controller
             $bonusType = bonus_type_by_id();
 
             if(isset($input['group_unit'])){
-            	$groupUnit = $input['group_unit'];
+            	$groupUnit[] = $input['group_unit'];
             	$getLocation = Location::getUnitWiseLocation($input['group_unit']);
-            	$groupLocation = $getLocation->hr_location_id;
+            	$groupLocation[] = $getLocation->hr_location_id;
             	if($input['group_unit'] == 1){
             		$groupUnit = collect($unit)->pluck('hr_unit_id');
             		$groupLocation = [6,8,10,12,13,14];
@@ -124,7 +126,7 @@ class BonusSheetController extends Controller
                 if($input['pay_status'] == 'cash'){
                     return $query->where('s.cash_payable', '>', 0);
                 }elseif($input['pay_status'] != 'all'){
-                    return $query->where('s.pay_type', $input['pay_status']);
+                    return $query->where('s.bank_name', $input['pay_status']);
                 }
             })
             ->when(!empty($input['area']), function ($query) use($input){
@@ -197,7 +199,7 @@ class BonusSheetController extends Controller
                     $queryData->groupBy('emp.'.$input['report_group']);
                 }
             }else{
-                $queryData->select('s.unit_id AS as_unit_id','s.associate_id', 's.designation_id AS as_designation_id','subsec.hr_subsec_area_id AS as_area_id', 'subsec.hr_subsec_department_id AS as_department_id', 'subsec.hr_subsec_section_id AS as_section_id', 's.subsection_id AS as_subsection_id','deg.hr_designation_position','deg.hr_designation_name', 'ben.bank_no','emp.as_id','emp.as_gender', 'emp.as_oracle_code', 'emp.as_line_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_doj', 's.net_payable', 's.bank_payable', 's.cash_payable', 's.stamp', 's.pay_status', 's.gross_salary', 's.basic', 's.duration', 's.bonus_amount', 's.override');
+                $queryData->select('s.unit_id AS as_unit_id','s.associate_id', 's.designation_id AS as_designation_id','subsec.hr_subsec_area_id AS as_area_id', 'subsec.hr_subsec_department_id AS as_department_id', 'subsec.hr_subsec_section_id AS as_section_id', 's.subsection_id AS as_subsection_id','deg.hr_designation_position','deg.hr_designation_name', 'ben.bank_no','emp.as_id','emp.as_gender', 'emp.as_oracle_code', 'emp.as_line_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_doj', 's.net_payable', 's.bank_payable', 's.cash_payable', 's.stamp', 's.pay_status', 's.gross_salary', 's.basic', 's.duration', 's.bonus_amount', 's.override', 'emp.as_location');
             }
 
             $getEmployee = $queryData->orderBy('s.bonus_amount', 'desc')->get();
@@ -233,7 +235,28 @@ class BonusSheetController extends Controller
             }
 
             $summary 	= $this->makeSummary($queryGet->get());
-            
+            if(isset($input['export'])){
+                $com['uniqueGroups'] = $uniqueGroups;
+                $com['uniqueGroupEmp'] = $uniqueGroupEmp;
+                $com['getEmployee'] = $getEmployee;
+                $com['bonusSheet'] = $bonusSheet;
+                $com['bonusType'] = $bonusType;
+                $com['summary'] = $summary;
+                $com['input']       = $input;
+                $com['format']      = $input['report_group'];
+                $com['unit']        = unit_by_id();
+                $com['location']    = location_by_id();
+                $com['line']        = line_by_id();
+                $com['floor']       = floor_by_id();
+                $com['department']  = department_by_id();
+                $com['designation'] = designation_by_id();
+                $com['section']     = section_by_id();
+                $com['subsection']  = subSection_by_id();
+                $com['area']        = area_by_id();
+                $filename = 'Bonus Report List - ';
+                $filename .= '.xlsx';
+                return Excel::download(new BonusExport($com, 'report'), $filename);
+            }
             $view = view('hr.reports.bonus.report', compact('uniqueGroups', 'format', 'getEmployee', 'input', 'totalAmount', 'totalEmployees','totalCashSalary', 'totalBankSalary', 'totalStamp', 'uniqueGroupEmp', 'location', 'unit', 'area', 'department', 'designation', 'section', 'subsection','summary', 'bonusType', 'bonusSheet'))->render();
             return $view;
         } catch (\Exception $e) {

@@ -14,7 +14,15 @@
             .page-break{
                 page-break-after: always;
             }
+            th{font-weight: normal !important;}
             p,td,th{ margin: 3pt 0 !important;}
+            .flex {
+                display: flex;
+            }
+
+            .justify-content-between {
+                justify-content: space-between!important;
+            }
         </style>
         
         <!-- unit loop -->
@@ -139,13 +147,14 @@
                                             {{eng_To_bn(number_format($emp->stamp,2, '.', ','))}}
                                         </span>
                                     </div>
+                                    <br>
+                                    @if($emp->override== 1)
                                     @if(isset($previousData[$emp->associate_id]))
-                                        E( {{eng_To_bn(number_format($previousData[$emp->associate_id],2, '.', ','))}})
+                                        <b>&nbsp; Ex. Bonus ( {{eng_To_bn(number_format($previousData[$emp->associate_id],2, '.', ','))}})</b>
                                     @endisset
+                                    @endif
                                 </td>
                                 <td style="text-align: right;">
-                                    
-                                    <hr style="margin: 2px;">
                                      <div class="flex justify-content-between">
                                         <span></span>
                                         <span style=" font-size: 16px; font-weight: bold;">

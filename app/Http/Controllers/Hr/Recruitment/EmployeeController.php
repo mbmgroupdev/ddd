@@ -577,7 +577,7 @@ class EmployeeController extends Controller
             $perm = true; 
         }
 
-        $sal = check_permission('Salary Sheet');
+        $sal = check_permission('Salary Sheet') || check_permission('Salary Report');
         // education
         $educationDegree = DB::table('hr_education_degree_title')->pluck('education_degree_title', 'id');
         $educations = DB::table('hr_education AS e')

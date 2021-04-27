@@ -261,7 +261,7 @@ class AttendaceBulkManualController extends Controller
 
                                     $bill = EmployeeHelper::dailyBillCalculation($info->as_ot, $info->as_unit_id, $insert['in_date'], $insert['as_id'], $nightFlag, $info->as_designation_id);
                                 }else{
-                                    $getBill = Bills::where('as_id', $insert['as_id'])->where('bill_date', $insert['in_date'])->first();
+                                    $getBill = Bills::where('as_id', $insert['as_id'])->where('bill_type', '!=', 4)->where('bill_date', $insert['in_date'])->first();
                                     if($getBill != null){
                                         Bills::where('id', $getBill->id)->delete();
                                     }
@@ -290,7 +290,7 @@ class AttendaceBulkManualController extends Controller
                         ->where('as_id',$info->as_id)
                         ->delete();
                         // bill
-                        $getBill = Bills::where('as_id', $info->as_id)->where('bill_date', $date)->first();
+                        $getBill = Bills::where('as_id', $info->as_id)->where('bill_type', '!=', 4)->where('bill_date', $date)->first();
                         if($getBill != null){
                             Bills::where('id', $getBill->id)->delete();
                         }
@@ -475,7 +475,7 @@ class AttendaceBulkManualController extends Controller
 
                                     $bill = EmployeeHelper::dailyBillCalculation($info->as_ot, $info->as_unit_id, $Att->in_date, $info->as_id, $nightFlag, $info->as_designation_id);
                                 }else{
-                                    $getBill = Bills::where('as_id', $info->as_id)->where('bill_date', $Att->in_date)->first();
+                                    $getBill = Bills::where('as_id', $info->as_id)->where('bill_type', '!=', 4)->where('bill_date', $Att->in_date)->first();
                                     if($getBill != null){
                                         Bills::where('id', $getBill->id)->delete();
                                     }
@@ -530,7 +530,7 @@ class AttendaceBulkManualController extends Controller
                         ->delete();
 
                         // bill
-                        $getBill = Bills::where('as_id', $info->as_id)->where('bill_date', $date)->first();
+                        $getBill = Bills::where('as_id', $info->as_id)->where('bill_type', '!=', 4)->where('bill_date', $date)->first();
                         if($getBill != null){
                             Bills::where('id', $getBill->id)->delete();
                         }

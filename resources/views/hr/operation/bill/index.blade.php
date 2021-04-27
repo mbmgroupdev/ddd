@@ -1,5 +1,5 @@
 @extends('hr.layout')
-@section('title', 'Tiffin/Dinner Bill')
+@section('title', 'Bill Announcement')
 
 @section('main-content')
 @push('js')
@@ -53,7 +53,7 @@
                 <li>
                     <a href="#">Operation</a>
                 </li>
-                <li class="active"> Tiffin/Dinner Bill</li>
+                <li class="active"> Bill Announcement</li>
             </ul>
         </div>
 
@@ -80,8 +80,8 @@
                                                         <label for="as_id">Employees</label>
                                                     </div>
                                                 </div>
-                                                <input type="hidden" id="form-range" name="date_type" class="" value="range">
-                                                <input type="hidden" class="report_date form-control" id="month-year" name="month_year" placeholder=" Month-Year" value="{{ date('Y-m') }}"autocomplete="off" />
+                                                <input type="hidden" id="emp-form-range" name="date_type" class="" value="range">
+                                                <input type="hidden" class="report_date form-control" id="emp-month-year" name="month_year" placeholder=" Month-Year" value="{{ date('Y-m') }}"autocomplete="off" />
                                                 <div class="col-sm-2">
                                                     <div class="form-group has-float-label has-required">
                                                         <input type="date" class="report_date datepicker form-control" id="associate_from_date" name="from_date" placeholder="Y-m-d" required="required" value="{{ date('Y-m-d') }}" autocomplete="off" />
@@ -105,9 +105,7 @@
                                                 </div>
                                                 <div class="col-sm-2">
                                                   <div class="form-group has-float-label select-search-group">
-                                                    <?php
-                                                      $billType = ['1'=>'Tiffin','2'=>'Dinner'];
-                                                    ?>
+                                                    
                                                     {{ Form::select('bill_type', $billType, 0, ['placeholder'=>'Select Payable Status ', 'class'=>'form-control capitalize select-search', 'id'=>'associate_bill_type']) }}
                                                     <label for="associate_bill_type">Bill Type</label>
                                                   </div>
@@ -149,11 +147,10 @@
                                     <div class="panel-body pb-0">
                                         <div class="row">
                                             <div class="col-3">
-                                                <div class="form-group has-float-label select-search-group">
-                                                    <select name="unit" class="form-control capitalize select-search" id="unit" >
-                                                        @if($mbmFlag == 1)
-                                                        <option value="145">MBM + MBF + MBM 2</option>
-                                                        @endif
+                                                <div class="form-group has-float-label select-search-group has-required">
+                                                    <select name="unit" class="form-control capitalize select-search" id="unit" required>
+                                                        <option value=""> - Select - </option>
+                                                        
                                                         @foreach($unitList as $key => $value)
                                                         <option value="{{ $key }}">{{ $value }}</option>
                                                         @endforeach
@@ -173,17 +170,14 @@
                                                     <select name="area" class="form-control capitalize select-search" id="area">
                                                         <option value="">Choose...</option>
                                                         @foreach($areaList as $key => $value)
-                                                        <option value="{{ $key }}" @if($value == 'Factory') selected @endif>{{ $value }}</option>
+                                                        <option value="{{ $key }}">{{ $value }}</option>
                                                         @endforeach
                                                     </select>
                                                     <label for="area">Area</label>
                                                 </div>
                                                 <div class="form-group has-float-label select-search-group">
-                                                    <select name="department" class="form-control capitalize select-search" id="department">
+                                                    <select name="department" class="form-control capitalize select-search" id="department" disabled>
                                                         <option selected="" value="">Choose...</option>
-                                                        @foreach($departmentList as $key => $value)
-                                                        <option value="{{ $key }}">{{ $value }}</option>
-                                                        @endforeach
                                                     </select>
                                                     <label for="department">Department</label>
                                                 </div>
@@ -243,9 +237,7 @@
                                             <div class="col-3">
                                                 
                                                 <div class="form-group has-float-label select-search-group">
-                                                    <?php
-                                                      $billType = ['1'=>'Tiffin','2'=>'Dinner'];
-                                                    ?>
+                                                    
                                                     {{ Form::select('bill_type', $billType, 0, ['placeholder'=>'Select Payable Status ', 'class'=>'form-control capitalize select-search', 'id'=>'bill_type']) }}
                                                     <label for="bill_type">Bill Type</label>
                                                 </div>
@@ -393,63 +385,8 @@
 <script>
     var _token = $('input[name="_token"]').val();
     
-    // show error message
-    function errorMsgRepeter(id, check, text){
-        var flug1 = false;
-        if(check == ''){
-            $('#'+id).html('<label class="control-label status-label" for="inputError">* '+text+'<label>');
-            flug1 = false;
-        }else{
-            $('#'+id).html('');
-            flug1 = true;
-        }
-        return flug1;
-    }
 
-    function formatState (state) {
-        //console.log(state.element);
-        if (!state.id) {
-            return state.text;
-        }
-        var baseUrl = "/user/pages/images/flags";
-        var $state = $(
-        '<span><img /> <span></span></span>'
-        );
-        // Use .text() instead of HTML string concatenation to avoid script injection issues
-        var targetName = state.name;
-        $state.find("span").text(targetName);
-        // $state.find("img").attr("src", baseUrl + "/" + state.element.value.toLowerCase() + ".png");
-        return $state;
-    };
-
-    $('select.associates').select2({
-        templateSelection:formatState,
-        placeholder: 'Select Name or Associate\'s ID',
-        ajax: {
-            url: '{{ url("hr/associate-search") }}',
-            dataType: 'json',
-            delay: 250,
-            data: function (params) {
-                return {
-                    keyword: params.term
-                };
-            },
-            processResults: function (data) {
-                return {
-                    results:  $.map(data, function (item) {
-                        return {
-                            text: $("<span><img src='"+(item.as_pic ==null?'/assets/images/avatars/profile-pic.jpg':item.as_pic)+"' height='50px' width='auto'/> " + item.associate_name + "</span>"),
-                            id: item.associate_id,
-                            name: item.associate_name
-                        }
-                    })
-                };
-          },
-          cache: true
-        }
-    });
-
-    // Reuseable ajax function
+    // Reusable ajax function
     function ajaxOnChange(ajaxUrl, ajaxType, valueObject, successStoreId) {
         $.ajax({
             url : ajaxUrl,
@@ -525,14 +462,14 @@
             processbar(0);
             $.ajax({
                 type: "get",
-                url: '{{ url("hr/operation/filter-wise-tiffin-dinner-bill-sheet")}}',
+                url: '{{ url("hr/operation/filter-wise-bill-announcement-sheet")}}',
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
                 },
                 data: form.serialize(), // serializes the form's elements.
                 success: function(response)
                 {
-                  console.log(response);
+                  // console.log(response);
                     if(response !== 'error'){
                         setTimeout(() => {
                             $('#setFlug').val(1); 
@@ -586,9 +523,9 @@
             }
         }
 
-        if((unit === '' && location === '' && area === '' && department === '')){
+        if((unit === '' && location === '')){
             flag = 1;
-            msg = 'Select Unit/Location/Area/Department';
+            msg = 'Select Unit/Location';
         }
 
         if(flag === 0){
@@ -598,7 +535,7 @@
             processbar(0);
             $.ajax({
                 type: "get",
-                url: '{{ url("hr/operation/filter-wise-tiffin-dinner-bill-sheet")}}',
+                url: '{{ url("hr/operation/filter-wise-bill-announcement-sheet")}}',
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
                 },
@@ -672,11 +609,7 @@
                 processbar(percentage);
             }, 1000);
         }
-
     }
-    
-    
-    
 </script>
 @endpush
 @endsection

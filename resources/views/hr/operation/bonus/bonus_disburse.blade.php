@@ -79,11 +79,15 @@
                                                 </div>
                                                 <div class="col-sm-3">
                                                   <div class="form-group has-float-label select-search-group">
-                                                  {{ Form::select('bonus_type', $bonus_type, null, ['placeholder'=>'Select Bonus Type', 'class'=>'form-control capitalize select-search', 'id'=>'bonusForSngle']) }}
-                                                    <label for="bonusForSngle">Bonus Type</label>
+                                                      {{ Form::select('bonus_type', $bonus_type, null, ['placeholder'=>'Select Bonus Type', 'class'=>'form-control capitalize select-search', 'id'=>'bonusForSngle']) }}
+                                                        <label for="bonusForSngle">Bonus Type</label>
+                                                    </div>
                                                 </div>
-                                                
-                                                
+                                                <div class="col-sm-2">
+                                                    <div class="form-group has-float-label">
+                                                        <input id="per_page" type="number" min="1" max="10" name="per_page" class="form-control" value="1">
+                                                        <label for="per_page">Per Page</label>
+                                                    </div>
                                                 </div>
                                                 <div class="col-sm-2">
                                                     <button onclick="individual()" type="button" class="btn btn-primary btn-sm" id="individualBtn"><i class="fa fa-save"></i> Generate</button>
@@ -442,7 +446,7 @@
         if(employee.length === 0){
             $.notify("Please Select At Least One Employee", 'error');
         }else{
-            disburseSheet(form,year,bonus_type);
+            disburseSheet(form,bonus_type);
         }
     }
 

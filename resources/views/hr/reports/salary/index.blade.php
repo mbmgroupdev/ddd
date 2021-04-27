@@ -80,7 +80,7 @@
                               <input type="hidden" id="reportFormat" name="report_format" value="1">
                               <div class="col-3">
                                 <div class="row">
-                                  <div class="col-7 pr-0">
+                                  <div class="col-5 pr-0">
                                     <div class="format">
                                       <div class="form-group has-float-label select-search-group mb-0">
                                           <?php
@@ -91,8 +91,11 @@
                                       </div>
                                     </div>
                                   </div>
-                                  <div class="col-5 pl-0">
+                                  <div class="col-7 pl-0">
                                     <div class="text-right">
+                                      <a class="btn view no-padding filter" data-toggle="tooltip" data-placement="top" title="" data-original-title="Advanced Filter">
+                                        <i class="fa fa-filter"></i>
+                                      </a>
                                       <a class="btn view grid_view no-padding" data-toggle="tooltip" data-placement="top" title="" data-original-title="Summary Report View" id="1">
                                         <i class="las la-th-large"></i>
                                       </a>
@@ -120,6 +123,7 @@
         </div><!-- /.page-content -->
     </div>
 </div>
+
 @include('common.right-modal')
 @push('js')
 <script src="{{ asset('assets/js/moment.min.js')}}"></script>
@@ -161,6 +165,10 @@
     $("#reportformat").val(value);
     $('input[name="employee"]').val('');
     salaryFilter();
+  });
+
+  $(document).on('click', '.filter', function(event) {
+    console.log('hi');
   });
     
   $("#reportGroupHead").on("change", function(){
