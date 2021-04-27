@@ -2,7 +2,7 @@
 	<div class="panel-body">
 		@php
 			$groupUnit = ($input['group_unit']??($input['unit']??''));
-		@endphp
+					@endphp
 		<div class="content_list_section"  id="report_section">
 			
 			<div class="page-header report_section">
@@ -48,7 +48,7 @@
 									$head = '';
 								}
 							@endphp
-		                	@if($head != '')
+		                	@if($head != '' && $format != 'as_unit_id')
 		                	<tr>
 			                    <th colspan="2">{{ $head }}</th>
 			                    <th colspan="12">{{ $body }}</th>
@@ -60,6 +60,8 @@
 		                    <th>Sl</th>
 		                    <th>Associate ID</th>
 		                    <th>Name</th>
+		                    <th>Unit</th>
+		                    <th>Location</th>
 		                    <th>Designation</th>
 		                    <th>Department</th>
 		                    <th>DOJ</th>
@@ -72,7 +74,8 @@
 			                <th>Bank Amount</th>
 			                <th>Net Payable</th>
 			                <th style=" font-weight: bold; font-size:13px;">Account No.</th>
-                            <th style=" font-weight: bold; font-size:13px;">Location</th>
+                            <th>Last Bonus</th>
+                            <th>Last Bonus Effect</th>
 		                </tr>
 		            </thead>
 		            <tbody>
@@ -88,6 +91,8 @@
 				            	
 				            	<td>{{ $employee->associate_id }}</td>
 				            	<td><b>{{ $employee->as_name }}</b></td>
+				            	<td>{{ $unit[$employee->as_unit_id]['hr_unit_short_name']??'' }}</td>
+				            	<td>{{ $location[$employee->as_location]['hr_location_name']??'' }}</td>
 				            	<td>{{ $designation[$employee->as_designation_id]['hr_designation_name']??'' }}</td>
 				            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
 				            	<td >{{$employee->as_doj}}</td>
@@ -112,9 +117,10 @@
                                         <b>{{ $employee->bank_no }}</b>
                                     @endif
                                 </td>
-                                <td>
-                                    {{ $location[$employee->as_location]['hr_location_name']??'' }}
-                                </td>
+                                <td> @if($employee->override== 1) {{$employee->bonus_amount }} 
+                                @endif</td>
+                                <td> @if($employee->override== 1) 1 
+                                @endif</td>
 			            	</tr>
 			            	
 			            @endforeach
@@ -203,7 +209,7 @@
 										$body = 'N/A';
 										$exPar = '';
 									}
-									$secUrl = $urldata.$exPar;
+									$secUrl = $exPar;
 								@endphp
 								{{ ($body == null)?'N/A':$body }}
 							</td>
