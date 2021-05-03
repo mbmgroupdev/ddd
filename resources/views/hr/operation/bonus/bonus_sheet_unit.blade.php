@@ -168,12 +168,17 @@
                             @endforeach
                         </tbody>
                     </table>
-                    <div class="page-break"></div>
-                    
-                    
+                    <div class="page-break page-break-{{$pageno}}">
+                        
+                    </div>
                 @endforeach
             @endforeach
         @endforeach
+        <style type="text/css">
+            .page-break-{{$pageno}}{
+                page-break-after: avoid !important;
+            }
+        </style>
         <div style="text-align:right;font-weight:bold;">
             <h2>সর্বমোট কর্মকর্তা/কর্মচারীঃ {{eng_to_bn($tEmp)}}</h2>
             <h2>স্ট্যাম্প বাবদঃ {{eng_to_bn(bn_money($tStamp))}}</h2>

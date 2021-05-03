@@ -467,6 +467,8 @@ class MonthlyActivityReportController extends Controller
         $getDesignation = designation_by_id();
         $getDepartment = department_by_id();
         $section = section_by_id();
+        $floor = floor_by_id();
+        $line = line_by_id();
         // employee basic sql binding
         $employeeData = DB::table('hr_as_basic_info');
         $employeeData_sql = $employeeData->toSql();
@@ -503,11 +505,11 @@ class MonthlyActivityReportController extends Controller
         ->when(!empty($input['department']), function ($query) use($input){
            return $query->where('subsec.hr_subsec_department_id',$input['department']);
         })
+        ->when(!empty($input['floor_id']), function ($query) use($input){
+           return $query->where('emp.as_floor_id', $input['floor_id']);
+        })
         ->when(!empty($input['line_id']), function ($query) use($input){
            return $query->where('emp.as_line_id', $input['line_id']);
-        })
-        ->when(!empty($input['floor_id']), function ($query) use($input){
-           return $query->where('emp.as_floor_id',$input['floor_id']);
         })
         ->when(!empty($input['section']), function ($query) use($input){
            return $query->where('subsec.hr_subsec_section_id', $input['section']);
@@ -533,12 +535,13 @@ class MonthlyActivityReportController extends Controller
         });
         $data = $queryData->orderBy('deg.hr_designation_position', 'asc')->get();
 
+
         return Datatables::of($data)
             ->addIndexColumn()
-            ->addColumn('pic', function($data){
+            /*->addColumn('pic', function($data){
                 return '<img src="'.emp_profile_picture($data).'" class="small-image min-img-file">';
             })
-           
+           */
             ->addColumn('associate_id', function($data) use ($input){
                 $month = $input['month'];
                 $jobCard = url("hr/operation/job_card?associate=$data->associate_id&month_year=$month");
@@ -548,14 +551,17 @@ class MonthlyActivityReportController extends Controller
             ->addColumn('as_name', function($data){
                 return $data->as_name.'<br>'.$data->as_contact;
             })
-            ->addColumn('hr_designation_name', function($data) use ($getDesignation){
-                return $getDesignation[$data->designation_id]['hr_designation_name']??'';
+            ->addColumn('hr_designation_name', function($data){
+                return $data->hr_designation_name??'';
             })
             ->addColumn('hr_department_name', function($data) use ($getDepartment){
                 return $getDepartment[$data->hr_subsec_department_id]['hr_department_name']??'';
             })
             ->addColumn('hr_section_name', function($data) use ($section){
                 return $section[$data->hr_subsec_section_id]['hr_section_name']??'';
+            })
+            ->addColumn('hr_line_name', function($data) use ($line){
+                return $line[$data->as_line_id]['hr_line_name']??'';
             })
             ->addColumn('hr_subsection_name', function($data){
                 return $data->hr_subsec_name??'';
@@ -566,7 +572,7 @@ class MonthlyActivityReportController extends Controller
             ->addColumn('total_day', function($data){
                 return ($data->present + $data->holiday + $data->leave);
             })
-            ->rawColumns(['DT_RowIndex', 'pic', 'associate_id', 'as_name', 'hr_designation_name', 'hr_department_name', 'present', 'absent', 'leave', 'holiday', 'ot_hour', 'total_day'])
+            ->rawColumns(['DT_RowIndex', 'associate_id', 'as_name', 'hr_designation_name', 'hr_department_name', 'present', 'absent', 'leave', 'holiday', 'ot_hour', 'total_day','hr_line_name'])
             ->make(true);
     }
 
