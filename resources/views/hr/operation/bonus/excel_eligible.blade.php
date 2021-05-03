@@ -1,4 +1,4 @@
-<h2>Bonus Eligble List</h2>
+<h2>Bonus Eligible List</h2>
 <h5>Total Employee: {{$summary->active + $summary->maternity}}</h5>
 <h5>Total  Bonus : {{$summary->active_amount + $summary->maternity_amount}}</h5>
 

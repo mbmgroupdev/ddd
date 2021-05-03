@@ -805,7 +805,7 @@ class IncrementController extends Controller
         $employeeTypes[12] = 'Management & Staff';
 
         $data['salaryMin']      = 0;
-        $data['salaryMax']      = 350000;
+        $data['salaryMax']      = Benefits::getSalaryRangeMax();
 
         return view('hr.payroll.increment.process', compact('unitList','floorList','lineList','areaList','deptList','sectionList','subSectionList', 'data','employeeTypes'));
 
@@ -873,7 +873,7 @@ class IncrementController extends Controller
             $employeeTypes[12] = 'Management & Staff';
 
             $data['salaryMin']      = 0;
-            $data['salaryMax']      = 350000;
+            $data['salaryMax']      = Benefits::getSalaryRangeMax();
 
             $unit_status = $this->getUnitMsg();
         

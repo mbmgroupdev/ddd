@@ -176,7 +176,7 @@
                                           </div>
                                         </div>
                                         <div class="form-group has-float-label has-required">
-                                          <input type="month" class="report_date form-control" id="month" name="month" placeholder=" Month-Year"required="required" value="{{ date('Y-m') }}"autocomplete="off" />
+                                          <input type="month" class="report_date form-control" id="month" name="year_month" placeholder=" Month-Year"required="required" value="{{ date('Y-m') }}"autocomplete="off" />
                                           <label for="month">Month</label>
                                         </div>
                                         <div class="form-group has-float-label has-required select-search-group">
@@ -209,13 +209,14 @@
                              <thead>
                                 <tr>
                                    <th>Sl.</th>
-                                   <th>Photo</th>
+                                   {{-- <th>Photo</th> --}}
                                    <th>ID</th>
                                    <th>Name & phone</th>
                                    <th>Designation</th>
                                    <th>Department</th>
                                    <th>Section</th>
                                    <th>Subsection</th>
+                                   <th>Line</th>
                                    <th>Present</th>
                                    <th>Absent</th>
                                    <th>Leave</th>
@@ -342,8 +343,8 @@
         var selectable = []; //use 4,5,6,7,8,9,10,11,....and * for all
         var dropdownList = {};
 
-        var exportColName = ['Sl.','','ID','Name','Designation', 'Department', 'Section','Subsection','Present', 'Absent', 'Leave', 'Holiday', 'OT Hour', 'Total Day'];
-        var exportCol = [2,3,4,5,6,7,8,9,10,11,12,13];
+        var exportColName = ['Sl.','ID','Name','Designation', 'Department', 'Section','Subsection','Line','Present', 'Absent', 'Leave', 'Holiday','Late', 'OT Hour', 'Total Day'];
+        var exportCol = [1,2,3,4,5,6,7,8,9,10,11,12,13,14];
 
         var dTable =  $('#dataTables').DataTable({
 
@@ -372,10 +373,10 @@
              d.department    = $("#department").val();
              d.section       = $("#section").val();
              d.subSection    = $("#subSection").val();
-             d.month         = $("#month").val();
+             d.year_month    = $("#month").val();
              d.min_sal       = $("#min_sal").val();
              d.max_sal       = $("#max_sal").val();
-             d.employee_status = $("#employee_status").val();
+             d.emp_status    = $("#employee_status").val();
              d.shift_roaster_status = $("#shift_roaster_status").val();
              d.location = $("#location").val();
 
@@ -484,13 +485,14 @@
 
          columns: [
            { data: 'DT_RowIndex', name: 'DT_RowIndex' },
-           { data: 'pic', name: 'pic' },
+           // { data: 'pic', name: 'pic' },
            { data: 'associate_id',  name: 'associate_id' },
            { data: 'as_name', name: 'as_name' },
            { data: 'hr_designation_name', name: 'hr_designation_name' },
            { data: 'hr_department_name', name: 'hr_department_name' },
            { data: 'hr_section_name', name: 'hr_section_name' },
            { data: 'hr_subsection_name', name: 'hr_subsection_name' },
+           { data: 'hr_line_name', name: 'hr_line_name' },
            { data: 'present', name: 'present' },
            { data: 'absent', name: 'absent' },
            { data: 'leave', name: 'leave' },

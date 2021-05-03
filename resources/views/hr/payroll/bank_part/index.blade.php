@@ -88,13 +88,13 @@
                                         <div class="row">
                                             <div class="col-sm-6 ">
                                                 <div class="form-group has-float-label has-required">
-                                                  <input type="text" class="report_date min_sal form-control" id="min_sal" name="min_sal" placeholder="Min Salary" required="required" value="0" min="0" max="300000" autocomplete="off" />
+                                                  <input type="text" class="report_date min_sal form-control" id="min_sal" name="min_sal" placeholder="Min Salary" required="required" value="0" min="0" max="{{ $salaryMax }}" autocomplete="off" />
                                                   <label for="min_sal">Range From</label>
                                                 </div>
                                               </div>
                                               <div class="col-sm-6">
                                                 <div class="form-group has-float-label has-required">
-                                                  <input type="text" class="report_date max_sal form-control" id="max_sal" name="max_sal" placeholder="Max Salary" required="required" value="300000" min="0" max="300000" autocomplete="off" />
+                                                  <input type="text" class="report_date max_sal form-control" id="max_sal" name="max_sal" placeholder="Max Salary" required="required" value="{{ $salaryMax }}" min="0" max="{{ $salaryMax }}" autocomplete="off" />
                                                   <label for="max_sal">Range To</label>
                                                 </div>
                                               </div>

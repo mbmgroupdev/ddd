@@ -22,7 +22,7 @@ class TestXYZController extends Controller
 {
     public function rfidUpdate()
     {
-        return $this->summaryReport();
+        return $this->annaBillCheck();
         return "";
         $data = array();
         $getBasic = DB::table('hr_as_basic_info')
@@ -417,6 +417,54 @@ class TestXYZController extends Controller
     {
         $date = '2021-04-';
         $data = [];
+        $getBill = DB::table('hr_bill')
+            ->select(DB::raw("CONCAT(bill_date,as_id) AS asdate"), 'bill_date', 'bill_type')
+            ->whereBetween('bill_date', ['2021-04-01', '2021-04-30'])
+            ->where('bill_type', 2)
+            ->get()
+            ->keyBy('asdate')
+            ->toArray();
+        for ($i=1; $i < 31; $i++) { 
+            $getatt = DB::table('hr_attendance_mbm')
+            ->select(DB::raw("CONCAT(in_date,as_id) AS asdate"), 'in_date', 'in_time', 'out_time', 'as_id')
+            ->where('in_date', date('Y-m-d', strtotime($date.$i)))
+            ->where('in_time', '>', $date.$i.' 18:00:00')
+            ->get()
+            ->keyBy('asdate')
+            ->toArray();
+            foreach ($getatt as $att) {
+                if(!isset($getBill[$att->in_date.$att->as_id])){
+
+                    $data[] = $att;
+                    $insert[] = [
+                        'as_id' => $att->as_id,
+                        'bill_date' => $att->in_date,
+                        'bill_type' => 2,
+                        'amount' => 70,
+                        'pay_status' => 0
+                    ];
+                // }elseif(isset($getBill[$att->in_date.$att->as_id]) && $getBill[$att->in_date.$att->as_id]->bill_type == 1){
+                //     $data[] = $att;
+                //     DB::table('hr_bill')
+                //     ->where('bill_date', $att->in_date)
+                //     ->where('as_id', $att->as_id)
+                //     ->update([
+                //         'pay_status' => 2,
+                //         'amount' => 70
+                //     ]);
+                }
+            }
+
+        }
+        return $data;
+        if(count($insert) > 0){
+            $chunk = collect($insert)->chunk(200);
+            foreach ($chunk as $key => $n) {        
+                DB::table('hr_bill')->insertOrIgnore(collect($n)->toArray());
+            }
+        }
+        return 'success';
+        // dd($data);
 
         for ($i=14; $i <= 24; $i++) { 
             $getBill = DB::table('hr_bill')
@@ -609,8 +657,19 @@ class TestXYZController extends Controller
         ->leftJoin('hr_employee_bengali AS ben', 'b.associate_id', 'ben.hr_bn_associate_id')
         ->where('b.as_unit_id', 2)
         ->whereNull('ben.hr_bn_associate_name')
-        ->whereIn('b.as_status', [1,6,2,5])
+        ->whereIn('b.as_status', [1,6])
         ->get();
+        $d = [];
+        foreach ($getEmployee as $emp) {
+            $d[] = array(
+                'Associate Id' => $emp->associate_id,
+                'Oracle Id' => $emp->as_oracle_code,
+                'Name' => $emp->as_name,
+                'Status' =>  $emp->as_status == 1?'Active':'Maternity'
+                
+            );
+        }
+        return (new FastExcel(collect($d)))->download('Employee Bangla info missing.xlsx');
         dd($getEmployee);
     }
     
@@ -749,10 +808,22 @@ class TestXYZController extends Controller
         return 'success';
     }
     public function checkHoliday(){
-        $getEmployee = DB::table('hr_as_basic_info')->where('associate_id', '18M000367A')->first();
-        $firstDateMonth = '2021-03-01';
-        $lastDateMonth = '2021-03-20';
-        $month = '03';
+        // $getBasic = DB::table('hr_as_basic_info AS b')
+        // ->select('b.associate_id', 'b.shift_roaster_status')
+        // ->where('b.shift_roaster_status', 0)
+        // //->whereIn('b.as_status', [1,6])
+        // ->whereIn('b.as_unit_id', [1,4,5])
+        // ->pluck('associate_id');
+        // $hoaster = DB::table('holiday_roaster')
+        // ->where('date', '2021-04-02')
+        // ->whereIn('as_id', $getBasic)
+        // ->where('remarks', 'General')
+        // ->delete();
+        // return ($hoaster);
+        $getEmployee = DB::table('hr_as_basic_info')->where('associate_id', '11M000041A')->first();
+        $firstDateMonth = '2021-04-01';
+        $lastDateMonth = '2021-04-30';
+        $month = '04';
         $year = 2021;
         $yearMonth = $year.'-'.$month;
         $empdoj = $getEmployee->as_doj;
@@ -1202,81 +1273,7 @@ class TestXYZController extends Controller
     
     public function employeeInfo()
     {
-        $getData = ['16D8699P',
-            '16E8458P',
-            '17E8862P',
-            '16K9116P',
-            '18A9243P',
-            '18D8860P',
-            '18E8508P',
-            '18D8839P',
-            '19M8920P',
-            '19L8959P',
-            '19L9011P',
-            '18M8701P',
-            '18M8761P',
-            '20K8617P',
-            '20K8766P',
-            '20K8729P',
-            '20M8616P',
-            '20M8628P',
-            '20M9066P',
-            '20M9067P',
-            '20J8556P',
-            '20L8823P',
-            '20L8835P',
-            '20L8850P',
-            '20L9006P',
-            '20M9076P',
-            '21A9002P',
-            '21A9103P',
-            '21A9112P',
-            '21A9114P',
-            '21A9131P',
-            '21A9145P',
-            '21A9164P',
-            '21A9171P',
-            '20L8546P',
-            '20L8967P',
-            '20L8994P',
-            '20K8493P',
-            '20K8741P',
-            '20L9047P',
-            '21A8625P',
-            '21A8996P',
-            '21A9198P',
-            '21A9206P',
-            '21A9207P',
-            '21A9215P',
-            '21A9220P',
-            '21A9226P',
-            '21A9015P',
-            '20L8814P',
-            '20L8877P',
-            '20L8930P',
-            '20L8932P',
-            '20M9073P',
-            '21A9205P',
-            '20K8676P',
-            '20K8716P',
-            '20M8858P',
-            '20M9071P',
-            '21A9151P',
-            '20K8751P',
-            '20K8779P',
-            '18D8854P',
-            '20L8922P',
-            '20L8964P',
-            '20L8997P',
-            '19M9029P',
-            '20L9048P',
-            '20M9086P',
-            '20K8737P',
-            '20L9041P',
-            '20L9013P',
-            '19L8830P',
-            '18B9372P',
-            '17D8530P'];
+        $getData = [];
         $getEmployee = DB::table('hr_as_basic_info AS b')
         ->whereIn('b.as_oracle_code', $getData)
         ->leftjoin('hr_benefits AS ben', 'b.associate_id', 'ben.ben_as_id')

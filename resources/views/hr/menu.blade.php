@@ -499,9 +499,10 @@
             <li class="@if($segment3 == 'late_count_default') active @endif"><a  href="{{ url('hr/setup/late_count_default') }}"><i class="las la-comment-dollar"></i>Late Count Default</a></li>
             <li class="@if($segment3 == 'late_count_customize') active @endif"><a  href="{{ url('hr/setup/late_count_customize') }}"><i class="las la-comment-dollar"></i>Late Count Customize</a></li>
             @endif
+            
             @if($user->can('Bill Setup') || $user->hasRole('Super Admin'))
             
-            <li class="@if($segment3 == 'bill-setting') active @endif"><a  href="{{ url('hr/setup/bill-setting') }}"><i class="las la-comment-dollar"></i>Tiffin/Dinner Bill</a></li>
+            <li class="@if($segment3 == 'bill-setting') active @endif"><a  href="{{ url('hr/setup/bill-setting') }}"><i class="las la-comment-dollar"></i>Bill Announcement</a></li>
             @endif
             @if($user->can('Loan Setup') || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'loan_type') active @endif"><a  href="{{ url('hr/setup/loan_type') }}"><i class="las la-comment-dollar"></i>Loan</a></li>

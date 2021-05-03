@@ -3,64 +3,6 @@
 @section('main-content')
 @push('css')
     <link href="{{ asset('assets/css/jquery-ui.min.css') }}" rel="stylesheet">
-    <style>
-        .close-button {
-            content: "X";
-            background-color: rgb(229 25 4);
-            transform: scale(1);
-            display: block;
-            border-radius: 50%;
-            border: 1px solid rgb(8 155 171);
-            position: absolute;
-            top: -12px;
-            right: 0px;
-            width: 25px;
-            height: 25px;
-            text-align: center;
-            line-height: 22px;
-            transition-duration: 0.4s;
-            color: #fff;
-            cursor: pointer;
-        }
-        .rule-section{
-            position: relative;
-        }
-        .iq-header{
-            border-bottom: 1px solid #ccc;
-        }
-        .iq-card-spacial{
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 5px 10px;
-            margin: 10px 0px;
-            position: relative;
-        }
-        .iq-sp-body{
-            padding: 10px 5px;
-        }
-        .iq-sp-head{
-            top: -10px;
-            left: 15px;
-            outline: none;
-            background: #fff;
-            position: absolute;
-        }
-        .iq-sp-head p{
-            margin-bottom: 0;
-            font-size: 14px;
-            padding: 0px 5px;
-        }
-        .rule-overlay{
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            background: #ffffff;
-            top: 0px;
-            opacity: .7;
-            z-index: 4;
-            border-radius: 5px;
-        }
-    </style>
 @endpush
 <div class="main-content">
     <div class="main-content-inner">

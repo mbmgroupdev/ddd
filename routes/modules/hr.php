@@ -470,6 +470,7 @@ Route::get('hr/reports/bonus-report', 'Hr\Reports\BonusSheetController@report');
 Route::get('hr/search-type', 'Hr\Search\SearchController@type');
 
 
+
 //---------Hr/ Payroll-----------//
 Route::get('hr/payroll/bank-sheet', 'Hr\Payroll\BankSheetController@index');
 Route::get('hr/reports/monthly-salary-bank-report', 'Hr\Payroll\BankSheetController@report');
@@ -794,6 +795,7 @@ Route::middleware(['permission:Basic Setup'])->group( function () {
 });
 // bill-announce-setting
 Route::resource('hr/setup/bill-setting', 'Hr\Setup\BillAnnounceSettingController');
+Route::resource('hr/setup/bill-type', 'Hr\Setup\BillTypeController');
 
 
 Route::get('hr/setup/get_presfhit_times', 'Hr\Setup\ShiftController@getPreShiftTimes');
@@ -1099,6 +1101,9 @@ Route::post('hr/reports/save_salary_sheet_unit_wise_data', 'Hr\Reports\SalaryShe
 // salary
 Route::get('hr/reports/salary', 'Hr\Reports\SalaryReportController@index');
 Route::get('hr/reports/salary-report', 'Hr\Reports\SalaryReportController@report');
+
+// salary data-table
+Route::get('hr/reports/monthly-attendance-activity-data', 'Hr\Reports\SalaryReportController@salaryDataTable');
 // warning notice
 Route::get('hr/operation/warning-notice', 'Hr\Operation\WarningNoticeController@index');
 Route::post('hr/operation/warning-notice-first', 'Hr\Operation\WarningNoticeController@firstStep');
@@ -1138,7 +1143,7 @@ Route::get('hr/reports/daily-present-absent-activity-report', 'Hr\Reports\DailyA
 Route::get('hr/reports/activity-report-excle', 'Hr\Reports\DailyActivityReportController@activityExcle');
 // monthly report
 Route::get('hr/reports/monthly-attendance-activity', 'Hr\Reports\MonthlyActivityReportController@attendance');
-Route::get('hr/reports/monthly-attendance-activity-data', 'Hr\Reports\MonthlyActivityReportController@attendanceData');
+// Route::get('hr/reports/monthly-attendance-activity-data', 'Hr\Reports\MonthlyActivityReportController@attendanceData');
 Route::get('hr/reports/monthly-reports', 'Hr\Reports\MonthlyReportController@index');
 Route::get('hr/reports/monthly-maternity-report', 'Hr\Reports\MonthlyReportController@maternity');
 

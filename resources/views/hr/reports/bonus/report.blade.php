@@ -104,7 +104,14 @@
             			<td colspan="2"></td>
             			<td style="width: 20%"><b>Stamp Amount</b></td>
             			<td style="width:13.3333%; padding-right:32px;">: <b><span class="amount" >৳ {{bn_money($summary->stamp)}}</span></b></span> </td>
-            			<td colspan="2"></td>
+            			<td style="width: 20%"><b>Stamp Amount</b></td>
+            			<td style="width:13.3333%; padding-right:32px;">: <b><span class="amount" >৳ {{bn_money($summary->stamp)}}</span></b></span> </td>
+            		</tr>
+            		<tr>
+            			<td colspan="4"></td>
+            			
+            			<td style="width: 20%"><b>Total Payable</b></td>
+            			<td style="width:13.3333%; padding-right:32px;">: <b><span class="amount" >৳ {{bn_money(($summary->active_amount + $summary->maternity_amount) - $summary->stamp)}}</span></b></span> </td>
             		</tr>
 
             	</table>
@@ -121,7 +128,7 @@
 			<input type="hidden" id="reportFormat" value="{{$input['report_format']}}">
 			@if($input['report_format'] == 0)
 				<table class="table table-bordered table-hover table-head" style="width:100%;border:0 !important;margin-bottom:0;font-size:14px;text-align:left" border="1" cellpadding="5">
-				@foreach($uniqueGroupEmp as $group => $employees)
+				@foreach($uniqueGroup as $group => $employees)
 		
 					<thead>
 						@if(count($employees) > 0)
@@ -261,15 +268,14 @@
 						</tr>
 					</thead>
 					<tbody>
-						@php $i = 0; @endphp
-						@if(count($getEmployee) > 0)
-						@foreach($getEmployee as $employee)
+						@php $i = 0; $totalNonOtAmount =0; $totalOtAmount =0; @endphp
+						@if(count($uniqueGroup) > 0)
+							@foreach($uniqueGroup as $group => $employee)
 						<tr>
 
 							<td>{{ ++$i }}</td>
 							<td>
 								@php
-									$group = $employee->$format;
 									if($format == 'as_unit_id'){
 										$body = $unit[$group]['hr_unit_name']??'';
 										$exPar = '&selected='.$unit[$group]['hr_unit_id']??'';
@@ -299,6 +305,8 @@
 										$exPar = '';
 									}
 									$secUrl = $urldata.$exPar;
+									$totalNonOtAmount += $employee->nonot_amount; 
+									$totalOtAmount += $employee->ot_amount; 
 								@endphp
 								<a onClick="selectedGroup(this.id, '{{ $body }}')" data-body="{{ $body }}" id="{{$exPar}}" class="select-group">{{ ($body == null)?'N/A':$body }}</a>
 							</td>
@@ -307,32 +315,33 @@
 							</td>
 
 							<td style="text-align: right;padding-right: 5px;">
-								{{ $employee->totalNonOt }}
+
+								{{ bn_money($employee->nonot_amount) }}
 							</td>
 							<td style="text-align: center;">
 								{{ $employee->ot }}
 							</td>
 
 							<td style="text-align: right;padding-right: 5px;">
-								{{ $employee->totalOt }}
+								{{ bn_money($employee->ot_amount) }}
 							</td>
 							<td style="text-align: center;">
-								{{ $employee->total }}
+								{{ $employee->ot + $employee->nonot }}
 							</td>
 
 							<td style="text-align: right;padding-right: 5px;">
-								{{ $employee->groupTotal }}
+								{{ bn_money($employee->ot_amount + $employee->nonot_amount) }}
 							</td>
 						</tr>
 						@endforeach
 						<tr>
 							<td colspan="2" class="text-center"> <b>Total</b> </td>
 							<td class="text-center"><b>{{$summary->nonot}}</b></td>
-							<td class="text-right"><b>{{bn_money($summary->nonot_amount)}}</b></td>
+							<td class="text-right"><b>{{bn_money($totalNonOtAmount)}}</b></td>
 							<td class="text-center"><b>{{$summary->ot}}</b></td>
-							<td class="text-right"><b>{{bn_money($summary->ot_amount)}}</b></td>
+							<td class="text-right"><b>{{bn_money($totalOtAmount)}}</b></td>
 							<td class="text-center"><b>{{$summary->active + $summary->maternity}}</b></td>
-							<td class="text-right"><b>{{$summary->active_amount + $summary->maternity_amount}}</b></td>
+							<td class="text-right"><b>{{$totalNonOtAmount + $totalOtAmount}}</b></td>
 						</tr>
 						@else
 						<tr>

@@ -60,7 +60,7 @@ class BillOperationController extends Controller
             $employeeBanData = DB::table('hr_employee_bengali');
             $employeeBanDataSql = $employeeBanData->toSql();
 
-	        $queryData = DB::table('hr_bill_extra as s')
+	        $queryData = DB::table('hr_bill as s')
 	        ->whereBetween('s.bill_date', [$input['from_date'],$input['to_date']])
             ->whereIn('emp.as_unit_id', auth()->user()->unit_permissions())
             ->whereIn('emp.as_location', auth()->user()->location_permissions())
@@ -203,7 +203,7 @@ class BillOperationController extends Controller
             $benefitData = DB::table('hr_benefits');
             $benefitData_sql = $benefitData->toSql();
 
-	        $queryData = DB::table('hr_bill_extra as s')
+	        $queryData = DB::table('hr_bill as s')
 	        ->whereBetween('s.bill_date', [$input['from_date'],$input['to_date']])
             ->whereIn('emp.as_unit_id', auth()->user()->unit_permissions())
             ->whereIn('emp.as_location', auth()->user()->location_permissions())
@@ -265,7 +265,7 @@ class BillOperationController extends Controller
     	}
     	DB::beginTransaction();
     	try {
-	        $queryData = DB::table('hr_bill_extra')
+	        $queryData = DB::table('hr_bill')
 	        ->whereBetween('bill_date', [$input['from_date'],$input['to_date']])
             ->where('pay_status', 0)
             ->when(!empty($input['bill_type']), function ($query) use($input){
@@ -308,7 +308,7 @@ class BillOperationController extends Controller
         ->where('b.as_status', 1)
         ->pluck('as_id');
 
-        $getBill = DB::table('hr_bill_extra')
+        $getBill = DB::table('hr_bill')
         ->whereIn('as_id', $getEmployee)
         ->whereBetween('bill_date', ['2021-04-15', '2021-04-22'])
         ->where('bill_type', 4)
