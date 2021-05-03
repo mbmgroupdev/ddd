@@ -63,7 +63,6 @@ class AttendaceBulkManualController extends Controller
                   ");
 
                 $result = $this->empAttendanceByMonth($request);
-
                 $attendance = $result['attendance'];
                 $info = $result['info'];
                 $joinExist = $result['joinExist'];
@@ -74,7 +73,9 @@ class AttendaceBulkManualController extends Controller
             }
             return view("hr/timeattendance/attendance_bulk_manual",compact('attendance','info', 'joinExist', 'leftExist', 'shifts','friday_att'));
         } catch(\Exception $e) {
-            return $e->getMessage();
+            $bug = $e->getMessage();
+            toastr()->error($e->getMessage());
+            return back()->with('error', $bug);
         }
     }
 
@@ -717,6 +718,7 @@ class AttendaceBulkManualController extends Controller
                         ->where('a.in_date', 'LIKE', $request->month_year.'%')
                         ->get()
                         ->keyBy('in_date')->toArray();
+
           // yearly holiday roster planner
           $getHoliday = DB::table("hr_yearly_holiday_planner")
                       ->where('hr_yhp_status', 1)
@@ -751,8 +753,8 @@ class AttendaceBulkManualController extends Controller
                               ->pluck($shift_day)
                               ->first();
             if($shift_code){
-              $shift = Shift::getCheckUniqueUnitIdShiftName($info->as_unit_id,$shift_code);
-              $attendance[$i]['shift_id'] = $shift->hr_shift_name;
+              $shift = Shift::getCheckUniqueUnitIdShiftName($info->as_unit_id, $shift_code);
+              $attendance[$i]['shift_id'] = $shift->hr_shift_name??'';
               $attendance[$i]['shift_code'] = $shift->hr_shift_code;
               $attendance[$i]['shift_start'] = $shift->hr_shift_start_time;
               $attendance[$i]['shift_end'] = $shift->hr_shift_end_time;
@@ -768,7 +770,6 @@ class AttendaceBulkManualController extends Controller
               $attendance[$i]['shift_night'] = $info->shift['hr_shift_night_flag'];
               $attendance[$i]['bill_eligible'] = $info->shift['bill_eligible'];
             }
-            
             $lineFloorInfo = DB::table('hr_station')
                         ->where('associate_id',$associate)
                         ->whereDate('start_date','<=',$thisDay)
@@ -908,7 +909,7 @@ class AttendaceBulkManualController extends Controller
           $result ['joinExist']     = $joinExist;
           $result ['leftExist']     = $leftExist;
           $result ['friday_att']    = $friday_att;
-          //dd($result);exit;
+          // dd($result);exit;
           return $result;
         }
     }

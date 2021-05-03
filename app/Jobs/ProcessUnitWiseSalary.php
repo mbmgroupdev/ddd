@@ -456,7 +456,8 @@ class ProcessUnitWiseSalary implements ShouldQueue
                         'total_payable' => $totalPayable,
                         'cash_payable' => $cashPayable,
                         'bank_payable' => $bankPayable,
-                        'tds' => $tds
+                        'tds' => $tds,
+                        'roaster_status' => $getEmployee->shift_roaster_status
                     ];
 
                     if($getSalary == null){

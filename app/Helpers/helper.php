@@ -869,10 +869,18 @@ if(!function_exists('unit_wise_today_att')){
 }
 if(!function_exists('location_by_id')){
     function location_by_id()
-    {
-       return  Cache::remember('location', Carbon::now()->addHour(23), function () {
-            return Location::get()->keyBy('hr_location_id')->toArray();
-        });      
+    { 
+        $location_permissions = auth()->user()->location_permissions();
+        $data = Cache::remember('location', Carbon::now()->addHour(23), function () {
+            return Location::orderBy('hr_location_name','DESC')->get()->keyBy('hr_location_id')->toArray();
+        });  
+
+        return collect($data)
+                ->filter(function($q) use ($location_permissions){
+                    return in_array($q['hr_location_id'], $location_permissions);
+                })
+                ->values()
+                ->keyBy('hr_location_id');      
 
     }
 }

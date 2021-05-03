@@ -17,7 +17,7 @@
 				.text-right{text-align:right;}
 				.text-center{text-align:center;}
 			</style>
-			<style type="text/css">
+			<style>
               .table{
                 width: 100%;
               }
@@ -52,34 +52,26 @@
 			@endphp
 			
 			<div class="top_summery_section">
-				
 				<div class="page-header">
-		            <h2 style="margin:4px 10px; font-weight: bold; text-align: center;">Salary @if($input['report_format'] == 0) Details @else Summary @endif Report </h2>
-		            
+		            <h4 style="margin:4px 10px; font-weight: bold; text-align: center;">Salary @if($input['report_format'] == 0) Details @else Summary @endif Report </h4>
 		            
 		            <table class="table no-border f-14" border="0" style="width:100%;margin-bottom:0;font-size:14px;text-align:left"  cellpadding="5">
 		            	<tr>
-		            		
 		            		<td>
-		            			<p style="text-align: center; font-size: 14px;">Month : {{ date('M Y', strtotime($input['year_month'])) }} </p>
+		            			<p style="text-align: center; font-size: 14px;">Month : {{ date('F Y', strtotime($input['year_month'])) }} </p>
 					            <p style="text-align: center; font-size: 14px;">Total Employee : {{ $summary->totalEmployees }} </p>
 					            
 					            <p style="text-align: center; font-size: 14px;">Total Payable : {{ bn_money(round($summary->totalSalary,2)) }} </p>
-	                			
 		            		</td>
-		            		
 		            	</tr>
-		            	
 		            </table>
-		            
 		        </div>
-		        
 			</div>
 
 			<div class="content_list_section">
 				@if($input['report_format'] == 0)
 					<table class="table table-bordered table-hover table-head table-responsive" style="width:100%;border:0 !important;margin-bottom:0;font-size:14px;text-align:left" border="1" cellpadding="5">
-					@foreach($uniqueGroupEmp as $group => $employees)
+					@foreach($uniqueGroup as $group => $employees)
 					
 						<thead>
 							@if(count($employees) > 0)
@@ -88,6 +80,9 @@
 									if($format == 'as_unit_id'){
 										$head = 'Unit';
 										$body = $unit[$group]['hr_unit_name']??'';
+									}elseif($format == 'as_location'){
+										$head = 'Location';
+										$body = $location[$group]['hr_location_name']??'';
 									}elseif($format == 'as_line_id'){
 										$head = 'Line';
 										$body = $line[$group]['hr_line_name']??'';
@@ -145,7 +140,7 @@
 			            @if(count($employees) > 0)
 				            @foreach($employees as $employee)
 				            	@php
-				            		$designationName = $employee->hr_designation_name??'';
+				            		$designationName = $designation[$employee->as_designation_id]['hr_designation_name']??'';
 			                        $otHour = numberToTimeClockFormat($employee->ot_hour);
 				            	@endphp
 				            	@if($head == '')
@@ -153,9 +148,7 @@
 					            		<td>{{ ++$i }}</td>
 						            	
 						            	<td>
-						            		{{-- <a href='{{ url("hr/operation/job_card?associate=$employee->associate_id&month_year=$month") }}' target="_blank">{{ $employee->associate_id }}</a> --}}
-						            		
-						            		<a class="job_card" data-name="{{ $employee->as_name }}" data-associate="{{ $employee->associate_id }}" data-month-year="{{ $month }}" data-toggle="tooltip" data-placement="top" title="" data-original-title="Job Card">{{ $employee->associate_id }}</a>
+						            		<a class="job_card" data-name="{{ $employee->as_name }}" data-associate="{{ $employee->as_id }}" data-month-year="{{ $month }}" data-toggle="tooltip" data-placement="top" title="" data-original-title="Job Card">{{ $employee->as_id }}</a>
 						            	</td>
 						            	<td>
 						            		<b>{{ $employee->as_name }}</b>
@@ -170,11 +163,11 @@
 						            		@if($employee->pay_status == 1)
 						            			Cash
 						            		@elseif($employee->pay_status == 2)
-						            		<b>{{ $employee->bank_name }}</b>
-						            		<b>{{ $employee->bank_no }}</b>
+						            		<b>{{ $employee->pay_type }}</b>
+						            		{{-- <b>{{ $employee->bank_no }}</b> --}}
 						            		@else
 						            		Bank & Cash
-						            		<b>{{ $employee->bank_no }}</b>
+						            		{{-- <b>{{ $employee->bank_no }}</b> --}}
 						            		@endif
 						            	</td>
 						            	<td>
@@ -201,7 +194,7 @@
 						            		{{ bn_money($totalNet) }}
 						            	</td>
 						            	<td>
-						            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-yearmonth="{{ $input['year_month'] }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Employee Salary Report' ><i class="fa fa-eye"></i></button>
+						            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->as_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-yearmonth="{{ $input['year_month'] }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Employee Salary Report' ><i class="fa fa-eye"></i></button>
 						            	</td>
 					            	</tr>
 				            	@else
@@ -210,7 +203,7 @@
 					            		<td>{{ ++$i }}</td>
 						            	
 						            	<td>
-						            		<a @if(auth()->user()->hasRole('Buyer Mode'))@else class="job_card" @endif data-name="{{ $employee->as_name }}" data-associate="{{ $employee->associate_id }}" data-month-year="{{ $month }}" data-toggle="tooltip" data-placement="top" title="" data-original-title="Job Card">{{ $employee->associate_id }}</a>
+						            		<a @if(auth()->user()->hasRole('Buyer Mode'))@else class="job_card" @endif data-name="{{ $employee->as_name }}" data-associate="{{ $employee->as_id }}" data-month-year="{{ $month }}" data-toggle="tooltip" data-placement="top" title="" data-original-title="Job Card">{{ $employee->as_id }}</a>
 						            	</td>
 						            	<td>
 						            		<b>{{ $employee->as_name }}</b>
@@ -224,13 +217,13 @@
 						            		@if($employee->pay_status == 1)
 						            			Cash
 						            		@elseif($employee->pay_status == 2)
-						            		<b class="uppercase">{{ $employee->bank_name }}</b>
+						            		<b class="uppercase">{{ $employee->pay_type }}</b>
 						            		<br>
-						            		<b>{{ $employee->bank_no }}</b>
+						            		{{-- <b>{{ $employee->bank_no }}</b> --}}
 						            		@else
-						            		<b class="uppercase">{{ $employee->bank_name }}</b> & Cash
+						            		<b class="uppercase">{{ $employee->pay_type }}</b> & Cash
 						            		<br>
-						            		<b>{{ $employee->bank_no }}</b>
+						            		{{-- <b>{{ $employee->bank_no }}</b> --}}
 						            		@endif
 						            	</td>
 						            	<td>
@@ -256,7 +249,7 @@
 						            		{{ bn_money($totalNet) }}
 						            	</td>
 						            	<td>
-						            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->associate_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-yearmonth="{{ $input['year_month'] }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Employee Salary Report' ><i class="fa fa-eye"></i></button>
+						            		<button type="button" class="btn btn-primary btn-sm yearly-activity" data-id="{{ $employee->as_id}}" data-eaid="{{ $employee->as_id }}" data-ename="{{ $employee->as_name }}" data-edesign="{{ $designationName }}" data-yearmonth="{{ $input['year_month'] }}" data-toggle="tooltip" data-placement="top" title="" data-original-title='Employee Salary Report' ><i class="fa fa-eye"></i></button>
 						            	</td>
 					            	</tr>
 				            	
@@ -330,36 +323,37 @@
 							@php $i=0; @endphp
 							@if(count($uniqueGroup) > 0)
 							@foreach($uniqueGroup as $group => $groupSal)
-							@php 
-								
-							@endphp
+							
 							<tr>
 								<td>{{ ++$i }}</td>
 								<td>
 									@php
 										
-										if($format == 'unit_id'){
+										if($format == 'as_unit_id'){
 											$body = $unit[$group]['hr_unit_name']??'';
 											$exPar = '&selected='.$unit[$group]['hr_unit_id']??'';
-										}elseif($format == 'line_id'){
+										}elseif($format == 'as_location'){
+											$body = $location[$group]['hr_location_name']??'';
+											$exPar = '&selected='.$location[$group]['hr_location_name']??'';
+										}elseif($format == 'as_line_id'){
 											$body = $line[$group]['hr_line_name']??'';
 											$exPar = '&selected='.$body;
-										}elseif($format == 'floor_id'){
+										}elseif($format == 'as_floor_id'){
 											$body = $floor[$group]['hr_floor_name']??'';
 											$exPar = '&selected='.$body;
-										}elseif($format == 'department_id'){
+										}elseif($format == 'as_department_id'){
 											$body = $department[$group]['hr_department_name']??'';
 											$exPar = '&selected='.$department[$group]['hr_department_id']??'';
-										}elseif($format == 'designation_id'){
+										}elseif($format == 'as_designation_id'){
 											$body = $designation[$group]['hr_designation_name']??'';
 											$exPar = '&selected='.$designation[$group]['hr_designation_id']??'';
-										}elseif($format == 'section_id'){
+										}elseif($format == 'as_section_id'){
 											$depId = $section[$group]['hr_section_department_id']??'';
 											$seDeName = $department[$depId]['hr_department_name']??'';
 											$seName = $section[$group]['hr_section_name']??'';
 											$body = $seDeName.' - '.$seName;
 											$exPar = '&selected='.$section[$group]['hr_section_id']??'';
-										}elseif($format == 'subsection_id'){
+										}elseif($format == 'as_subsection_id'){
 											$body = $subSection[$group]['hr_subsec_name']??'';
 											$exPar = '&selected='.$subSection[$group]['hr_subsec_id']??'';
 										}else{
@@ -455,139 +449,53 @@
 				@endif
 			</div>
 		</div>
-
-		{{-- modal employee salary --}}
-		<div class="item_details_section">
-		    <div class="overlay-modal overlay-modal-details" style="margin-left: 0px; display: none;">
-		      <div class="item_details_dialog show_item_details_modal" style="min-height: 115px;">
-		        <div class="fade-box-details fade-box">
-		          <div class="inner_gray clearfix">
-		            <div class="inner_gray_text text-center" id="heading">
-		             <h5 class="no_margin text-white">{{ date('M Y', strtotime($input['year_month'])) }} Salary</h5>   
-		            </div>
-		            <div class="inner_gray_close_button">
-		              <a class="cancel_details item_modal_close" role="button" rel='tooltip' data-tooltip-location='left' data-tooltip="Close Modal">Close</a>
-		            </div>
-		          </div>
-
-		          <div class="inner_body" id="modal-details-content" style="display: none">
-		            <div class="inner_body_content">
-		               	<div class="body_top_section">
-		               		<h3 class="text-center modal-h3"><strong>Name :</strong> <b id="eName"></b></h3>
-		               		<h3 class="text-center modal-h3"><strong>Id :</strong> <b id="eId"></b></h3>
-		               		<h3 class="text-center modal-h3"><strong>Designation :</strong> <b id="eDesgination"></b></h3>
-		               	</div>
-		               	<div class="body_content_section">
-			               	<div class="body_section" id="employee-salary">
-			               		
-			               	</div>
-		               	</div>
-		            </div>
-		            <div class="inner_buttons">
-		              <a class="cancel_modal_button cancel_details" role="button"> Close </a>
-		            </div>
-		          </div>
-		        </div>
-		      </div>
-		    </div>
-		</div>
-		{{--  --}}
 	</div>
 </div>
 
-<div class="modal right fade" id="right_modal_lg-group" tabindex="-1" role="dialog" aria-labelledby="right_modal_lg-group">
-  <div class="modal-dialog modal-lg right-modal-width" role="document" > 
-    <div class="modal-content">
-      <div class="modal-header">
-      	<a class="view prev_btn" data-toggle="tooltip" data-dismiss="modal" data-placement="top" title="" data-original-title="Back to Report">
-			<i class="las la-chevron-left"></i>
-		</a>
-        <h5 class="modal-title right-modal-title text-center" id="modal-title-right-group"> &nbsp; </h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="modal-content-result content-result" id="content-result-group">
-        	
-        </div>
-      </div>
-      
-    </div>
-  </div>
-</div>
+{{--  --}}
 
 <script type="text/javascript">
-    var loaderModal = '<div class="panel"><div class="panel-body"><p style="text-align:center;margin:10px;" class="loader-p"><i class="ace-icon fa fa-spinner fa-spin orange bigger-30" style="font-size:60px;"></i></p></div></div>';
-    var loaderContent = '<div class="animationLoading"><div id="container-loader"><div id="one"></div><div id="two"></div><div id="three"></div></div><div id="four"></div><div id="five"></div><div id="six"></div></div>';
-    $(".overlay-modal, .item_details_dialog").css("opacity", 0);
-    /*Remove inline styles*/
-    $(".overlay-modal, .item_details_dialog").removeAttr("style");
-    /*Set min height to 90px after  has been set*/
-    detailsheight = $(".item_details_dialog").css("min-height", "115px");
-    var months    = ['','January','February','March','April','May','June','July','August','September','October','November','December'];
-    $(document).on('click','.yearly-activity',function(){
-    	$("#employee-salary").html(loaderModal);
-        let id = $(this).data('id');
+    $(document).on('click', '.yearly-activity', function() {
+    	let id = $(this).data('id');
         let associateId = $(this).data('eaid');
         let name = $(this).data('ename');
         let designation = $(this).data('edesign');
         let yearMonth = $(this).data('yearmonth');
-        $("#eName").html(name);
-        $("#eId").html(associateId);
-        $("#eDesgination").html(designation);
-        /*Show the dialog overlay-modal*/
-        $(".overlay-modal-details").show();
-        $(".inner_body").show();
-        // ajax call
-        $.ajax({
+    	$("#modal-title-right").html(' '+name+' Salary Details');
+      	$('#right_modal_jobcard').modal('show');
+      	$("#content-result").html(loaderContent);
+    	$.ajax({
             url: '/hr/reports/employee-salary-modal',
             type: "GET",
             data: {
                 as_id: associateId,
                 year_month: yearMonth
             },
+            type: "GET",
             success: function(response){
             	// console.log(response);
                 if(response !== 'error'){
                 	setTimeout(function(){
-                		$("#employee-salary").html(response);
+                		$("#content-result").html(response);
                 	}, 1000);
                 }else{
                 	console.log(response);
                 }
             }
         });
-        /*Animate Dialog*/
-        $(".show_item_details_modal").css("width", "225").animate({
-          "opacity" : 1,
-          height : detailsheight,
-          width : "70%"
-        }, 600, function() {
-          /*When animation is done show inside content*/
-          $(".fade-box").show();
-        });
-        // 
-        
     });
     
-    $(".cancel_details").click(function() {
-        $(".overlay-modal-details, .show_item_details_modal").fadeOut("slow", function() {
-          /*Remove inline styles*/
-
-          $(".overlay-modal, .item_details_dialog").removeAttr("style");
-          $('body').css('overflow', 'unset');
-        });
-    });
     @if(auth()->user()->hasRole('Buyer Mode'))
-    	var mainurl = '/hrm/reports/group-salary-sheet-details?';
+    	var mainurl = '/hrm/reports/salary-report?';
     @else
-    	var mainurl = '/hr/reports/group-salary-sheet-details?';
+    	var mainurl = '/hr/reports/salary-report?';
     @endif
     function selectedGroup(e, body){
     	var part = e;
-    	var input = @json($urldata);
+    	var input = $("#filterForm").serialize() + '&' + $("#formReport").serialize();
+    	{{-- var input = @json($urldata); --}}
     	var pareUrl = input+part;
+    	// console.log(mainurl+pareUrl)
     	$("#modal-title-right-group").html(' '+body+' Salary Details');
     	$('#right_modal_lg-group').modal('show');
     	$("#content-result-group").html(loaderContent);
@@ -610,5 +518,6 @@
         });
 
     }
+
     
 </script>
