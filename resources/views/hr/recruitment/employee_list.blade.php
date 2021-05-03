@@ -73,9 +73,9 @@
 				</li>
 				<li class="active">Employee List</li>
 				<li class="top-nav-btn">
-					<button class="btn btn-sm btn-primary" id="employee_summary" data-type="employee">
+					{{-- <button class="btn btn-sm btn-primary" id="employee_summary" data-type="employee">
 						<i class="fa fa-grid"></i>
-					</button>
+					</button> --}}
 				</li>
 			</ul><!-- /.breadcrumb -->
 		</div>
@@ -86,50 +86,66 @@
                 
                 <div class="panel-body pb-0">
 			 <!-- Display Erro/Success Message -->
-					<form class="row" role="form" id="empFilter" method="get" action="#">
-                        <div class="col-2">
-                            <div class="form-group has-float-label has-required select-search-group">
-                                {{ Form::select('unit', $allUnit, null, ['placeholder'=>'Select Unit', 'id'=>'unit',  'class'=>'form-control']) }}
-                                <label  for="unit"> Unit </label>
-                            </div>
-                        </div>
+					<form class="mb-2" role="form" id="empFilter" method="get" action="#">
+						<div class="row">
 
-                        <div class="col-2">
-                            <div class="form-group has-float-label select-search-group">
-                                <select name="otnonot" id="otnonot" class="form-control filter">
-                                    <option value="">Select OT/Non-OT</option>
-                                    <option value="0">Non-OT</option>
-                                    <option value="1">OT</option>
-                                </select>
-                                <label  for="otnonot">OT/Non-OT </label>
-                            </div>
-                        </div>
+	                        <div class="col-2">
+	                            <div class="form-group has-float-label has-required select-search-group">
+	                                {{ Form::select('unit', $allUnit, null, ['placeholder'=>'Select Unit', 'id'=>'unit',  'class'=>'form-control']) }}
+	                                <label  for="unit"> Unit </label>
+	                            </div>
+	                        </div>
 
-                        <div class="col-2">
-                            <div class="form-group has-float-label select-search-group">
-                                {{ Form::select('emp_type', $empTypes, null, ['placeholder'=>'Select Employee Type', 'id'=>'emp_type',  'class'=>'form-control']) }}
-                                <label  for="emp_type"> Employee Type </label>
-                            </div>
-                        </div>
-                        <div class="col-2">
-                            <div class="form-group has-float-label">
-                                <input type="date" name="doj_from" class="form-control" id="doj_from">
-                                <label  for="doj_from"> DOJ From</label>
-                            </div>
-                        </div>
-                        <div class="col-2">
-                            <div class="form-group has-float-label">
-                                <input type="date" name="doj_to" class="form-control" id="doj_to">
-                                <label  for="doj_to"> DOJ To</label>
-                            </div>
-                        </div>
+	                        <div class="col-2">
+	                            <div class="form-group has-float-label select-search-group">
+	                                <select name="otnonot" id="otnonot" class="form-control filter">
+	                                    <option value="">Select OT/Non-OT</option>
+	                                    <option value="0">Non-OT</option>
+	                                    <option value="1">OT</option>
+	                                </select>
+	                                <label  for="otnonot">OT/Non-OT </label>
+	                            </div>
+	                        </div>
 
-                        <div class="col-2">
-                            <button type="button" id="" class="btn btn-primary  empFilter">
-                            <i class="fa fa-search"></i>
-                            Search
-                            </button>
-                        </div>
+	                        <div class="col-2">
+	                            <div class="form-group has-float-label select-search-group">
+	                                {{ Form::select('emp_type', $empTypes, null, ['placeholder'=>'Select Employee Type', 'id'=>'emp_type',  'class'=>'form-control']) }}
+	                                <label  for="emp_type"> Employee Type </label>
+	                            </div>
+	                        </div>
+	                        <div class="col-2">
+	                            <div class="form-group has-float-label">
+	                                <input type="date" name="doj_from" class="form-control" id="doj_from">
+	                                <label  for="doj_from"> DOJ From</label>
+	                            </div>
+	                        </div>
+	                        <div class="col-2">
+	                            <div class="form-group has-float-label">
+	                                <input type="date" name="doj_to" class="form-control" id="doj_to">
+	                                <label  for="doj_to"> DOJ To</label>
+	                            </div>
+	                        </div>
+	                        <div class="col-2">
+	                        	@php
+	                        		$status = [
+	                        			1 => 'Active',
+	                        			6 => 'Maternity',
+	                        		];
+	                        	@endphp
+	                            <div class="form-group has-float-label select-search-group">
+	                                {{ Form::select('as_status', $status, 1, ['placeholder'=>'Select Employee Type', 'id'=>'as_status',  'class'=>'form-control']) }}
+	                                <label  for="as_status"> Status </label>
+	                            </div>
+	                        </div>
+	                    </div>
+	                    <div class="row ">
+	                        <div class="col-2 pull-right">
+	                            <button type="button" id="" class="btn btn-primary  empFilter">
+	                            <i class="fa fa-search"></i>
+	                            Search
+	                            </button>
+	                        </div>
+	                    </div>
 		            </form>
 		        </div>
 		    </div>
@@ -251,6 +267,7 @@ $(document).ready(function()
 	            data: function (d) {
 	                d.unit  = $('#unit').val(),
 	                d.emp_type = $('#emp_type').val(),
+	                d.as_status = $('#as_status').val(),
 	                d.otnonot = $('#otnonot').val(),
 	                d.doj_from = $('#doj_from').val(),
 	                d.doj_to = $('#doj_to').val()
@@ -416,7 +433,7 @@ $(document).ready(function()
 		}
 	});
 
-	$(document).on("change",'#unit,#emp_type,#otnonot,#doj_from,#doj_to', function(e){
+	$(document).on("change",'#unit,#emp_type,#otnonot,#doj_from,#doj_to,#as_status', function(e){
 		e.preventDefault();
 		dt.draw();
 	});
