@@ -1,5 +1,5 @@
 <div class="panel">
-	<div class="panel-body">
+	<div class="panel-body pt-0">
 		
 		@php
 			$urldata = http_build_query($input) . "\n";

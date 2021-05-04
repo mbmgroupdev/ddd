@@ -49,13 +49,15 @@ class BillAnnounceSettingController extends Controller
             return $data;
         }
         $input = $request->all();
-        // return $input;
+        return $input;
         DB::beginTransaction();
         try {
             $totalUnit = count($input['unit']);
             for ($i=0; $i < $totalUnit; $i++) { 
                 // updated another bill end date
                 $unitId = $input['unit'][$i];
+                $checkCode = $this->getCheckUniqueCode($unitId, $input['bill_type_id'], 1);
+                $code = $unitId.$input['bill_type_id'].'1';
                 $getBill = BillSettings::
                 where('unit_id', $unitId)
                 ->where('bill_type_id', $input['bill_type_id'])
@@ -68,6 +70,7 @@ class BillAnnounceSettingController extends Controller
                 // create bill
                 $bill = [
                     'unit_id' => $unitId,
+                    'code' => $code,
                     'bill_type_id' => $input['bill_type_id'],
                     'amount' => $input['amount'],
                     'start_date' => $input['start_date'],
@@ -112,6 +115,17 @@ class BillAnnounceSettingController extends Controller
             DB::rollback();
             $data['message'][] = $e->getMessage();
             return $data;
+        }
+    }
+    public function getCheckUniqueCode($unitId, $typeId, $value)
+    {
+        $code = $unitId.$typeId.$value;
+        $checkCode = BillSettings::checkExistsCode($code);
+        if(empty($checkCode)){
+            return $code;
+        }else{
+            $value = ($value+1);
+            return $this->getCheckUniqueCode($unitId, $typeId, $value);
         }
     }
 

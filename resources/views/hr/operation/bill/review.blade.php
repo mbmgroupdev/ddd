@@ -17,6 +17,9 @@
             .signature{
                 display: block;
             }
+            .flex {
+                display: flex;
+            }
         }
         .flex-chunk{
             min-width: 40px;margin-right: 2px;border-right: 1px solid;padding-right: 2px;
@@ -115,7 +118,7 @@
                                     <th width="100">ইআরপি ও ওরাকল</th>
                                     <th>তারিখ</th>
                                     <th>একাউন্ট নম্বর</th>
-                                    <th>দিন</th>
+                                    <th width="70">দিন</th>
                                     <th width="120">মোট টাকার পরিমান</th>
                                     <th class="" width="120" >দস্তখত</th>
                                     
@@ -158,10 +161,10 @@
                                                 </p>
                                             </td>
                                             <td>
-                                                <div class="flex-content" style="display: flex; height: 100%; border: 0;">
+                                                <div class="flex-content" style="height: 100%; border: 0; cursor: pointer;">
                                                     @if(isset($getBillLists[$list->as_id]))
-                                                    @foreach($getBillLists[$list->as_id]->chunk(2) as $billLists)
-                                                        <div class="flex-chunk1">
+                                                    @foreach($getBillLists[$list->as_id]->chunk(5) as $billLists)
+                                                        <div class="flex-chunk1 flex">
                                                         @foreach($billLists as $dateList)
                                                         <p style="margin:0;border: 1px solid #ccc; padding: 0px 5px;" >
                                                             @php
@@ -183,7 +186,7 @@
                                             <td>
                                                 <p style="margin:0;padding:0">
                                                     
-                                                    <span style="text-align: right;width: 30%; float: right;  white-space: wrap;">
+                                                    <span style="text-align: center;  white-space: wrap;">
                                                         <font style="color:hotpink;" > {{ Custom::engToBnConvert($list->totalDay) }}</font>
                                                     </span>
                                                 </p>

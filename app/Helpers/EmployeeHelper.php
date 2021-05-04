@@ -77,7 +77,7 @@ class EmployeeHelper
 
 			    $checkBillHour = (strtotime($outtimePunch) - strtotime($shiftIntime))/3600;
 			    $breakCount = 0;
-			    if($checkBillHour > 6){
+			    if($checkBillHour > 7){
 			    	$breakCount = 1;
 			    }
 
@@ -98,7 +98,7 @@ class EmployeeHelper
 
 			    $shiftBreak = $shiftBreak + $extraBreakMin;
 
-			    if(strtotime($today) > strtotime('2021-04-13') && $shiftNight == 0 && $employee->as_subsection_id != 108){
+			    if(strtotime($today) > strtotime('2021-04-13') && $employee->as_subsection_id != 108 && ($shiftNight == 0 || strtotime($shiftIntime) < strtotime(date('Y-m-d H:i', strtotime($today.' 17:30:00'))))){
 			    	$extraMin = 0;
 			    	$breakStartTime = strtotime(date('Y-m-d H:i', strtotime($today.' 18:00:00')));
 			    	$breakEndTime = strtotime(date('Y-m-d H:i', strtotime($today.' 19:00:00')));

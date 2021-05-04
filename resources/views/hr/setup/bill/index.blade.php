@@ -296,15 +296,15 @@
             data: curStep.serialize(), // serializes the form's elements.
             success: function(response)
             {
-              // console.log(response);
-              $.each(response.message, function(index, el) {
-                $.notify(el, response.type);
-              });
-              if(response.type === 'success'){
-                setTimeout(function(){
-                  window.location.href = response.url;
-                }, 500);
-              }
+              console.log(response);
+              // $.each(response.message, function(index, el) {
+              //   $.notify(el, response.type);
+              // });
+              // if(response.type === 'success'){
+              //   setTimeout(function(){
+              //     window.location.href = response.url;
+              //   }, 500);
+              // }
               $(".app-loader").hide();
             },
             error: function (reject) {
