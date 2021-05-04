@@ -146,11 +146,79 @@ class EmployeeRepository implements EmployeeInterface
     }
 
     public function getEmployeeByAssociateId($asIds, $selected = null){
-        $query = DB::table('hr_as_basic_info')
-        ->whereIn('associate_id', $asIds);
+        $query = DB::table('hr_as_basic_info');
+        // ->whereIn('associate_id', $asIds);
         if($selected != null){
             $query->select($selected);
         }
         return $query->get();
+    }
+
+    /* Employee filter */
+    public function getEmployeeByFilter($input, $dataRow)
+    {
+        $collection = collect($dataRow)->whereNotIn('as_id', config('base.ignore_salary'))->sortByDesc('gross');
+
+        if(isset($input['employee']) && $input['employee'] != null && $input['report_format'] == 0){
+            $collection = collect($collection)->where('as_id', 'LIKE', '%'.$input['employee'] .'%');
+        }
+
+        if(isset($input['min_sal']) && $input['min_sal'] != null){
+            $collection = collect($collection)->whereBetween('gross', [$input['min_sal'], $input['max_sal']]);
+        }
+
+        if(isset($input['unit']) && $input['unit'] != null){
+            $collection = collect($collection)->whereIn('as_unit_id', $input['unit']);
+        }
+
+        if(isset($input['location']) && $input['location'] != null){
+            $collection = collect($collection)->whereIn('as_location', $input['location']);
+        }
+
+        if(isset($input['pay_status']) && $input['pay_status'] != null){
+            if($input['pay_status'] == 'cash'){
+                $collection = collect($collection)->where('cash_payable', '>', 0);
+            }elseif($input['pay_status'] != 'all'){
+                $collection = collect($collection)->where('pay_type', $input['pay_status']);
+            }
+        }
+
+        if(isset($input['area']) && $input['area'] != null){
+            $collection = collect($collection)->whereIn('as_area_id', $input['area']);
+        }
+
+        if(isset($input['department']) && $input['department'] != null){
+            $collection = collect($collection)->where('as_department_id', $input['department']);
+        }
+
+        if(isset($input['section']) && $input['section'] != null){
+            $collection = collect($collection)->where('as_section_id', $input['section']);
+        }
+
+        if(isset($input['subSection']) && $input['subSection'] != null){
+            $collection = collect($collection)->where('as_subsection_id', $input['subSection']);
+        }
+
+        if(isset($input['otnonot']) && $input['otnonot'] != null){
+            $collection = collect($collection)->where('ot_status', $input['otnonot']);
+        }
+
+        if(isset($input['floor_id']) && $input['floor_id'] != null){
+            $collection = collect($collection)->where('as_floor_id', $input['floor_id']);
+        }
+
+        if(isset($input['line_id']) && $input['line_id'] != null){
+            $collection = collect($collection)->where('as_line_id', $input['line_id']);
+        }
+
+        if(isset($input['selected'])){
+            if($input['selected'] == 'null'){
+                $collection = collect($collection)->whereNull($input['report_group']);
+            }else{
+                $collection = collect($collection)->where($input['report_group'], $input['selected']);
+            }
+        }
+
+        return $collection;
     }
 }

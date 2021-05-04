@@ -3,6 +3,7 @@
 namespace App\Models\Hr;
 
 use App\Models\Hr\BillSpecialSettings;
+use App\Models\Hr\BillType;
 use Illuminate\Database\Eloquent\Model;
 
 class BillSettings extends Model
@@ -17,7 +18,12 @@ class BillSettings extends Model
 
     public function special()
     {
-    	return $this->hasMany(BillSpecialSettings::class, 'bill_id', 'id');
+    	return $this->hasMany(BillSpecialSettings::class, 'bill_setup_id', 'id');
+    }
+
+    public function bill_type()
+    {
+        return $this->belongsTo(BillType::class, 'bill_type_id', 'id');
     }
 
      public function available_special() {

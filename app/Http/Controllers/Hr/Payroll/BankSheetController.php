@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Hr\Payroll;
 
 use App\Http\Controllers\Controller;
+use App\Models\Hr\Benefits;
 use App\Models\Hr\Location;
 use App\Models\Hr\Unit;
-use Illuminate\Http\Request;
 use DB;
+use Illuminate\Http\Request;
 
 class BankSheetController extends Controller
 {
@@ -21,8 +22,8 @@ class BankSheetController extends Controller
         ->whereIn('hr_location_id', auth()->user()->location_permissions())
         ->orderBy('hr_location_name', 'desc')
         ->pluck('hr_location_name', 'hr_location_id');
-
-        return view('hr/payroll/bank_part.index', compact('unitList','locationList'));
+        $salaryMax = Benefits::getSalaryRangeMax();
+        return view('hr/payroll/bank_part.index', compact('unitList','locationList', 'salaryMax'));
     }
 
     public function report(Request $request)

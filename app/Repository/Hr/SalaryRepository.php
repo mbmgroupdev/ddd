@@ -15,11 +15,12 @@ class SalaryRepository implements SalaryInterface
     }
 	public function getSalaryReport($input, $data)
     {
-        
         $result['summary']      = $this->makeSummarySalary($data);
         $list = collect($data)
             ->groupBy($input['report_group'],true);
-
+        if(!empty($input['selected'])){
+            $input['report_format'] = 0;
+        }
         if($input['report_format'] == 1){
             $list = $list->map(function($q){
                 $q = collect($q);
@@ -38,13 +39,13 @@ class SalaryRepository implements SalaryInterface
                 $sum->tds           = $q->sum('tds');
                 $sum->salaryPayable = $q->sum('salary_payable');
                 $sum->totalPayable  = $q->sum('total_payable');
-                $sum->foodAmount    = 0;
+                $sum->foodAmount    = $q->sum('food_deduct');
                 return $sum;
             })->all();
         }
 
         $result['uniqueGroup'] = $list;
-        $result['input']       = $input;
+        $result['input']       = $input->all();
         $result['format']      = $input['report_group'];
         $result['unit']        = unit_by_id();
         $result['location']    = location_by_id();
@@ -61,59 +62,96 @@ class SalaryRepository implements SalaryInterface
     public function getSalaryByFilter($input, $dataRow, $employee){
         
         $subSection = subSection_by_id();
-        $getSalary = collect($dataRow)->map(function($q) use ($subSection, $employee) {
-            $q->section_id = $subSection[$q->sub_section_id]['hr_subsec_section_id']??'';
-            $q->department_id = $subSection[$q->sub_section_id]['hr_subsec_department_id']??'';
-            $q->area_id = $subSection[$q->sub_section_id]['hr_subsec_area_id']??'';
+        $getFoodDeduct = $this->getFoodDeductList($input['year_month']);
+        return collect($dataRow)->map(function($q) use ($subSection, $employee, $getFoodDeduct) {
+            $q->as_section_id = $subSection[$q->sub_section_id]['hr_subsec_section_id']??'';
+            $q->as_department_id = $subSection[$q->sub_section_id]['hr_subsec_department_id']??'';
+            $q->as_area_id = $subSection[$q->sub_section_id]['hr_subsec_area_id']??'';
             $q->as_name = $employee[$q->as_id]->as_name??'';
-            $q->line_id = $employee[$q->as_id]->as_line_id??'';
-            $q->floor_id = $employee[$q->as_id]->as_floor_id??'';
+            $q->as_oracle_code = $employee[$q->as_id]->as_oracle_code??'';
+            $q->as_line_id = $employee[$q->as_id]->as_line_id??'';
+            $q->as_floor_id = $employee[$q->as_id]->as_floor_id??'';
+            $q->as_unit_id = $q->unit_id;
+            $q->as_location = $q->location_id;
+            $q->as_subsection_id = $q->sub_section_id;
+            $q->as_designation_id = $q->designation_id;
+            $q->food_deduct = $getFoodDeduct[$q->as_id]??0;
+            unset($q->unit_id, $q->location_id, $q->sub_section_id, $q->designation_id);
             return $q;
         });
         
-        $queryData = collect($getSalary)->whereNotIn('as_id', config('base.ignore_salary'));
-        if(isset($input['employee']) && !empty($input['employee']) && $input['report_format'] == 0){
-            $queryData->where('as_id', 'LIKE', '%'.$input['employee'] .'%');
-        }
-        if(isset($input['min_sal'])){
-            $queryData->whereBetween('gross', [$input['min_sal'], $input['max_sal']]);
-        }
-        $queryData->when(isset($input['unit']) && !empty($input['unit']), function ($query) use($input){
-           return $query->whereIn('unit_id',$input['unit']);
-        })
-        ->when(isset($input['location']) && !empty($input['location']), function ($query) use($input){
-           return $query->whereIn('location_id',$input['location']);
-        })
-        ->when(isset($input['pay_status']) && !empty($input['pay_status']), function ($query) use($input){
-            if($input['pay_status'] == 'cash'){
-                return $query->where('cash_payable', '>', 0);
-            }elseif($input['pay_status'] != 'all'){
-                return $query->where('pay_type', $input['pay_status']);
-            }
-        })
-        ->when(isset($input['area']) && !empty($input['area']), function ($query) use($input){
-           return $query->where('area_id',$input['area']);
-        })
-        ->when(isset($input['department']) && !empty($input['department']), function ($query) use($input){
-           return $query->where('department_id',$input['department']);
-        })
-        ->when(isset($input['line_id']) && !empty($input['line_id']), function ($query) use($input){
-           return $query->where('line_id', $input['line_id']);
-        })
-        ->when(isset($input['floor_id']) && !empty($input['floor_id']), function ($query) use($input){
-           return $query->where('floor_id',$input['floor_id']);
-        })
-        ->when(isset($input['otnonot']) && $input['otnonot']!=null, function ($query) use($input){
-           return $query->where('ot_status',$input['otnonot']);
-        })
-        ->when(isset($input['section']) && !empty($input['section']), function ($query) use($input){
-           return $query->where('section_id', $input['section']);
-        })
-        ->when(isset($input['subSection']) && !empty($input['subSection']), function ($query) use($input){
-           return $query->where('sub_section_id', $input['subSection']);
-        });
+        // $collection = collect($getSalary)->whereNotIn('as_id', config('base.ignore_salary'))->sortByDesc('gross');
 
-        return $queryData->sortBy('department_id');
+        // if(isset($input['employee']) && $input['employee'] != null && $input['report_format'] == 0){
+        //     $collection = collect($collection)->where('as_id', 'LIKE', '%'.$input['employee'] .'%');
+        // }
+
+        // if(isset($input['min_sal']) && $input['min_sal'] != null){
+        //     $collection = collect($collection)->whereBetween('gross', [$input['min_sal'], $input['max_sal']]);
+        // }
+
+        // if(isset($input['unit']) && $input['unit'] != null){
+        //     $collection = collect($collection)->whereIn('as_unit_id', $input['unit']);
+        // }
+
+        // if(isset($input['location']) && $input['location'] != null){
+        //     $collection = collect($collection)->whereIn('as_location', $input['location']);
+        // }
+
+        // if(isset($input['pay_status']) && $input['pay_status'] != null){
+        //     if($input['pay_status'] == 'cash'){
+        //         $collection = collect($collection)->where('cash_payable', '>', 0);
+        //     }elseif($input['pay_status'] != 'all'){
+        //         $collection = collect($collection)->where('pay_type', $input['pay_status']);
+        //     }
+        // }
+
+        // if(isset($input['area']) && $input['area'] != null){
+        //     $collection = collect($collection)->whereIn('as_area_id', $input['area']);
+        // }
+
+        // if(isset($input['department']) && $input['department'] != null){
+        //     $collection = collect($collection)->where('as_department_id', $input['department']);
+        // }
+
+        // if(isset($input['section']) && $input['section'] != null){
+        //     $collection = collect($collection)->where('as_section_id', $input['section']);
+        // }
+
+        // if(isset($input['subSection']) && $input['subSection'] != null){
+        //     $collection = collect($collection)->where('as_subsection_id', $input['subSection']);
+        // }
+
+        // if(isset($input['otnonot']) && $input['otnonot'] != null){
+        //     $collection = collect($collection)->where('ot_status', $input['otnonot']);
+        // }
+
+        // if(isset($input['floor_id']) && $input['floor_id'] != null){
+        //     $collection = collect($collection)->where('as_floor_id', $input['floor_id']);
+        // }
+
+        // if(isset($input['line_id']) && $input['line_id'] != null){
+        //     $collection = collect($collection)->where('as_line_id', $input['line_id']);
+        // }
+
+        // if(isset($input['selected'])){
+        //     if($input['selected'] == 'null'){
+        //         $collection = collect($collection)->whereNull($input['report_group']);
+        //     }else{
+        //         $collection = collect($collection)->where($input['report_group'], $input['selected']);
+        //     }
+        // }
+
+        // return $collection;
+    }
+
+    protected function getFoodDeductList($yearMonth)
+    {
+        $yearMonthExp = explode('-', $yearMonth);
+        return DB::table('hr_salary_add_deduct')
+        ->where('year', $yearMonthExp[0])
+        ->where('month', $yearMonthExp[1])
+        ->pluck('food_deduct', 'associate_id');
     }
 
     public function getSalaryByMonth($input){
@@ -143,7 +181,7 @@ class SalaryRepository implements SalaryInterface
         $sum->totalStamp       = $data->sum('stamp');
         $sum->totalTax         = $data->sum('tds');
         $sum->totalEmployees   = $data->count();
-        $sum->totalFood        = 0;
+        $sum->totalFood        = $data->sum('food_deduct');
         $sum->totalOTHourAmount   = $data->sum(function ($s) {
                                     return ($s->ot_hour * $s->ot_rate);
                                 });

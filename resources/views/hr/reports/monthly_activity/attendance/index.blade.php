@@ -176,7 +176,7 @@
                                           </div>
                                         </div>
                                         <div class="form-group has-float-label has-required">
-                                          <input type="month" class="report_date form-control" id="month" name="month" placeholder=" Month-Year"required="required" value="{{ date('Y-m') }}"autocomplete="off" />
+                                          <input type="month" class="report_date form-control" id="month" name="year_month" placeholder=" Month-Year"required="required" value="{{ date('Y-m') }}"autocomplete="off" />
                                           <label for="month">Month</label>
                                         </div>
                                         <div class="form-group has-float-label has-required select-search-group">
@@ -345,6 +345,7 @@
         var dropdownList = {};
 
         var exportColName = ['Sl.','ID','Oracle ID','Name','Designation', 'Department', 'Section','Subsection','Line','Present', 'Absent', 'Leave', 'Holiday','Late', 'OT Hour', 'Total Day'];
+
         var exportCol = [1,2,3,4,5,6,7,8,9,10,11,12,13,14];
 
         var dTable =  $('#dataTables').DataTable({
@@ -374,10 +375,10 @@
              d.department    = $("#department").val();
              d.section       = $("#section").val();
              d.subSection    = $("#subSection").val();
-             d.month         = $("#month").val();
+             d.year_month    = $("#month").val();
              d.min_sal       = $("#min_sal").val();
              d.max_sal       = $("#max_sal").val();
-             d.employee_status = $("#employee_status").val();
+             d.emp_status    = $("#employee_status").val();
              d.shift_roaster_status = $("#shift_roaster_status").val();
              d.location = $("#location").val();
 

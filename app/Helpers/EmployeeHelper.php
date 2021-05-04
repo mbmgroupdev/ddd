@@ -98,7 +98,7 @@ class EmployeeHelper
 
 			    $shiftBreak = $shiftBreak + $extraBreakMin;
 
-			    if(strtotime($today) > strtotime('2021-04-13') && $shiftNight == 0){
+			    if(strtotime($today) > strtotime('2021-04-13') && $shiftNight == 0 && $employee->as_subsection_id != 108){
 			    	$extraMin = 0;
 			    	$breakStartTime = strtotime(date('Y-m-d H:i', strtotime($today.' 18:00:00')));
 			    	$breakEndTime = strtotime(date('Y-m-d H:i', strtotime($today.' 19:00:00')));

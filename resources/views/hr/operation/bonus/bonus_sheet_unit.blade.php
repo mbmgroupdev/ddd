@@ -59,6 +59,13 @@
                                 @if(!empty($input['employee_status']) )
                                 <b>স্ট্যাটাসঃ</b> <span style="text-transform: capitalize; ">{{emp_status_name($input['employee_status'])}}</span>
                                 @endif
+                                @if(isset($input['pay_status']) && $input['pay_status'] != null)
+                                    @if($input['pay_status'] == 'cash')
+                                    - ক্যাশ পে
+                                    @else
+                                    - ব্যাংক পে
+                                    @endif
+                                @endif
                         </p>
                                 
                         

@@ -52,6 +52,10 @@ class SearchController extends Controller
                 $query = DB::table('hr_subsection')
                 ->select('hr_subsec_id AS id', 'hr_subsec_name AS text')
                 ->where('hr_subsec_name', 'LIKE', '%'.$request->keyvalue.'%');
+            }elseif($input['type'] == 'as_location'){
+                $query = DB::table('hr_location')
+                ->select('hr_location_id AS id', 'hr_location_name AS text')
+                ->where('hr_location_name', 'LIKE', '%'.$request->keyvalue.'%');
             }elseif($input['type'] == 'as_id'){
                 $query = DB::table('hr_as_basic_info')
                 ->select('as_id AS id', DB::raw('CONCAT_WS(" - ", associate_id, as_name) AS text'))
