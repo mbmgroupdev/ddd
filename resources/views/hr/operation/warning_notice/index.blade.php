@@ -296,9 +296,9 @@
             <div class="panel">
                 <div class="panel-heading report-print-section hide">
                     <h6 class="">
-                        <button type="button" onClick="printDiv('result-data')" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report"><i class="fa fa-print"></i>
+                        <button type="button" onClick="printLetter('result-data')" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report"><i class="fa fa-print"></i>
                         </button>
-                        <button type="button" onClick="printDiv('result-data-cover',11)" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Envelope"><i class="las la-envelope"></i>
+                        <button type="button" onClick="printLetter('result-data-cover',11)" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Envelope"><i class="las la-envelope"></i>
                         </button>
                     </h6>
                 </div>
@@ -355,6 +355,7 @@
                                     <br>
                                     <b id="firsrtManagerName"> </b>
                                     <p id="firsrtManagerDeg"></p>
+                                    <p id="firsrtManagerUnit"></p>
                                     <br>
                                     <p>অনুলিপিঃ </p>
                                     <p><small>১। মাননীয় ব্যবস্থাপনা পরিচালক মহোদয় (সদয় অবগণ)</small></p>
@@ -403,7 +404,7 @@
                                     <p style="text-align: justify;">আপনি গত <b id="sfirstAbsentDate">@if($notice != null){{ eng_to_bn(date('d-m-Y', strtotime($notice->start_date))) }} @endif</b> ইং তারিখ থেকে কারখানা কর্তৃপক্ষের বিনা অনুমতিতে কর্মস্থলে অনুপস্থিত রয়েছেন। এ প্রেক্ষিতে কারখানার কর্তৃপক্ষ আপনার স্থায়ী ও বর্তমান ঠিকানায় রেজিস্ট্রি ডাকযোগে গত <b id="sfirstIssueDate">@if($notice != null){{ eng_to_bn(date('d-m-Y', strtotime($notice->first_step_date))) }} @endif</b> ইং তারিখে বিনাঅনুমতিতে চাকুরীতে অনুপস্থিতির কারন ব্যাখ্যা সহ কাজে যোগদানের জন্য পত্র প্রেরন করেছে। কিন্তু অদ্যবধি আপনি উপরোক্ত বিষয়ে কোন ধরনের লিখিত ব্যাখ্যা প্রদান করেন নাই অথবা চাকুরিতেও যোগদান করেন নাই। </p>
                                     <br>
                                     <p>অতএব, অত্র পত্র প্রাপ্তির <b id="secondResDay">@if($notice != null){{ eng_to_bn($notice->second_response) }} @endif</b> দিনের মধ্যে আত্নপক্ষ সমর্থন সহ কাজে যোগদান করিতে আপনাকে নির্দেশ দেয়া গেল।</p>
-                                    <p>উক্ত সময়ের মধ্যে আপনি আত্নপক্ষ সমর্থনের জবাব সহ কাজে যোগদান করতে ব্যর্থ হলে বাংলাদেশ শ্রম আইন ২০০৬ এর ২৭(৩ক) ধারা অনুযায়ী আপনি স্বেচ্ছায় চাকুরী থেকে অব্যাহতি গ্রহন করেছেন বলে গণ্য হবে।</p>
+                                    <p>উক্ত সময়ের মধ্যে আপনি আত্নপক্ষ সমর্থনের জবাব সহ কাজে যোগদান করতে ব্যর্থ হলে বাংলাদেশ শ্রম আইন ২০০৬ এর ২৭(৩ক) ধারা অনুযায়ী আপনি স্বেচ্ছায় চাকুরী থেকে ইস্তফা গ্রহন করেছেন বলে গণ্য হবে।</p>
                                     <br>
                                     <br>
                                     <p>ধন্যবাদান্তে,</p>
@@ -412,6 +413,7 @@
                                     <br>
                                     <b id="secondManagerName"> </b>
                                     <p id="secondManagerDeg"></p>
+                                    <p id="secondManagerUnit"></p>
                                     <br>
                                     <p>অনুলিপিঃ </p>
                                     <p><small>১। মাননীয় ব্যবস্থাপনা পরিচালক মহোদয় (সদয় অবগণ),</small></p>
@@ -452,7 +454,7 @@
                                         </div>
                                     </div>
                                     <br>
-                                    <p><span style="text-decoration: underline;"><strong>বিষয়ঃ বাংলাদেশ শ্রম আইন ২০০৬ এর ২৭(৩ক) ধারা মোতাবেক শ্রমিক কর্তৃক স্বেচ্ছায় চাকুরী হইতে অব্যাহতি প্রসঙ্গে। </strong></span></p>
+                                    <p><span style="text-decoration: underline;"><strong>বিষয়ঃ বাংলাদেশ শ্রম আইন ২০০৬ এর ২৭(৩ক) ধারা মোতাবেক শ্রমিক কর্তৃক স্বেচ্ছায় চাকুরী হইতে ইস্তফা প্রসঙ্গে। </strong></span></p>
                                     <br>
                                     <p>জনাব/জনাবা,</p>
                                     <br>
@@ -460,7 +462,7 @@
                                     
                                     <p style="text-align: justify;">আপনি গত <b id="tfirstAbsentDate"></b> ইং তারিখ হতে অদ্যবদি পর্যন্ত কর্তৃপক্ষের বিনা অনুমতিতে কর্মস্থলে অনুপস্থিত থাকার কারনে আপনাকে গত <b id="tfirstIssueDate"></b> ইং তারিখে পত্রের মাধ্যমে <b id="tfirstResDay"></b> দিনের সময় দিয়ে চাকুরীতে যোগদান সহ ব্যাখ্যা প্রদান করতে বলা হয়েছিল। কিন্তু আপনি নির্ধারিত সময়ের মধ্যে কর্মস্থলে উপস্থিত হননি এবং কোন ব্যাখ্যা প্রদান করেননি। তথাপি কর্তৃপক্ষ গত  <b id="tsecondIssueDate"></b> ইং তারিখে আর একটি পত্রের মাধ্যমে আপনাকে আরো <b id="tsecondResDay"></b> দিনের সময় দিয়ে আত্নপক্ষ সমর্থন সহ চাকুরীতে যোগদানের জন্য পুনরায় নির্দেশ প্রদান করেন।  তৎসত্ত্বেও আপনি নির্ধারিত সময়ের মধ্যে আত্নপক্ষ সমর্থন করেননি এবং চাকুরিতে যোগদান করেননি।</p>
                                     <br>
-                                    <p>সুতরাং বাংলাদেশ শ্রম আইন ২০০৬ এর ২৭(৩ক) ধারা অনুযায়ী অনুপস্তিত দিন থেকে আপনি চাকুরী থেকে স্বেচ্ছায় অব্যাহতি গ্রহন করেছেন বলে গণ্য হলো।</p>
+                                    <p>সুতরাং বাংলাদেশ শ্রম আইন ২০০৬ এর ২৭(৩ক) ধারা অনুযায়ী অনুপস্তিত দিন থেকে আপনি চাকুরী থেকে স্বেচ্ছায় ইস্তফা গ্রহন করেছেন বলে গণ্য হলো।</p>
                                     <p>অতএব, আপনার বকেয়া মজুরী ও আইনানুগ পাওনা (যদি থাকে) যে কোন কর্মদিবসে অফিস চলাকালীন সময়ে কারখানা হিসাব শাখা থেকে গ্রহন করার নির্দেশ দেয়া গেল।</p>
                                     <br>
                                     <br>
@@ -470,6 +472,7 @@
                                     <br>
                                     <b id="thirdManagerName"></b>
                                     <p id="thirdManagerDeg"></p>
+                                    <p id="thirdManagerUnit"></p>
                                     <br>
                                     <p>অনুলিপিঃ </p>
                                     <p><small>১। মাননীয় ব্যবস্থাপনা পরিচালক মহোদয় (সদয় অবগণ),</small></p>
@@ -496,9 +499,9 @@
                                         <p>নামঃ {{$info->hr_bn_associate_name??'' }}</p>
                                         <p>পিতাঃ {{ $info->hr_bn_father_name??'' }} </p>
                                         <p><b>বর্তমান ঠিকানাঃ</b></p>
-                                        <p>বাসা নংঃ {{ $info->hr_bn_present_house??'' }}, {{ $info->hr_bn_present_house??'' }} {{$info->hr_bn_present_po??''}},</p>
+                                        <p>বাসা নংঃ {{ $info->hr_bn_present_house??'' }},  {{$info->hr_bn_present_po??''}},</p>
                                         <p> ডাকঘরঃ {{ $info->hr_bn_present_po??'' }}</p>
-                                        <p>থানাঃ {{ $info->present_upzilla_bn??'' }}, জেলাঃ {{ $info->present_district_bn??'' }} </p>
+                                        <p>থানাঃ {{ $info->present_upazilla_bn??'' }}, জেলাঃ {{ $info->present_district_bn??'' }} </p>
                                     </div>
                                 </div>
                                 <div style="page-break-after: always;"></div>
@@ -513,9 +516,9 @@
                                         <p>নামঃ {{$info->hr_bn_associate_name??'' }}</p>
                                         <p>পিতাঃ {{ $info->hr_bn_father_name??'' }} </p>
                                         <p><b>স্থায়ী ঠিকানাঃ</b></p>
-                                        <p>গ্রামঃ {{ $info->hr_bn_permanent_village??'' }}, {{ $info->hr_bn_permanent_village??'' }},</p>
+                                        <p>গ্রামঃ {{ $info->hr_bn_permanent_village??'' }},</p>
                                         <p> ডাকঘরঃ {{ $info->hr_bn_permanent_po??'' }}</p>
-                                        <p>থানাঃ {{ $info->permanent_upzilla_bn??'' }}, জেলাঃ {{ $info->permanent_district_bn??'' }} </p>
+                                        <p>থানাঃ {{ $info->permanent_upazilla_bn??'' }}, জেলাঃ {{ $info->permanent_district_bn??'' }} </p>
                                     </div>
                                 </div>
                             </div>
@@ -530,7 +533,7 @@
 </div>
 @push('js')
 <script type="text/javascript">
-    function printDiv(divName, font = 9)
+    function printLetter(divName, font = 9)
     { 
         var myWindow=window.open('','','width=800,height=800');
         myWindow.document.write('<html><head><title></title>');
@@ -598,6 +601,7 @@
                         $("#step_one").show();
                         $("#firsrtManagerName").html(response.first_manager.name);
                         $("#firsrtManagerDeg").html(response.first_manager.designation+', '+response.first_manager.department);
+                        $("#firsrtManagerUnit").html(response.first_manager.unit);
                         $("#firstResDay").html(response.first_response);
                         $("#firstAbsentDate").html(response.start_date);
                         $("#firstIssueDate").html(response.issue_date);
@@ -665,6 +669,8 @@
                         $("#step_one").hide();
                         $("#secondManagerName").html(response.second_manager.name);
                         $("#secondManagerDeg").html(response.second_manager.designation+', '+response.second_manager.department);
+                        $("#secondManagerUnit").html(response.second_manager.unit);
+                
                         $("#secondResDay").html(response.second_response);
                         $("#sfirstAbsentDate").html(response.start_date);
                         $("#sfirstIssueDate").html(response.issue_date);
@@ -734,6 +740,7 @@
                         $("#thirdIssueDate").html(response.third_issue_date);
                         $("#thirdManagerName").html(response.third_manager.name);
                         $("#thirdManagerDeg").html(response.third_manager.designation+', '+response.third_manager.department);
+                        $("#thirdManagerUnit").html(response.third_manager.unit);
                         $('html, body').animate({
                             scrollTop: $(".report-section").offset().top
                         }, 2000);

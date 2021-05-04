@@ -57,6 +57,24 @@ class TestController extends Controller
         $this->salaryTable  = 'hr_buyer_salary_'.$this->buyer->table_alias;
     }*/
 
+    public function lineAtt()
+    {
+        $user = DB::table('hr_as_basic_info')
+            ->where('as_unit_id', 2)
+            ->where('as_location', 7)
+            ->pluck('as_line_id', 'as_id');
+
+        foreach ($user as $key => $v) {
+            DB::table('hr_attendance_ceil')
+                ->where('as_id', $key)
+                ->update(['line_id' => $v]);
+        }
+
+        return 'hi';
+    }
+
+
+
     public function jobcardupdate()
     {
         $data = DB::table('hr_attendance_ceil')
@@ -101,12 +119,39 @@ class TestController extends Controller
         return 'done';
     }
 
+    public function lineUpdate()
+    {
+        $line = DB::table('hr_line')
+                    ->select('hr_line_name','hr_line_id','hr_line_floor_id')
+                    ->where('hr_line_unit_id', 2)
+                    ->get()->keyBy('hr_line_name');
+
+        $data = [];
+        
+        $nf=[];
+        foreach ($data as $key => $v) {
+            if(isset($line[$v['Line']])){
+                DB::table('hr_as_basic_info')
+                    ->where('associate_id', $key)
+                    ->update([
+                        'as_line_id' => $line[$v['Line']]->hr_line_id,
+                        'as_floor_id' => $line[$v['Line']]->hr_line_floor_id
+                    ]);
+            }else{
+                $nf[] = $v['Line'];
+            }
+
+        }
+
+        return array_unique($nf);
+
+    }
+
 
     public function test()
     {
-
         
-        return $this->findFriday();
+        return $this->lineUpdate();
         return $this->testMail();
         
         return '';

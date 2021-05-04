@@ -209,8 +209,8 @@
                              <thead>
                                 <tr>
                                    <th>Sl.</th>
-                                   {{-- <th>Photo</th> --}}
                                    <th>ID</th>
+                                   <th>Oracle ID</th>
                                    <th>Name & phone</th>
                                    <th>Designation</th>
                                    <th>Department</th>
@@ -221,6 +221,7 @@
                                    <th>Absent</th>
                                    <th>Leave</th>
                                    <th>Holiday</th>
+                                   <th>Late</th>
                                    <th>OT Hour</th>
                                    <th>Total Day</th>
                                 </tr>
@@ -343,7 +344,8 @@
         var selectable = []; //use 4,5,6,7,8,9,10,11,....and * for all
         var dropdownList = {};
 
-        var exportColName = ['Sl.','ID','Name','Designation', 'Department', 'Section','Subsection','Line','Present', 'Absent', 'Leave', 'Holiday','Late', 'OT Hour', 'Total Day'];
+        var exportColName = ['Sl.','ID','Oracle ID','Name','Designation', 'Department', 'Section','Subsection','Line','Present', 'Absent', 'Leave', 'Holiday','Late', 'OT Hour', 'Total Day'];
+
         var exportCol = [1,2,3,4,5,6,7,8,9,10,11,12,13,14];
 
         var dTable =  $('#dataTables').DataTable({
@@ -485,7 +487,6 @@
 
          columns: [
            { data: 'DT_RowIndex', name: 'DT_RowIndex' },
-           // { data: 'pic', name: 'pic' },
            { data: 'associate_id',  name: 'associate_id' },
            { data: 'as_name', name: 'as_name' },
            { data: 'hr_designation_name', name: 'hr_designation_name' },
@@ -497,6 +498,7 @@
            { data: 'absent', name: 'absent' },
            { data: 'leave', name: 'leave' },
            { data: 'holiday', name: 'holiday' },
+           { data: 'late_count', name: 'late_count' },
            { data: 'ot_hour', name: 'ot_hour' },
            { data: 'total_day', name: 'total_day' }
 

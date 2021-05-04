@@ -630,8 +630,8 @@ class BonusController extends Controller
             $data['salaryMin']     = 0;
             $data['salaryMax']     = Benefits::getSalaryRangeMax();
 
-
             return view('hr.operation.bonus.bonus_disburse', $data);
+            
 
         } catch(\Exception $e) {
             return $e->getMessage();
@@ -642,9 +642,10 @@ class BonusController extends Controller
 
     protected function getBonusList($input)
     {
+        
         $input['otnonot'] = isset($input['otnonot'])?$input['otnonot']:null;
     	return DB::table('hr_bonus_sheet as bns')
-    			->select('bns.*','sub.*','e.as_name','e.as_gender','b.hr_bn_associate_name','e.as_doj','e.temp_id','e.as_oracle_code')
+    			->select('bns.*','sub.*','e.as_name','e.as_gender','b.hr_bn_associate_name','e.as_doj','e.temp_id','e.as_oracle_code','e.as_oracle_sl')
     			->where('bns.bonus_rule_id',$input['bonus_type'])
     			->whereIn('bns.unit_id',auth()->user()->unit_permissions())
     			->whereIn('bns.location_id',auth()->user()->location_permissions())
@@ -664,11 +665,11 @@ class BonusController extends Controller
 	            ->when(!empty($input['location']), function ($query) use($input){
 	               return $query->where('bns.location_id',$input['location']);
 	            })
-	            ->when(!empty($input['line_id']), function ($query) use($input){
-	               return $query->where('e.as_line_id', $input['line_id']);
+	            ->when(!empty($input['line']), function ($query) use($input){
+	               return $query->where('e.as_line_id', $input['line']);
 	            })
-	            ->when(!empty($input['floor_id']), function ($query) use($input){
-	               return $query->where('e.as_floor_id',$input['floor_id']);
+	            ->when(!empty($input['floor']), function ($query) use($input){
+	               return $query->where('e.as_floor_id',$input['floor']);
 	            })
 	            ->when($input['otnonot'] != null, function ($query) use($input){
 	               return $query->where('bns.ot_status', $input['otnonot']);
@@ -750,7 +751,11 @@ class BonusController extends Controller
         $com['subSection'] 	= subSection_by_id();
         $com['area'] 		= area_by_id();
 
-        return view('hr.operation.bonus.bonus_sheet_unit', $com)->render();
+        if($request->sheet == 'bonus_sheet'){
+            return view('hr.operation.bonus.bonus_sheet_unit', $com)->render();
+        }else if($request->sheet == 'bonus_payslip'){
+            return view('hr.operation.bonus.bonus_pay_slip', $com)->render();
+        }
     }
 
 }

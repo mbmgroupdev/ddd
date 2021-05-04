@@ -39,6 +39,9 @@
         }
     </style>
 @endpush
+@php
+  $sheet = ['bonus_sheet'=>'Bonus Sheet', 'bonus_payslip'=> 'Bonus Payslip'];
+@endphp
 <div class="main-content">
     <div class="main-content-inner">
         <div class="breadcrumbs ace-save-state" id="breadcrumbs">
@@ -71,16 +74,23 @@
                                   <div class="panel">
                                         <div class="panel-body">
                                             <div class="row">
-                                                <div class="col-sm-5">
+                                                <div class="col-sm-4">
                                                     <div class="form-group has-float-label has-required select-search-group">
                                                         {{ Form::select('as_id[]', [],'', ['id'=>'as_id', 'class'=> 'allassociates form-control select-search no-select', 'multiple'=>"multiple",'style', 'data-validation'=>'required']) }}
                                                         <label for="as_id">Employees</label>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-3">
+                                                <div class="col-sm-2">
                                                   <div class="form-group has-float-label select-search-group">
                                                       {{ Form::select('bonus_type', $bonus_type, null, ['placeholder'=>'Select Bonus Type', 'class'=>'form-control capitalize select-search', 'id'=>'bonusForSngle']) }}
                                                         <label for="bonusForSngle">Bonus Type</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <div class="form-group has-float-label select-search-group">
+                                                    
+                                                        {{ Form::select('sheet', $sheet, 'bonus_sheet', [ 'class'=>'form-control capitalize select-search', 'id'=>'sheet']) }}
+                                                        <label for="sheet">Sheet</label>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-2">
@@ -90,7 +100,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-2">
-                                                    <button onclick="individual()" type="button" class="btn btn-primary btn-sm" id="individualBtn"><i class="fa fa-save"></i> Generate</button>
+                                                    <button onclick="individual()" type="button" class="btn btn-primary btn-sm pull-right" id="individualBtn"><i class="fa fa-save"></i> Generate</button>
                                                     
                                                 </div>
                                             </div>
@@ -244,10 +254,24 @@
                                                     <label for="estatus">Status</label>
                                                 </div>
                                                 <div class="form-group">
-                                                    <div class="form-group has-float-label">
-                                                        <input id="per_page" type="number" min="1" max="10" name="per_page" class="form-control" value="10">
-                                                        <label for="per_page">Per Page</label>
+                                                    <div class="row">
+                                                        <div class="col-sm-7">
+                                                            <div class="form-group has-float-label select-search-group">
+                                                            {{ Form::select('sheet', $sheet, 'bonus_sheet', [ 'class'=>'form-control capitalize select-search', 'id'=>'sheet']) }}
+                                                            <label for="sheet">Sheet</label>
+                                                        </div>
+
+
+                                                        </div>
+                                                        <div class="col-sm-5">
+                                                            <div class="form-group has-float-label">
+                                                                <input id="per_page" type="number" min="1" max="10" name="per_page" class="form-control" value="10">
+                                                                <label for="per_page">Per Page</label>
+                                                            </div>
+                                                            
+                                                        </div>
                                                     </div>
+                                                    
                                                         
                                                 </div>
                                                 
