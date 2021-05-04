@@ -343,8 +343,8 @@
         var selectable = []; //use 4,5,6,7,8,9,10,11,....and * for all
         var dropdownList = {};
 
-        var exportColName = ['Sl.','ID','Name','Designation', 'Department', 'Section','Subsection','Line','Present', 'Absent', 'Leave', 'Holiday','Late', 'OT Hour', 'Total Day'];
-        var exportCol = [1,2,3,4,5,6,7,8,9,10,11,12,13,14];
+        var exportColName = ['Sl.','ID','Name','Designation', 'Department', 'Section','Subsection','Line','Present', 'Absent', 'Leave', 'Holiday', 'OT Hour', 'Total Day'];
+        var exportCol = [0,1,2,3,4,5,6,7,8,9,10,11,12,13];
 
         var dTable =  $('#dataTables').DataTable({
 

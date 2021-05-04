@@ -4,6 +4,7 @@ namespace App\Models\Hr;
 
 use App\Models\Hr\BillSpecialSettings;
 use App\Models\Hr\BillType;
+use DB;
 use Illuminate\Database\Eloquent\Model;
 
 class BillSettings extends Model
@@ -28,5 +29,13 @@ class BillSettings extends Model
 
      public function available_special() {
         return $this->special()->whereNull('end_date');
+    }
+
+    public static function checkExistsCode($code)
+    {
+        return DB::table('hr_bill_settings')
+        ->where('code', $code)
+        ->pluck('code')
+        ->first();
     }
 }
