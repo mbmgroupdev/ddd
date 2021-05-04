@@ -230,10 +230,12 @@ class WarningNoticeController extends Controller
     {
         $designation = designation_by_id();
         $department = department_by_id();
+        $unit = unit_by_id();
 
     	$data =  DB::table('hr_as_basic_info as b')
             ->leftJoin('hr_employee_bengali as bn','b.associate_id','bn.hr_bn_associate_id')
             ->select(
+                'b.as_unit_id',
                 'bn.hr_bn_associate_name as name',
                 'b.as_department_id as department',
                 'b.as_designation_id as designation')
@@ -243,6 +245,7 @@ class WarningNoticeController extends Controller
         if($data){
             $data->department = isset($department[$data->department])?$department[$data->department]['hr_department_name_bn']:'';
             $data->designation = isset($designation[$data->designation])?$designation[$data->designation]['hr_designation_name_bn']:'';
+            $data->unit = isset($unit[$data->as_unit_id])?$unit[$data->as_unit_id]['hr_unit_name_bn']:'';
         }
 
         return $data;

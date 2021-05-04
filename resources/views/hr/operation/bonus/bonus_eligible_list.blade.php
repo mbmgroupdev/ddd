@@ -423,10 +423,10 @@
 						@endforeach
 						<tr>
 							<th style="text-align: center;" colspan="2">Total</th>
-							<th style="text-align: center;">{{collect($uniqueGroup)->sum('ot')}}</th>
-							<th style="text-align: right;padding-right: 5px;">{{bn_money(collect($uniqueGroup)->sum('ot_amount'))}}</th>
 							<th style="text-align: center;">{{collect($uniqueGroup)->sum('nonot')}}</th>
 							<th style="text-align: right;padding-right: 5px;">{{bn_money(collect($uniqueGroup)->sum('nonot_amount'))}}</th>
+							<th style="text-align: center;">{{collect($uniqueGroup)->sum('ot')}}</th>
+							<th style="text-align: right;padding-right: 5px;">{{bn_money(collect($uniqueGroup)->sum('ot_amount'))}}</th>
 							<th style="text-align: center;">{{collect($uniqueGroup)->sum('ot') + collect($uniqueGroup)->sum('nonot')}}</th>
 							<th style="text-align: right;padding-right: 5px;">{{bn_money(collect($uniqueGroup)->sum('ot_amount') + collect($uniqueGroup)->sum('nonot_amount'))}}</th>
 						</tr>

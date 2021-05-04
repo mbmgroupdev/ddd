@@ -209,8 +209,8 @@
                              <thead>
                                 <tr>
                                    <th>Sl.</th>
-                                   {{-- <th>Photo</th> --}}
                                    <th>ID</th>
+                                   <th>Oracle ID</th>
                                    <th>Name & phone</th>
                                    <th>Designation</th>
                                    <th>Department</th>
@@ -221,6 +221,7 @@
                                    <th>Absent</th>
                                    <th>Leave</th>
                                    <th>Holiday</th>
+                                   <th>Late</th>
                                    <th>OT Hour</th>
                                    <th>Total Day</th>
                                 </tr>
@@ -485,7 +486,6 @@
 
          columns: [
            { data: 'DT_RowIndex', name: 'DT_RowIndex' },
-           // { data: 'pic', name: 'pic' },
            { data: 'associate_id',  name: 'associate_id' },
            { data: 'as_name', name: 'as_name' },
            { data: 'hr_designation_name', name: 'hr_designation_name' },
@@ -497,6 +497,7 @@
            { data: 'absent', name: 'absent' },
            { data: 'leave', name: 'leave' },
            { data: 'holiday', name: 'holiday' },
+           { data: 'late_count', name: 'late_count' },
            { data: 'ot_hour', name: 'ot_hour' },
            { data: 'total_day', name: 'total_day' }
 
