@@ -17,12 +17,15 @@ use App\Models\Hr\AttendanceUndeclared;
 use App\Models\Hr\Bills;
 use App\Models\Hr\HolidayRoaster;
 use App\Models\Hr\YearlyHolyDay;
+use App\Repository\Hr\AttendanceProcessRepository;
+use App\Repository\Hr\EmployeeRepository;
 use Carbon\Carbon;
 use DB, Validator, Input, FastExcel, File;
 use Illuminate\Http\Request;
 
 class AttendanceFileProcessController extends Controller
 {
+
     public function importFile(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -325,14 +328,14 @@ class AttendanceFileProcessController extends Controller
             
                 $data['msg'] = $msg;
 
-                return $data;
+                
             } catch (\Exception $e) {
                 //$data['status'] = 'error';
                 $data['msg'] = $value." - ".$e->getMessage();
-                return $data;
+                
             }
         }
-
+        return $data;
         
     }
 

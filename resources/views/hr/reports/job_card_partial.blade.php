@@ -169,8 +169,16 @@
                                                 </td>
                                                 <td>{{ $value['floor'] }}</td>
                                                 <td>{{ $value['line'] }}</td>
-                                                <td>{{!empty($value['in_time'])?$value['in_time']:null}}</td>
-                                                <td>{{!empty($value['out_time'])?$value['out_time']:null}}</td>
+                                                <td>
+                                                  @if($value['outside'] == null)
+                                                  {{!empty($value['in_time'])?$value['in_time']:null}}
+                                                  @endif
+                                                </td>
+                                                <td>
+                                                  @if($value['outside'] == null)
+                                                  {{!empty($value['out_time'])?$value['out_time']:null}}
+                                                  @endif
+                                                </td>
                                                 <td>
                                                     {{numberToTimeClockFormat($value['overtime_time'])}}
                                                 </td>

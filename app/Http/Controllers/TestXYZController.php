@@ -24,7 +24,7 @@ class TestXYZController extends Controller
 {
     public function rfidUpdate()
     {
-        return $this->salaryCheck();
+        return $this->workFromHomeBill();
         return "";
         $data = array();
         $getBasic = DB::table('hr_as_basic_info')
@@ -528,6 +528,23 @@ class TestXYZController extends Controller
     {
         $data = [];
         $outsideCheck= DB::table('hr_outside')
+            ->select('hr_as_basic_info.as_id', 'hr_outside.start_date', 'hr_outside.end_date', 'hr_as_basic_info.as_unit_id')
+            ->where('start_date','>','2021-04-13')
+            ->where('requested_location','WFHOME')
+            ->join('hr_as_basic_info', 'hr_outside.as_id', 'hr_as_basic_info.associate_id')
+            ->get();
+        foreach($outsideCheck as $outside){
+            $tableName = get_att_table($outside->as_unit_id);
+            $data[] = DB::table($tableName)
+            ->where('as_id', $outside->as_id)
+            ->whereNotNull('in_unit')
+            ->whereBetween('in_date', [$outside->start_date, $outside->end_date])
+            ->get();
+        }
+        return ($data);
+
+        $data = [];
+        $outsideCheck= DB::table('hr_outside')
             ->select('hr_as_basic_info.as_id', 'hr_outside.start_date', 'hr_outside.end_date')
             ->where('start_date','>','2021-04-13')
             //->where('status',1)
@@ -590,6 +607,18 @@ class TestXYZController extends Controller
     }
     public function billRemove()
     {
+        $data = DB::table("hr_bill AS t")
+        ->select('t.*', 'b.as_designation_id', 'b.as_location', 'b.as_subsection_id', 'b.as_department_id')
+        ->leftJoin('hr_as_basic_info AS b', function($q){
+            $q->on('b.as_id', 't.as_id');
+        })
+        ->where('t.bill_date', '2021-04-13')
+        ->whereNotIn('b.as_department_id', [67])
+        ->where('t.bill_type', 2)
+        ->get();
+
+        return count($data);
+
         $getBill = DB::table("hr_bill AS t")
         ->select('t.*', 'b.as_designation_id', 'b.as_location', 'b.as_subsection_id', 'b.as_department_id')
         ->leftJoin('hr_as_basic_info AS b', function($q){
