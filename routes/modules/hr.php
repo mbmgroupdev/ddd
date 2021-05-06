@@ -268,6 +268,7 @@ Route::post('hr/operation/undeclared-employee-operation', 'Hr\Operation\HolidayR
 
 //attendance new process
 Route::post('/hr/timeattendance/attendance_manual/import', 'Hr\TimeAttendance\AttendanceFileProcessController@importFile');
+// Route::post('/hr/timeattendance/attendance_process_wise_data', 'Hr\TimeAttendance\AttendanceFileProcessController@attendanceProcess');
 Route::post('/hr/timeattendance/attendance_process_wise_data', 'Hr\TimeAttendance\AttendanceFileProcessController@attFileProcess');
 //attendance absent
 Route::get('hr/timeattendance/unit-wise-absent', 'Hr\TimeAttendance\AttendanceFileProcessController@unitAbsent');

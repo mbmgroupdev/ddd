@@ -234,7 +234,7 @@ class AttendaceBulkManualController extends Controller
                                 $insert['out_time'] = $date.' '.$outtime;
                                 if($intime != null) {
                                     // out time is tomorrow
-                                    if(strtotime($intime) > strtotime($outtime)) {
+                                    if(strtotime(date("Y-m-d H:i:s", strtotime("+2 hours", strtotime($intime)))) > strtotime($outtime)) {
                                         $dateModify = date("Y-m-d", strtotime("+1 day", strtotime($date)));
                                         $insert['out_time'] = $dateModify.' '.$outtime;
                                     }
@@ -441,7 +441,7 @@ class AttendaceBulkManualController extends Controller
                                 $update['out_time'] = date('Y-m-d H:i:s', strtotime($date.' '.$outtime));
                                 if($intime != null && $Att->remarks != 'DSI') {
                                     // out time is tomorrow
-                                    if(strtotime($outtime) < strtotime($intime)) {
+                                    if(strtotime($outtime) < strtotime(date("Y-m-d H:i:s", strtotime("+2 hours", strtotime($intime))))) {
                                         $dateOModify = date("Y-m-d", strtotime("+1 day", strtotime($date)));
                                         $update['out_time'] = date('Y-m-d H:i:s', strtotime($dateOModify.' '.$outtime));
                                     }
