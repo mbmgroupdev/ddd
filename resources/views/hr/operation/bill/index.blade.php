@@ -233,6 +233,13 @@
                                                     {{ Form::select('as_status', $status, 1, ['placeholder'=>'Select Employee Status ', 'class'=>'form-control capitalize select-search', 'id'=>'estatus']) }}
                                                     <label for="estatus">Status</label>
                                                 </div>
+                                                <div class="form-group has-float-label has-required select-search-group">
+                                                    <?php
+                                                      $payType = ['all'=>'All','cash' => 'Cash','dbbl'=>'DBBL','rocket'=>'Rocket'];
+                                                    ?>
+                                                    {{ Form::select('pay_status', $payType, 'all', ['placeholder'=>'Select Payment Type', 'class'=>'form-control capitalize select-search', 'id'=>'paymentType', 'required']) }}
+                                                    <label for="paymentType">Payment Type</label>
+                                                </div>
                                             </div>
                                             <div class="col-3">
                                                 
