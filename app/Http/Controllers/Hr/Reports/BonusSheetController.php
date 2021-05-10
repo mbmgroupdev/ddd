@@ -46,8 +46,7 @@ class BonusSheetController extends Controller
         try {
             $getBonus = $this->bonus->getBonusBySheet($request);
             if(count($getBonus) > 0){
-                $asIds = collect($getBonus)->pluck('associate_id');
-                $getEmployee = collect($this->employee->getEmployeeByAssociateId($asIds, ['associate_id', 'as_name', 'as_line_id', 'as_floor_id', 'as_designation_id', 'as_doj', 'as_oracle_code']))->keyBy('associate_id');
+                $getEmployee = collect($this->employee->getEmployeeByAssociateId(['associate_id', 'as_name', 'as_line_id', 'as_floor_id', 'as_designation_id', 'as_doj', 'as_oracle_code']))->keyBy('associate_id');
                 $dataRow = $this->bonus->getBonusMergeByEmployee($getBonus, $getEmployee);
                 $getBonus = $this->employee->getEmployeeByFilter($request, $dataRow);
             }

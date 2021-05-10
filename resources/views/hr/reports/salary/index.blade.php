@@ -182,9 +182,12 @@
     }, 2000);
     var data = $("#filterForm").serialize() + '&' + $("#formReport").serialize();
     $.ajax({
-        type: "GET",
+        type: "POST",
         url: '{{ url("hr/reports/salary-report") }}',
         data: data, // serializes the form's elements.
+        headers: {
+          'X-CSRF-TOKEN': '{{ csrf_token() }}',
+        },
         success: function(response)
         {
           // console.log(response);

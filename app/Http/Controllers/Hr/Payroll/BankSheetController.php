@@ -2,26 +2,22 @@
 
 namespace App\Http\Controllers\Hr\Payroll;
 
+use App\Exports\Hr\SalarySheetExport;
 use App\Http\Controllers\Controller;
 use App\Models\Hr\Benefits;
 use App\Models\Hr\Location;
 use App\Models\Hr\Unit;
 use DB;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class BankSheetController extends Controller
 {
     public function index()
     {
-    	$unitList  = Unit::where('hr_unit_status', '1')
-        ->whereIn('hr_unit_id', auth()->user()->unit_permissions())
-        ->orderBy('hr_unit_name', 'desc')
-        ->pluck('hr_unit_name', 'hr_unit_id');
+    	$unitList  = collect(unit_by_id())->pluck('hr_unit_name', 'hr_unit_id');
 
-        $locationList  = Location::where('hr_location_status', '1')
-        ->whereIn('hr_location_id', auth()->user()->location_permissions())
-        ->orderBy('hr_location_name', 'desc')
-        ->pluck('hr_location_name', 'hr_location_id');
+        $locationList  = collect(location_by_id())->pluck('hr_location_name', 'hr_location_id');
         $salaryMax = Benefits::getSalaryRangeMax();
         return view('hr/payroll/bank_part.index', compact('unitList','locationList', 'salaryMax'));
     }
@@ -87,10 +83,21 @@ class BankSheetController extends Controller
             // $totalStamp = round($queryData->sum("s.stamp"));
             $totalTax = round($queryData->sum("s.tds"));
 
-            $getEmployee = $queryData->orderBy('s.bank_payable', 'desc')->get();
+            $result['getEmployee'] = $queryData->orderBy('s.bank_payable', 'desc')->get();
 
-            $totalEmployees = count($getEmployee);
-            return view('hr.payroll.bank_part.reports', compact('getEmployee', 'input', 'totalSalary', 'totalEmployees', 'totalBankSalary', 'totalTax'));
+            $result['totalEmployees'] = count($getEmployee);
+            $result['input'] = $input;
+            $result['totalSalary'] = $totalSalary;
+            $result['totalBankSalary'] = $totalBankSalary;
+            $result['totalTax'] = $totalTax;
+            $result['unit'] = unit_by_id();
+            $result['location'] = location_by_id();
+            if(isset($request->export)){
+                $filename = 'Salary Sheet Report - ';
+                $filename .= '.xlsx';
+                return Excel::download(new SalarySheetExport($result, 'bank'), $filename);
+            }
+            return view('hr.payroll.bank_part.reports', $result);
         } catch (\Exception $e) {
             return $e->getMessage();
             return 'error';
