@@ -419,59 +419,61 @@ class TestXYZController extends Controller
     {
         $date = '2021-04-';
         $data = [];
-        $getBill = DB::table('hr_bill')
-            ->select(DB::raw("CONCAT(bill_date,as_id) AS asdate"), 'bill_date', 'bill_type')
-            ->whereBetween('bill_date', ['2021-04-01', '2021-04-30'])
-            ->where('bill_type', 2)
-            ->get()
-            ->keyBy('asdate')
-            ->toArray();
-        for ($i=1; $i < 31; $i++) { 
-            $getatt = DB::table('hr_attendance_mbm')
-            ->select(DB::raw("CONCAT(in_date,as_id) AS asdate"), 'in_date', 'in_time', 'out_time', 'as_id')
-            ->where('in_date', date('Y-m-d', strtotime($date.$i)))
-            ->where('in_time', '>', $date.$i.' 18:00:00')
-            ->get()
-            ->keyBy('asdate')
-            ->toArray();
-            foreach ($getatt as $att) {
-                if(!isset($getBill[$att->in_date.$att->as_id])){
+        // $getBill = DB::table('hr_bill')
+        //     ->select(DB::raw("CONCAT(bill_date,as_id) AS asdate"), 'bill_date', 'bill_type')
+        //     ->whereBetween('bill_date', ['2021-04-01', '2021-04-30'])
+        //     ->where('bill_type', 2)
+        //     ->get()
+        //     ->keyBy('asdate')
+        //     ->toArray();
+        // for ($i=1; $i < 31; $i++) { 
+        //     $getatt = DB::table('hr_attendance_mbm')
+        //     ->select(DB::raw("CONCAT(in_date,as_id) AS asdate"), 'in_date', 'in_time', 'out_time', 'as_id')
+        //     ->where('in_date', date('Y-m-d', strtotime($date.$i)))
+        //     ->where('in_time', '>', $date.$i.' 18:00:00')
+        //     ->get()
+        //     ->keyBy('asdate')
+        //     ->toArray();
+        //     foreach ($getatt as $att) {
+        //         if(!isset($getBill[$att->in_date.$att->as_id])){
 
-                    $data[] = $att;
-                    $insert[] = [
-                        'as_id' => $att->as_id,
-                        'bill_date' => $att->in_date,
-                        'bill_type' => 2,
-                        'amount' => 70,
-                        'pay_status' => 0
-                    ];
-                // }elseif(isset($getBill[$att->in_date.$att->as_id]) && $getBill[$att->in_date.$att->as_id]->bill_type == 1){
-                //     $data[] = $att;
-                //     DB::table('hr_bill')
-                //     ->where('bill_date', $att->in_date)
-                //     ->where('as_id', $att->as_id)
-                //     ->update([
-                //         'pay_status' => 2,
-                //         'amount' => 70
-                //     ]);
-                }
-            }
+        //             $data[] = $att;
+        //             $insert[] = [
+        //                 'as_id' => $att->as_id,
+        //                 'bill_date' => $att->in_date,
+        //                 'bill_type' => 2,
+        //                 'amount' => 70,
+        //                 'pay_status' => 0
+        //             ];
+        //         // }elseif(isset($getBill[$att->in_date.$att->as_id]) && $getBill[$att->in_date.$att->as_id]->bill_type == 1){
+        //         //     $data[] = $att;
+        //         //     DB::table('hr_bill')
+        //         //     ->where('bill_date', $att->in_date)
+        //         //     ->where('as_id', $att->as_id)
+        //         //     ->update([
+        //         //         'pay_status' => 2,
+        //         //         'amount' => 70
+        //         //     ]);
+        //         }
+        //     }
 
-        }
-        return $data;
-        if(count($insert) > 0){
-            $chunk = collect($insert)->chunk(200);
-            foreach ($chunk as $key => $n) {        
-                DB::table('hr_bill')->insertOrIgnore(collect($n)->toArray());
-            }
-        }
-        return 'success';
+        // }
+        // return $data;
+        // if(count($insert) > 0){
+        //     $chunk = collect($insert)->chunk(200);
+        //     foreach ($chunk as $key => $n) {        
+        //         DB::table('hr_bill')->insertOrIgnore(collect($n)->toArray());
+        //     }
+        // }
+        // return 'success';
         // dd($data);
 
-        for ($i=14; $i <= 24; $i++) { 
+        for ($i=14; $i <= 30; $i++) { 
             $getBill = DB::table('hr_bill')
             ->select(DB::raw("CONCAT(bill_date,as_id) AS asdate"), 'bill_date', 'bill_type')
             ->where('bill_date', date('Y-m-d', strtotime($date.$i)))
+            ->join('hr_as_basic_info AS b', 'hr_bill.as_id', 'b.as_id')
+            ->whereIn('b.as_unit_id', [1,4,5])
             ->where('bill_type', 4)
             ->get()
             ->keyBy('asdate')

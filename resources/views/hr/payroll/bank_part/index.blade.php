@@ -152,9 +152,9 @@
                             <div class="col-6">
                               <span id="result-section-btn" style="display: none; ">
                                 <button class="btn btn-sm btn-primary hidden-print" onclick="printDiv('report_section')" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report"><i class="las la-print"></i> </button>
-                                <button class="btn btn-sm btn-info hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download">
+                                {{-- <button class="btn btn-sm btn-info hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download">
                                   <i class="fa fa-file-excel-o"></i>
-                                </button>
+                                </button> --}}
                               </span>
                               
                             </div>

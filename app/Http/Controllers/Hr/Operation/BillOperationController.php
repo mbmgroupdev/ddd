@@ -55,6 +55,10 @@ class BillOperationController extends Controller
     		// employee info
     		$employeeData = DB::table('hr_as_basic_info');
 	        $employeeDataSql = $employeeData->toSql();
+
+            // employee benefit sql binding
+            $benefitData = DB::table('hr_benefits');
+            $benefitData_sql = $benefitData->toSql();
             
             // employee bangla info
             $employeeBanData = DB::table('hr_employee_bengali');
@@ -95,6 +99,13 @@ class BillOperationController extends Controller
             })
             ->when(!empty($input['subSection']), function ($query) use($input){
                return $query->where('emp.as_subsection_id', $input['subSection']);
+            })
+            ->when(!empty($input['pay_status']), function ($query) use($input){
+                if($input['pay_status'] == 'cash'){
+                    return $query->where('ben.ben_cash_amount', '>', 0);
+                }elseif($input['pay_status'] != 'all'){
+                    return $query->where('ben.ben_bank_amount', '>', 0)->where('ben.bank_name', $input['pay_status']);
+                }
             });
             if(isset($input['otnonot']) && $input['otnonot'] != null){
                 $queryData->where('emp.as_ot',$input['otnonot']);
@@ -111,20 +122,17 @@ class BillOperationController extends Controller
             $queryData->leftjoin(DB::raw('(' . $employeeDataSql. ') AS emp'), function($join) use ($employeeData) {
                 $join->on('emp.as_id','s.as_id')->addBinding($employeeData->getBindings());
             });
+            $queryData->leftjoin(DB::raw('(' . $benefitData_sql. ') AS ben'), function($join) use ($benefitData) {
+                $join->on('ben.ben_as_id','emp.associate_id')->addBinding($benefitData->getBindings());
+            });
 
             $queryData->leftjoin(DB::raw('(' . $employeeBanDataSql. ') AS bemp'), function($join) use ($employeeBanData) {
                 $join->on('bemp.hr_bn_associate_id','emp.associate_id')->addBinding($employeeBanData->getBindings());
             });
             
             if(isset($input['output']) && $input['output'] == 'excel'){
-                // employee benefit info
-                $benefitData = DB::table('hr_benefits');
-                $benefitData_sql = $benefitData->toSql();
-                $queryData->leftjoin(DB::raw('(' . $benefitData_sql. ') AS ben'), function($join) use ($benefitData) {
-                    $join->on('ben.ben_as_id','emp.associate_id')->addBinding($benefitData->getBindings());
-                });
-
-                $queryData->select('ben.bank_no','emp.as_name','emp.as_doj', 'emp.as_ot', 'emp.as_designation_id', 'emp.as_section_id', 'emp.as_location', 'emp.as_unit_id','emp.as_id','emp.associate_id', DB::raw('sum(amount) as totalAmount'), DB::raw('count(*) as totalDay'), DB::raw("SUM(IF(pay_status=0,1,0)) AS dueDay"), DB::raw("SUM(IF(pay_status=0,amount,0)) AS dueAmount"))->groupBy('emp.as_id');
+                
+                $queryData->select('ben.bank_no', 'ben.ben_cash_amount', 'ben.ben_bank_amount','emp.as_name','emp.as_doj', 'emp.as_ot', 'emp.as_designation_id', 'emp.as_section_id', 'emp.as_location', 'emp.as_unit_id','emp.as_id','emp.associate_id', DB::raw('sum(amount) as totalAmount'), DB::raw('count(*) as totalDay'), DB::raw("SUM(IF(pay_status=0,1,0)) AS dueDay"), DB::raw("SUM(IF(pay_status=0,amount,0)) AS dueAmount"))->groupBy('emp.as_id');
                 $totalAmount =  array_sum(array_column($queryData->get()->toArray(),'dueAmount'));
                 $getBillList = $queryData->orderBy('emp.as_oracle_sl', 'asc')->get();
                 return Excel::download(new BillExport($getBillList, $input), 'bill.xlsx');

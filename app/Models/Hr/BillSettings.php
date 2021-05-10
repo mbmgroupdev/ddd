@@ -38,4 +38,28 @@ class BillSettings extends Model
         ->pluck('code')
         ->first();
     }
+
+    public static function checkUnitTypeWiseExistsCode($value)
+    {
+        return DB::table('hr_bill_settings')
+        ->where('unit_id', $value['unit_id'])
+        ->where('bill_type_id', $value['bill_type_id'])
+        ->orderBy('id', 'desc')
+        ->pluck('code')
+        ->first();
+    }
+
+    public static function updatePreviousBillUnitWiseStatus($value)
+    {
+        $endDate = date('Y-m-d', strtotime($value['start_date']));
+        return DB::table('hr_bill_settings')
+        ->where('unit_id', $value['unit_id'])
+        ->where('bill_type_id', $value['bill_type_id'])
+        ->whereNull('end_date')
+        ->update([
+            'end_date' => $endDate,
+            'status' => 0,
+            'updated_by' => auth()->user()->id
+        ]);
+    }
 }

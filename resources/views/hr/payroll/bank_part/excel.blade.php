@@ -1,47 +1,7 @@
 <div class="panel">
 	<div class="panel-body">
-		@php
-			$urldata = http_build_query($input) . "\n";
-		@endphp
-		
-		<a href='{{ url("hr/reports/monthly-salary-bank-report?$urldata&export=excel")}}' target="_blank" class="btn btn-sm btn-info hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download" style="position: absolute; top: 19px; left: 65px;"><i class="fa fa-file-excel-o"></i></a>
 
 		<div id="report_section" class="report_section">
-			<style type="text/css">
-				@media print {
-            
-		            .pagebreak {
-		                page-break-before: always !important;
-		            }
-		            .disburse-button{
-		                display: none;
-		            }
-		        }
-              .table{
-                width: 100%;
-              }
-              a{text-decoration: none;}
-              .table-bordered {
-                  border-collapse: collapse;
-              }
-              .table-bordered th,
-              .table-bordered td {
-                border: 1px solid #777 !important;
-                padding:5px;
-              }
-              .no-border td, .no-border th{
-                border:0 !important;
-                vertical-align: top;
-              }
-              .f-14 th, .f-14 td, .f-14 td b{
-                font-size: 14px !important;
-              }
-                      </style>
-			@php
-				$unit = unit_by_id();
-				$location = location_by_id();
-			@endphp
-			
 			<div class="top_summery_section">
 				<div class="page-header">
 		            <h2 style="margin:4px 10px; font-weight: bold; text-align: center;">Salary Report - {{ $input['pay_status']}} </h2>
@@ -110,9 +70,3 @@
 		</div>
 	</div>
 </div>
-
-
-<script type="text/javascript">
-
-    
-</script>

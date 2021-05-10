@@ -145,9 +145,10 @@ class EmployeeRepository implements EmployeeInterface
         return $query->orderBy('temp_id', 'ASC')->get();
     }
 
-    public function getEmployeeByAssociateId($asIds, $selected = null){
-        $query = DB::table('hr_as_basic_info');
-        // ->whereIn('associate_id', $asIds);
+    public function getEmployeeByAssociateId($selected = null){
+        $query = DB::table('hr_as_basic_info')
+        ->whereIn('as_unit_id', auth()->user()->unit_permissions())
+        ->whereIn('as_location', auth()->user()->location_permissions());
         if($selected != null){
             $query->select($selected);
         }
