@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\DB;
 
 
 if(!function_exists('check_permission')){
-    
+
     function check_permission($permission)
     {
         $perm = false;
@@ -38,7 +38,7 @@ if(!function_exists('check_permission')){
 }
 
 if(!function_exists('get_att_table')){
-	
+
 	function get_att_table($unit = null)
 	{
 		$tableName = "";
@@ -75,8 +75,8 @@ if(!function_exists('salary_lock_date')){
     {
         return  Cache::remember('salary_lock_date', 100000000, function () {
             return DB::table('hr_system_setting')->first()->salary_lock;
-        }); 
-        
+        });
+
     }
 }
 
@@ -123,7 +123,7 @@ if(!function_exists('monthly_activity_close')){
                 $flag = 0; // unlock
             }
         }
-        
+
         return $flag;
     }
 }
@@ -134,7 +134,7 @@ if(!function_exists('number_to_time')){
         $number = round($number,1);
         $hour = explode(".", $number);
         if(isset($hour[1])){
-            return $hour[0].':'.round($hour[1]*6);   
+            return $hour[0].':'.round($hour[1]*6);
         }else
             return $hour[0];
     }
@@ -232,7 +232,7 @@ if(!function_exists('number_to_time_format')){
         $number = round($number,1);
         $hour = explode(".", $number);
         if(isset($hour[1])){
-            $hour[1] = round($hour[1]*6);    
+            $hour[1] = round($hour[1]*6);
         }else{
             $hour[1] = '00';
         }
@@ -268,7 +268,7 @@ if(!function_exists('log_file_write')){
 
 if(!function_exists('emp_remain_leave_check')){
     function emp_remain_leave_check($request)
-    {        
+    {
         $statement = [];
         $statement['stat'] = "false";
         $associate_id = $request->associate_id;
@@ -277,6 +277,12 @@ if(!function_exists('emp_remain_leave_check')){
         }else{
             $hello = 'This employee has';
         }
+
+        $member_join_date = DB::table('hr_as_basic_info')->where('associate_id', $associate_id)->first();
+        $member_join_year = date('Y', strtotime($member_join_date->as_doj));
+        $member_join_month = date('m', strtotime($member_join_date->as_doj));
+
+
         if($request->leave_type== "Earned"){
             $statement['stat'] = "true";
             /*$earned = DB::table('hr_earned_leave')
@@ -297,21 +303,28 @@ if(!function_exists('emp_remain_leave_check')){
             }*/
         }
 
+
+
         if($request->leave_type== "Casual"){
-            $leaves = DB::table("hr_leave") 
+            $leaves = DB::table("hr_leave")
                 ->select(
                     DB::raw("
                         SUM(CASE WHEN leave_type = 'Casual' THEN DATEDIFF(leave_to, leave_from)+1 END) AS casual
                     ")
                 )
-                ->where("leave_ass_id", $associate_id) 
-                ->where("leave_status", "1") 
+                ->where("leave_ass_id", $associate_id)
+                ->where("leave_status", "1")
                 ->where(function ($q){
                     $q->where(DB::raw("YEAR(leave_from)"), '=', date("Y"));
-                }) 
+                })
                 ->first();
 
-            $casual = 10-$leaves->casual;
+            if ($member_join_year == Carbon::now()->year){
+                $casual = ceil((10/12)*(12-$member_join_month))-$leaves->casual;
+            } else{
+                $casual = 10-$leaves->casual;
+            }
+
             if($request->sel_days <= $casual){
                 $statement['stat'] = "true";
             }else{
@@ -320,48 +333,57 @@ if(!function_exists('emp_remain_leave_check')){
         }
         // Sick Leave Restriction
         if($request->leave_type== "Sick"){
-            $leaves = DB::table("hr_leave") 
+            $leaves = DB::table("hr_leave")
                 ->select(
                     DB::raw("
                         SUM(CASE WHEN leave_type = 'Sick' THEN DATEDIFF(leave_to, leave_from)+1 END) AS sick
                     ")
                 )
-                ->where("leave_ass_id", $associate_id) 
-                ->where("leave_status", "1") 
+                ->where("leave_ass_id", $associate_id)
+                ->where("leave_status", "1")
                 ->where(function ($q){
                     $q->where(DB::raw("YEAR(leave_from)"), '=', date("Y"));
-                }) 
+                })
                 ->first();
 
-            $sick = 14-$leaves->sick;
+            if ($member_join_year == Carbon::now()->year){
+                $sick = ceil((14/12)*(12-$member_join_month))-$leaves->sick;
+            } else{
+                $sick = 14-$leaves->sick;
+            }
             if($request->sel_days <= $sick){
                 $statement['stat'] = "true";
             }else{
-                $statement['msg'] = $hello.' '.$sick.' day(s) of Sick(14) Leave';
+                if ($member_join_year == Carbon::now()->year){
+                    $sick = ceil((14/12)*(12-$member_join_month))-$leaves->sick;
+                    $statement['msg'] = $hello.' '.$sick.' day(s) of Sick('.ceil((14/12)*(12-$member_join_month)).') Leave';
+                } else{
+                    $statement['msg'] = $hello.' '.$sick.' day(s) of Sick(14) Leave';
+                }
             }
         }
         // Maternity Leave Restriction
         if($request->leave_type== "Maternity"){
-            $leaves = DB::table("hr_leave") 
+            $leaves = DB::table("hr_leave")
                 ->select(
                     DB::raw("
                         SUM(CASE WHEN leave_type = 'Maternity' THEN DATEDIFF(leave_to, leave_from)+1 END) AS maternity
                     ")
                 )
-                ->where("leave_ass_id", $request->associate_id) 
-                ->where("leave_status", 1) 
+                ->where("leave_ass_id", $request->associate_id)
+                ->where("leave_status", 1)
                 ->where(function ($q){
                     $q->where(DB::raw("YEAR(leave_from)"), '=', date("Y"));
-                }) 
+                })
                 ->first();
             $remain = 112-($leaves->maternity??0);
             //dd($request->sel_days);
             if($leaves == null || ($leaves != null && $request->sel_days< $remain) ) {
                 $statement['stat'] = "true";
             }else if (($leaves != null && $request->sel_days > $remain)){
-                $statement['msg'] = $hello.' only '.$remain.' day(s) remain';   
+                $statement['msg'] = $hello.' only '.$remain.' day(s) remain';
             }else{
-                $statement['msg'] = $hello.' already taken Maternity Leave';   
+                $statement['msg'] = $hello.' already taken Maternity Leave';
             }
         }
         if($request->leave_type == "Special"){
@@ -411,8 +433,8 @@ if(!function_exists('get_unit_name_by_id')){
         if(is_numeric($id)) {
             $unit = unit_by_id();
             $unit_name = $unit[$id]->hr_unit_short_name??'';
-           
-        } 
+
+        }
 
         return $unit_name;
     }
@@ -446,7 +468,7 @@ if(!function_exists('num_to_time')){
         $number = round($number,1);
         $hour = explode(".", $number);
         if(isset($hour[1])){
-            return $hour[0].':'.round($hour[1]*6);   
+            return $hour[0].':'.round($hour[1]*6);
         }else
             return $hour[0];
     }
@@ -541,7 +563,7 @@ if(!function_exists('get_employee_by_id'))
             ->where("hr_as_basic_info.associate_id", $associate_id)
             ->whereIn('hr_as_basic_info.as_unit_id', auth()->user()->unit_permissions())
             ->first();
-            
+
         if($emp){
             $emp->as_pic = emp_profile_picture($emp);
         }
@@ -690,7 +712,7 @@ if(!function_exists('cache_today_att')){
 
         $today = date("Y-m-d");
         $data = [];
-        
+
         $mbm = DB::table('hr_attendance_mbm AS a')
                 ->where('a.in_date', $today)
                 ->leftJoin('hr_as_basic_info AS b', 'b.as_id', 'a.as_id')
@@ -740,7 +762,7 @@ if(!function_exists('cache_today_att')){
 
 if(!function_exists('cache_daily_operation')){
     function cache_daily_operation($unit = null)
-    {   
+    {
 
         Cache::put('today_att', cache_today_att($unit), 1000000);
         cache_att_all();
@@ -759,7 +781,7 @@ if(!function_exists('cache_att_mbm')){
         ->leftJoin('hr_as_basic_info as b','b.as_id','m.as_id')
         ->where('b.as_unit_id', 1)
         ->get()
-        ->groupBy('in_date')->toArray();       
+        ->groupBy('in_date')->toArray();
     }
 }
 
@@ -773,7 +795,7 @@ if(!function_exists('cache_att_mbm2')){
         ->leftJoin('hr_as_basic_info as b','b.as_id','m.as_id')
         ->where('b.as_unit_id', 5)
         ->get()
-        ->groupBy('in_date')->toArray();          
+        ->groupBy('in_date')->toArray();
     }
 }
 
@@ -787,7 +809,7 @@ if(!function_exists('cache_att_mfw')){
         ->leftJoin('hr_as_basic_info as b','b.as_id','m.as_id')
         ->where('b.as_unit_id', 4)
         ->get()
-        ->groupBy('in_date')->toArray();          
+        ->groupBy('in_date')->toArray();
     }
 }
 
@@ -799,7 +821,7 @@ if(!function_exists('cache_att_aql')){
             ->whereMonth('in_date',date('m'))
             ->whereYear('in_date',date('Y'))
             ->get()
-            ->groupBy('in_date')->toArray();  
+            ->groupBy('in_date')->toArray();
     }
 }
 
@@ -811,7 +833,7 @@ if(!function_exists('cache_att_ceil')){
             ->whereMonth('in_date',date('m'))
             ->whereYear('in_date',date('Y'))
             ->get()
-            ->groupBy('in_date')->toArray(); 
+            ->groupBy('in_date')->toArray();
     }
 }
 
@@ -823,7 +845,7 @@ if(!function_exists('cache_att_cew')){
             ->whereMonth('in_date',date('m'))
             ->whereYear('in_date',date('Y'))
             ->get()
-            ->groupBy('in_date')->toArray(); 
+            ->groupBy('in_date')->toArray();
     }
 }
 
@@ -833,14 +855,14 @@ if(!function_exists('cache_monthly_ot')){
     function cache_monthly_ot()
     {
         return Cache::remember('monthly_ot', 10000, function  (){
-            
+
             return DB::table('hr_monthly_salary')->selectRaw(
                 'as_id, ot_hour, CONCAT(year,"-",month) as ym'
             )
             ->get()
             ->groupBy('ym')
             ->toArray();
-        });      
+        });
     }
 }
 
@@ -848,7 +870,7 @@ if(!function_exists('cache_monthly_salary')){
     function cache_monthly_salary()
     {
         return Cache::remember('monthly_salary', 10000, function  (){
-            
+
             return DB::table('hr_monthly_salary')->selectRaw(
                 'as_id, salary_payable, (ot_hour*ot_rate) as ot, CONCAT(year,"-",month) as ym'
             )
@@ -869,18 +891,18 @@ if(!function_exists('unit_wise_today_att')){
 }
 if(!function_exists('location_by_id')){
     function location_by_id()
-    { 
+    {
         $location_permissions = auth()->user()->location_permissions();
         $data = Cache::remember('location', Carbon::now()->addHour(23), function () {
             return Location::orderBy('hr_location_name','DESC')->get()->keyBy('hr_location_id')->toArray();
-        });  
+        });
 
         return collect($data)
                 ->filter(function($q) use ($location_permissions){
                     return in_array($q['hr_location_id'], $location_permissions);
                 })
                 ->values()
-                ->keyBy('hr_location_id');      
+                ->keyBy('hr_location_id');
 
     }
 }
@@ -890,7 +912,7 @@ if(!function_exists('designation_by_id')){
     {
        return  Cache::remember('designation', 10000000, function () {
             return Designation::get()->keyBy('hr_designation_id')->toArray();
-        });      
+        });
 
     }
 }
@@ -910,12 +932,12 @@ if(!function_exists('shortdesignation_by_id')){
                         else
                             $txt .= substr($val,1,2);
                     }
-                else 
+                else
                     $txt = substr($ai[0],0,3);
 
                 return $txt;
             });
-        });      
+        });
 
     }
 }
@@ -925,7 +947,7 @@ if(!function_exists('shift_by_code')){
     {
        return  Cache::remember('shift_code', 10000000, function () {
             return Shift::get()->keyBy('hr_shift_code')->toArray();
-        });      
+        });
 
     }
 }
@@ -936,14 +958,14 @@ if(!function_exists('unit_by_id')){
         $unit_permissions = auth()->user()->unit_permissions();
         $data = Cache::remember('unit', Carbon::now()->addHour(12), function () {
             return Unit::orderBy('hr_unit_name','DESC')->get()->keyBy('hr_unit_id')->toArray();
-        });  
+        });
 
         return collect($data)
                 ->filter(function($q) use ($unit_permissions){
                     return in_array($q['hr_unit_id'], $unit_permissions);
                 })
                 ->values()
-                ->keyBy('hr_unit_id');  
+                ->keyBy('hr_unit_id');
 
     }
 }
@@ -956,7 +978,7 @@ if(!function_exists('unit_list')){
             ->whereIn('hr_unit_id', auth()->user()->unit_permissions())
             ->orderBy('hr_unit_name', 'desc')
             ->pluck('hr_unit_name', 'hr_unit_id');
-        });      
+        });
 
     }
 }
@@ -969,9 +991,9 @@ if(!function_exists('permitted_unit_short')){
         $untiList = [];
         foreach($auth_unit as $key => $u) {
             $untiList[$u] = $unit[$u]['hr_unit_short_name']??'';
-        }  
+        }
 
-        return $untiList;   
+        return $untiList;
 
     }
 }
@@ -983,14 +1005,14 @@ if(!function_exists('permitted_units')){
             return Unit::where('hr_unit_status', '1')
             ->orderBy('hr_unit_name', 'desc')
             ->pluck('hr_unit_short_name', 'hr_unit_id');
-        });  
+        });
         $permit = auth()->user()->unit_permissions();
         $uname = '';
         foreach ($permit as $key => $u) {
               $uname .= ' '.($units[$u]??'').',';
-              if($key == 2) 
-                $uname .= '<br>'; 
-        } 
+              if($key == 2)
+                $uname .= '<br>';
+        }
 
         return $uname;
     }
@@ -1003,7 +1025,7 @@ if(!function_exists('line_by_id')){
     {
        return  Cache::remember('line', 10000000, function () {
             return Line::get()->keyBy('hr_line_id')->toArray();
-        });      
+        });
 
     }
 }
@@ -1013,7 +1035,7 @@ if(!function_exists('floor_by_id')){
     {
        return  Cache::remember('floor', 10000000, function () {
             return Floor::get()->keyBy('hr_floor_id')->toArray();
-        });      
+        });
 
     }
 }
@@ -1023,7 +1045,7 @@ if(!function_exists('department_by_id')){
     {
        return  Cache::remember('department', 10000000, function () {
             return Department::get()->keyBy('hr_department_id')->toArray();
-        });      
+        });
 
     }
 }
@@ -1033,7 +1055,7 @@ if(!function_exists('section_by_id')){
     {
        return  Cache::remember('section', 10000000, function () {
             return Section::get()->keyBy('hr_section_id')->toArray();
-        });      
+        });
 
     }
 }
@@ -1042,7 +1064,7 @@ if(!function_exists('subSection_by_id')){
     {
        return  Cache::remember('subSection', 10000000, function () {
             return Subsection::get()->keyBy('hr_subsec_id')->toArray();
-        });      
+        });
 
     }
 }
@@ -1052,7 +1074,7 @@ if(!function_exists('area_by_id')){
     {
        return  Cache::remember('area', 10000000, function () {
             return Area::get()->keyBy('hr_area_id')->toArray();
-        });      
+        });
 
     }
 }
@@ -1063,10 +1085,10 @@ if(!function_exists('area_by_id')){
 if(!function_exists('district_by_id')){
     function district_by_id()
     {
-       
+
        return  Cache::rememberForever('district_by_id', function () {
             return District::pluck('dis_name', 'dis_id')->toArray();
-        });      
+        });
 
     }
 }
@@ -1074,10 +1096,10 @@ if(!function_exists('district_by_id')){
 if(!function_exists('district_info_by_id')){
     function district_info_by_id()
     {
-       
+
        return  Cache::rememberForever('district_info_by_id', function () {
             return District::get()->keyBy('dis_id')->toArray();
-        });      
+        });
 
     }
 }
@@ -1087,7 +1109,7 @@ if(!function_exists('upzila_info_by_id')){
     {
        return  Cache::rememberForever('upzila_info_by_id', function () {
             return Upazilla::get()->keyBy('upa_id')->toArray();
-        });      
+        });
 
     }
 }
@@ -1097,7 +1119,7 @@ if(!function_exists('upzila_by_id')){
     {
        return  Cache::rememberForever('upzila_by_id', function () {
             return Upazilla::pluck('upa_name', 'upa_id')->toArray();
-        });      
+        });
 
     }
 }
@@ -1107,27 +1129,27 @@ if(!function_exists('bonus_type_by_id')){
     {
        return  Cache::remember('bonus_type_by_id', Carbon::now()->addHour(12), function () {
             return BonusType::get()->keyBy('id')->toArray();
-        });      
+        });
 
     }
 }
 
 
 
-// ot format calculation 
+// ot format calculation
 function numberToTimeClockFormat($number){
     // $number = round($number,1);
     $hour = explode(".", $number);
 
     if(isset($hour[1])){
-        $hour[1] = '0.'.$hour[1];    
-        $hour[1] = ($hour[1]*60);     
-        $hour[1] = sprintf("%02d", round($hour[1]));     
+        $hour[1] = '0.'.$hour[1];
+        $hour[1] = ($hour[1]*60);
+        $hour[1] = sprintf("%02d", round($hour[1]));
         // return $hour[1];
     }else{
         $hour[1] = '00';
     }
-    
+
     if(empty($hour[0])){
         $hour[0] = 0;
     }
@@ -1179,7 +1201,7 @@ function monthly_navbar($yearMonth){
     }
     $months = [];
     $months[date('Y-m')] = 'Current';
-    for ($i=1; $i <= 9 ; $i++) { 
+    for ($i=1; $i <= 9 ; $i++) {
         $months[$max->format('Y-m')] = $max->format('M, y');
         $max = $max->subMonth(1);
     }
