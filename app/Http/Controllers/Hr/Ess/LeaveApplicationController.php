@@ -146,7 +146,10 @@ class LeaveApplicationController extends Controller
                         'as_name',
                         'as_oracle_code',
                         'as_doj',
-                        'as_pic'
+                        'as_pic',
+                        'as_designation_id',
+                        'as_department_id',
+                        'as_section_id'
                     )
                     ->where('associate_id', $request->associate_id)
                     ->orWhere('as_oracle_code', $request->associate_id)
