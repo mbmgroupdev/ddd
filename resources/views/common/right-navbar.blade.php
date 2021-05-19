@@ -195,9 +195,12 @@
             scrollTop: $("#result-data").offset().top
         }, 2000);
         $.ajax({
-            type: "GET",
+            type: "POST",
             url: '/hr/reports/salary-report',
             data: data, // serializes the form's elements.
+            headers: {
+              'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            },
             success: function(response)
             {
               // console.log(response);

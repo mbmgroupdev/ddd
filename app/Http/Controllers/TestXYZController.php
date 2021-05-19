@@ -24,7 +24,7 @@ class TestXYZController extends Controller
 {
     public function rfidUpdate()
     {
-        return $this->workFromHomeBill();
+        return $this->checkHoliday();
         return "";
         $data = array();
         $getBasic = DB::table('hr_as_basic_info')
@@ -852,7 +852,8 @@ class TestXYZController extends Controller
         // ->where('remarks', 'General')
         // ->delete();
         // return ($hoaster);
-        $getEmployee = DB::table('hr_as_basic_info')->where('associate_id', '11M000041A')->first();
+        $getEmployee = DB::table('hr_as_basic_info')->where('associate_id', '10F020020C')->first();
+
         $firstDateMonth = '2021-04-01';
         $lastDateMonth = '2021-04-30';
         $month = '04';
@@ -862,6 +863,81 @@ class TestXYZController extends Controller
         $empdojMonth = date('Y-m', strtotime($getEmployee->as_doj));
         $empdojDay = date('d', strtotime($getEmployee->as_doj));
         $tableName = get_att_table($getEmployee->as_unit_id);
+
+        $rosterStatus = HolidayRoaster::select('remarks','date')
+        ->where('year', $year)
+        ->where('month', $month)
+        ->where('as_id', $getEmployee->associate_id)
+        ->where('date','>=', $firstDateMonth)
+        ->where('date','<=', $lastDateMonth)
+        ->get();
+        $rosterDate = collect($rosterStatus)->groupBy('remarks', true)->map(function($q){
+            return collect($q)->pluck('date');
+        });
+
+        $plannerDate = [];
+        if($getEmployee->shift_roaster_status == 0){
+            $query = YearlyHolyDay::select('hr_yhp_open_status', 'hr_yhp_dates_of_holidays')
+                ->where('hr_yhp_unit', $getEmployee->as_unit_id)
+                ->where('hr_yhp_dates_of_holidays','>=', $firstDateMonth)
+                ->where('hr_yhp_dates_of_holidays','<=', $lastDateMonth);
+                if($empdojMonth == $yearMonth){
+                    $query->where('hr_yhp_dates_of_holidays','>=', $empdoj);
+                }
+
+            $plannerStatus = $query->get();
+            $plannerDate = collect($plannerStatus)->groupBy('hr_yhp_open_status', true)->map(function($q){
+                return collect($q)->pluck('hr_yhp_dates_of_holidays');
+            });
+        }
+
+        // Planner List
+        $plannerHoliday = isset($plannerDate[0])?$plannerDate[0]->toArray():[];
+        $plannerGeneral = isset($plannerDate[1])?$plannerDate[1]->toArray():[];
+        $plannerOT = isset($plannerDate[2])?$plannerDate[2]->toArray():[];
+        // Roster List
+        $rosterHoliday = isset($rosterDate['Holiday'])?$rosterDate['Holiday']->toArray():[];
+        $rosterHoliday = array_diff($rosterHoliday, $plannerHoliday);
+
+        $rosterGeneral = isset($rosterDate['General'])?$rosterDate['General']->toArray():[];
+        $rosterGeneral = array_diff($rosterGeneral, $plannerGeneral);
+
+        $rosterOT = isset($rosterDate['OT'])?$rosterDate['OT']->toArray():[];
+        $rosterOT = array_diff($rosterOT, $plannerOT);
+
+        // get Holiday 
+        $plannerHoliday = array_diff($plannerHoliday, $rosterGeneral);
+        $plannerHoliday = array_diff($plannerHoliday, $rosterOT);
+        $holidayMerge = array_merge($rosterHoliday, $plannerHoliday);
+        $getHoliday = array_unique($holidayMerge);
+
+        // get General
+        // $plannerGeneral = array_diff($plannerGeneral, $rosterHoliday);
+        // $plannerGeneral = array_diff($plannerGeneral, $rosterOT);
+        // $generalMerge = array_merge($rosterGeneral, $plannerGeneral);
+        // $getGeneral = array_unique($generalMerge);
+
+        // get OT 
+        $plannerOT = array_diff($plannerOT, $rosterHoliday);
+        $plannerOT = array_diff($plannerOT, $rosterGeneral);
+        $otMerge = array_merge($rosterOT, $plannerOT);
+        $getOT = array_unique($otMerge);
+        if(count($getOT)){
+            $attDate = DB::table($tableName)
+            ->where('as_id', $getEmployee->as_id)
+            ->whereIn('in_date', $getOT)
+            ->pluck('in_date');
+            $getOT = array_diff($getOT, $attDate->toArray());
+        }
+
+        $holidayCount = count($getHoliday) + count($getOT);
+        $holidayCount = $holidayCount < 0 ? 0:$holidayCount;
+        return $holidayCount;
+        // dd($plannerHoliday, $plannerGeneral, $plannerOT);
+        dd($rosterHoliday, $rosterGeneral, $rosterOT);
+
+        
+
         $rosterOTCount = HolidayRoaster::where('year', $year)
         ->where('month', $month)
         ->where('as_id', $getEmployee->associate_id)
