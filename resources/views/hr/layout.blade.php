@@ -203,6 +203,9 @@
 
     </div>
     <script src="{{asset('assets/js/all.js')}}"></script>
+    <script>
+      var loaderContent = '<div class="animationLoading"><div id="container-loader"><div id="one"></div><div id="two"></div><div id="three"></div></div><div id="four"></div><div id="five"></div><div id="six"></div></div>';
+    </script>
     <!-- Custom JavaScript -->
     @stack('js')
     @toastr_render
