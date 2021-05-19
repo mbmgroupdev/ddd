@@ -44,7 +44,7 @@
                             <td>{{ $value->as_doj }}</td>
                             <td>{{ $designation[$value->as_designation_id]['hr_designation_name'] }}</td>
                             <td>{{ $value->associate_id }}</td>
-                            <td>{{ $value->bank_no }}</td>
+                            <td>{{ ($value->ben_bank_amount > 0)?$value->bank_no:'' }}</td>
                             <td>{{ $value->totalDay }}</td>
                             <td>{{ $value->totalAmount }}</td>
                         </tr>

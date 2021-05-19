@@ -182,7 +182,7 @@
       e.preventDefault();
       advFilter();
     });
-    
+    let afterLoader = '<div class="loading-select left"><img src="{{ asset('images/loader.gif')}}" /></div>';
     function advFilter(){
       $(".prev_btn").click();
       $("#result-section-btn").show();
@@ -195,9 +195,12 @@
             scrollTop: $("#result-data").offset().top
         }, 2000);
         $.ajax({
-            type: "GET",
+            type: "POST",
             url: '/hr/reports/salary-report',
             data: data, // serializes the form's elements.
+            headers: {
+              'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            },
             success: function(response)
             {
               // console.log(response);
@@ -214,43 +217,6 @@
       }
     }
     
-    // change unit
-    // $('#unit').on("change", function(){
-    //     $('#floor_id').attr('disabled', true);
-    //     $('#line_id').attr('disabled', true);
-    //     $.ajax({
-    //         url : "{{ url('hr/attendance/floor_by_unit') }}",
-    //         type: 'get',
-    //         data: {unit : $(this).val()},
-    //         success: function(data)
-    //         {
-    //             $('#floor_id').removeAttr('disabled');
-                
-    //             $("#floor_id").html(data);
-    //         },
-    //         error: function(reject)
-    //         {
-    //            console.log(reject);
-    //         }
-    //     });
-
-    //     //Load Line List By Unit ID
-    //     $.ajax({
-    //        url : "{{ url('hr/reports/line_by_unit') }}",
-    //        type: 'get',
-    //        data: {unit : $(this).val()},
-    //        success: function(data)
-    //        {
-    //             $('#line_id').removeAttr('disabled');
-    //             $("#line_id").html(data);
-    //        },
-    //        error: function(reject)
-    //        {
-    //          console.log(reject);
-    //        }
-    //     });
-
-    // });
     //Load Department List By Area ID
     $('#area').on("change", function(){
       if($(this).val() !== ''){
@@ -262,7 +228,6 @@
             if(data.status === 'success'){
               departmentLoad(data.value);  
             }
-            // $("#department").html(data);
           },
           error: function(reject)
           {
@@ -284,7 +249,7 @@
           type: 'get',
           success: function(data)
           {
-            if(data.status === 'success') sectionLoad(data);
+            if(data.status === 'success') sectionLoad(data.value);
           },
           error: function(reject)
           {
@@ -304,7 +269,7 @@
           type: 'get',
           success: function(data)
           {
-            if(data.status === 'success') subSectionLoad(data);
+            if(data.status === 'success') subSectionLoad(data.value);
           },
           error: function(reject)
           {
@@ -341,7 +306,7 @@
       }
     });
     function departmentLoad(data){
-      $('#department').empty();
+      $('#department').empty().attr('disabled', true).after(afterLoader);
       if(data === 'all'){
         data = @json(department_by_id());
       }
@@ -349,10 +314,11 @@
       $.each(data, function(index, el) {
         $('#department').append('<option value="'+el.hr_department_id+'">'+el.hr_department_name+'</option>');
       });
+      removeEndLoad('department');
     }
 
     function sectionLoad(data){
-      $('#section').empty();
+      $('#section').empty().attr('disabled', true).after(afterLoader);;
       if(data === 'all'){
         data = @json(section_by_id());
       }
@@ -360,9 +326,10 @@
       $.each(data, function(index, el) {
         $('#section').append('<option value="'+el.hr_section_id+'">'+el.hr_section_name+'</option>');
       });
+      removeEndLoad('section');
     }
     function subSectionLoad(data){
-      $('#subSection').empty();
+      $('#subSection').empty().attr('disabled', true).after(afterLoader);;
       if(data === 'all'){
         data = @json(subSection_by_id());
       }
@@ -370,6 +337,13 @@
       $.each(data, function(index, el) {
         $('#subSection').append('<option value="'+el.hr_subsec_id+'">'+el.hr_subsec_name+'</option>');
       });
+      removeEndLoad('subSection');
+    }
+    function removeEndLoad(attr){
+      setTimeout(function(){
+        $('.loading-select').remove();
+        $('#'+attr).removeAttr('disabled');
+      }, 500);
     }
 </script>
 @endpush

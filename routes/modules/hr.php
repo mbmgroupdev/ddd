@@ -268,6 +268,7 @@ Route::post('hr/operation/undeclared-employee-operation', 'Hr\Operation\HolidayR
 
 //attendance new process
 Route::post('/hr/timeattendance/attendance_manual/import', 'Hr\TimeAttendance\AttendanceFileProcessController@importFile');
+// Route::post('/hr/timeattendance/attendance_process_wise_data', 'Hr\TimeAttendance\AttendanceFileProcessController@attendanceProcess');
 Route::post('/hr/timeattendance/attendance_process_wise_data', 'Hr\TimeAttendance\AttendanceFileProcessController@attFileProcess');
 //attendance absent
 Route::get('hr/timeattendance/unit-wise-absent', 'Hr\TimeAttendance\AttendanceFileProcessController@unitAbsent');
@@ -1081,7 +1082,6 @@ Route::get('hr/reports/employee_report', 'Hr\Reports\EmployeeReportController@re
 Route::get('hr/buyermode/job_card', 'Hr\BuyerMode\BmodeJobCardController@jobCard');
 Route::get('hr/buyermode/generate_att_salary', 'Hr\BuyerMode\BmodeJobCardController@generateBuyerModeAttSalary');
 
-#----------  Reports By Mati-----------#
 //Salary/Wages Increment Status
 Route::get('hr/recruitment/increment_report', 'Hr\Reports\IncrementReportController@incrementReport');
 
@@ -1100,7 +1100,7 @@ Route::get('hr/reports/salary_sheet_unit_wise_day', 'Hr\Reports\SalarySheetContr
 Route::post('hr/reports/save_salary_sheet_unit_wise_data', 'Hr\Reports\SalarySheetController@saveSalarySheetUnitData');*/
 // salary
 Route::get('hr/reports/salary', 'Hr\Reports\SalaryReportController@index');
-Route::get('hr/reports/salary-report', 'Hr\Reports\SalaryReportController@report');
+Route::post('hr/reports/salary-report', 'Hr\Reports\SalaryReportController@report');
 
 // salary data-table
 Route::get('hr/reports/monthly-attendance-activity-data', 'Hr\Reports\SalaryReportController@salaryDataTable');

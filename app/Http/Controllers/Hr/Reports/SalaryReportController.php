@@ -40,8 +40,7 @@ class SalaryReportController extends Controller
     {
         $getSalary = $this->salary->getSalaryByMonth($request);
         if(count($getSalary) > 0){
-            $asIds = collect($getSalary)->pluck('as_id');
-            $getEmployee = collect($this->employee->getEmployeeByAssociateId($asIds, ['associate_id', 'as_name', 'as_line_id', 'as_floor_id', 'as_oracle_code']))->keyBy('associate_id');
+            $getEmployee = collect($this->employee->getEmployeeByAssociateId(['associate_id', 'as_name', 'as_line_id', 'as_floor_id', 'as_oracle_code']))->keyBy('associate_id');
             $dataRow = $this->salary->getSalaryByFilter($request, $getSalary, $getEmployee);
             $getSalary = $this->employee->getEmployeeByFilter($request, $dataRow);
         }

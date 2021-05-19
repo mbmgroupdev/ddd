@@ -12,6 +12,7 @@ use App\Models\Employee;
 use App\Models\Hr\Benefits;
 use App\Models\Hr\Shift;
 use App\Models\Hr\Unit;
+use App\Repository\Hr\AttendanceProcessRepository;
 use App\Repository\Hr\EmployeeRepository;
 use Carbon\Carbon;
 use DataTables, DB, Auth, ACL;
@@ -20,9 +21,11 @@ use Illuminate\Http\Request;
 class AbsentPresentListController extends Controller
 {
   protected $employee;
-  public function __construct(EmployeeRepository $employee)
+  protected $attProcess;
+  public function __construct(EmployeeRepository $employee, AttendanceProcessRepository $attProcess)
   {
       $this->employee = $employee;
+      $this->attProcess = $attProcess;
   }
   public function absentPresentIndex()
   {
@@ -208,7 +211,7 @@ class AbsentPresentListController extends Controller
   }
 
 
-  function find_missing($numeros, $absentCount)
+  function find_missing($holidayDate, $numeros, $absentCount)
   {
       $numeros = array_filter(array_unique($numeros), function ($v) { return $v >= 0; });
       sort($numeros);
@@ -230,16 +233,15 @@ class AbsentPresentListController extends Controller
       }
       $data['type'] = false;
       foreach ($conseq as $key => $value) {
-        if($absentCount <= count($value)){
+        $acAbsent = array_diff($value, $holidayDate);
+        if($absentCount <= count($acAbsent)){
           $data['type'] = true;
-          $data['absent'] = $value;
-          $data['absentCount'] = count($value);
+          $data['absent'] = $acAbsent;
+          $data['absentCount'] = count($acAbsent);
           return $data;
         }
       }
       return $data;
-
-    
   }
 
 
@@ -249,38 +251,57 @@ class AbsentPresentListController extends Controller
     $getDesignation = designation_by_id();
     $getSection = section_by_id();
     $getEmployee = collect($this->employee->getEmployeesByStatus($request))->keyBy('associate_id');
+    
     $getEmpIds = collect($getEmployee)->pluck('associate_id');
     $absentData = DB::table('hr_absent')
     ->select('associate_id', 'date')
     ->whereIn('associate_id', $getEmpIds)
-    ->whereBetween('date',array($request['report_from'],$request['report_to']))
+    ->whereBetween('date',array($request['report_from'], $request['report_to']))
     ->get()
     ->groupBy('associate_id');
-    
+
     $absentExists = collect($absentData)->map(function($q) use ($request){
       if($request['consecutive_day'] <= count($q)){
         return collect($q)->pluck('date');
       }
     });
     $absentDatas = array_filter($absentExists->toArray());
+    
     $data = [];
     foreach ($absentDatas as $key => $dates) {
-      $checkDate = $this->find_missing($dates, $request['consecutive_day']);
-      if($checkDate['type'] !== true){
-        continue;
-      }
-      $d = (object)[];
-      $d->absent_count = $checkDate['absentCount'];
-      
-      $firstDate = $checkDate['absent'][0];
-      $dateMonth = '';
-      foreach ($checkDate['absent'] as $value) {
-        $dt=explode('-', $value);
-        $dateMonth .= $dt[2].'/'.$dt[1];
-        $dateMonth .= ', ';
-      }
       if(isset($getEmployee[$key])) {
         $abs = $getEmployee[$key];
+        $value = [];
+        $value['as_id'] = $abs->as_id;
+        $value['associate_id'] = $abs->associate_id;
+        $value['firstDayMonth'] = $request['report_from'];
+        $value['lastDayMonth'] = $request['report_to'];
+        $value['as_unit_id'] = $abs->as_unit_id;
+        $value['shift_roaster_status'] = $abs->shift_roaster_status;
+        $value['year'] = date('Y', strtotime($request['report_from']));
+        $value['month'] = date('m', strtotime($request['report_from']));
+        $value['empdojMonth'] = date('Y-m', strtotime($abs->as_doj));
+        $value['tableName'] = get_att_table($abs->as_unit_id);
+        $holidayDate = $this->attProcess->getEmployeeHolidayDate($value);
+
+        $dateMerge = array_merge($dates, $holidayDate);
+        sort($dateMerge);
+        $checkDate = $this->find_missing($holidayDate, $dateMerge, $request['consecutive_day']);
+
+        if($checkDate['type'] !== true){
+          continue;
+        }
+        $d = (object)[];
+        $d->absent_count = $checkDate['absentCount'];
+        
+        $firstDate = current($checkDate['absent']);
+        $dateMonth = '';
+        foreach ($checkDate['absent'] as $value) {
+          $dt=explode('-', $value);
+          $dateMonth .= $dt[2].'/'.$dt[1];
+          $dateMonth .= ', ';
+        }
+      
         $d->associate_id        = $abs->associate_id;
         $d->as_unit_id          = $abs->as_unit_id;
         $d->as_name             = $abs->as_name;

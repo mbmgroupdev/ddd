@@ -160,12 +160,12 @@ class SalaryProcessController extends Controller
             ->when(!empty($input['subSection']), function ($query) use($input){
                return $query->where('s.sub_section_id', $input['subSection']);
             });
-            if($ignore == 1){
-                $queryData->where( function ($q) use ($ignore){
-                    return  $q->where('emp.as_line_id','!=', 324)
-                        ->orWhereNull('emp.as_line_id');
-                });
-            }
+            // if($ignore == 1){
+            //     $queryData->where( function ($q) use ($ignore){
+            //         return  $q->where('emp.as_line_id','!=', 324)
+            //             ->orWhereNull('emp.as_line_id');
+            //     });
+            // }
             
             if(isset($input['otnonot']) && $input['otnonot'] != null){
                 $queryData->where('s.ot_status',$input['otnonot']);
