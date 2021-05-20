@@ -26,13 +26,21 @@
                 input[type=radio], input[type=checkbox] {
 				    vertical-align: middle;
 				}
+
+                .page-break{
+                    page-break-after: always;
+                }
+                .page-break p{
+                    
+                    line-height: 16px;
+                }
 			
 		</style>
 		<style type="text/css" media="print">
 			.bn-form-output{padding:54pt 36pt }
 		</style>
 		@foreach($employees as $key => $emp)
-		<div id="jc-{{$emp->associate_id}}" class="bn-form-output" >
+		<div id="jc-{{$emp->associate_id}}" class="bn-form-output page-break" >
 			@php
             	$des['bn'] = '';
             	$des['en'] = '';
@@ -321,7 +329,7 @@
                     </tr>
                 </table>
 		</div>
-		<div class="page-break"></div>
+		
 		@endforeach
 	</div>
 </div>   
