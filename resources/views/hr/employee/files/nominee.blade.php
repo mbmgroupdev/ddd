@@ -26,13 +26,24 @@
                 p{
                     margin: 5px;padding:0;
                 }
+                .page-break{
+                    page-break-after: always;
+                }
+                .page-break p{
+                    
+                    line-height: 15px;
+                }
+                td{
+                    
+                    line-height: 16px;
+                }
 			
 		</style>
 		<style type="text/css" media="print">
 			.bn-form-output{padding:18pt 12pt }
 		</style>
 		@foreach($employees as $key => $emp)
-		<div id="jc-{{$emp->associate_id}}" class="bn-form-output" >
+		<div id="jc-{{$emp->associate_id}}" class="bn-form-output page-break" >
 			@php
             	$des['bn'] = '';
             	$des['en'] = '';
@@ -67,7 +78,7 @@
                 </font>
             </p>
             <p class="d-flex">
-                <font style="width:75%;border-bottom:1px dotted #999; display:inline-block">&nbsp; 
+                <font style="width:75%;border-bottom:1px dotted #999; display:inline-block;margin-left:20px;">&nbsp; 
                     ({{ (!empty($emp->hr_bn_present_road)?"রোড নং-".$emp->hr_bn_present_road:null) }},
                     {{ (!empty($emp->hr_bn_present_house)?"বাড়ি নং-".$emp->hr_bn_present_house:null) }},
                     {{ (!empty($emp->hr_bn_present_po)?"ডাকঘর-".$emp->hr_bn_present_po:null) }},
@@ -148,7 +159,7 @@
             <table style="font-size:11px; border-collapse: collapse;" align="center" width="100%" border="1" cellspacing="0" cellpadding="4">
                 <thead>
                     <tr>
-                        <td width="45%" align="center">
+                        <td width="45%" align="center" style="line-height: 15px;">
                             মনোনীত ব্যক্তি বা ব্যক্তিদের নাম, ঠিকানা ও ছবি <br/>
                             (নমিনীর ছবি ও স্বাক্ষর কর্মকর্তা/কর্মচারী/শ্রমিক কর্তৃক সত্যায়িত) <br/>
                             এন আই ডি নং  
@@ -209,12 +220,12 @@
                 </tbody>
             </table>
 
-            <p style="margin-top:20px;text-align:justify;">প্রত্যয়ন করিতেছি যে, আমার উপস্থিতিতে জনাব/জনাবা <font style="width:160px;border-bottom:1px dotted #999; display:inline-block"></font> লিপিবদ্ধ বিবরণসমূহ পাঠ করিবার পর উক্ত ঘোষণা সাক্ষর করিয়াছেন। </p>
+            <p style="margin-top:15px;text-align:justify;">প্রত্যয়ন করিতেছি যে, আমার উপস্থিতিতে জনাব/জনাবা <font style="width:160px;border-bottom:1px dotted #999; display:inline-block"></font> লিপিবদ্ধ বিবরণসমূহ পাঠ করিবার পর উক্ত ঘোষণা সাক্ষর করিয়াছেন। </p>
 
             <div style="display: flex;justify-content: space-between;">
                 <div style="width: 50%">
                     <p style="text-align:left;">
-                        <br><br><br>
+                        <br><br>
                         <font style="width:100%;border-top:1px dotted #999; display:inline-block;padding-top:10px">তারিখ সহ মনোনীত ব্যক্তিগণের স্বাক্ষর অথবা টিপসই <br/>
                         (কর্মকর্তা/কর্মচারী//শ্রমিক কর্তৃক সত্যায়িত ছবি)</font> <br>
                         <div style="width:120px;height: 120px;border:1px solid;"></div> 
@@ -223,12 +234,12 @@
                 </div>
                 <div style="width: 50%">
                     <p style="text-align:right;">
-                        <br><br>
-                        <font style="width:70%;border-bottom:1px dotted #999; display:inline-block">&nbsp;</font><br/><br/><br>
+                        <br>
+                        <font style="width:70%;border-bottom:1px dotted #999; display:inline-block">&nbsp;</font><br/><br/>
                         <font style="width:70%;display:inline-block;text-align:left">মনোনয়ন প্রদানকারী কর্মকর্তা/কর্মচারী/শ্রমিকের স্বাক্ষর, টিপসই ও তারিখ</font>
                     </p>
                     <p style="text-align:right;">
-                        <br><br><br>
+                        <br><br>
                         <font style="width:70%;border-bottom:1px dotted #999; display:inline-block">&nbsp;</font><br/><br/>
                         <font style="width:70%;display:inline-block;text-align:left">মালিকের বা প্রধিকারপ্রাপ্ত কর্মকর্তার স্বাক্ষর ও তারিখ</font><br/>
                     </p>
@@ -238,7 +249,7 @@
       
         
 		</div>
-		<div class="page-break"></div>
+		
 		@endforeach
 	</div>
 </div>   
