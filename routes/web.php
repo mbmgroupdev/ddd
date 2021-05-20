@@ -26,7 +26,6 @@ Auth::routes();
 
 // need to modify this routes
 Route::get('hr/payroll/promotion-jobs', 'Hr\Recruitment\BenefitController@promotionJobs');
-Route::get('hr/payroll/promotion-jobs', 'Hr\Recruitment\BenefitController@promotionJobs');
 Route::get('hr/payroll/increment-jobs', 'Hr\Recruitment\BenefitController@incrementJobs');
 
 Route::group(['middleware' => 'auth'], function(){
@@ -119,7 +118,5 @@ Route::group(['middleware' => 'auth'], function(){
 });
 
 Route::get('test-check', 'TestXYZController@rfidUpdate');
-
-
 
 
