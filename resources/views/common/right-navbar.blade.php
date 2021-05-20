@@ -6,7 +6,7 @@
   </style>
 @endpush
 <div class="modal right fade" id="right_modal_navbar" tabindex="-1" role="dialog" aria-labelledby="right_modal_navbar">
-  <div class="modal-dialog modal-lg navbar-modal" role="document" > 
+  <div class="modal-dialog modal-lg navbar-modal" role="document" >
     <div class="modal-content">
       <div class="modal-header">
         <a class="view prev_btn" data-toggle="tooltip" data-dismiss="modal" data-placement="top" title="" data-original-title="Back">
@@ -33,7 +33,7 @@
                       <label class="custom-control-label" for="unit-{{ $unit['hr_unit_id'] }}"> {{ $unit['hr_unit_short_name'] }}</label>
                     </div>
                     @endforeach
-                  </div>  
+                  </div>
                 @endforeach
               </div>
             </div>
@@ -49,7 +49,7 @@
                       <label class="custom-control-label" for="location-{{ $location['hr_location_id'] }}"> {{ $location['hr_location_short_name'] }}</label>
                     </div>
                     @endforeach
-                  </div>  
+                  </div>
                 @endforeach
               </div>
             </div>
@@ -86,7 +86,7 @@
             <hr class="mt-2">
             <div class="form-group has-float-label select-search-group">
               <select name="subSection" class="form-control capitalize select-search" id="subSection">
-                  <option selected="" value="">Choose Sub Section...</option> 
+                  <option selected="" value="">Choose Sub Section...</option>
                   @foreach(subSection_by_id() as $key => $subSection)
                   <option value="{{ $key }}">{{ $subSection['hr_subsec_name'] }}</option>
                   @endforeach
@@ -123,27 +123,27 @@
               <label for="otnonot">OT/Non-OT</label>
             </div>
             <hr class="mt-2">
-            <div class="form-group mb-2">
-              <label for="" class="m-0 fwb">Salary</label>
-              <hr class="mt-2">
-              <div class="row">
-                <div class="col-5 pr-0">
-                  <div class="form-group has-float-label has-required">
-                    <input type="number" class="report_date min_sal form-control" id="min_sal" name="min_sal" placeholder="Min Salary" required="required" value="0" min="0" max="{{ $salaryMax }}" autocomplete="off" />
-                    <label for="min_sal">Min</label>
-                  </div>
-                </div>
-                <div class="col-1 p-0">
-                  <div class="c1DHiF text-center">-</div>
-                </div>
-                <div class="col-6">
-                  <div class="form-group has-float-label has-required">
-                    <input type="number" class="report_date max_sal form-control" id="max_sal" name="max_sal" placeholder="Max Salary" required="required" value="{{ $salaryMax }}" min="0" max="{{ $salaryMax }}" autocomplete="off" />
-                    <label for="max_sal">Max</label>
-                  </div>
-                </div>
-              </div>
-            </div>
+{{--            <div class="form-group mb-2">--}}
+{{--              <label for="" class="m-0 fwb">Salary</label>--}}
+{{--              <hr class="mt-2">--}}
+{{--              <div class="row">--}}
+{{--                <div class="col-5 pr-0">--}}
+{{--                  <div class="form-group has-float-label has-required">--}}
+{{--                    <input type="number" class="report_date min_sal form-control" id="min_sal" name="min_sal" placeholder="Min Salary" required="required" value="0" min="0" max="{{ $salaryMax }}" autocomplete="off" />--}}
+{{--                    <label for="min_sal">Min</label>--}}
+{{--                  </div>--}}
+{{--                </div>--}}
+{{--                <div class="col-1 p-0">--}}
+{{--                  <div class="c1DHiF text-center">-</div>--}}
+{{--                </div>--}}
+{{--                <div class="col-6">--}}
+{{--                  <div class="form-group has-float-label has-required">--}}
+{{--                    <input type="number" class="report_date max_sal form-control" id="max_sal" name="max_sal" placeholder="Max Salary" required="required" value="{{ $salaryMax }}" min="0" max="{{ $salaryMax }}" autocomplete="off" />--}}
+{{--                    <label for="max_sal">Max</label>--}}
+{{--                  </div>--}}
+{{--                </div>--}}
+{{--              </div>--}}
+{{--            </div>--}}
             @yield('right-nav')
             <hr class="mt-2">
             <div class="form-group has-float-label has-required select-search-group">
@@ -163,10 +163,10 @@
             </div>
             <hr class="mt-2">
             <div class="form-group">
-              
+
               <button class="btn btn-primary nextBtn btn-lg pull-right filterBtnSubmit" type="button" ><i class="fa fa-filter"></i> Filter</button>
             </div>
-            
+
           </div>
         </form>
       </div>
@@ -178,12 +178,12 @@
 @push('js')
 <script src="{{ asset('assets/js/moment.min.js')}}"></script>
 <script type="text/javascript">
-    $(document).on('click', '.filterBtnSubmit', function(e) {
-      e.preventDefault();
-      advFilter();
-    });
+    // $(document).on('click', '.filterBtnSubmit', function(e) {
+    //   e.preventDefault();
+    //   //advFilter();
+    // });
     let afterLoader = '<div class="loading-select left"><img src="{{ asset('images/loader.gif')}}" /></div>';
-    function advFilter(){
+    /*function advFilter(){
       $(".prev_btn").click();
       $("#result-section-btn").show();
       $("#report_section").html(loaderContent);
@@ -215,8 +215,8 @@
       }else{
         console.log('required');
       }
-    }
-    
+    }*/
+
     //Load Department List By Area ID
     $('#area').on("change", function(){
       if($(this).val() !== ''){
@@ -226,7 +226,7 @@
           success: function(data)
           {
             if(data.status === 'success'){
-              departmentLoad(data.value);  
+              departmentLoad(data.value);
             }
           },
           error: function(reject)
@@ -280,7 +280,7 @@
         subSectionLoad('all');
       }
     });
-    
+
     function checkAllGroup(val){
       var id = $(val).attr('id')
       if($(val).is(':checked')){
