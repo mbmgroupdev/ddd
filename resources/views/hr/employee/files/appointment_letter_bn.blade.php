@@ -90,7 +90,7 @@
             <p>পিতার নামঃ   {{ (!empty($emp->hr_bn_father_name)?$emp->hr_bn_father_name:null) }}</p>
             
             <p>মাতার নামঃ {{ (!empty($emp->hr_bn_mother_name)?$emp->hr_bn_mother_name:null) }}</p>
-            <p style="display: none;">{{ ((!empty($emp->as_gender) && $emp->as_gender=="Male")?"স্ত্রীর নামঃ":"স্বামীর নামঃ") }}  {{ (!empty($emp->hr_bn_spouse_name)?$emp->hr_bn_spouse_name:null) }}</p>
+            <p>{{ ((!empty($emp->as_gender) && $emp->as_gender=="Male")?"স্ত্রীর নামঃ":"স্বামীর নামঃ") }}  {{ (!empty($emp->hr_bn_spouse_name)?$emp->hr_bn_spouse_name:null) }}</p>
             <p style="margin-top:0 !important"><b>ঠিকানাঃ স্থায়ী ঠিকানাঃ</b></p>
             
             <table width="500" style="margin-left:50px;font-size: 12px;" class="table-data-width">

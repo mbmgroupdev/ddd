@@ -26,17 +26,22 @@
                 p{
                     margin: 5px;padding:0;
                 }
-                .page-break{
-                    page-break-after: always;
-                }
+                
                 .page-break p{
                     
-                    line-height: 15px;
+                    line-height: 14px;
                 }
                 td{
                     
-                    line-height: 16px;
+                    line-height: 17px;
                 }
+
+                .page-break{
+                    page-break-after: always;
+                }
+
+                
+                
 			
 		</style>
 		<style type="text/css" media="print">
@@ -71,14 +76,19 @@
             <p>১ । প্রতিষ্ঠানের নামঃ&nbsp;{{$un['name']}}</p>
             <p>২ । প্রতিষ্ঠানের ঠিকানাঃ&nbsp;{{ $un['address'] }}</p>
             <p class="d-flex">
-                <font style="width:250px">৩ । কর্মকর্তা/কর্মচারী/শ্রমিকের নাম ও ঠিকানাঃ &nbsp;</font>
+                <font style="width:200px">৩ । কর্মকর্তা/কর্মচারী/শ্রমিকের নামঃ </font>
                 <font class="bordered">
                     {{ (!empty($emp->hr_bn_associate_name)?$emp->hr_bn_associate_name:null) }} 
                     
                 </font>
+            </font>আইডিঃ<font style="width:20%;border-bottom:1px dotted #999;flex-grow: 1">&nbsp;
+                <b>{{$emp->associate_id}}</b>
+            </font>
             </p>
+            
             <p class="d-flex">
-                <font style="width:75%;border-bottom:1px dotted #999; display:inline-block;margin-left:20px;">&nbsp; 
+                &nbsp;&nbsp;&nbsp;&nbsp;<font >ঠিকানাঃ </font>
+                <font style="width:75%;border-bottom:1px dotted #999; display:inline-block;margin-left:20px;"> 
                     ({{ (!empty($emp->hr_bn_present_road)?"রোড নং-".$emp->hr_bn_present_road:null) }},
                     {{ (!empty($emp->hr_bn_present_house)?"বাড়ি নং-".$emp->hr_bn_present_house:null) }},
                     {{ (!empty($emp->hr_bn_present_po)?"ডাকঘর-".$emp->hr_bn_present_po:null) }},
