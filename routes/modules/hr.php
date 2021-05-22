@@ -473,7 +473,7 @@ Route::get('hr/operation/bonus-sheet-process-for-approval', 'Hr\Operation\BonusC
 Route::post('hr/operation/bonus-audit', 'Hr\Reports\BonusSheetController@audit');
 // bonus reports
 Route::get('hr/reports/bonus', 'Hr\Reports\BonusSheetController@index');
-Route::get('hr/reports/bonus-report', 'Hr\Reports\BonusSheetController@report');
+Route::post('hr/reports/bonus-report', 'Hr\Reports\BonusSheetController@report');
 
 
 Route::get('hr/search-type', 'Hr\Search\SearchController@type');
