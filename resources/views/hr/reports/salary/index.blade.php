@@ -56,7 +56,8 @@
             
             <div class="row">
                 <div class="col">
-                  <form role="form" method="get" action="#" id="formReport">
+                  <form role="form" method="post" action="{{ url("hr/reports/salary-report") }}" id="formReport">
+                    @csrf
                     <div class="iq-card" id="result-section">
                       <div class="iq-card-header d-flex mb-0">
                          <div class="iq-header-title w-100">
@@ -64,7 +65,6 @@
                               <div style="width: 10%; float: left; margin-left: 15px; margin-top: 2px;">
                                 <div id="result-section-btn">
                                   <button class="btn btn-sm btn-primary hidden-print" onclick="printDiv('report_section')" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report"><i class="las la-print"></i> </button>
-                                  
                                 </div>
                               </div>
                               <div class="text-center" style="width: 47%; float: left">
@@ -76,7 +76,7 @@
                                   @endforeach
                                 </h4> --}}
                               </div>
-                              {{-- <input type="hidden" id="yearMonth" name="year_month" value="{{ $yearMonth }}"> --}}
+
                               <input type="hidden" id="reportFormat" name="report_format" value="1">
                               <div style="width: 40%; float: left">
                                 <div class="row">
@@ -163,89 +163,48 @@
     </div>
   </div>
 </div>
+@section('right-nav')
+  <hr class="mt-2">
+  <div class="form-group mb-2">
+    <label for="" class="m-0 fwb">Salary</label>
+    <hr class="mt-2">
+    <div class="row">
+      <div class="col-5 pr-0">
+        <div class="form-group has-float-label has-required">
+          <input type="number" class="report_date min_sal form-control" id="min_sal" name="min_sal" placeholder="Min Salary" required="required" value="0" min="0" max="{{ $salaryMax }}" autocomplete="off" />
+          <label for="min_sal">Min</label>
+        </div>
+      </div>
+      <div class="col-1 p-0" style="line-height: 35px;">
+        <div class="c1DHiF text-center">-</div>
+      </div>
+      <div class="col-6 pl-0">
+        <div class="form-group has-float-label has-required">
+          <input type="number" class="report_date max_sal form-control" id="max_sal" name="max_sal" placeholder="Max Salary" required="required" value="{{ $salaryMax }}" min="0" max="{{ $salaryMax }}" autocomplete="off" />
+          <label for="max_sal">Max</label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr class="mt-2">
+  <div class="form-group has-float-label select-search-group">
+    <?php
+      $payType = ['all'=>'All', 'cash'=>'Cash', 'rocket'=>'Rocket', 'bKash'=>'bKash', 'dbbl'=>'Duch-Bangla Bank Limited.'];
+    ?>
+    {{ Form::select('pay_status', $payType, 'all', ['placeholder'=>'Select Payment Type', 'class'=>'form-control capitalize select-search', 'id'=>'paymentType']) }}
+    <label for="paymentType">Payment Type</label>
+  </div>
+@endsection
   {{--  --}}
 @include('common.right-modal')
 @include('common.right-navbar')
+
 @push('js')
 <script src="{{ asset('assets/js/moment.min.js')}}"></script>
 <script type="text/javascript">
   @if(!Request::get('unit')) 
-    salaryFilter();
+    advFilter();
   @endif
-
-  function salaryFilter(){
-    $("#result-data").html(loaderContent);
-    $("#single-employee-search").hide();
-    var format = $('input[name="report_format"]').val();
-    $('html, body').animate({
-        scrollTop: $("#result-data").offset().top
-    }, 2000);
-    var data = $("#filterForm").serialize() + '&' + $("#formReport").serialize();
-    $.ajax({
-        type: "POST",
-        url: '{{ url("hr/reports/salary-report") }}',
-        data: data, // serializes the form's elements.
-        headers: {
-          'X-CSRF-TOKEN': '{{ csrf_token() }}',
-        },
-        success: function(response)
-        {
-          // console.log(response);
-          if(response !== 'error'){
-            $("#result-data").html(response);
-          }else{
-            // console.log(response);
-            $("#result-data").html('');
-          }
-          if(format == 0 && response !== 'error'){
-            $("#single-employee-search").show();
-            $('.list_view').addClass('active').attr('disabled', true);
-            $('.grid_view').removeClass('active').attr('disabled', false);
-          }else{
-            $("#single-employee-search").hide();
-            $('.grid_view').addClass('active').attr('disabled', true);
-            $('.list_view').removeClass('active').attr('disabled', false);
-          }
-          
-        },
-        error: function (reject) {
-            console.log(reject);
-        }
-    });
-  }
-  $(".grid_view, .list_view").click(function() {
-    var value = $(this).attr('id');
-    // console.log(value);
-    $('input[name="report_format"]').val(value);
-    $('input[name="employee"]').val('');
-    salaryFilter();
-  });
-    
-  $("#reportGroupHead").on("change", function(){
-    var group = $(this).val();
-    $("#reportGroup").val(group);
-    salaryFilter();
-  });
-
-  $("#yearMonth").on("change", function(){
-    salaryFilter();
-  });
-  // $(document).on('click', '.nav-year', function(event) {
-  //   let month = $(this).data('year-month');
-  //   $("#yearMonth").val(month);
-  //   salaryFilter();
-  //   $(".nav-year").removeClass('bg-primary text-white');
-  //   $(this).addClass('bg-primary text-white');
-  // });
-  $(document).on('click', '.filter', function(event) {
-    $('#right_modal_navbar').modal('show');
-    $('#navbar-title-right').html('Advanced Filter');
-  });
-
-  $(document).on('click', '.clear-filter', function(event) {
-    var yearMonth = $("#yearMonth").val();
-    window.location.href = '{{ url("hr/reports/salary?year_month=") }}'+yearMonth;
-  });
 </script>
 @endpush
 @endsection
