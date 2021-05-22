@@ -13,9 +13,6 @@
                 width: 100%;
               }
               a{text-decoration: none;}
-              .table-bordered {
-                  border-collapse: collapse;
-              }
               .table-bordered th,
               .table-bordered td {
                 border: 1px solid #777 !important;
@@ -34,17 +31,8 @@
 				.content-result .panel .panel-body .loader-p{
 					margin-top: 20% !important;
 				}
-				.modal-h3{
-					line-height: 1;
-				}
 			</style>
 
-
-<!--			<div class="top_summery_section">
-				<div class="page-header">
-		            <h4 style="margin:4px 10px; font-weight: bold; text-align: center;">Attendance Form</h4>
-		        </div>
-			</div>-->
             @foreach($results->chunk(14) as $resultData)
 			<div class="content_list_section">
                 <div class="row">
@@ -86,12 +74,6 @@
                                         <td style="border: 1px solid black; font-family: Tahoma, sans-serif; font-size: 10pt;" ></td>
                                     @endfor
                                 </tr>
-<!--                               <tr >
-                                    <td style="font-size: 10px; border: 1px solid black; font-family: Tahoma, sans-serif;"><span style="font-weight: bolder; font-size: 10px ">ID</span>({{$result->associate_id}})</td>
-                                </tr>
-                                <tr>
-                                    <td style="border: 1px solid black; font-family: Tahoma, sans-serif; font-size: 10pt;"><b>DOJ:</b>{{$result->as_doj}}</td>
-                                </tr>-->
                                 <?php $i++?>
                             @endforeach
 

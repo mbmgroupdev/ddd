@@ -4,19 +4,10 @@
 @section('main-content')
     @push('css')
         <style>
-            .single-employee-search {
-                margin-top: 82px !important;
-            }
-
             .view:hover, .view:hover {
                 color: #ccc !important;
 
             }
-
-            .grid_view {
-
-            }
-
             .view i {
                 font-size: 25px;
                 border: 1px solid #000;
@@ -36,10 +27,6 @@
                 padding-bottom: 0px;
             }
 
-            .modal-h3 {
-                line-height: 15px !important;
-            }
-
             .select2-container .select2-selection--single, .month-report {
                 height: 30px !important;
             }
@@ -52,14 +39,6 @@
                 border: 1px solid black;
                 font-family: Tahoma, sans-serif;
                 font-size: 10pt;
-            }
-
-            .friday {
-                font-size: 8pt;
-                padding: 0in;
-                text-align: center;
-                line-height: 8.5pt;
-
             }
 
             td {
@@ -86,7 +65,8 @@
 
                 <div class="row">
                     <div class="col">
-                        <form role="form" method="get" action="#" id="formReport">
+                        <form role="form" method="post" action="{{ url("hr/operation/attendance-form/report") }}" id="formReport">
+                            @csrf
                             <div class="iq-card" id="result-section">
                                 <div class="iq-card-header d-flex mb-0">
                                     <div class="iq-header-title w-100">
@@ -102,15 +82,8 @@
                                                 </div>
                                             </div>
                                             <div class="text-center" style="width: 47%; float: left">
-                                                {{-- <h4 class="card-title capitalize inline">
-                                                  @foreach(array_reverse($months) as $k => $i)
-                                                    <a class="nav-year @if($k== $yearMonth) bg-primary text-white @endif" data-toggle="tooltip" data-placement="top" data-year-month="{{ date('Y-m', strtotime($k)) }}" title="" data-original-title="Salary of {{$i}}" >
-                                                        {{$i}}
-                                                    </a>
-                                                  @endforeach
-                                                </h4> --}}
+
                                             </div>
-                                            {{-- <input type="hidden" id="yearMonth" name="year_month" value="{{ $yearMonth }}"> --}}
                                             <input type="hidden" id="reportFormat" name="report_format" value="1">
                                             <div style="width: 40%; float: left">
                                                 <div class="row">
@@ -193,50 +166,7 @@
             $(document).ready(function (){
                 $(".filter").click();
             });
-            function AttendanceFormFilter() {
-                $(".prev_btn").click();
-                $("#result-data").html(loaderContent);
-                $("#single-employee-search").hide();
-                var format = $('input[name="report_format"]').val();
-                $('html, body').animate({
-                    scrollTop: $("#result-data").offset().top
-                }, 2000);
-                var data = $("#filterForm").serialize() + '&' + $("#formReport").serialize();
-                $.ajax({
-                    type: "POST",
-                    url: '{{ url("hr/operation/attendance-form/report") }}',
-                    data: data, // serializes the form's elements.
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    },
-                    success: function (response) {
-                        console.log(response);
-                        if (response !== 'error') {
-                            $("#result-data").html(response);
-                        } else {
-                            // console.log(response);
-                            $("#result-data").html('');
-                        }
 
-                    },
-                    error: function (reject) {
-                        console.log(reject);
-                    }
-                });
-            }
-
-            $("#yearMonth").on("change", function () {
-                AttendanceFormFilter();
-            });
-
-            $(document).on('click', '.filter', function (event) {
-                $('#right_modal_navbar').modal('show');
-                $('#navbar-title-right').html('Advanced Filter');
-            });
-
-            $(document).on('click', '.filterBtnSubmit', function (){
-                AttendanceFormFilter();
-            });
         </script>
     @endpush
 @endsection
