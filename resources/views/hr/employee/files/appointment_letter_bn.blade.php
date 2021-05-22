@@ -16,15 +16,39 @@
 				    width: 160px;
 				    display: inline-block;
 				}
+                .page-break{
+                    page-break-after: always;
+                }
+                .page-break p{
+                    
+                    line-height: 16px;
+                }
+                .page-break b{
+                    
+                    line-height: 16px;
+                }
+                @page  
+                { 
+                    size: auto;   /* auto is the initial value */ 
+
+                    /* this affects the margin in the printer settings */ 
+                    margin: 25mm 25mm 25mm 25mm;  
+                }
+                .table-data-width td{
+                    width:250px !important;
+                  
+                } 
 			
 		</style>
 		<style type="text/css" media="print">
-			.bn-form-output{padding:36pt 36pt }
+			.bn-form-output{padding:4pt 4pt }
 		</style>
 
 		@foreach($employees as $key => $emp)
         @php $date = str_replace($en, $bn, $emp->as_doj); @endphp
-		<div id="jc-{{$emp->associate_id}}" class="bn-form-output" >
+		<div id="jc-{{$emp->associate_id}}" class="bn-form-output page-break" {{-- style="page-break-after: always;" --}} >
+
+            
 
 			@php
             	$des['bn'] = '';
@@ -47,9 +71,12 @@
 
             @endphp
 
-            <center><b style="font-size: 16px;">{{ $un['name'] }} </b></center>
+            <center><b style="font-size: 18px; line-height: 16px;">{{ $un['name'] }} </b></center>
             <center><u> {{$un['address']}} </u> </center>
-            <br><br><br>
+            <br>
+            <br>
+            <br>
+            <br>
             <p>তারিখঃ&nbsp; {{ $date }} ইং</p>
             <p>
             	@if($emp->as_gender == 'Female')
@@ -60,10 +87,13 @@
 
             	{{ (!empty($emp->hr_bn_associate_name)?$emp->hr_bn_associate_name:null) }}</p>
             
-            <p>পিতা/স্বামীর নামঃ   {{ (!empty($emp->hr_bn_father_name)?$emp->hr_bn_father_name:null) }}/{{ (!empty($emp->hr_bn_spouse_name)?$emp->hr_bn_spouse_name:null) }}</p>
+            <p>পিতার নামঃ   {{ (!empty($emp->hr_bn_father_name)?$emp->hr_bn_father_name:null) }}</p>
+            
             <p>মাতার নামঃ {{ (!empty($emp->hr_bn_mother_name)?$emp->hr_bn_mother_name:null) }}</p>
+            <p>{{ ((!empty($emp->as_gender) && $emp->as_gender=="Male")?"স্ত্রীর নামঃ":"স্বামীর নামঃ") }}  {{ (!empty($emp->hr_bn_spouse_name)?$emp->hr_bn_spouse_name:null) }}</p>
             <p style="margin-top:0 !important"><b>ঠিকানাঃ স্থায়ী ঠিকানাঃ</b></p>
-            <table width="500" style="margin-left:50px;font-size: 12px;">
+            
+            <table width="500" style="margin-left:50px;font-size: 12px;" class="table-data-width">
                 <tr>
                     <td>গ্রামঃ {{ (!empty($emp->hr_bn_permanent_village)?$emp->hr_bn_permanent_village:null) }}</td>
                     <td>ডাকঘরঃ {{ (!empty($emp->hr_bn_permanent_po)?$emp->hr_bn_permanent_po:null) }}</td>
@@ -75,7 +105,7 @@
                 </tr>
             </table>
             <p style="margin-top:0 !important"><b>অস্থায়ী/বর্তমান ঠিকানাঃ</b></p>
-            <table width="500" style="margin-left:50px;font-size: 12px;">
+            <table width="500" style="margin-left:50px;font-size: 12px;" class="table-data-width">
                 <tr>
                     <td>গ্রামঃ {{ (!empty($emp->hr_bn_present_road)?$emp->hr_bn_present_road:null) }}</td>
                     <td>ডাকঘরঃ {{ (!empty($emp->hr_bn_present_po)?$emp->hr_bn_present_po:null) }}</td>
@@ -131,8 +161,8 @@
             
             <p style="text-align: center;margin-top: 0 !important;"> বেতন প্রদানঃ প্রতি মাসের বেতন পরবর্তী মাসের সাত কর্ম দিবসের মধ্যে বেতন এবং ওভার টাইম এক সঙ্গে প্রদান করা হয়। </p><br>
 
-            <p>৩। কর্ম ঘন্টাঃ ফ্যাক্টরি সকাল ৮.০০ থেকে শুরু এবং বিকাল ৫.০০ টায় সাধারণ কর্মদিবসের সমাপ্তি এবং এর মধ্যবর্তী সময়ে ০১(এক) ঘণ্টা বিরতি।</p>
-            <p style="margin-top: 0">৪। অতিরিক্ত কর্মঘন্টা (ওভার টাইম)ঃ  ইহা মূল বেতনের দ্বিগুন হারে প্রদেয়। ( মূল বেতন/২০৮x২xমোট অতিরিক্ত ঘন্টা)।</p><br>
+            <p>৩। কর্ম ঘন্টাঃ ফ্যাক্টরি সকাল ৮.০০ থেকে শুরু এবং বিকাল ৫.০০ টায় সাধারণ কর্মদিবসের সমাপ্তি এবং এর মধ্যবর্তী সময়ে ০১(এক) ঘণ্টা বিরতি।</p><br>
+            <p style="margin-top: 0">৪। অতিরিক্ত কর্মঘন্টা (ওভার টাইম): ইহা মূল বেতনের দ্বিগুন হারে প্রদেয়। ( মূল বেতন/২০৮x২xমোট অতিরিক্ত ঘন্টা)।</p><br>
             <p>৫।<b> ছুটিঃ</b></p>
             <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;১। শুক্রবার সাপ্তাহিক ছুটি।</p>
             <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;২। অন্যান্য ছুটি, (যাহা পূর্ণ বেতনে ভোগ করিতে পারিবেন।&nbsp;</p>
@@ -140,7 +170,7 @@
             <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;খ) অসুস্থতা জনিত ছুটিঃ বছরে ১৪(চৌদ্দ) দিন।</p>
             <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;গ) উৎসব ছুটিঃ বছরে সর্বনিম্ন ১১(এগার) দিন।</p>
             <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ঘ) অর্জিত ছুটিঃ- ০১(এক) বৎসর অতিবাহিত হওয়ার পর প্রতি ১৮ কর্মদিবসের জন্য একদিন করে বার্ষিক ছুটি ভোগ করিতে পারিবেন।</p>
-            <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ঙ) মাতৃকল্যাণ ছুটিঃ- কোন মহিলা শ্রমিক যদি অত্র প্রতিষ্ঠানে একাধিক্রমে ০৬(ছয়) মাস চাকুরী করেন তাহলে তিনি উক্ত ছুটি ভোগ করিতে পারিবেন। ২০০৬ সালের মাতৃকল্যাণ আইনের ধারা অনুযায়ী মোট ১৬ সপ্তাহ বা (৫৬+৫৬)=১১২ দিন মাতৃত্বকালীন ছুটি (আইনানুগ ও নগদে) ভোগ করিতে পারিবেন।</p>
+            <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ঙ) মাতৃকল্যাণ ছুটিঃ- কোন মহিলা শ্রমিক যদি অত্র প্রতিষ্ঠানে একাধিক্রমে ০৬(ছয়) মাস চাকুরী করেন তাহলে তিনি উক্ত ছুটি ভোগ করিতে পারিবেন। ২০০৬ সালের মাতৃকল্যাণ আইনের ধারা অনুযায়ী মোট ১৬ সপ্তাহ বা (৫৬+৫৬)=১১২ দিন মাতৃত্বকালীন ছুটি (আইনানুগ ও নগদে) ভোগ করিতে পারিবেন।</p><br>
 
             <p>৬। <b> সুবিধা</b></p>
             <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ক) মূল মজুরীর ৫% হারে বাৎসরিক ভিত্তিতে মজুরী বৃদ্ধি পাইবে।</p>
@@ -176,9 +206,9 @@
             <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;(ঞ) মালিকের অফিসিয়াল রেকর্ডের রদবদল, জালকরণ, অন্যায় পরিবর্তন, উহার ক্ষতিকরন বা উহা হারাইয়া ফেলা।</p>
 
             <p>আপনি যদি কখনো কোনরুপ অসদাচরণের অপরাধে দোষী প্রমাণিত হন তবে কর্তৃপক্ষ আপনার বিরুদ্ধে আইনগত শাস্তিমূলক ব্যবস্থা গ্রহণ করিতে পারবে। </p> <br>
-            <p>১০।  আপনার চাকুরী কোম্পানী কর্তৃক জারিকৃত বিধি-বিধান ও বাংলাদেশের প্রচলিত শ্রম আইন দ্বারা পরিচালিত হইবে।</p>
-            <p>১১।  কর্তৃপক্ষ আপনাকে প্রয়োজনবোধে এই প্রতিষ্ঠানের যে কোন বিভাগে অথবা বাংলাদেশে অবস্থিত যে কোন কারখানায়/অফিসে বদলি করিতে পারিবেন।</p>
-            <p>১২। গোপনীয়তা রক্ষার নীতি <b>(Non-Disclosure Policy)</b>ঃ প্রতিষ্ঠানের স্বার্থে সকল প্রকার তথ্য গোপন রাখিতে হইবে।</p>
+            <p>১০।  আপনার চাকুরী কোম্পানী কর্তৃক জারিকৃত বিধি-বিধান ও বাংলাদেশের প্রচলিত শ্রম আইন দ্বারা পরিচালিত হইবে।</p><br>
+            <p>১১।  কর্তৃপক্ষ আপনাকে প্রয়োজনবোধে এই প্রতিষ্ঠানের যে কোন বিভাগে অথবা বাংলাদেশে অবস্থিত যে কোন কারখানায়/অফিসে বদলি করিতে পারিবেন।</p><br>
+            <p>১২। গোপনীয়তা রক্ষার নীতি <b>(Non-Disclosure Policy)</b>: প্রতিষ্ঠানের স্বার্থে সকল প্রকার তথ্য গোপন রাখিতে হইবে।</p><br>
             <p>১৩।  কোম্পানীর যাবতীয় নিয়ম-কানুন পরিবর্তনযোগ্য ( যাহা দেশের প্রচলিত আইনের পরিপন্থি নহে) এবং আপনি পরিবর্তীত নিয়ম কানুন সর্বদা মানিয়া চলিতে বাধ্য থাকিবেন। </p><br><br><br><br><br><br>
             <div style="display: flex;justify-content: space-between;">
                 <div style="width: 50%">
@@ -207,7 +237,7 @@
         </div>
 
         
-		<div class="page-break"></div>
+		
 		@endforeach
 	</div>
 </div>   

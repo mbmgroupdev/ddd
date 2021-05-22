@@ -17,13 +17,28 @@
 				    font-size: 12px !important;
 				    display: inline-block;
 				}
+
+                .page-break{
+                    page-break-after: always;
+                }
+                .page-break p{
+                    
+                    line-height: 16px;
+                }
+                .page-break b{
+                    
+                    line-height: 16px;
+                }
+                td{
+                    line-height:14px;
+                }
 			
 		</style>
 		<style type="text/css" media="print">
 			.bn-form-output{padding:54pt 36pt }
 		</style>
 		@foreach($employees as $key => $emp)
-		<div id="jc-{{$emp->associate_id}}" class="bn-form-output" >
+		<div id="jc-{{$emp->associate_id}}" class="bn-form-output page-break" >
 			@php
                 $des['bn'] = '';
             	$des['en'] = '';
@@ -171,7 +186,7 @@
             </table>
             <table width="100%" style="border: 1px solid; font-size: 12px;border-collapse: collapse;" cellpadding="3">
                 <tr style="width: 100%">
-                    <td style="border: none; text-align: right;" colspan= "2">
+                    <td style="border: none; text-align: right; padding-right:10px;" colspan= "2" >
                         (অফিস কর্তৃক পূরণীয় For office use only)
                     </td>
                 </tr>
@@ -195,7 +210,9 @@
                     <td style="border: none;padding: 3px 10px;">
                         ৩. কার্ড নং (Card Number) : {{$emp->associate_id}}
                     </td>
+                    <td style="border: none;padding: 3px 10px;"></td>
                 </tr>
+               
                 <tr style="width: 100%">
                     <td style="border: none;"><br></td>
                     <td style="border: none;"><br></td>
@@ -207,14 +224,14 @@
                         
                     </td>
                     <td style="border: 0; text-align: center;border-collapse: none;padding: 3px 10px;">
-                        <br><br><br>
+                        <br><br>
                         প্রশাসনিক কর্মকর্তা<br>
                         Manager HR/ Asst. Manager HR
                     </td>
                 </tr>
             </table>
 		</div>
-		<div class="page-break"></div>
+		
 		@endforeach
 	</div>
 </div>   
