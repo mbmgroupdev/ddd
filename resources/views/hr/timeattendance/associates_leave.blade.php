@@ -38,9 +38,9 @@
            <div class="media-support-info ml-3">
               <h6>Casual Leave</h6>
               <p class="mb-0">
-                <span class="text-danger">Total:</span>  <span class="text-bold" id="total_earn_leave">{{$member_join_year == $this_year ? ceil((10/12)*(12-$member_join_month)) : '10'}}</span>
+                <span class="text-danger">Total:</span>  <span class="text-bold" id="total_earn_leave">{{$member_join_year == $this_year ? ceil((10/12)*(12-($member_join_month-1))) : '10'}}</span>
                 <span class="text-danger">Enjoyed:</span> <span class="text-bold" id="enjoyed_earn_leave">{{ (!empty($leaves->casual)?$leaves->casual:0) }}</span >
-                <span class="text-danger">Remained:</span> <span class="text-bold" id="remained_earn_leave">{{ $member_join_year == $this_year ? ceil((10/12)*(12-$member_join_month))-$leaves->casual : (10-$leaves->casual) }}</span></p>
+                <span class="text-danger">Remained:</span> <span class="text-bold" id="remained_earn_leave">{{ $member_join_year == $this_year ? ceil((10/12)*(12-($member_join_month-1)))-$leaves->casual : (10-$leaves->casual) }}</span></p>
            </div>
         </li>
         <li class="d-flex mb-4 align-items-center">
@@ -48,9 +48,9 @@
            <div class="media-support-info ml-3">
               <h6>Sick Leave</h6>
               <p class="mb-0">
-                <span class="text-danger">Total: </span>  <span class="text-bold" id="total_earn_leave">{{$member_join_year == $this_year ? ceil((14/12)*(12-$member_join_month)) : '14'}}</span class="text-danger">
+                <span class="text-danger">Total: </span>  <span class="text-bold" id="total_earn_leave">{{$member_join_year == $this_year ? ceil((14/12)*(12-($member_join_month-1))) : '14'}}</span class="text-danger">
                 <span class="text-danger">Enjoyed: </span> <span class="text-bold" id="enjoyed_earn_leave">{{ (!empty($leaves->sick)?$leaves->sick:0) }}</span >
-                <span class="text-danger">Remained: </span> <span class="text-bold" id="remained_earn_leave">{{ $member_join_year == $this_year ? ceil((14/12)*(12-$member_join_month))-$leaves->sick : (14-$leaves->sick) }}</span></p>
+                <span class="text-danger">Remained: </span> <span class="text-bold" id="remained_earn_leave">{{ $member_join_year == $this_year ? ceil((14/12)*(12-($member_join_month-1)))-$leaves->sick : (14-$leaves->sick) }}</span></p>
            </div>
         </li>
 
@@ -72,7 +72,6 @@
            </div>
         </li>
      </ul>
-
 </div>
 
 @include('hr/timeattendance/leave_application_form')

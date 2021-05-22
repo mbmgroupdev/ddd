@@ -123,16 +123,16 @@
                     <tbody>
                     <tr style="border: 1px solid black; padding: 20px">
                         <td style="border: 1px solid black; padding: 7px 0px">Casual</td>
-                        <td style="border: 1px solid black; padding: 7px 0px">{{$member_join_year == $this_year ? ceil((10/12)*(12-$member_join_month)) : '10'}}</td>
+                        <td style="border: 1px solid black; padding: 7px 0px">{{$member_join_year == $this_year ? ceil((10/12)*(12-($member_join_month-1))) : '10'}}</td>
                         <td style="border: 1px solid black; padding: 7px 0px">{{ (!empty($leaves->casual)?$leaves->casual:0) }}</td>
-                        <td style="border: 1px solid black; padding: 7px 0px">{{ $member_join_year == $this_year ? ceil((10/12)*(12-$member_join_month))-$leaves->casual : (10-$leaves->casual) }}</td>
+                        <td style="border: 1px solid black; padding: 7px 0px">{{ $member_join_year == $this_year ? ceil((10/12)*(12-($member_join_month-1)))-$leaves->casual : (10-$leaves->casual) }}</td>
                         <td style="border: 1px solid black; padding: 7px 0px"></td>
                     </tr>
                     <tr style="border: 1px solid black; padding: 20px">
                         <td style="border: 1px solid black; padding: 7px 0px">Sick</td>
-                        <td style="border: 1px solid black ; padding: 7px 0px">{{$member_join_year == $this_year ? ceil((14/12)*(12-$member_join_month)) : '14'}}</td>
+                        <td style="border: 1px solid black ; padding: 7px 0px">{{$member_join_year == $this_year ? ceil((14/12)*(12-($member_join_month-1))) : '14'}}</td>
                         <td style="border: 1px solid black; padding: 7px 0px">{{ (!empty($leaves->sick)?$leaves->sick:0) }}</td>
-                        <td style="border: 1px solid black; padding: 7px 0px">{{ $member_join_year == $this_year ? ceil((14/12)*(12-$member_join_month))-$leaves->sick : (14-$leaves->sick) }}</td>
+                        <td style="border: 1px solid black; padding: 7px 0px">{{ $member_join_year == $this_year ? ceil((14/12)*(12-($member_join_month-1)))-$leaves->sick : (14-$leaves->sick) }}</td>
                         <td style="border: 1px solid black; padding: 7px 0px"></td>
                     </tr>
                     <tr style="border: 1px solid black; padding: 20px">
