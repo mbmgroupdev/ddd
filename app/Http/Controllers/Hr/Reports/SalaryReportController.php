@@ -48,7 +48,7 @@ class SalaryReportController extends Controller
     }
 
     public function salaryDataTable(Request $request)
-    {   
+    {
         $data = $this->processSalary($request);
         return Datatables::of($data)
             ->addIndexColumn()
@@ -86,5 +86,12 @@ class SalaryReportController extends Controller
             })
             ->rawColumns(['DT_RowIndex', 'pic', 'associate_id', 'as_name', 'hr_designation_name', 'hr_department_name','hr_line_name', 'present', 'absent', 'leave', 'holiday', 'ot_hour', 'total_day'])
             ->make(true);
+    }
+
+    public function bankSheetReport(Request $request){
+        $getSalary = $this->processSalary($request);
+        $result = $this->salary->getSalaryReport($request, $getSalary);
+
+        return view('hr.payroll.bank_part.reports', $result)->render();
     }
 }
