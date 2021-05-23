@@ -220,7 +220,15 @@
                                                     <span style="text-align: left; width: 65%; float: left;  white-space: wrap;">অনুপস্থিত দিবস </span>
                                                     <span style="text-align: right;width: 5%; float: left;white-space: wrap;color: hotpink;">=</span>
                                                     <span style="text-align: right;width: 30%; float: right;  white-space: wrap;">
-                                                          <font style="color:hotpink"> {{ Custom::engToBnConvert($list->absent + $list->leave) }}</font>
+                                                            <!--
+                                                                HR Requirements Applicable from April
+                                                                2021/05/05 
+                                                             -->
+                                                             @if(($pageHead->for_date < '2021-04'))
+                                                              <font style="color:hotpink"> {{ Custom::engToBnConvert($list->absent + $list->leave) }}</font>
+                                                             @else
+                                                               <font style="color:hotpink"> {{ Custom::engToBnConvert($list->absent) }}</font>
+                                                             @endif
                                                     </span>
                                                 </p>
                                                 <p style="margin:0;padding:0">

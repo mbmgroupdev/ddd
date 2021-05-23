@@ -9,7 +9,7 @@
 
 <nav class="iq-sidebar-menu">
    <ul id="iq-sidebar-toggle" class="iq-menu">
-      
+
       <li>
          <a href="{{ url('/') }}" class="iq-waves-effect"><i class="las la-home"></i><span>Dashboard</span></a>
       </li>
@@ -35,16 +35,16 @@
          </ul>
       </li>
       @endif
-      
+
       <li class="{{ $segment2 == 'reservation'?'active':'' }}">
          <a href="{{ url('merch/reservation')}}" class="iq-waves-effect"><i class="las la-list-ol"></i><span>Reservation</span></a>
       </li>
-      
+
       @if(auth()->user()->canany([]) || $user->hasRole('Super Admin'))
       <li class="@if($segment2 == 'orders') active @endif">
          <a href="#order" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="lab la-first-order"></i><span>Order</span><i class="las la-angle-right iq-arrow-right"></i></a>
          <ul id="order" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
-            
+
             @if($user->can('Order Entry' ) || $user->hasRole('Super Admin'))
             <li class="@if($segment2 == 'orders' && $segment3=='create') active @endif">
                <a href="{{ url('merch/orders/create') }}"><i class="las la-folder-plus"></i> New Order</a>
@@ -55,7 +55,7 @@
                <a href="{{ url('merch/orders') }}"><i class="las la-list-ol"></i> Order List</a>
             </li>
             @endif
-            
+
          </ul>
       </li>
       @endif
@@ -63,15 +63,15 @@
       <li class="@if($segment2 == 'po') active @endif">
          <a href="#po" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="las la-shopping-cart"></i><span>PO</span><i class="las la-angle-right iq-arrow-right"></i></a>
          <ul id="po" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
-            
+
             <li class="@if($segment2 == 'po' && $segment3=='create') active @endif">
                <a  href="{{ url('merch/po/create')}}"><i class="las la-folder-plus"></i> Create PO</a>
             </li>
-            
+
             <li class="@if($segment2 == 'po' && $segment3=='') active @endif">
                <a href="{{ url('merch/po')}}"><i class="las la-list-ol"></i> PO List</a>
             </li>
-            
+
          </ul>
       </li>
       @endif
@@ -90,11 +90,11 @@
                <a href="#"><i class="las la-list-ol"></i> Order TNA</a>
             </li>
             @endif
-            
+
             <li class="@if($segment2 == 'order_tna' && $segment3=='bom') active @endif">
                <a href="#" class="iq-waves-effect"><i class="las la-clipboard-list"></i><span>TNA Status</span></a>
             </li>
-            
+
          </ul>
       </li>
       @endif
@@ -104,10 +104,11 @@
       <li class="{{ $segment2 == 'order_costing'?'active':'' }}">
          <a href="{{ url('/merch/order_costing') }}" class="iq-waves-effect"><i class="las la-clipboard-list"></i><span>Order Costing</span></a>
       </li> --}}
-      
+
       <li class="{{ $segment2 == 'order-breakdown'?'active':'' }}">
          <a href="#" class="iq-waves-effect" style="color: #c9c9c9;"><i class="las la-list-ol"></i><span>Order Breakdown</span></a>
       </li>
+
       @if(auth()->user()->canany([]) || $user->hasRole('Super Admin'))
 
       <li class="@if($segment2 == 'order_booking') active @endif">
@@ -125,27 +126,30 @@
             @endif
          </ul>
       </li>
-      
+
       @endif
+
+
       @if(auth()->user()->canany([]) || $user->hasRole('Super Admin'))
 
       <li class="@if($segment2 == 'pi') active @endif">
-         <a href="#pi" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false" style="color: #c9c9c9;"><i class="las la-shopping-bag"></i><span>PI</span><i class="las la-angle-right iq-arrow-right"></i></a>
+         <a href="#pi" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false" ><i class="las la-shopping-bag"></i><span>PI</span><i class="las la-angle-right iq-arrow-right"></i></a>
          <ul id="pi" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
             @if($user->can('New Style') || $user->hasRole('Super Admin'))
             <li class="@if($segment2 == 'style' && $segment3=='style_new') active @endif">
-               <a  href="#"><i class="las la-folder-plus"></i> Create PI</a>
+               <a  href="{{url('merch/proforma_invoice/form')}}"><i class="las la-folder-plus"></i> Create PI</a>
             </li>
             @endif
             @if($user->can('Style List' ) || $user->hasRole('Super Admin'))
             <li class="@if($segment2 == 'style' && $segment3=='style_list') active @endif">
-               <a href="#"><i class="las la-list-ol"></i> PI List</a>
+               <a href="{{url('merch/proforma_invoice')}}"><i class="las la-list-ol"></i> PI List</a>
             </li>
             @endif
          </ul>
       </li>
-      
+
       @endif
+
       <li class="{{ $segment2 == 'costing-compare'?'active':'' }}">
          <a href="#" class="iq-waves-effect" style="color: #c9c9c9;"><i class="las la-list-ol"></i><span>Costing Compare</span></a>
       </li>
@@ -166,7 +170,7 @@
             @endif
          </ul>
       </li>
-      
+
       @endif
       <li class="{{ $segment2 == 'reports'?'active':'' }}" >
          <a href="#" class="iq-waves-effect" style="color: #c9c9c9;"><i class="las la-file-invoice"></i><span>Reports</span></a>
@@ -271,8 +275,8 @@
                <a  href="{{ url('merch/setup/approval') }}"><i class="las la-folder-plus"></i> Approval Hierarchy</a>
             </li>
             @endif
-            
-            
+
+
          </ul>
       </li>
       @endif

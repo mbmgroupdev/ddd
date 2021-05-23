@@ -93,7 +93,7 @@
                                     <div class="form-group has-float-label select-search-group" id="choose-device" style="display:none;">
                                         <div class="div">
                                             
-                                            {{ Form::select('device', ['1' => 'Old', '2' => 'Automation (New)'], null, ['placeholder'=>'Select AQL Unit Device', 'id'=>'device', 'class'=> 'form-control' ]) }}  
+                                            {{ Form::select('device', ['1' => 'Old', '2' => 'New'], null, ['placeholder'=>'Select Unit Device', 'id'=>'device', 'class'=> 'form-control' ]) }}  
                                         </div>
                                         <label  for="device"> Select Device  </label>
                                         <div class="invalid-feedback" role="alert">
@@ -188,7 +188,7 @@
 
     $('#unit').on('change',function(e){
         var unit =  e.target.value;
-        if(unit == 3){
+        if(unit == 3 || unit == 1){
             $("#choose-device").show();
         }else{
             $("#choose-device").hide();

@@ -32,7 +32,7 @@
             </ul>
         </div>
         @include('inc/message')
-        <div class="page-content"> 
+        <div class="page-content">
             <div class="panel panel-success">
                 <div class="panel-body">
                     <div class="row">
@@ -40,7 +40,7 @@
                             {{ Form::open(['url'=>'hr/timeattendance/leave_worker', 'class'=>'form-horizontal needs-validation', 'files' => true, 'novalidate']) }}
 
                                 <div class="form-group has-required has-float-label select-search-group">
-                                    {{ Form::select('leave_ass_id', [], null, ['placeholder'=>'Select Associate\'s ID', 'id'=>'leave_ass_id', 'class'=> 'associates form-control', 'required'=>'required']) }}  
+                                    {{ Form::select('leave_ass_id', [], null, ['placeholder'=>'Select Associate\'s ID', 'id'=>'leave_ass_id', 'class'=> 'associates form-control', 'required'=>'required']) }}
                                     <label for="leave_ass_id"> Associate's ID </label>
                                 </div>
                                 <div class="row mb-3">
@@ -50,8 +50,8 @@
                                                 <option value="">Select Leave Type</option>
                                                 <option value="Casual">Casual</option>
                                                 <option value="Earned">Earned</option>
-                                                <option value="Sick">Sick</option> 
-                                                <option value="Special">Special</option> 
+                                                <option value="Sick">Sick</option>
+                                                <option value="Special">Special</option>
                                             </select>
                                             <label for="leave_type">Leave Type</label>
                                         </div>
@@ -65,7 +65,7 @@
                                 </div>
                                 <div class="row mb-3">
                                     <div class="col-6">
-                                        
+
                                         <div class="form-group has-required has-float-label mb-0">
                                             <input type="date" name="leave_from" id="leave_from" class="form-control" required />
                                             <label  for="leave_from">Leave From </label>
@@ -77,7 +77,7 @@
                                             <input type="date"  name="leave_to" id="leave_to" class="form-control" required />
                                             <label  for="leave_from">Leave From </label>
                                         </div>
-                                        
+
                                     </div>
                                     <div class="col-sm-12">
                                         <p id="select_day" class="text-success"></p>
@@ -93,9 +93,9 @@
                                 </div>
                                 <div class="form-group">
                                     <span id="file_upload_error" class="text-danger" style="; font-size: 12px;">Only <strong>docx, doc, pdf, jpeg, jpg or png</strong> file supported(<1 MB).</span>
-                                    
+
                                 </div>
-                                
+
                                 <div class="form-group has-float-label">
                                     <label for="leave_comment"> Note </label>
                                     <textarea name="leave_comment" id="leave_comment" class="form-control" placeholder="Description"></textarea>
@@ -132,8 +132,8 @@
                                           </div>
                                     </div>
                                 </div>
-                                        
-                                
+
+
                                 <div class="col-sm-7">
                                     <ul class="speciality-list m-0 p-0">
                                         <li class="d-flex mb-4 align-items-center">
@@ -150,7 +150,7 @@
                                               <p class="mb-0">Total:  <span class="text-danger" id="total_earn_leave">14</span class="text-danger"> Enjoyed: <span class="text-danger" id="enjoyed_earn_leave">0</span > Remained: <span class="text-success" id="remained_earn_leave">0</span></p>
                                            </div>
                                         </li>
-                                        
+
                                         <li class="d-flex mb-4 align-items-center">
                                            <div class="user-img img-fluid"><a href="#" class="iq-bg-info"><i class="las f-18 la-dollar-sign"></i></a></div>
                                            <div class="media-support-info ml-3">
@@ -166,7 +166,7 @@
                                            </div>
                                         </li>
                                      </ul>
-                                    
+
                                 </div>
                             </div>
                         </div>
@@ -181,7 +181,7 @@
 <script type="text/javascript">
 $(document).ready(function()
 {
-    
+
 
     $("#leave_type").on("change", function(e){
         if(!($("#leave_ass_id").val())){
@@ -197,7 +197,7 @@ $(document).ready(function()
                 dataType: 'json',
                 data: {
                     "_token": "{{ csrf_token() }}",
-                    associate_id: $("#leave_ass_id").val(), 
+                    associate_id: $("#leave_ass_id").val(),
                     leave_type: $(this).val()
                 },
                 success: function(data)
@@ -219,7 +219,7 @@ $(document).ready(function()
         $('#select_day').html('');
         $('#error_leave_text').html('');
         $('#leave_entry').attr("disabled",true);
-    }); 
+    });
 
     $("#leave_ass_id").on("change", function(e){
         if(($("#leave_ass_id").val())){
@@ -244,11 +244,11 @@ $(document).ready(function()
                 },
                 error: function(xhr)
                 {
-                    
+
                 }
             });
         }
-    }); 
+    });
 
 
     $(document).on('change','#leave_from',function(){
@@ -263,10 +263,10 @@ $(document).ready(function()
         var l_type = $('#leave_type').val();
         if(associate_id && l_type){
             const from_date = new Date(formval);
-            const to_date   = new Date(lv_to_date); 
+            const to_date   = new Date(lv_to_date);
             if(from_date > to_date){
                 $(this).val(formval);
-                $.notify('From date is later than To date'); 
+                $.notify('From date is later than To date');
             }
             const from = new Date($('#leave_from').val());
             const to   = new Date($('#leave_to').val());
@@ -283,7 +283,7 @@ $(document).ready(function()
                     dataType: 'json',
                     data: {
                         "_token": "{{ csrf_token() }}",
-                        associate_id: associate_id, 
+                        associate_id: associate_id,
                         leave_type: l_type,
                         sel_days: diffDays+1,
                         from_date: $('#leave_from').val(),
@@ -291,7 +291,7 @@ $(document).ready(function()
                     },
                     success: function(data)
                     {
-                        
+
                         if(data.stat == 'false'){
                             $.notify(data.msg, 'error');
                             $('#error_leave_text').html('<span style="color:#da0000;">'+data.msg+'</div>');
@@ -310,7 +310,7 @@ $(document).ready(function()
                                 },
                                 success: function(data)
                                 {
-                                   
+
                                     if(data.stat == false){
                                         $.notify(data.msg,'error');
                                         $('#error_leave_text').html(data.msg+' Attendance will be removed!');
@@ -326,11 +326,11 @@ $(document).ready(function()
                     },
                     error: function(xhr)
                     {
-                        
+
                     }
                 });
 
-                            
+
             }
         }else{
             $('#select_day').html('');
@@ -341,6 +341,8 @@ $(document).ready(function()
         }
     });
 });
+
 </script>
 @endpush
+
 @endsection

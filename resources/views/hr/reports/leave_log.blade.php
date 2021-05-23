@@ -49,18 +49,21 @@
                                 </div>
                                 <div class="col-6">
                                     <button type="submit" class="btn btn-primary btn-sm activityReportBtn"><i class="fa fa-save"></i> Generate</button>
-                                    <div id="print_pdf" class="custom-control-inline" style="display: none;">
-                                        @if (!empty($info)) 
-                                        <button type="button" onClick="printMe1('PrintArea')" class="inline btn btn-warning btn-sm" title="Print">
+                                    @if (!empty($info->associate))
+                                    <div id="print_pdf" class="custom-control-inline">
+                                         
+                                        <button type="button" onClick="printDiv('PrintArea')" class="inline btn btn-warning btn-sm" title="Print">
                                             <i class="fa fa-print"></i> 
                                         </button> 
-                                        <a href="{{request()->fullUrl()}}&pdf=true" target="_blank" class="inline btn btn-danger btn-sm" title="PDF">
-                                            <i class="fa fa-file-pdf-o"></i> 
-                                        </a>
+                                        
+                                        <button type="button" onclick="window.location.href='{{request()->fullUrl()}}&pdf=true'" target="_blank" class="inline btn btn-danger btn-sm" title="PDF">
+                                          <i class="fa fa-file-pdf-o"></i> 
+                                      </button>
                                         <button type="button"  id="excel"  class="showprint inline btn btn-success btn-sm" title="Excel"><i class="fa fa-file-excel-o" style="font-size:14px"></i>
                                        </button>
-                                        @endif
+                                       
                                     </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -72,7 +75,7 @@
         </div>
         <div class="row">
             <div class="col">
-              @if(!empty($info))
+              @if(!empty($info->associate))
                 <div class="panel">
                     <div class="panel-body">
                         <div id="leave_content_section" class="row">
@@ -83,9 +86,9 @@
                                 
                                 <div id="html-2-pdfwrapper" class="col-sm-12" style="margin:20px auto">
                                     <div class="col-sm-12 text-center page-header" style="margin-bottom: 15px;">
-                                        <h3 {{-- style="margin:4px 10px;text-align:center;font-weight:600" --}}>{{ $info->unit }}</h3>
-                                        <h5 {{-- style="margin:4px 10px;text-align:center;font-weight:600" --}}>Leave Log</h5>
-                                        <h5 {{-- style="margin:4px 10px;text-align:center;font-weight:600" --}}>For The Year : {{ request()->year }}</h5>
+                                        <h3 style="margin:4px 10px;text-align:center;font-weight:600">{{ $info->unit }}</h3>
+                                        <h5 style="margin:4px 10px;text-align:center;font-weight:600">Leave Log</h5>
+                                        <h5 style="margin:4px 10px;text-align:center;font-weight:600">For The Year : {{ request()->year }}</h5>
                                     </div>
                                     <table class="table" style="width:100%;border:1px solid #ccc;margin-bottom:0;font-size:14px;text-align:left;"  cellpadding="5">
                                         <tr>
@@ -108,7 +111,11 @@
                                           <th rowspan="2" width="30%">Month</th>
                                           <th colspan="3" width="30%">Casual Leave</th>
                                           <th colspan="3" width="30%">Medical Leave</th>
-                                          <th colspan="3" width="30%">Meternity Leave</th>
+                                         
+                                          
+                                          @if ($info->gender == "Female")
+                                          <th colspan="3" width="30%">Meternity Leave</th>       
+                                          @endif
                                           <th colspan="3" width="30%">Earn Leave</th>
                                         </tr> 
                                         <tr>
@@ -118,9 +125,11 @@
                                           <th>Due</th>
                                           <th>Enjoyed</th>
                                           <th>Balance</th>
+                                          @if ($info->gender == "Female")
                                           <th>Due</th>
                                           <th>Enjoyed</th>
-                                          <th>Balance</th>
+                                          <th>Balance</th> 
+                                          @endif
                                           <th>Due</th>
                                           <th>Enjoyed</th>
                                           <th>Balance</th>
@@ -165,9 +174,11 @@
                                           <th>{{ $medical_due }}</th>
                                           <th>{{ $medical_enjoyed }}</th>
                                           <th>{{ $medical_balance }}</th>
+                                          @if ($info->gender == "Female")
                                           <th>{{ $maternity_due }}</th>
                                           <th>{{ $maternity_enjoyed }}</th>
-                                          <th>{{ $maternity_balance }}</th>  
+                                          <th>{{ $maternity_balance }}</th> 
+                                          @endif
                                           <th>{{ $earned_due }}</th>
                                           <th>{{ $earned_enjoyed }}</th>
                                           <th>{{ $earned_balance }}</th>   
@@ -267,17 +278,7 @@
           },1000);
       }
     }
-    
-  function printMe1(divName)
-    { 
-        var myWindow=window.open('','','width=800,height=800');
-        myWindow.document.write('<style>.page-header{text-align:center;}</style>');
-        myWindow.document.write(document.getElementById(divName).innerHTML); 
-        myWindow.document.close();
-        myWindow.focus();
-        myWindow.print();
-        myWindow.close();
-    }
+
  
 </script>
 @endpush

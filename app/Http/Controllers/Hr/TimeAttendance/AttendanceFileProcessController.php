@@ -31,11 +31,13 @@ class AttendanceFileProcessController extends Controller
         $validator = Validator::make($request->all(), [
             'unit' => 'required|min:1|max:11',
             'file' => 'required',
-            'device' => 'required_if:unit,==,3'
+            'device' => 'required_if:unit,==,3',
+            'device' => 'required_if:unit,==,1'
         ]);
         $input = $request->all();
         if ($validator->fails())
         {
+            toastr()->error('Unit/Device etc required');
             return back()
             ->withErrors($validator)
             ->withInput();
@@ -82,11 +84,35 @@ class AttendanceFileProcessController extends Controller
                 $rfid="";
                 $checktime = null;
                 if(($unit==1 || $unit==4 || $unit==5 || $unit==9) && !empty($lineData) && (strlen($lineData)>1)){
-                    $sl = substr($lineData, 0, 2);
-                    $date   = substr($lineData, 3, 8);
-                    $time   = substr($lineData, 12, 6);
-                    $rfid = substr($lineData, 19, 10);
+                    if($input['device'] == 2){
+                        $dataExplode = explode('",,"', $lineData);
+                        if(count($dataExplode) == 0){
+                            $msg[] = " Punch Problem!";
+                            continue;
+                        }
+                        $removeExtra = $dataExplode[0];
+                        $anRemoveExtra = explode(',,,', $removeExtra);
+                        if(count($anRemoveExtra) == 0){
+                            $msg[] = " Punch Problem!";
+                            continue;
+                        }
+                        $reData = str_replace('"', "", $anRemoveExtra[1]);
+                        $sparateData = explode(',', $reData);
+                        if(count($anRemoveExtra) < 2){
+                            $msg[] = " Punch Problem!";
+                            continue;
+                        }
+                        $date   = $sparateData[0];
+                        $time   = $sparateData[1];
+                        $rfid = $sparateData[2];
+                    }else{
+                        $sl = substr($lineData, 0, 2);
+                        $date   = substr($lineData, 3, 8);
+                        $time   = substr($lineData, 12, 6);
+                        $rfid = substr($lineData, 19, 10);
+                    }
                     $checktime = ((!empty($date) && !empty($time))?date("Y-m-d H:i:s", strtotime("$date $time")):null);
+                    
                 }
                 else if($unit==2 && !empty($lineData) && (strlen($lineData)>1)){
                     $sl = substr($lineData, 0, 2);
@@ -343,6 +369,7 @@ class AttendanceFileProcessController extends Controller
     {
 
         try {
+
 
             $shift_name         = $shift->hr_shift_name;
             $shift_code         = $shift->hr_shift_code;

@@ -16,6 +16,7 @@ class LeaveLogController extends Controller
               "b.associate_id AS associate",
               "b.as_name AS name",
               "b.as_doj AS doj",
+              "b.as_gender AS gender",
               "u.hr_unit_id AS unit_id",
               "u.hr_unit_name AS unit",
               "s.hr_section_name AS section",
@@ -36,7 +37,7 @@ class LeaveLogController extends Controller
             $earned_due = 0;
         }
 
-    	$leaves = $this->leaves($request->associate, $request->year);
+    	$leaves = $this->leaves($info, $request->year);
 
 
 
@@ -58,10 +59,17 @@ class LeaveLogController extends Controller
     } 
 
 
-    public function leaves($associate = null, $year = null)
+    public function leaves($info = null, $year = null)
     {
+        
     	$leaves = array();
-    	for ($i=1; $i<=12; $i++)
+        if($year < date('Y', strtotime($info->doj))){
+            return $leaves;
+        }
+        $startMonth = ($year == date('Y', strtotime($info->doj))?date('n', strtotime($info->doj)):1);
+        $endMonth = ($year == date('Y')?date('n'):12);
+
+    	for ($i=$startMonth; $i<=$endMonth; $i++)
     	{
 	    	$due     = 0;
 	    	$enjoyed = 0;
@@ -94,7 +102,7 @@ class LeaveLogController extends Controller
                         SUM(DATEDIFF(leave_to, leave_from)+1) AS total
                     ")
                 )
-	    		->where("leave_ass_id", $associate) 
+	    		->where("leave_ass_id", $info->associate) 
                 ->where("leave_status", "1") 
                 ->where(function ($q) use($month, $year) {
                     $q->where(DB::raw("YEAR(leave_from)"), '=', $year);

@@ -82,7 +82,7 @@
                    <div class="iq-navbar-custom">
                       <div class="iq-sidebar-logo">
                          <div class="top-logo">
-                            <a href="index-2.html" class="logo">
+                            <a href="#" class="logo">
                             <img src="{{ asset('assets/images/logo.png') }}" class="img-fluid" alt="">
                             <span>MBM Group</span>
                             </a>
@@ -203,6 +203,10 @@
 
     </div>
     <script src="{{asset('assets/js/all.js')}}"></script>
+    <script>
+      var loaderContent = '<div class="animationLoading"><div id="container-loader"><div id="one"></div><div id="two"></div><div id="three"></div></div><div id="four"></div><div id="five"></div><div id="six"></div></div>';
+      let afterLoader = '<div class="loading-select left"><img src="{{ asset('images/loader.gif')}}" /></div>';
+    </script>
     <!-- Custom JavaScript -->
     @stack('js')
     @toastr_render

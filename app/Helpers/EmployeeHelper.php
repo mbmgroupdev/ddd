@@ -57,7 +57,7 @@ class EmployeeHelper
 			    $dayname = Carbon::parse($intimePunch)->format('l');
 			    $employee = Employee::where('associate_id', $eAsId)->first();
 
-			    if(strtotime($today) < strtotime('2021-04-13')){
+			    if(strtotime($today) < strtotime('2021-04-13') || strtotime($today) > strtotime('2021-05-13')){
     			    if(date('H:i:s', strtotime($shiftIntime)) < date('H:i:s', strtotime('14:00:00'))  && $dayname == 'Friday' && in_array($eUnit, [1,4,5])){
     			    	$shiftBreak = 90;
     			    	/*224 = security, 350/428 = cook*/
@@ -98,7 +98,7 @@ class EmployeeHelper
 
 			    $shiftBreak = $shiftBreak + $extraBreakMin;
 
-			    if(strtotime($today) > strtotime('2021-04-13') && $employee->as_subsection_id != 108 && ($shiftNight == 0 || strtotime($shiftIntime) < strtotime(date('Y-m-d H:i', strtotime($today.' 17:30:00'))))){
+			    if((strtotime($today) > strtotime('2021-04-13') && strtotime($today) < strtotime('2021-05-13')) && $employee->as_subsection_id != 108 && ($shiftNight == 0 || strtotime($shiftIntime) < strtotime(date('Y-m-d H:i', strtotime($today.' 17:30:00'))))){
 			    	$extraMin = 0;
 			    	$breakStartTime = strtotime(date('Y-m-d H:i', strtotime($today.' 18:00:00')));
 			    	$breakEndTime = strtotime(date('Y-m-d H:i', strtotime($today.' 19:00:00')));
@@ -712,7 +712,7 @@ class EmployeeHelper
         $totalLate = $late;
         $salary_date = $present + $getHoliday + $leaveCount;
 
-        $stamp = 10;
+        
         
         $salary = [
             'as_id' => $employee->associate_id,
@@ -736,7 +736,7 @@ class EmployeeHelper
             'attendance_bonus' => $attBonus,
             'production_bonus' => $productionBonus,
             'emp_status' => $status,
-            'stamp' => $stamp,
+            'stamp' => 0,
             'pay_status' => 1,
             'bank_payable' => 0,
             'tds' => 0,
@@ -744,23 +744,36 @@ class EmployeeHelper
             
         ];
 
+        // leave adjust calculate
         $salaryAdjust = SalaryAdjustMaster::getCheckEmployeeIdMonthYearWise($employee->associate_id, $month, $year);
+
         $leaveAdjust = 0.00;
+        $incrementAdjust = 0;
+        $salaryAdd = 0;
         if($salaryAdjust != null){
-            if(isset($salaryAdjust->salary_adjust)){
-                foreach ($salaryAdjust->salary_adjust as $leaveAd) {
-                    $leaveAdjust += $leaveAd->amount;
-                }
-            }
+            $adj = DB::table('hr_salary_adjust_details')
+                ->where('salary_adjust_master_id', $salaryAdjust->id)
+                ->get();
+
+            $leaveAdjust = collect($adj)->where('type',1)->sum('amount');
+            $incrementAdjust = collect($adj)->where('type',3)->sum('amount');
+            $salaryAdd = collect($adj)->where('type',2)->sum('amount');
+            
         }
 
-        $leaveAdjust = round($leaveAdjust, 2);
+        $leaveAdjust = ceil((float) $leaveAdjust);
+        $incrementAdjust = ceil((float) $incrementAdjust);
         
         // get salary payable calculation
-        $salaryPayable = round((($perDayGross*$total_day) - ($getAbsentDeduct + $deductCost + $stamp)), 2);
+        $salaryPayable = round((($perDayGross*$total_day) - ($getAbsentDeduct + $deductCost)), 2);
         $ot = ($overtime_rate*$overtimes);
 
-        $totalPayable = ceil((float)($salaryPayable + $ot + $deductSalaryAdd  + $productionBonus + $leaveAdjust));
+        $totalPayable = ceil((float)($salaryPayable + $ot + $deductSalaryAdd  + $productionBonus + $leaveAdjust + $salaryAdd + $incrementAdjust));
+
+        if($totalPayable > 1000){
+        	$salary['stamp'] = 10;
+        	$totalPayable = $totalPayable - 10;
+        }
         
         $salary['total_payable'] = $totalPayable;
         $salary['cash_payable'] = $totalPayable;
@@ -1323,7 +1336,7 @@ class EmployeeHelper
 
 	            $otHour = 0;
 	            if($getAtt != null){
-	            	$getShift = Shift::where('hr_shift_code', $getAtt->hr_shift_code)->first();
+	            	$getShift = Shift::where('hr_shift_code', $getAtt->hr_shift_code)->where('hr_shift_unit_id', $as_info->as_unit_id)->first();
 	            	
 	            	if($getShift != null){
 	            		if($as_info->as_ot == 1 && $getAtt->out_time != null && $getAtt->in_time != null){

@@ -15,7 +15,9 @@ use Maatwebsite\Excel\Facades\Excel;
 class BonusSheetController extends Controller
 {
     protected $bonus;
+
     protected $employee;
+    
     public function __construct(BonusRepository $bonus, EmployeeRepository $employee)
     {
         ini_set('zlib.output_compression', 1);

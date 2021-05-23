@@ -109,7 +109,7 @@ class LeaveApplicationController extends Controller
     public function getTableName($unit)
     {
         $tableName = "";
-        //CEIL
+       //CEIL
         if($unit == 2){
             $tableName= "hr_attendance_ceil AS a";
         }
@@ -135,7 +135,7 @@ class LeaveApplicationController extends Controller
         return $tableName;
     }
 
-   
+
     public function associatesLeave(Request $request)
     {
         $info = Employee::select(
@@ -146,7 +146,10 @@ class LeaveApplicationController extends Controller
                         'as_name',
                         'as_oracle_code',
                         'as_doj',
-                        'as_pic'
+                        'as_pic',
+                        'as_designation_id',
+                        'as_department_id',
+                        'as_section_id'
                     )
                     ->where('associate_id', $request->associate_id)
                     ->orWhere('as_oracle_code', $request->associate_id)
@@ -198,7 +201,7 @@ class LeaveApplicationController extends Controller
         $statement['stat'] = "false";
         // Earned Leave Restriction
         if($request->leave_type== "Earned"){
-            
+
             /*$earned = DB::table('hr_earned_leave')
                         ->select(DB::raw('sum(earned - enjoyed) as l'))
                         ->where('associate_id', $associate_id)
@@ -212,20 +215,20 @@ class LeaveApplicationController extends Controller
                 $statement['msg'] = 'This employee has  '.$earned.' day(s) of Earned Leave and can take only '.$avail. ' day(s)' ;
             }*/
             $statement['stat'] = "true";
-        } 
+        }
         // Casual Leave Restriction
         if($request->leave_type== "Casual"){
-            $leaves = DB::table("hr_leave") 
+            $leaves = DB::table("hr_leave")
                 ->select(
                     DB::raw("
                         SUM(CASE WHEN leave_type = 'Casual' THEN DATEDIFF(leave_to, leave_from)+1 END) AS casual
                     ")
                 )
-                ->where("leave_ass_id", $request->associate_id) 
-                ->where("leave_status", "1") 
+                ->where("leave_ass_id", $request->associate_id)
+                ->where("leave_status", "1")
                 ->where(function ($q){
                     $q->where(DB::raw("YEAR(leave_from)"), '=', date("Y"));
-                }) 
+                })
                 ->first();
             if($leaves->casual < 10){
                 $statement['stat'] = "true";
@@ -236,17 +239,17 @@ class LeaveApplicationController extends Controller
         }
         // Sick Leave Restriction
         if($request->leave_type== "Sick"){
-            $leaves = DB::table("hr_leave") 
+            $leaves = DB::table("hr_leave")
                 ->select(
                     DB::raw("
                         SUM(CASE WHEN leave_type = 'Sick' THEN DATEDIFF(leave_to, leave_from)+1 END) AS sick
                     ")
                 )
-                ->where("leave_ass_id", $request->associate_id) 
-                ->where("leave_status", "1") 
+                ->where("leave_ass_id", $request->associate_id)
+                ->where("leave_status", "1")
                 ->where(function ($q){
                     $q->where(DB::raw("YEAR(leave_from)"), '=', date("Y"));
-                }) 
+                })
                 ->first();
             if($leaves->sick < 14){
                 $statement['stat'] = "true";
@@ -255,7 +258,7 @@ class LeaveApplicationController extends Controller
                 $statement['msg'] = 'This employee has taken 14 day(s) of Sick(14) Leave';
             }
         }
-     
+
         if($request->leave_type== "Special"){
             $statement['stat'] = "true";
         }
@@ -287,7 +290,7 @@ class LeaveApplicationController extends Controller
         $period      = new DatePeriod($from_date, $interval, $to_date);
 
         $statement = [];
-        $statement['stat'] = true; 
+        $statement['stat'] = true;
         $statement['msg']  = 'This employee already has atteandance at ';
         foreach ($period as $dt) {
             $check = DB::table($table)
@@ -295,7 +298,7 @@ class LeaveApplicationController extends Controller
                      ->where('in_date',$dt->format("Y-m-d"))
                      ->first();
             if($check){
-                $statement['stat'] = false; 
+                $statement['stat'] = false;
                 $statement['msg'] .= $dt->format("Y-m-d");
             }
         }
