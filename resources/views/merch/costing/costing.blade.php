@@ -1,4 +1,5 @@
 @extends('merch.layout')
+@section('title', 'Costing Compare - {{$order->order_code}}')
 @section('main-content')
 @push('css')
 <style>

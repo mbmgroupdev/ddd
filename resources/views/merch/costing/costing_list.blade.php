@@ -1,5 +1,5 @@
 @extends('merch.layout')
-@section('title', 'Costing Compare')
+@section('title', 'Costing List')
 @section('main-content')
     @push('css')
         <style>
