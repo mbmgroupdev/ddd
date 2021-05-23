@@ -3,6 +3,10 @@
 namespace App\Repository\Hr;
 
 use App\Contracts\Hr\SalaryInterface;
+use App\Models\Hr\AttendanceBonusConfig;
+use App\Models\Hr\HrMonthlySalary;
+use App\Models\Hr\SalaryAddDeduct;
+use App\Models\Hr\SalaryAdjustMaster;
 use App\Repository\Hr\EmployeeRepository;
 use DB;
 use Illuminate\Support\Collection;
@@ -13,7 +17,7 @@ class SalaryRepository implements SalaryInterface
     {
         ini_set('zlib.output_compression', 1);
     }
-	public function getSalaryReport($input, $data)
+    public function getSalaryReport($input, $data)
     {
         $result['summary']      = $this->makeSummarySalary($data);
         $list = collect($data)
@@ -186,5 +190,245 @@ class SalaryRepository implements SalaryInterface
                                     return ($s->ot_hour * $s->ot_rate);
                                 });
         return $sum;
+    }
+
+    public function makeEmployeeBenefitValue($value='')
+    {
+        $addDeduct = $this->getEmployeeSalaryAddDeduct($value);
+        $stamp = $this->getEmployeeStampAmount($value);
+        $attBonus = $this->getEmployeeAttendanceBonus($value);
+        $salaryAdjust = $this->getEmployeeSalaryAdjust($value);
+        $value = array_merge($value, $addDeduct, $stamp, $attBonus, $salaryAdjust);
+        $salaryPayable = $this->getEmployeeSalaryPayable($value);
+
+        $value = array_merge($value, $salaryPayable);
+        $cashBank = $this->getEmployeeSalaryCashBank($value);
+        return array_merge($value, $cashBank);
+    }
+
+    public function getEmployeeSalaryAddDeduct($value='')
+    {
+        $getAddDeduct = SalaryAddDeduct::
+            where('associate_id', $value['associate_id'])
+            ->where('month', '=', $value['month'])
+            ->where('year', '=', $value['year'])
+            ->first();
+        if($getAddDeduct != null){
+            $row['deductCost'] = ($getAddDeduct->advp_deduct + $getAddDeduct->cg_deduct + $getAddDeduct->food_deduct + $getAddDeduct->others_deduct);
+            $row['deductSalaryAdd'] = $getAddDeduct->salary_add;
+            $row['productionBonus'] = $getAddDeduct->bonus_add;
+            $row['deductId'] = $getAddDeduct->id;
+        }else{
+            $row['deductCost'] = 0;
+            $row['deductSalaryAdd'] = 0;
+            $row['deductId'] = null;
+            $row['productionBonus'] = 0;
+        }
+        return $row;
+    }
+
+    public function getEmployeeStampAmount($value='')
+    {
+        $stamp = 10;
+        if($value['ben_cash_amount'] == 0 && $value['as_emp_type_id'] == 3){
+            $stamp = 0;
+        }
+        return ['stamp'=>$stamp];
+    }
+
+    public function getEmployeeAttendanceBonus($value='')
+    {         
+        /*
+         *get unit wise bonus rules 
+         *if employee joined this month, employee will get bonus 
+          only he/she joined at 1
+        */ 
+        $attBonus = 0;
+        if(($value['empdojMonth'] == $value['yearMonth'] && date('d', strtotime($value['as_doj'])) > 1) || $value['partial'] == 1 ){
+            $attBonus = 0;
+        }else{
+            $getBonusRule = AttendanceBonusConfig::
+            where('unit_id', $value['as_unit_id'])
+            ->first();
+            if($getBonusRule != null){
+                $lateAllow = $getBonusRule->late_count;
+                $leaveAllow = $getBonusRule->leave_count;
+                $absentAllow = $getBonusRule->absent_count;
+            }else{
+                $lateAllow = 3;
+                $leaveAllow = 1;
+                $absentAllow = 1;
+            }
+            
+            if ($value['lateCount'] <= $lateAllow && $value['leaveCount'] <= $leaveAllow && $value['absentCount'] <= $absentAllow && $value['as_emp_type_id'] == 3) {
+                $lastMonth = date('m', strtotime('-1 months', strtotime($value['year'].'-'.$value['month'].'-01')));
+                if($lastMonth == '12'){
+                    $value['year'] = $value['year'] - 1;
+                }
+                $getLastMonthSalary = HrMonthlySalary::
+                    where('as_id', $value['associate_id'])
+                    ->where('month', $lastMonth)
+                    ->where('year', $value['year'])
+                    ->first();
+                if (($getLastMonthSalary != null) && ($getLastMonthSalary->attendance_bonus > 0)) {
+                    if(isset($getBonusRule->second_month)) {
+                        $attBonus = $getBonusRule->second_month;
+                    }
+                } else {
+                    if(isset($getBonusRule->first_month)) {
+                        $attBonus = $getBonusRule->first_month;
+                    }
+                }
+            }
+        }
+        return ['attBonus'=>$attBonus];
+    }
+
+    public function getEmployeeSalaryAdjust($value='')
+    {
+        $salaryAdjust = SalaryAdjustMaster::getCheckEmployeeIdMonthYearWise($value['associate_id'], $value['month'], $value['year']);
+
+        $leaveAdjust = 0;
+        $incrementAdjust = 0;
+        $salaryAdd = 0;
+        if($salaryAdjust != null){
+            $adj = DB::table('hr_salary_adjust_details')
+                ->where('salary_adjust_master_id', $salaryAdjust->id)
+                ->get();
+
+            $leaveAdjust = collect($adj)->where('type',1)->sum('amount');
+            $incrementAdjust = collect($adj)->where('type',3)->sum('amount');
+            $salaryAdd = collect($adj)->where('type',2)->sum('amount');
+            
+        }
+
+        return [
+            'leaveAdjust' => ceil((float) $leaveAdjust),
+            'incrementAdjust' => ceil((float) $incrementAdjust),
+            'salaryAdd' => ceil((float) $salaryAdd)
+        ];
+        
+    }
+
+    public function getEmployeeSalaryPayable($value='')
+    {
+        $perDayBasic = $value['ben_basic'] / 30;
+        $getAbsentDeduct = (int)($value['absentCount'] * $perDayBasic);
+        $getHalfDeduct = (int)($value['halfCount'] * ($perDayBasic / 2));
+        $overtime_rate = number_format((($value['ben_basic']/208)*2), 2, ".", "");
+        $overtime_rate = ($value['as_ot']==1)?($overtime_rate):0;
+
+        if(($value['empdojMonth'] == $value['yearMonth'] && date('d', strtotime($value['as_doj'])) > 1) || $value['monthDayCount'] > $value['totalDay'] || $value['partial'] == 1){
+            $perDayGross   = $value['ben_current_salary']/$value['monthDayCount'];
+            $totalGrossPay = ($perDayGross * $value['totalDay']);
+            
+        }else{
+            $totalGrossPay = $value['ben_current_salary'];
+        }
+
+        $salaryPayable = $totalGrossPay - ($getAbsentDeduct + $getHalfDeduct + $value['deductCost'] + $value['stamp']);
+
+        $otAmount = ((float)($overtime_rate) * ($value['otCount']));
+        
+        $totalPayable = ceil((float)($salaryPayable + $otAmount + $value['deductSalaryAdd'] + $value['attBonus'] + $value['productionBonus'] + $value['leaveAdjust'] + $value['salaryAdd'] + $value['incrementAdjust']));
+        return [
+            'salaryPayable' => $salaryPayable,
+            'overtime_rate' => $overtime_rate,
+            'totalPayable'  => $totalPayable,
+            'absentDeduct'  => $getAbsentDeduct,
+            'halfDeduct'    => $getHalfDeduct
+        ];
+    }
+
+    public function getEmployeeSalaryCashBank($value='')
+    {
+
+        $payStatus = 1; // cash pay
+        if($value['ben_bank_amount'] > 0 && $value['ben_cash_amount'] > 0){
+            $payStatus = 3; // partial pay
+        }elseif($value['ben_bank_amount'] > 0){
+            $payStatus = 2; // bank pay
+        }
+
+        $tds = $value['ben_tds_amount']??0;
+        if($payStatus == 1){
+            $tds = 0;
+            $cashPayable = $value['totalPayable'];
+            $bankPayable = 0; 
+        }elseif($payStatus == 2){
+            $cashPayable = 0;
+            $bankPayable = $value['totalPayable'];
+        }else{
+            if($value['ben_bank_amount'] <= $value['totalPayable']){
+                $cashPayable = $value['totalPayable'] - $value['ben_bank_amount'];
+                $bankPayable = $value['ben_bank_amount'];
+            }else{
+                $cashPayable = 0;
+                $bankPayable = $value['totalPayable'];
+            }
+        }
+
+        if($bankPayable > 0 && $tds > 0 && $bankPayable > $tds){
+            $bankPayable = $bankPayable - $tds;
+        }else{
+            $tds = 0;
+        }
+
+        return [
+            'payStatus' => $payStatus,
+            'cashPayable' => $cashPayable,
+            'bankPayable' => $bankPayable,
+            'tds' => $tds
+        ];
+    }
+
+    public function slaryStore($value='')
+    {
+        try {
+            HrMonthlySalary::updateOrCreate(
+            [
+                'as_id' => $value['associate_id'],
+                'month' => $value['month'],
+                'year' => $value['year']
+            ],
+            [
+                'ot_status' => $value['as_ot'],
+                'unit_id' => $value['as_unit_id'],
+                'designation_id' => $value['as_designation_id'],
+                'sub_section_id' => $value['as_subsection_id'],
+                'location_id' => $value['as_location'],
+                'pay_type' => ($value['payStatus'] != 1?$value['bank_name']:''),
+                'gross' => $value['ben_current_salary'],
+                'basic' => $value['ben_basic'],
+                'house' => $value['ben_house_rent'],
+                'medical' => $value['ben_medical'],
+                'transport' => $value['ben_transport'],
+                'food' => $value['ben_food'],
+                'late_count' => $value['lateCount'],
+                'present' => $value['presentCount'],
+                'holiday' => $value['holidayCount'],
+                'absent' => $value['absentCount'],
+                'leave' => $value['leaveCount'],
+                'absent_deduct' => $value['absentDeduct'],
+                'half_day_deduct' => $value['halfDeduct'],
+                'salary_add_deduct_id' => $value['deductId'],
+                'salary_payable' => $value['salaryPayable'],
+                'ot_rate' => $value['overtime_rate'],
+                'ot_hour' => $value['otCount'],
+                'attendance_bonus' => $value['attBonus'],
+                'production_bonus' => $value['productionBonus'],
+                'leave_adjust' => $value['leaveAdjust'],
+                'stamp' => $value['stamp'],
+                'pay_status' => $value['payStatus'],
+                'emp_status' => $value['as_status'],
+                'total_payable' => $value['totalPayable'],
+                'cash_payable' => $value['cashPayable'],
+                'bank_payable' => $value['bankPayable'],
+                'tds' => $value['tds'],
+                'roaster_status' => $value['shift_roaster_status']
+            ]);
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
     }
 }
