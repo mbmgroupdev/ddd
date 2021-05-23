@@ -1,3 +1,0 @@
-2021-05-22 09:28:01 "20F025017D" MD.ALI ZINNAH - rollback to active:  9071
-2021-05-20 09:52:44 "21D025021D" User information updated 125
-2021-05-20 09:46:24 "21D025021D" User information updated 125

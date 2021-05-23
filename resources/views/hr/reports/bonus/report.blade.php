@@ -3,8 +3,9 @@
 		@php
 			$urldata = http_build_query($input) . "\n";
 			$groupUnit = ($input['group_unit']??($input['unit']??''));
+
 		@endphp
-		<a href='{{ url("hr/reports/bonus-report?$urldata&export=excel")}}' target="_blank" class="btn btn-sm btn-info hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download" style="position: absolute; top: 16px; left: 65px;"><i class="fa fa-file-excel-o"></i></a>
+		<a href='{{ url("hr/reports/bonus-report?$urldata&export=excel")}}' target="_blank" class="btn btn-sm btn-info hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download" style="position: absolute; top: 21px; left: 65px;"><i class="fa fa-file-excel-o"></i></a>
 		<div class="content_list_section"  id="report_section">
 			<style type="text/css">
 				.page-data{
@@ -18,10 +19,9 @@
     			.amount{text-align: right;width: 100px;display: inline-block;float: right;padding-right: 10px;}
 			</style>
 			<div class="page-header report_section">
-				
-				<h3 style="font-weight: bold; text-align: center;"> {{ $unit[$groupUnit]['hr_unit_name']??'' }} </h3> 
+				<h3 style="font-weight: bold; text-align: center;">@if(count($groupUnit) == 1) {{ $unit[$groupUnit[0]]['hr_unit_name']??'' }} @endif</h3>
 				<h3 style=" text-align: center;">{{ $bonusType[$bonusSheet->bonus_type_id]['bonus_type_name']??''}}-{{ $bonusSheet->bonus_year }} @if($input['report_format'] == 0) Details @else Summary @endif Report </h3>
-				
+
 	            <table border="0" width="100%" class="p-3">
             		<tr>
             			<td style="width: 20%">Active Employee</td>
@@ -73,14 +73,14 @@
             			<td style="width:13.3333%; padding-right:32px;">: <span class="amount" >{{$summary->partial}}</span></td>
             			<td style="width: 20%">Rocket Employee</td>
             			<td style="width:13.3333%; padding-right:32px;">: <span class="amount" >
-            				
+
             				@if(isset($summary->payment_group['rocket']))
             				 {{($summary->payment_group['rocket']?$summary->payment_group['rocket']->emp:0)}}
             				@else
             				0
             				@endif
             			</span></td>
-            			
+
             			<td style="width: 20%">Non-OT Employee Bonus</td>
             			<td style="width:13.3333%; padding-right:32px;">: <span class="amount" >৳ {{bn_money($summary->nonot_amount)}}</span> </td>
             		</tr>
@@ -98,7 +98,7 @@
             			</td>
             			<td style="width: 20%"><b>Total Bonus</b></td>
             			<td style="width:13.3333%; padding-right:32px;">: <span class="amount" ><b>৳ {{bn_money($summary->active_amount + $summary->maternity_amount)}}</td>
-            			
+
             		</tr>
             		<tr>
             			<td colspan="2"></td>
@@ -109,7 +109,7 @@
             		</tr>
             		<tr>
             			<td colspan="4"></td>
-            			
+
             			<td style="width: 20%"><b>Total Payable</b></td>
             			<td style="width:13.3333%; padding-right:32px;">: <b><span class="amount" >৳ {{bn_money(($summary->active_amount + $summary->maternity_amount) - $summary->stamp)}}</span></b></span> </td>
             		</tr>
@@ -119,7 +119,7 @@
     			<div class="col-12">
             		<div class="salary-section text-right ">
                         <button type="button" data-toggle="modal" data-target="#exampleModalCenteredScrollable" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="" data-original-title="Bonus Approval Process" ><i class="fa fa-save"></i> Approve Bonus</button>
-                        
+
                     </div>
 
     			</div>
@@ -129,10 +129,10 @@
 			@if($input['report_format'] == 0)
 				<table class="table table-bordered table-hover table-head" style="width:100%;border:0 !important;margin-bottom:0;font-size:14px;text-align:left" border="1" cellpadding="5">
 				@foreach($uniqueGroup as $group => $employees)
-		
+
 					<thead>
 						@if(count($employees) > 0)
-		                
+
 		                	@php
 								if($format == 'as_unit_id'){
 									$head = 'Unit';
@@ -165,7 +165,7 @@
 			                    <th colspan="12">{{ $body }}</th>
 		                    </tr>
 		                    @endif
-		                
+
 		                @endif
 		                <tr>
 		                    <th width="5%">Sl</th>
@@ -191,10 +191,10 @@
 			            	@php
 			            		$designationName = $employee->hr_designation_name??'';
 			            	@endphp
-			            	
+
 			            	<tr>
 			            		<td>{{ ++$i }}</td>
-				            	
+
 				            	<td>{{ $employee->associate_id }}</td>
 				            	<td><b>{{ $employee->as_name }}</b></td>
 				            	<td>{{ $designation[$employee->as_designation_id]['hr_designation_name']??'' }}</td>
@@ -205,17 +205,17 @@
 				            	<td class="@if($employee->duration < 12) highlight @endif">
 				            		@if($employee->duration < 12)
 				            			{{$employee->duration}}/12
-				            		
+
 				            		@endif
 				            	</td>
-				            	
+
 				            	<td>{{$employee->bonus_amount }}</td>
 				            	<td>{{$employee->stamp }}</td>
 				            	<td>{{$employee->cash_payable }}</td>
 				            	<td>{{$employee->bank_payable }}</td>
 				            	<td @if($employee->override == 1) style="background: yellow;" @endif>{{$employee->net_payable }}</td>
 			            	</tr>
-			            	
+
 			            @endforeach
 		            @else
 			            <tr>
@@ -224,7 +224,7 @@
 		            @endif
 		            	<tr style="border:0 !important;"><td colspan="16" style="border: 0 !important;height: 20px;"></td> </tr>
 		            </tbody>
-		            
+
 				@endforeach
 			</table>
 			@elseif(($input['report_format'] == 1 && $format != null))
@@ -305,8 +305,8 @@
 										$exPar = '';
 									}
 									$secUrl = $urldata.$exPar;
-									$totalNonOtAmount += $employee->nonot_amount; 
-									$totalOtAmount += $employee->ot_amount; 
+									$totalNonOtAmount += $employee->nonot_amount;
+									$totalOtAmount += $employee->ot_amount;
 								@endphp
 								<a onClick="selectedGroup(this.id, '{{ $body }}')" data-body="{{ $body }}" id="{{$exPar}}" class="select-group">{{ ($body == null)?'N/A':$body }}</a>
 							</td>
@@ -349,7 +349,7 @@
 			            </tr>
 						@endif
 					</tbody>
-					
+
 				</table>
 			@endif
 		</div>

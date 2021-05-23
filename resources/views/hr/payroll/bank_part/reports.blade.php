@@ -3,13 +3,13 @@
 		@php
 			$urldata = http_build_query($input) . "\n";
 		@endphp
-		
+
 		<a href='{{ url("hr/reports/monthly-salary-bank-report?$urldata&export=excel")}}' target="_blank" class="btn btn-sm btn-info hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download" style="position: absolute; top: 19px; left: 65px;"><i class="fa fa-file-excel-o"></i></a>
 
 		<div id="report_section" class="report_section">
 			<style type="text/css">
 				@media print {
-            
+
 		            .pagebreak {
 		                page-break-before: always !important;
 		            }
@@ -41,18 +41,18 @@
 				$unit = unit_by_id();
 				$location = location_by_id();
 			@endphp
-			
+
 			<div class="top_summery_section">
 				<div class="page-header">
 		            <h2 style="margin:4px 10px; font-weight: bold; text-align: center;">Salary Report - {{ $input['pay_status']}} </h2>
-		            <h4  style="text-align: center;">Month : {{ date('M Y', strtotime($input['month'])) }} </h4>
-		            
+		            <h4  style="text-align: center;">Month : {{ date('M Y', strtotime($input['year_month'])) }} </h4>
+
 		        </div>
-		        
+
 			</div>
 
 			<div class="content_list_section">
-					
+
 				<table class="table table-bordered table-hover table-head" style="width:100%;border:1px solid #ccc;margin-bottom:0;font-size:14px;text-align:left" border="1" cellpadding="5">
 					<thead>
 		                <tr>
@@ -91,7 +91,7 @@
 			            @endforeach
 			            	<tr>
 			            		<td colspan="4" class="text-right" style="text-align:right;"><b>Total Amount</b></td>
-		            		
+
 			            		<td style="text-align:right;"><b>{{ ($salarySum) }}</b></td>
 			            		<td style="text-align:right;"><b>{{ ($tds) }}</b></td>
 			            		<td colspan="3"> &nbsp;</td>
@@ -103,9 +103,9 @@
 		            @endif
 		            </tbody>
 
-		            
+
 				</table>
-				
+
 			</div>
 		</div>
 	</div>
@@ -114,5 +114,5 @@
 
 <script type="text/javascript">
 
-    
+
 </script>

@@ -320,7 +320,7 @@ if(!function_exists('emp_remain_leave_check')){
                 ->first();
 
             if ($member_join_year == Carbon::now()->year){
-                $casual = ceil((10/12)*(12-$member_join_month))-$leaves->casual;
+                $casual = ceil((10/12)*(12-($member_join_month-1)))-$leaves->casual;
             } else{
                 $casual = 10-$leaves->casual;
             }
@@ -347,7 +347,7 @@ if(!function_exists('emp_remain_leave_check')){
                 ->first();
 
             if ($member_join_year == Carbon::now()->year){
-                $sick = ceil((14/12)*(12-$member_join_month))-$leaves->sick;
+                $sick = ceil((14/12)*(12-($member_join_month-1)))-$leaves->sick;
             } else{
                 $sick = 14-$leaves->sick;
             }
@@ -355,8 +355,8 @@ if(!function_exists('emp_remain_leave_check')){
                 $statement['stat'] = "true";
             }else{
                 if ($member_join_year == Carbon::now()->year){
-                    $sick = ceil((14/12)*(12-$member_join_month))-$leaves->sick;
-                    $statement['msg'] = $hello.' '.$sick.' day(s) of Sick('.ceil((14/12)*(12-$member_join_month)).') Leave';
+                    $sick = ceil((14/12)*(12-($member_join_month-1)))-$leaves->sick;
+                    $statement['msg'] = $hello.' '.$sick.' day(s) of Sick('.ceil((14/12)*(12-($member_join_month-1))).') Leave';
                 } else{
                     $statement['msg'] = $hello.' '.$sick.' day(s) of Sick(14) Leave';
                 }

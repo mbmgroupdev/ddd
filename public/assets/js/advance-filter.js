@@ -1,4 +1,4 @@
-let rootUrl = window.location.origin;  
+let rootUrl = window.location.origin;
 //Load Department List By Area ID
 $('#area').on("change", function(){
   if($(this).val() !== ''){
@@ -178,7 +178,7 @@ $(".grid_view, .list_view").click(function() {
   $('input[name="employee"]').val('');
   advFilter();
 });
-  
+
 $("#reportGroupHead").on("change", function(){
   var group = $(this).val();
   $("#reportGroup").val(group);
@@ -192,5 +192,5 @@ $("#yearMonth").on("change", function(){
 $(document).on('click', '.clear-filter', function(event) {
   var yearMonth = $("#yearMonth").val();
   if(confirm("Are you sure you want to clear the filter?"))
-    window.location.href = rootUrl+"/hr/reports/salary?year_month="+yearMonth;
+    window.location.reload();
 });
