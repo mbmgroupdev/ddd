@@ -3,19 +3,24 @@
 namespace App\Repository\Hr;
 
 use App\Contracts\Hr\SalaryInterface;
+use App\Models\Employee;
 use App\Models\Hr\AttendanceBonusConfig;
+use App\Models\Hr\Benefits;
 use App\Models\Hr\HrMonthlySalary;
 use App\Models\Hr\SalaryAddDeduct;
 use App\Models\Hr\SalaryAdjustMaster;
+use App\Repository\Hr\AttendanceProcessRepository;
 use App\Repository\Hr\EmployeeRepository;
 use DB;
 use Illuminate\Support\Collection;
 
 class SalaryRepository implements SalaryInterface
 {
-    public function __construct()
+    public $attProcess;
+    public function __construct(AttendanceProcessRepository $attProcess)
     {
         ini_set('zlib.output_compression', 1);
+        $this->attProcess = $attProcess;
     }
     public function getSalaryReport($input, $data)
     {
@@ -63,7 +68,8 @@ class SalaryRepository implements SalaryInterface
         return $result;
     }
 
-    public function getSalaryByFilter($input, $dataRow, $employee){
+    public function getSalaryByFilter($input, $dataRow, $employee)
+    {
         
         $subSection = subSection_by_id();
         $getFoodDeduct = $this->getFoodDeductList($input['year_month']);
@@ -158,7 +164,8 @@ class SalaryRepository implements SalaryInterface
         ->pluck('food_deduct', 'associate_id');
     }
 
-    public function getSalaryByMonth($input){
+    public function getSalaryByMonth($input)
+    {
         $input['emp_status'] = $input['emp_status']??1;
         $yearMonthExp = explode('-', $input['year_month']);
         $data = DB::table('hr_monthly_salary')
@@ -171,7 +178,8 @@ class SalaryRepository implements SalaryInterface
         return $data;
     }
 
-    protected function makeSummarySalary($data){
+    protected function makeSummarySalary($data)
+    {
         $data = collect($data);
         $sum  = (object)[];
         $sum->totalOt          = $data->where('ot_status', 1)->count();
@@ -429,6 +437,54 @@ class SalaryRepository implements SalaryInterface
             ]);
         } catch (\Exception $e) {
             return $e->getMessage();
+        }
+    }
+
+    public function employeeMonthlySalaryProcess($asId, $month, $year, $totalDay)
+    {
+        $getEmployee = Employee::where('as_id', $asId)->first(['as_id', 'as_doj', 'as_unit_id', 'associate_id', 'as_status_date', 'as_ot', 'shift_roaster_status', 'as_emp_type_id', 'as_designation_id', 'as_subsection_id', 'as_location', 'as_status', 'as_gender']);
+        
+        $row['month'] = $month;
+        $row['year'] = $year;
+        $row['yearMonth'] = date('Y-m', strtotime($row['year'].'-'.$row['month']));
+        $row['totalDay'] = $totalDay;
+        $row['tableName'] = get_att_table($getEmployee->as_unit_id);
+        try {
+            if($getEmployee != null && date('Y-m', strtotime($getEmployee->as_doj)) <= $row['yearMonth']){
+                $row['unit_id'] = $getEmployee->as_unit_id;
+                // check lock month
+                $checkLock = monthly_activity_close($row);
+                if($checkLock == 1){
+                    return 'error';
+                }
+                // get employee benefit
+                $getBenefit = Benefits::getEmployeeAssIdwise($getEmployee->associate_id);
+                if($getBenefit == null){
+                    return 'error';
+                }
+
+                $row = array_merge($row, $getEmployee->toArray());
+                // employee basic info
+                $startNendInfo = $this->attProcess->getEmployeeMonthStartNEndInfo($row);
+                $row = array_merge($row, $startNendInfo);
+                // attendance count like - present, holiday, leave, absent, late etc.
+                $attCount = $this->attProcess->makeEmployeeAttendanceCount($row);
+                $row = array_merge($row, $getBenefit->toArray(), $attCount);
+                // all benefit calculate for pay
+                $benefit = $this->makeEmployeeBenefitValue($row);
+             
+                // salary store
+                $this->slaryStore($benefit);
+            }
+            return 'success';
+
+        } catch (\Exception $e) {
+            DB::table('error')->insert(['msg' => $asId.' '.$e->getMessage()]);
+            /*$bug = $e->errorInfo[1];
+            // $bug1 = $e->errorInfo[2];
+            if($bug == 1062){
+                // duplicate
+            }*/
         }
     }
 }
