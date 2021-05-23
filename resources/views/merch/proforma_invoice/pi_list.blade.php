@@ -1,57 +1,65 @@
-@extends('merch.index')
-@push('css')
-<style type="text/css">
-    {{-- removing the links in print and adding each page header --}}
-    a[href]:after { content: none !important; }
-    thead {display: table-header-group;}
+@extends('merch.layout')
+@section('title', 'Proforma Invoice List')
+@section('main-content')
+    @push('css')
+        <style>
+            a[href]:after { content: none !important; }
+            thead {display: table-header-group;}
+            th{
+                font-size: 12px;
+                font-weight: bold;
+            }
+            #example th:nth-child(2) input{
+                width: 100px !important;
+            }
+            #example th:nth-child(3) input{
+                width: 90px !important;
+            }
+            #example th:nth-child(5) select{
+                width: 80px !important;
+            }
+            #example th:nth-child(6) select{
+                width: 80px !important;
+            }
+            /*#example th:nth-child(7) select{
+              width: 80px !important;
+            }*/
+            #example th:nth-child(7) input{
+                width: 110px !important;
+            }
+            #example th:nth-child(8) input{
+                width: 70px !important;
+            }
 
-    /*making place holder custom*/
-    input::-webkit-input-placeholder {
-        color: black;
-        font-weight: bold;
-        font-size: 12px;
-    }
-    input:-moz-placeholder {
-        color: black;
-        font-weight: bold;
-        font-size: 12px;
-    }
-    input:-ms-input-placeholder {
-        color: black;
-        font-weight: bold;
-        font-size: 12px;
-    }
-    th{
-        font-size: 12px;
-        font-weight: bold;
-    }
-</style>
-@endpush
-@section('content')
+            .text-warning {
+                color: #c49090!important;
+            }
+            table.dataTable thead>tr>td.sorting, table.dataTable thead>tr>td.sorting_asc, table.dataTable thead>tr>td.sorting_desc, table.dataTable thead>tr>th.sorting, table.dataTable thead>tr>th.sorting_asc, table.dataTable thead>tr>th.sorting_desc {
+                padding-right: 16px;
+            }
+        </style>
+    @endpush
+@section('main-content')
 <div class="main-content">
 	<div class="main-content-inner">
 		<div class="breadcrumbs ace-save-state" id="breadcrumbs">
 			<ul class="breadcrumb">
-				<li> 
+				<li>
 					<i class="ace-icon fa fa-home home-icon"></i>
 					<a href="#">Proforma Invoice</a>
-				</li>  
+				</li>
 				<li class="active">Proforma Invoice List</li>
-			</ul><!-- /.breadcrumb --> 
+                <li class="top-nav-btn">
+                    <a class="btn btn-sm btn-primary" href="{{ url('merch/proforma_invoice/form') }}"><i class="las la-plus"></i>Add Proforma Invoice</a>
+                </li>
+			</ul><!-- /.breadcrumb -->
 		</div>
 
-		<div class="page-content">
-            <div class="row">
-                <!-- Widget Header -->
-                
-                <!-- Widget Body -->
-                <div class="panel-body">
-
-                    @include('inc/message')
-                    <div class="widget-header text-right">
-                        <a type="button" class="btn btn-primary btn-xs" href="{{ url('merch/proforma_invoice/form') }}">Add Proforma Invoice</a>
-                    </div> 
-                    <br>
+        <div class="page-content">
+            <div class="">
+                @include('inc/message')
+                <div class="panel panel-info">
+                    <div class="panel-body">
                     <div class="worker-list">
                         <table id="dataTables" class="table table-striped table-bordered" style="white-space:nowrap">
                             <thead>
@@ -76,10 +84,11 @@
 		</div><!-- /.page-content -->
 	</div>
 </div>
+</div>
 <script type="text/javascript">
 $(document).ready(function() {
     var searchable = [1,2,3];
-    // var selectable = [2]; 
+    // var selectable = [2];
 
     $('#dataTables').DataTable({
         order: [], //reset auto order
@@ -88,10 +97,10 @@ $(document).ready(function() {
         serverSide: true,
         pagingType: "full_numbers",
         ajax: '{!! url("merch/proforma_invoice/getPIListData") !!}',
-        dom: "<'row'<'col-sm-2'l><'col-sm-4'i><'col-sm-3 text-center'B><'col-sm-3'f>>tp", 
+        dom: "lBftrip",
         buttons: [
             {
-                extend: 'copy', 
+                extend: 'copy',
                 className: 'btn-sm btn-info',
                 title: 'Reservation List',
                 exportOptions: {
@@ -100,9 +109,9 @@ $(document).ready(function() {
                 },
                 footer:true,
                 header:false
-            }, 
+            },
             {
-                extend: 'csv', 
+                extend: 'csv',
                 className: 'btn-sm btn-success',
                 title: 'Reservation List',
                 exportOptions: {
@@ -111,9 +120,9 @@ $(document).ready(function() {
                 },
                 footer: true,
                 header:false
-            }, 
+            },
             {
-                extend: 'excel', 
+                extend: 'excel',
                 className: 'btn-sm btn-warning',
                 title: 'Reservation List',
                 exportOptions: {
@@ -122,10 +131,10 @@ $(document).ready(function() {
                 },
                 footer: true,
                 header:false
-            }, 
+            },
             {
-                extend: 'pdf', 
-                className: 'btn-sm btn-primary', 
+                extend: 'pdf',
+                className: 'btn-sm btn-primary',
                 title: 'Reservation List',
                 exportOptions: {
                     // columns: ':visible'
@@ -133,9 +142,9 @@ $(document).ready(function() {
                 },
                 footer: true,
                 header:false
-            }, 
+            },
             {
-                extend: 'print', 
+                extend: 'print',
                 className: 'btn-sm btn-default',
                 title: 'Reservation List',
                 exportOptions: {
@@ -143,8 +152,8 @@ $(document).ready(function() {
                     columns: [0,1,2,3,4,5,6,7,8,9],
                     stripHtml: false
                 },
-                footer: false 
-            } 
+                footer: false
+            }
         ],
         columns: [
             { data: 'DT_RowIndex', name: 'DT_RowIndex' },
