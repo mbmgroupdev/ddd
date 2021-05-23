@@ -65,7 +65,7 @@ class BuyerSalaryController extends Controller
         try {
             ini_set('zlib.output_compression', 1);
             // ignore line
-            $ignore = 1;
+            /*$ignore = 1;
 
             if($input['unit'] != null && $input['department'] == ''  && $input['section'] == ''){
                 $ignore = 0;
@@ -73,7 +73,7 @@ class BuyerSalaryController extends Controller
 
             if(isset($input['line'])){
                 if($input['line'] == 324) $ignore = 0;
-            }
+            }*/
             $info = [];
             if(isset($input['area'])){
                 $info['area'] = Area::where('hr_area_id',$input['area'])->first()->hr_area_name_bn??'';
@@ -154,12 +154,12 @@ class BuyerSalaryController extends Controller
             ->when(!empty($input['subSection']), function ($query) use($input){
                return $query->where('s.subsection_id', $input['subSection']);
             });
-            if($ignore == 1){
+           /* if($ignore == 1){
                 $queryData->where( function ($q) use ($ignore){
                     return  $q->where('emp.as_line_id','!=', 324)
                         ->orWhereNull('emp.as_line_id');
                 });
-            }
+            }*/
             if(isset($input['otnonot']) && $input['otnonot'] != null){
                 $queryData->where('s.ot_status',$input['otnonot']);
             }
@@ -199,7 +199,7 @@ class BuyerSalaryController extends Controller
                 
             $queryData->select('s.*','emp.associate_id', 'emp.as_doj', 's.unit_id AS as_unit_id','s.location_id AS as_location', 's.designation_id AS as_designation_id', 's.ot_status AS as_ot', 'emp.as_section_id', 's.location_id', 'bemp.hr_bn_associate_name', 'emp.as_oracle_code',DB::raw('s.ot_hour * s.ot_rate as ot_amount'), 'subsec.hr_subsec_area_id AS as_area_id', 'subsec.hr_subsec_department_id AS as_department_id', 'subsec.hr_subsec_section_id AS as_section_id');
             $getSalaryList = $queryData->orderBy('emp.as_oracle_sl', 'asc')->get();
-            // dd($getSalaryList);
+            
             $totalSalary = round($getSalaryList->sum("total_payable"));
             $totalCashSalary = round($getSalaryList->sum("cash_payable"));
             $totalBankSalary = round($getSalaryList->sum("bank_payable"));

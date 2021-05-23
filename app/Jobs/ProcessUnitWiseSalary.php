@@ -371,6 +371,7 @@ class ProcessUnitWiseSalary implements ShouldQueue
 
                     $leaveAdjust = 0.00;
                     $incrementAdjust = 0;
+                    $salaryAdd = 0;
                     if($salaryAdjust != null){
                         $adj = DB::table('hr_salary_adjust_details')
                             ->where('salary_adjust_master_id', $salaryAdjust->id)

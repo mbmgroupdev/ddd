@@ -34,11 +34,11 @@ class SummaryReportController extends Controller
             'working_hour' => 'Working Hour',
             'leave' => 'Leave',
         ];
-        $reportType['ot_levis'] = 'OT (Levis format)';
-        
-        if(auth()->user()->can('End of Job Benefits')){
-           $reportType['left_resign'] = 'Left & Resign';
+        if(auth()->user()->can('OT Report')){
+            $reportType['ot_levis'] = 'OT (Levis format)';
         }
+        $reportType['left_resign'] = 'Left & Resign';
+        
 
         if(auth()->user()->can('Manage Employee')){
            $reportType['recruitment'] = 'Recruitment';
