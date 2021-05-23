@@ -1,5 +1,5 @@
 
-@extends('merch.layout')
+@extends('layouts.master')
 
 @section('title', 'MERCHANDISING')
 
