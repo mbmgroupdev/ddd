@@ -712,7 +712,7 @@ class EmployeeHelper
         $totalLate = $late;
         $salary_date = $present + $getHoliday + $leaveCount;
 
-        $stamp = 10;
+        
         
         $salary = [
             'as_id' => $employee->associate_id,
@@ -736,7 +736,7 @@ class EmployeeHelper
             'attendance_bonus' => $attBonus,
             'production_bonus' => $productionBonus,
             'emp_status' => $status,
-            'stamp' => $stamp,
+            'stamp' => 0,
             'pay_status' => 1,
             'bank_payable' => 0,
             'tds' => 0,
@@ -744,23 +744,36 @@ class EmployeeHelper
             
         ];
 
+        // leave adjust calculate
         $salaryAdjust = SalaryAdjustMaster::getCheckEmployeeIdMonthYearWise($employee->associate_id, $month, $year);
+
         $leaveAdjust = 0.00;
+        $incrementAdjust = 0;
+        $salaryAdd = 0;
         if($salaryAdjust != null){
-            if(isset($salaryAdjust->salary_adjust)){
-                foreach ($salaryAdjust->salary_adjust as $leaveAd) {
-                    $leaveAdjust += $leaveAd->amount;
-                }
-            }
+            $adj = DB::table('hr_salary_adjust_details')
+                ->where('salary_adjust_master_id', $salaryAdjust->id)
+                ->get();
+
+            $leaveAdjust = collect($adj)->where('type',1)->sum('amount');
+            $incrementAdjust = collect($adj)->where('type',3)->sum('amount');
+            $salaryAdd = collect($adj)->where('type',2)->sum('amount');
+            
         }
 
-        $leaveAdjust = round($leaveAdjust, 2);
+        $leaveAdjust = ceil((float) $leaveAdjust);
+        $incrementAdjust = ceil((float) $incrementAdjust);
         
         // get salary payable calculation
-        $salaryPayable = round((($perDayGross*$total_day) - ($getAbsentDeduct + $deductCost + $stamp)), 2);
+        $salaryPayable = round((($perDayGross*$total_day) - ($getAbsentDeduct + $deductCost)), 2);
         $ot = ($overtime_rate*$overtimes);
 
-        $totalPayable = ceil((float)($salaryPayable + $ot + $deductSalaryAdd  + $productionBonus + $leaveAdjust));
+        $totalPayable = ceil((float)($salaryPayable + $ot + $deductSalaryAdd  + $productionBonus + $leaveAdjust + $salaryAdd + $incrementAdjust));
+
+        if($totalPayable > 1000){
+        	$salary['stamp'] = 10;
+        	$totalPayable = $totalPayable - 10;
+        }
         
         $salary['total_payable'] = $totalPayable;
         $salary['cash_payable'] = $totalPayable;
