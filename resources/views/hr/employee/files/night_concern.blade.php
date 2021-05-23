@@ -11,13 +11,21 @@
 				    font-size: 12px !important;
 				    display: inline-block;
 				}
+
+				.page-break{
+                    page-break-after: always;
+                }
+                .page-break p{
+                    
+                    line-height: 16px;
+                }
 			
 		</style>
 		<style type="text/css" media="print">
 			.bn-form-output{padding:54pt 36pt }
 		</style>
 		@foreach($employees as $key => $emp)
-		<div id="jc-{{$emp->associate_id}}" class="bn-form-output" >
+		<div id="jc-{{$emp->associate_id}}" class="bn-form-output page-break" >
 			<h2 class="text-center">ফরম-৩৫</h2>
 			<h2 class="text-center">[ধারা ১০৯ এবং বিধি ১০৩ (১) দ্রষ্টব্য]</h2>
 			<p class="text-center">মহিলাদের রাত্রিকালীন কাজ করিবার সম্মতি পত্র।</p>
@@ -70,7 +78,7 @@
 			<br>
 			<p>তারিখঃ........................... </p>
 		</div>
-		<div class="page-break"></div>
+		 
 		@endforeach
 	</div>
 </div>                                                                                                            

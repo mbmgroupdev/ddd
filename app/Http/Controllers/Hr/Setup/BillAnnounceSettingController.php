@@ -49,25 +49,30 @@ class BillAnnounceSettingController extends Controller
             return $data;
         }
         $input = $request->all();
-        // return $input;
+
         DB::beginTransaction();
         try {
+            $specialData = [];
             $totalUnit = count($input['unit']);
             for ($i=0; $i < $totalUnit; $i++) { 
                 // updated another bill end date
-                $unitId = $input['unit'][$i];
-                $getBill = BillSettings::
-                where('unit_id', $unitId)
-                ->where('bill_type_id', $input['bill_type_id'])
-                ->whereNull('end_date')
-                ->update([
-                    'end_date' => date('Y-m-d'),
-                    'status' => 0,
-                    'updated_by' => auth()->user()->id
-                ]);
-                // create bill
+                $input['unit_id'] = $input['unit'][$i];
+                $lastCode = BillSettings::checkUnitTypeWiseExistsCode($input);
+                $unitTypeMix = $input['unit_id'].$input['bill_type_id'];
+                if($lastCode != null){
+                    $billCode = explode($unitTypeMix, $lastCode);
+                    $adjustNo = ((int)$billCode[1]+1)??1;
+                }else{
+                    $adjustNo = 1;
+                }
+                $code = $this->getCheckUniqueCode($unitTypeMix, $adjustNo);
+                // update previous bill 
+                BillSettings::updatePreviousBillUnitWiseStatus($input);
+                
+                // create bill setup
                 $bill = [
-                    'unit_id' => $unitId,
+                    'unit_id' => $input['unit_id'],
+                    'code' => $code,
                     'bill_type_id' => $input['bill_type_id'],
                     'amount' => $input['amount'],
                     'start_date' => $input['start_date'],
@@ -77,7 +82,7 @@ class BillAnnounceSettingController extends Controller
                     'as_ot'       => $input['as_ot'],
                     'created_by'  => auth()->user()->id
                 ];
-                $specialData = [];
+                
                 $special['bill_setup_id'] = BillSettings::create($bill)->id;
                 foreach ($input['special_rule'] as $key => $value) {
                     $special['adv_type'] = $key;
@@ -98,9 +103,10 @@ class BillAnnounceSettingController extends Controller
                         $specialData[] = $special;
                     }
                 }
-                if(count($specialData) > 0){
-                    BillSpecialSettings::insert($specialData);
-                }
+            }
+
+            if(count($specialData) > 0){
+                BillSpecialSettings::insert($specialData);
             }
             
             $data['url'] = url()->current();
@@ -112,6 +118,17 @@ class BillAnnounceSettingController extends Controller
             DB::rollback();
             $data['message'][] = $e->getMessage();
             return $data;
+        }
+    }
+    public function getCheckUniqueCode($value, $no)
+    {
+        $code = $value.$no;
+        $checkCode = BillSettings::checkExistsCode($code);
+        if(empty($checkCode)){
+            return $code;
+        }else{
+            $no = ($no+1);
+            return $this->getCheckUniqueCode($value, $no);
         }
     }
 

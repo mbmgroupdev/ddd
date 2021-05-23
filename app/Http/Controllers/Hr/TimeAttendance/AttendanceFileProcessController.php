@@ -17,22 +17,27 @@ use App\Models\Hr\AttendanceUndeclared;
 use App\Models\Hr\Bills;
 use App\Models\Hr\HolidayRoaster;
 use App\Models\Hr\YearlyHolyDay;
+use App\Repository\Hr\AttendanceProcessRepository;
+use App\Repository\Hr\EmployeeRepository;
 use Carbon\Carbon;
 use DB, Validator, Input, FastExcel, File;
 use Illuminate\Http\Request;
 
 class AttendanceFileProcessController extends Controller
 {
+
     public function importFile(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'unit' => 'required|min:1|max:11',
             'file' => 'required',
-            'device' => 'required_if:unit,==,3'
+            'device' => 'required_if:unit,==,3',
+            'device' => 'required_if:unit,==,1'
         ]);
         $input = $request->all();
         if ($validator->fails())
         {
+            toastr()->error('Unit/Device etc required');
             return back()
             ->withErrors($validator)
             ->withInput();
@@ -79,11 +84,35 @@ class AttendanceFileProcessController extends Controller
                 $rfid="";
                 $checktime = null;
                 if(($unit==1 || $unit==4 || $unit==5 || $unit==9) && !empty($lineData) && (strlen($lineData)>1)){
-                    $sl = substr($lineData, 0, 2);
-                    $date   = substr($lineData, 3, 8);
-                    $time   = substr($lineData, 12, 6);
-                    $rfid = substr($lineData, 19, 10);
+                    if($input['device'] == 2){
+                        $dataExplode = explode('",,"', $lineData);
+                        if(count($dataExplode) == 0){
+                            $msg[] = " Punch Problem!";
+                            continue;
+                        }
+                        $removeExtra = $dataExplode[0];
+                        $anRemoveExtra = explode(',,,', $removeExtra);
+                        if(count($anRemoveExtra) == 0){
+                            $msg[] = " Punch Problem!";
+                            continue;
+                        }
+                        $reData = str_replace('"', "", $anRemoveExtra[1]);
+                        $sparateData = explode(',', $reData);
+                        if(count($anRemoveExtra) < 2){
+                            $msg[] = " Punch Problem!";
+                            continue;
+                        }
+                        $date   = $sparateData[0];
+                        $time   = $sparateData[1];
+                        $rfid = $sparateData[2];
+                    }else{
+                        $sl = substr($lineData, 0, 2);
+                        $date   = substr($lineData, 3, 8);
+                        $time   = substr($lineData, 12, 6);
+                        $rfid = substr($lineData, 19, 10);
+                    }
                     $checktime = ((!empty($date) && !empty($time))?date("Y-m-d H:i:s", strtotime("$date $time")):null);
+                    
                 }
                 else if($unit==2 && !empty($lineData) && (strlen($lineData)>1)){
                     $sl = substr($lineData, 0, 2);
@@ -95,10 +124,16 @@ class AttendanceFileProcessController extends Controller
                 else if($unit==8  &&  !empty($lineData) && (strlen($lineData)>1)){
                     // if(strlen($lineData)>0){
                     $lineData = explode(" ", $lineData);
-                    $rfid = $lineData[0];
-                    $date = $lineData[1];
-                    $time = $lineData[2];
-                    $checktime = ((!empty($date) && !empty($time))?date("Y-m-d H:i:s", strtotime("$date $time")):null);
+                    if(isset($lineData[2])){
+                        $rfid = $lineData[0];
+                        $date = $lineData[1];
+                        $time = $lineData[2];
+                        $checktime = ((!empty($date) && !empty($time))?date("Y-m-d H:i:s", strtotime("$date $time")):null);
+                    }else{
+                        $msg[] = " Punch Problem!";
+                        continue;
+                    }
+                    
                 }
                 else if($unit==3  &&  !empty($lineData) && (strlen($lineData)>1)){
                     if($input['device'] == 1){
@@ -144,8 +179,7 @@ class AttendanceFileProcessController extends Controller
 
                 //get Employee Information from as_basic_info table according to the RFID
                 if(strlen($rfid)>0){
-                    
-
+            
                     // attendance history record
                     if($unit == 3 && $input['device'] == 2){
                         $as_info = Employee::where('as_id', $asId)
@@ -295,7 +329,6 @@ class AttendanceFileProcessController extends Controller
                         if($shift){
 
                             $att = $this->attendanceCrud($checktime, $shift,$tableName, $as_info, $checkHolidayFlag, $unit, $day_of_date, $month, $year, $unitId, $checkLeaveFlag);
-                            
                             if($fileDate == ''){
                                 $fileDate[] = $today;
                             }else{
@@ -319,16 +352,17 @@ class AttendanceFileProcessController extends Controller
                     //break;
                 }
             
-            $data['msg'] = $msg;
+                $data['msg'] = $msg;
 
-            
+                
             } catch (\Exception $e) {
                 //$data['status'] = 'error';
                 $data['msg'] = $value." - ".$e->getMessage();
+                
             }
         }
-
         return $data;
+        
     }
 
     public function attendanceCrud($checktime, $shift, $tableName, $as_info, $checkHolidayFlag, $unit, $day_of_date, $month, $year, $unitId, $checkLeaveFlag)
@@ -517,9 +551,7 @@ class AttendanceFileProcessController extends Controller
             }
             else{
 
-
-
-                // if friday night check att exist in morning
+                // if Friday night check att exist in morning
                 // check if shift has times
                 if($shift->ot_shift != null){
                     $ot_shift = DB::table('hr_shift')
@@ -670,7 +702,7 @@ class AttendanceFileProcessController extends Controller
 
 
                     }
-                    // elinate out timeif out of range
+                    // eliminate out time if out of range
                     if(($shift_end_begin_new >= $last_punch->out_time || $last_punch->out_time >= $shift_end_end_new ) && $last_punch->out_time != null){
 
                         if($last_punch->in_time != null){ 
@@ -687,10 +719,7 @@ class AttendanceFileProcessController extends Controller
                 }
 
                 if($shift_end_begin_new <= $check_time && $check_time <= $shift_end_end_new){
-
                     if(!empty($last_punch)){
-                    
-
                         $punchId = $last_punch->id;
                         // $checkOutTimeFlag = 0;
                         if($last_punch->out_time == null){
@@ -721,6 +750,39 @@ class AttendanceFileProcessController extends Controller
                         }
                         
                     }else{
+                        // check this day holiday or leave
+                        $today = date('Y-m-d', strtotime($check_time->copy()->subDays(1)->format('Y-m-d')));
+
+                        $checkLeaveFlag = 0;
+                        $getLeave = DB::table('hr_leave')
+                        ->where('leave_ass_id', $as_info->associate_id)
+                        ->where('leave_from', '<=', $today)
+                        ->where('leave_to', '>=', $today)
+                        ->where('leave_status',1)
+                        ->first();
+                        
+                        if($getLeave != null){
+                            $checkLeaveFlag = 1;
+                        }
+                        $checkHolidayFlag = 0;
+                        // check holiday individual
+                        $getHoliday = HolidayRoaster::getHolidayYearMonthAsIdDateWise($year, $month, $as_info->associate_id, $today);
+                         //dd($getHoliday);exit;
+                        if($getHoliday != null && $getHoliday->remarks == 'Holiday'){
+                            $checkHolidayFlag = 1;
+                            // $msg[] = $value." - ".$today." Holiday for roster this employee";
+                            // continue;
+                        }else if($getHoliday == null){
+                            if($as_info->shift_roaster_status == 0){
+                                $getYearlyHoliday = YearlyHolyDay::getCheckUnitDayWiseHoliday($as_info->as_unit_id, $today);
+                                 //dd($getYearlyHoliday);exit;
+                                if($getYearlyHoliday != null && $getYearlyHoliday->hr_yhp_open_status == 0){
+                                    $checkHolidayFlag = 1;
+                                    // $msg[] = $value." - ".$today." Holiday for this employee";
+                                    // continue;
+                                }
+                            }
+                        }
                         if(!empty($shift_code_new) && $checkHolidayFlag == 0 && $checkLeaveFlag == 0){
                             $defaultInTime = date("Y-m-d H:i:s", strtotime($shift_start));
                             $punchId = DB::table($tableName)

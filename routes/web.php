@@ -22,6 +22,7 @@ Route::group(['middleware' => 'guest'], function(){
 
 Auth::routes();
 
+/*Route::get('riadtest', 'riadTestController@index');*/
 
 // need to modify this routes
 Route::get('hr/payroll/promotion-jobs', 'Hr\Recruitment\BenefitController@promotionJobs');
@@ -38,7 +39,7 @@ Route::group(['middleware' => 'auth'], function(){
 	Route::get('hr/leave/leave_status_update_jobs', 'Hr\TimeAttendance\LeaveWorkerController@LeaveStatusCheckAndUpdate');
 	Route::get('/search-employee-result', 'SearchController@searchEmp');
 	Route::get('dashboard', 'DashboardController@index');
-	
+
 	//---------USER MANAGEMENT-----------//
 
 	/*Route::get('users_management/users', 'Users_Management\UsersController@index')->middleware(['permission:View User']);
@@ -47,7 +48,7 @@ Route::group(['middleware' => 'auth'], function(){
 	Route::get('users_management/user/create', 'Users_Management\UsersController@create')->middleware(['permission:Add User']);
 	Route::post('users_management/user/create', 'Users_Management\UsersController@store')->middleware(['permission:Add User']);
 	Route::get('users_management/user/edit/{id}', 'Users_Management\UsersController@edit')->middleware(['permission:Manage User']);
-	Route::post('users_management/user/edit/{id}', 'Users_Management\UsersController@update')->middleware(['permission:Manage User']); 
+	Route::post('users_management/user/edit/{id}', 'Users_Management\UsersController@update')->middleware(['permission:Manage User']);
 	Route::get('users_management/user/delete/{id}', 'Users_Management\UsersController@destroy')->middleware(['permission:Manage User']);
 	Route::get('users_management/user/permission-assign', 'Users_Management\UsersController@permissionAssign')->middleware(['permission:Assign Permission']);
 	Route::post('users_management/user/password/{id}', 'Users_Management\UsersController@userPassword')->middleware(['permission:Manage User']);
@@ -73,7 +74,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('users_management/top_management_update','Users_Management\TopManagementController@updateTopManagement');
     Route::get('users_management/top_management_delete/{id}','Users_Management\TopManagementController@deleteTopManagement');
 	*/
-	
+
     //user dashboard
 	// Route::get('/', 'UserDashboardController@index');
 	Route::get('user-dashboard/conversations', 'UserDashboardController@conversations');
@@ -81,7 +82,7 @@ Route::group(['middleware' => 'auth'], function(){
 	Route::get('user-dashboard/delete-message', 'UserDashboardController@deleteMessage');
 
 
-	
+
 
   //user dashboard
 	Route::get('dashboard', 'UserDashboardController@index')->name('user-dashboard');
@@ -117,7 +118,5 @@ Route::group(['middleware' => 'auth'], function(){
 });
 
 Route::get('test-check', 'TestXYZController@rfidUpdate');
-
-
 
 

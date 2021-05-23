@@ -57,7 +57,7 @@ class EmployeeHelper
 			    $dayname = Carbon::parse($intimePunch)->format('l');
 			    $employee = Employee::where('associate_id', $eAsId)->first();
 
-			    if(strtotime($today) < strtotime('2021-04-13')){
+			    if(strtotime($today) < strtotime('2021-04-13') || strtotime($today) > strtotime('2021-05-13')){
     			    if(date('H:i:s', strtotime($shiftIntime)) < date('H:i:s', strtotime('14:00:00'))  && $dayname == 'Friday' && in_array($eUnit, [1,4,5])){
     			    	$shiftBreak = 90;
     			    	/*224 = security, 350/428 = cook*/
@@ -77,7 +77,7 @@ class EmployeeHelper
 
 			    $checkBillHour = (strtotime($outtimePunch) - strtotime($shiftIntime))/3600;
 			    $breakCount = 0;
-			    if($checkBillHour > 6){
+			    if($checkBillHour > 7){
 			    	$breakCount = 1;
 			    }
 
@@ -98,7 +98,7 @@ class EmployeeHelper
 
 			    $shiftBreak = $shiftBreak + $extraBreakMin;
 
-			    if(strtotime($today) > strtotime('2021-04-13') && $shiftNight == 0 && $employee->as_subsection_id != 108){
+			    if((strtotime($today) > strtotime('2021-04-13') && strtotime($today) < strtotime('2021-05-13')) && $employee->as_subsection_id != 108 && ($shiftNight == 0 || strtotime($shiftIntime) < strtotime(date('Y-m-d H:i', strtotime($today.' 17:30:00'))))){
 			    	$extraMin = 0;
 			    	$breakStartTime = strtotime(date('Y-m-d H:i', strtotime($today.' 18:00:00')));
 			    	$breakEndTime = strtotime(date('Y-m-d H:i', strtotime($today.' 19:00:00')));
@@ -1336,7 +1336,7 @@ class EmployeeHelper
 
 	            $otHour = 0;
 	            if($getAtt != null){
-	            	$getShift = Shift::where('hr_shift_code', $getAtt->hr_shift_code)->first();
+	            	$getShift = Shift::where('hr_shift_code', $getAtt->hr_shift_code)->where('hr_shift_unit_id', $as_info->as_unit_id)->first();
 	            	
 	            	if($getShift != null){
 	            		if($as_info->as_ot == 1 && $getAtt->out_time != null && $getAtt->in_time != null){

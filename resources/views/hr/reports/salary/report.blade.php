@@ -1,14 +1,12 @@
 <div class="panel">
-	<div class="panel-body">
+	<div class="panel-body pt-0">
 		
 		@php
 			$urldata = http_build_query($input) . "\n";
 		@endphp
-		@if(auth()->user()->hasRole('Buyer Mode'))
-		<a href='{{ url("hrm/reports/monthly-salary-excel?$urldata")}}' target="_blank" class="btn btn-sm btn-info hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download" style="position: absolute; top: 16px; left: 65px;"><i class="fa fa-file-excel-o"></i></a>
-		@else
-		<a href='{{ url("hr/reports/monthly-salary-excel?$urldata")}}' target="_blank" class="btn btn-sm btn-info hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download" style="position: absolute; top: 16px; left: 65px;"><i class="fa fa-file-excel-o"></i></a>
-		@endif
+		
+		<a href='#' target="_blank" class="btn btn-sm btn-info hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download" style="position: absolute; top: 19px; left: 65px;"><i class="fa fa-file-excel-o"></i></a>
+
 		
 		<div id="report_section" class="report_section">
 			<style type="text/css" media="print">
@@ -504,7 +502,10 @@
             data: {
                 body: body
             },
-            type: "GET",
+            type: "POST",
+            headers: {
+	          'X-CSRF-TOKEN': '{{ csrf_token() }}',
+	        },
             success: function(response){
             	// console.log(response);
                 if(response !== 'error'){

@@ -4,16 +4,16 @@ Route::group(['prefix' => 'hr','namespace' => 'Hr'], function(){
 	Route::get('/', 'DashboardController@index');
 
 
-	// Administrator 
+	// Administrator
 	Route::group(['prefix' => 'adminstrator','namespace' => 'Adminstrator'], function(){
 		Route::get('users', 'UserController@index');
 		Route::post('user/list', 'UserController@getUserList');
 		Route::get('user/create', 'UserController@create');
-		
+
 		Route::get('get_emp_as_pic', 'UserController@getEmpAsPic');
 		Route::post('user/store', 'UserController@store');
 		Route::get('user/edit/{id}', 'UserController@edit');
-		Route::post('user/update/{id}', 'UserController@update'); 
+		Route::post('user/update/{id}', 'UserController@update');
 		Route::get('user/delete/{id}', 'UserController@destroy');
 		Route::get('user/permission-assign', 'UserController@permissionAssign');
 		Route::get('user/get-permission', 'UserController@getPermission');
@@ -28,12 +28,12 @@ Route::group(['prefix' => 'hr','namespace' => 'Hr'], function(){
 		Route::get('role/create', 'RolesController@create');
 		Route::post('role/store', 'RolesController@store');
 		Route::get('role/edit/{id}', 'RolesController@edit');
-		Route::post('role/edit/{id}', 'RolesController@update'); 
+		Route::post('role/edit/{id}', 'RolesController@update');
 		Route::get('role/delete/{id}', 'RolesController@destroy');
 		Route::get('role/sync-permission', 'RolesController@syncPermission');
 	});
 
-	// settings 
+	// settings
 	Route::group(['prefix' => 'settings','namespace' => 'Settings'], function(){
 		# unit settings
 		Route::get('unit','UnitController@index');
@@ -136,7 +136,7 @@ Route::group(['prefix' => 'hr/search/','namespace' => 'Hr\Search', 'middleware' 
 
 	Route::get('hr_att_emp_count', 'AttendaceSearchController@hrAttEmpCount');
 	Route::get('testf', 'AttendaceSearchController@testf');
-	
+
 	Route::get('hr_salary_search', 'SalarySearchController@hrSalarySearch');
 	Route::get('hr_salary_search_unit', 'SalarySearchController@hrSalarySearchUnit');
 	Route::get('hr_salary_search_area', 'SalarySearchController@hrSalarySearchArea');
@@ -153,7 +153,7 @@ Route::group(['prefix' => 'hr/search/','namespace' => 'Hr\Search', 'middleware' 
 
 	//Print
 	Route::post('hr_salary_search_print_page','SalarySearchController@hrSalarySearchPrintPage');
-	
+
 	Route::get('hr_ot_search', 'OTSearchController@hrOTSearch');
 	Route::get('hr_ot_search_otshift', 'OTSearchController@hrOTSearchShift');
 	Route::get('hr_ot_search_othour', 'OTSearchController@hrOTSearchHour');
@@ -172,7 +172,7 @@ Route::group(['prefix' => 'hr/search/','namespace' => 'Hr\Search', 'middleware' 
 	Route::post('hr_ot_search_print_page','OTSearchController@hrOtSearchPrintPage');
 
 	// Line Change Query
-	
+
 	Route::get('hr_line_search', 'LineSearchController@hrLineSearch');
 	Route::get('hr_line_search_unit', 'LineSearchController@hrLineSearchUnit');
 	Route::get('hr_line_search_floor', 'LineSearchController@hrLineSearchFloor');
@@ -268,6 +268,7 @@ Route::post('hr/operation/undeclared-employee-operation', 'Hr\Operation\HolidayR
 
 //attendance new process
 Route::post('/hr/timeattendance/attendance_manual/import', 'Hr\TimeAttendance\AttendanceFileProcessController@importFile');
+// Route::post('/hr/timeattendance/attendance_process_wise_data', 'Hr\TimeAttendance\AttendanceFileProcessController@attendanceProcess');
 Route::post('/hr/timeattendance/attendance_process_wise_data', 'Hr\TimeAttendance\AttendanceFileProcessController@attFileProcess');
 //attendance absent
 Route::get('hr/timeattendance/unit-wise-absent', 'Hr\TimeAttendance\AttendanceFileProcessController@unitAbsent');
@@ -294,8 +295,16 @@ Route::get('hr/timeattendance/calculate_ot', 'Hr\TimeAttendance\AttendaceManualC
 
 // activity lock/unlock check
 Route::get('hr/operation/unit-wise-activity-lock', 'Hr\Operation\AttendanceOperationController@activityLock');
+
+//Attendance Form
+Route::get('hr/operation/attendance-form', 'Hr\Operation\AttendanceFormController@index')->middleware(['permission:Attendance Operation']);
+Route::post('hr/operation/attendance-form/report', 'Hr\Operation\AttendanceFormController@report')->middleware(['permission:Attendance Operation']);
+
+
 //Attendance Report
 Route::get('hr/operation/attendance-operation', 'Hr\TimeAttendance\AttendanceController@attendanceReport')->middleware(['permission:Attendance Operation']);
+
+
 // Route::get('hr/timeattendance/attendance_report_data', 'Hr\TimeAttendance\AttendanceController@attendanceReportData')->middleware(['permission:Attendance Operation']);
 Route::get('hr/timeattendance/attendance_report_data', 'Hr\Operation\AttendanceOperationController@attendanceReportData')->middleware(['permission:Attendance Operation']);
 Route::get('hr/timeattendance/attendance_summary', 'Hr\TimeAttendance\AttendanceController@attendanceSummary');
@@ -462,9 +471,9 @@ Route::get('hr/payroll/bonus-sheet-process', 'Hr\Operation\BonusController@appro
 Route::get('hr/operation/bonus-sheet-process-for-approval', 'Hr\Operation\BonusController@approvalSheet');
 // bonus audit
 Route::post('hr/operation/bonus-audit', 'Hr\Reports\BonusSheetController@audit');
-// bonus reports 
+// bonus reports
 Route::get('hr/reports/bonus', 'Hr\Reports\BonusSheetController@index');
-Route::get('hr/reports/bonus-report', 'Hr\Reports\BonusSheetController@report');
+Route::post('hr/reports/bonus-report', 'Hr\Reports\BonusSheetController@report');
 
 
 Route::get('hr/search-type', 'Hr\Search\SearchController@type');
@@ -473,7 +482,7 @@ Route::get('hr/search-type', 'Hr\Search\SearchController@type');
 
 //---------Hr/ Payroll-----------//
 Route::get('hr/payroll/bank-sheet', 'Hr\Payroll\BankSheetController@index');
-Route::get('hr/reports/monthly-salary-bank-report', 'Hr\Payroll\BankSheetController@report');
+Route::post('hr/reports/monthly-salary-bank-report', 'Hr\Payroll\SalaryReportController@bankSheetReport');
 Route::get('hr/payroll/ot', 'Hr\Payroll\OtController@OT');
 Route::post('hr/payroll/ot', 'Hr\Payroll\OtController@OtStore');
 Route::get('hr/payroll/ot_list', 'Hr\Payroll\OtController@otList');
@@ -646,7 +655,7 @@ Route::group(['middleware' => 'permission:Manage Employee|Medical Entry|Advance 
 	Route::post('hr/recruitment/operation/education_info','Hr\Recruitment\AdvanceInfoController@educationInfoStore');
 	Route::post('hr/recruitment/operation/education_info/update','Hr\Recruitment\AdvanceInfoController@educationInfoUpdate');
 	Route::get('hr/recruitment/operation/education_info/delete/{id}/{associate}','Hr\Recruitment\AdvanceInfoController@educationDelete');
-	
+
 	Route::post('hr/recruitment/employee/add_employee_bn', 'Hr\Recruitment\AdvanceInfoController@saveBengali');
 	Route::get('hr/recruitment/operation/advance_info_list','Hr\Recruitment\AdvanceInfoController@advanceInfoList');
 	Route::post('hr/recruitment/operation/advance_info_list_data','Hr\Recruitment\AdvanceInfoController@advanceInfoListData');
@@ -713,7 +722,7 @@ Route::group(['middleware' => 'permission:Disciplinary Record'], function(){
 	Route::post('hr/performance/operation/disciplinary_form', 'Hr\Performance\DisciplinaryRecordController@saveData');
 	Route::get('hr/performance/operation/disciplinary_edit/{record_id}', 'Hr\Performance\DisciplinaryRecordController@editForm');
 	Route::post('hr/performance/operation/disciplinary_edit', 'Hr\Performance\DisciplinaryRecordController@updateData');
-}); 
+});
 
 Route::get('hr/performance/appraisal_list', 'Hr\Performance\AppraisalListController@appraisalList')->middleware(['permission:Performance List']);
 Route::post('hr/performance/appraisal_list_data', 'Hr\Performance\AppraisalListController@appraisalListData')->middleware(['permission:Performance List']);
@@ -805,7 +814,7 @@ Route::post('hr/setup/shift_roaster_employee_update_processing','Hr\Setup\ShiftC
 //designation
 Route::group(['middleware' => 'permission:Designation Setup'], function(){
 	Route::get('hr/search-designation','Hr\Setup\DesignationController@searchDesignation');
-	
+
 	Route::get('hr/setup/designation','Hr\Setup\DesignationController@designation');
 	Route::get('hr/setup/getDesignationListByEmployeeTypeID','Hr\Setup\DesignationController@getDesignationListByEmployeeTypeID');
 	Route::post('hr/setup/designation','Hr\Setup\DesignationController@designationStore');
@@ -914,7 +923,7 @@ Route::get('hr/training/training_data', 'Hr\Training\TrainingController@getData'
 Route::get('/hr/training/training_status/{id}/{status}', 'Hr\Training\TrainingController@trainingStatus');
 Route::get('hr/training/add_training', 'Hr\Training\TrainingController@showForm')->middleware(['permission:Add Training']);
 Route::post('hr/training/add_training', 'Hr\Training\TrainingController@saveTraining')->middleware(['permission:Add Training']);
-	
+
 // Assign Training
 Route::get('hr/training/assign_list', 'Hr\Training\TrainingAssignController@assignList')->middleware(['permission:Assigned Employee List']);
 Route::post('hr/training/assign_data', 'Hr\Training\TrainingAssignController@getData')->middleware(['permission:Assigned Employee List']);
@@ -1081,7 +1090,6 @@ Route::get('hr/reports/employee_report', 'Hr\Reports\EmployeeReportController@re
 Route::get('hr/buyermode/job_card', 'Hr\BuyerMode\BmodeJobCardController@jobCard');
 Route::get('hr/buyermode/generate_att_salary', 'Hr\BuyerMode\BmodeJobCardController@generateBuyerModeAttSalary');
 
-#----------  Reports By Mati-----------#
 //Salary/Wages Increment Status
 Route::get('hr/recruitment/increment_report', 'Hr\Reports\IncrementReportController@incrementReport');
 
@@ -1100,7 +1108,7 @@ Route::get('hr/reports/salary_sheet_unit_wise_day', 'Hr\Reports\SalarySheetContr
 Route::post('hr/reports/save_salary_sheet_unit_wise_data', 'Hr\Reports\SalarySheetController@saveSalarySheetUnitData');*/
 // salary
 Route::get('hr/reports/salary', 'Hr\Reports\SalaryReportController@index');
-Route::get('hr/reports/salary-report', 'Hr\Reports\SalaryReportController@report');
+Route::post('hr/reports/salary-report', 'Hr\Reports\SalaryReportController@report');
 
 // salary data-table
 Route::get('hr/reports/monthly-attendance-activity-data', 'Hr\Reports\SalaryReportController@salaryDataTable');
@@ -1147,10 +1155,10 @@ Route::get('hr/reports/monthly-attendance-activity', 'Hr\Reports\MonthlyActivity
 Route::get('hr/reports/monthly-reports', 'Hr\Reports\MonthlyReportController@index');
 Route::get('hr/reports/monthly-maternity-report', 'Hr\Reports\MonthlyReportController@maternity');
 
-// daily activity audit 
+// daily activity audit
 Route::get('hr/daily-activity-audit', 'Hr\Reports\DailyActivityReportController@attendanceAudit');
 
-// monthly salary audit 
+// monthly salary audit
 Route::get('hr/monthly-salary-audit', 'Hr\Reports\MonthlyActivityReportController@salaryAudit');
 Route::post('hr/operation/salary-audit', 'Hr\Operation\SalaryProcessController@salaryAuditStatus');
 Route::post('hr/operation/salary-individual-audit', 'Hr\Operation\SalaryProcessController@individualAudit');
@@ -1257,7 +1265,7 @@ Route::get('hr/operation/salary-sheet', 'Hr\Reports\SalarySheetCustomController@
 
 //Multiple Salary Sheet ()
 Route::group(['prefix' => 'hr/reports','namespace' => 'Hr\Reports'], function(){
-	
+
 	Route::get('salary-sheet-custom-extra-ot', 'SalarySheetCustomController@salary_sheet_extra_ot');
 	Route::get('salary-sheet-custom-individual-search', 'SalarySheetCustomController@individualSearch');
 	Route::get('salary-sheet-custom-multi-search', 'SalarySheetCustomController@multiSearch');
@@ -1488,7 +1496,7 @@ Route::post('hr/employee/get-file', 'Hr\Employee\FileController@getFile');
 
 
 
-// Buyer Mode 
+// Buyer Mode
 Route::group(['prefix' => 'hr/buyer','namespace' => 'Hr\Buyer'], function(){
 	Route::get('/','BuyerModeController@index');
 	Route::post('/generate','BuyerModeController@generate');

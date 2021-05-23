@@ -430,7 +430,7 @@ class ProcessUnitWiseSalary implements ShouldQueue
                         'designation_id' => $getEmployee->as_designation_id,
                         'sub_section_id' => $getEmployee->as_subsection_id,
                         'location_id' => $getEmployee->as_location,
-                        'pay_type' => $getBenefit->bank_name,
+                        'pay_type' => ($payStatus != 1?$getBenefit->bank_name:''),
                         'gross' => $getBenefit->ben_current_salary,
                         'basic' => $getBenefit->ben_basic,
                         'house' => $getBenefit->ben_house_rent,
