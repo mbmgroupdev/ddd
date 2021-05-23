@@ -29,13 +29,20 @@ class OrderEntry extends Model
     {
         return $this->belongsTo('App\Models\Merch\Brand', 'mr_brand_br_id', 'br_id');
     }
+
     public  function unit()
     {
         return $this->belongsTo('App\Models\HR\Unit', 'unit_id', 'hr_unit_id');
     }
+
     public  function buyer()
     {
         return $this->belongsTo('App\Models\Merch\Buyer', 'mr_buyer_b_id', 'b_id');
+    }
+
+    public  function season()
+    {
+        return $this->belongsTo('App\Models\Merch\Season', 'mr_season_se_id', 'se_id');
     }
 
 
