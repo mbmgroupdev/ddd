@@ -54,7 +54,7 @@
 		    							'cr.res_quantity'
 		    						])
 		    						->groupBy('oe.res_id')
-	    							->join('mr_capacity_reservation AS cr', 'cr.res_id', 'oe.res_id')
+	    							->join('mr_capacity_reservation AS cr', 'cr.id', 'oe.res_id')
 	    							->where('cr.res_month', '>=', date('m', strtotime("month")))
 	    							->where('cr.res_month', '<=', date('m', strtotime("+2 month")))
 	    							// ->where(function($query) use(total_order){
@@ -297,7 +297,7 @@
 						</li>
 					</ul>
 				</li>
-         
+
 				<li class="light-blue dropdown-modal">
 					<a data-toggle="dropdown" href="#" class="dropdown-toggle">
 						<img class="nav-user-photo" src="{{ asset('assets/images/avatars/profile-pic.jpg') }}" alt="Profile Photo" />

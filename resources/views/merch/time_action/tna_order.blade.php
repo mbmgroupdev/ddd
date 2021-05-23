@@ -1,133 +1,174 @@
-@extends('merch.index')
-@section('content')
+@extends('merch.layout')
+@section('title', 'Order TNA')
+@section('main-content')
+    @push('css')
+        <style>
+            .ui-autocomplete {
+                position: absolute;
+                z-index: 2150000000 !important;
+                cursor: default;
+                border: 2px solid #ccc;
+                padding: 5px 0;
+                border-radius: 2px;
+            }
+            .close-button {
+                position: absolute;
+                z-index: 100;
+                right: 5px;
+                border: none;
+                padding: 4px 6px;
+                color: #fff;
+                font-size: 13px;
+                top: -10px;
+                background: rgb(8 155 171);
+                border-radius: 50%;
+                font-weight: 500;
+            }
+            .opr-item{
+                border: 1px solid #d1d1d1;
+                margin: 3px;
+            }
 
+
+            @media only screen and (max-width: 767px) {
+
+                .modal{margin-top: 45px;}
+                .checkbox label input[type=checkbox].ace+.lbl, .radio label input[type=radio].ace+.lbl{margin-left: 10px;}
+                input[type=checkbox].ace+.lbl, input[type=radio].ace+.lbl{ margin-left: 10px; }
+
+            }
+            @media only screen and (max-width: 480px) {
+
+                .modal{margin-top: 85px;}
+                .checkbox label input[type=checkbox].ace+.lbl, .radio label input[type=radio].ace+.lbl{margin-left: 10px;}
+                input[type=checkbox].ace+.lbl, input[type=radio].ace+.lbl{margin-left: 10px;}
+                .modalDiv .col-xs-8 {width: 100% !important; padding-top: 10px;}
+                .modalDiv .col-xs-4 {padding-left: 0px;}
+
+            }
+
+            .slide_upload {
+                width: auto;
+                height: 100px;
+                position: relative;
+                cursor: pointer;
+                background: #eee;
+                border: 1px solid rgb(8 155 171);
+                border-radius: 5px;
+                overflow: hidden;
+            }
+            .slide_upload img {
+                width: 100%;
+                padding: 2px;
+                object-fit: cover;
+            }
+            .slide_upload::before{content: "+";position: absolute;top: 50%;color: rgb(8 155 171);left: 50%;font-size: 52px;margin-left: -17px;margin-top: -37px;}
+
+        </style>
+    @endpush
 <div class="main-content">
-    <div class="main-content-inner">
-        <div class="breadcrumbs ace-save-state" id="breadcrumbs">
-            <ul class="breadcrumb">
-                <li>
-                    <i class="ace-icon fa fa-home home-icon"></i>
-                    <a href="#"> Merchandising </a>
-                </li> 
-                <li>
-                    <a href="#"> Time & Action </a>
-                </li>
-                  
-                <li class="active">Order TNA </li>
-            </ul><!-- /.breadcrumb --> 
-        </div>
+        <div class="main-content-inner">
+            <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+                <ul class="breadcrumb">
+                    <li>
+                        <i class="ace-icon fa fa-home home-icon"></i>
+                        <a href="#">Merchandising</a>
+                    </li>
+                    <li>
+                        <a href="#">Time & Action</a>
+                    </li>
+                    <li class="active">Order TNA</li>
+                </ul><!-- /.breadcrumb -->
+            </div>
 
-
-        <div class="page-content">
-              {{-- Entry Fields --}}
-              <div class="panel panel-success">
-                <div class="panel-heading">
-                  <h6>Time and Action Generate</h6>
-                </div>
+            @include('inc/message')
+            <div class="panel">
                 <div class="panel-body">
-                    <div class="row no-padding no-margin">
-                            <!-- Display Erro/Success Message -->
-                          @include('inc/message')
-                          <!-- -Form 1----------------------> 
+                    <div class="style_section">
+                    <div class="row">
+                        <div class="col-sm-5">
+                          <!-- -Form 1---------------------->
                           <form class="form-horizontal col-sm-12" role="form" method="post" action="{{ url('merch/time_action/tna_generate_store')}}" enctype="multipart/form-data">
-                            {{ csrf_field() }} 
+                            {{ csrf_field() }}
 
-                            <div class="col-sm-5">
-                                <h5 class="page-header">TNA Generate</h5>
+
+                                <input type="hidden" name="stl_order_type" id="inlineRadio1" value="Development" required="required" readonly>
+                                <span style="color: green">* TNA Generate</span>
                                 <!-- PAGE CONTENT BEGINS -->
-                                <div class="form-horizontal">
+                                <div class="form-horizontal" style="margin-top: 10px">
 
                                   <div class="form-group">
-                                      <label class="col-sm-4 control-label no-padding-right" for="mbm_order" >MBM Order<span style="color: red">&#42;</span> </label>
+                                        <div class="form-group has-float-label select-search-group has-required">
 
-                                        <div class="col-sm-8">
-                                          
-                                          {{ Form::select('mbm_order', $order_en, null, ['placeholder'=>'Select ','id'=>'order_id','class'=> 'col-xs-12', 'data-validation' => 'required']) }}
-                                       </div>
+                                          {{ Form::select('mbm_order', $order_en, null, ['placeholder'=>'Select ','id'=>'order_id','class'=> 'col-xs-12 form-control', 'data-validation' => 'required']) }}
+                                            <label for="mbm_order" >MBM Order </label>
+                                        </div>
                                   </div>
-                                  <div class="form-group">
-                                      <label class="col-sm-4 control-label no-padding-right" for="confirm_date" >Confirm Date <span style="color: red">&#42;</span> </label>
-
-                                        <div class="col-sm-8">
-                                            <input type="text" name="confirm_date" id="confirm_date" class="datepicker col-xs-12" value="" data-validation="required" autocomplete="off" placeholder="Y-m-d" />
-                                           
-                                        </div> 
-                                         <div id="msg" class="col-sm-9 pull-right" style="color: red">
-                                         </div>
+                                  <div class="form-group has-float-label has-required">
+                                      <input type="text" name="confirm_date" id="confirm_date" class="datepicker col-xs-12 form-control" value="" data-validation="required" autocomplete="off" placeholder="Y-m-d" />
+                                      <label for="confirm_date" >Confirm Date </label>
+                                      <div id="msg" class="col-sm-9 pull-right" style="color: red"></div>
                                   </div>
-                                  <div class="form-group">
-                                      <label class="col-sm-4 control-label no-padding-right" for="lead_days" >Lead Days <span style="color: red">&#42;</span> </label>
+                                  <div class="form-group has-float-label has-required">
 
-                                        <div class="col-sm-8">
-                                           <input type="text" id="lead_days" name="lead_days" placeholder="Enter Text" class="col-xs-12" data-validation="required length custom" data-validation-length="1-50"/>
-                                           
-                                        </div> 
-                                         <div id="msg" class="col-sm-9 pull-right" style="color: red">
-                                         </div>
+                                      <input type="text" id="lead_days" name="lead_days" placeholder="Enter Text" class="col-xs-12 form-control" data-validation="required length custom" data-validation-length="1-50"/>
+                                      <label for="lead_days" >Lead Days</label>
+                                      <div id="msg" class="col-sm-9 pull-right" style="color: red"></div>
                                   </div>
-                                  <div class="form-group">
-                                      <label class="col-sm-4 control-label no-padding-right" for="tolerance_days" >Tolerance Days <span style="color: red">&#42;</span> </label>
-
-                                        <div class="col-sm-8">
-                                           <input type="text" id="tolerance_days" name="tolerance_days" placeholder="Enter Text" class="col-xs-12" data-validation="required length custom" data-validation-length="1-50"/>
-                                           
-                                        </div> 
+                                  <div class="form-group has-float-label has-required">
+                                           <input type="text" id="tolerance_days" name="tolerance_days" placeholder="Enter Text" class="col-xs-12 form-control" data-validation="required length custom" data-validation-length="1-50"/>
+                                      <label for="tolerance_days" >Tolerance Days</label>
                                         <div id="msg" class="col-sm-9 pull-right" style="color: red">
                                         </div>
                                   </div>
-                                  <div class="form-group">
-                                      <label class="col-sm-4 control-label no-padding-right" for="tna_templatetype" >TNA Type <span style="color: red">&#42;</span> </label>
-                                        <div class="col-sm-8">
-                                          <select id="tna_type" class="col-xs-12" name="tna_templatetype"><option value=" " data-validation="required">Select Order</option></select>
-                                        </div> 
-                                         <div id="msg" class="col-sm-9 pull-right" style="color: red">
-                                         </div>
+                                  <div class="form-group has-float-label select-search-group has-required">
+                                      <select id="tna_type" class="col-xs-12 form-control" name="tna_templatetype"><option value=" " data-validation="required">Select Order</option></select>
+                                      <label for="tna_templatetype" >TNA Type </label>
+                                      <div id="msg" class="col-sm-9 pull-right" style="color: red"></div>
                                   </div>
-                                  <div class="form-group">
-                                      <label class="col-sm-4 control-label no-padding-right" for="ok_to_begin" >OK to Begin <span style="color: red">&#42;</span> </label>
-                                        <div class="col-sm-8">
-                                            <input type="text" name="ok_to_begin" id="ok_to_begin" class="datepicker col-xs-12" value="" data-validation="required" autocomplete="off" placeholder="Y-m-d" />                              
-                                        </div> 
+                                  <div class="form-group has-float-label has-required ">
+
+                                        <input type="text" name="ok_to_begin" id="ok_to_begin" class="datepicker col-xs-12 form-control" value="" data-validation="required" autocomplete="off" placeholder="Y-m-d" />
+                                      <label  for="ok_to_begin" >OK to Begin </label>
+                                      <div id="msg" class="col-sm-9 pull-right" style="color: red"></div>
+                                  </div>
+                                  <div class="form-group has-float-label has-required">
+
+
+                                            <input type="text" name="rev_ok_to_begin" id="rev_ok_to_begin" class="datepicker col-xs-12 form-control" value="" data-validation="required" autocomplete="off" placeholder="Y-m-d" />
+                                      <label  for="rev_ok_to_begin" >Rev OK to Begin </label>
                                         <div id="msg" class="col-sm-9 pull-right" style="color: red">
                                         </div>
                                   </div>
-                                  <div class="form-group">
-                                      <label class="col-sm-4 control-label no-padding-right" for="rev_ok_to_begin" >Rev OK to Begin <span style="color: red">&#42;</span> </label>
-                                        <div class="col-sm-8">
-                                            <input type="text" name="rev_ok_to_begin" id="rev_ok_to_begin" class="datepicker col-xs-12" value="" data-validation="required" autocomplete="off" placeholder="Y-m-d" />                              
-                                        </div> 
-                                        <div id="msg" class="col-sm-9 pull-right" style="color: red">
-                                        </div>
+
                                   </div>
-                                                           
+                              <div class="clearfix form-actions">
+                                  <div >
+                                      <a style="padding-left: 10px; padding-right: 10px; border-radius: 5px; color: white" class="btn btn-sm btn-primary generatetna" type="submit">
+                                          Generate TNA
+                                      </a>
+                                      <button style="width: 100px; border-radius: 5px" class="btn btn-sm btn-success" type="submit">
+                                          Save
+                                      </button>
+                                      <button class="btn btn-sm" type="reset">
+                                          <i class="ace-icon fa fa-undo bigger-110"></i> Reset
+                                      </button>
                                   </div>
-                                
-                              </div>     
+                              </div>
+                          </form>
+                              </div>
                             <!-- /.col -->
-                            <div class="col-sm-7 tna-generate">
-                                     <!--Table here--->
-                            </div>
 
-                            <div class="clearfix form-actions col-md-9"> 
-                                <div class="col-md-offset-3 "> 
-                                    <a class="btn btn-sm btn-info generatetna" type="submit">
-                                        <i class="ace-icon fa fa-check bigger-110"></i> Generate TNA
-                                    </a>
-                                    <button class="btn btn-sm btn-info" type="submit">
-                                        <i class="ace-icon fa fa-check bigger-110"></i> Save
-                                    </button>
-                                    <button class="btn btn-sm" type="reset">
-                                        <i class="ace-icon fa fa-undo bigger-110"></i> Reset
-                                    </button>
-                                </div>
-                            </div>      
-                        </form> 
+
+                        <div class="col-sm-7 tna-generate">
+                            <!--Table here--->
+                        </div>
                     </div><!--- /. Row Form 1---->
-                  
+
                 </div>
-              </div> 
-        
-            
+              </div>
+
+
         {{-- <div class="panel panel-default"></div> --}}
       </div><!-- /.page-content -->
     </div>
@@ -143,17 +184,17 @@
 </script> -->
 <script type="text/javascript">
 
-$(document).ready(function(){ 
-  //$("#confirm_date").val(moment().format("YYYY-MM-DD")); 
+$(document).ready(function(){
+  //$("#confirm_date").val(moment().format("YYYY-MM-DD"));
   //template buyer wise
-    $('#order_id').on("change", function(){ 
-  
+    $('#order_id').on("change", function(){
+
         $.ajax({
             url : "{{ url('merch/time_action/templates_list') }}",
             type: 'get',
             data: {
-              order_id: $("#order_id").val(),             
-             
+              order_id: $("#order_id").val(),
+
             },
             success: function(data)
             {
@@ -171,14 +212,14 @@ $(document).ready(function(){
 
      var basedon = $(".generatetna");
      var action_place=$(".tna-generate");
-      basedon.on("click", function(){ 
+      basedon.on("click", function(){
 
         // Action Element list
         $.ajax({
             url : "{{ url('merch/time_action/tna_generate1') }}",
             type: 'get',
             data: {
-              order_id: $("#order_id").val(),             
+              order_id: $("#order_id").val(),
               confirm_date:$("#confirm_date").val(),
               lead_days:$("#lead_days").val(),
               tolerance_days:$("#tolerance_days").val(),
@@ -186,7 +227,7 @@ $(document).ready(function(){
               ok_to_begin:$("#ok_to_begin").val(),
               rev_ok_to_begin:$("#rev_ok_to_begin").val()
             },
-             
+
             success: function(data)
             {
                 action_place.html(data);
@@ -198,7 +239,7 @@ $(document).ready(function(){
         });
 
     });
-/// 
+///
 
 });
 </script>
