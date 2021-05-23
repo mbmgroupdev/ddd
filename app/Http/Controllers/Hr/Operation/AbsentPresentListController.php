@@ -277,6 +277,7 @@ class AbsentPresentListController extends Controller
         $value['firstDayMonth'] = $request['report_from'];
         $value['lastDayMonth'] = $request['report_to'];
         $value['as_unit_id'] = $abs->as_unit_id;
+        $value['as_doj'] = $abs->as_doj;
         $value['shift_roaster_status'] = $abs->shift_roaster_status;
         $value['year'] = date('Y', strtotime($request['report_from']));
         $value['month'] = date('m', strtotime($request['report_from']));
@@ -302,6 +303,7 @@ class AbsentPresentListController extends Controller
           $dateMonth .= ', ';
         }
       
+        $d->as_oracle_code      = $abs->as_oracle_code;
         $d->associate_id        = $abs->associate_id;
         $d->as_unit_id          = $abs->as_unit_id;
         $d->as_name             = $abs->as_name;
@@ -622,6 +624,10 @@ return DataTables::of($data)->addIndexColumn()
 ->addColumn('pic', function ($data) {
     return '<img src="'.emp_profile_picture($data).'" class="min-img-file">';
 })
+->editColumn('associate_id', function($data){
+    $oracleId = '<br>'.$data->as_oracle_code??'';
+    return $data->associate_id.$oracleId;
+})
 ->editColumn('dates', function($data){
     return $data->dates;
 })
@@ -637,7 +643,7 @@ return DataTables::of($data)->addIndexColumn()
   }
 
 })
-->rawColumns(['pic', 'dates', 'absent_count', 'action'])
+->rawColumns(['pic', 'associate_id', 'dates', 'absent_count', 'action'])
 ->make(true);
 }
 }

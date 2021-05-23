@@ -370,6 +370,7 @@ class AttendanceFileProcessController extends Controller
 
         try {
 
+
             $shift_name         = $shift->hr_shift_name;
             $shift_code         = $shift->hr_shift_code;
             $shift_start_time   = $shift->hr_shift_start_time;

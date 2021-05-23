@@ -77,6 +77,14 @@ class BuyerModeController extends Controller
         ['name' => 'created_by', 'type' => 'integer', 'null' => 1, 'deafult' => null]
     ];
 
+
+    protected $date;
+
+    protected $buyer;
+
+
+    protected $shift;
+
     /**
      * Create dynamic table along with dynamic fields
      *
@@ -148,7 +156,7 @@ class BuyerModeController extends Controller
     public function buildUpdateQuery($table, $update)
     {
         if(count($update) > 0){
-            $chunked = array_chunk($update, 300);
+            $chunked = array_chunk($update, 100);
 
             foreach ($chunked as $key => $part) {
                 # code...
@@ -324,6 +332,9 @@ class BuyerModeController extends Controller
     {
         $buyer = DB::table('hr_buyer_template')->where('id', $id)->first();
 
+        $this->buyer = $buyer;
+        $this->date  = $request->date;
+
         $count = $this->syncAtt($request->date, $buyer);
 
         return response([
@@ -431,21 +442,30 @@ class BuyerModeController extends Controller
         return $emplist;
     }
 
+    
 
-
-
-
-    public function syncAtt($date, $buyer)
+    protected function getMaxMin($date, $shift, $max)
     {
-        $ignore_subsec = explode(',', $buyer->ignore_subsec);
-        $shift = shift_by_code();
+        $shift_start = $date." ".$shift->hr_shift_start_time;
+        $shift_end = $date." ".$shift->hr_shift_end_time;
+        
+        $shift_in_time = Carbon::createFromFormat('Y-m-d H:i:s', $shift_start);
+        $shift_out_time = Carbon::createFromFormat('Y-m-d H:i:s', $shift_end);
+    
+        if($shift_out_time < $shift_in_time){
+            $shift_out_time = $shift_out_time->copy()->addDays(1);
+        }
+        $sft = $shift;
+        $sft['in_limit'] = $shift_in_time->copy()->subMinutes(7)->format('Y-m-d H:i:s'); 
+        $sft['out_limit'] = $shift_out_time->copy()->addMinutes(($max*60 + $break + 7))->format('Y-m-d H:i:s'); 
 
-        $mappedshift = collect($shift)->map(function($item) use ($date, $buyer){
-            $limits = $this->getMaxMin($date, $item, $buyer->base_ot);
-            $item['in_limit'] =  $limits['in_limit'];
-            $item['out_limit'] =  $limits['out_limit'];
-            return $item;
-        });
+        return $sft;
+
+    }
+
+
+    protected function getTodayEmployee($date, $buyer)
+    {
 
         $ignore = DB::table('hr_buyer_att_'.$buyer->table_alias)
                     ->where('in_date', $date)
@@ -454,10 +474,12 @@ class BuyerModeController extends Controller
 
         # all active employees on that day
         $location = explode(',',$buyer->hr_location);
-        $toDayEmps = DB::table('hr_as_basic_info')
-                    ->select('as_id','associate_id','shift_roaster_status','as_shift_id','as_line_id','as_unit_id','as_ot','as_subsection_id')
+
+        return DB::table('hr_as_basic_info')
+                    ->select('as_id','associate_id','shift_roaster_status','as_shift_id','as_line_id','as_unit_id','as_ot','as_subsection_id','as_designation_id')
                     ->where('as_unit_id', $buyer->hr_unit_id)
                     ->whereIn('as_location', $location)
+                    //->where('associate_id', '21A109489N')
                     ->whereNotIn('as_id', $ignore)
                     ->where(function($q) use ($date){
                         $q->where(function($qa) use ($date){
@@ -476,6 +498,123 @@ class BuyerModeController extends Controller
                     })
                     ->get();
 
+    }
+
+
+    protected function getEmployeeByType($emp, $type)
+    {
+        return collect($emp)
+            ->where('shift_roaster_status', $type)
+            ->pluck('as_id')->toArray();
+    }
+
+    protected function roaster($emp, $date)
+    {
+        return DB::table('holiday_roaster as l')
+            ->select('l.remarks', 'b.as_id')
+            ->leftJoin('hr_as_basic_info as b', 'b.associate_id','l.as_id')
+            ->where('l.date', $this->date)
+            ->whereIn('b.as_id', $emp)
+            ->get();
+    }
+
+    protected function setShiftTime($time)
+    {
+        return Carbon::createFromFormat('Y-m-d H:i:s', ($this->date." ".$time));
+    }
+
+
+    protected function getShift()
+    {
+        return DB::table('hr_shift')
+            ->where('hr_shift_unit_id',$this->buyer->hr_unit_id)
+            ->orderBy('hr_shift_id','DESC')
+            ->get()
+            ->keyBy('hr_shift_code')
+            ->toArray();
+    }
+
+
+    protected function setInlimit($time)
+    {
+        return $time->copy()->subMinutes(7)->format('Y-m-d H:i:s'); 
+    }
+
+
+    protected function setOutLimit($time, $max, $break, $shift_in)
+    {
+        $shift_out_time = $time->copy()->addMinutes(($max*60 + $break))->format('Y-m-d H:i:s'); 
+        return $this->modifyOutLimit($shift_out_time, $shift_in);
+    }
+
+
+    protected function setBreakTime($shift_start, $break, $outpunch, $designation, $shift_end)
+    {
+        // Friday Prayer Break
+        if($outpunch && (strtotime($shift_end) - (strtotime($shift_start)))/3600 > 7){   
+            $length = (strtotime($outpunch) - (strtotime($shift_start)))/3600;
+            if($length < 6){
+                $break = 0;
+            }
+        }
+
+        $prayer = $this->date.' '.'14:00:00';
+        if(date('D', strtotime($this->date)) == 'Fri' &&  $outpunch > $prayer && $shift_start < $prayer && !in_array($designation,[224,350,428]) ){
+            $break = 60;
+        }
+
+        return $break;
+    }
+
+    
+    protected function modifyOutLimit($time, $shift_in)
+    {
+        $ifter = $this->date .' '.'18:00:00';
+        // modify out limit with iftar break after 15 april
+        if($time > $ifter && $shift_in < $ifter && $this->date  >= '2021-04-14' && $this->date  < '2021-05-14' && $this->buyer->hr_unit_id != 8){
+            $time = Carbon::parse($time)->addMinutes(60)->format('Y-m-d H:i:s');
+        }
+
+        //dd($time);
+
+        return $time;
+
+    }
+
+
+    protected function mapShiftData($designation, $shift, $date, $max, $outpunch)
+    {
+        $shift_in_time  = $this->setShiftTime($shift->hr_shift_start_time);
+        $shift_out_time = $this->setShiftTime($shift->hr_shift_end_time);
+
+    
+        if($shift_out_time < $shift_in_time){
+            $shift_out_time = $shift_out_time->copy()->addDays(1);
+        }
+
+        $sf = (array) $shift;
+
+        $sf['in_limit']  = $this->setInlimit($shift_in_time);
+        $sf['hr_shift_break_time'] = $this->setBreakTime($sf['in_limit'], $sf['hr_shift_break_time'], $outpunch, $designation, $shift_out_time);
+
+
+        $sf['out_limit'] = $this->setOutLimit($shift_out_time, $max, $sf['hr_shift_break_time'], $sf['in_limit']);
+        
+
+        return $sf;
+    }
+
+
+    public function syncAtt($date, $buyer)
+    {
+        $ignore_subsec = explode(',', $buyer->ignore_subsec);
+
+        
+
+        $this->shift = $this->getShift();
+
+
+        $toDayEmps = $this->getTodayEmployee($date, $buyer);
         $emplist = collect($toDayEmps)->keyBy('as_id', true);
 
      
@@ -485,24 +624,12 @@ class BuyerModeController extends Controller
 
         $toDayAs = collect($toDayEmps)->pluck('as_id')->toArray();
 
-        $roasterAs =  collect($toDayEmps)
-                        ->where('shift_roaster_status', 1)
-                        ->pluck('as_id')->toArray();
+        $roasterAs =  $this->getEmployeeByType($toDayEmps, 1);
 
-
-
-        $shiftAs = collect($toDayEmps)
-                        ->where('shift_roaster_status', 0)
-                        ->pluck('as_id')->toArray();
-
+        $shiftAs = $this->getEmployeeByType($toDayEmps, 0);
 
         // roaster data
-        $roaster = DB::table('holiday_roaster as l')
-                    ->select('l.remarks', 'b.as_id')
-                    ->leftJoin('hr_as_basic_info as b', 'b.associate_id','l.as_id')
-                    ->where('l.date', $date)
-                    ->whereIn('b.as_id', $toDayAs)
-                    ->get();
+        $roaster = $this->roaster($toDayAs, $date);
 
 
         // roaster data
@@ -530,7 +657,7 @@ class BuyerModeController extends Controller
 
         // get att data 
         $table = get_att_table($buyer->hr_unit_id);
-        $att = DB::table($table)
+        $attendance = DB::table($table)
                 ->whereIn('as_id', $toDayAs)
                 ->where('in_date', $date)
                 ->get()->keyBy('as_id');
@@ -560,7 +687,7 @@ class BuyerModeController extends Controller
             'ot_hour' => 0,
             'remarks' => null,
             'late_status' => 0,
-            'created_by' => auth()->id()
+            'created_by' => null
         ];
 
 
@@ -663,33 +790,48 @@ class BuyerModeController extends Controller
             }
 
             // if att exist
-            if(isset($att[$w])){
-                $a = $att[$w];
-                $shiftData =  $mappedshift[$a->hr_shift_code];
+            if(isset($attendance[$w])){
+                $att = $attendance[$w];
+                $emp = $emplist[$w];
+
+                $sftdata =  $this->shift[$attendance[$w]->hr_shift_code];
+
+                
+
                 $ins[$w]['att_status']      = 'p';
-                $ins[$w]['hr_shift_code']   = $a->hr_shift_code; // att shift
-                $ins[$w]['late_status']     = $a->late_status;
-                $ins[$w]['line_id']         = $a->line_id; // att line
+                $ins[$w]['hr_shift_code']   =  $attendance[$w]->hr_shift_code; // att shift
+                $ins[$w]['late_status']     =  $attendance[$w]->late_status;
+                $ins[$w]['line_id']         =  $attendance[$w]->line_id; // att line
 
                 // ignore subsection
                 if(in_array($emplist[$w]->as_subsection_id, $ignore_subsec)){
-                    $ins[$w]['in_time']     = $a->in_time;
-                    $ins[$w]['out_time']    = $a->out_time;
-                    $ins[$w]['ot_hour']     = $a->ot_hour;
+                    $ins[$w]['in_time']     =  $attendance[$w]->in_time;
+                    $ins[$w]['out_time']    =  $attendance[$w]->out_time;
+                    $ins[$w]['ot_hour']     =  $attendance[$w]->ot_hour;
                 }else{
+                    
+                    // get shift information
+                    $getshift = $this->mapShiftData($emp->as_designation_id, $sftdata, $date, $buyer->base_ot,  $attendance[$w]->out_time);
+                    $shiftData = (object) $getshift;
+                    $shift_in_limit  = $shiftData->in_limit;
+                    $shift_out_limit = $shiftData->out_limit;
 
-                    if(($a->in_time >= $shiftData['in_limit'] || $a->in_time == null)  && ($a->out_time <= $shiftData['out_limit'] || $a->out_time == null) ){
+                    
+
+                    if(( $attendance[$w]->in_time >= $shift_in_limit ||  $attendance[$w]->in_time == null)  && ( $attendance[$w]->out_time <= $shift_out_limit ||  $attendance[$w]->out_time == null) ){
+
+
                         // no changes needed
-                            $ins[$w]['in_time']     = $a->in_time;
-                            $ins[$w]['out_time']    = $a->out_time;
-                            $ins[$w]['ot_hour']     = $a->ot_hour;
+                            $ins[$w]['in_time']     =  $attendance[$w]->in_time;
+                            $ins[$w]['out_time']    =  $attendance[$w]->out_time;
+                            $ins[$w]['ot_hour']     =  $attendance[$w]->ot_hour;
 
-                    }else if($a->out_time > $shiftData['out_limit'] ){
+                    }else if( $attendance[$w]->out_time > $shift_out_limit ){
                         // only out time modify
-                        $ins[$w]['out_time'] = Carbon::parse($shiftData['out_limit'])->subSeconds(rand(0,839))->format('Y-m-d H:i:s');
-                        $ins[$w]['in_time'] = $a->in_time;
+                        $ins[$w]['out_time'] = Carbon::parse($shift_out_limit)->subSeconds(rand(0,839))->format('Y-m-d H:i:s');
+                        $ins[$w]['in_time'] =  $attendance[$w]->in_time;
 
-                        if($a->in_time != null && $emplist[$w]->as_ot == 1){
+                        if( $attendance[$w]->in_time != null && $emplist[$w]->as_ot == 1){
                             $ins[$w]['ot_hour'] = $buyer->base_ot;
 
                         }else{
@@ -697,18 +839,42 @@ class BuyerModeController extends Controller
                         }
 
 
-                    }else if($a->in_time < $shiftData['in_limit']  ){
+                    }else if( $attendance[$w]->in_time < $shift_in_limit  ){
                         // only intime modify
-                        $ins[$w]['in_time'] = Carbon::parse($shiftData['in_limit'])->addSeconds(rand(0,419))->format('Y-m-d H:i:s');
-                        $ins[$w]['out_time']    = $a->out_time;
-                        $ins[$w]['ot_hour']     = $a->ot_hour;
+                        $ins[$w]['in_time'] = Carbon::parse($shift_in_limit)->addSeconds(rand(0,419))->format('Y-m-d H:i:s');
+                        $ins[$w]['out_time']    =  $attendance[$w]->out_time;
+                        $ins[$w]['ot_hour']     =  $attendance[$w]->ot_hour;
 
                     }
+
+
 
                     // if full day ot
                     if($ins[$w]['in_time'] != null && $ins[$w]['out_time'] != null && $ins[$w]['remarks'] == 'OT' && $emplist[$w]->as_ot == 1){
-                        $ins[$w]['ot_hour'] = $this->calculateOt(($date.' '.$shiftData['hr_shift_start_time']), $ins[$w]['out_time'], $shiftData['hr_shift_break_time']);
-                    }
+
+                        // overwrite breaktime
+                        $breaktime = $shiftData->hr_shift_break_time;
+
+                        // shift start
+                        $start     = $this->date.' '.$shiftData->hr_shift_start_time;
+                        if($ins[$w]['in_time'] > $start ){
+                            $start = $ins[$w]['in_time'];
+                        }
+                        $outpunch  = $ins[$w]['out_time'];
+
+                        $ins[$w]['ot_hour'] = $this->calculateOt($start, $outpunch, $breaktime);
+                    }                
+                }
+
+                // make weekend if OT and unit aql
+                if($ins[$w]['remarks'] == 'OT' && $buyer->hr_unit_id == 3){
+                    $ins[$w]['att_status']      = 'h';
+                    $ins[$w]['remarks']         = 'Weekend'; 
+                    $ins[$w]['in_time']         = null;
+                    $ins[$w]['out_time']        = null;
+                    $ins[$w]['ot_hour']         = null;
+                    $ins[$w]['late_status']     = null;
+
                 }
             }else if(isset($leave[$w])){
                 // if leave exist
@@ -718,26 +884,44 @@ class BuyerModeController extends Controller
                 $ins[$w]['remarks']         = $leave[$w]->leave_type;
 
             }else{
-                // make absent
-                $ins[$w]['hr_shift_code']   = $emplist[$w]->as_shift_id;
-                $ins[$w]['line_id']         = $emplist[$w]->as_line_id;
-                $ins[$w]['att_status']      = 'a';
+                // make weekend if OT
+                if($ins[$w]['remarks'] == 'OT'){
+                    $ins[$w]['hr_shift_code']   = $emplist[$w]->as_shift_id;
+                    $ins[$w]['line_id']         = $emplist[$w]->as_line_id;
+                    $ins[$w]['att_status']      = 'h';
+                    $ins[$w]['remarks']         = 'Weekend'; 
+
+                }else{
+
+                    // make absent
+                    $ins[$w]['hr_shift_code']   = $emplist[$w]->as_shift_id;
+                    $ins[$w]['line_id']         = $emplist[$w]->as_line_id;
+                    $ins[$w]['att_status']      = 'a';
+                }
+
+
             }
+
+            
 
             if(isset($synced[$w])){
                 $atn = $synced[$w];
-                if($atn->att_status != $ins[$w]['att_status']  || $atn->ot_hour != $ins[$w]['ot_hour'] || $ins[$w]['hr_shift_code'] != $atn->hr_shift_code || $ins[$w]['remarks'] != $atn->remarks){
+                if($atn->att_status != $ins[$w]['att_status']  || $atn->ot_hour != $ins[$w]['ot_hour'] || $ins[$w]['hr_shift_code'] != $atn->hr_shift_code || $ins[$w]['remarks'] != $atn->remarks || $ins[$w]['out_time'] != $atn->out_time){
 
                     $updates[$w] = [
                         'data' => $ins[$w],
                         'id'   => $synced[$w]->id
                     ];
                 }
+
             }else{
                 $inserts[$w] = $ins[$w];
-            }
+            } 
+            $sftdata = null;
 
-        } 
+        }
+        
+        
 
         if(count($inserts) > 0){
             $chunked = array_chunk($inserts, 300);
@@ -753,12 +937,13 @@ class BuyerModeController extends Controller
 
         }
 
+
         // build update query
         $this->buildUpdateQuery('hr_buyer_att_'.$buyer->table_alias, $updates);
 
         if(isset($request->process)){
             if(count($inserts) > 0){
-                $chunked = array_chunk($inserts, 50);
+                $chunked = array_chunk($inserts, 30);
                 foreach ($chunked as $key => $insert) {
                     $queue = (new ProcessBuyerSalary($buyer, date('m', strtotime($date)), date('Y', strtotime($date)), $insert))
                                 ->onQueue('buyersalary')
@@ -767,7 +952,7 @@ class BuyerModeController extends Controller
                 }
             }
             if(count($updates) > 0){
-                $chunked = array_chunk($updates, 50);
+                $chunked = array_chunk($updates, 30);
                 foreach ($chunked as $key => $insert) {
 
                     $queue = (new ProcessBuyerSalary($buyer, date('m', strtotime($date)), date('Y', strtotime($date)), array_keys($insert)))
@@ -816,32 +1001,5 @@ class BuyerModeController extends Controller
 
         return $data;
     }
-
-
-    public function getMaxMin($date, $shift, $max)
-    {
-        $shift_start = $date." ".$shift['hr_shift_start_time'];
-        $shift_end = $date." ".$shift['hr_shift_end_time'];
-        $break = $shift['hr_shift_break_time'];
-        $shift_in_time = Carbon::createFromFormat('Y-m-d H:i:s', $shift_start);
-        $shift_out_time = Carbon::createFromFormat('Y-m-d H:i:s', $shift_end);
-    
-        if($shift_out_time < $shift_in_time){
-            $shift_out_time = $shift_out_time->copy()->addDays(1);
-        }
-
-        $sft['in_limit'] = $shift_in_time->copy()->subMinutes(7)->format('Y-m-d H:i:s'); 
-        $sft['out_limit'] = $shift_out_time->copy()->addMinutes(($max*60 + $break + 7))->format('Y-m-d H:i:s'); 
-
-        return $sft;
-
-    }
-
-
-    
-
-
-
-
 
 }
