@@ -129,7 +129,7 @@
                 responsive: false,
                 serverSide: true,
                 pagingType: "full_numbers",
-                dom: "<'row'<'col-sm-2'l><'col-sm-4'i><'col-sm-3 text-center'B><'col-sm-3'f>>tp",
+                dom: "lBftrip",
                 ajax: '{!! url("merch/sales_contract/sales_contract_get_data") !!}',
                 columns: [
                     {data: 'serial_no', name: 'serial_no'},

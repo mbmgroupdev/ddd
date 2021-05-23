@@ -122,7 +122,7 @@ $(document).ready(function(){
 	    responsive: false,
 	    serverSide: true,
         pagingType: "full_numbers",
-        dom: "<'row'<'col-sm-4'l><'col-sm-4 text-center'B><'col-sm-4'f>>tp",
+        dom: "lBftrip",
 
         ajax: {
             url: "{!! url('merch/time_action/tna_order_list_data') !!}",
