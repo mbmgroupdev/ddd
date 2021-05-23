@@ -21,6 +21,7 @@ class SalesContractController extends Controller
 
       $buyer=Buyer::pluck('b_name','b_id');
       $bank=Bank::pluck('bank_name','id');
+      //$bank=null;
       $country=Country::pluck('cnt_name','cnt_id');
       $unit=Unit::pluck('hr_unit_name','hr_unit_id');
 

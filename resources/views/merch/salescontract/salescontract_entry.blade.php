@@ -41,7 +41,7 @@
                 <br>
               </div>
                   <form class="form-horizontal" role="form" method="post" action=" {{ url('merch/sales_contract/sales_contract_store') }}" enctype="multipart/form-data">
-                      {{ csrf_field() }}
+                      @csrf
                       <div class="row">
                             
 
@@ -51,7 +51,7 @@
                                       <label class=" col-sm-6 control-label no-padding-right" for="product" >Buyer: <span style="color: red">&#42;</span></label>
 
                                        <div class="col-sm-6">
-                                           {{ Form::select('buyer', $buyer, null, ['placeholder'=>'Select Buyer','id'=> 'buyer','class'=> 'form-control col-xs-10', 'data-validation' => 'required']) }}
+                                           {{ Form::select('buyer', $buyer, null, array(['placeholder'=>'Select Buyer','id'=> 'buyer','class'=> 'form-control col-xs-10', 'data-validation' => 'required'])) }}
                                         </div>
 
                                   </div>
@@ -60,13 +60,13 @@
                                       <label class="col-sm-6 control-label no-padding-right font-weight-bold" for="unit">Unit:<span style="color: red">&#42;</span> </label>
 
                                     <div class="col-sm-6">
-                                        {{ Form::select('unit', $unit, null, ['placeholder'=>'Select','id'=>'unit','class'=> 'form-control col-xs-10', 'data-validation' =>'required']) }}
+                                        {{ Form::select('unit', $unit, null, array(['placeholder'=>'Select','id'=>'unit','class'=> 'form-control col-xs-10', 'data-validation' =>'required'])) }}
                                     </div>
                                   </div>
                                   <div class="form-group ">
                                       <label class="col-sm-6 control-label no-padding-right" for="contract_no" >Contract Source:<span style="color: red">&#42;</span></label>
                                       <div class="col-sm-6">
-                                      {{ Form::select('contract_no', array('In House'=>'In House', 'Buyer'=>'Buyer'), null, ['placeholder'=>'Select','id'=>'c_number_by','class'=> 'form-control col-xs-10', 'data-validation' => 'required']) }}
+                                      {{ Form::select('contract_no', array(['In House'=>'In House', 'Buyer'=>'Buyer']), null, array(['placeholder'=>'Select','id'=>'c_number_by','class'=> 'form-control col-xs-10', 'data-validation' => 'required'])) }}
                                     </div>
                                   </div>
                                     <div class="form-group">
@@ -155,14 +155,14 @@
                                                  <input type="text" name="initial_value" id="initial value" value=""placeholder="Enter" class=" col-xs-12" style="height: 32px;" />
                                                 </div>
                                                 <div class="col-sm-6 col-xs-6"> 
-                                                  {{ Form::select('currency', array('USD'=>'$ USD', 'EUR'=>'€ EUR','GBP'=>'£ GBP','Tk'=>'৳ Tk'), 'USD', ['placeholder'=>'Select','class'=> '', 'data-validation' => 'required']) }}
+                                                  {{ Form::select('currency', array('USD'=>'$ USD', 'EUR'=>'€ EUR','GBP'=>'£ GBP','Tk'=>'৳ Tk'), 'USD', array(['placeholder'=>'Select','class'=> '', 'data-validation' => 'required'])) }}
                                                 </div>
                                               </div>
                                           </div>
                                           <div class="form-group">
                                               <label class="col-sm-4 control-label no-padding-right" for="lc_bank" >Buyer Bank: </label>
                                               <div class="col-sm-8">
-                                                {{ Form::select('lc_bank', $bank, null, ['placeholder'=>'Select','class'=> 'form-control']) }}
+                                                {{ Form::select('lc_bank', $bank, null, array(['placeholder'=>'Select','class'=> 'form-control'])) }}
 
                                               </div>
                                           </div>
@@ -171,7 +171,7 @@
                                           <div class="form-group">
                                               <label class="col-sm-4 control-label no-padding-right" for="initial value" >BTB Bank: </label>
                                               <div class="col-sm-8">
-                                                {{ Form::select('btb_bank', $bank, null, ['placeholder'=>'Select','class'=> 'form-control col-xs-10']) }}
+                                                {{ Form::select('btb_bank', $bank, null, array(['placeholder'=>'Select','class'=> 'form-control col-xs-10'])) }}
                                               </div>
                                           </div>
                                       </div>

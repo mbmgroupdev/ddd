@@ -404,6 +404,7 @@ Route::get('hr/operation/maternity-leave/list', 'Hr\Operation\MaternityPaymentCo
 Route::get('hr/operation/maternity-leave/listData', 'Hr\Operation\MaternityPaymentController@listData');
 Route::get('hr/operation/maternity-leave/{id}', 'Hr\Operation\MaternityPaymentController@process');
 Route::post('hr/maternity-leave/approve', 'Hr\Operation\MaternityPaymentController@approve');
+Route::get('hr/maternity-leave/active/{id}', 'Hr\Operation\MaternityPaymentController@active');
 
 Route::get('hr/operation/maternity-medical-process/{id}', 'Hr\Operation\MaternityPaymentController@medicalProcess');
 Route::post('hr/operation/maternity-medical-basic/', 'Hr\Operation\MaternityPaymentController@storeMedicalBasic');

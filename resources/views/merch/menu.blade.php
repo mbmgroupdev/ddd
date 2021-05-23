@@ -106,7 +106,7 @@
       </li> --}}
       
       <li class="{{ $segment2 == 'order-breakdown'?'active':'' }}">
-         <a href="#" class="iq-waves-effect" style="color: #c9c9c9;"><i class="las la-list-ol"></i><span>Order Breakdown</span></a>
+         <a href="{{ url('merch/order_breakdown')}}" class="iq-waves-effect"><i class="las la-list-ol"></i><span>Order Breakdown</span></a>
       </li>
       @if(auth()->user()->canany([]) || $user->hasRole('Super Admin'))
 
@@ -152,11 +152,11 @@
       @if(auth()->user()->canany([]) || $user->hasRole('Super Admin'))
 
       <li class="@if($segment2 == 'sales-contract') active @endif">
-         <a href="#sales_contract" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false" style="color: #c9c9c9;"><i class="las la-address-book"></i><span>Sales Contract</span><i class="las la-angle-right iq-arrow-right"></i></a>
+         <a href="#sales_contract" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="las la-address-book"></i><span>Sales Contract</span><i class="las la-angle-right iq-arrow-right"></i></a>
          <ul id="sales_contract" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
             @if($user->can('New Style') || $user->hasRole('Super Admin'))
             <li class="@if($segment2 == 'style' && $segment3=='style_new') active @endif">
-               <a  href="#"><i class="las la-folder-plus"></i> Create Sales Contract</a>
+               <a  href="{{ url('merch/sales_contract/sales_contract_entry')}}"><i class="las la-folder-plus"></i> Create Sales Contract</a>
             </li>
             @endif
             @if($user->can('Style List' ) || $user->hasRole('Super Admin'))
