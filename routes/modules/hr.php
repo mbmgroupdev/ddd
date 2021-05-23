@@ -482,7 +482,7 @@ Route::get('hr/search-type', 'Hr\Search\SearchController@type');
 
 //---------Hr/ Payroll-----------//
 Route::get('hr/payroll/bank-sheet', 'Hr\Payroll\BankSheetController@index');
-Route::get('hr/reports/monthly-salary-bank-report', 'Hr\Payroll\BankSheetController@report');
+Route::post('hr/reports/monthly-salary-bank-report', 'Hr\Payroll\SalaryReportController@bankSheetReport');
 Route::get('hr/payroll/ot', 'Hr\Payroll\OtController@OT');
 Route::post('hr/payroll/ot', 'Hr\Payroll\OtController@OtStore');
 Route::get('hr/payroll/ot_list', 'Hr\Payroll\OtController@otList');
