@@ -579,6 +579,12 @@ class NewStyleController extends Controller
               $return .= '<a href="'.url('merch/style/bom/'.$data->stl_id).'" class="btn btn-sm text-white '.$bomClass.'" data-toggle="tooltip" title="'.$bomStatus.'">
                   <i class="las la-clipboard-list"></i>
               </a>';
+
+              //View
+                $return .= '<a href="'.url('merch/style/style_profile/'.$data->stl_id).'" class="btn btn-sm text-white btn-info" data-toggle="tooltip" title="View Style">
+                  <i class="las la-eye"></i>
+              </a>';
+
               // Costing
               $costingStatus = ($data->bom_status == 1)?'Edit Style Costing':'Create Style Costing';
               $costingClass = ($data->costing_status == 1)?'btn-primary':'btn-warning';
