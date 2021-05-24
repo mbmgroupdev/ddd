@@ -383,7 +383,7 @@
                    <th width="30%" class="">Order Delivary Date</th>
                </thead>
                <tbody>
-         @foreach($orderLists as $orderd)
+         @foreach($orderLists as $orderd) 
                    <tr>
                      <td>
                        <input name="selected_item[]" type="checkbox" value="{{$orderd->order_id}}" class="ace col-sm-2 checkbox-input" checked>
