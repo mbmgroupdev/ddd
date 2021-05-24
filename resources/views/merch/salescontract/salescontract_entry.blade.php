@@ -112,7 +112,7 @@ background: #e9ecef;
                             <div class="col-md-4 ">
 
                                 <div class="form-group ">
-                                    <label class="form-check-label col-sm-12 control-label no-padding-right" for="cmpc" >Export Type: </label>
+                                    <label class="form-check-label col-sm-12 control-label no-padding-right pl-0" for="cmpc" >Export Type: </label>
 
                                     <div class="col-sm-12">
                                       <input type="radio" class="form-check-input" id="lctype" name="lctype" value="ELC" checked> ELC<br/>
@@ -153,29 +153,17 @@ background: #e9ecef;
   
                                     </div>
                                     <div class="col-xs-6 col-sm-4">
-
-                                      
-
-                                      
-                                        
-
                                         <div class="row">
-                                            
                                             <div class="col-sm-9 ">
                                               <div class="form-group has-float-label">
                                                 <input type="text" class="form-control" id="initial_value" name="initial_value" placeholder="Enter"   autocomplete="off">
                                                 <label for="initial_value"> Initial Value:  </label>
-                                              </div>
-                                              
-                                                
+                                              </div>    
                                             </div>
-                                            
-
                                             <div class="col-sm-3">
                                               <div class="form-group has-float-label select-search-group">
                                                 {{ Form::select('currency', array('USD'=>'$ USD', 'EUR'=>'€ EUR','GBP'=>'£ GBP','Tk'=>'৳ Tk'), 'USD', ['placeholder'=>'Select','class'=> '', 'data-validation' => 'required']) }}
-                                              </div>
-                                              
+                                              </div>                                              
                                           </div>
                                         </div> 
                                       
@@ -277,8 +265,36 @@ background: #e9ecef;
   </div>
 </div> --}}
 <!-- Modal End -->
+<!--New Modal Start -->
 
-@include('merch.common.right-modal')
+<div class="modal right fade" id="right_modal_item" tabindex="-1" role="dialog" aria-labelledby="right_modal_item">
+  <div class="modal-dialog modal-lg right-modal-width" role="document" > 
+    <div class="modal-content">
+      <div class="modal-header">
+        <a class="view prev_btn" data-toggle="tooltip" data-dismiss="modal" data-placement="top" title="" data-original-title="Back">
+          <i class="las la-chevron-left"></i>
+        </a>
+        <h5 class="modal-title right-modal-title text-center" id="modal-title-right"> &nbsp; </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-content-result" id="content-result"></div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
+        <button type="button" id="modal_data" class="btn btn-primary btn-sm">Done</button>
+      </div>
+      
+    </div>
+  </div>
+</div>
+<!--New Modal End -->
+
+
 
 
 <script type="text/javascript">
