@@ -110,18 +110,18 @@ class SalesContractController extends Controller
              ->get();
        }
 
-            $list ='<table class="table table-responsive table-bordered table-striped">
+            $list ='<table class="table table-responsive table-bordered table-striped" style= "width:100%;">
                       <thead>
-                        <th class="">
+                        <th width="30%" class="">
                          Order No
                         </th>
-                        <th class="">
+                        <th width="30%" class="">
                           Style
                         </th>
-                        <th class="">
+                        <th width="30%" class="">
                           Order Qty
                         </th>
-                        <th class="">
+                        <th width="30%" class="">
                         Order Delivary Date
                         </th>
                       </thead>
