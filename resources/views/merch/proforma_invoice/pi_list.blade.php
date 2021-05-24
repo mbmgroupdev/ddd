@@ -42,6 +42,9 @@
 					<a href="#">Proforma Invoice</a>
 				</li>
 				<li class="active">Proforma Invoice List</li>
+                <li class="top-nav-btn">
+                    <a class="btn btn-sm btn-primary" href="{{ url('merch/proforma_invoice/form') }}"><i class="las la-plus"></i> Create PI</a>
+                </li>
 			</ul><!-- /.breadcrumb -->
 		</div>
 
@@ -58,6 +61,7 @@
 {{--                    </div>--}}
 {{--                    <br>--}}
 {{--                    <div class="worker-list">--}}
+        {{-- --}}
         <div class="row">
             <div class="col-sm-12 col-lg-12">
 {{--                <input type="hidden" value="1" id="lock_status">--}}
@@ -67,12 +71,19 @@
                             <div class="panel">
                                 <div class="panel-heading">
                                     <h6>
-                                        Line manpower present list
+                                        Proforma Invoice List
+{{--                                        <a href="{{url('/pmddatadownload')}}" class="btn btn-primary pull-right">Create PI</a>--}}
                                     </h6>
                                 </div>
+
+{{--                                <div class="panel-heading">--}}
+{{--                                    <h6 >PMD Data For H&M--}}
+{{--                                        <a href="{{url('/pmddatadownload')}}" class="btn btn-primary pull-right">Download</a>--}}
+{{--                                    </h6>--}}
+{{--                                </div>--}}
                                 <div class="panel-body">
                                     <table id="dataTables" class="table table-striped table-bordered"
-                                           style="white-space:nowrap">
+                                            style="display: block;overflow-x: auto;width: 100%;" border="1">
                                         <thead>
                                         <tr class="warning">
                                             <th>Sl</th>
