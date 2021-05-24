@@ -346,7 +346,7 @@ class NewStyleController extends Controller
       "stl_smv"          => "required|max:20",
       "stl_no"           => "required|max:30|unique:mr_style,stl_no,stl_type,mr_buyer_b_id,prd_type_id,mr_season_se_id"
     ]);
-    
+
     if ($validator->fails()) {
       $failedRules = $validator->failed();
 
@@ -358,7 +358,7 @@ class NewStyleController extends Controller
             toastr()->error($message);
         }
         return redirect()->back()->withErrors($validator)->withInput();
-        
+
       }
 
     }
@@ -564,7 +564,7 @@ class NewStyleController extends Controller
         ->editColumn('action', function ($data) use ($styleOrder) {
             $return = '<div class="btn-group" >';
             if(isset($styleOrder[$data->stl_id])){
-              $return .= "<a class=\"btn btn-sm btn-primary text-white\" data-toggle=\"tooltip\" title=\"Style Copy\">
+              $return .= "<a class=\"btn btn-sm btn-primary text-white\" data-toggle=\"tooltip\" title=\"Style Copy\" href='style_copy_search?style_no=$data->stl_id'>
                     <i class=\"ace-icon fa fa-copy bigger-120\"></i>
               </a>";
             }else{
@@ -572,7 +572,7 @@ class NewStyleController extends Controller
                     <i class=\"ace-icon fa fa-pencil bigger-120\"></i>
               </a>";
             }
-            if(!isset($styleOrder[$data->stl_id])){ 
+            if(!isset($styleOrder[$data->stl_id])){
               // BOM
               $bomStatus = ($data->bom_status == 1)?'Edit Style BOM':'Create Style BOM';
               $bomClass = ($data->bom_status == 1)?'btn-primary':'btn-warning';
@@ -995,7 +995,7 @@ class NewStyleController extends Controller
             toastr()->error($message);
         }
         return redirect()->back()->withErrors($validator)->withInput();
-        
+
       }
 
     }
@@ -1730,7 +1730,7 @@ class NewStyleController extends Controller
           $this->logFileWrite("Style Bulk Created", $stl_id);
         }
         DB::commit();
-        
+
         return redirect('merch/style/style_new_edit/'.$stl_id)
         ->with('success', 'Bulk Created Successfully !!');
       } else {
