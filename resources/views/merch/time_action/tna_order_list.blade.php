@@ -123,6 +123,9 @@ $(document).ready(function(){
 	    serverSide: true,
         pagingType: "full_numbers",
         dom: "lBftrip",
+        language: {
+            processing: '<i class="fa fa-spinner fa-spin f-60" style="font-size:60px;margin-top:50px;z-index:100;"></i>'
+        },
 
         ajax: {
             url: "{!! url('merch/time_action/tna_order_list_data') !!}",
