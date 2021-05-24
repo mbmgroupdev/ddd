@@ -117,6 +117,9 @@
                 responsive: false,
                 serverSide: true,
                 pagingType: "full_numbers",
+                language: {
+                    processing: '<i class="fa fa-spinner fa-spin f-60" style="font-size:60px;margin-top:50px;z-index:100;"></i>'
+                },
                 dom: "lBftrip",
                 ajax: {
                     url: '{!! url("merch/costing/list-data") !!}',
