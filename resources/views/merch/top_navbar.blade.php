@@ -297,7 +297,7 @@
 						</li>
 					</ul>
 				</li>
-         
+
 				<li class="light-blue dropdown-modal">
 					<a data-toggle="dropdown" href="#" class="dropdown-toggle">
 						<img class="nav-user-photo" src="{{ asset('assets/images/avatars/profile-pic.jpg') }}" alt="Profile Photo" />

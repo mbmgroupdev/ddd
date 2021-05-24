@@ -1,5 +1,3 @@
-
-
 @extends('merch.layout')
 
 @section('title', 'MERCHANDISING')

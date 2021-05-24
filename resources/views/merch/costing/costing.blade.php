@@ -1,5 +1,6 @@
-@extends('merch.index')
-@section('content')
+@extends('merch.layout')
+@section('title', 'Costing Compare')
+@section('main-content')
 @push('css')
 <style>
 	.elminate-item td{
@@ -7,28 +8,27 @@
 	}
 </style>
 @endpush
-@section('content')
 <div class="main-content">
 	<div class="main-content-inner">
 		<div class="breadcrumbs ace-save-state" id="breadcrumbs">
 			<ul class="breadcrumb">
-				<li> 
+				<li>
 					<i class="ace-icon fa fa-home home-icon"></i>
 					<a href="#">Costing Compare</a>
-				</li>  
+				</li>
 				<li class="active">{{$order->order_code}}</li>
-			</ul><!-- /.breadcrumb --> 
+			</ul><!-- /.breadcrumb -->
 		</div>
 
-		<div class="page-content">   
+		<div class="page-content">
             <!-- Display Erro/Success Message -->
             @include('inc/message')
             <div class="panel panel-success">
             	<div class="panel-heading page-headline-bar">
             		<h6>
-            			Costing Compare					
+            			Costing Compare
 						<div class="text-right pull-right">
-			            	
+
 		                	<a href="{{ url('/merch/costing-compare') }}" rel='tooltip' data-tooltip-location='left' data-tooltip='Costing Compare list' type="button" class="btn btn-info btn-sm">
 								<i class="glyphicon  glyphicon-list"></i>
 							</a>
@@ -40,7 +40,7 @@
 						<div class="col-sm-7">
 							<div class="row">
 								<div class="col-sm-6">
-									
+
 								</div>
 								<div class="col-sm-6"></div>
 							</div>
@@ -53,35 +53,35 @@
 										</a>
 
 									</th>
-									
-									
+
+
 									<th>Order COde</th>
 									<td>{{$order->order_code}}</td>
-									
+
 								</tr>
 								<tr>
 									<th>Order Quantity</th>
 									<td>{{$order->order_qty}}</td>
-									
+
 								</tr>
 								<tr>
 									<th>Unit</th>
-									<td>{{$order->unit['hr_unit_name']}}</td>
-									
+									<td>{{$order->unit['hr_unit_name']??''}}</td>
+
 								</tr>
 								<tr>
 									<th>Brand</th>
-									<td>{{$order->brand['br_name']}}</td>
+									<td>{{$order->brand['br_name']??''}}</td>
 									<th>Season</th>
-									<td>{{$order->season['se_name']}}</td>
-									
+									<td>{{$order->season['se_name']??''}}</td>
+
 								</tr>
 								<tr>
 									<th>Style No</th>
 									<td>{{$order->style['stl_no']}}</td>
 									<th>Delivery Date</th>
 									<td>{{$order->order_delivery_date}}</td>
-									
+
 								</tr>
 								<tr>
 									<th>Reference No</th>
@@ -102,7 +102,7 @@
 								<div class="widget-header widget-header-small header-color-blue2">
 									<h4 class="widget-title smaller">
 										<i class="ace-icon fa fa-table bigger-100"></i>
-										Item Wise Costing 
+										Item Wise Costing
 									</h4>
 								</div>
 							</div>
@@ -118,15 +118,15 @@
 											<th>Supplier</th>
 											<th>Consumption</th>
 											<th>Extra (%)</th>
-											<th>Unit</th> 
-											<th>Terms</th> 
-											<th>Style Cost</th> 
-											<th>Order Cost</th> 
-											<th>PO Cost</th> 
-											<th>PI Cost</th> 
-											<th>Req. Qty</th>  
+											<th>Unit</th>
+											<th>Terms</th>
+											<th>Style Cost</th>
+											<th>Order Cost</th>
+											<th>PO Cost</th>
+											<th>PI Cost</th>
+											<th>Req. Qty</th>
 										</tr>
-			                        </thead>  
+			                        </thead>
 									<tbody>
 									@foreach($order_cost as $item)
 										<tr>
@@ -141,25 +141,25 @@
 											<td>{{$item->supplier['sup_name']??''}}</td>
 											<td>{{$item->consumption}}</td>
 											<td>{{$item->extra_percent}}</td>
-											<td>{{$item->uom}}</td> 
-											<td>{{$item->bom_term}}</td> 
+											<td>{{$item->uom}}</td>
+											<td>{{$item->bom_term}}</td>
 											<td>
 												@if(isset($style_cost[$item->mr_cat_item_id]->price))
 													{{round($style_cost[$item->mr_cat_item_id]->price,6)}}
 												@else
 													N/A
 												@endif
-											</td> 
+											</td>
 											<td>
 												{{ ($item->precost_unit_price*($item->consumption+($item->consumption*($item->extra_percent / 100)))) }}
-											</td> 
-											<td>PO Cost</td> 
+											</td>
+											<td>PO Cost</td>
 											<td>
 												@if(isset($pi_cost[$item->mr_cat_item_id]))
 													{{round($pi_cost[$item->mr_cat_item_id],6)}}
 												@endif
-											</td> 
-											<td>{{$item->precost_req_qty}}</td>  
+											</td>
+											<td>{{$item->precost_req_qty}}</td>
 										</tr>
 									@endforeach
 									@if(count($style_old)>0)
@@ -176,20 +176,20 @@
 											<td>{{$style_cost[$style]->supplier['sup_name']}}</td>
 											<td>{{$style_cost[$style]->consumption}}</td>
 											<td>{{$style_cost[$style]->extra_percent}}</td>
-											<td>{{$style_cost[$style]->uom}}</td> 
-											<td>{{$style_cost[$style]->bom_term}}</td> 
-											<td>{{$style_cost[$style_cost[$style]->mr_cat_item_id]->price??0}}</td> 
-											<td> N/A </td> 
-											<td> N/A </td> 
-											<td> N/A </td> 
-											<td> N/A </td>  
+											<td>{{$style_cost[$style]->uom}}</td>
+											<td>{{$style_cost[$style]->bom_term}}</td>
+											<td>{{$style_cost[$style_cost[$style]->mr_cat_item_id]->price??0}}</td>
+											<td> N/A </td>
+											<td> N/A </td>
+											<td> N/A </td>
+											<td> N/A </td>
 										</tr>
 									@endforeach
-									@endif 
-			                        </tbody>   
+									@endif
+			                        </tbody>
 			                    </table>
-							
-	                    </div>						
+
+	                    </div>
 					</div>
 				</div>
 			</div>
@@ -224,7 +224,7 @@ $(document).ready(function() {
                     steps: 10
                 },
                 afterFit: function(scale) {
-                   scale.width = 60  //<-- set value as you wish 
+                   scale.width = 60  //<-- set value as you wish
                 },
                 scaleLabel: {
                     display: true,
