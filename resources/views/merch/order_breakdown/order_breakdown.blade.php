@@ -75,20 +75,7 @@ table.dataTable thead>tr>td.sorting, table.dataTable thead>tr>td.sorting_asc, ta
                             <th width="15%">Action</th>
                         </tr>
                         </thead>
-                        <tfoot>
-                        <tr>
-                            <th>SL</th>
-                            <th>Order No</th>
-                            <th>Unit</th>
-                            <th>Buyer</th>
-                            <!-- <th>Brand</th> -->
-                            <th>Season</th>
-                            <th>Style No</th>
-                            <th>Order Quantity</th>
-                            <th>Delivery Date</th>
-                            <th>Action</th>
-                        </tr>
-                        </tfoot>
+                        
                     </table>
                 
     
