@@ -27,7 +27,7 @@ use App\Repository\Merch\PoBomRepository;
 
 class OrderPoBookingController extends Controller
 {
-	
+
   	private $poBomRepository;
 
     public function __construct(PoBomRepository  $poBomRepository)
@@ -41,7 +41,7 @@ class OrderPoBookingController extends Controller
 
 			$unitList = collect(unit_by_id())->pluck('hr_unit_name', 'hr_unit_id');
 			$buyerList = collect(buyer_by_id())->pluck('b_name', 'b_id');
-			
+
 			$prdtypList = ProductType::pluck('prd_type_name', 'prd_type_id');
 
 			return view("merch.order_booking.order_po_booking.order_po_booking_list", compact('unitList','buyerList','prdtypList'));
@@ -53,15 +53,15 @@ class OrderPoBookingController extends Controller
 
 	public function getSupOrderList(Request $request)
 	{
-		
+
 		$team =[];
-		
+
 		$unitId = $request->unit_id;
 		$orderId = $request->order_id;
 		$buyerId  = $request->buyer_id;
 		$supId  = $request->sup_id;
 		$exOrderList  = $request->ex_order_list;
-		
+
 		$buyerOrderList = DB::table('mr_order_entry as a')->select([
 			'a.order_id',
 			'a.order_code',
@@ -1634,15 +1634,12 @@ class OrderPoBookingController extends Controller
 			->where('mr_order_entry.order_id',$orderId)
 			->first();
 
-		/*$poList = DB::table('mr_purchase_order')
+		$poList = DB::table('mr_purchase_order')
 		->select('po_id','mr_order_entry_order_id','po_no','po_qty')
 		->where('mr_order_entry_order_id',$orderId)->get();
-*/		
-		$boms = $this->poBomRepository->bom($orderId, $supplierId);
 
+		$boms = $this->poBomRepository->bomInfo($orderId, $supplierId);
 
-
-		
 
 		//dd($boms);
 				// dd($poList,$boms);exit;
@@ -1711,29 +1708,34 @@ class OrderPoBookingController extends Controller
 		$poSizeQtyListC = [];
 		$poSizeQtyListCN = [];
 
+
 		foreach($poDataList as $key=>$poDataL) {
-			$poSizeAr[$poDataL->po_sub_style_id] = DB::table('mr_po_size_qty')
-			->where('mr_po_sub_style_id',$poDataL->po_sub_style_id)->get();
-			$poColorAr[$poDataL->po_sub_style_id] = DB::table('mr_po_sub_style')
-			->where('po_sub_style_id',$poDataL->po_sub_style_id)->get();
+
+            $poSizeAr[$poDataL->po_sub_style_id] = DB::table('mr_po_size_qty')
+			->where('po_id',$poDataL->po_sub_style_id)->get();
+
+            $poColorAr[$poDataL->po_sub_style_id] = DB::table('mr_purchase_order')
+			->where('po_id',$poDataL->po_sub_style_id)->get();
+
 			foreach($poSizeAr[$poDataL->po_sub_style_id] as $key1=>$poSizeSingle) {
 				$poSizeQtyList[$poDataL->clr_id][$poDataL->po_sub_style_id][$key][$poSizeSingle->mr_product_size_id] = $poSizeSingle->qty;
 				$poSizeQtyListC[$poDataL->po_id][$poDataL->clr_id][$poDataL->po_id][$key][$poSizeSingle->mr_product_size_id] = $poSizeSingle->qty;
 				$poSizeQtyListS[$poDataL->po_id][$poSizeSingle->mr_product_size_id][$key] = $poSizeSingle->qty;
 			}
+
 			foreach($poColorAr[$poDataL->po_sub_style_id] as $key1=>$poColorSingle) {
-				$poColorQtyList[$poDataL->clr_id][$poDataL->po_sub_style_id][$key] = $poColorSingle->po_sub_style_qty;
-				$poColorQtyListC[$poDataL->po_id][$poDataL->clr_id][$poDataL->po_id][$key] = $poColorSingle->po_sub_style_qty;
+				$poColorQtyList[$poDataL->clr_id][$poDataL->po_sub_style_id][$key] = $poColorSingle->po_qty;
+				$poColorQtyListC[$poDataL->po_id][$poDataL->clr_id][$poDataL->po_id][$key] = $poColorSingle->po_qty;
 			}
 		}
 
-		foreach($boms as $bkey=>$bom) {
-			if($bom->po_pos_id == null) {
+		foreach($boms as $bom) {
+			if($bom->po_po_id == null) {
 				foreach($poDataList as $key=>$poDataL) {
 					$poSizeArN[$bom->order_id][$key] = DB::table('mr_po_size_qty')
 					->where('mr_po_sub_style_id',$poDataL->po_sub_style_id)->get();
-					$poColorArN[$bom->order_id][$key] = DB::table('mr_po_sub_style')
-					->where('po_sub_style_id',$poDataL->po_sub_style_id)->get();
+					$poColorArN[$bom->order_id][$key] = DB::table('mr_purchase_order')
+					->where('po_id',$poDataL->po_sub_style_id)->get();
 					foreach($poSizeArN[$bom->order_id][$key] as $key1=>$orderSizeSingle) {
 						$poSizeQtyListN[$bom->order_id][$key][$key1] = $orderSizeSingle->qty;
 						$poSizeQtyListCN[$bom->order_id][$poDataL->clr_id][$orderSizeSingle->mr_product_size_id][$key] = $orderSizeSingle->qty;
@@ -1778,7 +1780,7 @@ class OrderPoBookingController extends Controller
 		}
 	}
 
-	public function getSupOrderListForEdit($unitId, $supplierId, $buyerId, $orderList=[], $orderBookingExist)
+	public function getSupOrderListForEdit($unitId, $supplierId, $buyerId, $orderList, $orderBookingExist)
 	{
 		try {
 
