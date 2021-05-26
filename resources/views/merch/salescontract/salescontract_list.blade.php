@@ -78,6 +78,7 @@
                                            style="display: block; overflow-x: auto; width: 100%;">
                                         <thead>
                                         <tr>
+                                            <th width="15%">Action</th>
                                             <th width="15%">SL</th>
                                             <th width="15%">Export LC / Contract No</th>
                                             <th width="15%">Buyer</th>
@@ -86,8 +87,8 @@
                                             <th width="15%">Contract Qty</th>
                                             <th width="15%">ELC Date</th>
                                             <th width="15%">LC Type</th>
-                                            <th width="15%">Action</th>
                                         </thead>
+
                                     </table>
                                 </div><!-- /.col -->
                             </div><!-- /.row -->
@@ -123,7 +124,8 @@
                 dom: "lBftrip",
                 ajax: '{!! url("merch/sales_contract/sales_contract_get_data") !!}',
                 columns: [
-                    {data: 'serial_no', name: 'serial_no'},
+                    {data: 'action', name: 'action', orderable: false, searchable: false},
+                    {data: 'serial_no', name: 'serial_no' },
                     {data: 'lc_contract_no', name: 'lc_contract_no'},
                     {data: 'b_name', name: 'b_name'},
                     {data: 'hr_unit_name', name: 'hr_unit_name'},
@@ -131,8 +133,6 @@
                     {data: 'contract_qty', name: 'contract_qty'},
                     {data: 'elc_date', name: 'elc_date'},
                     {data: 'lc_contract_type', name: 'lc_contract_type'},
-                    {data: 'action', name: 'action', orderable: false, searchable: false}
-
                 ],
                 buttons: [
                     {

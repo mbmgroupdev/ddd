@@ -109,7 +109,7 @@ class OrderBreakDownController extends Controller
                                   </a>
                                   ";
                 }else{
-                    $return .= "<a href=".url('merch/order_breakdown/show/'.$orders->order_id)." class=\"btn btn-xs btn-warning\" data-toggle=\"tooltip\" title=\"Show\">
+                    $return .= "<a href=".url('merch/order_breakdown/show/'.$orders->order_id)." class=\"btn btn-xs btn-warning\" data-toggle=\"tooltip\" title=\"Edit\">
                                  <i class=\"ace-icon fa fa-plus \"></i>
                                   </a>
                                   ";

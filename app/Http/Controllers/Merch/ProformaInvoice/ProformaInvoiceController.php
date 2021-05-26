@@ -127,7 +127,6 @@ class ProformaInvoiceController extends Controller
 	{
 		try {
 			$buyer_permissions = auth()->user()->buyer_permissions;
-
 			$buyerOrderList = DB::table('mr_order_entry as a')->select([
 									'bu.b_name',
 									'bu.b_id'
@@ -476,7 +475,7 @@ class ProformaInvoiceController extends Controller
 			}else{
 				return back()->with('error', 'PI Not Found');
 			}
-
+			
 		} catch(\Exception $e) {
 			return back();
 		}
@@ -527,7 +526,7 @@ class ProformaInvoiceController extends Controller
 				return back()->with('error', 'PI Not Found');
 			}
 
-
+			
 		} catch(\Exception $e) {
 			$bug = $e->getMessage();
 			return back()->with('error', $bug);

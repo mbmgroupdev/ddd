@@ -223,22 +223,6 @@ class MaternityPaymentController extends Controller
 
 	}
 
-	####### Code for activating Maternity 
-	public function active($id)
-	{
-		$leave = MaternityLeave::with('medical','medical.record')->findOrFail($id);
-		if($leave){
-			DB::table('hr_as_basic_info')
-	            ->where('associate_id', $leave->associate_id)
-	            ->update([
-	                 'as_status' => 1,  
-	                 'as_status_date' => $leave->leave_to
-	            ]);
-		}
-		return redirect()->back()->with('success', 'Activate done');
-	}
-	######
-
 	public function process($id, Request $request)
 	{
 		$leave = MaternityLeave::with('medical','medical.record')->findOrFail($id);

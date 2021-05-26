@@ -23,16 +23,16 @@
                     <div class="row np-padding no-margin">
                          <div class="col-sm-6 no-padding no-margin">
                              <h6>Copy Style</h6>
-                         </div>   
+                         </div>
                          <div class="col-sm-6 no-padding no-margin">
                             <!-- <a href="{{ url('merch/style/style_new') }}" class="btn btn-primary btn-xs pull-right" style="border-radius: 5px;" >
                                 New Style
                             </a>
-                            <a href="{{ url('merch/style/create_bulk') }}" class="btn btn-info btn-xs pull-right" 
+                            <a href="{{ url('merch/style/create_bulk') }}" class="btn btn-info btn-xs pull-right"
                                 style="border-radius: 5px; margin-right: 5px;" >
                                 Create Bulk
                             </a> -->
-                         </div>   
+                         </div>
                     </div>
                 </div>
 
@@ -51,7 +51,7 @@
                                         <label class="col-sm-4 control-label no-padding-right" for="b_id" > Production Type<span style="color: red">&#42;</span> </label>
                                         <div class="col-sm-8">
                                             <label class="radio-inline">
-                                                @if($style->stl_type == 'Bulk')
+                                                @if($style->stl_type == 'B')
                                             <input type="radio" name="stl_order_type" id="inlineRadio1" value="Bulk" data-validation="required" checked> Bulk
                                                     @else
                                             <input type="radio" name="stl_order_type" id="inlineRadio1" value="Development" data-validation="required" checked> Development
@@ -122,7 +122,7 @@
 
                                                     ?>
                                                     <label class='col-sm-6' style='padding:0px; pointer-events: none;'>
-                                                        <input name="opr_id[]" id="opr_id" type="checkbox"  class="ace" 
+                                                        <input name="opr_id[]" id="opr_id" type="checkbox"  class="ace"
                                                                     value="{{ $id }}" @if($tnalib) checked @endif>
                                                         <span class="lbl"> {{ $name }}</span>
                                                     </label>
@@ -154,7 +154,7 @@
 
                                                     ?>
                                                     <label class="col-sm-12" style='padding:0px; pointer-events: none; '>
-                                                        <input name="sp_machine_id[]" id="sp_machine_id" type="checkbox" class="ace" 
+                                                        <input name="sp_machine_id[]" id="sp_machine_id" type="checkbox" class="ace"
                                                             value="{{ $id }}"  @if($smachine) checked @endif>
                                                         <span class="lbl"> {{ $name }} </span>
                                                     </label>
@@ -186,7 +186,7 @@
                                     <div class="col-sm-8" style="pointer-events: none;">
                                       {{ Form::select('gmt_id', $garmentsTypeList, $style->gmt_id, ['placeholder'=>'Select Garments Type', 'id'=>'gmt_id', 'class'=> 'col-xs-12', 'data-validation' => 'required' ]) }}
                                     </div>
-                                </div> 
+                                </div>
                                 <div class="form-group" style="pointer-events: none;">
                                     <label class="col-sm-4 control-label no-padding-right" for="stl_description" > Description<span style="color: red">&#42;</span> </label>
                                     <div class="col-sm-8">
@@ -346,7 +346,7 @@
                 </div>
             </div>
 
-            
+
         </div><!-- /.page-content -->
     </div>
 </div>

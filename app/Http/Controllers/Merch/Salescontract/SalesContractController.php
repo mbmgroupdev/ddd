@@ -21,7 +21,6 @@ class SalesContractController extends Controller
 
       $buyer=Buyer::pluck('b_name','b_id');
       $bank=Bank::pluck('bank_name','id');
-      //$bank=null;
       $country=Country::pluck('cnt_name','cnt_id');
       $unit=Unit::pluck('hr_unit_name','hr_unit_id');
 
@@ -110,18 +109,18 @@ class SalesContractController extends Controller
              ->get();
        }
 
-            $list ='<table class="table table-responsive table-bordered table-striped" style= "width:100%;">
+            $list ='<table class="table table-responsive table-bordered table-striped">
                       <thead>
-                        <th width="30%" class="">
+                        <th class="">
                          Order No
                         </th>
-                        <th width="30%" class="">
+                        <th class="">
                           Style
                         </th>
-                        <th width="30%" class="">
+                        <th class="">
                           Order Qty
                         </th>
-                        <th width="30%" class="">
+                        <th class="">
                         Order Delivary Date
                         </th>
                       </thead>

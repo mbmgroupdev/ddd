@@ -40,7 +40,6 @@ class BonusSheetController extends Controller
         $data['areaList'] = collect(area_by_id())->pluck('hr_area_name', 'hr_area_id');
         $data['salaryMin'] = 0;
         $data['salaryMax'] = Benefits::getSalaryRangeMax();
-
         return view('hr.reports.bonus.index', $data);
     }
 
@@ -63,7 +62,7 @@ class BonusSheetController extends Controller
         } catch (\Exception $e) {
             return $e->getMessage();
             return 'error';
-            }
+        }
     }
 
     public function audit(Request $request)
