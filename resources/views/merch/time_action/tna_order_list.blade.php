@@ -83,18 +83,6 @@
                                     <th width="15%">Rev OK to Begin </th>
                                     <th width="15%">Action</th>
                             </thead>
-                            <tfoot>
-                                <tr>
-                                    <th>SL</th>
-                                    <th>MBM Order</th>
-                                    <th>Confirm Date</th>
-                                    <th>Lead Days </th>
-                                    <th>Tolerance Days</th>
-                                    <th>TNA Type </th>
-                                    <th>OK to Begin</th>
-                                    <th>Rev OK to Begin </th>
-                                    <th>Action</th>
-                            </tfoot>
                         </table>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
