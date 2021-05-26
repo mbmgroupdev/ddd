@@ -88,7 +88,6 @@
                                             <th width="15%">LC Type</th>
                                             <th width="15%">Action</th>
                                         </thead>
-
                                     </table>
                                 </div><!-- /.col -->
                             </div><!-- /.row -->

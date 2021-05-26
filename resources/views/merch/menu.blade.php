@@ -91,6 +91,7 @@
             </li>
             @endif
 
+
             <li class="@if($segment2 == 'time_action' && $segment3=='tna_status') active @endif">
                <a href="{{url('merch/time_action/tna_status')}}" class="iq-waves-effect"><i class="las la-clipboard-list"></i>TNA Status</a>
             </li>
@@ -106,8 +107,9 @@
       </li> --}}
 
       <li class="{{ $segment2 == 'order-breakdown'?'active':'' }}">
-         <a href="#" class="iq-waves-effect" style="color: #c9c9c9;"><i class="las la-list-ol"></i><span>Order Breakdown</span></a>
+         <a href="{{ url('merch/order_breakdown')}}" class="iq-waves-effect"><i class="las la-list-ol"></i><span>Order Breakdown</span></a>
       </li>
+
       @if(auth()->user()->canany([]) || $user->hasRole('Super Admin'))
 
       <li class="@if($segment2 == 'order_booking') active @endif">
@@ -127,25 +129,28 @@
       </li>
 
       @endif
+
+
       @if(auth()->user()->canany([]) || $user->hasRole('Super Admin'))
 
       <li class="@if($segment2 == 'pi') active @endif">
-         <a href="#pi" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false" style="color: #c9c9c9;"><i class="las la-shopping-bag"></i><span>PI</span><i class="las la-angle-right iq-arrow-right"></i></a>
+         <a href="#pi" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false" ><i class="las la-shopping-bag"></i><span>PI</span><i class="las la-angle-right iq-arrow-right"></i></a>
          <ul id="pi" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
             @if($user->can('New Style') || $user->hasRole('Super Admin'))
             <li class="@if($segment2 == 'style' && $segment3=='style_new') active @endif">
-               <a  href="#"><i class="las la-folder-plus"></i> Create PI</a>
+               <a  href="{{url('merch/proforma_invoice/form')}}"><i class="las la-folder-plus"></i> Create PI</a>
             </li>
             @endif
             @if($user->can('Style List' ) || $user->hasRole('Super Admin'))
             <li class="@if($segment2 == 'style' && $segment3=='style_list') active @endif">
-               <a href="#"><i class="las la-list-ol"></i> PI List</a>
+               <a href="{{url('merch/proforma_invoice')}}"><i class="las la-list-ol"></i> PI List</a>
             </li>
             @endif
          </ul>
       </li>
 
       @endif
+
       <li class="{{ $segment2 == 'costing-compare'?'active':'' }}">
          <a href="{{url('merch/costing-compare')}}" class="iq-waves-effect"><i class="las la-list-ol"></i><span>Costing Compare</span></a>
       </li>
@@ -155,6 +160,7 @@
          <a href="#sales_contract" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="las la-address-book"></i><span>Sales Contract</span><i class="las la-angle-right iq-arrow-right"></i></a>
          <ul id="sales_contract" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
             @if($user->can('New Style') || $user->hasRole('Super Admin'))
+
             <li class="@if($segment2 == 'sales_contract' && $segment3=='sales_contract_entry') active @endif">
                <a  href="{{url('merch/sales_contract/sales_contract_entry')}}"><i class="las la-folder-plus"></i> Create Sales Contract</a>
             </li>
