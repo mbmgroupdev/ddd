@@ -28,7 +28,6 @@
                                 <th>EDD</th>
                                 <th>Status</th>
                                 <th style="text-align: center;">Action</th>
-                                
                             </tr>
                         </thead> 
                         
