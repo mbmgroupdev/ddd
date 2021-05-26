@@ -2,6 +2,7 @@
 @section('title', 'Style Create')
 @section('main-content')
 @push('css')
+    <link href="{{url('https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css')}}" rel="stylesheet">
 <style>
   .ui-autocomplete {
     position: absolute;
@@ -64,6 +65,15 @@
 }
 .slide_upload::before{content: "+";position: absolute;top: 50%;color: rgb(8 155 171);left: 50%;font-size: 52px;margin-left: -17px;margin-top: -37px;}
 
+  span.toggle-handle.btn.btn-light {
+      width: 44px !important;
+  }
+
+  .toggle.btn{
+      width: 12.1em !important;
+  }
+
+  .slow  .toggle-group { transition: left 0.7s; -webkit-transition: left 2s; }
 </style>
 @endpush
 <div class="main-content">
@@ -92,8 +102,8 @@
                     {{ Form::open(["url" => "merch/style/style_store", "class"=>"form-horizontal", "files"=>true]) }}
                         <div class="row">
                             <div class="col-sm-6">
-                                <input type="hidden" name="stl_order_type" id="inlineRadio1" value="Development" required="required" readonly>
-                                <span style="color: green">* Production Type (Development)</span>
+{{--                                <input type="hidden" name="stl_order_type" id="inlineRadio1" value="Development" required="required" readonly>--}}
+                                <span style="color: green">* Production Type</span>
                                 <div class="row mt-3">
 
                                     <div class="col-sm-6" id="buyerSection">
@@ -150,6 +160,7 @@
                                             <label for="gender"> Gender  </label>
 
                                         </div>
+
                                         <div class="form-group">
                                             <button style="width: 100px;" class="btn btn-success" type="submit">
                                                 Save  &nbsp;
@@ -186,11 +197,7 @@
                                         <div class="form-group has-float-label select-search-group">
                                             {{ Form::select('mr_sample_style', $sampleType, null, ['placeholder'=>'Please Select Sample Type', 'id'=>'mr_sample_style', 'class'=> 'form-control ']) }}
                                             <label for="mr_sample_style"> Sample Type  </label>
-
                                         </div>
-
-
-
                                     </div>
                                     <div class="col-sm-12">
 
@@ -236,6 +243,10 @@
                                             @endhasanyrole
                                         </div>
                                         <div  id="show_selected_size_group" ></div>
+
+                                    <div class="form-group">
+                                        <input type="checkbox" checked data-toggle="toggle" value="true" name="stl_order_type" data-on="Development" data-off="Bulk" data-onstyle="primary" data-offstyle="info">
+                                    </div>
 
 
 
@@ -289,7 +300,6 @@
                       <div class="form-group col-sm-9">
                         <label for="march_buyer_address" >  Address </label>
                         <div class="col-sm-8">
-
                           <textarea name="march_buyer_address" class="col-xs-12 march_buyer_address" id="march_buyer_address"  required="required length" required-length="0-128"></textarea>
                       </div>
                   </div>
@@ -319,7 +329,6 @@
                DONE
            </button>
        </div>
-
    </div>
 
    {{ Form::close() }}
@@ -430,6 +439,7 @@
 @include('merch.modals.add_size_group')
 @include('merch.modals.add_wash')
 @push('js')
+    <script src="{{url('https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js')}}"></script>
 <script type="text/javascript">
     var url = "{{ url('/') }}";
 //autocomplete placement script

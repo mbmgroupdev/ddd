@@ -389,7 +389,15 @@ class NewStyleController extends Controller
         $stlimg   = $request->style_img;
       }
 
-      $data->stl_type         = $request->stl_order_type;
+        //$stl_type = $request->stl_order_type;
+
+      if ($request->stl_order_type == true){
+          $stl_type = 'Development';
+      } else{
+          $stl_type = 'Bulk';
+      }
+
+      $data->stl_type         = $stl_type;
       $data->unit_id          = auth()->user()->unit_permissions()[0];
       $data->mr_buyer_b_id    = $request->b_id;
       $data->prd_type_id      = $request->prd_type_id;
