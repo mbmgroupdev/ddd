@@ -165,6 +165,7 @@
                             <th>EDD</th>
                             <th>Payment</th>
                             <th>Action</th>
+                            
                         </tr>
                     </thead>
                     <tbody>
@@ -188,7 +189,15 @@
                                 <td>{{ bn_money($leave->second_payment??0) }}</td>
                                 <td>
                                     <a href='{{ url("hr/operation/maternity-leave/".$leave->id) }}' target="_blank">View</a>
+                                    {{-- @if ( $leave->leave_to < Carbon\Carbon::now() )
+                                    
+                                        <a href='{{ url("hr/maternity-leave/active/".$leave->id) }}' target="_blank">Active</a>
+                                    
+                                    @endif --}}
                                 </td>
+
+                                
+                                
                             </tr>
                             @endforeach
                             <tr>

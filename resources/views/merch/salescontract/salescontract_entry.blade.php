@@ -1,4 +1,5 @@
-@extends('merch.index')
+@extends('merch.layout')
+@section('title', 'Create Sales Contract')
 @push('css')
 <style>
     input[type=text], input[type=number] {
@@ -8,12 +9,21 @@
   
   .modal{padding-top: 50px;}
 }
+
+.label_background label::after {
+
+background: #e9ecef;
+
+}
 </style>
 @endpush
-@section('content')
+
+
+
+@section('main-content')
 <div class="main-content">
-    <div class="main-content-inner">
-        <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+  <div class="main-content-inner">
+      <div class="breadcrumbs ace-save-state" id="breadcrumbs">
             <ul class="breadcrumb">
                 <li>
                     <i class="ace-icon fa fa-home home-icon"></i>
@@ -21,218 +31,221 @@
                 </li>
                 
                 <li class="active">Sales Contract Entry</li>
+                <li class="top-nav-btn">
+                  <a class="btn btn-sm btn-primary" href="{{ url('merch/sales_contract/sales_contract_list') }}"><i class="las la-list"></i></a>
+              </li>
             </ul><!-- /.breadcrumb -->
-        </div>
+      </div>
 
-          <div class="page-content">
-            {{-- <div class="page-header">
-                <h1>Commercial <small><i class="ace-icon fa fa-angle-double-right"></i> Sales Contract Entry  </small></h1>
-            </div> --}}
+      <div class="panel">
+                {{-- <div class="page-header">
+                    <h1>Commercial <small><i class="ace-icon fa fa-angle-double-right"></i> Sales Contract Entry  </small></h1>
+                </div> --}}
 
-            @include('inc/message')
+          <div class="panel-body">
 
-            <div class="text-right">
-                <div class="col-sm-12">
+                @include('inc/message')
 
-                    <a href="{{ url('merch/sales_contract/sales_contract_list') }}" class="btn btn-primary btn-xs" >Contract List </a>
-                </div>
-                <br>
-                <br>
-                <br>
-              </div>
-                  <form class="form-horizontal" role="form" method="post" action=" {{ url('merch/sales_contract/sales_contract_store') }}" enctype="multipart/form-data">
-                      {{ csrf_field() }}
-                      <div class="row">
-                            
+                
+                <form class="form-horizontal" role="form" method="post" action=" {{ url('merch/sales_contract/sales_contract_store') }}" enctype="multipart/form-data">
+                    {{ csrf_field() }}
+                    <div class="row">
+                          
 
-                              <div class="col-md-4 ">
+                            <div class="col-md-4">
 
-                                 <div class="form-group ">
-                                      <label class=" col-sm-6 control-label no-padding-right" for="product" >Buyer: <span style="color: red">&#42;</span></label>
+                              <div class="form-group has-float-label select-search-group has-required">
+                                {{ Form::select('buyer', $buyer, null, ['placeholder'=>'Select Buyer','id'=> 'buyer','class'=> 'form-control col-xs-10', 'data-validation' => 'required']) }}
+                                <label for="product" >Buyer </label>
 
-                                       <div class="col-sm-6">
-                                           {{ Form::select('buyer', $buyer, null, ['placeholder'=>'Select Buyer','id'=> 'buyer','class'=> 'form-control col-xs-10', 'data-validation' => 'required']) }}
-                                        </div>
-
-                                  </div>
-
-                                  <div class="form-group ">
-                                      <label class="col-sm-6 control-label no-padding-right font-weight-bold" for="unit">Unit:<span style="color: red">&#42;</span> </label>
-
-                                    <div class="col-sm-6">
-                                        {{ Form::select('unit', $unit, null, ['placeholder'=>'Select','id'=>'unit','class'=> 'form-control col-xs-10', 'data-validation' =>'required']) }}
-                                    </div>
-                                  </div>
-                                  <div class="form-group ">
-                                      <label class="col-sm-6 control-label no-padding-right" for="contract_no" >Contract Source:<span style="color: red">&#42;</span></label>
-                                      <div class="col-sm-6">
-                                      {{ Form::select('contract_no', array('In House'=>'In House', 'Buyer'=>'Buyer'), null, ['placeholder'=>'Select','id'=>'c_number_by','class'=> 'form-control col-xs-10', 'data-validation' => 'required']) }}
-                                    </div>
-                                  </div>
-                                    <div class="form-group">
-                                        <label class="col-sm-6 control-label no-padding-right" for="initial value" >Select Order:
-                                       </label>
-                                        <div class="col-sm-6">
-                                            <button type="button" class="btn btn-primary btn-xs" id="add_order_button" data-toggle="modal" data-target="#select_item">Add Order</button>
-                                        </div>
-                                    </div>
                               </div>
-                              <div class="col-md-4">
 
-                                  <div class="form-group">
-                                      <label class="col-sm-6 control-label no-padding-right" for="exlc_contract_no" >Export LC / Contract No.:  <span style="color: red">&#42;</span></label>
-                                      <div class="col-sm-6">
-                                       <input type="text" name="exlc_contract_no"  value="" placeholder="Enter" id="exlc_contract_no" class=" form-control" data-validation ="required" readonly="readonly" />
-                                      </div>
-                                  </div>
-                                  <div class="form-group ">
-                                      <label class="col-sm-6 control-label no-padding-right" for="contract_qty" >Contract Qty: <span style="color: red">&#42;</span></label>
-                                       <div class="col-sm-6">
-                                         <input type="text" name="contract_qty"  value="" placeholder="Enter" id="contract_qty" class=" form-control"  data-validation ="required" />
-                                      </div>
-                                  </div>
-                                  <div class="form-group ">
-                                      <label class="col-sm-6 control-label no-padding-right" for="contract_value" >Contract Value: <span style="color: red">&#42;</span></label>
-                                       <div class="col-sm-6">
-                                         <input type="text" name="contract_value"  value="" placeholder="Enter" id="contract_value" class=" form-control"  data-validation ="required" />
-                                         <strong id="contract_value_suggestion"></strong>
-                                      </div>
-                                  </div>
-                                  <div class="form-group">
-                                        <label class="col-sm-6 control-label no-padding-right" for="elc_date" >Contract Issue Date: </label>
-                                        <div class="col-sm-6">
-                                            <input type="text" name="elc_date" id="elc_date" value=""placeholder="yyyy-mm-dd" class=" form-control datepicker"/>
-                                        </div>
+                              <div class="form-group has-float-label select-search-group has-required">
+                                {{ Form::select('unit', $unit, null, ['placeholder'=>'Select','id'=>'unit','class'=> 'form-control col-xs-10', 'data-validation' =>'required']) }}
+                                <label for="unit" >Unit </label>
+
+                              </div>
+
+                              <div class="form-group has-float-label select-search-group has-required">
+                                {{ Form::select('contract_no', array('In House'=>'In House', 'Buyer'=>'Buyer'), null, ['placeholder'=>'Select','id'=>'c_number_by','class'=> 'form-control col-xs-10', 'data-validation' => 'required']) }}
+                                <label for="contract_no" >Contract Source: </label>
+
+                              </div>
+
+
+                                <div class="form-group">
+                                        <button type="button" class="btn btn-primary btn-sm" id="add_order_button" data-toggle="modal" data-target="#right_modal_item" style="width:100%;border-radius: 5px;">Add Order</button>
+                                        
                                     </div>
-                              </div>
-                              <div class="col-md-4 ">
-
-                                  <div class="form-group ">
-                                      <label class="form-check-label col-sm-6 control-label no-padding-right" for="cmpc" >Export Type: </label>
-
-                                       <div class="col-sm-6">
-                                        <input type="radio" class="form-check-input" id="lctype" name="lctype" value="ELC" checked> ELC<br/>
-                                         <input type="radio" class="form-check-input" name="lctype" value="Contract"> Contract
-                                     </div>
-                                  </div>
-                              </div>
-                      </div>
-
-                      <div class="row">
-                        <div class="col-md-12 form-horizontal">
-                            <div class="tabbable">
-                              <ul class="nav nav-tabs">
-                                  <li class="active">
-                                      <a data-toggle="tab" href="#merch" aria-expanded="true">Optional</a>
-                                  </li>
-                              </ul>
-
-                              <div class="tab-content">
-                                <!-- merch -->
-                                  <div id="merch" class="tab-pane fade in active">
-
-                                    <div class="row form-group">
-
-                                      <div class="col-xs-6 col-sm-4">
-                                          <div class="form-group">
-                                              <label class="col-sm-4 control-label no-padding-right" for="exp_date" >Expire Date: </label>
-                                              <div class="col-sm-8">
-                                               <input type="text" name="exp_date" id="exp_date" value=""placeholder="Enter" class=" form-control datepicker"/>
-                                              </div>
-                                          </div>
-                                          <div class="form-group">
-                                              <label class="col-sm-4 control-label no-padding-right" for="remark" >Remarks: </label>
-                                              <div class="col-sm-8">
-                                               <input type="text" name="remark" id="remark" value=""placeholder="Enter" class=" form-control"/>
-                                              </div>
-                                          </div>
-                                      </div>
-                                      <div class="col-xs-6 col-sm-4">
-                                          <div class="form-group">
-                                              <label class="col-sm-4 control-label no-padding-right" for="initial value" >Initial Value: </label>
-                                              <div class="col-sm-8">
-                                                <div class="col-sm-6 col-xs-6 no-padding-left no-padding-left">
-                                                 <input type="text" name="initial_value" id="initial value" value=""placeholder="Enter" class=" col-xs-12" style="height: 32px;" />
-                                                </div>
-                                                <div class="col-sm-6 col-xs-6"> 
-                                                  {{ Form::select('currency', array('USD'=>'$ USD', 'EUR'=>'€ EUR','GBP'=>'£ GBP','Tk'=>'৳ Tk'), 'USD', ['placeholder'=>'Select','class'=> '', 'data-validation' => 'required']) }}
-                                                </div>
-                                              </div>
-                                          </div>
-                                          <div class="form-group">
-                                              <label class="col-sm-4 control-label no-padding-right" for="lc_bank" >Buyer Bank: </label>
-                                              <div class="col-sm-8">
-                                                {{ Form::select('lc_bank', $bank, null, ['placeholder'=>'Select','class'=> 'form-control']) }}
-
-                                              </div>
-                                          </div>
-                                      </div>
-                                      <div class="col-xs-6 col-sm-3 col-sm-offset-1">
-                                          <div class="form-group">
-                                              <label class="col-sm-4 control-label no-padding-right" for="initial value" >BTB Bank: </label>
-                                              <div class="col-sm-8">
-                                                {{ Form::select('btb_bank', $bank, null, ['placeholder'=>'Select','class'=> 'form-control col-xs-10']) }}
-                                              </div>
-                                          </div>
-                                      </div>
-                                     {{--  <div class="col-xs-4 col-sm-4">
-                                          <div class="form-group">
-                                              <label class="col-sm-4 control-label no-padding-right" for="initial value" >
-
-                                               </label>
-                                              <div class="col-sm-8">
-                                                  <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#select_item">Add Order</button>
-                                              </div>
-                                          </div>
-                                       </div> --}}
-
-                                     </div>
-                                   </div>
-                                 </div>
+                                  
                             </div>
-                        </div>
-                      </div>
+                            <div class="col-md-4">
 
-                      <div class="row">
-                        <div class="col-md-12" style="margin-top: 20px;">
-                          <table  class="table table-responsive table-bordered" >
-                             <thead id="table_head">
+                              <div class="form-group has-float-label has-required label_background">
+                                
+                                <input type="text" name="exlc_contract_no"  value="" placeholder="Enter Value" id="exlc_contract_no" class="col-xs-12 form-control" autocomplete="off" data-validation ="required" readonly="readonly"/>
+                                <label for="exlc_contract_no" > Export LC / Contract No. </label>
+                              </div>
 
-                             </thead>
+                              
+                                <div class="form-group has-float-label has-required">
 
-                             <tbody id="order_list_des">
-                             </tbody>
-                             <tfoot id="table_foot">
+                                      <input type="text" name="contract_qty"  value="" placeholder="Enter Value" id="contract_qty" class="col-xs-12 form-control" autocomplete="off" data-validation ="required"/>
+                                      <label for="contract_qty" > Contract Qty: </label>
+                                </div>
 
-                             </tfoot>
-                          </table>
-                        </div>
-                      </div>
+                                <div class="form-group has-float-label has-required">
 
+                                  <input type="text" name="contract_value"  value="" placeholder="Enter Value" id="contract_value" class="col-xs-12 form-control" autocomplete="off" data-validation ="required"/>
+                                  <label for="contract_value" > Contract Value: </label>
+                                  <strong id="contract_value_suggestion"></strong>
+                                </div>
 
-                      <div class="clearfix form-actions">
-                          <div class="col-sm-offset-4 col-sm-4">
-                              <button class="btn btn-sm btn-success" type="submit">
-                                  <i class="ace-icon fa fa-check bigger-110"></i> Submit
-                              </button>
+                                <div class="form-group has-float-label">
 
-                              &nbsp; &nbsp; &nbsp;
-                              <button class="btn btn-sm" type="reset">
-                                  <i class="ace-icon fa fa-undo bigger-110"></i> Reset
-                              </button>
+                                  <input type="date" name="elc_date"  value="" placeholder="yyyy-mm-dd" id="elc_date" class=" form-control datepicker"/>
+                                  <label for="elc_date" > Contract Issue Date: </label>
+                                </div>
+                                
+                              
+                            </div>
+                            <div class="col-md-4 ">
+
+                                <div class="form-group ">
+                                    <label class="form-check-label col-sm-12 control-label no-padding-right pl-0" for="cmpc" >Export Type: </label>
+
+                                    <div class="col-sm-12">
+                                      <input type="radio" class="form-check-input" id="lctype" name="lctype" value="ELC" checked> ELC<br/>
+                                      <input type="radio" class="form-check-input" name="lctype" value="Contract"> Contract
+                                  </div>
+                                </div>
+                            </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-md-12 form-horizontal">
+                          <div class="tabbable">
+                            <ul class="nav nav-tabs">
+                                <li class="active">
+                                    <a data-toggle="tab" href="#merch" aria-expanded="true">Optional</a>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content">
+                              <!-- merch -->
+                                <div id="merch" class="tab-pane in active">
+
+                                  <div class="row form-group">
+
+                                    <div class="col-xs-6 col-sm-4">
+
+                                      <div class="form-group has-float-label">
+
+                                        <input type="date" name="exp_date"  value="" placeholder="yyyy-mm-dd" id="exp_date" class=" form-control datepicker"/>
+                                        <label for="exp_date" > Expire Date: </label>
+                                      </div>
+
+                                      <div class="form-group has-float-label">
+
+                                        <input type="text" name="remark"  value="" placeholder="Enter" id="remark" class="form-control"/>
+                                        <label for="remark" > Remarks: </label>
+                                      </div>
+  
+                                    </div>
+                                    <div class="col-xs-6 col-sm-4">
+                                        <div class="row">
+                                            <div class="col-sm-9 ">
+                                              <div class="form-group has-float-label">
+                                                <input type="text" class="form-control" id="initial_value" name="initial_value" placeholder="Enter"   autocomplete="off">
+                                                <label for="initial_value"> Initial Value:  </label>
+                                              </div>    
+                                            </div>
+                                            <div class="col-sm-3">
+                                              <div class="form-group has-float-label select-search-group">
+                                                {{ Form::select('currency', array('USD'=>'$ USD', 'EUR'=>'€ EUR','GBP'=>'£ GBP','Tk'=>'৳ Tk'), 'USD', ['placeholder'=>'Select','class'=> '', 'data-validation' => 'required']) }}
+                                              </div>                                              
+                                          </div>
+                                        </div> 
+                                      
+
+                                      <div class="form-group has-float-label select-search-group">
+                                        {{ Form::select('lc_bank', $bank, null, ['placeholder'=>'Select','class'=> 'form-control']) }}
+                                        <label for="lc_bank" >Buyer Bank: </label>
+        
+                                      </div>
+
+                                    </div>
+                                    <div class="col-xs-6 col-sm-4 col-sm-offset-1">
+
+                                      <div class="form-group has-float-label select-search-group">
+                                        {{ Form::select('btb_bank', $bank, null, ['placeholder'=>'Select','class'=> 'form-control col-xs-10']) }}
+                                        <label for="btb_bank" >BTB Bank: </label>
+        
+                                      </div>
+
+                                      <div class="form-group">
+                                        <button class="btn btn-sm btn-success" type="submit">
+                                          <i class="ace-icon fa fa-check bigger-110"></i> Submit
+                                      </button>
+                  
+                                      &nbsp; &nbsp; &nbsp;
+                                      <button class="btn btn-sm" type="reset">
+                                          <i class="ace-icon fa fa-undo bigger-110"></i> Reset
+                                      </button>
+                                    </div>
+
+                                        
+                                    </div>
+                                  {{--  <div class="col-xs-4 col-sm-4">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label no-padding-right" for="initial value" >
+
+                                            </label>
+                                            <div class="col-sm-8">
+                                                <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#select_item">Add Order</button>
+                                            </div>
+                                        </div>
+                                    </div> --}}
+
+                                  </div>
+                                </div>
+                              </div>
                           </div>
                       </div>
-        </form>
+                    </div>
 
-          </div>
-                <!-- PAGE CONTENT ENDS -->
-    </div>
+                    {{-- <div class="row">
+                      <div class="col-md-12" style="margin-top: 20px;">
+                        <table  class="table table-responsive table-bordered" >
+                          <thead id="table_head">
 
-</div><!-- /.page-content -->
+                          </thead>
+
+                          <tbody id="order_list_des">
+                          </tbody>
+                          <tfoot id="table_foot">
+
+                          </tfoot>
+                        </table>
+                      </div>
+                    </div> --}}
+
+                    
 
 
-<!-- Modal Select Order -->
-<div class="modal fade" id="select_item" tabindex="-1" role="dialog" aria-labelledby="sizeLabel">
+                  
+                </form>
+                  
+              </div> <!-- /.end panel body -->
+              
+
+          </div><!-- /.end panel -->
+    </div><!-- /.main-content inner -->
+</div><!-- /.main-content -->
+
+
+<!--Old Modal Select Order -->
+{{-- <div class="modal fade" id="right_modal_item" tabindex="-1" role="dialog" aria-labelledby="sizeLabel">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -250,10 +263,48 @@
       </div>
     </div>
   </div>
-</div>
+</div> --}}
 <!-- Modal End -->
+<!--New Modal Start -->
+
+<div class="modal right fade" id="right_modal_item" tabindex="-1" role="dialog" aria-labelledby="right_modal_item">
+  <div class="modal-dialog modal-lg right-modal-width" role="document" > 
+    <div class="modal-content">
+      <div class="modal-header">
+        <a class="view prev_btn" data-toggle="tooltip" data-dismiss="modal" data-placement="top" title="" data-original-title="Back">
+          <i class="las la-chevron-left"></i>
+        </a>
+        <h5 class="modal-title right-modal-title text-center" id="modal-title-right"> &nbsp; </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-content-result" id="content-result"></div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
+        <button type="button" id="modal_data" class="btn btn-primary btn-sm">Done</button>
+      </div>
+      
+    </div>
+  </div>
+</div>
+<!--New Modal End -->
+
+
+
 
 <script type="text/javascript">
+
+// #######
+
+
+
+// #########
+
   $(document).ready(function(){
 
     var order_num=0;
@@ -333,7 +384,7 @@
   */
     $("#buyer,#unit").on("change",function(){
 
-        $("#addListToModal").html("<span>No Order Found, Please select Buyer and Unit</span>");
+        $("#content-result").html("<span>No Order Found, Please select Buyer and Unit</span>");
         $("#order_list_des").html("");
 
         var b_id = $('#buyer').val();
@@ -347,18 +398,18 @@
                 success: function(data)
                 {
                   if(data!=""){
-                   $("#addListToModal").html(data);
+                   $("#content-result").html(data);
                    }
 
                 },
                 error: function()
                 {
-                   $("#addListToModal").html("<span>No Order, Please select Buyer and Unit</span>");
+                   $("#content-result").html("<span>No Order, Please select Buyer and Unit</span>");
                 }
             });
         }
         else{
-            $("#addListToModal").html("<span>No Order, Please select Buyer and Unit </span>");
+            $("#content-result").html("<span>No Order, Please select Buyer and Unit </span>");
             $("#order_list_des").html("");
         }
     });
@@ -367,7 +418,7 @@
   * SHOW DATA AFTER MODAL HIDE
   * -----------------------
   */
-    var sgmodal = $("#select_item");
+    var sgmodal = $("#right_modal_item");
     $("body").on("click", "#modal_data", function(e) {
 
         order_num=0; //initialize order number
