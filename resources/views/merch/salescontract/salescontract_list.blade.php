@@ -88,18 +88,7 @@
                                             <th width="15%">LC Type</th>
                                             <th width="15%">Action</th>
                                         </thead>
-                                        <tfoot>
-                                        <tr>
-                                            <th>SL</th>
-                                            <th>Export LC / Contract No</th>
-                                            <th>Buyer</th>
-                                            <th>Unit</th>
-                                            <th>Contract Number By</th>
-                                            <th>Contract Qty</th>
-                                            <th>ELC Date</th>
-                                            <th>LC Type</th>
-                                            <th>Action</th>
-                                        </tfoot>
+
                                     </table>
                                 </div><!-- /.col -->
                             </div><!-- /.row -->

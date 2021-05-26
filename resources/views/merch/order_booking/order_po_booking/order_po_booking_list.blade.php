@@ -34,22 +34,22 @@
 	<div class="main-content-inner">
 		<div class="breadcrumbs ace-save-state" id="breadcrumbs">
 			<ul class="breadcrumb">
-				<li> 
+				<li>
 					<i class="ace-icon fa fa-home home-icon"></i>
 					<a href="#">Order Booking</a>
-				</li>  
+				</li>
 				<li class="active">Order Booking List</li>
                 <li class="top-nav-btn">
                     <a type="button" class="btn btn-primary btn-xs" href="{{ url('merch/order_po_booking/showForm') }}">Add Order Booking</a>
                 </li>
-			</ul><!-- /.breadcrumb --> 
+			</ul><!-- /.breadcrumb -->
 		</div>
 
         @include('inc/message')
         <div class="panel">
             <!-- Widget Body -->
             <div class="panel-body">
-                
+
                 <div class="worker-list">
                     <table id="dataTables" class="table table-striped table-bordered table-responsive" style="display: block; white-space: nowrap; overflow-x: auto; width: 100%;">
                         <thead>
@@ -65,19 +65,7 @@
                                 <th>Action</th>
                             </tr>
                         </thead>
-                         <tfoot>
-                            <tr>
-                                <th>Sl</th>
-                                <th>Booking Reference</th>
-                                <th>Buyer</th>
-                                <th>Supplier</th>
-                                <th>Unit</th>
-                                {{-- <th>Order & PO</th> --}}
-                                <th>Booking Quantity</th>
-                                <th>Delivery Date</th>
-                                <th>Action</th>
-                            </tr>
-                        </tfoot>
+
                     </table>
                 </div>
             </div><!-- /.Widget Body -->
@@ -87,7 +75,7 @@
 <script type="text/javascript">
 $(document).ready(function() {
     var searchable = [1,2,3];
-    // var selectable = [2]; 
+    // var selectable = [2];
 
     $('#dataTables').DataTable({
         order: [], //reset auto order
@@ -99,7 +87,7 @@ $(document).ready(function() {
         dom: "lBftrip",
         buttons: [
             {
-                extend: 'copy', 
+                extend: 'copy',
                 className: 'btn-sm btn-info',
                 title: 'Reservation List',
                 exportOptions: {
@@ -108,9 +96,9 @@ $(document).ready(function() {
                 },
                 footer:true,
                 header:false
-            }, 
+            },
             {
-                extend: 'csv', 
+                extend: 'csv',
                 className: 'btn-sm btn-success',
                 title: 'Reservation List',
                 exportOptions: {
@@ -119,9 +107,9 @@ $(document).ready(function() {
                 },
                 footer: true,
                 header:false
-            }, 
+            },
             {
-                extend: 'excel', 
+                extend: 'excel',
                 className: 'btn-sm btn-warning',
                 title: 'Reservation List',
                 exportOptions: {
@@ -130,10 +118,10 @@ $(document).ready(function() {
                 },
                 footer: true,
                 header:false
-            }, 
+            },
             {
-                extend: 'pdf', 
-                className: 'btn-sm btn-primary', 
+                extend: 'pdf',
+                className: 'btn-sm btn-primary',
                 title: 'Reservation List',
                 exportOptions: {
                     // columns: ':visible'
@@ -141,9 +129,9 @@ $(document).ready(function() {
                 },
                 footer: true,
                 header:false
-            }, 
+            },
             {
-                extend: 'print', 
+                extend: 'print',
                 className: 'btn-sm btn-default',
                 title: 'Reservation List',
                 exportOptions: {
@@ -151,8 +139,8 @@ $(document).ready(function() {
                     columns: [0,1,2,3,4,5,6,7,8,9],
                     stripHtml: false
                 },
-                footer: false 
-            } 
+                footer: false
+            }
         ],
         columns: [
             { data: 'DT_RowIndex', name: 'DT_RowIndex' },
