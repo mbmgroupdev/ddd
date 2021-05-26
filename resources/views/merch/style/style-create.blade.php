@@ -2,7 +2,7 @@
 @section('title', 'Style Create')
 @section('main-content')
 @push('css')
-    <link href="{{url('https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css')}}" rel="stylesheet">
+    <link href="{{asset('assets/css/bootstrap4-toggle.min.css')}}" rel="stylesheet" media="screen, print">
 <style>
   .ui-autocomplete {
     position: absolute;
@@ -439,7 +439,7 @@
 @include('merch.modals.add_size_group')
 @include('merch.modals.add_wash')
 @push('js')
-    <script src="{{url('https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js')}}"></script>
+    <script src="{{asset('assets/js/bootstrap4-toggle.min.js')}}"></script>
 <script type="text/javascript">
     var url = "{{ url('/') }}";
 //autocomplete placement script
