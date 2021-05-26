@@ -103,7 +103,7 @@
 
                                     </div>
                                     <div class="col-sm-4 no-padding no-margin">
-                                         <center><span style="color: green; font-size: 14px;">Production Type {{ ($style->stl_type == 'd' ? 'Development' : 'Bulk')}}</span></center>
+                                         <center><span style="color: green; font-size: 14px;">Production Type {{ ($style->stl_type == 'D' ? 'Development' : 'Bulk')}}</span></center>
                                     </div>
                                     <div class="col-sm-4 no-padding no-margin">
 

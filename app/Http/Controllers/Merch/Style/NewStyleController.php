@@ -392,9 +392,9 @@ class NewStyleController extends Controller
         //$stl_type = $request->stl_order_type;
 
       if ($request->stl_order_type == true){
-          $stl_type = 'd';
+          $stl_type = 'D';
       } else{
-          $stl_type = 'b';
+          $stl_type = 'B';
       }
 
       $data->stl_type         = $stl_type;

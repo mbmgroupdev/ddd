@@ -15,7 +15,7 @@
                     <table class="table custom-font-table detailTable" width="50%" cellpadding="0" cellspacing="0" border="0">
                         <tr>
                             <th>Production Type</th>
-                            <td>{{ (!empty($style->stl_type)?($style->stl_type == 'd' ? 'Development' : 'Bulk'):null) }}</td>
+                            <td>{{ (!empty($style->stl_type)?($style->stl_type == 'D' ? 'Development' : 'Bulk'):null) }}</td>
                             <th>Style Reference 1</th>
                             <td>{!! (!empty($style->stl_no)?$style->stl_no:null) !!}</td>
                             <th>Operation</th>

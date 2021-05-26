@@ -98,7 +98,7 @@
                         <div class="row">
                             <div class="col-sm-6">
                                 <input type="hidden" name="stl_order_type" id="inlineRadio1" value="Development" required="required" readonly>
-                                <span style="color: green">* Production Type ({{ $style->stl_type == 'd' ? 'Development' : 'Bulk'}})</span>
+                                <span style="color: green">* Production Type ({{ $style->stl_type == 'D' ? 'Development' : 'Bulk'}})</span>
                                 <div class="row mt-3">
 
                                     <div class="col-sm-6" id="buyerSection">

@@ -51,7 +51,7 @@
                                         <label class="col-sm-4 control-label no-padding-right" for="b_id" > Production Type<span style="color: red">&#42;</span> </label>
                                         <div class="col-sm-8">
                                             <label class="radio-inline">
-                                                @if($style->stl_type == 'b')
+                                                @if($style->stl_type == 'B')
                                             <input type="radio" name="stl_order_type" id="inlineRadio1" value="Bulk" data-validation="required" checked> Bulk
                                                     @else
                                             <input type="radio" name="stl_order_type" id="inlineRadio1" value="Development" data-validation="required" checked> Development
