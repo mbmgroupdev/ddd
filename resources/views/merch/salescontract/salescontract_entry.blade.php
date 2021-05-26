@@ -282,12 +282,17 @@ background: #e9ecef;
       <div class="modal-body">
         <div class="modal-content-result" id="content-result"></div>
 
+        <div>
+          <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
+        <button type="button" id="modal_data" class="btn btn-primary btn-sm">Done</button>
+        </div>
+
       </div>
 
-      <div class="modal-footer">
+      {{-- <div class="modal-footer">
         <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
         <button type="button" id="modal_data" class="btn btn-primary btn-sm">Done</button>
-      </div>
+      </div> --}}
       
     </div>
   </div>
@@ -427,7 +432,8 @@ background: #e9ecef;
         var table_foot='';
         var sum_qty = 0;
         var sum_value = 0;
-        var contractText   = $("#c_number_by option:selected").html();
+       var contractText   = $("#c_number_by option:selected").html();
+        
 
         if(contractText == "In House"){
             table_head='<tr>\
