@@ -1,4 +1,4 @@
-@extends('merch.index')
+@extends('merch.layout')
 @push('css')
 	<style>
 		.alert.alert-info {
@@ -21,6 +21,7 @@
 		    text-align: center;
 		    border: navajowhite;
 		    cursor: default;
+			width: 30px;
 		}
 		.inputBgLight {
 			background: #fff;
@@ -36,7 +37,7 @@
     }
 	</style>
 @endpush
-@section('content')
+@section('main-content')
 
 <div class="main-content">
 	<div class="main-content-inner">
@@ -54,9 +55,9 @@
 			<div class="panel panel-info">
                     <div class="panel-heading page-headline-bar">
                         <h6>Order Color & Size Break Down Show
-	                        <div class="text-right pull-right">
-		                        <a href='{{ url("merch/orders/order_edit/".$order->order_id) }}' class="btn btn-xs btn-success" rel='tooltip' data-tooltip-location='top' data-tooltip="Edit Order"><i class="glyphicon glyphicon-pencil"></i> Edit Order</a>
-		                    </div>
+	                        {{-- <div class="text-right pull-right">
+		                        <a href='{{ url("merch/orders/order_edit/"  .$order->order_id  ) }}' class="btn btn-xs btn-success" rel='tooltip' data-tooltip-location='top' data-tooltip="Edit Order"><i class="glyphicon glyphicon-pencil"></i> Edit Order</a>
+		                    </div> --}}
 	                    </h6>
                     </div>
                     <div class="panel-body">
