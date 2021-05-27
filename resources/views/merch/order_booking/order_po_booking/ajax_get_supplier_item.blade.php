@@ -1,7 +1,7 @@
 
 @if(!empty($poList->toArray()))
     @php
-        $poTotalNoSize = []; 
+        $poTotalNoSize = [];
         $grandTotalValue = 0;
     @endphp
     @foreach($poList as $key=>$poSingle)
@@ -25,7 +25,7 @@
                     @endphp
                     {{-- color dependancy --}}
                     @if($bom->depends_on == 1)
-                        @foreach($colors as $color) 
+                        @foreach($colors as $color)
                             @if(in_array($color->clr_id, $color_ids))
                                 {{-- 0 check --}}
                                 @php
@@ -97,6 +97,7 @@
                                             @endphp
                                             {{$posSubTotalQty}}
                                            <input type="hidden" value="{{ $posSubTotalQty }}" name="req_qty[{{ $bom->id }}][{{ $bom->order_id }}][{{$bom->sup_id}}][{{ $poSingle->po_id }}][{{$color->clr_id}}]" class="form-control rqty_rm_class {{$bom->id.$bom->order_id.$poSingle->po_id}}" readonly="readonly">
+                                           <input type="hidden" value="{{ $bom->booking_qty }}" name="booking_qty[{{ $bom->id }}][{{ $bom->order_id }}][{{$bom->sup_id}}][{{ $poSingle->po_id }}][{{$color->clr_id}}]" class="form-control rqty_rm_class {{$bom->id.$bom->order_id.$poSingle->po_id}}" readonly="readonly">
                                         </td>
 
                                         <!--total value input field-->
@@ -127,7 +128,7 @@
                     @elseif($bom->depends_on == 2)
                         @foreach($sizes as $size)
                             {{-- 0 check --}}
-                            @php $poSizeQty = 0; 
+                            @php $poSizeQty = 0;
                                 if(isset($poSizeQtyListS[$poSingle->po_id])){
                                     if(isset($poSizeQtyListS[$poSingle->po_id][$size->id])){
                                         $poSizeQty = array_sum($poSizeQtyListS[$poSingle->po_id][$size->id]);
@@ -165,7 +166,7 @@
 
                                     <!--qty input field-->
                                     <td class="text-custom-style">
-                                        @php $poSizeQty = 0; 
+                                        @php $poSizeQty = 0;
                                             if(isset($poSizeQtyListS[$poSingle->po_id])){
                                                 if(isset($poSizeQtyListS[$poSingle->po_id][$size->id])){
                                                     $poSizeQty = array_sum($poSizeQtyListS[$poSingle->po_id][$size->id]);
@@ -184,7 +185,7 @@
                                             $ptotal = ($bom->consumption * $bom->extra_percent)/100;
                                             $total = $ptotal + $bom->consumption;
                                         @endphp
-                                        @php $poSizeQty = 0; 
+                                        @php $poSizeQty = 0;
                                             if(isset($poSizeQtyListS[$poSingle->po_id])){
                                                 if(isset($poSizeQtyListS[$poSingle->po_id][$size->id])){
                                                     $poSizeQty = array_sum($poSizeQtyListS[$poSingle->po_id][$size->id])*$total;
@@ -203,7 +204,7 @@
                                             $ptotal = ($bom->consumption * $bom->extra_percent)/100;
                                             $total = $ptotal + $bom->consumption;
                                         @endphp
-                                        @php $poSizeQty = 0; 
+                                        @php $poSizeQty = 0;
                                             if(isset($poSizeQtyListS[$poSingle->po_id])){
                                                 if(isset($poSizeQtyListS[$poSingle->po_id][$size->id])){
                                                     $poSizeQty = array_sum($poSizeQtyListS[$poSingle->po_id][$size->id])*$total;
@@ -515,5 +516,5 @@
             }
         });
     }
-    
+
 </script>

@@ -371,6 +371,8 @@ class OrderPoBookingController extends Controller
 
 	public function oneClickOrderWiseBookingForm($order,$boms,$colors,$sizes,$care_label,$filter,$poSizeQtyList,$poSizeQtyListC,$poSizeQtyListS,$poList, $itemUnique, $catCount,$poSizeQtyListN,$poSizeQtyListCN,$poSizeQtyListSN,$poBookingId,$poColorQtyList,$poColorQtyListC,$poColorQtyListN,$poColorQtyListCN)
 	{
+
+
 		$request = [];
 		$request['mr_po_booking_id'] = $poBookingId;
 		foreach($itemUnique as $item) {
@@ -529,6 +531,7 @@ class OrderPoBookingController extends Controller
 						foreach($sizes as $size) {
 							$poSizeQty = 0;
 							if($bom->po_po_id != null){
+
 								if(isset($poSizeQtyListS[$bom->po_po_id])){
 									if(isset($poSizeQtyListS[$bom->po_po_id][$size->id])){
 										$poSizeQty = array_sum($poSizeQtyListS[$bom->po_po_id][$size->id]);
@@ -1639,6 +1642,8 @@ class OrderPoBookingController extends Controller
 		->where('mr_order_entry_order_id',$orderId)->get();
 
 		$boms = $this->poBomRepository->bomInfo($orderId, $supplierId);
+
+
 
 
 		//dd($boms);
