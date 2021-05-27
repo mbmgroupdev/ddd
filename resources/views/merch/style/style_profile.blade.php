@@ -481,7 +481,7 @@
                                             <div class="profile-contact-info" id="printMe2">
                                                 <div class="profile-contact-links align-left">
                                                     <p style="text-align: center;"><strong>Production
-                                                            Type:</strong> {{ (!empty($style->stl_type)?$style->stl_type:null) }}
+                                                            Type:</strong> {{ (!empty($style->stl_type)?($style->stl_type == 'D' ? 'Development' : 'Bulk'):null) }}
                                                     </p>
                                                     <p style="text-align: center;">
                                                         <strong>Operation:</strong> {{ (!empty($operations->name)?$operations->name:null) }}
@@ -553,7 +553,7 @@
                                                                                 cellspacing="0" border="0">
                                                                                 <tr>
                                                                                     <th>Production Type</th>
-                                                                                    <td>{{ (!empty($style->stl_type)?$style->stl_type:null) }}</td>
+                                                                                    <td>{{ (!empty($style->stl_type)?($style->stl_type == 'd' ? 'Development' : 'Bulk'):null) }}</td>
                                                                                     <th>Style Reference 1</th>
                                                                                     <td>{{ (!empty($style->stl_no)?$style->stl_no:null) }}</td>
                                                                                     <th>Operation</th>
