@@ -88,7 +88,6 @@
                                             <th width="15%">ELC Date</th>
                                             <th width="15%">LC Type</th>
                                         </thead>
-
                                     </table>
                                 </div><!-- /.col -->
                             </div><!-- /.row -->
