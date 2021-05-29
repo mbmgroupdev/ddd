@@ -6,14 +6,18 @@
             /*#largePreview{position: absolute;display:none;top: 0;height: auto;z-index: 100;box-shadow: 0 0 10px 5px #428BCA;left: 300px;max-width: 800px;}*/
 
             .slider-container {
-                width: 20%;
+                width: 90%;
                 height: 152px !important;
-                margin: unset;
+                
             }
 
             .light-box .slider-container {
                 width: 90% !important;
                 height: 100% !important;
+            }
+
+            .multi-image{
+                width:
             }
 
             .steps-div {
@@ -358,7 +362,7 @@
         </style>
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
               rel="stylesheet">
-        <link href="{{ asset('assets/css/slider.css') }}" rel="stylesheet" type="text/css">
+        
     @endpush
     <div class="main-content">
         <div class="main-content-inner">
@@ -411,63 +415,59 @@
 
                                     <div class="row">
                                         <div class="col-sm-3">
-                                            <div>
-                                                <div class="slider-container">
-                                                    <div class="slider-carousel">
-                                                        <div class="slider">
-                                                            <div class="slide-panel">
-                                                                <img class="slide-img"
-                                                                     src="{{ asset(!empty($style->stl_img_link)?$style->stl_img_link:'assets/images/avatars/profile-pic.jpg') }}"
-                                                                     alt="">
-                                                                <div class="slide-overlay"></div>
-                                                            </div>
-                                                            @if(count($styleImages) > 0)
-                                                                @foreach($styleImages as $styleImage)
-                                                                    <div class="slide-panel">
-                                                                        <img class="slide-img img-responsive"
-                                                                             src="{{ asset(!empty($styleImage->image)?$styleImage->image:'assets/images/avatars/profile-pic.jpg') }}">
+                                        <div class="row">
+                                            <div class="slider-container" style="margin-left: 9%;">
+                                                
+                                                @if(count($styleImages) > 0)
+                                                        <div id="carouselExampleControls" class="carousel slide" data-ride="carousel" data-interval="2500">
+
+                                                                <div class="carousel-inner" role="listbox">
+                                                                @foreach( $styleImages as $styleImage )
+                                                                    <div class=" carousel-item {{ $loop->first ? 'active' : '' }}">
+                                                                        <div class="d-flex justify-content-center w-100 h-100">
+                                                                        <img class="img-fluid align-middle" src="{{ asset(!empty($styleImage->image)?$styleImage->image:'assets/images/avatars/profile-pic.jpg') }}" alt="No Image">
+                                                                          </div>  
                                                                     </div>
                                                                 @endforeach
-                                                            @endif
+                                                            
+                                                            
+                                                            </div>
+                                                            <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                            <span class="sr-only">Previous</span>
+                                                            </a>
+                                                            <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                            <span class="sr-only">Next</span>
+                                                            </a>
+                                                        </div>
+                                                            @else
+                                                            <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+                                                                <div class="carousel-inner" role="listbox">
+                                                                    <div class="carousel-item active">
+                                                                        <div class="d-flex justify-content-center w-100 h-100">
+                                                                        <img width="60%" class="d-block img-fluid" src="{{ asset(!empty($style->stl_img_link)?$style->stl_img_link:'assets/images/avatars/profile-pic.jpg') }}" alt="No Image">
+                                                                          </div>  
+                                                                    </div>
+
+                                                            
+                                                        </div>
                                                         </div>
 
-<!--                                                        <div class="slider-controls">
-								          <span class="slider-arrow prev-slide">
-								            <i class="material-icons">
-								              left
-								            </i>
-								          </span>
-                                                            <span class="slider-arrow next-slide">
-								            <i class="material-icons">
-								              right
-								            </i>
-								          </span>
-                                                            <div class="slideshow-toggle" style="display: none">
-                                                                <i class="material-icons play-slideshow">
-                                                                    play
-                                                                </i>
-                                                                <i class="material-icons pause-slideshow">
-                                                                    pause
-                                                                </i>
-                                                            </div>
-                                                            <ul class="slide-selector">
-                                                                <li class="slide-selected"></li>
-                                                                @if(count($styleImages) > 0)
-                                                                    @foreach($styleImages as $styleImage)
-                                                                        <li></li>
-                                                                    @endforeach
-                                                                @endif
-                                                            </ul>
-                                                        </div>-->
-                                                    </div>
-                                                </div>
 
-<!--                                                <div class="slider-modal">
-                                                    <span class="slider-close">&times;</span>
-                                                    <div class="modal-slide light-box"></div>
-                                                </div>-->
-                                                <div class="space-4"></div>
-                                                <div style="margin-top: 85px"
+                                                
+                                                @endif
+                                            
+                                                
+
+
+                                                
+                                            </div>
+                                        </div>
+                                        <div class="space-4"></div>
+                                        <div class="row">
+                                            
+                                                <div style="margin-top: 40%;margin-left: 9%;"
                                                     class="width-80 label label-info label-xlg arrowed-in arrowed-in-right">
                                                     <div class="inline position-relative" id="style_no_div">
                                                         <a href="#" class="user-title-label">
@@ -476,8 +476,9 @@
                                                         </a>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="space-6"></div>
+                                        </div>
+                                        <div class="space-6"></div>
+                                        <div class="row">
                                             <div class="profile-contact-info" id="printMe2">
                                                 <div class="profile-contact-links align-left">
                                                     <p style="text-align: center;"><strong>Production
@@ -520,6 +521,11 @@
                                                     </p>
                                                 </div>
                                             </div>
+                                        </div>
+                                            
+                                                
+                                            
+                                            
                                         </div>
                                         <div class="col-sm-9">
                                             <!-- style steps -->
@@ -628,8 +634,8 @@
                                                                             <td width="80">{{ $styleCatMcat->uom}}</td>
                                                                             <td>{{ $styleCatMcat->consumption}}</td>
                                                                             <td>{{ $styleCatMcat->extra_percent}}</td>
-                                                                            <td><?= ($styleCatMcat->extra_percent * $styleCatMcat->consumption) / 100 ?></td>
-                                                                            <td><?= $styleCatMcat->extra_percent != 0 ? $styleCatMcat->consumption + (($styleCatMcat->extra_percent * $styleCatMcat->consumption) / 100) : 0  ?></td>
+                                                                            <td><?= $styleCatMcat->extra_percent / 100 ?></td>
+                                                                            <td><?= $styleCatMcat->extra_percent != 0 ? $styleCatMcat->precost_unit_price + $styleCatMcat->extra_percent / 100 : 0  ?></td>
                                                                         </tr>
                                                                         <?php } ?>
                                                                         <?php } ?>
@@ -1068,7 +1074,7 @@
     @push('js')
         <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
         <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
-        <script src="{{ asset('assets/js/slider.js')}}"></script>
+        
         <script type="text/javascript">
             $(document).ready(function () {
                 /*
