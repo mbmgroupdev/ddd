@@ -56,13 +56,13 @@ function changeCost(thisvalue, type) {
     extraCon = (isNaN(extraCon) || extraCon == '')?'0':extraCon;
     unitprice = (isNaN(unitprice) || unitprice == '')?'0':unitprice;
     // var total_unit_price = fob+lc+freight;
-    var unitprice_for_fob_freight_lc = parseFloat(parseFloat(lc)+parseFloat(freight));
+    var unitprice_for_fob_freight_lc = parseFloat(parseFloat(lc)+parseFloat(freight)+parseFloat(fob));
     // console.log(unitprice)
     var comsumptionPer = parseFloat((parseFloat(consumption) * parseFloat(extraCon)) / 100).toFixed(6);
     var comsumptionEx = parseFloat(consumption) + parseFloat(comsumptionPer);
     var totalpercost = '';
     if (fob > 0 || lc > 0 || freight > 0 ){
-        totalpercost = parseFloat(parseFloat(unitprice_for_fob_freight_lc)+parseFloat(parseFloat(comsumptionEx)*parseFloat(fob))).toFixed(6);
+        totalpercost = parseFloat(parseFloat(unitprice_for_fob_freight_lc)*parseFloat(parseFloat(comsumptionEx))).toFixed(6);
     } else {
         totalpercost = parseFloat(parseFloat(unitprice)*parseFloat(comsumptionEx)).toFixed(6);
     }
