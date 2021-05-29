@@ -223,7 +223,8 @@
                                             @foreach($stlImageGallery as $image)
                                             @php $cc = $cc+1; @endphp
                                             <div class="col-sm-3 multi-image">
-                                                <button title="Remove this image!" type="button" class="fa fa-close close-button" onclick="removeImage({{ $image->id }},file_image_{{ $cc }})"></button>
+                                                {{-- <button title="Remove this image!" type="button" class="fa fa-close close-button" onclick="removeImage({{ $image->id }},file_image_{{ $cc }})"></button> --}}
+                                                <button title="Remove this image!" type="button" class="fa fa-close close-button" onclick="$(this).parent().remove()"></button>
                                                 <label class="slide_upload" for="file_image_{{ $cc }}">
                                                   <!--  -->
                                                   <img id="imagepreview_{{ $cc }}" src='{{ url($image->image) }}'>
@@ -245,7 +246,7 @@
                                         @else
                                             <div class="col-sm-3 multi-image">
                                                 <label class="slide_upload" for="file_image_0">
-                                                    <img id="imagepreview_0" src='{{asset('assets/files/style/placeholder.png')}}'>
+                                                    <img id="imagepreview_0" src='{{ asset($style->stl_img_link?$style->stl_img_link:'assets/images/avatars/profile-pic.jpg') }}'>
                                                 </label>
                                                 <input type="file" class="multi-image-input" id="file_image_0" name="style_img_n" onchange="readURL(this,this.id)" style="display:none">
                                                 <input type="hidden" class="setfile" name="style_img" value="/assets/files/style/placeholder.png">
