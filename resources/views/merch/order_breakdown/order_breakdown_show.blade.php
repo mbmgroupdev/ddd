@@ -112,7 +112,9 @@
 								@foreach($poList as $key=>$poSingle)
 									@php
 										$color_ids = [];
-										$color_ids = array_keys($poSizeQtyListC[$poSingle->po_id]);
+										if(isset($poSizeQtyListC[$poSingle->po_id])){
+											$color_ids = array_keys($poSizeQtyListC[$poSingle->po_id]);
+										}
 									@endphp
 									<div class="panel panel-default">
 										<div class="panel-heading">
@@ -883,8 +885,9 @@
 															{{ $noDependTotalQty }}
 													    	<input type="hidden" value="{{ $noDependTotalQty }}" name="order_qty-{{ $itemIndex }}[]" class="form-control">
 														@else
-															{{ $order->order_qty }}
-													    	<input type="hidden" value="{{ $order->order_qty }}" name="order_qty-{{ $itemIndex }}[]" class="form-control">
+														{{ (!empty($order->order_qty)?$order->order_qty:null) }}
+															{{-- {{ $order->order_qty }} --}}
+													    	<input type="hidden" value="{{ (!empty($order->order_qty)?$order->order_qty:null) }}" name="order_qty-{{ $itemIndex }}[]" class="form-control">
 														@endif
 													@else
 														<p>Nothing Found</p>
@@ -1043,8 +1046,9 @@
 															{{ $noDependTotalQty * $total }}
 															<input type="hidden" value="{{ $noDependTotalQty * $total }}" name="order_req_qty-{{ $itemIndex }}[]" class="form-control">
 														@else
-															{{ $order->order_qty * $total }}
-															<input type="hidden" value="{{ $order->order_qty * $total }}" name="order_req_qty-{{ $itemIndex }}[]" class="form-control">
+														{{ (!empty($order->order_qty)?$order->order_qty * $total:null) }}
+															{{-- {{ $order->order_qty * $total }} --}}
+															<input type="hidden" value="{{ (!empty($order->order_qty)?$order->order_qty * $total:null) }}" name="order_req_qty-{{ $itemIndex }}[]" class="form-control">
 														@endif
 													@else
 														<p>Nothing Found</p>

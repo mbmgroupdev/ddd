@@ -547,7 +547,7 @@ class NewStyleController extends Controller
         ->addIndexColumn()
         ->editColumn('stl_img_link', function ($data) {
           $imageUrl = style_picture($data);
-          return '<img src="'.url('/').$imageUrl.'" width="30" height="40">';
+          return '<img src="'.asset($imageUrl).'" width="30" height="40">';
         })
 
         // ->editColumn('stl_type', function ($data) {
