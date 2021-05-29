@@ -126,6 +126,7 @@ class OrderBreakDownController extends Controller
 
     public function show($id)
     {
+//        dd($id);
       try {
       	$order = DB::table('mr_order_entry')
       	          ->join('hr_unit','mr_order_entry.unit_id','=','hr_unit.hr_unit_id')

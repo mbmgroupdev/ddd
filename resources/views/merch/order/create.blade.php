@@ -93,6 +93,7 @@
 						    <input type="hidden" name="mr_buyer_b_id" value="{{ $style->mr_buyer_b_id}}">
 						    <input type="hidden" name="prd_type_id" value="{{ $style->prd_type_id}}">
 						    <input type="hidden" name="res_id" value="{{ $reservation->id??0}}">
+						    <input type="hidden" name="mr_brand_br_id" value="{{ $style->mr_brand_br_id??0}}">
 						    <input type="hidden" name="stl_order_type" value="B">
 						    <div class="row">
 						    	<div class="col-sm-4">
