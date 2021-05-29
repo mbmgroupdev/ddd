@@ -85,88 +85,89 @@
             <div class="panel">
                 <div class="panel-body">
                     <div class="style_section">
-                    <div class="row">
-                        <div class="col-sm-5">
-                          <!-- -Form 1---------------------->
-                          <form class="form-horizontal col-sm-12" role="form" method="post" action="{{ url('merch/time_action/tna_generate_store')}}" enctype="multipart/form-data">
-                            {{ csrf_field() }}
+                        <!-- -Form 1---------------------->
+                    </div>
+                    <form class="form-horizontal col-sm-12" role="form" method="post" action="{{ url('merch/time_action/tna_generate_store')}}" enctype="multipart/form-data">
+                        {{ csrf_field() }}
+                        <div class="row">
 
+                            <div class="col-sm-5">
 
                                 <input type="hidden" name="stl_order_type" id="inlineRadio1" value="Development" required="required" readonly>
                                 <span style="color: green">* TNA Generate</span>
                                 <!-- PAGE CONTENT BEGINS -->
+
                                 <div class="form-horizontal" style="margin-top: 10px">
 
-                                  <div class="form-group">
+                                    <div class="form-group">
                                         <div class="form-group has-float-label select-search-group has-required">
 
-                                          {{ Form::select('mbm_order', $order_en, null, ['placeholder'=>'Select ','id'=>'order_id','class'=> 'col-xs-12 form-control', 'data-validation' => 'required']) }}
+                                            {{ Form::select('mbm_order', $order_en, null, ['placeholder'=>'Select ','id'=>'order_id','class'=> 'col-xs-12 form-control', 'data-validation' => 'required']) }}
                                             <label for="mbm_order" >MBM Order </label>
                                         </div>
-                                  </div>
-                                  <div class="form-group has-float-label has-required">
-                                      <input type="text" name="confirm_date" id="confirm_date" style="padding-left: 10px" class="datepicker col-xs-12 form-control" value="" data-validation="required" autocomplete="off" placeholder="Y-m-d" />
-                                      <label for="confirm_date" >Confirm Date </label>
-                                      <div id="msg" class="col-sm-9 pull-right" style="color: red"></div>
-                                  </div>
-                                  <div class="form-group has-float-label has-required">
+                                    </div>
+                                    <div class="form-group has-float-label has-required">
+                                        <input type="text" name="confirm_date" id="confirm_date" style="padding-left: 10px" class="datepicker col-xs-12 form-control" value="" data-validation="required" autocomplete="off" placeholder="Y-m-d" />
+                                        <label for="confirm_date" >Confirm Date </label>
+                                        <div id="msg" class="col-sm-9 pull-right" style="color: red"></div>
+                                    </div>
+                                    <div class="form-group has-float-label has-required">
 
-                                      <input type="text" id="lead_days" name="lead_days" placeholder="Enter Text" class="col-xs-12 form-control" data-validation="required length custom" data-validation-length="1-50"/>
-                                      <label for="lead_days" >Lead Days</label>
-                                      <div id="msg" class="col-sm-9 pull-right" style="color: red"></div>
-                                  </div>
-                                  <div class="form-group has-float-label has-required">
-                                           <input type="text" id="tolerance_days" name="tolerance_days" placeholder="Enter Text" class="col-xs-12 form-control" data-validation="required length custom" data-validation-length="1-50"/>
-                                      <label for="tolerance_days" >Tolerance Days</label>
+                                        <input type="text" id="lead_days" name="lead_days" placeholder="Enter Text" class="col-xs-12 form-control" data-validation="required length custom" data-validation-length="1-50"/>
+                                        <label for="lead_days" >Lead Days</label>
+                                        <div id="msg" class="col-sm-9 pull-right" style="color: red"></div>
+                                    </div>
+                                    <div class="form-group has-float-label has-required">
+                                        <input type="text" id="tolerance_days" name="tolerance_days" placeholder="Enter Text" class="col-xs-12 form-control" data-validation="required length custom" data-validation-length="1-50"/>
+                                        <label for="tolerance_days" >Tolerance Days</label>
                                         <div id="msg" class="col-sm-9 pull-right" style="color: red">
                                         </div>
-                                  </div>
-                                  <div class="form-group has-float-label select-search-group has-required">
-                                      <select id="tna_type" class="col-xs-12 form-control" name="tna_templatetype"><option value=" " data-validation="required">Select Order</option></select>
-                                      <label for="tna_templatetype" >TNA Type </label>
-                                      <div id="msg" class="col-sm-9 pull-right" style="color: red"></div>
-                                  </div>
-                                  <div class="form-group has-float-label has-required ">
+                                    </div>
+                                    <div class="form-group has-float-label select-search-group has-required">
+                                        <select id="tna_type" class="col-xs-12 form-control" name="tna_templatetype"><option value=" " data-validation="required">Select Order</option></select>
+                                        <label for="tna_templatetype" >TNA Type </label>
+                                        <div id="msg" class="col-sm-9 pull-right" style="color: red"></div>
+                                    </div>
+                                    <div class="form-group has-float-label has-required ">
 
                                         <input type="text" name="ok_to_begin" id="ok_to_begin" style="padding-left: 10px" class="datepicker col-xs-12 form-control" value="" data-validation="required" autocomplete="off" placeholder="Y-m-d" />
-                                      <label  for="ok_to_begin" >OK to Begin </label>
-                                      <div id="msg" class="col-sm-9 pull-right" style="color: red"></div>
-                                  </div>
-                                  <div class="form-group has-float-label has-required">
+                                        <label  for="ok_to_begin" >OK to Begin </label>
+                                        <div id="msg" class="col-sm-9 pull-right" style="color: red"></div>
+                                    </div>
+                                    <div class="form-group has-float-label has-required">
 
 
-                                            <input type="text" name="rev_ok_to_begin" style="padding-left: 10px" id="rev_ok_to_begin" class="datepicker col-xs-12 form-control" value="" data-validation="required" autocomplete="off" placeholder="Y-m-d" />
-                                      <label  for="rev_ok_to_begin" >Rev OK to Begin </label>
+                                        <input type="text" name="rev_ok_to_begin" style="padding-left: 10px" id="rev_ok_to_begin" class="datepicker col-xs-12 form-control" value="" data-validation="required" autocomplete="off" placeholder="Y-m-d" />
+                                        <label  for="rev_ok_to_begin" >Rev OK to Begin </label>
                                         <div id="msg" class="col-sm-9 pull-right" style="color: red">
                                         </div>
-                                  </div>
+                                    </div>
 
-                                  </div>
-                              <div class="clearfix form-actions">
-                                  <div >
-                                      <a style="padding-left: 10px; padding-right: 10px; border-radius: 5px; color: white" class="btn btn-sm btn-primary generatetna" type="submit">
-                                          Generate TNA
-                                      </a>
-                                      <button style="width: 100px; border-radius: 5px" class="btn btn-sm btn-success" type="submit">
-                                          Save
-                                      </button>
-                                      <button class="btn btn-sm" type="reset">
-                                          <i class="ace-icon fa fa-undo bigger-110"></i> Reset
-                                      </button>
-                                  </div>
-                              </div>
-                          </form>
-                              </div>
-                            <!-- /.col -->
+                                </div>
+                                <div class="clearfix form-actions">
+                                    <div >
+                                        <a style="padding-left: 10px; padding-right: 10px; border-radius: 5px; color: white" class="btn btn-sm btn-primary generatetna" type="submit">
+                                            Generate TNA
+                                        </a>
+                                        <button style="width: 100px; border-radius: 5px" class="btn btn-sm btn-success" type="submit">
+                                            Save
+                                        </button>
+                                        <button class="btn btn-sm" type="reset">
+                                            <i class="ace-icon fa fa-undo bigger-110"></i> Reset
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- /.col -->
+                            </div>
 
 
-                        <div class="col-sm-7 tna-generate">
-                            <!--Table here--->
-                        </div>
-                    </div><!--- /. Row Form 1---->
+                            <div class="col-sm-7 tna-generate">
+                                <!--Table here--->
+                            </div>
+                        </div><!--- /. Row Form 1---->
 
+                    </form>
                 </div>
-              </div>
 
 
         {{-- <div class="panel panel-default"></div> --}}

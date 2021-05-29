@@ -47,7 +47,7 @@
 		            <div class="offset-sm-2 col-sm-8">
 		              <form role="form" method="get" action="{{ url("merch/orders/create")}}" class="style" id="styleForm">
 		                <div class="panel" style="margin-bottom: 0;">
-		                    
+
 		                    <div class="panel-body" style="padding-bottom: 5px;">
 		                        <div class="row">
 		                            <div class="col-8">
@@ -60,10 +60,10 @@
 		                                    <label  for="stl_id"> Style No </label>
 		                                </div>
 		                            </div>
-		                            
+
 		                            <div class="col-4">
 		                                <button type="submit" class="btn btn-primary btn-sm activityReportBtn"><i class="fa fa-search"></i> Search</button>
-		                                
+
 		                            </div>
 		                        </div>
 		                    </div>
@@ -93,6 +93,8 @@
 						    <input type="hidden" name="mr_buyer_b_id" value="{{ $style->mr_buyer_b_id}}">
 						    <input type="hidden" name="prd_type_id" value="{{ $style->prd_type_id}}">
 						    <input type="hidden" name="res_id" value="{{ $reservation->id??0}}">
+						    <input type="hidden" name="mr_brand_br_id" value="{{ $style->mr_brand_br_id??0}}">
+						    <input type="hidden" name="stl_order_type" value="B">
 						    <div class="row">
 						    	<div class="col-sm-4">
 						    		<div class="form-group has-required has-float-label select-search-group">
@@ -110,7 +112,7 @@
 						    		<div class="form-group has-required has-float-label select-search-group">
 								      <input type="text" class="form-control" id="product-type" placeholder="Product Type Name" value="{!! $productType[$style->prd_type_id]->prd_type_name??'' !!}" readonly autocomplete="off" />
 								      <label for="product-type" > Product Type Name </label>
-								      
+
 								    </div>
 						    	</div>
 						    </div>
@@ -133,7 +135,7 @@
 								      <label for="style-reference-2" > Style Reference 2 </label>
 								    </div>
 						    	</div>
-						    	
+
 						    </div>
 						    <div class="row">
 						    	<div class="col-sm-4">
@@ -164,8 +166,8 @@
 										</div>
 									</div>
 								</div>
-								
-						    </div>	
+
+						    </div>
 
 						    <div class="row">
 						    	<div class="col-sm-4">
@@ -186,7 +188,7 @@
 								        <label for="month" >Order Year-Month </label>
 								    </div>
 						    	</div>
-						    	
+
 						    </div>
 						    <div class="row">
 					    		<div class="col-sm-4">
@@ -206,15 +208,15 @@
 								        <button class="btn btn-outline-success pull-right" type="button" id="saveBtn">
 								            <i class="fa fa-save"></i> Save
 								        </button>
-								    </div> 
+								    </div>
 						    	</div>
 					    	</div>
-						                                
+
 						</form>
 					</div>
 		      	</div>
 		      	@endif
-            </div> 
+            </div>
         </div>
 
     </div><!-- /.page-content -->
@@ -224,11 +226,11 @@
 @push('js')
 <script type="text/javascript">
 	$(document).on('click', '#saveBtn', function(event) {
-	  
+
 	  var curStep = jQuery(this).closest("#orderForm"),
 	    curInputs = curStep.find("input[type='text'], input[type='number'],input[type='hidden'],input[type='date'], input[type='month'],input[type='checkbox'],input[type='radio'],textarea,select"),
 	    isValid = true;
-	    
+
 	  $(".form-group").removeClass("has-error");
 	  for (var i = 0; i < curInputs.length; i++) {
 	    if (!curInputs[i].validity.valid) {
@@ -258,12 +260,12 @@
 	        {
 	          $("#app-loader").hide();
 	          console.log(response)
-	          
+
 	          if(response.type === 'success'){
 	            setTimeout(function(){
 	              window.location.href=response.url;
 	            }, 1000);
-	          } 
+	          }
 	        },
 	        error: function (reject) {
 	          $("#app-loader").hide();
@@ -278,7 +280,7 @@
 	              var value = errors[key];
 	              $.notify(value[0], 'error');
 	            }
-	             
+
 	          }
 	        }
 	     });

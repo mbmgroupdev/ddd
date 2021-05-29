@@ -634,8 +634,8 @@
                                                                             <td width="80">{{ $styleCatMcat->uom}}</td>
                                                                             <td>{{ $styleCatMcat->consumption}}</td>
                                                                             <td>{{ $styleCatMcat->extra_percent}}</td>
-                                                                            <td><?= $styleCatMcat->extra_percent / 100 ?></td>
-                                                                            <td><?= $styleCatMcat->extra_percent != 0 ? $styleCatMcat->precost_unit_price + $styleCatMcat->extra_percent / 100 : 0  ?></td>
+                                                                            <td><?= ($styleCatMcat->extra_percent * $styleCatMcat->consumption) / 100 ?></td>
+                                                                            <td><?= $styleCatMcat->extra_percent != 0 ? $styleCatMcat->consumption + (($styleCatMcat->extra_percent * $styleCatMcat->consumption) / 100) : 0  ?></td>
                                                                         </tr>
                                                                         <?php } ?>
                                                                         <?php } ?>

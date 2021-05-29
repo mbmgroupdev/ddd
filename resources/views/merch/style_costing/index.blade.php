@@ -28,10 +28,10 @@
               <li class="active">Style Costing</li>
               <li class="top-nav-btn">
                 @if($style->bom_status == 1 && $style->costing_status == 1)
-                <a href='{{ url("merch/orders/create?stl_id=$style->stl_id")}}' class="btn btn-outline-success btn-sm pull-right"> <i class="ace-icon fa fa-cart-plus"></i> Process To Order</a>  &nbsp; 
+                <a href='{{ url("merch/orders/create?stl_id=$style->stl_id")}}' class="btn btn-outline-success btn-sm pull-right"> <i class="ace-icon fa fa-cart-plus"></i> Process To Order</a>  &nbsp;
                 @endif
                 <a href='{{ url("merch/style/bom/$style->stl_id") }}' class="btn btn-outline-primary btn-sm pull-right"> @if($style->bom_status == 1) <i class="fa fa-edit"></i> Style BOM @else <i class="fa fa-plus"></i> Style BOM @endif</a> &nbsp;
-                
+
                 <a href="{{ url('merch/style/style_list')}}" class="btn btn-outline-success btn-sm pull-right"> <i class="fa fa-list"></i> Style List</a>
                 </li>
             </ul><!-- /.breadcrumb -->
@@ -45,33 +45,33 @@
                 <div class="panel panel-success">
                     <div class="panel-body pb-2">
                         @include('merch.common.style_info')
-                    </div> 
+                    </div>
                 </div>
                 <div class="panel panel-info table-list-section">
                         <form class="form-horizontal" role="form" method="post" id="costingForm">
                             <input type="hidden" name="stl_id" value="{{ $style->stl_id }}">
                             <input type="hidden" id="change-flag" value="0">
                             <input type="hidden" id="costing_status" name="costing_status" value="{{ $style->costing_status}}">
-                            {{ csrf_field() }} 
+                            {{ csrf_field() }}
                             <div class="panel-body">
-                                
+
                                 <div class='row'>
                                     <div class='col-sm-12 table-wrapper-scroll-y table-custom-scrollbar'>
                                         <table class="table table-bordered table-hover table-fixed table-head" id="itemList">
                                             <thead>
                                                 <tr class="text-center active">
-                                                    
+
                                                     <th width="150" class="vertical-align">Item Description</th>
                                                     <th width="100" class="vertical-align">Color</th>
                                                     <th width="80" class="vertical-align">Size / Width</th>
                                                     <th width="130" class="vertical-align">Supplier</th>
                                                     <th width="130" class="vertical-align">Article</th>
-                                                    
+
                                                     {{-- <th width="80" class="vertical-align">Cost</th> --}}
                                                     <th width="70" class="vertical-align p-1" >Consum- ption</th>
                                                     <th width="80" class="vertical-align">Extra (%)</th>
                                                     <th width="80" class="vertical-align">UOM</th>
-                                                    
+
                                                     <th width="70" class="vertical-align">Terms</th>
                                                     <th width="80" class="vertical-align">FOB</th>
                                                     <th width="80" class="vertical-align">L/C</th>
@@ -130,8 +130,9 @@
                                                       <td>
                                                         <p id="percosting-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" class="text-right fwb totalpercost">0</p>
                                                         <input type="hidden" step="any" min="0" name="pertotal[]" id="pertotal-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" data-catid="{{ $itemBom->mcat_id}}" class="form-control pertotalcosting catTotalCost-{{ $itemBom->mcat_id}}" autocomplete="off" value="0">
+
                                                       </td>
-                                                      
+
                                                   </tr>
                                                   @endforeach
                                                   <tr class="table-default">
@@ -141,7 +142,7 @@
                                                     </td>
                                                   </tr>
                                                 @endif
-                                                
+
                                             </tbody>
                                             @endforeach
                                             <tbody>
@@ -164,7 +165,7 @@
                                                   </select>
                                                 </td>
                                                 <td colspan="4"></td>
-                                                
+
                                                 <td>
                                                   <input type="text" step="any" min="0" name="spunitprice[]" id="spunitprice-{{ $spo->style_op_id }}" class="form-control sp_price spunitprice action-input" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="{{ $spo->unit_price??'0' }}">
                                                   <input type="hidden" name="style_op_id[]" value="{{ $spo->style_op_id }}">
@@ -173,7 +174,7 @@
                                                 </td>
                                                 <td>
                                                   <p id="sp-{{ $spo->style_op_id }}" class="text-right fwb categoryPrice sp_per_price">{{ number_format((float)($spo->unit_price??'0'), 6,'.','') }}</p>
-                                                  
+
                                                 </td>
                                               </tr>
                                               @endforeach
@@ -188,7 +189,7 @@
                                                 </td>
                                                 <td>
                                                   <p id="testing-cost" class="text-right fwb categoryPrice sp_per_price">{{ number_format((float)($otherCosting->testing_cost??'0'), 6,'.','') }}</p>
-                                                  
+
                                                 </td>
                                               </tr>
                                               <tr class="table-default">
@@ -202,7 +203,7 @@
                                                 </td>
                                                 <td>
                                                   <p id="cm-cost" class="text-right fwb categoryPrice sp_per_price">{{ number_format((float)($otherCosting->cm??'0'), 6,'.','') }}</p>
-                                                  
+
                                                 </td>
                                               </tr>
                                               <tr class="table-default">
@@ -213,7 +214,7 @@
                                                 </td>
                                                 <td>
                                                   <p id="commercial-cost" class="text-right fwb categoryPrice sp_per_price">{{ number_format((float)($otherCosting->commercial_cost??'0'), 6,'.','') }}</p>
-                                                  
+
                                                 </td>
                                               </tr>
                                               <tr class="table-default">
@@ -237,7 +238,7 @@
                                                 </td>
                                                 <td>
                                                   <p id="buyer-fob" class="text-right fwb totalpercost">0</p>
-                                                  
+
                                                 </td>
                                               </tr>
                                               <tr class="table-default">
@@ -255,7 +256,7 @@
                                                 </td>
                                                 <td>
                                                   <p id="agent-fob" class="text-right fwb totalpercost">0</p>
-                                                  
+
                                                 </td>
                                               </tr>
 
@@ -266,9 +267,9 @@
                                                   </td>
                                               </tr>
                                             </tbody>
-                                            
+
                                         </table>
-                                        
+
                                     </div>
                                 </div>
                                 <div class="row">
@@ -280,7 +281,7 @@
                                 </div>
                             </div>
                         </form>
-                    </div> 
+                    </div>
               </div>
             </div>
         </div><!-- /.page-content -->
@@ -294,6 +295,23 @@
 
 <script src="{{ asset('assets/js/costing.js')}}"></script>
 <script>
+/*
+    $(document).ready(function(){
+        var lc = $(".lc").val();
+        var freight = $(".freight").val();
+        var fob = $(".fob").val();
+
+        fob = (isNaN(fob) || fob == '')?'0':fob;
+        lc = (isNaN(lc) || lc == '')?'0':lc;
+        freight = (isNaN(freight) || freight == '')?'0':freight;
+
+        if(fob > 0 && lc > 0 && freight > 0){
+            $('.unitprice').attr('disabled','disabled');;
+        } else {
+            console.log('sorry');
+        }
+    });*/
+
     function saveCosting(savetype) {
       if(savetype =='manual' ) $(".app-loader").show();
       if(savetype =='manual' ) $('#costing_status').val(1);
@@ -307,6 +325,8 @@
       //       $(curInputs[i]).closest(".form-group").addClass("has-error");
       //    }
       // }
+
+
       if(parseFloat($("#totalfob").html()) > 0){
         var form = $("#costingForm");
         if (isValid){
@@ -353,7 +373,7 @@
                     var value = errors[key];
                     $.notify(value[0], 'error');
                   }
-                   
+
                 }
               }
            });
@@ -370,7 +390,7 @@
       }else{
         $(".app-loader").hide();
       }
-        
+
     };
 </script>
 @endpush

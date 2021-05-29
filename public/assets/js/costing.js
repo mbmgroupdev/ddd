@@ -1,11 +1,11 @@
 var base_url = $("#base_url").val();
-// fob and c&f check 
+// fob and c&f check
 
 // change terms
 
 $(document).on('change', '.terms:radio', function(){
-    termsCondition($(this)); 
-}); 
+    termsCondition($(this));
+});
 $(document).ready(function() {
     $(".terms:checked").each(function(){
         termsCondition($(this));
@@ -17,13 +17,16 @@ function termsCondition(thisvalue){
         thisvalue.parent().parent().parent().find('.fob').attr('readonly', true).val(0);
         thisvalue.parent().parent().parent().find('.lc').attr('readonly', true).val(0);
         thisvalue.parent().parent().parent().find('.freight').attr('readonly', true).val(0);
-    }else{
+        thisvalue.parent().parent().parent().find('.unitprice').removeAttr('disabled readonly').addClass('highlight action-input');
+    }
+    else{
         thisvalue.parent().parent().parent().find('.fob').removeAttr('disabled readonly').addClass('highlight');
         thisvalue.parent().parent().parent().find('.lc').removeAttr('disabled readonly').addClass('highlight');
         thisvalue.parent().parent().parent().find('.freight').removeAttr('disabled readonly').addClass('highlight');
+        thisvalue.parent().parent().parent().find('.unitprice').attr('readonly', true).removeClass("action-input");
     }
     changeCost(thisvalue, 'radio');
-    
+
 }
 // on change input cost
 $(document).on("keyup blur", ".changesNo", function(){
@@ -52,13 +55,21 @@ function changeCost(thisvalue, type) {
     consumption = (isNaN(consumption) || consumption == '')?'0':consumption;
     extraCon = (isNaN(extraCon) || extraCon == '')?'0':extraCon;
     unitprice = (isNaN(unitprice) || unitprice == '')?'0':unitprice;
-    unitprice = parseFloat(parseFloat(unitprice)+parseFloat(fob)+parseFloat(lc)+parseFloat(freight)); 
+    // var total_unit_price = fob+lc+freight;
+    var unitprice_for_fob_freight_lc = parseFloat(parseFloat(lc)+parseFloat(freight));
     // console.log(unitprice)
     var comsumptionPer = parseFloat((parseFloat(consumption) * parseFloat(extraCon)) / 100).toFixed(6);
-    var comsumptionEx = parseFloat(consumption) + parseFloat(comsumptionPer);   
-    var totalpercost = parseFloat(parseFloat(unitprice)*parseFloat(comsumptionEx)).toFixed(6); 
+    var comsumptionEx = parseFloat(consumption) + parseFloat(comsumptionPer);
+    var totalpercost = '';
+    if (fob > 0 || lc > 0 || freight > 0 ){
+        totalpercost = parseFloat(parseFloat(unitprice_for_fob_freight_lc)+parseFloat(parseFloat(comsumptionEx)*parseFloat(fob))).toFixed(6);
+    } else {
+        totalpercost = parseFloat(parseFloat(unitprice)*parseFloat(comsumptionEx)).toFixed(6);
+    }
+
     // set total price
     index.find(".totalpercost").html(totalpercost);
+    index.find(".unitprice").val(unitprice_for_fob_freight_lc);
     index.find(".pertotalcosting").val(totalpercost);
     var catid = index.find(".unitprice").data('catid');
 
@@ -66,7 +77,7 @@ function changeCost(thisvalue, type) {
     var tSewFin = 0;
     // check cat wise
     $(".catTotalCost-"+catid).each(function(i, v) {
-        if($(this).val() != '' )total += parseFloat( $(this).val() ); 
+        if($(this).val() != '' )total += parseFloat( $(this).val() );
     });
 
     total = parseFloat(total).toFixed(6);
@@ -87,6 +98,8 @@ function changeCost(thisvalue, type) {
         index.find(".totalperqty").html(precost_req_qty);
         index.find(".totalpervalue").html(total_value);
     }
+
+
     calculateFOB();
 }
 
@@ -107,14 +120,14 @@ $(document).on('change keyup blur','.buyer-commission-percent, .agent-commission
 function calculateFOB(){
     var categoryFob = 0;
     $(".categoryPrice").each(function(i, v) {
-        if($(this).html() != '' )categoryFob += parseFloat( $(this).html() ); 
+        if($(this).html() != '' )categoryFob += parseFloat( $(this).html() );
     });
     var netFob = parseFloat(categoryFob).toFixed(6);
     netFob = (isNaN(netFob) || netFob == '')?'0':netFob;
     $("#net-fob").html(netFob);
     $("#net_fob").val(netFob);
-    
-    //buyer fob 
+
+    //buyer fob
     var buyerPercent = $('.buyer-commission-percent').val();
     buyerPercent = (isNaN(buyerPercent) || buyerPercent == '')?'0':buyerPercent;
     var buyerPerVal = parseFloat((netFob * buyerPercent)/100).toFixed(6);
@@ -133,7 +146,7 @@ function calculateFOB(){
     $("#agent-fob").html(agentFob);
     $("#agent_fob").val(agentFob);
 
-    // var totalFob = parseFloat(parseFloat(netFob) + parseFloat(buyerFob) + parseFloat(agentFob)).toFixed(6); 
+    // var totalFob = parseFloat(parseFloat(netFob) + parseFloat(buyerFob) + parseFloat(agentFob)).toFixed(6);
     $("#totalfob").html(agentFob);
 }
 // auto save
@@ -176,7 +189,7 @@ $(document).on('keypress', function(e) {
         }else{
             e.preventDefault();
         }
-    }            
+    }
 });
 
 // cal

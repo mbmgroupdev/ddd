@@ -2,6 +2,8 @@
 @section('title', 'Style Edit')
 @section('main-content')
 @push('css')
+
+    <link href="{{asset('assets/css/bootstrap4-toggle.min.css')}}" rel="stylesheet" media="screen, print">
 <style>
   .ui-autocomplete {
     position: absolute;
@@ -64,6 +66,15 @@
 }
 .slide_upload::before{content: "+";position: absolute;top: 50%;color: rgb(8 155 171);left: 50%;font-size: 52px;margin-left: -17px;margin-top: -37px;}
 
+
+
+  .toggle.btn{
+      width: 12.1em !important;
+  }
+
+  .slow  .toggle-group { transition: left 0.7s; -webkit-transition: left 2s; }
+
+
 </style>
 @endpush
 <div class="main-content">
@@ -78,7 +89,7 @@
                 <a href="#">Style</a>
             </li>
             <li class="active">Style Edit</li>
-            <li>{{ $style->stl_type}}</li>
+            <li>{{ $style->stl_type == 'D' ? 'Development' : 'Bulk'}}</li>
             <li class="top-nav-btn">
                 <a class="btn btn-sm btn-primary" href="{{ url('merch/style/style_list') }}"><i class="las la-list"></i></a>
             </li>
@@ -97,7 +108,7 @@
                        <input type="hidden" name="style_id" value="{{ $style->stl_id }}">
                         <div class="row">
                             <div class="col-sm-6">
-                                <input type="hidden" name="stl_order_type" id="inlineRadio1" value="Development" required="required" readonly>
+{{--                                <input type="hidden" name="stl_order_type" id="inlineRadio1" value="Development" required="required" readonly>--}}
                                 <span style="color: green">* Production Type ({{ $style->stl_type == 'D' ? 'Development' : 'Bulk'}})</span>
                                 <div class="row mt-3">
 
@@ -155,6 +166,11 @@
                                             <label for="gender"> Gender  </label>
 
                                         </div>
+
+                                        <div class="form-group">
+                                            <input type="checkbox" {{$style->stl_type == 'D' ? 'checked' : ''}} data-toggle="toggle" name="stl_order_type" data-on="Development" data-off="Bulk" data-onstyle="primary" data-offstyle="info">
+                                        </div>
+
                                         <div class="form-group">
                                             <button class="btn btn-success" type="submit">
                                                 Update  &nbsp;
@@ -473,6 +489,7 @@
 @include('merch.modals.add_size_group')
 @include('merch.modals.add_wash')
 @push('js')
+<script src="{{asset('assets/js/bootstrap4-toggle.min.js')}}"></script>
 <script type="text/javascript">
     var url = "{{ url('/') }}";
 //autocomplete placement script
