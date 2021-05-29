@@ -416,10 +416,10 @@
                                     <div class="row">
                                         <div class="col-sm-3">
                                         <div class="row">
-                                            <div class="slider-container">
+                                            <div class="slider-container" style="margin-left: 9%;">
                                                 
                                                 @if(count($styleImages) > 0)
-                                                        <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+                                                        <div id="carouselExampleControls" class="carousel slide" data-ride="carousel" data-interval="2500">
 
                                                                 <div class="carousel-inner" role="listbox">
                                                                 @foreach( $styleImages as $styleImage )
@@ -467,7 +467,7 @@
                                         <div class="space-4"></div>
                                         <div class="row">
                                             
-                                                <div style="margin-top: 40%"
+                                                <div style="margin-top: 40%;margin-left: 9%;"
                                                     class="width-80 label label-info label-xlg arrowed-in arrowed-in-right">
                                                     <div class="inline position-relative" id="style_no_div">
                                                         <a href="#" class="user-title-label">
@@ -634,8 +634,8 @@
                                                                             <td width="80">{{ $styleCatMcat->uom}}</td>
                                                                             <td>{{ $styleCatMcat->consumption}}</td>
                                                                             <td>{{ $styleCatMcat->extra_percent}}</td>
-                                                                            <td><?= ($styleCatMcat->extra_percent * $styleCatMcat->consumption) / 100 ?></td>
-                                                                            <td><?= $styleCatMcat->extra_percent != 0 ? $styleCatMcat->consumption + (($styleCatMcat->extra_percent * $styleCatMcat->consumption) / 100) : 0  ?></td>
+                                                                            <td><?= $styleCatMcat->extra_percent / 100 ?></td>
+                                                                            <td><?= $styleCatMcat->extra_percent != 0 ? $styleCatMcat->precost_unit_price + $styleCatMcat->extra_percent / 100 : 0  ?></td>
                                                                         </tr>
                                                                         <?php } ?>
                                                                         <?php } ?>
