@@ -23,7 +23,7 @@ function termsCondition(thisvalue){
         thisvalue.parent().parent().parent().find('.fob').removeAttr('disabled readonly').addClass('highlight');
         thisvalue.parent().parent().parent().find('.lc').removeAttr('disabled readonly').addClass('highlight');
         thisvalue.parent().parent().parent().find('.freight').removeAttr('disabled readonly').addClass('highlight');
-        thisvalue.parent().parent().parent().find('.unitprice').attr('readonly', true).removeClass("action-input");
+        thisvalue.parent().parent().parent().find('.unitprice').attr('readonly', true).removeClass("action-input").val(0);
     }
     changeCost(thisvalue, 'radio');
 
@@ -69,7 +69,9 @@ function changeCost(thisvalue, type) {
 
     // set total price
     index.find(".totalpercost").html(totalpercost);
-    index.find(".unitprice").val(unitprice_for_fob_freight_lc);
+    if (fob > 0 || lc > 0 || freight > 0 ){
+        index.find(".unitprice").val(unitprice_for_fob_freight_lc);
+    }
     index.find(".pertotalcosting").val(totalpercost);
     var catid = index.find(".unitprice").data('catid');
 
