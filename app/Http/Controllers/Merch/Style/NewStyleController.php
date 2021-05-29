@@ -1035,9 +1035,15 @@ class NewStyleController extends Controller
       }
       $pdSizeList = DB::table('mr_product_type')->pluck('prd_type_id','prd_type_name');
 
+      //dd($request->stl_order_type);
+        if ($request->stl_order_type == 'on'){
+            $stl_type = 'D';
+        } else {
+            $stl_type = 'B';
+        }
       // Style Data Update
       $style_record = Style::where('stl_id', $request->style_id)->update([
-        /*'stl_type'         => $request->stl_order_type,*/
+        'stl_type'         => $stl_type,
         'mr_buyer_b_id'    => $request->b_id,
         'prd_type_id'      => $request->prd_type_id,
         'stl_product_name' => $this->quoteReplaceHtmlEntry($request->stl_product_name),

@@ -2,7 +2,7 @@
 @section('title', 'Style Create')
 @section('main-content')
 @push('css')
-    <link href="{{asset('assets/css/bootstrap4-toggle.min.css')}}" rel="stylesheet" media="screen, print">
+
 <style>
   .ui-autocomplete {
     position: absolute;
@@ -69,11 +69,6 @@
       width: 44px !important;
   }
 
-  .toggle.btn{
-      width: 12.1em !important;
-  }
-
-  .slow  .toggle-group { transition: left 0.7s; -webkit-transition: left 2s; }
 </style>
 @endpush
 <div class="main-content">
@@ -102,7 +97,7 @@
                     {{ Form::open(["url" => "merch/style/style_store", "class"=>"form-horizontal", "files"=>true]) }}
                         <div class="row">
                             <div class="col-sm-6">
-{{--                                <input type="hidden" name="stl_order_type" id="inlineRadio1" value="Development" required="required" readonly>--}}
+                                <input type="hidden" name="stl_order_type" id="inlineRadio1" value="D" required="required" readonly>
                                 <span style="color: green">* Production Type</span>
                                 <div class="row mt-3">
 
@@ -244,9 +239,7 @@
                                         </div>
                                         <div  id="show_selected_size_group" ></div>
 
-                                    <div class="form-group">
-                                        <input type="checkbox" checked data-toggle="toggle" value="true" name="stl_order_type" data-on="Development" data-off="Bulk" data-onstyle="primary" data-offstyle="info">
-                                    </div>
+
 
 
 
@@ -439,7 +432,7 @@
 @include('merch.modals.add_size_group')
 @include('merch.modals.add_wash')
 @push('js')
-    <script src="{{asset('assets/js/bootstrap4-toggle.min.js')}}"></script>
+
 <script type="text/javascript">
     var url = "{{ url('/') }}";
 //autocomplete placement script
