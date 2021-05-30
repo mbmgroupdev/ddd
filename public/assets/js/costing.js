@@ -23,7 +23,7 @@ function termsCondition(thisvalue){
         thisvalue.parent().parent().parent().find('.fob').removeAttr('disabled readonly').addClass('highlight');
         thisvalue.parent().parent().parent().find('.lc').removeAttr('disabled readonly').addClass('highlight');
         thisvalue.parent().parent().parent().find('.freight').removeAttr('disabled readonly').addClass('highlight');
-        thisvalue.parent().parent().parent().find('.unitprice').attr('readonly', true).removeClass("action-input");
+        thisvalue.parent().parent().parent().find('.unitprice').attr('readonly', true).removeClass("action-input").val(0);
     }
     changeCost(thisvalue, 'radio');
 
@@ -56,20 +56,22 @@ function changeCost(thisvalue, type) {
     extraCon = (isNaN(extraCon) || extraCon == '')?'0':extraCon;
     unitprice = (isNaN(unitprice) || unitprice == '')?'0':unitprice;
     // var total_unit_price = fob+lc+freight;
-    var unitprice_for_fob_freight_lc = parseFloat(parseFloat(lc)+parseFloat(freight));
+    var unitprice_for_fob_freight_lc = parseFloat(parseFloat(lc)+parseFloat(freight)+parseFloat(fob));
     // console.log(unitprice)
     var comsumptionPer = parseFloat((parseFloat(consumption) * parseFloat(extraCon)) / 100).toFixed(6);
     var comsumptionEx = parseFloat(consumption) + parseFloat(comsumptionPer);
     var totalpercost = '';
     if (fob > 0 || lc > 0 || freight > 0 ){
-        totalpercost = parseFloat(parseFloat(unitprice_for_fob_freight_lc)+parseFloat(parseFloat(comsumptionEx)*parseFloat(fob))).toFixed(6);
+        totalpercost = parseFloat(parseFloat(unitprice_for_fob_freight_lc)*parseFloat(parseFloat(comsumptionEx))).toFixed(6);
     } else {
         totalpercost = parseFloat(parseFloat(unitprice)*parseFloat(comsumptionEx)).toFixed(6);
     }
 
     // set total price
     index.find(".totalpercost").html(totalpercost);
-    index.find(".unitprice").val(unitprice_for_fob_freight_lc);
+    if (fob > 0 || lc > 0 || freight > 0 ){
+        index.find(".unitprice").val(unitprice_for_fob_freight_lc);
+    }
     index.find(".pertotalcosting").val(totalpercost);
     var catid = index.find(".unitprice").data('catid');
 
