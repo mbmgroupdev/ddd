@@ -416,7 +416,7 @@
                                     <div class="row">
                                         <div class="col-sm-3">
                                         <div class="row">
-                                            <div class="slider-container" style="margin-left: 9%;">
+                                            <div class="slider-container" style="margin-left: 5%;">
                                                 
                                                 @if(count($styleImages) > 0)
                                                         <div id="carouselExampleControls" class="carousel slide" data-ride="carousel" data-interval="2500">
@@ -634,8 +634,10 @@
                                                                             <td width="80">{{ $styleCatMcat->uom}}</td>
                                                                             <td>{{ $styleCatMcat->consumption}}</td>
                                                                             <td>{{ $styleCatMcat->extra_percent}}</td>
-                                                                            <td><?= $styleCatMcat->extra_percent / 100 ?></td>
-                                                                            <td><?= $styleCatMcat->extra_percent != 0 ? $styleCatMcat->precost_unit_price + $styleCatMcat->extra_percent / 100 : 0  ?></td>
+                                                                            <td><?= ($styleCatMcat->consumption * $styleCatMcat->extra_percent) / 100 ?></td>
+                                                                           <!-- /* <td><?= $styleCatMcat->extra_percent / 100 ?></td> */ -->
+                                                                           <!-- /* <td><?= $styleCatMcat->extra_percent != 0 ? $styleCatMcat->precost_unit_price + $styleCatMcat->extra_percent / 100 : 0  ?></td> */ -->
+                                                                            <td><?= $styleCatMcat->extra_percent != 0 ? $styleCatMcat->precost_unit_price + ($styleCatMcat->consumption * $styleCatMcat->extra_percent) / 100 + $styleCatMcat->consumption: 0  ?></td>
                                                                         </tr>
                                                                         <?php } ?>
                                                                         <?php } ?>
