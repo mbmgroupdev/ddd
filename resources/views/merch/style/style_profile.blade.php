@@ -637,7 +637,8 @@
                                                                             <td><?= ($styleCatMcat->consumption * $styleCatMcat->extra_percent) / 100 ?></td>
                                                                            <!-- /* <td><?= $styleCatMcat->extra_percent / 100 ?></td> */ -->
                                                                            <!-- /* <td><?= $styleCatMcat->extra_percent != 0 ? $styleCatMcat->precost_unit_price + $styleCatMcat->extra_percent / 100 : 0  ?></td> */ -->
-                                                                            <td><?= $styleCatMcat->extra_percent != 0 ? $styleCatMcat->precost_unit_price + ($styleCatMcat->consumption * $styleCatMcat->extra_percent) / 100 + $styleCatMcat->consumption: 0  ?></td>
+                                                                           <!-- /* <td><?= $styleCatMcat->extra_percent != 0 ? $styleCatMcat->precost_unit_price + (($styleCatMcat->consumption * $styleCatMcat->extra_percent) / 100) + $styleCatMcat->consumption: 0  ?></td> */ -->
+                                                                            <td><?= $styleCatMcat->extra_percent != 0 ? (($styleCatMcat->consumption * $styleCatMcat->extra_percent) / 100) + $styleCatMcat->consumption: 0  ?></td> 
                                                                         </tr>
                                                                         <?php } ?>
                                                                         <?php } ?>
