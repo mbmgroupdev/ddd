@@ -7,6 +7,7 @@ use App\Models\Hr\SalaryAdjustMaster;
 use App\Models\Hr\Unit;
 use App\Models\Merch\MrOrderBooking;
 use App\Models\Merch\OrderBOM;
+use App\Models\Merch\OrderBomCostingBooking;
 use App\Models\Merch\PoBooking;
 use App\Models\Merch\PoBookingDetail;
 use DB;
@@ -362,7 +363,7 @@ class Custom
                     ->toArray();
         $poBookingDetails = PoBookingDetail::where(['mr_order_entry_order_id' => $orderId])->pluck('mr_order_bom_costing_booking_id','id')->toArray();
         $result = [];
-        if(empty($poBookingDetails)) {
+/*       if(empty($poBookingDetails)) {
             foreach($cosBookingList as $key=>$cosBooking) {
                 $result[] = $cosBooking->sup_name.'('.$cosBooking->item_name.')';
             }
@@ -392,7 +393,14 @@ class Custom
                         $result[] = $cosBooking->sup_name.' ('.$cosBooking->item_name.')'.'~0|0|0.00%';
                     }
                }
+                $result[] = $cosBooking->sup_name.' ('.$cosBooking->item_name.')'.'~0|0|0.00%';
             }
+        }*/
+        foreach($cosBookingList as $key=>$cosBooking) {
+            $mr_order_bom_costing = OrderBomCostingBooking::where(['id' => $cosBooking->cosId])->first();
+            $reqQty = $mr_order_bom_costing->precost_req_qty;
+           // $reqQty = 13;
+            $result[] = $cosBooking->sup_name.' ('.$cosBooking->item_name.')'.'~0|'.$reqQty.'|0.00%';
         }
         return $result;
     }
@@ -594,18 +602,18 @@ class Custom
                     }
                     $att = $otMinute;
                 }
-                $otHour += $att; 
+                $otHour += $att;
             }
         }
         //->get();
-        
+
         return $otHour;
 
     }
 
 
 
-    ///PI get booking 
+    ///PI get booking
     public static function getPiQty($booking_id)
     {
         $bookedPi =  DB::table('cm_pi_bom')
@@ -622,7 +630,7 @@ class Custom
                     ->sum('pi_qty');
         return $bookedPi;
     }
-    
+
     public static function getPiItemsQty($booking_id,$item)
     {
         $bookedPi =  DB::table('cm_pi_bom')
@@ -660,7 +668,7 @@ class Custom
                     ->pluck('o.order_code')
                     ->unique()
                     ->toArray();
-        return $order;           
+        return $order;
     }
 
     public static function getCmPiBomInfoBy($btb,$cat,$item,$cons,$color,$size){
@@ -723,7 +731,7 @@ class Custom
                 'mob.size'=>$size,
                 'inv.cm_imp_invoice_id'=> $invoice_id
             ];
-        
+
         $booking = DB::table('mr_order_booking As mob')
                     ->select(
                         "mc.clr_name",
@@ -852,7 +860,7 @@ class Custom
         $number = round($number,1);
         $hour = explode(".", $number);
         if(isset($hour[1])){
-            return $hour[0].':'.round($hour[1]*6);   
+            return $hour[0].':'.round($hour[1]*6);
         }else
             return $hour[0];
     }
@@ -862,13 +870,13 @@ class Custom
         $number = round($number,1);
         $hour = explode(".", $number);
         if(isset($hour[1])){
-            $hour[1] = round($hour[1]*6);    
+            $hour[1] = round($hour[1]*6);
         }else{
             $hour[1] = '00';
         }
         return $hour[0].':'.$hour[1];
     }
-    
+
     public static function getLockDate(){
         return DB::table('hr_system_setting')->first()->salary_lock;
     }
