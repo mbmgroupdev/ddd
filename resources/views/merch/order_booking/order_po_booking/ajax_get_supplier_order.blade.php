@@ -3,6 +3,7 @@
 	$checkItem = [];
 @endphp
 @if(!empty($buyerOrderList->toArray()))
+{{--    {{dd($buyerOrderList)}}--}}
 	@foreach($buyerOrderList as $singleBuyer)
 		@php
 			if($supId != null) {

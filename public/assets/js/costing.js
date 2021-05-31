@@ -3,11 +3,11 @@ var base_url = $("#base_url").val();
 
 // change terms
 
-$(document).on('change', '.terms:radio', function(){
+$(document).on('change', 'select#terms', function(){
     termsCondition($(this));
 });
 $(document).ready(function() {
-    $(".terms:checked").each(function(){
+    $("select#terms").each(function(){
         termsCondition($(this));
     });
 });
@@ -19,13 +19,19 @@ function termsCondition(thisvalue){
         thisvalue.parent().parent().parent().find('.freight').attr('readonly', true).val(0);
         thisvalue.parent().parent().parent().find('.unitprice').removeAttr('disabled readonly').addClass('highlight action-input');
     }
-    else{
+    else if(thisvalue.val() == "FOB"){
         thisvalue.parent().parent().parent().find('.fob').removeAttr('disabled readonly').addClass('highlight');
         thisvalue.parent().parent().parent().find('.lc').removeAttr('disabled readonly').addClass('highlight');
         thisvalue.parent().parent().parent().find('.freight').removeAttr('disabled readonly').addClass('highlight');
         thisvalue.parent().parent().parent().find('.unitprice').attr('readonly', true).removeClass("action-input").val(0);
     }
-    changeCost(thisvalue, 'radio');
+    else{
+        thisvalue.parent().parent().parent().find('.fob').removeAttr('disabled readonly').addClass('highlight');
+        thisvalue.parent().parent().parent().find('.lc').removeAttr('disabled readonly').addClass('highlight');
+        thisvalue.parent().parent().parent().find('.freight').removeAttr('disabled readonly').addClass('highlight');
+        thisvalue.parent().parent().parent().find('.unitprice').removeAttr('disabled readonly').addClass('highlight action-input');
+    }
+    changeCost(thisvalue, 'select#terms');
 
 }
 // on change input cost

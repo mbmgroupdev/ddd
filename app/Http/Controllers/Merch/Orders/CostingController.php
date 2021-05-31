@@ -54,14 +54,14 @@ class CostingController extends Controller
 									->whereIn('as_id',$team_members)
 									->pluck('associate_id');
 		 	$team = array_merge($team_members_associateId->toArray(), $lead_associateId);
-		 
+
 	 	}elseif (auth()->user()->hasRole('merchandising_executive')) {
 			$executive_associateId[] = auth()->user()->associate_id;
 			$team = $executive_associateId;
 		}else{
 		 	$team =[];
 		}
-		
+
 		$getBuyer = buyer_by_id();
 		$getSeason = season_by_id();
 		$getBrand = brand_by_id();
@@ -163,7 +163,7 @@ class CostingController extends Controller
 	        	->whereIn('mr_buyer_b_id', auth()->user()->buyer_permissions());
 
 			$order = $queryData->where("order_id", $id)->first();
-    		
+
 			if($order == null){
 				toastr()->error("Order Not Found!");
 				return back();
@@ -191,7 +191,7 @@ class CostingController extends Controller
 
 			// dd($styleSpOperation);
 			$groupBom = collect($getBom->toArray())->groupBy('mcat_id',true);
-			
+
 			$samples = SampleStyle::getStyleIdWiseSampleName($order->mr_style_stl_id);
 		    $operations = OperationCost::getStyleIdWiseOperationCostName($order->mr_style_stl_id);
 		    $machines = StyleSpecialMachine::getStyleIdWiseSpMachineName($order->mr_style_stl_id);
@@ -207,7 +207,7 @@ class CostingController extends Controller
 			$uom = collect($uom)->pluck('measurement_name','id');
 
 		    return view('merch.order_costing.index', compact('order', 'samples', 'operations', 'machines', 'getColor', 'itemCategory', 'uom', 'groupBom', 'getArticle', 'getSupplier', 'getItem', 'specialOperation', 'otherCosting', 'getBuyer', 'getUnit', 'styleCosting', 'bomCosting', 'styleSpOperation', 'styleOtherCosting'));
-			
+
 		} catch (\Exception $e) {
 			$bug = $e->getMessage();
 		    toastr()->error($bug);
@@ -217,9 +217,10 @@ class CostingController extends Controller
 
     public function ajaxStore(Request $request)
     {
+
     	$input = $request->all();
     	$data['type'] = 'error';
-    	// return $input;
+    	 //return $input;
     	DB::beginTransaction();
     	try {
     		// BOM costing update
@@ -227,20 +228,20 @@ class CostingController extends Controller
     		for ($i=0; $i < sizeof($input['itemid']); $i++){
     			$itemId = $input['itemid'][$i];
             	if($itemId != null){
-            		$term = "C&F";
+/*            		$term = "C&F";
         			if($input['precost_fob'][$i] > 0 || $input['precost_lc'][$i] > 0 || $input['precost_freight'][$i] > 0){
         				$term = "FOB";
-        			}
+        			}*/
 
             		$bom = [
-            			'bom_term' => $term,
+            			'bom_term' => $input['terms'][$i],
             			'precost_fob' => $input['precost_fob'][$i],
             			'precost_lc' => $input['precost_lc'][$i],
             			'precost_freight' => $input['precost_freight'][$i],
             			'precost_unit_price' => $input['precost_unit_price'][$i]
             		];
 
-            		$updateCosting[] = 
+            		$updateCosting[] =
                     [
                         'data' => $bom,
                         'keyval' => $input['bomitemid'][$i]
@@ -256,12 +257,12 @@ class CostingController extends Controller
                 ->whereKey('id')
                 ->bulkup($updateCosting);
             }
-            
+
             // mr_order_operation_n_cost - update
             if(isset($input['order_op_id'])){
             	$updateOpCost = [];
             	for ($s=0; $s < sizeof($input['order_op_id']); $s++) {
-					
+
 					// OrderOperationNCost::updateOrCreate(
 					// [
 					// 	"order_op_id"             => $request->order_op_id[$s],
@@ -281,7 +282,7 @@ class CostingController extends Controller
 						"unit_price" => $request->spunitprice[$s]
 					];
 
-					$updateOpCost[] = 
+					$updateOpCost[] =
                     [
                         'data' => $spItem,
                         'keyval' => $request->order_op_id[$s]
@@ -299,7 +300,7 @@ class CostingController extends Controller
 
 
             }
-            
+
 			// mr_stl_bom_other_costing - insert
 			OrderBomOtherCosting::updateOrCreate(
 			[
