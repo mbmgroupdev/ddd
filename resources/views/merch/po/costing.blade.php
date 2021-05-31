@@ -43,7 +43,7 @@
                 <div class="panel panel-success">
                     <div class="panel-body pb-2">
                         @include('merch.common.order_po_info')
-                    </div> 
+                    </div>
                 </div>
                 <div class="panel panel-info table-list-section">
                         <form class="form-horizontal" role="form" method="post" id="costingForm">
@@ -53,26 +53,26 @@
                             <input type="hidden" name="po_id" value="{{ $po->po_id }}">
                             <input type="hidden" id="change-flag" value="0">
 
-                            {{ csrf_field() }} 
+                            {{ csrf_field() }}
                             <div class="panel-body">
-                                
+
                                 <div class='row'>
                                     <div class='col-sm-12 table-wrapper-scroll-y table-custom-scrollbar'>
                                         <table class="table table-bordered table-hover table-fixed table-head" id="itemList">
                                             <thead>
                                                 <tr class="text-center active">
-                                                    
+
                                                     <th width="150" class="vertical-align">Item Description</th>
                                                     <th width="100" class="vertical-align">Color</th>
                                                     <th width="80" class="vertical-align">Size / Width</th>
                                                     <th width="130" class="vertical-align">Supplier</th>
                                                     <th width="130" class="vertical-align">Article</th>
-                                                    
+
                                                     {{-- <th width="80" class="vertical-align">Cost</th> --}}
                                                     <th width="70" class="vertical-align p-1" >Consum- ption</th>
                                                     <th width="80" class="vertical-align">Extra (%)</th>
                                                     <th width="80" class="vertical-align">UOM</th>
-                                                    
+
                                                     <th width="70" class="vertical-align">Terms</th>
                                                     <th width="80" class="vertical-align">FOB</th>
                                                     <th width="80" class="vertical-align">L/C</th>
@@ -93,20 +93,20 @@
                                                 @php $totalOrdPrice = 0; @endphp
                                                 @if(count($groupBom) > 0 && isset($groupBom[$itemCat->mcat_id]))
                                                   @foreach($groupBom[$itemCat->mcat_id] as $itemBom)
-                                                    @php 
+                                                    @php
                                                       $itemOrdUnitPrice = 0;
                                                       $itemPrice = $itemBom->precost_unit_price;
                                                     @endphp
                                                     @if(isset($orderCosting[$itemBom->ord_bom_id]) && ($orderCosting[$itemBom->ord_bom_id]->mr_cat_item_id == $itemBom->mr_cat_item_id))
                                                       @php
                                                         $itemOrdUnitPrice = $orderCosting[$itemBom->ord_bom_id]->precost_unit_price??0;
-                                                        
+
                                                       @endphp
                                                     @endif
                                                     @php
                                                       $totalOrdPrice += $itemOrdUnitPrice;
                                                     @endphp
-                                                    
+
                                                   <tr id="itemRow-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}">
                                                       <td>
                                                           <input type="hidden" id="bomitemid-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" name="bomitemid[]" value="{{ $itemBom->id }}">
@@ -126,14 +126,47 @@
                                                       <td><p class="extra">{{ $itemBom->extra_percent }}</p></td>
                                                       <td> {{ $itemBom->uom }} </td>
                                                       <td>
-                                                        <div class="custom-control custom-radio custom-radio-color-checked custom-control-inline ">
-                                                          <input type="radio" id="FOB-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" name="terms-{{ $itemBom->mcat_id}}{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" class="custom-control-input bg-primary terms" value="FOB" @if($itemBom->bom_term == 'FOB') checked @endif >
-                                                          <label class="custom-control-label" for="FOB-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}"> FOB </label>
-                                                        </div>
-                                                        <div class="custom-control custom-radio custom-radio-color-checked custom-control-inline ">
-                                                          <input type="radio" id="CF-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" name="terms-{{ $itemBom->mcat_id}}{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" class="custom-control-input bg-primary terms" value="C&F" @if($itemBom->bom_term != 'FOB') checked @endif>
-                                                          <label class="custom-control-label" for="CF-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}"> C&F</label>
-                                                        </div>
+{{--                                                        <div class="custom-control custom-radio custom-radio-color-checked custom-control-inline ">--}}
+{{--                                                          <input type="radio" id="FOB-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" name="terms-{{ $itemBom->mcat_id}}{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" class="custom-control-input bg-primary terms" value="FOB" @if($itemBom->bom_term == 'FOB') checked @endif >--}}
+{{--                                                          <label class="custom-control-label" for="FOB-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}"> FOB </label>--}}
+{{--                                                        </div>--}}
+{{--                                                        <div class="custom-control custom-radio custom-radio-color-checked custom-control-inline ">--}}
+{{--                                                          <input type="radio" id="CF-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" name="terms-{{ $itemBom->mcat_id}}{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" class="custom-control-input bg-primary terms" value="C&F" @if($itemBom->bom_term != 'FOB') checked @endif>--}}
+{{--                                                          <label class="custom-control-label" for="CF-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}"> C&F</label>--}}
+{{--                                                        </div>--}}
+
+                                                          <select name="terms[]" id="terms"
+                                                                  class="form-control">
+                                                              <option
+                                                                  id="FOB-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}"
+                                                                  name="terms-{{ $itemBom->mcat_id}}{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}"
+                                                                  class="custom-control-input  terms"
+                                                                  style="color: black !important;"
+                                                                  value="FOB"
+                                                                  @if($itemBom->bom_term == 'FOB') selected @endif>
+                                                                  FOB
+                                                              </option>
+
+                                                              <option
+                                                                  id="CF-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}"
+                                                                  name="terms-{{ $itemBom->mcat_id}}{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}"
+                                                                  class="custom-control-input bg-primary terms"
+                                                                  style="color: black !important;"
+                                                                  value="C&F"
+                                                                  @if($itemBom->bom_term == 'C&F') selected @endif>
+                                                                  C&F
+                                                              </option>
+
+                                                              <option
+                                                                  id="EXW-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}"
+                                                                  name="terms-{{ $itemBom->mcat_id}}{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}"
+                                                                  class="custom-control-input bg-primary terms"
+                                                                  style="color: black !important;"
+                                                                  value="EXW"
+                                                                  @if($itemBom->bom_term == 'EXW') selected @endif>
+                                                                  EXW
+                                                              </option>
+                                                          </select>
                                                       </td>
                                                       <td>
                                                           <input type="text" step="any" min="0" name="precost_fob[]" id="fob-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" class="form-control changesNo fob" autocomplete="off" data-catid="{{ $itemBom->mcat_id}}" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="{{ $itemBom->precost_fob??'0' }}" readonly>
@@ -177,7 +210,7 @@
                                                     <td colspan="2"></td>
                                                   </tr>
                                                 @endif
-                                                
+
                                             </tbody>
                                             @endforeach
                                             <tbody>
@@ -189,7 +222,7 @@
                                                   <td></td>
                                                   <td colspan="2"></td>
                                               </tr>
-                                              
+
                                               @foreach($specialOperation as $spo)
                                               <tr class="table-default">
                                                 <td colspan="5"><p class="capilize">{{ $spo->opr_name }}</p></td>
@@ -203,7 +236,7 @@
                                                   </select>
                                                 </td>
                                                 <td colspan="4"></td>
-                                                
+
                                                 <td>
                                                   <input type="text" step="any" min="0" name="spunitprice[]" id="spunitprice-{{ $spo->id }}" class="form-control sp_price spunitprice action-input" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="{{ $spo->unit_price??'0' }}">
                                                   <input type="hidden" name="op_id[]" value="{{ $spo->id }}">
@@ -212,7 +245,7 @@
                                                 </td>
                                                 <td>
                                                   <p id="sp-{{ $spo->id }}" class="text-right fwb categoryPrice sp_per_price">{{ number_format((float)($spo->unit_price??'0'), 6,'.','') }}</p>
-                                                  
+
                                                 </td>
                                                 <td class="table-warning">
                                                   <p class="text-right fwb">
@@ -233,7 +266,7 @@
                                                 </td>
                                                 <td>
                                                   <p id="testing-cost" class="text-right fwb categoryPrice sp_per_price">{{ number_format((float)($otherCosting->testing_cost??'0'), 6,'.','') }}</p>
-                                                  
+
                                                 </td>
                                                 <td class="table-warning">
                                                   <p class="text-right fwb">
@@ -253,7 +286,7 @@
                                                 </td>
                                                 <td>
                                                   <p id="cm-cost" class="text-right fwb categoryPrice sp_per_price">{{ number_format((float)($otherCosting->cm??'0'), 6,'.','') }}</p>
-                                                  
+
                                                 </td>
                                                 <td class="table-warning">
                                                   <p class="text-right fwb">
@@ -270,7 +303,7 @@
                                                 </td>
                                                 <td>
                                                   <p id="commercial-cost" class="text-right fwb categoryPrice sp_per_price">{{ number_format((float)($otherCosting->commercial_cost??'0'), 6,'.','') }}</p>
-                                                  
+
                                                 </td>
                                                 <td class="table-warning">
                                                   <p class="text-right fwb">
@@ -306,7 +339,7 @@
                                                 </td>
                                                 <td>
                                                   <p id="buyer-fob" class="text-right fwb totalpercost">0</p>
-                                                  
+
                                                 </td>
                                                 <td class="table-warning">
                                                   <p class="text-right fwb">
@@ -330,7 +363,7 @@
                                                 </td>
                                                 <td>
                                                   <p id="agent-fob" class="text-right fwb totalpercost">0</p>
-                                                  
+
                                                 </td>
                                                 <td class="table-warning">
                                                   <p class="text-right fwb">
@@ -353,9 +386,9 @@
                                                   <td colspan="2" class="tsticky-bottom"></td>
                                               </tr>
                                             </tbody>
-                                            
+
                                         </table>
-                                        
+
                                     </div>
                                 </div>
                                 <div class="row">
@@ -367,7 +400,7 @@
                                 </div>
                             </div>
                         </form>
-                    </div> 
+                    </div>
               </div>
             </div>
         </div><!-- /.page-content -->
@@ -430,7 +463,7 @@
                     var value = errors[key];
                     $.notify(value[0], 'error');
                   }
-                   
+
                 }
               }
            });
