@@ -392,7 +392,7 @@
             {{-- <li><a href="{{ url('hr/reports/group_attendance') }}"><i class="las la-fingerprint"></i>Group Attendance</a></li> --}}
             @if($user->can('Salary Report') || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'monthly-attendance-activity') active @endif"><a href="{{ url('hr/reports/monthly-attendance-activity') }}"><i class="las la-fingerprint"></i>Monthly Attendance</a></li>
-            <li class="@if($segment3 == 'monthly-salary') active @endif"><a href="{{ url('hr/reports/monthly-salary') }}"><i class="las la-fingerprint"></i>Monthly Salary</a></li>
+            <li class="@if($segment3 == 'monthly-salary') active @endif"><a href="{{ url('hr/reports/salary') }}"><i class="las la-fingerprint"></i>Monthly Salary</a></li>
             @endif
             @if($user->can('Bonus Report') || $user->can('Bonus') || $user->hasRole('Super Admin'))
             <li class="@if($segment3 == 'bonus') active @endif"><a href="{{ url('hr/reports/bonus') }}"><i class="las la-fingerprint"></i>Bonus</a></li>

@@ -55,7 +55,7 @@
 													if($para == 'as_department_id'){
 														$body = $department[$group]['hr_department_name']??'';
 													}elseif($para == 'as_location'){
-														$body = $location[$group]['hr_designation_name']??'';
+														$body = $location[$group]['hr_location_name']??'';
 													}elseif($para == 'as_designation_id'){
 														$body = $designation[$group]['hr_designation_name']??'';
 													}elseif($para == 'as_section_id'){

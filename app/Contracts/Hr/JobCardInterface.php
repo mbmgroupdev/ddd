@@ -5,8 +5,8 @@ use Illuminate\Support\Collection;
 
 interface JobCardInterface
 {
-   protected function holidays(): Collection;
+   // protected function holidays(): Collection;
 
-   protected function leave(): Collection;
+   // protected function leave(): Collection;
 
 }

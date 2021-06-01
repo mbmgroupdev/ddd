@@ -38,6 +38,16 @@ class Employee extends Model
         return $query->first();
     }
 
+    public static function getEmployeeAsIdWiseSelectedField($as_id, $selectedField)
+    {
+        $query = DB::table('hr_as_basic_info')
+        ->where('as_id', $as_id);
+        if($selectedField != 'all'){
+            $query->select($selectedField);
+        }
+        return $query->first();
+    }
+
     public static function getSelectIdNameEmployee()
     {
         return Employee::select('as_id', 'as_name', 'associate_id')->get();

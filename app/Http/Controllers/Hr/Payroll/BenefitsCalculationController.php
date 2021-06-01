@@ -2,22 +2,23 @@
 
 namespace App\Http\Controllers\Hr\Payroll;
 
-use Illuminate\Http\Request;
+use App\Helpers\BnConvert;
+use App\Helpers\EmployeeHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Hr\Reports\JobCardController as JobCard;
 use App\Models\Employee;
-use App\Models\Hr\HrAllGivenBenefits;
-use App\Models\Hr\SalaryAddDeduct;
 use App\Models\Hr\AttendanceBonus;
-use App\Models\Hr\HrMonthlySalary;
 use App\Models\Hr\HolidayRoaster;
-use App\Models\Hr\YearlyHolyDay;
+use App\Models\Hr\HrAllGivenBenefits;
+use App\Models\Hr\HrMonthlySalary;
+use App\Models\Hr\SalaryAddDeduct;
 use App\Models\Hr\SalaryAdjustMaster;
+use App\Models\Hr\YearlyHolyDay;
+use App\Repository\Hr\JobCardRepository;
 use Carbon\Carbon;
-use Illuminate\Support\Arr;
-use App\Helpers\BnConvert;
-use App\Helpers\EmployeeHelper;
 use DB, Response, Auth, Exception, DataTables, Validator;
+use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 class BenefitsCalculationController extends Controller
 {
@@ -172,39 +173,31 @@ class BenefitsCalculationController extends Controller
     	}
     }
 
+    protected function checkExist($key, $arr)
+    {
+        $value = Carbon::parse($key)->addDay()->toDateString();
+        if(in_array($value, $arr->toArray())){
+            $key = $value;
+            return $this->checkExist($key, $arr);
+        }
+        return $key;
+    }
+
     public function getEmpJobcard($request)
     {
-        $jobcard = new JobCard();
-        $result = $jobcard->empAttendanceByMonth($request);
+        $jobcard = new JobCardRepository();
+        $result = $jobcard->jobCardByMonth((array)$request);
+        $lastLeaveDate = collect($result['leaveDate'])->keys()->last();
+        $lastPresentDate = collect($result['presentDate'])->keys()->last();
+        $last_date = max($lastPresentDate, $lastLeaveDate);
+        if($last_date){
+            $holidays = collect($result['holidayDate'])->keys();
 
-
-        $attendance = $result['attendance'];
-        $info = $result['info'];
-        $joinExist = $result['joinExist'];
-        $leftExist = $result['leftExist'];
-
-        $filtered = Arr::where($attendance, function ($value, $key) {
-            if($value['day_status'] == 'P'){
-                return $value;
-            }
-        });
-
-        if(empty($filtered)){
-            $last_key = 0;
-            $last_date = Carbon::parse($request->month_year)->subMonth()->lastOfMonth()->toDateString();
+            $last_date = $this->checkExist($last_date, $holidays);
         }else{
-            $last_key = array_key_last($filtered);
-            $last_date = $attendance[$last_key]['date'];
-
-            if(isset($attendance[$last_key+1])){
-                if(($attendance[$last_key+1]['day_status']) == 'W'){
-                    $last_date = Carbon::parse($last_date)->addDay()->toDateString();
-                }
-            }
+            $last_date = $request->month_year.'-01';
         }
-        
-
-        $card = view('hr.common.job_card_layout_custom', compact('request','attendance','info','joinExist','leftExist'))->render();
+        $card = view('hr/reports/job_card/report', $result)->render();
 
         return array(
             'jobcard' => $card,
@@ -245,11 +238,11 @@ class BenefitsCalculationController extends Controller
                 $earned_leave = $earned->l??0;
 
 
-                $data = $this->storeBenefit($employee, $years, $months, $earned_leave, $request);
-                $benefits = $data['benefit'];
-                $status = $data['status'];
+                // $data = $this->storeBenefit($employee, $years, $months, $earned_leave, $request);
+                // $benefits = $data['benefit'];
+                // $status = $data['status'];
 
-                $benefit_page = view('hr.common.end_of_job_final_pay', compact('employee','benefits','years','months'))->render();
+                // $benefit_page = view('hr.common.end_of_job_final_pay', compact('employee','benefits','years','months'))->render();
                 $salary_date = Carbon::parse($request->status_date)->subDay();
                 $month_last = $salary_date->copy()->endOfMonth()->toDateString();
 
@@ -258,7 +251,7 @@ class BenefitsCalculationController extends Controller
                 $lock['unit_id'] = $employee->as_unit_id;
                 $lockActivity = monthly_activity_close($lock);
 
-
+                dd($salary_date);
                 if($salary_date->toDateString() != $month_last && $lockActivity == 0){
 
                     $salary = EmployeeHelper::processPartialSalary($employee, $salary_date->toDateString(), $status);

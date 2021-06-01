@@ -25,6 +25,8 @@ class SalarySheetExport implements FromView, WithHeadingRow
     	
         if($this->page_type == 'bank'){
             return view('hr.payroll.bank_part.excel',$fields);
+        }elseif($this->page_type == 'report'){
+            return view('hr.reports.salary.excel',$fields);
         }
 
     }

@@ -21,6 +21,7 @@
       <div class="modal-content-result" id="content-result">
         <form id="filterForm">
           <div class="filter-section">
+            @yield('right-nav-top')
             <div class="form-group mb-2">
               <label for="" class="m-0 fwb"><h5>Unit <input type='checkbox' id="unit" class="unit-group group-checkbox bg-primary" checked onclick="checkAllGroup(this)" /></h5></label>
               <hr class="mt-2">
@@ -123,12 +124,38 @@
               <label for="otnonot">OT/Non-OT</label>
             </div>
             <hr class="mt-2">
-            <div class="form-group has-float-label has-required select-search-group">
-              <?php
-                $status = ['1'=>'Active','25' => 'Left & Resign','2'=>'Resign','3'=>'Terminate','4'=>'Suspend','5'=>'Left', '6'=>'Maternity'];
-              ?>
-              {{ Form::select('employee_status', $status, 1, ['placeholder'=>'Select Employee Status ', 'class'=>'form-control capitalize select-search', 'id'=>'estatus', 'required']) }}
-              <label for="estatus">Status</label>
+            
+            <div class="form-group mb-2">
+              <label for="" class="m-0 fwb"><h5>Employee Status </h5></label>
+              <hr class="mt-2">
+              <div class="row">
+                <div class="col pr-0">
+                  <div class="custom-control custom-checkbox custom-checkbox-color-check ">
+                    <input type="checkbox" name="emp_status[]" class="custom-control-input bg-primary sta" value="1" id="sta-1" checked >
+                    <label class="custom-control-label" for="sta-1">Active</label>
+                  </div>
+                  
+                  <div class="custom-control custom-checkbox custom-checkbox-color-check ">
+                    <input type="checkbox" name="emp_status[]" class="custom-control-input bg-primary sta" value="6" id="sta-6" >
+                    <label class="custom-control-label" for="sta-6">Maternity</label>
+                  </div>
+                </div>
+                <div class="col pr-0">
+                  <div class="custom-control custom-checkbox custom-checkbox-color-check ">
+                    <input type="checkbox" name="emp_status[]" class="custom-control-input bg-primary sta" value="5" id="sta-5" >
+                    <label class="custom-control-label" for="sta-5">Left</label>
+                  </div>
+                  <div class="custom-control custom-checkbox custom-checkbox-color-check ">
+                    <input type="checkbox" name="emp_status[]" class="custom-control-input bg-primary sta" value="2" id="sta-2" >
+                    <label class="custom-control-label" for="sta-2">Resign</label>
+                  </div>
+                  <div class="custom-control custom-checkbox custom-checkbox-color-check ">
+                    <input type="checkbox" name="emp_status[]" class="custom-control-input bg-primary sta" value="3" id="sta-3" >
+                    <label class="custom-control-label" for="sta-3">Terminate</label>
+                  </div>
+                </div>
+                
+              </div>
             </div>
             @yield('right-nav')
             

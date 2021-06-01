@@ -5,7 +5,7 @@
 			$urldata = http_build_query($input) . "\n";
 		@endphp
 		
-		<a href='#' target="_blank" class="btn btn-sm btn-info hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download" style="position: absolute; top: 19px; left: 65px;"><i class="fa fa-file-excel-o"></i></a>
+		<a href='{{ url("hr/reports/salary-report?$urldata&export=excel")}}' target="_blank" class="btn btn-sm btn-info hidden-print" id="excel" data-toggle="tooltip" data-placement="top" title="" data-original-title="Excel Download" style="position: absolute; top: 19px; left: 65px;"><i class="fa fa-file-excel-o"></i></a>
 
 		
 		<div id="report_section" class="report_section">
@@ -162,10 +162,10 @@
 						            			Cash
 						            		@elseif($employee->pay_status == 2)
 						            		<b>{{ $employee->pay_type }}</b>
-						            		{{-- <b>{{ $employee->bank_no }}</b> --}}
+						            		<b>{{ ($employee->bank_payable > 0)?$employee->bank_no:'' }}</b>
 						            		@else
 						            		Bank & Cash
-						            		{{-- <b>{{ $employee->bank_no }}</b> --}}
+						            		<b>{{ ($employee->bank_payable > 0)?$employee->bank_no:'' }}</b>
 						            		@endif
 						            	</td>
 						            	<td>
@@ -217,11 +217,11 @@
 						            		@elseif($employee->pay_status == 2)
 						            		<b class="uppercase">{{ $employee->pay_type }}</b>
 						            		<br>
-						            		{{-- <b>{{ $employee->bank_no }}</b> --}}
+						            		<b>{{ ($employee->bank_payable > 0)?$employee->bank_no:'' }}</b>
 						            		@else
 						            		<b class="uppercase">{{ $employee->pay_type }}</b> & Cash
 						            		<br>
-						            		{{-- <b>{{ $employee->bank_no }}</b> --}}
+						            		<b>{{ ($employee->bank_payable > 0)?$employee->bank_no:'' }}</b>
 						            		@endif
 						            	</td>
 						            	<td>
@@ -502,7 +502,7 @@
             data: {
                 body: body
             },
-            type: "POST",
+            type: "GET",
             headers: {
 	          'X-CSRF-TOKEN': '{{ csrf_token() }}',
 	        },

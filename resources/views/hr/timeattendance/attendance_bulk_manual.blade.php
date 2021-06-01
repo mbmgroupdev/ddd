@@ -150,17 +150,6 @@
                                     <i class="fa fa-search"></i>
                                     Search
                                 </button>
-                                @if (!empty(request()->associate) && !empty(request()->month) && !empty(request()->year))
-                                    <button type="button" onClick="printMe('PrintArea')" class="btn btn-warning " title="Print">
-                                        <i class="fa fa-print"></i>
-                                    </button> 
-                                    <a href="{{request()->fullUrl()}}&pdf=true" target="_blank" class="btn btn-danger " title="PDF">
-                                        <i class="fa fa-file-pdf-o"></i>
-                                    </a>
-                                    <button type="button"  id="excel"  class="showprint btn btn-success " title="Excel">
-                                        <i class="fa fa-file-excel-o" style="font-size:14px"></i>
-                                   </button>
-                                @endif
                                 
                             </div>
                         </div>

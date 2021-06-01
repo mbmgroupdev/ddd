@@ -175,8 +175,14 @@
                                             </div>
                                           </div>
                                         </div>
+                                        @php
+                                        $yearMonth = date('Y-m');
+                                        if(date('d') < 10){
+                                            $yearMonth = date('Y-m', strtotime('-1 month'));
+                                        }
+                                        @endphp
                                         <div class="form-group has-float-label has-required">
-                                          <input type="month" class="report_date form-control" id="month" name="year_month" placeholder=" Month-Year"required="required" value="{{ date('Y-m') }}"autocomplete="off" />
+                                          <input type="month" class="report_date form-control" id="month" name="year_month" placeholder=" Month-Year"required="required" value="{{ $yearMonth }}"autocomplete="off" />
                                           <label for="month">Month</label>
                                         </div>
                                         <div class="form-group has-float-label has-required select-search-group">
@@ -210,7 +216,6 @@
                                 <tr>
                                    <th>Sl.</th>
                                    <th>ID</th>
-                                   <th>Oracle ID</th>
                                    <th>Name & phone</th>
                                    <th>Designation</th>
                                    <th>Department</th>
@@ -344,8 +349,8 @@
         var selectable = []; //use 4,5,6,7,8,9,10,11,....and * for all
         var dropdownList = {};
 
-        var exportColName = ['Sl.','ID','Name','Designation', 'Department', 'Section','Subsection','Line','Present', 'Absent', 'Leave', 'Holiday', 'OT Hour', 'Total Day'];
-        var exportCol = [0,1,2,3,4,5,6,7,8,9,10,11,12,13];
+        var exportColName = ['Sl.','ID','Name','Designation', 'Department', 'Section','Subsection','Line','Present', 'Absent', 'Leave', 'Holiday', 'Late', 'OT Hour', 'Total Day'];
+        var exportCol = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14];
 
         var dTable =  $('#dataTables').DataTable({
 
@@ -377,7 +382,7 @@
              d.year_month    = $("#month").val();
              d.min_sal       = $("#min_sal").val();
              d.max_sal       = $("#max_sal").val();
-             d.emp_status    = $("#employee_status").val();
+             d.emp_status    = [$("#employee_status").val()];
              d.shift_roaster_status = $("#shift_roaster_status").val();
              d.location = $("#location").val();
 

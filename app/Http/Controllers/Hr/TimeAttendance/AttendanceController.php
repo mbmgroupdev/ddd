@@ -833,9 +833,9 @@ class AttendanceController extends Controller
                 }
                 if($data->status == 'Present (Late)' || $data->status == 'Present (Halfday)'){
                    if($data->in_time == null){
-                     return '<span class="label label-md label-warning">Late</span><span class="label label-sm label-success">Present</span> <button class="btn btn-xs btn-round btn-danger make-absent" >Make Absent</button>';
+                     return '<span class="label label-md label-warning">Late</span><span class="label label-sm label-success">Present</span>';
                    }elseif ($data->out_time == null && $data->remarks != 'HD') {
-                     return '<span class="label label-md label-warning">Late</span><span class="label label-sm label-success">Present</span> <button class="btn btn-xs btn-round btn-danger make-halfday" >Make Halfday</button>';
+                     return '<span class="label label-md label-warning">Late</span><span class="label label-sm label-success">Present</span> ';
                    }elseif ($data->out_time == null && $data->remarks == 'HD') {
                      $time = explode(' ',$data->in_time);
                      if(strtotime($time[1]) >(strtotime($data->hr_shift_start_time)+180)){
@@ -852,9 +852,9 @@ class AttendanceController extends Controller
                 }
                 if($data->status == 'Present' || $data->status == 'Present (Halfday)') {
                    if($data->in_time == null){
-                     return '<span class="label label-md  label-success">Present</span> <button class="btn btn-xs btn-round btn-danger make-absent" >Make Absent</button>';
+                     return '<span class="label label-md  label-success">Present</span>';
                    }elseif ($data->out_time == null && $data->remarks != 'HD') {
-                     return '<span class="label label-md  label-success">Present</span> <button class="btn btn-xs btn-round btn-danger make-halfday" >Make Halfday</button>';
+                     return '<span class="label label-md  label-success">Present</span> ';
                    }elseif ($data->out_time == null && $data->remarks == 'HD') {
                      $time = explode(' ',$data->in_time);
                      if(strtotime($time[1]) >(strtotime($data->hr_shift_start_time)+180)){

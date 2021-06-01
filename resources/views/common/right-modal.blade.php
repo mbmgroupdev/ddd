@@ -31,8 +31,8 @@
         </button>
       </div>
       <div class="modal-body" style="padding-top: 0;">
-        <div class="modal-content-result" id="content-result">
-          
+        <div class="offset-1 col-10 h-min-400">
+          <div class="modal-content-result" id="content-result"></div>
         </div>
       </div>
       
@@ -52,7 +52,7 @@
       $('#right_modal_jobcard').modal('show');
       $("#content-result").html(loaderContent);
       $.ajax({
-            url: "{{ url('hr/operation/partial_job_card') }}",
+            url: "{{ url('hr/reports/job-card-report') }}",
             data: {
                 associate: associate,
                 month_year: yearMonth

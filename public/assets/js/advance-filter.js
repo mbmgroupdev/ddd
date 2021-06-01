@@ -145,8 +145,9 @@ function advFilter(){
   }, 2000);
   var data = $("#filterForm").serialize() + '&' + $("#formReport").serialize();
   var formAction = $("#formReport").attr("action");
+  var formType = $("#formReport").attr("method");
   $.ajax({
-      type: "POST",
+      type: formType,
       url: formAction,
       data: data, // serializes the form's elements.
       success: function(response)
