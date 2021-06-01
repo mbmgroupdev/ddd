@@ -40,9 +40,8 @@ class SummaryReportController extends Controller
         $reportType['left_resign'] = 'Left & Resign';
         
 
-        if(auth()->user()->can('Manage Employee')){
-           $reportType['recruitment'] = 'Recruitment';
-        }
+        $reportType['recruitment'] = 'Recruitment';
+        
 
         return view('hr/reports/summary/index', compact('unitList','areaList','locationList','reportType'));
 	}
@@ -91,9 +90,16 @@ class SummaryReportController extends Controller
             // employee basic sql binding
             $employeeData = DB::table('hr_as_basic_info');
             $employeeData_sql = $employeeData->toSql();
+
+            // unit
+            if($input['unit'] == 145){
+                $units = [1,4,5];
+            }else{
+                $units = [$input['unit']];
+            }
             // shift
             if($input['report_type'] == 'working_hour'){
-                $shiftData = DB::table('hr_shift');
+                $shiftData = DB::table('hr_shift')->whereIn('hr_shift_unit_id', $units);
                 $shiftDataSql = $shiftData->toSql();
             }
 
@@ -102,8 +108,8 @@ class SummaryReportController extends Controller
             if($input['report_type'] == 'ot' || $input['report_type'] == 'working_hour' || $input['report_type'] == 'late' || $input['report_type'] == 'ot_levis'){
                 
                 $attData = DB::table($tableName)
-                            ->where('a.in_date','>=', $input['from_date'])
-                            ->where('a.in_date','<=', $input['to_date']);
+                        ->where('a.in_date','>=', $input['from_date'])
+                        ->where('a.in_date','<=', $input['to_date']);
             }else if($input['report_type'] == 'left_resign'){
 
                 $attData = DB::table('hr_as_basic_info AS emp')
@@ -284,7 +290,7 @@ class SummaryReportController extends Controller
             }else if($input['report_type'] == 'recruitment'){
                     
                 $attData->select(
-                    'emp.as_id', 'emp.as_gender', 'emp.as_unit_id', 'emp.as_shift_id', 'emp.as_oracle_code', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_contact', 'emp.as_section_id','emp.as_subsection_id','emp.as_status','emp.as_doj'
+                    'emp.as_id', 'emp.as_gender', 'emp.as_unit_id', 'emp.as_shift_id', 'emp.as_oracle_code', 'emp.associate_id', 'emp.as_line_id', 'emp.as_designation_id', 'emp.as_department_id', 'emp.as_floor_id', 'emp.as_pic', 'emp.as_name', 'emp.as_contact', 'emp.as_section_id','emp.as_subsection_id','emp.as_status','emp.as_doj','emp.as_ot'
                 );
                 $getEmployee = $attData->get();
 

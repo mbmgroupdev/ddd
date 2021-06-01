@@ -11,7 +11,6 @@ use App\Models\Hr\SalaryAddDeduct;
 use App\Models\Hr\SalaryAdjustMaster;
 use App\Repository\Hr\AttendanceProcessRepository;
 use DB;
-use Illuminate\Support\Collection;
 
 class SalaryRepository implements SalaryInterface
 {

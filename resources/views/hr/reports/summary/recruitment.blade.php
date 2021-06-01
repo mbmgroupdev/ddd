@@ -137,16 +137,16 @@
 								@endphp
 			                	@if($head != '')
 			                    <th colspan="2">{{ $head }}</th>
-			                    <th colspan="11">{{ $body }}</th>
+			                    <th colspan="12">{{ $body }}</th>
 			                    @endif
 			                </tr>
 			                @endif
 			                <tr>
 			                    <th style="width:20px;">Sl</th>
-			                    {{-- <th>Photo</th> --}}
 			                    <th style="width:60px;">Associate ID</th>
 			                    <th style="width:100px;">Name & Phone</th>
 			                    <th style="width:5%;">Oracle ID</th>
+			                    <th style="width:5%;">OT</th>
 			                    <th style="width:25%;">Designation</th>
 			                    <th style="width:10%;">Department</th>
 			                    <th style="width:5%;">Section</th>
@@ -181,6 +181,8 @@
 				            		<p>{{ $employee->as_contact }}</p>
 				            	</td>
 				            	<td>{{ $employee->as_oracle_code }}</td>
+				            	<td>{{ $employee->as_ot == 1?'OT':'Non-OT' }}</td>
+				            	
 				            	<td>{{ $designation[$employee->as_designation_id]['hr_designation_name']??'' }}</td>
 				            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
 				            	<td>{{ $section[$employee->as_section_id]['hr_section_name']??'' }}</td>

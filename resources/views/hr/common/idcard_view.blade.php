@@ -112,20 +112,26 @@
                     </strong>
                 </td>
             </tr>
+            
             <tr>
-                <td style="text-align: left;padding-left: 5px;padding-top: 25px;">
-                    <strong style="font-size:9px;;">শ্রমিকের স্বাক্ষর</strong>
-                </td>
-                <td style="text-align: center;padding-right:5px;position: relative;">
-                    @if($associate->hr_unit_authorized_signature)
-                    <img style="height: 30px;margin-top: -14px;position: absolute;right: 5px;" src="{{asset($associate->hr_unit_authorized_signature)}}">
-                    @else
-                    <div style="height: 6px;margin-top: -8px;margin-left: auto;"></div>
-                    {{-- <img style="height: 30px;margin-top: -8px;margin-left: auto;" src=""></img> --}}
-                    @endif
-                    <br>
-                    <strong style="font-size:9px;position: absolute;right: 0;width: 100px;">
-                    মালিক/ব্যবস্থাপক</strong>
+                <td colspan="2" style="width: 100%;">
+                    <div style="display: flex;justify-content: space-between;">
+                        
+                        <div style="text-align: left;padding-left: 5px;padding-top: 25px;width: 50%;">
+                            <strong style="font-size:9px;;">শ্রমিকের স্বাক্ষর</strong>
+                        </div>
+                        <div style="text-align: center;padding-right:5px;">
+                            @if($associate->hr_unit_authorized_signature)
+                            <img style="height: 35px;margin-top: 9px;" src="{{asset($associate->hr_unit_authorized_signature)}}">
+                            @else
+                            <div style="height: 6px;margin-top: -8px;margin-left: auto;"></div>
+                            {{-- <img style="height: 30px;margin-top: -8px;margin-left: auto;" src=""></img> --}}
+                            @endif
+                            <br>
+                            <strong style="font-size:9px;right: 0;width: 100px;white-space: nowrap;">
+                            মালিক/ব্যবস্থাপক</strong>
+                        </div>
+                    </div>
                 </td>
             </tr>
         </table>

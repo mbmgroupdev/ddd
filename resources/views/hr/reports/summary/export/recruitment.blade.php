@@ -80,7 +80,7 @@
 								@endphp
 			                	@if($head != '')
 			                    <th colspan="2">{{ $head }}</th>
-			                    <th colspan="11">{{ $body }}</th>
+			                    <th colspan="13">{{ $body }}</th>
 			                    @endif
 			                </tr>
 			                @endif
@@ -91,6 +91,8 @@
 			                    <th >Name</th>
 			                    <th >Phone</th>
 			                    <th >Oracle ID</th>
+			                    <th >OT</th>
+			                    <th >Unit</th>
 			                    <th >Designation</th>
 			                    <th >Department</th>
 			                    <th >Section</th>
@@ -122,6 +124,8 @@
 				            	</td>
 				            	<td>{{ $employee->as_contact }}</td>
 				            	<td>{{ $employee->as_oracle_code }}</td>
+				            	<td>{{ $employee->as_ot == 1?'OT':'Non-OT' }}</td>
+				            	<td>{{ $unit[$employee->as_unit_id]['hr_unit_short_name']??'' }}</td>
 				            	<td>{{ $designation[$employee->as_designation_id]['hr_designation_name']??'' }}</td>
 				            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
 				            	<td>{{ $section[$employee->as_section_id]['hr_section_name']??'' }}</td>

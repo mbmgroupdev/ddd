@@ -57,6 +57,7 @@ class EmployeeHelper
 			    $dayname = Carbon::parse($intimePunch)->format('l');
 			    $employee = Employee::where('associate_id', $eAsId)->first();
 
+			    // ramadan break
 			    if(strtotime($today) < strtotime('2021-04-13') || strtotime($today) > strtotime('2021-05-13')){
     			    if(date('H:i:s', strtotime($shiftIntime)) < date('H:i:s', strtotime('14:00:00'))  && $dayname == 'Friday' && in_array($eUnit, [1,4,5])){
     			    	$shiftBreak = 90;
@@ -629,6 +630,18 @@ class EmployeeHelper
 
         $late = $att->late??0;
         $overtimes = $att->ot_hour??0;
+
+        // check if friday has extra ot
+        if($employee->shift_roaster_status == 1 ){
+            $friday_ot = DB::table('hr_att_special')
+                            ->where('as_id', $employee->as_id)
+                            ->where('in_date','>=', $first_day)
+                            ->where('in_date','<=', $salary_date)
+                            ->get()
+                            ->sum('ot_hour');
+
+            $overtimes = $overtimes + $friday_ot;
+        }
 
         $diffExplode = explode('.', $overtimes);
         $minutes = (isset($diffExplode[1]) ? $diffExplode[1] : 0);

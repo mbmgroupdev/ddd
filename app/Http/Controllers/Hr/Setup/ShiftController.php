@@ -16,10 +16,17 @@ class ShiftController extends Controller
 	#show form
     public function shift()
     {
+        $unitList  = Unit::where('hr_unit_status', '1')
+            ->whereIn('hr_unit_id', auth()->user()->unit_permissions())
+            ->orderBy('hr_unit_name', 'desc')
+            ->pluck('hr_unit_short_name', 'hr_unit_id');
 
-        $unitList  = Unit::where('hr_unit_status', '1')->whereIn('hr_unit_id', auth()->user()->unit_permissions())->orderBy('hr_unit_name', 'desc')->pluck('hr_unit_name', 'hr_unit_id');
+
+        $designation = collect(designation_by_id())->pluck('hr_designation_name','hr_designation_id');
+
 
         $unitids = implode(",", auth()->user()->unit_permissions());
+
         $shifts = DB::select("SELECT
             s1.hr_shift_id,
             s1.hr_shift_name,
@@ -41,6 +48,12 @@ class ShiftController extends Controller
 
         $ot_shift = collect($shifts)->where('ot_status',1)->pluck('hr_shift_name','hr_shift_name');
 
+        $bill  = [
+            '1' => 'Ifter',
+            '2' => 'Lunch',
+        ];
+
+        return view('hr/setup/shift/create', compact('unitList', 'shifts','trashed','ot_shift','designation'));
     	return view('hr/setup/shift', compact('unitList', 'shifts','trashed','ot_shift'));
     }
 

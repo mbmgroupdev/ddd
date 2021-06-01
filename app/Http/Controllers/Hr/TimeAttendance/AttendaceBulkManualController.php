@@ -565,6 +565,7 @@ class AttendaceBulkManualController extends Controller
         $shift = collect(shift_by_code())
             ->where('hr_shift_name','Friday OT')
             ->first();
+
         foreach ($friday as $key => $v) {
             $shift_start = $key." ".$shift['hr_shift_start_time'];
             if($v['in_time']){
@@ -576,11 +577,21 @@ class AttendaceBulkManualController extends Controller
             if($v['in_time']!= null && $v['out_time'] != null){
                 $v['ot_hour'] = $this->fullot($v['in_time'], $shift_start, $v['out_time'],  $shift['hr_shift_break_time']);
 
-            }
-            DB::table('hr_att_special')
+            }else if($v['in_time']== null && $v['out_time'] == null){
+                DB::table('hr_att_special')
                 ->where('as_id',$info->as_id)
                 ->where('in_date',$key)
-                ->update($v);
+                ->delete();
+            }else{
+                $v['ot_hour'] = 0;
+            }
+            if(isset($v['ot_hour'])){
+                
+                DB::table('hr_att_special')
+                    ->where('as_id', $info->as_id)
+                    ->where('in_date',$key)
+                    ->update($v);
+            }
         }
     }
 
