@@ -1,6 +1,8 @@
+
+
 <div class="row justify-content-center">
-	<div class="col-sm-12 mt-2">
-                            
+   <div class="col-sm-12 mt-2">
+
         <button class="btn btn-sm btn-primary hidden-print" onclick="printDiv('print-area')" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report"><i class="las la-print"></i> </button>
 
     </div>
@@ -8,66 +10,70 @@
         date_default_timezone_set('Asia/Dhaka');
         $en = array('0','1','2','3','4','5','6','7','8','9');
         $bn = array('০', '১', '২', '৩',  '৪', '৫', '৬', '৭', '৮', '৯');
-        
+
     ?>
-	<div id="print-area" class="col-sm-9">
-		<style type="text/css">
-				.mb-2 span {
-				    width: 160px;
-				    display: inline-block;
-				}
+   <div id="print-area" class="col-sm-9">
+      <style type="text/css">
+            .mb-2 span {
+                width: 160px;
+                display: inline-block;
+            }
                 .page-break{
                     page-break-after: always;
                 }
                 .page-break p{
-                    
+
                     line-height: 16px;
                 }
                 .page-break b{
-                    
+
                     line-height: 16px;
                 }
-                @page  
-                { 
-                    size: auto;   /* auto is the initial value */ 
+                @page
+                {
+                    size: auto;   /* auto is the initial value */
 
-                    /* this affects the margin in the printer settings */ 
-                    margin: 25mm 25mm 25mm 25mm;  
+                    /* this affects the margin in the printer settings */
+                    margin: 25mm 25mm 25mm 25mm;
                 }
                 .table-data-width td{
                     width:250px !important;
-                  
-                } 
-			
-		</style>
-		<style type="text/css" media="print">
-			.bn-form-output{padding:4pt 4pt }
-		</style>
 
-		@foreach($employees as $key => $emp)
+                }
+
+                @media print {
+                    .pagebreak { page-break-before: always; } /* page-break-after works, as well */
+                }
+
+      </style>
+      <style type="text/css" media="print">
+         .bn-form-output{padding:4pt 4pt }
+      </style>
+
+      @foreach($employees as $key => $emp)
         @php $date = str_replace($en, $bn, $emp->as_doj); @endphp
-		<div id="jc-{{$emp->associate_id}}" class="bn-form-output page-break" {{-- style="page-break-after: always;" --}} >
+      <div id="jc-{{$emp->associate_id}}" class="bn-form-output page-break" {{-- style="page-break-after: always;" --}} >
 
-            
 
-			@php
-            	$des['bn'] = '';
-            	$des['en'] = '';
-            	$des['grade'] = '';
-            	$un['name'] = '';
-            	$un['address'] = '';
+
+         @php
+               $des['bn'] = '';
+               $des['en'] = '';
+               $des['grade'] = '';
+               $un['name'] = '';
+               $un['address'] = '';
                 $un['signature'] = '';
-            	if(isset($designation[$emp->as_designation_id])){
-            		$des['bn'] = $designation[$emp->as_designation_id]['hr_designation_name_bn'];
-            		$des['en'] = $designation[$emp->as_designation_id]['hr_designation_name'];
-            		$des['grade'] = $designation[$emp->as_designation_id]['hr_designation_grade'];
-            	}
-            	if(isset($unit[$emp->as_unit_id])){
-            		$un['name'] = $unit[$emp->as_unit_id]['hr_unit_name_bn'];
+               if(isset($designation[$emp->as_designation_id])){
+                  $des['bn'] = $designation[$emp->as_designation_id]['hr_designation_name_bn'];
+                  $des['en'] = $designation[$emp->as_designation_id]['hr_designation_name'];
+                  $des['grade'] = $designation[$emp->as_designation_id]['hr_designation_grade'];
+               }
+               if(isset($unit[$emp->as_unit_id])){
+                  $un['name'] = $unit[$emp->as_unit_id]['hr_unit_name_bn'];
                     $un['address'] = $unit[$emp->as_unit_id]['hr_unit_address_bn'];
-            		$un['signature'] = $unit[$emp->as_unit_id]['hr_unit_authorized_signature'];
+                  $un['signature'] = $unit[$emp->as_unit_id]['hr_unit_authorized_signature'];
 
-            	}
+               }
 
             @endphp
 
@@ -79,20 +85,20 @@
             <br>
             <p>তারিখঃ&nbsp; {{ $date }} ইং</p>
             <p>
-            	@if($emp->as_gender == 'Female')
-            		জনাবাঃ
-            	@else
-            		জনাবঃ
-            	@endif
+               @if($emp->as_gender == 'Female')
+                  জনাবাঃ
+               @else
+                  জনাবঃ
+               @endif
 
-            	{{ (!empty($emp->hr_bn_associate_name)?$emp->hr_bn_associate_name:null) }}</p>
-            
+               {{ (!empty($emp->hr_bn_associate_name)?$emp->hr_bn_associate_name:null) }}</p>
+
             <p>পিতার নামঃ   {{ (!empty($emp->hr_bn_father_name)?$emp->hr_bn_father_name:null) }}</p>
-            
+
             <p>মাতার নামঃ {{ (!empty($emp->hr_bn_mother_name)?$emp->hr_bn_mother_name:null) }}</p>
             <p>{{ ((!empty($emp->as_gender) && $emp->as_gender=="Male")?"স্ত্রীর নামঃ":"স্বামীর নামঃ") }}  {{ (!empty($emp->hr_bn_spouse_name)?$emp->hr_bn_spouse_name:null) }}</p>
             <p style="margin-top:0 !important"><b>ঠিকানাঃ স্থায়ী ঠিকানাঃ</b></p>
-            
+
             <table width="500" style="margin-left:50px;font-size: 12px;" class="table-data-width">
                 <tr>
                     <td>গ্রামঃ {{ (!empty($emp->hr_bn_permanent_village)?$emp->hr_bn_permanent_village:null) }}</td>
@@ -101,7 +107,7 @@
                 <tr>
                     <td>থানাঃ   {{ (!empty($emp->permanent_upazilla_bn)?$emp->permanent_upazilla_bn:null) }}</td>
                     <td>জেলাঃ {{ (!empty($emp->permanent_district_bn)?$emp->permanent_district_bn:null) }}</td>
-                    
+
                 </tr>
             </table>
             <p style="margin-top:0 !important"><b>অস্থায়ী/বর্তমান ঠিকানাঃ</b></p>
@@ -113,26 +119,26 @@
                 <tr>
                     <td>থানাঃ   {{ (!empty($emp->present_upazilla_bn)?$emp->present_upazilla_bn:null) }}</td>
                     <td>জেলাঃ {{ (!empty($emp->present_district_bn)?$emp->present_district_bn:null) }}</td>
-                    
+
                 </tr>
             </table>
             <br>
             <p><span style="text-decoration: underline;"><strong>বিষয়ঃ- নিয়োগপত্র</strong></span></p>
-            <p style="text-align: justify;">কর্তৃপক্ষ অত্যন্ত আনন্দের সহিত জানাচ্ছে যে, আপনাকে নিম্নলিখিত শর্তসাপেক্ষে অত্র কারখানার <b>{{ $des['bn'] }}</b> পদে প্রতি মাসে সর্বসাকুল্যে মোট {{ (!empty($emp->ben_current_salary)?str_replace($en, $bn, $emp->ben_current_salary):null) }} টাকা বেতনে  
-            	@if($emp->as_emp_type_id == 3)
-            	গ্রেডঃ <span style="display: inline-block;min-width: 10px; text-align: center;"> {{$des['grade']}} </span> 
-            	@endif
+            <p style="text-align: justify;">কর্তৃপক্ষ অত্যন্ত আনন্দের সহিত জানাচ্ছে যে, আপনাকে নিম্নলিখিত শর্তসাপেক্ষে অত্র কারখানার <b>{{ $des['bn'] }}</b> পদে প্রতি মাসে সর্বসাকুল্যে মোট {{ (!empty($emp->ben_current_salary)?str_replace($en, $bn, $emp->ben_current_salary):null) }} টাকা বেতনে
+               @if($emp->as_emp_type_id == 3)
+               গ্রেডঃ <span style="display: inline-block;min-width: 10px; text-align: center;"> {{$des['grade']}} </span>
+               @endif
             নিয়োগ দেওয়ার সিদ্ধান্ত গ্রহণ করিয়াছেন, আপনার পরিচয় পত্র নং(আই.ডি. নং)-<b>{{$emp->associate_id}}</b>  যাহা <b>{{ (!empty($emp->as_doj)?str_replace($en, $bn, $emp->as_doj):null) }}</b> তারিখ হইতে কার্যকরী।</p>
             <p>১। আপনি চাকুরীতে প্রথম ০৩ (তিন) মাস প্রবেশনারী অবস্থায় থাকিবেন এবং উক্ত সময়ের মধ্যে আপনার কর্মদক্ষতা সন্তোষজনক না হইলে আপনার প্রবেশনকাল আরও তিন মাস বর্ধিত করা যেতে পারে। @if($des['grade'] <= 6) প্রবেশনকাল অতিবাহিত হওয়ার পর আপনি সরাসরি স্থায়ী শ্রমিক হিসাবে গণ্য হবেন। @endif</p><br>
             <p>২। <b> বেতনঃ</b></p>
             <table width="600">
                 <tr>
                     <td>ক) মূল বেতন( Monthly Basic Pay )</td>
-                    <td>: টাকা {{ (!empty($emp->ben_basic)?str_replace($en, $bn, $emp->ben_basic):null) }}/= 
+                    <td>: টাকা {{ (!empty($emp->ben_basic)?str_replace($en, $bn, $emp->ben_basic):null) }}/=
                         @if($emp->as_ot == 1)
-                            অতিরিক্ত কর্ম ঘন্টার হার: 
+                            অতিরিক্ত কর্ম ঘন্টার হার:
                             @php $ot_pay= ($emp->ben_basic/208)*2; $ot_pay = sprintf('%0.2f', $ot_pay);
-                            @endphp 
+                            @endphp
                         {{str_replace($en, $bn, $ot_pay)}} টাকা
                         @endif
                      </td>
@@ -158,7 +164,7 @@
                     <td>: টাকা {{ (!empty($emp->ben_current_salary)?str_replace($en, $bn, $emp->ben_current_salary):null) }}/=</td>
                 </tr>
             </table>
-            
+
             <p style="text-align: center;margin-top: 0 !important;"> বেতন প্রদানঃ প্রতি মাসের বেতন পরবর্তী মাসের সাত কর্ম দিবসের মধ্যে বেতন এবং ওভার টাইম এক সঙ্গে প্রদান করা হয়। </p><br>
 
             <p>৩। কর্ম ঘন্টাঃ ফ্যাক্টরি সকাল ৮.০০ থেকে শুরু এবং বিকাল ৫.০০ টায় সাধারণ কর্মদিবসের সমাপ্তি এবং এর মধ্যবর্তী সময়ে ০১(এক) ঘণ্টা বিরতি।</p><br>
@@ -181,8 +187,9 @@
              প্রথম মাস ৪০০/= টাকা এবং একইভাবে পরবর্তী মাসে উপস্থিত থাকলে ৫০০/=
             @else  ৫০০/= @endif
          টাকা হাজিরা বোনাস প্রদান করা হয়। (ইহা আইনানুনাগ কোন পাওনা নয়। ইহা বেতনের বাহিরের একটি অংশ)</p>
-            <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ঘ) বিনা খরচে ডাক্তার এবং নার্সের মাধ্যমে চিকিৎসা সুবিধা প্রদান করা হয়। </p>
-            <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ঙ) শ্রমিক/কর্মচারীর জন্য গ্রুপ ইন্স্যুরেন্স এর ব্যবস্থা আছে। </p><br>
+            <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ঘ) বিনা খরচে ডাক্তার এবং নার্সের মাধ্যমে চিকিৎসা সুবিধা প্রদান করা হয়। </p>
+            <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ঙ) শ্রমিক/কর্মচারীর জন্য গ্রুপ ইন্স্যুরেন্স এর ব্যবস্থা আছে। </p><br>
+            <div class="pagebreak"> </div>
             <p>৭। <b> চাকুরি ছাড়ার নিয়মঃ</b></p>
             <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ক) চাকুরী ছাড়তে হলে বাংলাদেশ শ্রম আইন, (২০০৬) অনুসারে ২৭(১) ধারা মোতাবেক চাকুরী ছাড়ার ২ মাস(৬০ দিন) আগে কর্তৃপক্ষকে লিখিত নোটিশ প্রদান করতে হবে, অন্যথায় প্রদেয় নোটিশের পরিবর্তে নোটিশ মেয়াদের জন্য মূল মজুরীর সমপরিমাণ অর্থ মালিককে প্রদান করিয়া ইহা করিতে পারিবেন।</p>
             <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;খ) অসুস্থতার কারণে চাকুরী ছেড়ে দিতে হলে মেডিকেল সার্টিফিকেট দাখিল করতে হবে।</p>
@@ -205,27 +212,28 @@
             <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;(ঝ) প্রধান পরিদর্শক কর্তৃক অনুমোদিত চাকুরী সংক্রান্ত শৃংখল বা আচরণসহ, যে কোন বিধির অভ্যাসগত লংঘন।</p>
             <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;(ঞ) মালিকের অফিসিয়াল রেকর্ডের রদবদল, জালকরণ, অন্যায় পরিবর্তন, উহার ক্ষতিকরন বা উহা হারাইয়া ফেলা।</p>
 
-            <p>আপনি যদি কখনো কোনরুপ অসদাচরণের অপরাধে দোষী প্রমাণিত হন তবে কর্তৃপক্ষ আপনার বিরুদ্ধে আইনগত শাস্তিমূলক ব্যবস্থা গ্রহণ করিতে পারবে। </p> <br>
+            <p>আপনি যদি কখনো কোনরুপ অসদাচরণের অপরাধে দোষী প্রমাণিত হন তবে কর্তৃপক্ষ আপনার বিরুদ্ধে আইনগত শাস্তিমূলক ব্যবস্থা গ্রহণ করিতে পারবে। </p> <br>
             <p>১০।  আপনার চাকুরী কোম্পানী কর্তৃক জারিকৃত বিধি-বিধান ও বাংলাদেশের প্রচলিত শ্রম আইন দ্বারা পরিচালিত হইবে।</p><br>
             <p>১১।  কর্তৃপক্ষ আপনাকে প্রয়োজনবোধে এই প্রতিষ্ঠানের যে কোন বিভাগে অথবা বাংলাদেশে অবস্থিত যে কোন কারখানায়/অফিসে বদলি করিতে পারিবেন।</p><br>
             <p>১২। গোপনীয়তা রক্ষার নীতি <b>(Non-Disclosure Policy)</b>: প্রতিষ্ঠানের স্বার্থে সকল প্রকার তথ্য গোপন রাখিতে হইবে।</p><br>
-            <p>১৩।  কোম্পানীর যাবতীয় নিয়ম-কানুন পরিবর্তনযোগ্য ( যাহা দেশের প্রচলিত আইনের পরিপন্থি নহে) এবং আপনি পরিবর্তীত নিয়ম কানুন সর্বদা মানিয়া চলিতে বাধ্য থাকিবেন। </p><br><br><br><br><br><br>
+            <p>১৩।  কোম্পানীর যাবতীয় নিয়ম-কানুন পরিবর্তনযোগ্য ( যাহা দেশের প্রচলিত আইনের পরিপন্থি নহে) এবং আপনি পরিবর্তীত নিয়ম কানুন সর্বদা মানিয়া চলিতে বাধ্য থাকিবেন। </p><br><br><br><br><br><br>
             <div style="display: flex;justify-content: space-between;">
-                <div style="width: 50%">
+                <div style="width: 70%">
+                    <br><br>
                     <p>ধন্যবাদান্তে</p>
                     <p>সংশ্লিষ্ট ব্যবস্থাপক</p>
                 </div>
-                <div style="width: 50%;text-align: right;position: relative;">
+                <div style="width: 30%;text-align: center;">
                     @if($emp->as_unit_id == 2)
-                        <img style="height: 40px;position: absolute;top: -35px;" src="{{asset($un['signature'])}}">
+                        <img style="height: 40px;padding-top: -35px;" src="{{asset($un['signature'])}}"><br>
                     @endif
-                    ----------------<br>
+                    ---------------- <br>
 
                     কারখানা কর্তৃপক্ষ
 
                 </div>
             </div>
-            
+
             <br><br>
             <p>&nbsp; &nbsp;অনুলিপিঃ</p>
             <p>&nbsp; &nbsp;১। হিসাব বিভাগ।</p>
@@ -236,8 +244,8 @@
             </p>
         </div>
 
-        
-		
-		@endforeach
-	</div>
-</div>   
+
+
+      @endforeach
+   </div>
+</div>

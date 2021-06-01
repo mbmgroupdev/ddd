@@ -4,8 +4,8 @@ namespace App\Repository\Hr;
 
 use App\Contracts\Hr\SalaryInterface;
 use App\Repository\Hr\EmployeeRepository;
-use DB;
 use Illuminate\Support\Collection;
+use DB;
 
 class SalaryRepository implements SalaryInterface
 {

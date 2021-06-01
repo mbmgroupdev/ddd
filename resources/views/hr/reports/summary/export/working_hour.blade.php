@@ -51,7 +51,7 @@
 					
 					<table class="table table-bordered table-hover table-head" border="1">
 						<thead >
-							@if(count($employees) > 0)
+							@if(count($employees) > 0 && $format != 'as_unit_id')
 			                <tr>
 			                	@php
 									if($format == 'as_line_id'){
@@ -83,16 +83,17 @@
 								@endphp
 			                	@if($head != '')
 			                    <th colspan="2" style="font-weight: bold;">{{ $head }}</th>
-			                    <th colspan="11" style="font-weight: bold;">{{ $body }}</th>
+			                    <th colspan="12" style="font-weight: bold;">{{ $body }}</th>
 			                    @endif
 			                </tr>
 			                @endif
 			                <tr >
 			                    <th style="font-weight: bold;" >Sl</th>
 			                    <th style="font-weight: bold;" >Associate ID</th>
-			                    <th style="font-weight: bold;" >Name  Phone</th>
+			                    <th style="font-weight: bold;" >Name</th>
 			                    <th style="font-weight: bold;" >Oracle ID</th>
 			                    <th style="font-weight: bold;" >Designation</th>
+			                    <th style="font-weight: bold;" >Unit</th>
 			                    <th style="font-weight: bold;" >Department</th>
 			                    <th style="font-weight: bold;" >Section</th>
 			                    <th style="font-weight: bold;" >Sub Section</th>
@@ -117,14 +118,11 @@
 			            	@endphp
 			            	<tr>
 			            		<td>{{ ++$i }}</td>
-				            	{{-- <td><img src="{{ emp_profile_picture($employee) }}" class='small-image' style="height: 40px; width: auto;"></td> --}}
 				            	<td>{{ $employee->associate_id }}</td>
-				            	<td>
-				            		<b>{{ $employee->as_name }}</b>
-				            		<p>{{ $employee->as_contact }}</p>
-				            	</td>
+				            	<td>{{ $employee->as_name }}</td>
 				            	<td>{{ $employee->as_oracle_code }}</td>
 				            	<td>{{ $designation[$employee->as_designation_id]['hr_designation_name']??'' }}</td>
+				            	<td>{{ $unit[$employee->as_unit_id]['hr_unit_short_name']??'' }}</td>
 				            	<td>{{ $department[$employee->as_department_id]['hr_department_name']??'' }}</td>
 				            	<td>{{ $section[$employee->as_section_id]['hr_section_name']??'' }}</td>
 				            	<td>{{ $subSection[$employee->as_subsection_id]['hr_subsec_name']??'' }}</td>
@@ -140,7 +138,7 @@
 			            	@endphp
 			            @endforeach
 			            	<tr>
-			            		<td colspan="11" style="text-align: right;font-weight: bold;"><b>Total</b></td>
+			            		<td colspan="12" style="text-align: right;font-weight: bold;"><b>Total</b></td>
 			            		<td  style="text-align: right;font-weight: bold;">
 			            			<b> {{number_format($totalWH,2, '.', '')}} </b>
 			            		</td>

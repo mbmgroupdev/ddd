@@ -50,9 +50,16 @@ class SummaryExport implements FromView, WithHeadingRow
         // employee basic sql binding
         $employeeData = DB::table('hr_as_basic_info');
         $employeeData_sql = $employeeData->toSql();
+
+        // unit
+        if($input['unit'] == 145){
+            $units = [1,4,5];
+        }else{
+            $units = [$input['unit']];
+        }
         // shift
         if($input['report_type'] == 'working_hour'){
-            $shiftData = DB::table('hr_shift');
+            $shiftData = DB::table('hr_shift')->whereIn('hr_shift_unit_id', $units);
             $shiftDataSql = $shiftData->toSql();
         }
 
