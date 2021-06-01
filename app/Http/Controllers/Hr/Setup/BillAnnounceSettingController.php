@@ -57,50 +57,32 @@ class BillAnnounceSettingController extends Controller
             for ($i=0; $i < $totalUnit; $i++) { 
                 // updated another bill end date
                 $input['unit_id'] = $input['unit'][$i];
-                $lastCode = BillSettings::checkUnitTypeWiseExistsCode($input);
-                $unitTypeMix = $input['unit_id'].$input['bill_type_id'];
-                if($lastCode != null){
-                    $billCode = explode($unitTypeMix, $lastCode);
-                    $adjustNo = ((int)$billCode[1]+1)??1;
-                }else{
-                    $adjustNo = 1;
-                }
-                $code = $this->getCheckUniqueCode($unitTypeMix, $adjustNo);
+                $input['code'] = $this->getCode($input);
                 // update previous bill 
                 BillSettings::updatePreviousBillUnitWiseStatus($input);
                 
                 // create bill setup
-                $bill = [
-                    'unit_id' => $input['unit_id'],
-                    'code' => $code,
-                    'bill_type_id' => $input['bill_type_id'],
-                    'amount' => $input['amount'],
-                    'start_date' => $input['start_date'],
-                    'end_date'  => $input['end_date'],
-                    'pay_type'  => $input['pay_type'],
-                    'duration'  => $input['duration'],
-                    'as_ot'       => $input['as_ot'],
-                    'created_by'  => auth()->user()->id
-                ];
-                
-                $special['bill_setup_id'] = BillSettings::create($bill)->id;
-                foreach ($input['special_rule'] as $key => $value) {
-                    $special['adv_type'] = $key;
-                    $totalKey = count($value);
-                    for ($s=0; $s < $totalKey; $s++) { 
-                        $keyValue = $value[$s];
-                        if($key == 'outtime'){
-                            $keyValue['pay_type'] = 0;
-                            $keyValue['duration'] = 0;
+                $input['created_by'] = auth()->user()->id;
+                $special['bill_setup_id'] = BillSettings::create($input)->id;
+                if(isset($input['special_rule'])){
+                    foreach ($input['special_rule'] as $key => $value) {
+                        $special['adv_type'] = $key;
+                        $totalKey = count($value);
+                        for ($s=0; $s < $totalKey; $s++) { 
+                            $keyValue = $value[$s];
+                            if($key == 'out_time'){
+                                $keyValue['pay_type'] = 0;
+                                $keyValue['duration'] = 0;
+                            }
+                            $special['parameter'] = $keyValue['id'];
+                            $special['amount'] = $keyValue['amount'];
+                            $special['pay_type'] = $keyValue['pay_type'];
+                            $special['duration'] = $keyValue['duration'];
+                            $special['start_date'] = $input['start_date'];
+                            $special['end_date']  = $input['end_date'];
+                            $special['created_by']  = auth()->user()->id;
+                            $specialData[] = $special;
                         }
-                        $special['parameter'] = $keyValue['id'];
-                        $special['amount'] = $keyValue['amount'];
-                        $special['pay_type'] = $keyValue['pay_type'];
-                        $special['duration'] = $keyValue['duration'];
-                        $special['start_date'] = $input['start_date'];
-                        $special['end_date']  = $input['end_date'];
-                        $special['created_by']  = auth()->user()->id;
-                        $specialData[] = $special;
                     }
                 }
             }
@@ -120,17 +102,7 @@ class BillAnnounceSettingController extends Controller
             return $data;
         }
     }
-    public function getCheckUniqueCode($value, $no)
-    {
-        $code = $value.$no;
-        $checkCode = BillSettings::checkExistsCode($code);
-        if(empty($checkCode)){
-            return $code;
-        }else{
-            $no = ($no+1);
-            return $this->getCheckUniqueCode($value, $no);
-        }
-    }
+    
 
     /**
      * Display the specified resource.
@@ -188,5 +160,30 @@ class BillAnnounceSettingController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function getCode($input='')
+    {
+        $lastCode = BillSettings::checkUnitTypeWiseExistsCode($input);
+        $unitTypeMix = $input['unit_id'].$input['bill_type_id'];
+        if($lastCode != null){
+            $billCode = explode($unitTypeMix, $lastCode);
+            $adjustNo = ((int)$billCode[1]+1)??1;
+        }else{
+            $adjustNo = 1;
+        }
+        return $this->getCheckUniqueCode($unitTypeMix, $adjustNo);
+    }
+
+    public function getCheckUniqueCode($value, $no)
+    {
+        $code = $value.$no;
+        $checkCode = BillSettings::checkExistsCode($code);
+        if(empty($checkCode)){
+            return $code;
+        }else{
+            $no = ($no+1);
+            return $this->getCheckUniqueCode($value, $no);
+        }
     }
 }

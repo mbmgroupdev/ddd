@@ -25,9 +25,10 @@ mix.styles([
 ], 'public/assets/css/all.css');
 
 mix.scripts([
+    'assets/js/jquery.min.js',
+    'public/assets/js/select2.min.js',
     'public/assets/js/smooth-scrollbar.js',
     'public/assets/js/notify/notify.js',
-    'public/assets/js/select2.min.js',
     'public/assets/js/toastr.min.js',
     'public/plugins/DataTables/datatables.min.js',
 ], 'public/assets/js/all.js');

@@ -4,22 +4,29 @@ namespace App\Http\Controllers\Hr\TimeAttendance;
 use App\Helpers\EmployeeHelper;
 use App\Http\Controllers\Controller;
 use App\Jobs\ProcessUnitWiseSalary;
+use App\Models\Employee;
 use App\Models\Hr\Absent;
 use App\Models\Hr\Attendace;
 use App\Models\Hr\AttendaceManual;
 use App\Models\Hr\Bills;
-use App\Models\Employee;
 use App\Models\Hr\HolidayRoaster;
 use App\Models\Hr\HrLateCount;
 use App\Models\Hr\Leave;
 use App\Models\Hr\Shift;
 use App\Models\Hr\Unit;
+use App\Repository\Hr\AttendanceProcessRepository;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use PDF, Validator, Auth, ACL, DB, DataTables;
 
 class AttendaceBulkManualController extends Controller
 {
+    protected $attProcess;
+    public function __construct()
+    {
+        ini_set('zlib.output_compression', 1);
+        $this->attProcess = new AttendanceProcessRepository;
+    }
     public function bulkManual(Request $request)
     {
         try {
@@ -248,26 +255,13 @@ class AttendaceBulkManualController extends Controller
                             }else{
                                 $insert['ot_hour'] = 0;
                             }
-                            $insert['in_date'] = date('Y-m-d', strtotime($insert['in_time']));
+                            $insert['in_date'] = $date;
+                            
                             DB::table($tableName)->insert($insert);
 
-                            if($outtime != null && $billEligible != null){
-                                $pindate = $insert['in_date'];
-                                if($nightFlag == 1){
-                                    $pindate = Carbon::createFromFormat('Y-m-d', $pindate);
-                                    $pindate = $pindate->copy()->addDays(1);
-                                }
-                                $shiftElig = strtotime($pindate.' '.$billEligible);
-                                if(strtotime($insert['out_time']) > $shiftElig){
-
-                                    $bill = EmployeeHelper::dailyBillCalculation($info->as_ot, $info->as_unit_id, $insert['in_date'], $insert['as_id'], $nightFlag, $info->as_designation_id);
-                                }else{
-                                    $getBill = Bills::where('as_id', $insert['as_id'])->where('bill_type', '!=', 4)->where('bill_date', $insert['in_date'])->first();
-                                    if($getBill != null){
-                                        Bills::where('id', $getBill->id)->delete();
-                                    }
-                                }
-                            }
+                            
+                            
+                            $this->attProcess->processBillAnncement($insert);
                             
                             //
                             $absentWhere = [
@@ -290,16 +284,17 @@ class AttendaceBulkManualController extends Controller
                         ->where('in_date', $date)
                         ->where('as_id',$info->as_id)
                         ->delete();
-                        // bill
-                        $getBill = Bills::where('as_id', $info->as_id)->where('bill_type', '!=', 4)->where('bill_date', $date)->first();
-                        if($getBill != null){
-                            Bills::where('id', $getBill->id)->delete();
-                        }
+                        $bill = [
+                            'as_id' => $info->as_id,
+                            'in_date' => $date
+                        ];
+                        $this->attProcess->removeBillAnncement($bill);
+                        
                     }
 
                 }
             }
-
+            
             //update
             if(isset($request->old_date)){
                 foreach ($request->old_date as $key => $date) {
@@ -464,32 +459,11 @@ class AttendaceBulkManualController extends Controller
                                 $update['ot_hour'] = 0;
                             }
 
-                            if($outtime != null && $billEligible != null){
-                                $pindate = $Att->in_date;
-                                if($nightFlag == 1){
-                                    $pindate = Carbon::createFromFormat('Y-m-d', $pindate);
-                                    $pindate = $pindate->copy()->addDays(1);
-                                }
-                                $shiftElig = strtotime($pindate.' '.$billEligible);
-
-                                if(strtotime($update['out_time']) > $shiftElig){
-
-                                    $bill = EmployeeHelper::dailyBillCalculation($info->as_ot, $info->as_unit_id, $Att->in_date, $info->as_id, $nightFlag, $info->as_designation_id);
-                                }else{
-                                    $getBill = Bills::where('as_id', $info->as_id)->where('bill_type', '!=', 4)->where('bill_date', $Att->in_date)->first();
-                                    if($getBill != null){
-                                        Bills::where('id', $getBill->id)->delete();
-                                    }
-                                }
-                            }
-                            
-
                             $event['ot_new'] = $update['ot_hour'];
-
+                            $update['as_id'] = $request->ass_id;
+                            $update['in_date'] = date('Y-m-d', strtotime($date));
                             if($request->old_status[$key] == 'A' && $Att == null) {
                                 // insert present and remove absent
-                                $update['as_id'] = $request->ass_id;
-                                $update['in_date'] = date('Y-m-d', strtotime($update['in_time']));
                                 DB::table($tableName)->insert($update);
                                 
                                 // remove absent
@@ -517,6 +491,9 @@ class AttendaceBulkManualController extends Controller
                                 Absent::where($absentWhere)->delete();
                             }
                         }
+                        
+                        $this->attProcess->processBillAnncement($update);
+                        
                     }
                     else{
                         $absentWhere = [
@@ -530,11 +507,11 @@ class AttendaceBulkManualController extends Controller
                         ->where('as_id',$request->ass_id)
                         ->delete();
 
-                        // bill
-                        $getBill = Bills::where('as_id', $info->as_id)->where('bill_type', '!=', 4)->where('bill_date', $date)->first();
-                        if($getBill != null){
-                            Bills::where('id', $getBill->id)->delete();
-                        }
+                        $bill = [
+                            'as_id' => $request->ass_id,
+                            'in_date' => $date
+                        ];
+                        $this->attProcess->removeBillAnncement($bill);
                     }
                 }
             }

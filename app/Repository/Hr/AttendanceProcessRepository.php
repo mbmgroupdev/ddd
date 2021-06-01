@@ -3,7 +3,11 @@
 namespace App\Repository\Hr;
 
 use App\Contracts\Hr\AttendanceProcessInterface;
+use App\Models\Employee;
+use App\Models\Hr\BillSettings;
+use App\Models\Hr\Bills;
 use App\Models\Hr\Leave;
+use App\Models\Hr\Shift;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use DB;
@@ -346,15 +350,17 @@ class AttendanceProcessRepository implements AttendanceProcessInterface
         $leaveDate = DB::table('hr_leave')
         ->where('leave_status', 1)
         ->where('leave_ass_id', $value['associate_id'])
-        ->where('leave_from', '>=', $value['firstDayMonth'])
-        ->where('leave_to', '<=', $value['lastDayMonth'])
+        ->where('leave_to','>=', $value['firstDayMonth'])
+        ->where('leave_from','<=', $value['lastDayMonth'])
         ->get();
         $dates = [];
         foreach ($leaveDate as $key => $leave) {
             $period = CarbonPeriod::create($leave->leave_from, $leave->leave_to);
             foreach ($period as $date) {
-                $comment = ($leave->leave_comment!='')?('- '.$leave->leave_comment):'';
-                $dates[$date->format('Y-m-d')] = $leave->leave_type.' Leave '.$comment;
+                if($date->format('Y-m-d') <= $value['lastDayMonth']){
+                    $comment = ($leave->leave_comment!='')?('- '.$leave->leave_comment):'';
+                    $dates[$date->format('Y-m-d')] = $leave->leave_type.' Leave '.$comment;
+                }
             }
         }
         
@@ -384,10 +390,10 @@ class AttendanceProcessRepository implements AttendanceProcessInterface
             if($value['shift_roaster_status'] == 1 ){
                 $fridayOt = collect($this->getEmployeeSpecialInfo($value))->sum('ot_hour');
 
-                $otHour = $row['otCount'] + $fridayOt;
+                $row['otCount'] = $row['otCount'] + $fridayOt;
             }
 
-            $diffExplode = explode('.', $otHour);
+            $diffExplode = explode('.', $row['otCount']);
             $minutes = (isset($diffExplode[1]) ? $diffExplode[1] : 0);
             $minutes = floatval('0.'.$minutes);
             if($minutes > 0 && $minutes != 1){
@@ -407,44 +413,57 @@ class AttendanceProcessRepository implements AttendanceProcessInterface
         $empdojDay = date('d', strtotime($value['as_doj']));
         $empdojMonth = date('Y-m', strtotime($value['as_doj']));
         $totalDay = $value['totalDay'];
-        $today = $value['yearMonth'].'-01';
         $monthDayCount  = Carbon::parse($value['yearMonth'])->daysInMonth;
-        $firstDateMonth = Carbon::parse($today)->startOfMonth()->toDateString();
+        $firstDateMonth = $value['yearMonth'].'-01';
+        
+        $lastDateMonth = $value['yearMonth'].'-'.$value['totalDay'];
+        if($value['yearMonth'] == date('Y-m')){
+            $lastDateMonth = date('Y-m-d');
+            $totalDay = date('d');
+        }
         if($empdojMonth == $value['yearMonth']){
             $totalDay = $totalDay - ((int) $empdojDay-1);
             $firstDateMonth = date('Y-m-d', strtotime($value['as_doj']));
+        }elseif($empdojMonth > $value['yearMonth']){
+            $firstDateMonth = '0000-00-00';
+            $lastDateMonth = '0000-00-00';
+            $totalDay = 0;
         }
         
+        
+        list($year,$month) = explode('-', $value['yearMonth']);
+
         if($value['as_status_date'] != null){
             $sDate = $value['as_status_date'];
-            $sYearMonth = Carbon::parse($sDate)->format('Y-m');
             $sDay = Carbon::parse($sDate)->format('d');
 
-            if($value['yearMonth'] == $sYearMonth){
-                $firstDateMonth = $value['as_status_date'];
-                $totalDay = $totalDay - ((int) $sDay-1);
+            list($yearL,$monthL,$dateL) = explode('-',$value['as_status_date']);
+            if($year == $yearL && $month == $monthL) {
+                if($value['as_status'] == 1){
+                    $firstDateMonth = $value['as_status_date'];
+                    $totalDay = $totalDay - ((int) $sDay-1);
+                }
 
-                if($sDay > 1){
-                    $partial = 1;
+                // left,terminate,resign, suspend, delete
+                if(in_array($value['as_status'],[0,2,3,4,5]) != false) {      
+                    $lastDateMonth = $value['as_status_date'];
+                    $totalDay = date('d', strtotime($value['as_status_date']));
+                    
+                    if(($yearL.'-'.$monthL) == $value['yearMonth']){
+                        if($empdojMonth == $value['yearMonth']){
+                            $totalDay = ((int) $dateL - (int) $empdojDay);
+                        }else{
+                            $totalDay = ((int) $dateL-1);
+                        }
+                    }
                 }
             }
         }
-
         
         if($monthDayCount > $totalDay){
-            $lastDateMonth = $value['yearMonth'].'-'.$value['totalDay'];
-        }else{
-            if($value['yearMonth'] == date('Y-m')){
-                $lastDateMonth = date('Y-m-d');
-                $totalDay = $totalDay - (date('t') - date('j'));
-                if($monthDayCount > $totalDay){
-                    $partial = 1;
-                }
-            }else{
-                $lastDateMonth = Carbon::parse($today)->endOfMonth()->toDateString();
-            }
+            $partial = 1;
         }
-
+        
         return [
             'empdojMonth' => $empdojMonth,
             'firstDayMonth' => $firstDateMonth,
@@ -508,5 +527,185 @@ class AttendanceProcessRepository implements AttendanceProcessInterface
         ->where('in_date','<=', $value['lastDayMonth'])
         ->orderBy('in_date')
         ->get();
+    }
+
+    public function processBillAnncement($value='')
+    {
+        $employee = Employee::getEmployeeAsIdWiseSelectedField($value['as_id'], ['associate_id', 'as_unit_id', 'as_location', 'as_department_id', 'as_designation_id', 'as_section_id', 'as_subsection_id']);
+        $value = array_merge($value, (array) $employee);
+        return $this->makeBillProcess($value);
+    }
+
+    protected function makeBillProcess($value='')
+    {
+        try {
+            $shift = Shift::where('hr_shift_unit_id', $value['as_unit_id'])->where('hr_shift_code', $value['hr_shift_code'])->pluck('hr_shift_id')->first();
+            $value['hr_shift_id'] = $shift;
+            $billTypeId = $this->getBillTypes($value);
+            // remove extra bill
+            $this->removeUndeclearBill($billTypeId, $value);
+            // bill entry
+            $this->getBillData($billTypeId, $value);
+            return 'success';
+        } catch (\Exception $e) {
+            DB::table('error')->insert(['msg' => $value['as_id'].' - bill - '.$e->getMessage()]);
+            return 'error';
+        }
+    }
+
+    protected function getBillTypes($value='')
+    {
+        return DB::table('hr_shift_bills')
+        ->select('hr_shift_id', 'hr_bill_type_id')
+        ->where('hr_shift_id', $value['hr_shift_id'])
+        ->where('start_date', '<=', $value['in_date'])
+        ->whereNull('end_date')
+        ->orWhere('end_date', '>=', $value['in_date'])
+        ->orderBy('id', 'desc')
+        ->groupBy(['hr_shift_id', 'hr_bill_type_id'])
+        ->pluck('hr_bill_type_id');
+    }
+
+    protected function removeUndeclearBill($billTypes, $value)
+    {
+        return DB::table('hr_bill')
+        ->where('as_id', $value['as_id'])
+        ->where('bill_date', $value['in_date'])
+        ->whereNotIn('bill_type', $billTypes)
+        ->delete();
+    }
+
+    protected function removeBillAnncement($value)
+    {
+        return DB::table('hr_bill')
+        ->where('as_id', $value['as_id'])
+        ->where('bill_date', $value['in_date'])
+        ->delete();
+    }
+
+    protected function getBillData($billTypes, $value)
+    {
+        $bills = BillSettings::with('available_special')
+        ->where('unit_id', $value['as_unit_id'])
+        ->whereIn('bill_type_id', $billTypes)
+        ->where('start_date', '<=', $value['in_date'])
+        ->whereNull('end_date')
+        ->orWhere('end_date', '>=', $value['in_date'])
+        ->where('status', 1)
+        ->groupBy('bill_type_id')
+        ->orderBy('id', 'desc')
+        ->get();
+        foreach($bills as $bill){
+            $prePriority = 0;
+            $payAmount = $this->billProcessRuleBaseAmount($bill, $value);
+            foreach($bill->available_special as $special){
+                $priority = 0;
+                $amount = 0;
+                if($special->adv_type == 'out_time'){
+                    if(strtotime($special->parameter) >= strtotime(date('H:i:s', strtotime($value['out_time'])))){
+                        $priority = 1;
+                        $amount = $this->billProcessRuleBaseAmount($special, $value);
+                    }
+                }
+
+                if($special->adv_type == 'as_location'){
+                    if($special->parameter == $value['as_location']){
+                        $priority = 2;
+                        $amount = $this->billProcessRuleBaseAmount($special, $value);
+                    }
+                }
+
+                if($special->adv_type == 'as_department_id'){
+                    if($special->parameter == $value['as_department_id']){
+                        $priority = 3;
+                        $amount = $this->billProcessRuleBaseAmount($special, $value);
+                    }
+                }
+
+                if($special->adv_type == 'as_designation_id'){
+                    if($special->parameter == $value['as_designation_id']){
+                        $priority = 4;
+                        $amount = $this->billProcessRuleBaseAmount($special, $value);
+                    }
+                }
+
+                if($special->adv_type == 'as_section_id'){
+                    if($special->parameter == $value['as_section_id']){
+                        $priority = 5;
+                        $amount = $this->billProcessRuleBaseAmount($special, $value);
+                    }
+                }
+
+                if($special->adv_type == 'as_subsection_id'){
+                    if($special->parameter == $value['as_subsection_id']){
+                        $priority = 6;
+                        $amount = $this->billProcessRuleBaseAmount($special, $value);
+                    }
+                }
+
+                if($priority > 0 && $prePriority < $priority){
+                    $payAmount = $amount;
+                    $prePriority = $priority;
+                }
+            }
+            // insert/update/delete data
+
+            if($payAmount > 0){
+                Bills::updateOrCreate([
+                    'as_id' => $value['as_id'],
+                    'bill_date' => $value['in_date'],
+                    'bill_type' => $bill->bill_type_id
+                ],
+                [
+                    'amount' => $payAmount
+                ]);
+            }else{
+                DB::table('hr_bill')
+                ->where('as_id', $value['as_id'])
+                ->where('bill_date', $value['in_date'])
+                ->where('bill_type', $bill->bill_type_id)
+                ->delete();
+            } 
+        }
+        return 'success';
+    }
+
+    protected function billProcessRuleBaseAmount($bill, $value='')
+    {
+        $payBill = 0;
+        // 1 = present
+        if($bill->pay_type == 1){
+            if(($value['in_time'] != null && $value['in_time'] != '') || ($value['out_time'] != null && $value['out_time'] != '')){
+                $payBill = $bill->amount;
+            }
+        }
+
+        // 2 = Working Hour
+        if($bill->pay_type == 2){
+            if(($value['in_time'] != null && $value['in_time'] != '') && ($value['out_time'] != null && $value['out_time'] != '')){
+                $timestamp1 = strtotime($value['in_time']);
+                $timestamp2 = strtotime($value['out_time']);
+                $hour = abs($timestamp2 - $timestamp1)/(60*60);
+                if($hour >= $bill->duration){
+                    $payBill = $bill->amount;
+                }
+            }
+            
+        }
+
+        // 3 = OT Hour
+        if($bill->pay_type == 3){
+            if($value['ot_hour'] >= $bill->duration){
+                $payBill = $bill->amount;
+            }
+        }
+
+        // 4 = Out-time
+        if($bill->pay_type == 4){
+            if(strtotime(date('H:i:s', strtotime($value['out_time']))) >= strtotime($bill->duration)){
+                $payBill = $bill->amount;
+            }
+        }
+        return $payBill;
     }
 }

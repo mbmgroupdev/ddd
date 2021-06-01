@@ -20,27 +20,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/custom.css?v=1.3') }}" media='screen,print'>
     <!-- Responsive CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/responsive.css') }}" media='screen,print'>
-    <script src="{{ asset('js/app.js') }}"></script>
-    <script>
-        var count = 0;
-        var refreshIntervalId =setInterval(function(){ 
-            count++;
-            jQuery(document).ready(function() {
-                clearInterval(refreshIntervalId);
-                jQuery("#load").fadeOut();
-                jQuery("#loading").fadeOut("");
-                
-            });
-            if( count == 5){
-                clearInterval(refreshIntervalId);
-                jQuery("#load").fadeOut();
-                jQuery("#loading").fadeOut("");
-            }
-        }, 300);
-
-
-        
-    </script>
+    
 </head>
 <body>
     <!-- loader Start -->
@@ -48,7 +28,6 @@
         <div id="loading-center">
         </div>
     </div>
-    <div id="main"></div>
     <!-- loader END -->
     <div id="app">
         <!-- Wrapper Start -->
@@ -202,7 +181,25 @@
         </div>
 
     </div>
+    <script src="{{ asset('js/app.js') }}"></script>
     <script src="{{asset('assets/js/all.js')}}"></script>
+    <script>
+        var count = 0;
+        var refreshIntervalId =setInterval(function(){ 
+            count++;
+            jQuery(document).ready(function() {
+                clearInterval(refreshIntervalId);
+                jQuery("#load").fadeOut();
+                jQuery("#loading").fadeOut("");
+                
+            });
+            if( count == 5){
+                clearInterval(refreshIntervalId);
+                jQuery("#load").fadeOut();
+                jQuery("#loading").fadeOut("");
+            }
+        }, 300);
+    </script>
     <script>
       var loaderContent = '<div class="animationLoading"><div id="container-loader"><div id="one"></div><div id="two"></div><div id="three"></div></div><div id="four"></div><div id="five"></div><div id="six"></div></div>';
       let afterLoader = '<div class="loading-select left"><img src="{{ asset('images/loader.gif')}}" /></div>';
@@ -218,7 +215,15 @@
             //"delay": {"show": 1000, "hide": 0},
         });
       });
-      
+      $(document).ajaxError(function(event, jqxhr, settings, exception) {
+        if (exception == 'Unauthorized') {
+          $.notify("Your session has expired!", 'error');
+          setTimeout(function(){
+            window.location = '{{ url()->full() }}';
+          }, 1000)
+
+        }
+      });
     </script>
     <script src="{{ asset('assets/js/custom.js') }}"></script>
     <script src="{{ asset('js/custom.js') }}"></script>

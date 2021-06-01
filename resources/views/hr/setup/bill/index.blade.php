@@ -136,7 +136,7 @@
                                                                                       <option value="as_designation_id"> Designation</option>
                                                                                       <option value="as_section_id"> Section</option>
                                                                                       <option value="as_subsection_id"> Sub Section</option>
-                                                                                      <option value="outtime"> Out-time</option>
+                                                                                      <option value="out_time"> Out-time</option>
                                                                                   </select>
                                                                                   <label for="special-type-for">Type </label>
                                                                               </div>
@@ -297,14 +297,14 @@
             success: function(response)
             {
               console.log(response);
-              // $.each(response.message, function(index, el) {
-              //   $.notify(el, response.type);
-              // });
-              // if(response.type === 'success'){
-              //   setTimeout(function(){
-              //     window.location.href = response.url;
-              //   }, 500);
-              // }
+              $.each(response.message, function(index, el) {
+                $.notify(el, response.type);
+              });
+              if(response.type === 'success'){
+                setTimeout(function(){
+                  window.location.href = response.url;
+                }, 500);
+              }
               $(".app-loader").hide();
             },
             error: function (reject) {

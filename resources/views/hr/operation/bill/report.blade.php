@@ -90,15 +90,19 @@
                                         </h3>
                                         <h5 style="margin:4px 10px;text-align:center;font-weight:600;font-size:12px;">
                                             @if($input['bill_type'] == 1)
-                                            টিফিন
+                                            টিফিন বিল
                                             @elseif($input['bill_type'] == 2)
-                                            ডিনার
+                                            @if($unit == 3)
+                                            নাইট ভাতা
+                                            @else
+                                            ডিনার বিল
+                                            @endif
                                             @elseif($input['bill_type'] == 3)
-                                            লাঞ্চ
+                                            লাঞ্চ বিল
                                             @elseif($input['bill_type'] == 4)
-                                            ইফতার
+                                            ইফতার বিল
                                             @endif 
-                                            বিল
+                                            
                                             <br/>
                                             @if($input['date_type'] == 'range')
                                             তারিখ: {{ Custom::engToBnConvert($fromDate) }} থেকে {{ Custom::engToBnConvert($toDate) }}
@@ -210,7 +214,7 @@
                                                                 <span style ="width: 20%; text-align: left; white-space: wrap; float: left;" > -
                                                                 </span>
                                                                 <span style="width: 40%; text-align: left; float: left; white-space: wrap;" >
-                                                                    <font > {{ Custom::engToBnConvert(date('H:i',strtotime($attendance[$list->as_id][$dateList->bill_date]->out_time))) }}</font>
+                                                                    <font > {{ $attendance[$list->as_id][$dateList->bill_date]->out_time == null?'null':Custom::engToBnConvert(date('H:i',strtotime($attendance[$list->as_id][$dateList->bill_date]->out_time))) }}</font>
                                                                 </span>
                                                             </p>
                                                             @endif
