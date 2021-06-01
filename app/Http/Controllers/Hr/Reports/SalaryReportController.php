@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers\Hr\Reports;
 
+use App\Exports\Hr\SalarySheetExport;
 use App\Http\Controllers\Controller;
 use App\Models\Hr\Benefits;
 use App\Repository\Hr\EmployeeRepository;
 use App\Repository\Hr\SalaryRepository;
+use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use DB, DataTables;
+use Illuminate\Http\Request;
 
 class SalaryReportController extends Controller
 {
@@ -22,7 +24,11 @@ class SalaryReportController extends Controller
 	}
     public function index(Request $request)
     {
-    	$data['yearMonth'] = $request->year_month??date('Y-m');
+        $yearMonth = $request->year_month??date('Y-m');
+        if(date('d') < 10){
+            $yearMonth = date('Y-m', strtotime('-1 month'));
+        }
+    	$data['yearMonth'] = $yearMonth;
     	$data['months'] = monthly_navbar($data['yearMonth']);
         $data['salaryMax'] = Benefits::getSalaryRangeMax();
     	return view('hr.reports.salary.index', $data);
@@ -32,7 +38,11 @@ class SalaryReportController extends Controller
     {
         $getSalary = $this->processSalary($request);
     	$result = $this->salary->getSalaryReport($request, $getSalary);
-
+        if(isset($request->export)){
+            $filename = 'Salary Report - ';
+            $filename .= '.xlsx';
+            return Excel::download(new SalarySheetExport($result, 'report'), $filename);
+        }
     	return view('hr.reports.salary.report', $result)->render();
     }
 
@@ -40,7 +50,7 @@ class SalaryReportController extends Controller
     {
         $getSalary = $this->salary->getSalaryByMonth($request);
         if(count($getSalary) > 0){
-            $getEmployee = collect($this->employee->getEmployeeByAssociateId(['associate_id', 'as_name', 'as_line_id', 'as_floor_id', 'as_oracle_code']))->keyBy('associate_id');
+            $getEmployee = collect($this->employee->getEmployeeByAssociateId(['associate_id', 'as_name', 'as_line_id', 'as_floor_id', 'as_oracle_code', 'as_doj']))->keyBy('associate_id');
             $dataRow = $this->salary->getSalaryByFilter($request, $getSalary, $getEmployee);
             $getSalary = $this->employee->getEmployeeByFilter($request, $dataRow);
         }
@@ -50,6 +60,11 @@ class SalaryReportController extends Controller
     public function salaryDataTable(Request $request)
     {
         $data = $this->processSalary($request);
+        $designation = designation_by_id();
+        $department = department_by_id();
+        $section = section_by_id();
+        $subSection = subSection_by_id();
+        $line = line_by_id();
         return Datatables::of($data)
             ->addIndexColumn()
             ->addColumn('pic', function($data){
@@ -63,20 +78,20 @@ class SalaryReportController extends Controller
             ->addColumn('as_name', function($data){
                 return $data->as_name.'<br>';
             })
-            ->addColumn('hr_designation_name', function($data){
-                return designation_by_id()[$data->as_designation_id]['hr_designation_name']??'';
+            ->addColumn('hr_designation_name', function($data) use ($designation){
+                return $designation[$data->as_designation_id]['hr_designation_name']??'';
             })
-            ->addColumn('hr_department_name', function($data){
-                return department_by_id()[$data->as_department_id]['hr_department_name']??'';
+            ->addColumn('hr_department_name', function($data) use ($department){
+                return $department[$data->as_department_id]['hr_department_name']??'';
             })
-            ->addColumn('hr_section_name', function($data){
-                return section_by_id()[$data->as_section_id]['hr_section_name']??'';
+            ->addColumn('hr_section_name', function($data) use ($section){
+                return $section[$data->as_section_id]['hr_section_name']??'';
             })
-            ->addColumn('hr_subsection_name', function($data){
-                return subSection_by_id()[$data->as_subsection_id]['hr_subsec_name']??'';
+            ->addColumn('hr_subsection_name', function($data) use ($subSection){
+                return $subSection[$data->as_subsection_id]['hr_subsec_name']??'';
             })
-            ->addColumn('hr_line_name', function($data){
-                return line_by_id()[$data->as_line_id]['hr_line_name']??'';
+            ->addColumn('hr_line_name', function($data) use ($line){
+                return $line[$data->as_line_id]['hr_line_name']??'';
             })
             ->addColumn('ot_hour', function($data){
                 return numberToTimeClockFormat($data->ot_hour);

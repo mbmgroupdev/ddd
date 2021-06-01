@@ -56,7 +56,7 @@
             
             <div class="row">
                 <div class="col">
-                  <form role="form" method="post" action="{{ url("hr/reports/salary-report") }}" id="formReport">
+                  <form role="form" method="get" action="{{ url("hr/reports/salary-report") }}" id="formReport">
                     @csrf
                     <div class="iq-card" id="result-section">
                       <div class="iq-card-header d-flex mb-0">
@@ -64,7 +64,7 @@
                             <div class="row">
                               <div style="width: 10%; float: left; margin-left: 15px; margin-top: 2px;">
                                 <div id="result-section-btn">
-                                  <button class="btn btn-sm btn-primary hidden-print" onclick="printDiv('report_section')" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report"><i class="las la-print"></i> </button>
+                                  <button type="button" class="btn btn-sm btn-primary hidden-print" onclick="printDiv('report_section')" data-toggle="tooltip" data-placement="top" title="" data-original-title="Print Report"><i class="las la-print"></i> </button>
                                 </div>
                               </div>
                               <div class="text-center" style="width: 47%; float: left">

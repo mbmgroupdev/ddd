@@ -106,13 +106,20 @@ class AttendanceFileProcessController extends Controller
                         $time   = $sparateData[1];
                         $rfid = $sparateData[2];
                     }else{
-                        $sl = substr($lineData, 0, 2);
-                        $date   = substr($lineData, 3, 8);
-                        $time   = substr($lineData, 12, 6);
-                        $rfid = substr($lineData, 19, 10);
+                        $singleData = explode('', $lineData);
+                        if(count($singleData) > 3){
+                            $sl = $singleData[0];
+                            $date   = $singleData[1];
+                            $time   = $singleData[2];
+                            $rfid   = str_replace(':', "", $singleData[3]);
+                        }
+                        
+                        // $sl = substr($lineData, 0, 2);
+                        // $date   = substr($lineData, 3, 8);
+                        // $time   = substr($lineData, 12, 6);
+                        // $rfid = substr($lineData, 19, 10);
                     }
                     $checktime = ((!empty($date) && !empty($time))?date("Y-m-d H:i:s", strtotime("$date $time")):null);
-                    
                 }
                 else if($unit==2 && !empty($lineData) && (strlen($lineData)>1)){
                     $sl = substr($lineData, 0, 2);
@@ -437,11 +444,14 @@ class AttendanceFileProcessController extends Controller
 
                 }
                 if(($shift_end_begin >= $last_punch->out_time || $last_punch->out_time >= $shift_end_end ) && $last_punch->out_time != null){
-                    if($last_punch->in_time != null){ 
-                        DB::table($tableName)->where('id', $last_punch->id)->update([
-                            'out_time' => null, 'ot_hour' => 0]);
-                    }else{
-                        DB::table($tableName)->where('id', $last_punch->id)->delete();
+                    $checkDay = EmployeeHelper::employeeDateWiseStatus(date('Y-m-d', strtotime($last_punch->out_time)), $as_info->associate_id, $as_info->as_unit_id, $as_info->shift_roaster_status);
+                    if($checkDay == 'open'){
+                        if($last_punch->in_time != null){ 
+                            DB::table($tableName)->where('id', $last_punch->id)->update([
+                                'out_time' => null, 'ot_hour' => 0]);
+                        }else{
+                            DB::table($tableName)->where('id', $last_punch->id)->delete();
+                        }
                     }
                     $last_punch = DB::table($tableName)->where('id', $last_punch->id)->first();
 

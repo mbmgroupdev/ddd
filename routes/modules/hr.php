@@ -482,7 +482,7 @@ Route::get('hr/search-type', 'Hr\Search\SearchController@type');
 
 //---------Hr/ Payroll-----------//
 Route::get('hr/payroll/bank-sheet', 'Hr\Payroll\BankSheetController@index');
-Route::post('hr/reports/monthly-salary-bank-report', 'Hr\Payroll\SalaryReportController@bankSheetReport');
+Route::get('hr/reports/monthly-salary-bank-report', 'Hr\Payroll\BankSheetController@report');
 Route::get('hr/payroll/ot', 'Hr\Payroll\OtController@OT');
 Route::post('hr/payroll/ot', 'Hr\Payroll\OtController@OtStore');
 Route::get('hr/payroll/ot_list', 'Hr\Payroll\OtController@otList');
@@ -1081,6 +1081,8 @@ Route::post('hr/reports/filetag/search', 'Hr\Reports\FileTagController@fileTagSe
 
 // JOB CARD
 Route::get('hr/operation/job_card', 'Hr\Reports\JobCardController@jobCard')->middleware(['permission:Job Card']);
+Route::get('hr/reports/job-card-report', 'Hr\Reports\JobCardController@jobCardByMonth')->middleware(['permission:Job Card']);
+Route::get('hr/operation/job-card-edit', 'Hr\Reports\JobCardController@jobCardEdit')->middleware(['permission:Attendance Operation']);
 Route::get('hr/operation/partial_job_card', 'Hr\Reports\JobCardController@jobCardPartial');
 
 
@@ -1108,7 +1110,7 @@ Route::get('hr/reports/salary_sheet_unit_wise_day', 'Hr\Reports\SalarySheetContr
 Route::post('hr/reports/save_salary_sheet_unit_wise_data', 'Hr\Reports\SalarySheetController@saveSalarySheetUnitData');*/
 // salary
 Route::get('hr/reports/salary', 'Hr\Reports\SalaryReportController@index');
-Route::post('hr/reports/salary-report', 'Hr\Reports\SalaryReportController@report');
+Route::get('hr/reports/salary-report', 'Hr\Reports\SalaryReportController@report');
 
 // salary data-table
 Route::get('hr/reports/monthly-attendance-activity-data', 'Hr\Reports\SalaryReportController@salaryDataTable');

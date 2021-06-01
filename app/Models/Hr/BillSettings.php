@@ -11,7 +11,7 @@ class BillSettings extends Model
 {
 	protected $table = 'hr_bill_settings';
 	protected $primaryKey = 'id';
-    protected $guarded = [];
+    protected $fillable = ['unit_id', 'code', 'bill_type_id', 'amount', 'start_date', 'end_date', 'pay_type', 'duration', 'as_ot'];
 
     protected $dates = [
         'created_at', 'updated_at'

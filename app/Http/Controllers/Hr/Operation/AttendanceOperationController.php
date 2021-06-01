@@ -128,9 +128,9 @@ class AttendanceOperationController extends Controller
             if($data->status == 'Present (Late)' || $data->status == 'Present (Halfday)'){
 
                if($data->in_time == null){
-                 return '<span class="inline badge badge-warning">Late</span> <span class="inline badge badge-primary">Present</span> <button class="inline btn btn-sm btn-round btn-danger make-absent" data-asid="'.$data->associate_id.'">Make Absent</button> ';
+                 return '<span class="inline badge badge-warning">Late</span> <span class="inline badge badge-primary">Present</span>  ';
                }elseif ($data->out_time == null && $data->remarks != 'HD') {
-                 return '<span class="inline badge badge-warning">Late</span> <span class="inline badge badge-primary">Present</span> <button class="inline btn btn-sm btn-round btn-danger make-halfday" data-asid="'.$data->associate_id.'">Make Halfday</button> ';
+                 return '<span class="inline badge badge-warning">Late</span> <span class="inline badge badge-primary">Present</span>  ';
                }elseif ($data->out_time == null && $data->remarks == 'HD') {
                  $time = explode(' ',$data->in_time);
                  if($data->late_status == 1){
@@ -147,9 +147,9 @@ class AttendanceOperationController extends Controller
             }
             if($data->status == 'Present' || $data->status == 'Present (Halfday)') {
                if($data->in_time == null){
-                 return '<span class="inline badge badge-primary">Present</span> <button class="inline btn btn-sm btn-round btn-danger make-absent" data-asid="'.$data->associate_id.'">Make Absent</button>';
+                 return '<span class="inline badge badge-primary">Present</span> ';
                }elseif ($data->out_time == null && $data->remarks != 'HD') {
-                 return '<span class="inline badge badge-primary">Present</span> <button class="inline btn btn-sm btn-round btn-danger make-halfday" data-asid="'.$data->associate_id.'">Make Halfday</button>';
+                 return '<span class="inline badge badge-primary">Present</span> ';
                }elseif ($data->out_time == null && $data->remarks == 'HD') {
                  $time = explode(' ',$data->in_time);
                  if($data->late_status == 1){

@@ -214,7 +214,7 @@
                                                                 <span style ="width: 20%; text-align: left; white-space: wrap; float: left;" > -
                                                                 </span>
                                                                 <span style="width: 40%; text-align: left; float: left; white-space: wrap;" >
-                                                                    <font > {{ Custom::engToBnConvert(date('H:i',strtotime($attendance[$list->as_id][$dateList->bill_date]->out_time))) }}</font>
+                                                                    <font > {{ $attendance[$list->as_id][$dateList->bill_date]->out_time == null?'null':Custom::engToBnConvert(date('H:i',strtotime($attendance[$list->as_id][$dateList->bill_date]->out_time))) }}</font>
                                                                 </span>
                                                             </p>
                                                             @endif

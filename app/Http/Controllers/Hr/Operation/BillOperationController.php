@@ -111,7 +111,11 @@ class BillOperationController extends Controller
                 $queryData->where('emp.as_ot',$input['otnonot']);
             }
             if(isset($input['as_status']) && $input['as_status'] != null){
-                $queryData->where('emp.as_status', $input['as_status']);
+                if($input['as_status'] == 1){
+                    $queryData->whereIn('emp.as_status', [1,6]);
+                }else{
+                    $queryData->where('emp.as_status', $input['as_status']);
+                }
             }
             if(isset($input['pay_status']) && $input['pay_status'] != null){
                 $queryData->where('s.pay_status', $input['pay_status']);

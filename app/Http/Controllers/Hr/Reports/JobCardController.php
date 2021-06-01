@@ -7,65 +7,57 @@ use App\Models\Employee;
 use App\Models\Hr\HolidayRoaster;
 use App\Models\Hr\Leave;
 use App\Models\Hr\Unit;
+use App\Repository\Hr\JobCardRepository;
 use Illuminate\Http\Request;
 use PDF,DB;
 
 class JobCardController extends Controller
 { 
-
+    protected $jobCard;
+    public function __construct()
+    {
+        ini_set('zlib.output_compression', 1);
+        $this->jobCard = new JobCardRepository;
+    }
     public function jobCard(Request $request)
     {
-
         if(auth()->user()->hasRole('Buyer Mode')){
             return redirect('hrm/operation/job_card');
         }
+        $input = $request->all();
+        return view("hr/reports/job_card/index", compact('input'));
+    }
 
-        $result['unitList']  = Unit::where('hr_unit_status', '1')
-        ->whereIn('hr_unit_id', auth()->user()->unit_permissions())
-        ->pluck('hr_unit_name', 'hr_unit_id');
-
-        $result['areaList']  = DB::table('hr_area')->where('hr_area_status', '1')->pluck('hr_area_name', 'hr_area_id');
-        if ($request->get('pdf') == true) {
-            $result = $this->empAttendanceByMonth($request);
-            $attendance = $result['attendance'];
-            $info = $result['info'];
-
-            $pdf = PDF::loadView('hr/reports/job_card_pdf', $result);
-            return $pdf->download('Job_Card_Report_'.date('d_F_Y').'.pdf');
-        } elseif($request->associate != null && $request->month_year != null){
-            $result = $this->empAttendanceByMonth($request);
-            if($result != null){
-                return view("hr/reports/job_card", $result);
-            }else{
-                toastr()->error('This Month Job Card Not Found!');
-                return back();
-            }
-
-        }else{
-          return view("hr/reports/job_card", $result);
-        }
-
-        return view("hr/reports/job_card", $result);
+    public function jobCardByMonth(Request $request)
+    {
+        $result = $this->jobCard->jobCardByMonth($request);
+        
+        return view('hr/reports/job_card/report', $result);
     }
 
     public function jobCardPartial(Request $request)
     {
-        $result = $this->empAttendanceByMonth($request);
-        if($result != null){
-            $attendance = $result['attendance'];
-            $info = $result['info'];
-            $joinExist = $result['joinExist'];
-            $leftExist = $result['leftExist'];
-            return view("hr/reports/job_card_partial", $result)->render();
-        }else{
-           return "<h3 class='text-center'>This Month Job Card Not Found!</h3>";
+        $result = $this->jobCard->jobCardByMonth($request);
+        return view('hr/reports/job_card/report', $result);
+    }
+
+    public function jobCardEdit(Request $request)
+    {
+        $result = $this->jobCard->jobCardByMonth($request);
+        // check lock month
+        $lock['month'] = $result['info']['month'];
+        $lock['year'] = $result['info']['year'];
+        $lock['unit_id'] = $result['info']['as_unit_id'];
+        $lockActivity = monthly_activity_close($lock);
+        if($lockActivity == 1){
+            toastr()->error('Activity locked this month!');
+            return back();
         }
+        return view('hr/reports/job_card/edit', $result);
     }
 
     public  function empAttendanceByMonth($request)
     {
-
-
         $total_attend   = 0;
         $total_overtime = 0;
         $associate = $request->associate;

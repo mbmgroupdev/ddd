@@ -10,7 +10,6 @@ use App\Models\Hr\HrMonthlySalary;
 use App\Models\Hr\SalaryAddDeduct;
 use App\Models\Hr\SalaryAdjustMaster;
 use App\Repository\Hr\AttendanceProcessRepository;
-use App\Repository\Hr\EmployeeRepository;
 use DB;
 use Illuminate\Support\Collection;
 
@@ -73,6 +72,7 @@ class SalaryRepository implements SalaryInterface
         
         $subSection = subSection_by_id();
         $getFoodDeduct = $this->getFoodDeductList($input['year_month']);
+        
         return collect($dataRow)->map(function($q) use ($subSection, $employee, $getFoodDeduct) {
             $q->as_section_id = $subSection[$q->sub_section_id]['hr_subsec_section_id']??'';
             $q->as_department_id = $subSection[$q->sub_section_id]['hr_subsec_department_id']??'';
@@ -83,76 +83,13 @@ class SalaryRepository implements SalaryInterface
             $q->as_floor_id = $employee[$q->as_id]->as_floor_id??'';
             $q->as_unit_id = $q->unit_id;
             $q->as_location = $q->location_id;
+            $q->as_doj = $employee[$q->as_id]->as_doj??'';
             $q->as_subsection_id = $q->sub_section_id;
             $q->as_designation_id = $q->designation_id;
             $q->food_deduct = $getFoodDeduct[$q->as_id]??0;
             unset($q->unit_id, $q->location_id, $q->sub_section_id, $q->designation_id);
             return $q;
         });
-        
-        // $collection = collect($getSalary)->whereNotIn('as_id', config('base.ignore_salary'))->sortByDesc('gross');
-
-        // if(isset($input['employee']) && $input['employee'] != null && $input['report_format'] == 0){
-        //     $collection = collect($collection)->where('as_id', 'LIKE', '%'.$input['employee'] .'%');
-        // }
-
-        // if(isset($input['min_sal']) && $input['min_sal'] != null){
-        //     $collection = collect($collection)->whereBetween('gross', [$input['min_sal'], $input['max_sal']]);
-        // }
-
-        // if(isset($input['unit']) && $input['unit'] != null){
-        //     $collection = collect($collection)->whereIn('as_unit_id', $input['unit']);
-        // }
-
-        // if(isset($input['location']) && $input['location'] != null){
-        //     $collection = collect($collection)->whereIn('as_location', $input['location']);
-        // }
-
-        // if(isset($input['pay_status']) && $input['pay_status'] != null){
-        //     if($input['pay_status'] == 'cash'){
-        //         $collection = collect($collection)->where('cash_payable', '>', 0);
-        //     }elseif($input['pay_status'] != 'all'){
-        //         $collection = collect($collection)->where('pay_type', $input['pay_status']);
-        //     }
-        // }
-
-        // if(isset($input['area']) && $input['area'] != null){
-        //     $collection = collect($collection)->whereIn('as_area_id', $input['area']);
-        // }
-
-        // if(isset($input['department']) && $input['department'] != null){
-        //     $collection = collect($collection)->where('as_department_id', $input['department']);
-        // }
-
-        // if(isset($input['section']) && $input['section'] != null){
-        //     $collection = collect($collection)->where('as_section_id', $input['section']);
-        // }
-
-        // if(isset($input['subSection']) && $input['subSection'] != null){
-        //     $collection = collect($collection)->where('as_subsection_id', $input['subSection']);
-        // }
-
-        // if(isset($input['otnonot']) && $input['otnonot'] != null){
-        //     $collection = collect($collection)->where('ot_status', $input['otnonot']);
-        // }
-
-        // if(isset($input['floor_id']) && $input['floor_id'] != null){
-        //     $collection = collect($collection)->where('as_floor_id', $input['floor_id']);
-        // }
-
-        // if(isset($input['line_id']) && $input['line_id'] != null){
-        //     $collection = collect($collection)->where('as_line_id', $input['line_id']);
-        // }
-
-        // if(isset($input['selected'])){
-        //     if($input['selected'] == 'null'){
-        //         $collection = collect($collection)->whereNull($input['report_group']);
-        //     }else{
-        //         $collection = collect($collection)->where($input['report_group'], $input['selected']);
-        //     }
-        // }
-
-        // return $collection;
     }
 
     protected function getFoodDeductList($yearMonth)
@@ -166,16 +103,31 @@ class SalaryRepository implements SalaryInterface
 
     public function getSalaryByMonth($input)
     {
-        $input['emp_status'] = $input['emp_status']??1;
+        $input['emp_status'] = $input['emp_status']??[1];
         $yearMonthExp = explode('-', $input['year_month']);
+        
         $data = DB::table('hr_monthly_salary')
-        ->where('emp_status', $input['emp_status'])
+        ->whereIn('emp_status', $input['emp_status'])
         ->where('year', $yearMonthExp[0])
         ->where('month', $yearMonthExp[1])
         ->whereIn('unit_id', auth()->user()->unit_permissions())
         ->whereIn('location_id', auth()->user()->location_permissions())
         ->get();
-        return $data;
+        $benefit = $this->getBenefitData(['bank_no']);
+        return collect($data)->map(function($q) use ($benefit){
+            $q->bank_no = $benefit[$q->as_id]->bank_no??'';
+            return $q;
+        });
+    }
+
+    protected function getBenefitData($selected=''){
+        $query = DB::table('hr_benefits')
+        ->select('ben_as_id');
+        if($selected != null){
+            $query->addSelect($selected);
+        }
+        return $query->get()->keyBy('ben_as_id');
+
     }
 
     protected function makeSummarySalary($data)
@@ -466,13 +418,13 @@ class SalaryRepository implements SalaryInterface
                 $row = array_merge($row, $getEmployee->toArray());
                 // employee basic info
                 $startNendInfo = $this->attProcess->getEmployeeMonthStartNEndInfo($row);
+
                 $row = array_merge($row, $startNendInfo);
                 // attendance count like - present, holiday, leave, absent, late etc.
                 $attCount = $this->attProcess->makeEmployeeAttendanceCount($row);
                 $row = array_merge($row, $getBenefit->toArray(), $attCount);
                 // all benefit calculate for pay
                 $benefit = $this->makeEmployeeBenefitValue($row);
-             
                 // salary store
                 $this->slaryStore($benefit);
             }

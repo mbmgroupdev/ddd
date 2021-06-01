@@ -3,7 +3,7 @@
 @push('css')
   
   <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-datetimepicker.min.css') }}" />
-  <link rel="stylesheet" href="{{ asset('assets/css/editor.dataTables.min.css') }}" />
+  {{-- <link rel="stylesheet" href="{{ asset('assets/css/editor.dataTables.min.css') }}" /> --}}
   <link rel="stylesheet" href="{{ asset('assets/css/sweetalert2.min.css') }}" />
   <style>
     #dataTables th:nth-child(2) input{
@@ -210,7 +210,7 @@
 
 <script src="{{ asset('assets/js/moment.min.js') }}"></script>
 <script src="{{ asset('assets/js/bootstrap-datetimepicker.min.js') }}"></script>
-<script src="{{ asset('assets/js/datatableedit.js') }}"></script>
+{{-- <script src="{{ asset('assets/js/datatableedit.js') }}"></script> --}}
 <script src="{{ asset('assets/js/sweetalert2.min.js') }}"></script>
 <script type="text/javascript">
     $(document).ready(function(){  
@@ -664,31 +664,31 @@
 
        });
 
-       dt.MakeCellsEditable({
-         "onUpdate": myCallbackFunction,
-         "inputCss":'my-input-class',
-         "columns": [7,8],
-         "allowNulls": {
-           "columns": [3],
-           "errorClass": 'error'
-         },
-         "confirmationButton": { // could also be true
-           "confirmCss": 'my-confirm-class',
-           "cancelCss": 'my-cancel-class'
-         },
-         "inputTypes": [
-           {
-             "column": 7,
-             "type": "text",
-             "options":null
-           },
-           {
-             "column": 8,
-             "type": "text",
-             "options":null
-           }
-         ]
-       });
+       // dt.MakeCellsEditable({
+       //   "onUpdate": myCallbackFunction,
+       //   "inputCss":'my-input-class',
+       //   "columns": [7,8],
+       //   "allowNulls": {
+       //     "columns": [3],
+       //     "errorClass": 'error'
+       //   },
+       //   "confirmationButton": { // could also be true
+       //     "confirmCss": 'my-confirm-class',
+       //     "cancelCss": 'my-cancel-class'
+       //   },
+       //   "inputTypes": [
+       //     {
+       //       "column": 7,
+       //       "type": "text",
+       //       "options":null
+       //     },
+       //     {
+       //       "column": 8,
+       //       "type": "text",
+       //       "options":null
+       //     }
+       //   ]
+       // });
        $('#attendanceReport').on('submit', function(e)
        {
          e.preventDefault();
@@ -742,110 +742,110 @@
     // Retrieve the text property of the element (cross-browser support)
     return temporalDivElement.textContent || temporalDivElement.innerText || "";
   }
-  $('#dataTables').on('click', '.make-absent', function (e) {
+  // $('#dataTables').on('click', '.make-absent', function (e) {
 
-     var associate_id = $(this).data('asid');
-     var date = $(this).parent().parent().find('td').eq(6).html();
-     var ths =$(this);
-     var attdate = new Date(date);
-     var currentdate = new Date();
+  //    var associate_id = $(this).data('asid');
+  //    var date = $(this).parent().parent().find('td').eq(6).html();
+  //    var ths =$(this);
+  //    var attdate = new Date(date);
+  //    var currentdate = new Date();
 
-     var lock = $("#lock_status").val();
-      if(lock == 0){
+  //    var lock = $("#lock_status").val();
+  //     if(lock == 0){
 
-       swal({
-         title: "Are you sure?",
-         icon: "warning",
-         buttons: true,
-         dangerMode: false,
-       })
-       .then((willDelete) => {
-         if (willDelete) {
-           $.ajax({
-             url : "{{ url('hr/timeattendance/make_absent') }}",
-             type: 'get',
-             data: {
-               associate_id: associate_id,
-               date: date
-             },
-             success: function(data)
-             {
-                // console.log(data);
-                if(data === 'success'){
-                  $.notify('Attendance Updated Successfully.', 'success');
-                   var row = ths.closest('tr');
-                   row.fadeOut(400, function () {
-                     $('#dataTables').DataTable().row(row).remove()
-                   });
-                 }else{
-                    $.notify('Please Try Again Later, Something Went Wrong!!', 'error');
-                 }
-             },
-             error: function()
-             {
-               $.notify('Please Try Again Later, Something Went Wrong!!', 'error');
-             }
-           });
-         } else {
+  //      swal({
+  //        title: "Are you sure?",
+  //        icon: "warning",
+  //        buttons: true,
+  //        dangerMode: false,
+  //      })
+  //      .then((willDelete) => {
+  //        if (willDelete) {
+  //          $.ajax({
+  //            url : "{{ url('hr/timeattendance/make_absent') }}",
+  //            type: 'get',
+  //            data: {
+  //              associate_id: associate_id,
+  //              date: date
+  //            },
+  //            success: function(data)
+  //            {
+  //               // console.log(data);
+  //               if(data === 'success'){
+  //                 $.notify('Attendance Updated Successfully.', 'success');
+  //                  var row = ths.closest('tr');
+  //                  row.fadeOut(400, function () {
+  //                    $('#dataTables').DataTable().row(row).remove()
+  //                  });
+  //                }else{
+  //                   $.notify('Please Try Again Later, Something Went Wrong!!', 'error');
+  //                }
+  //            },
+  //            error: function()
+  //            {
+  //              $.notify('Please Try Again Later, Something Went Wrong!!', 'error');
+  //            }
+  //          });
+  //        } else {
 
-         }
-       });
-     }else{
-       $.notify("Attendance Modification Time Over","error");
-     }
-  });
+  //        }
+  //      });
+  //    }else{
+  //      $.notify("Attendance Modification Time Over","error");
+  //    }
+  // });
 
-  $('#dataTables').on('click', '.make-halfday', function () {
+  // $('#dataTables').on('click', '.make-halfday', function () {
 
-     var associate_id = $(this).data('asid');
-     var date = $(this).parent().parent().find('td').eq(6).html();
-     var ths =$(this);
-     var attdate = new Date(date);
-     var currentdate = new Date();
+  //    var associate_id = $(this).data('asid');
+  //    var date = $(this).parent().parent().find('td').eq(6).html();
+  //    var ths =$(this);
+  //    var attdate = new Date(date);
+  //    var currentdate = new Date();
 
-     var lock = $("#lock_status").val();
-      if(lock == 0){
-       swal({
-         title: "Are you sure?",
-         icon: "warning",
-         buttons: true,
-         dangerMode: false,
-       })
-       .then((willDelete) => {
-         if (willDelete) {
-           $.ajax({
-             url : "{{ url('hr/timeattendance/make_halfday') }}",
-             type: 'get',
-             data: {
-               associate_id: associate_id,
-               date: date
-             },
-             success: function(data)
-             {
-                if(data === 'success'){
-                  $.notify('Attendance Updated Successfully.', 'success');
-                  var row = ths.closest('tr');
+  //    var lock = $("#lock_status").val();
+  //     if(lock == 0){
+  //      swal({
+  //        title: "Are you sure?",
+  //        icon: "warning",
+  //        buttons: true,
+  //        dangerMode: false,
+  //      })
+  //      .then((willDelete) => {
+  //        if (willDelete) {
+  //          $.ajax({
+  //            url : "{{ url('hr/timeattendance/make_halfday') }}",
+  //            type: 'get',
+  //            data: {
+  //              associate_id: associate_id,
+  //              date: date
+  //            },
+  //            success: function(data)
+  //            {
+  //               if(data === 'success'){
+  //                 $.notify('Attendance Updated Successfully.', 'success');
+  //                 var row = ths.closest('tr');
 
-                  row.fadeOut(400, function () {
-                    $('#dataTables').DataTable().row(row).remove()
-                  });
-                }else{
-                  $.notify('Please Try Again Later, Something Went Wrong!!', 'error');
-                }
-             },
-             error: function()
-             {
-               $.notify('Please Try Again Later, Something Went Wrong!!', 'error');
-             }
-           });
-         } else {
+  //                 row.fadeOut(400, function () {
+  //                   $('#dataTables').DataTable().row(row).remove()
+  //                 });
+  //               }else{
+  //                 $.notify('Please Try Again Later, Something Went Wrong!!', 'error');
+  //               }
+  //            },
+  //            error: function()
+  //            {
+  //              $.notify('Please Try Again Later, Something Went Wrong!!', 'error');
+  //            }
+  //          });
+  //        } else {
 
-         }
-       });
-     }else{
-       $.notify("Attendance Modification Time Over","error");
-     }
-  });
+  //        }
+  //      });
+  //    }else{
+  //      $.notify("Attendance Modification Time Over","error");
+  //    }
+  // });
 
   $("#ot_hour").bind("keyup change", function(e) {
      var data =
