@@ -1,4 +1,3 @@
-
 @if(!empty($poList->toArray()))
     @php
         $poTotalNoSize = [];
@@ -61,7 +60,6 @@
                                             {{$color->clr_name}}
                                             <input type="hidden" value="{{ $color->clr_id }}" name="mr_material_color_clr_id[{{ $bom->id }}][{{ $bom->order_id }}][{{$bom->sup_id}}][{{ $poSingle->po_id }}][{{$color->clr_id}}]" class="color_rm_class {{ $bom->id.$bom->order_id.$poSingle->po_id.$color->clr_id }}" readonly="readonly">
                                         </td>
-
                                         {{-- size input --}}
                                         <td></td>
 
@@ -97,7 +95,7 @@
                                             @endphp
                                             {{$posSubTotalQty}}
                                            <input type="hidden" value="{{ $posSubTotalQty }}" name="req_qty[{{ $bom->id }}][{{ $bom->order_id }}][{{$bom->sup_id}}][{{ $poSingle->po_id }}][{{$color->clr_id}}]" class="form-control rqty_rm_class {{$bom->id.$bom->order_id.$poSingle->po_id}}" readonly="readonly">
-                                           <input type="hidden" value="{{ $bom->booking_qty }}" name="booking_qty[{{ $bom->id }}][{{ $bom->order_id }}][{{$bom->sup_id}}][{{ $poSingle->po_id }}][{{$color->clr_id}}]" class="form-control rqty_rm_class {{$bom->id.$bom->order_id.$poSingle->po_id}}" readonly="readonly">
+{{--                                           <input type="hidden" value="{{ $bom->booking_qty }}" name="booking_qty[{{ $bom->id }}][{{ $bom->order_id }}][{{$bom->sup_id}}][{{ $poSingle->po_id }}][{{$color->clr_id}}]" class="form-control rqty_rm_class {{$bom->id.$bom->order_id.$poSingle->po_id}}" readonly="readonly">--}}
                                         </td>
 
                                         <!--total value input field-->
@@ -156,7 +154,7 @@
                                     <input type="hidden" name="mr_supplier[{{ $bom->sup_id }}]" value="{{ $bom->sup_id }}">
 
                                     <!--COlor input field-->
-                                    <td></td>
+                                    <td>erettgrrhthryh</td>
 
                                     <!--size input field-->
                                     <td>
@@ -216,6 +214,7 @@
                                         {{$poSizeQty}}
                                         <input type="hidden" name="total_value[{{ $bom->id }}][{{ $bom->order_id }}][{{$bom->sup_id}}][{{ $poSingle->po_id }}][{{$size->id}}]" value="{{ $poSizeQty }}" class="form-control global_total {{ $bom->po_no!=null?'inputBgLightGolder':'inputBgLight' }} tvlu_rm_class {{$bom->id.$bom->order_id.$poSingle->po_id.$size->id}}" size="1" readonly="readonly">
                                     </td>
+                                    <td>aosidhfoashdf</td>
                                 </tr>
                             @endif
                         @endforeach
@@ -335,6 +334,7 @@
                                             {{$posSubTotalQtyCS}}
                                             <input type="hidden" value="{{ $posSubTotalQtyCS }}" name="total_value[{{ $bom->id }}][{{ $bom->order_id }}][{{$bom->sup_id}}][{{ $poSingle->po_id }}][{{$color->clr_id}}][{{$color->product_size_id}}]" class="form-control global_totals {{ $bom->po_no!=null?'inputBgLightGolder':'inputBgLight' }} tvlu_rm_class {{$bom->id.$bom->order_id.$poSingle->po_id.$color->clr_id.$color->product_size_id}}" size="1" readonly="readonly">
                                         </td>
+                                        <td>asdfasdf</td>
                                     </tr>
                                 @endif
                             @endif
@@ -468,6 +468,7 @@
                                         <input type="hidden" value="{{ $noDependTotalQty }}" name="total_value[{{ $bom->id }}][{{ $bom->order_id }}][{{$bom->sup_id}}][{{ $poSingle->po_id }}][]" class="form-control tvlu_rm_class {{$bom->id.$bom->order_id.$poSingle->po_id}}" readonly="readonly">
                                     @endif
                                 </td>
+                                <td><input type="text" value="{{ $bom->booking_qty }}" name="booking_qty[{{ $bom->id }}][{{ $bom->order_id }}][{{$bom->sup_id}}][{{ $poSingle->po_id }}][{{$color->clr_id??0}}]" class="form-control rqty_rm_class {{$bom->id.$bom->order_id.$poSingle->po_id}}"></td>
                             </tr>
                         @endif
                     @endif

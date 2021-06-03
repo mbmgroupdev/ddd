@@ -9,6 +9,7 @@ use App\Models\Merch\BomOtherCosting;
 use App\Models\Merch\Brand;
 use App\Models\Merch\Buyer;
 use App\Models\Merch\MrOrderBooking;
+use App\Models\Merch\MrPoBomCostingBooking;
 use App\Models\Merch\OrderBOM;
 use App\Models\Merch\OrderBomCostingBooking;
 use App\Models\Merch\OrderBomOtherCosting;
@@ -262,6 +263,9 @@ class OrderPoBookingController extends Controller
 													$poTableDetailC['created_by'] = auth()->user()->associate_id;
 													$result[$cosBookingIdListK][$supplier_id][$poIdK][] = $poTableDetailC;
 													PoBookingDetail::insert($poTableDetailC);
+													MrPoBomCostingBooking::where('id', $poIdK)->update([
+													    'booking_qty' => $poTableDetailC['booking_qty'],
+                                                    ]);
 												}
 											}
 																						// end isset two
@@ -1551,14 +1555,16 @@ class OrderPoBookingController extends Controller
 		->addColumn('bookingQty', function($data){
 
 			$returnNumber = 0;
-			if(!$data->orderBooking->isEmpty()){
-				if(is_numeric($data->orderBooking->sum('booking_qty'))) {
-					$returnNumber = number_format((float)$data->orderBooking->sum('booking_qty'), 2, '.', '');
+			if(!$data->poDetails->isEmpty()){
+				if(is_numeric($data->poDetails->sum('booking_qty'))) {
+					$returnNumber = number_format((float)$data->poDetails->sum('booking_qty'), 2, '.', '');
 					if(fmod($returnNumber, 1) == 0.00){
-						$returnNumber = round($data->orderBooking->sum('booking_qty'), 0);
+						$returnNumber = round($data->poDetails->sum('booking_qty'), 0);
 					}
 				}
-			}
+			}else{
+                $returnNumber = $data->poDetails->sum('booking_qty');
+            }
 
 			return $returnNumber;
 		})
@@ -1649,12 +1655,20 @@ class OrderPoBookingController extends Controller
 		//dd($boms);
 				// dd($poList,$boms);exit;
 
-		$colors = DB::table('mr_order_entry')
+/*		$colors = DB::table('mr_order_entry')
 		->groupBy('mr_material_color.clr_name')
 		->selectRaw('sum(mr_po_sub_style.po_sub_style_qty) as sum, mr_material_color.clr_name as clr_name, mr_material_color.clr_id')
 		->leftJoin('mr_purchase_order','mr_order_entry.order_id','=','mr_purchase_order.mr_order_entry_order_id')
 		->leftJoin('mr_po_sub_style','mr_purchase_order.po_id','=','mr_po_sub_style.po_id')
 		->leftJoin('mr_material_color','mr_po_sub_style.clr_id','=','mr_material_color.clr_id')
+		->where('mr_order_entry.order_id', $orderId)
+		->orderBy('mr_material_color.clr_name','ASC')
+		->get();*/
+		$colors = DB::table('mr_order_entry')
+		->groupBy('mr_material_color.clr_name')
+		->selectRaw('sum(mr_purchase_order.po_qty) as sum, mr_material_color.clr_name as clr_name, mr_material_color.clr_id')
+		->leftJoin('mr_purchase_order','mr_order_entry.order_id','=','mr_purchase_order.mr_order_entry_order_id')
+		->leftJoin('mr_material_color','mr_purchase_order.clr_id','=','mr_material_color.clr_id')
 		->where('mr_order_entry.order_id', $orderId)
 		->orderBy('mr_material_color.clr_name','ASC')
 		->get();
