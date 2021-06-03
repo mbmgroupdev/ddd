@@ -73,11 +73,11 @@
                                                     <th width="80" class="vertical-align">Extra (%)</th>
                                                     <th width="80" class="vertical-align">UOM</th>
 
-                                                    <th width="70" class="vertical-align">Terms</th>
-                                                    <th width="80" class="vertical-align">FOB</th>
-                                                    <th width="80" class="vertical-align">L/C</th>
-                                                    <th width="80" class="vertical-align">Freight</th>
-                                                    <th width="80" class="vertical-align">Unit Price</th>
+                                                    <th width="90" class="vertical-align">Terms</th>
+                                                    <th width="110" class="vertical-align">FOB</th>
+                                                    <th width="110" class="vertical-align">L/C</th>
+                                                    <th width="110" class="vertical-align">Freight</th>
+                                                    <th width="110" class="vertical-align">Unit Price</th>
                                                     <th width="80" class="vertical-align">Total Price</th>
                                                     <th width="80" class="vertical-align">Order Cost</th>
                                                     <th width="80" class="vertical-align">Req. Qty</th>
