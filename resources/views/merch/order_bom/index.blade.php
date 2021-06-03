@@ -44,23 +44,24 @@
                 <div class="panel panel-success">
                     <div class="panel-body pb-2">
                         @include('merch.common.order_info')
-                    </div> 
+                    </div>
                 </div>
                 <div class="panel panel-info table-list-section">
                         <form class="form-horizontal" role="form" method="post" id="bomForm">
                             <input type="hidden" name="stl_id" value="{{ $order->mr_style_stl_id }}">
                             <input type="hidden" name="order_id" value="{{ $order->order_id }}">
+                            <input type="hidden" name="order_qty" value="{{ (!empty($order->order_qty)?$order->order_qty:0) }}">
                             <input type="hidden" id="change-flag" value="0">
-                            {{ csrf_field() }} 
+                            {{ csrf_field() }}
                             <div class="panel-body">
-                                
+
                                 <div class='row'>
                                     <div class='col-sm-12 table-wrapper-scroll-y table-custom-scrollbar'>
                                         <table class="table table-bordered table-hover table-fixed table-head" id="itemList">
                                             <thead>
                                                 <tr class="text-center active">
                                                     <th width="2%">
-                                                        
+
                                                     </th>
                                                     <th width="150">Item Name</th>
                                                     <th width="100">Description</th>
@@ -69,7 +70,7 @@
                                                     <th width="80">Depen-<br>dency</th>
                                                     <th width="130">Supplier</th>
                                                     <th width="130">Article</th>
-                                                    
+
                                                     <th width="80">UOM</th>
                                                     <th width="80">Consumption</th>
                                                     <th width="80">Extra (%)</th>
@@ -91,16 +92,16 @@
                                                                 <ul>
                                                                   <li>
                                                                     <a class="textblack arrows-context add-arrows" data-catid="{{ $itemBom->mcat_id }}"><i class="las la-cart-plus"></i> Add Row</a>
-                                                                  </li>   
+                                                                  </li>
                                                                   <li>
                                                                     <a class="textblack arrows-context remove-arrows"  data-catid="{{ $itemBom->mcat_id }}" ><i class="las la-trash"></i> Remove Row</a>
-                                                                  </li>           
+                                                                  </li>
                                                                   <li>
                                                                     <a class="textblack arrows-context add-new" data-type="item" data-catid="{{ $itemBom->mcat_id }}" id="additem_{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}"><i class="las la-folder-plus"></i> Add New Item</a>
                                                                 </li>
                                                                 </ul>
                                                             </div>
-                                                            
+
                                                         </td>
                                                         <td>
                                                             <input type="hidden" id="bomitemid_{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" name="bomitemid[]" value="{{ $itemBom->id }}">
@@ -142,7 +143,7 @@
                                                               if($dependsOn == 1 || $dependsOn == 3){
                                                                 $dependsColor = 1;
                                                               }
-                                                              
+
                                                               if($dependsOn == 2 || $dependsOn == 3){
                                                                 $dependsSize = 1;
                                                               }
@@ -170,7 +171,7 @@
                                                                       @endforeach
                                                                       @endif
                                                                     </select>
-                                                                    
+
                                                                 </div>
                                                                 <div class="col-3 pl-0 pr-0 pt-2">
                                                                     <a class="btn btn-xs btn-primary text-white addSupplier add-new" data-type="supplier" id="addsupplier_{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" data-catid="{{ $itemBom->mcat_id }}" data-toggle="tooltip" data-placement="top" title="" data-original-title="Add New Supplier">
@@ -183,7 +184,7 @@
                                                         <td>
                                                             <div class="row m-0">
                                                                 <div class="col-9 p-0">
-                                                                    
+
                                                                     <select name="article[]" id="article_{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" class="form-control articlechange" >
                                                                       <option value=""> - Select - </option>
                                                                       @if(isset($getArticle[$itemBom->mr_supplier_sup_id]))
@@ -200,7 +201,7 @@
                                                                     </a>
                                                                 </div>
                                                             </div>
-                                                            
+
                                                         </td>
                                                         <td>
                                                             <select name="uom[]" id="uom_{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" class="form-control uomchange" >
@@ -225,7 +226,7 @@
                                                         <td>
                                                             <input type="text" step="any" min="0" name="total[]" id="total_{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" class="form-control" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" readonly value="{{ $itemBom->total }}">
                                                         </td>
-                                                        
+
                                                     </tr>
                                                 @endforeach
                                                 @endif
@@ -236,16 +237,16 @@
                                                             <ul>
                                                               <li>
                                                                 <a class="textblack arrows-context add-arrows" data-catid="{{ $itemCat->mcat_id }}"><i class="las la-cart-plus"></i> Add Row</a>
-                                                              </li>   
+                                                              </li>
                                                               <li>
                                                                 <a class="textblack arrows-context remove-arrows"  data-catid="{{ $itemCat->mcat_id }}" ><i class="las la-trash"></i> Remove Row</a>
-                                                              </li>           
+                                                              </li>
                                                               <li>
                                                                 <a class="textblack arrows-context add-new" data-type="item" data-catid="{{ $itemCat->mcat_id }}" id="additem_{{ $itemCat->mcat_id}}_1"><i class="las la-folder-plus"></i> Add New Item</a>
                                                             </li>
                                                             </ul>
                                                         </div>
-                                                        
+
                                                     </td>
                                                     <td>
                                                         <input type="hidden" id="bomitemid_{{ $itemCat->mcat_id}}_1" name="bomitemid[]" value="">
@@ -260,7 +261,7 @@
                                                     <td>
                                                       <select name="color[]" id="color_{{ $itemCat->mcat_id}}_1" class="form-control" data-toggle="tooltip" data-placement="top" title="" data-original-title="this.value">
                                                           <option value=""> - Select - </option>
-                                                          
+
                                                       </select>
                                                     </td>
                                                     <td>
@@ -284,7 +285,7 @@
                                                                 <select name="supplier[]" id="supplier_{{ $itemCat->mcat_id}}_1" data-category="{{ $itemCat->mcat_id }}" class="form-control supplier" disabled>
                                                                   <option value=""> - Select - </option>
                                                                 </select>
-                                                                
+
                                                             </div>
                                                             <div class="col-3 pl-0 pr-0 pt-2">
                                                                 <a class="btn btn-xs btn-primary text-white addSupplier add-new" data-type="supplier" id="addsupplier_{{ $itemCat->mcat_id}}_1" data-catid="{{ $itemCat->mcat_id }}" data-toggle="tooltip" data-placement="top" title="" data-original-title="Add New Supplier">
@@ -297,7 +298,7 @@
                                                     <td>
                                                         <div class="row m-0">
                                                             <div class="col-9 p-0">
-                                                                
+
                                                                 <select name="article[]" id="article_{{ $itemCat->mcat_id}}_1" class="form-control articlechange " disabled>
                                                                   <option value=""> - Select - </option>
                                                                 </select>
@@ -309,10 +310,10 @@
                                                                 </a>
                                                             </div>
                                                         </div>
-                                                        
+
                                                     </td>
                                                     <td>
-                                                        
+
                                                         <select name="uom[]" id="uom_{{ $itemCat->mcat_id}}_1" class="form-control uomchange" disabled>
                                                           <option value=""> - Select - </option>
                                                         </select>
@@ -330,14 +331,14 @@
                                                     <td>
                                                         <input type="text" step="any" min="0" value="0" name="total[]" id="total_{{ $itemCat->mcat_id}}_1" class="form-control" autocomplete="off" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" readonly>
                                                     </td>
-                                                    
+
                                                 </tr>
-                                                
+
                                             </tbody>
                                             @endforeach
-                                            
+
                                         </table>
-                                        
+
                                     </div>
                                 </div>
                                 <div class="row">
@@ -349,14 +350,14 @@
                                 </div>
                             </div>
                         </form>
-                    </div> 
+                    </div>
               </div>
             </div>
         </div><!-- /.page-content -->
     </div>
 </div>
 <div class="modal right fade" id="right_modal_item" tabindex="-1" role="dialog" aria-labelledby="right_modal_item">
-  <div class="modal-dialog modal-lg right-modal-width" role="document" > 
+  <div class="modal-dialog modal-lg right-modal-width" role="document" >
     <div class="modal-content">
       <div class="modal-header">
         <a class="view prev_btn" data-toggle="tooltip" data-dismiss="modal" data-placement="top" title="" data-original-title="Back to Report">
@@ -371,7 +372,7 @@
         <div class="modal-content-result" id="content-result"></div>
 
       </div>
-      
+
     </div>
   </div>
 </div>
@@ -423,7 +424,7 @@
                     var bomid = bomindex[i].getAttribute('id');
                     $("#"+bomid).val(el);
                 });
-                 
+
               }
               $(".app-loader").hide();
             },
@@ -441,7 +442,7 @@
                   var value = errors[key];
                   $.notify(value[0], 'error');
                 }
-                 
+
               }
             }
          });
@@ -450,7 +451,7 @@
           $.notify("Some field are required", 'error');
       }
     };
-    
+
 </script>
 
 @endpush
