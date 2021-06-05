@@ -130,7 +130,7 @@ class CostingController extends Controller
     {
     	try {
     		$style = Style::getStyleIdWiseStyleInfo($id, ['stl_id', 'mr_buyer_b_id', 'stl_type', 'stl_no', 'stl_product_name', 'stl_description', 'stl_smv', 'stl_img_link', 'stl_status','bom_status' , 'costing_status']);
-	    	
+
 			if($style == null){
 				toastr()->error("Style Not Found!");
 				return back();
@@ -154,7 +154,7 @@ class CostingController extends Controller
 			$uom = collect($uom)->pluck('measurement_name','id');
 
 		    return view('merch.style_costing.index', compact('style', 'samples', 'operations', 'machines', 'getColor', 'itemCategory', 'uom', 'groupStyleBom', 'getArticle', 'getSupplier', 'getItem', 'specialOperation', 'otherCosting', 'getBuyer'));
-			
+
 		} catch (\Exception $e) {
 			$bug = $e->getMessage();
 		    toastr()->error($bug);
@@ -174,20 +174,20 @@ class CostingController extends Controller
     		for ($i=0; $i < sizeof($input['itemid']); $i++){
     			$itemId = $input['itemid'][$i];
             	if($itemId != null){
-            		$term = "C&F";
+/*            		$term = "C&F";
         			if($input['precost_fob'][$i] > 0 || $input['precost_lc'][$i] > 0 || $input['precost_freight'][$i] > 0){
         				$term = "FOB";
-        			}
+        			}*/
 
             		$bom = [
-            			'bom_term' => $term,
+            			'bom_term' =>$input['terms'][$i] ,
             			'precost_fob' => $input['precost_fob'][$i],
             			'precost_lc' => $input['precost_lc'][$i],
             			'precost_freight' => $input['precost_freight'][$i],
             			'precost_unit_price' => $input['precost_unit_price'][$i]
             		];
 
-                    $updateCosting[] = 
+                    $updateCosting[] =
                     [
                         'data' => $bom,
                         'keyval' => $input['bomitemid'][$i]
@@ -203,7 +203,7 @@ class CostingController extends Controller
                 ->whereKey('id')
                 ->bulkup($updateCosting);
             }
-            
+
             // mr_style_operation_n_cost - update
             if(isset($input['style_op_id'])){
                 $updateOpCost = [];
@@ -218,7 +218,7 @@ class CostingController extends Controller
 					// ->where("style_op_id", $request->style_op_id[$s])
 					// ->update($spItem);
 
-                    $updateOpCost[] = 
+                    $updateOpCost[] =
                     [
                         'data' => $spItem,
                         'keyval' => $request->style_op_id[$s]
@@ -235,7 +235,7 @@ class CostingController extends Controller
                     ->bulkup($updateOpCost);
                 }
             }
-            
+
 			// mr_stl_bom_other_costing - insert
 			$otherCosting = BomOtherCosting::updateOrCreate(
 				[

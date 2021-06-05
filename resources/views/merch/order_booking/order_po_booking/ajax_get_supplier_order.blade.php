@@ -3,6 +3,7 @@
 	$checkItem = [];
 @endphp
 @if(!empty($buyerOrderList->toArray()))
+{{--    {{dd($buyerOrderList)}}--}}
 	@foreach($buyerOrderList as $singleBuyer)
 		@php
 			if($supId != null) {
@@ -88,6 +89,10 @@
 							{!!'<span class="label label-info" style="background-color: #fff;">0</span><br>'!!}
 						@endif
 					@endforeach
+
+{{--                    @foreach($booking_qty as $qty)
+
+                    @endforeach--}}
 				</td>
 				<td>
 					@foreach($itemList as $i=>$item)

@@ -72,7 +72,7 @@
                                                     <th width="80" class="vertical-align">Extra (%)</th>
                                                     <th width="80" class="vertical-align">UOM</th>
 
-                                                    <th width="70" class="vertical-align">Terms</th>
+                                                    <th width="80" class="vertical-align">Terms</th>
                                                     <th width="80" class="vertical-align">FOB</th>
                                                     <th width="80" class="vertical-align">L/C</th>
                                                     <th width="80" class="vertical-align">Freight</th>
@@ -106,14 +106,47 @@
                                                       <td><p class="extra">{{ $itemBom->extra_percent }}</p></td>
                                                       <td> {{ $itemBom->uom }} </td>
                                                       <td>
-                                                        <div class="custom-control custom-radio custom-radio-color-checked custom-control-inline ">
-                                                          <input type="radio" id="FOB-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" name="terms-{{ $itemBom->mcat_id}}{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" class="custom-control-input bg-primary terms" value="FOB" @if($itemBom->bom_term == 'FOB') checked @endif >
-                                                          <label class="custom-control-label" for="FOB-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}"> FOB </label>
-                                                        </div>
-                                                        <div class="custom-control custom-radio custom-radio-color-checked custom-control-inline ">
-                                                          <input type="radio" id="CF-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" name="terms-{{ $itemBom->mcat_id}}{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" class="custom-control-input bg-primary terms" value="C&F" @if($itemBom->bom_term != 'FOB') checked @endif>
-                                                          <label class="custom-control-label" for="CF-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}"> C&F</label>
-                                                        </div>
+{{--                                                        <div class="custom-control custom-radio custom-radio-color-checked custom-control-inline ">--}}
+{{--                                                          <input type="radio" id="FOB-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" name="terms-{{ $itemBom->mcat_id}}{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" class="custom-control-input bg-primary terms" value="FOB" @if($itemBom->bom_term == 'FOB') checked @endif >--}}
+{{--                                                          <label class="custom-control-label" for="FOB-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}"> FOB </label>--}}
+{{--                                                        </div>--}}
+{{--                                                        <div class="custom-control custom-radio custom-radio-color-checked custom-control-inline ">--}}
+{{--                                                          <input type="radio" id="CF-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" name="terms-{{ $itemBom->mcat_id}}{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" class="custom-control-input bg-primary terms" value="C&F" @if($itemBom->bom_term != 'FOB') checked @endif>--}}
+{{--                                                          <label class="custom-control-label" for="CF-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}"> C&F</label>--}}
+{{--                                                        </div>--}}
+
+                                                          <select name="terms[]" id="terms"
+                                                                  class="form-control">
+                                                              <option
+                                                                  id="FOB-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}"
+                                                                  name="terms-{{ $itemBom->mcat_id}}{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}"
+                                                                  class="custom-control-input  terms"
+                                                                  style="color: black !important;"
+                                                                  value="FOB"
+                                                                  @if($itemBom->bom_term == 'FOB') selected @endif>
+                                                                  FOB
+                                                              </option>
+
+                                                              <option
+                                                                  id="CF-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}"
+                                                                  name="terms-{{ $itemBom->mcat_id}}{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}"
+                                                                  class="custom-control-input bg-primary terms"
+                                                                  style="color: black !important;"
+                                                                  value="C&F"
+                                                                  @if($itemBom->bom_term == 'C&F') selected @endif>
+                                                                  C&F
+                                                              </option>
+
+                                                              <option
+                                                                  id="EXW-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}"
+                                                                  name="terms-{{ $itemBom->mcat_id}}{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}"
+                                                                  class="custom-control-input bg-primary terms"
+                                                                  style="color: black !important;"
+                                                                  value="EXW"
+                                                                  @if($itemBom->bom_term == 'EXW') selected @endif>
+                                                                  EXW
+                                                              </option>
+                                                          </select>
                                                       </td>
                                                       <td>
                                                           <input type="text" step="any" min="0" name="precost_fob[]" id="fob-{{ $itemBom->mcat_id}}_{{ $itemBom->mr_cat_item_id }}{{ $itemBom->sl }}" class="form-control changesNo fob" autocomplete="off" data-catid="{{ $itemBom->mcat_id}}" onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" onClick="this.select()" value="{{ $itemBom->precost_fob??'0' }}" readonly>

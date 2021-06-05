@@ -35,7 +35,7 @@ class CostingController extends Controller
 			}
     		$orderId = $po->mr_order_entry_order_id;
 			$order = OrderEntry::orderInfoWithStyle($orderId);
-    		
+
 			if($order == null){
 				toastr()->error("Order Not Found!");
 				return back();
@@ -47,7 +47,7 @@ class CostingController extends Controller
 
 			$specialOperation = MrPoOperationNCost::getPoIdWiseOperationInfo($id, 2);
 			$otherCosting = MrPoBomOtherCosting::getOpIdWisePoOtherCosting($id);
-			
+
 			// order costing info
 			$orderCosting = OrderBOM::getOrderIdWiseOrderBOM($orderId);
 			$orderCosting = collect($orderCosting->toArray())->keyBy('id')->toArray();
@@ -70,7 +70,7 @@ class CostingController extends Controller
 			$uom = collect($uom)->pluck('measurement_name','id');
 
 		    return view('merch.po.costing', compact('po','order', 'samples', 'operations', 'machines', 'getColor', 'itemCategory', 'uom', 'groupBom', 'getArticle', 'getSupplier', 'getItem', 'specialOperation', 'otherCosting', 'getBuyer', 'getUnit', 'orderCosting', 'ordSPOperation', 'ordOthCosting'));
-			
+
 		} catch (\Exception $e) {
 			$bug = $e->getMessage();
 		    toastr()->error($bug);
@@ -90,19 +90,19 @@ class CostingController extends Controller
     		for ($i=0; $i < sizeof($input['itemid']); $i++){
     			$itemId = $input['itemid'][$i];
             	if($itemId != null){
-            		$term = "C&F";
+/*            		$term = "C&F";
         			if($input['precost_fob'][$i] > 0 || $input['precost_lc'][$i] > 0 || $input['precost_freight'][$i] > 0){
         				$term = "FOB";
-        			}
+        			}*/
 
             		$bom = [
-            			'bom_term' => $term,
+            			'bom_term' => $input['terms'][$i],
             			'precost_fob' => $input['precost_fob'][$i],
             			'precost_lc' => $input['precost_lc'][$i],
             			'precost_freight' => $input['precost_freight'][$i],
             			'precost_unit_price' => $input['precost_unit_price'][$i]
             		];
-            		$updateCosting[] = 
+            		$updateCosting[] =
                     [
                         'data' => $bom,
                         'keyval' => $input['bomitemid'][$i]
@@ -117,12 +117,12 @@ class CostingController extends Controller
                 ->whereKey('id')
                 ->bulkup($updateCosting);
             }
-            
+
             // mr_po_operation_n_cost - update
             if(isset($input['op_id'])){
             	$updateOpCost = [];
             	for ($s=0; $s < sizeof($input['op_id']); $s++) {
-					
+
 					// MrPoOperationNCost::updateOrCreate(
 					// [
 					// 	"id"                      => $request->op_id[$s],
@@ -140,7 +140,7 @@ class CostingController extends Controller
 						"uom"        => $request->spuom[$s],
 						"unit_price" => $request->spunitprice[$s]
 					];
-					$updateOpCost[] = 
+					$updateOpCost[] =
                     [
                         'data' => $spItem,
                         'keyval' => $request->op_id[$s]
@@ -157,7 +157,7 @@ class CostingController extends Controller
                     ->bulkup($updateOpCost);
                 }
             }
-            
+
 			// mr_po_bom_other_costing - insert or Update
 			MrPoBomOtherCosting::updateOrCreate(
 			[
