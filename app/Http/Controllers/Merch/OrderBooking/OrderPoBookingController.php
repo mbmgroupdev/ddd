@@ -198,6 +198,8 @@ class OrderPoBookingController extends Controller
 
 	public function store(Request $request)
 	{
+//	    dd($request->all());
+
 		try {
 			$costingBookingIdList = $request->mr_order_bom_costing_booking_id;
 			$orderIdOrderWise = $request->order_id;
@@ -219,7 +221,7 @@ class OrderPoBookingController extends Controller
 			$poTableDetailS = [];
 			$poTableDetailCS = [];
 			$poTableDetailN = [];
-			if($costingBookingIdList != null) {
+			if(count($costingBookingIdList) > 0) {
 				foreach($supplierList as $supplier_id) {
 					$poBookingTable = PoBooking::get();
 										// insert first time
@@ -238,8 +240,9 @@ class OrderPoBookingController extends Controller
 
 										// loop one
 					foreach($costingBookingIdList  as $costingBookingIdK=>$costingBookingId) {
+
 												// loop two
-						foreach($orderPoIdList[$costingBookingId] as $orderIdK=>$orderList) {
+						foreach($orderPoIdList[$costingBookingIdK] as $orderIdK=>$orderList) {
 														// loop three
 							foreach($orderIdList[$orderIdK][$supplier_id] as $poIdK=>$cosBookingIdList) {
 																// loop four
@@ -1596,6 +1599,8 @@ class OrderPoBookingController extends Controller
 
 	public function getPoOrderItem(Request $request)
 	{
+
+
 		try {
 			return $this->getPoOrderItemGlobal($request->order_id, $request->supplier_id, 'insert');
 
@@ -1643,12 +1648,12 @@ class OrderPoBookingController extends Controller
 			->where('mr_order_entry.order_id',$orderId)
 			->first();
 
-		$poList = DB::table('mr_purchase_order')
-		->select('po_id','mr_order_entry_order_id','po_no','po_qty')
-		->where('mr_order_entry_order_id',$orderId)->get();
-
+		$poList = DB::table('mr_po_bom_costing_booking AS l')
+		->select('l.po_id','l.order_id as mr_order_entry_order_id','p.po_no','p.po_qty')
+            ->join('mr_purchase_order AS p', 'l.po_id', 'p.po_id')
+		->where('l.order_id',$orderId)->get();
 		$boms = $this->poBomRepository->bomInfo($orderId, $supplierId);
-
+//        dd($boms);
 
 
 
@@ -1768,7 +1773,6 @@ class OrderPoBookingController extends Controller
 				}
 			}
 		}
-
 
 
 		$filter = array();
