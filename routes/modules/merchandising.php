@@ -523,12 +523,19 @@ Route::get('merch/order_profile','Merch\OrderProfile\ProfileController@index');
 // Route::get('merch/orders/order_profile_pdf/{id}','Merch\OrderProfile\ProfileController@orderProfilePdf');
 
 /*-------------------order color and size breakdown-------------*/
-Route::get('merch/order_breakdown','Merch\OrderBreakdown\OrderBreakDownController@index');
-Route::get('merch/getOrder','Merch\OrderBreakdown\OrderBreakDownController@orderData');
-Route::get('merch/order_breakdown/show/{id}','Merch\OrderBreakdown\OrderBreakDownController@show');
-Route::post('merch/order_breakdown_store','Merch\OrderBreakdown\OrderBreakDownController@store');
-Route::get('merch/order_breakdown_edit/{id}','Merch\OrderBreakdown\OrderBreakDownController@edit');
-Route::post('merch/order_breakdown_update','Merch\OrderBreakdown\OrderBreakDownController@update');
+// Route::get('merch/order_breakdown','Merch\OrderBreakdown\OrderBreakDownController@index');
+// Route::get('merch/getOrder','Merch\OrderBreakdown\OrderBreakDownController@orderData');
+// Route::get('merch/order_breakdown/show/{id}','Merch\OrderBreakdown\OrderBreakDownController@show');
+// Route::post('merch/order_breakdown_store','Merch\OrderBreakdown\OrderBreakDownController@store');
+// Route::get('merch/order_breakdown_edit/{id}','Merch\OrderBreakdown\OrderBreakDownController@edit');
+// Route::post('merch/order_breakdown_update','Merch\OrderBreakdown\OrderBreakDownController@update');
+
+Route::get('merch/order_breakdown','Merch\OrderBreakdown\OrderBreakDownControllerNew@index');
+Route::get('merch/getOrder','Merch\OrderBreakdown\OrderBreakDownControllerNew@orderData');
+Route::get('merch/order_breakdown/show/{id}','Merch\OrderBreakdown\OrderBreakDownControllerNew@show');
+Route::post('merch/order_breakdown_store','Merch\OrderBreakdown\OrderBreakDownControllerNew@store');
+Route::get('merch/order_breakdown_edit/{id}','Merch\OrderBreakdown\OrderBreakDownControllerNew@edit');
+Route::post('merch/order_breakdown_update','Merch\OrderBreakdown\OrderBreakDownControllerNew@update');
 
 Route::get('merch/order_booking_edit/{id}','Merch\OrderBooking\OrderBookingController@edit');
 Route::post('merch/order_booking_update','Merch\OrderBooking\OrderBookingController@update');
