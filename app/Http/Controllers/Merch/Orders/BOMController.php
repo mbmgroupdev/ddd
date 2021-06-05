@@ -63,7 +63,7 @@ class BOMController extends Controller
 									->whereIn('mr_excecutive_team_id',$teamid)
 									->leftJoin('hr_as_basic_info as b','mr_excecutive_team_members.member_id','b.as_id')
 									->pluck('associate_id');
-																		 
+
 			$team = array_merge($team_members_associateId->toArray(),$team_lead->toArray());
 		}else{
 		 	$team =[];
@@ -165,7 +165,7 @@ class BOMController extends Controller
 	            	->get()
 	            	->groupBy('mcat_id',true)
 	            	->toArray();
-	            	
+
 	            	$getItemSupplier = array_column($getBom->toArray(), 'mr_supplier_sup_id');
 	            	$getItemSup = array_unique($getItemSupplier);
 	            	// get Article
@@ -176,7 +176,7 @@ class BOMController extends Controller
 	            	->groupBy('mr_supplier_sup_id',true)
 	            	->toArray();
 
-	            	// item 
+	            	// item
 	            	$itemsId = array_column($getBom->toArray(), 'mr_cat_item_id');
 	            	$getItems = DB::table('mr_cat_item AS i')
 		            ->select('i.id','i.item_name','i.item_code', 'i.dependent_on')
@@ -187,7 +187,7 @@ class BOMController extends Controller
 
 	            	$uomData = DB::table('uom');
             		$uomData_sql = $uomData->toSql();
-	            	
+
 	            	$getItemUom = DB::table('mr_cat_item_uom AS iu')
 	            	->select('u.id AS id', 'u.measurement_name AS text','iu.mr_cat_item_id')
 	            	->whereIn('iu.mr_cat_item_id', $itemsId)
@@ -207,7 +207,7 @@ class BOMController extends Controller
 	            		}
 	            	}
 				}
-				
+
 			    $samples = SampleStyle::getStyleIdWiseSampleName($order->mr_style_stl_id);
 			    $operations = OperationCost::getStyleIdWiseOperationCostName($order->mr_style_stl_id);
 			    $machines = StyleSpecialMachine::getStyleIdWiseSpMachineName($order->mr_style_stl_id);
@@ -241,7 +241,7 @@ class BOMController extends Controller
 	    	$getBomId = collect($getItemBom->toArray())->pluck('id')->toArray();
 	    	$itemDiff = array_diff($getBomId, $oldItem);
 	    	// return $itemDiff;
-	    	for ($d=0; $d < count($itemDiff); $d++) { 
+	    	for ($d=0; $d < count($itemDiff); $d++) {
 	    		OrderBOM::whereIn('id', $itemDiff)->delete();
 	    	}
 
@@ -262,14 +262,15 @@ class BOMController extends Controller
             			'uom' => $input['uomname'][$i],
             			'consumption' => $input['consumption'][$i],
             			'extra_percent' => $input['extraper'][$i],
+                        'precost_req_qty' => ($input['consumption'][$i]+(($input['consumption'][$i]*$input['extraper'][$i])/100))*$request->order_qty,
             			'order_id' => $input['order_id'],
             			'depends_on' => $input['depends_on'][$i],
             			'sl' => $sl,
             			'stl_bom_id' => $input['stl_bom_id'][$i],
             		];
-            		if($input['bomitemid'][$i] != null && $itemBomCount > 0){ 
+            		if($input['bomitemid'][$i] != null && $itemBomCount > 0){
             			// update
-            			$updateBOM[] = 
+            			$updateBOM[] =
 					    [
 							'data' => $bom,
 							'keyval' => $input['bomitemid'][$i]
@@ -280,10 +281,10 @@ class BOMController extends Controller
             			$bomId = OrderBOM::create($bom)->id;
             			$data['value'][$i] = $bomId;
             		}
-            		
+
             		$sl++;
             	}
-	
+
             }
 
             // update mr_order_bom_costing_booking

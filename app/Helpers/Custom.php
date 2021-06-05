@@ -399,11 +399,13 @@ class Custom
         foreach($cosBookingList as $key=>$cosBooking) {
             //return $cosBooking;
             $mr_order_bom_costing = OrderBomCostingBooking::where(['id' => $cosBooking->cosId])->first();
-            $reqQty = $mr_order_bom_costing->precost_req_qty;
-            //$mr_booking_qty = PoBookingDetail::where(['mr_po_booking_id' => $cosBooking->cosId])->groupBy('mr_po_booking_id')->first();
+            $precost_reqQty = $mr_order_bom_costing->precost_req_qty;
+            $mr_booking_qty = PoBookingDetail::where(['mr_order_bom_costing_booking_id' => $cosBooking->cosId])->first();
             //return $mr_booking_qty;
-            //$booking_qty = $mr_booking_qty->booking_qty;
-            $booking_qty = 0;
+            $booking_qty = $mr_booking_qty->booking_qty??0;
+            $reqQty = $mr_booking_qty->req_qty??$precost_reqQty;
+
+            //$booking_qty = 0;
            // $reqQty = 13;
             $result[] = $cosBooking->sup_name.' ('.$cosBooking->item_name.')'.'~'.$booking_qty.'|'.$reqQty.'|0.00%';
         }
