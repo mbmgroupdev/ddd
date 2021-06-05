@@ -52,7 +52,7 @@
 
                                         <input type="hidden" name="mr_order_entry_order_id[{{ $bom->order_id }}][{{$bom->sup_id}}][{{ $poSingle->po_id }}][{{ $bom->id }}]" value="{{ $bom->depends_on }}">
                                         <input type="hidden" name="mr_purchase_order_po_id[{{ $bom->id }}][{{ $bom->order_id }}][{{$bom->sup_id}}][{{ $poSingle->po_id }}]" value="{{ $poSingle->po_id }}">
-                                        <input type="hidden" name="mr_order_bom_costing_booking_id[{{ $bom->id }}]" value="{{ $bom->id }}">
+                                        <input type="hidden" name="mr_order_bom_costing_booking_id[{{ $bom->ord_bom_id }}]" value="{{ $bom->ord_bom_id }}">
                                         <input type="hidden" name="mr_supplier[{{ $bom->sup_id }}]" value="{{ $bom->sup_id }}">
 
                                         <!--COlor input field-->
@@ -150,7 +150,7 @@
 
                                     <input type="hidden" name="mr_order_entry_order_id[{{ $bom->order_id }}][{{$bom->sup_id}}][{{ $poSingle->po_id }}][{{ $bom->id }}]" value="{{ $bom->depends_on }}">
                                     <input type="hidden" name="mr_purchase_order_po_id[{{ $bom->id }}][{{ $bom->order_id }}][{{$bom->sup_id}}][{{ $poSingle->po_id }}]" value="{{ $poSingle->po_id }}">
-                                    <input type="hidden" name="mr_order_bom_costing_booking_id[{{ $bom->id }}]" value="{{ $bom->id }}">
+                                    <input type="hidden" name="mr_order_bom_costing_booking_id[{{ $bom->ord_bom_id }}]" value="{{ $bom->ord_bom_id }}">
                                     <input type="hidden" name="mr_supplier[{{ $bom->sup_id }}]" value="{{ $bom->sup_id }}">
 
                                     <!--COlor input field-->
@@ -252,7 +252,7 @@
 
                                         <input type="hidden" name="mr_order_entry_order_id[{{ $bom->order_id }}][{{$bom->sup_id}}][{{ $poSingle->po_id }}][{{ $bom->id }}]" value="{{ $bom->depends_on }}">
                                         <input type="hidden" name="mr_purchase_order_po_id[{{ $bom->id }}][{{ $bom->order_id }}][{{$bom->sup_id}}][{{ $poSingle->po_id }}]" value="{{ $poSingle->po_id }}">
-                                        <input type="hidden" name="mr_order_bom_costing_booking_id[{{ $bom->id }}]" value="{{ $bom->id }}">
+                                        <input type="hidden" name="mr_order_bom_costing_booking_id[{{ $bom->ord_bom_id }}]" value="{{ $bom->ord_bom_id }}">
 
                                         <input type="hidden" value="{{ $color->clr_id }}" name="mr_material_color_clr_id[{{ $bom->id }}][{{ $bom->order_id }}][{{$bom->sup_id}}][{{ $poSingle->po_id }}][{{$color->clr_id}}]" class="color_rm_class {{ $bom->id.$bom->order_id.$poSingle->po_id.$color->clr_id }}">
                                         <input type="hidden" name="mr_supplier[{{ $bom->sup_id }}]" value="{{ $bom->sup_id }}">
@@ -373,7 +373,7 @@
 
                                 <input type="hidden" name="mr_order_entry_order_id[{{ $bom->order_id }}][{{$bom->sup_id}}][{{ $poSingle->po_id }}][{{ $bom->id }}]" value="{{ $bom->depends_on }}">
                                 <input type="hidden" name="mr_purchase_order_po_id[{{ $bom->id }}][{{ $bom->order_id }}][{{$bom->sup_id}}][{{ $poSingle->po_id }}]" value="{{ $poSingle->po_id }}">
-                                <input type="hidden" name="mr_order_bom_costing_booking_id[{{ $bom->id }}]" value="{{ $bom->id }}">
+                                <input type="hidden" name="mr_order_bom_costing_booking_id[{{ $bom->ord_bom_id }}]" value="{{ $bom->ord_bom_id }}">
                                 <input type="hidden" name="mr_supplier[{{ $bom->sup_id }}]" value="{{ $bom->sup_id }}">
 
                                 <!--COlor input field-->
