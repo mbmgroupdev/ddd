@@ -5,6 +5,7 @@
     padding: 4px !important;
 }
 </style>
+    // comments
 @endpush
 @section('content')
 <div class="main-content">
@@ -15,7 +16,7 @@
                     <i class="ace-icon fa fa-home home-icon"></i>
                     <a href="#">Merchandising</a>
                 </li>
-                
+
                 <li class="active">Sales Contract Amendment</li>
             </ul><!-- /.breadcrumb -->
         </div>
@@ -26,7 +27,7 @@
             </div> --}}
 
              @include('inc/message')
-             
+
             <div class="text-right">
                 <div class="col-sm-12">
                     <a href="{{ url('commercial/export/sales_contract/sales_contract_list') }}" class="btn btn-primary btn-xs" >Contract List </a>
@@ -37,7 +38,7 @@
               {{ csrf_field() }}
               <input type="hidden" name="sales_contract_id" id="sales_contract_id"  value="{{$amend->cm_sales_contract_id}}">
                  <div class="row">
-                           
+
 
                               <div class="col-md-4 ">
 
@@ -451,7 +452,7 @@
         var contract_value= $("#contract_value").val();
         checkQuantity(contract_qty,sum_qty);
         checkValue(contract_value,sum_value);
-        
+
     });
 
 
