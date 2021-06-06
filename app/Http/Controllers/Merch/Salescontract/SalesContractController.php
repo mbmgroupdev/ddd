@@ -217,6 +217,7 @@ class SalesContractController extends Controller
             					->orderBy('po_ex_fty', "DESC")
             					->pluck('po_ex_fty')
             					->first();
+								
 
                 $list.='<tr>
                           <td>
