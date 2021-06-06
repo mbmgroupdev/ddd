@@ -109,7 +109,7 @@ class OrderBreakDownController extends Controller
                                   </a>
                                   ";
                 }else{
-                    $return .= "<a href=".url('merch/order_breakdown/show/'.$orders->order_id)." class=\"btn btn-xs btn-warning\" data-toggle=\"tooltip\" title=\"Edit\">
+                    $return .= "<a href=".url('merch/order_breakdown/show/'.$orders->order_id)." class=\"btn btn-xs btn-warning\" data-toggle=\"tooltip\" title=\"Show\">
                                  <i class=\"ace-icon fa fa-plus \"></i>
                                   </a>
                                   ";
@@ -126,13 +126,14 @@ class OrderBreakDownController extends Controller
 
     public function show($id)
     {
+//        dd($id);
       try {
       	$order = DB::table('mr_order_entry')
       	          ->join('hr_unit','mr_order_entry.unit_id','=','hr_unit.hr_unit_id')
       	          ->join('mr_buyer','mr_order_entry.mr_buyer_b_id','=','mr_buyer.b_id')
-      	          ->join('mr_brand','mr_order_entry.mr_brand_br_id','mr_brand.br_id')
       	          ->join('mr_season','mr_order_entry.mr_season_se_id','=','mr_season.se_id')
       	          ->join('mr_style','mr_order_entry.mr_style_stl_id','=','mr_style.stl_id')
+      	          ->join('mr_brand','mr_style.mr_brand_br_id','mr_brand.br_id')
       	          ->where('mr_order_entry.order_id',$id)
       	          ->first();
 

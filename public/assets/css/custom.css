@@ -44,7 +44,7 @@ p.search-title{
     color: #099faf;
 }
 .wrapper {
-    background: #027581; 
+    background: #027581;
     background: -moz-linear-gradient(left, rgba(8, 155, 171, 1) 0%, #027581 100%);
     background: -webkit-gradient(left top, right top, color-stop(0%, rgba(8, 155, 171, 1)), color-stop(100%, #027581));
     background: -webkit-linear-gradient(left, rgba(8, 155, 171, 1) 0%, #027581 100%);
@@ -118,7 +118,7 @@ p.search-title{
 }
 
 .accordion-toggle.collapsed span.header-title::before {
-    
+
     transition: all ease 500ms;
     transform: rotate(0);
 }
@@ -271,7 +271,7 @@ div.dataTables_wrapper, div.dataTables_processing {
     left: 1px;
     width: 3.5rem;
 }
-.custom-switch-22.custom-switch-icon .custom-control-label::before, 
+.custom-switch-22.custom-switch-icon .custom-control-label::before,
 .custom-switch-22.custom-switch-text .custom-control-label::before {
     height: 22px;
     top: -1px;
@@ -327,8 +327,8 @@ li{
     color: #9a9a9a !important;
 }
 .has-float-label.has-required label:before {
-    content:"*"; 
-    color:red; 
+    content:"*";
+    color:red;
 }
 .profile-user-info{
     display: table;
@@ -365,8 +365,8 @@ li{
 }
 
 .form-group.required label:after {
-    content:"*"; 
-    color:red; 
+    content:"*";
+    color:red;
 }
 .has-float-label .form-control:placeholder-shown:not(:focus)+* {
     top: .9em;
@@ -473,7 +473,7 @@ li{
 #searchContent .breadcrumbs .breadcrumb{
     padding:0;
     margin-bottom: 0;
-    padding-top:10px; 
+    padding-top:10px;
 }
 .breadcrumb>li, .breadcrumb>li.active {
     padding: 0 3px;
@@ -502,8 +502,8 @@ table th input{
     border-bottom: 1px solid rgb(195 225 228);
     border-top-right-radius: 3px;
     border-top-left-radius: 3px;
-    position:relative; 
-    
+    position:relative;
+
 }
 .panel-heading h6 .pull-right {
     margin-top: -4px;
@@ -527,7 +527,7 @@ table th input{
     padding: 30px;
 }
 .benefit-employee .user-details-block .user-profile {
-    margin-top: 10px; 
+    margin-top: 10px;
 }
 .empty-form-group{
     margin: 5rem;
@@ -653,7 +653,7 @@ input[type="date" i] {
     color:red;
 }
 
-.was-validated .form-control:invalid + .select2-container--default .select2-selection--single, 
+.was-validated .form-control:invalid + .select2-container--default .select2-selection--single,
 .form-control.is-invalid + .select2-container--default .select2-selection--single{
     border-color: #e3342f !important;
 }
@@ -1032,7 +1032,7 @@ main{
     display: flex;
 }
 .icon-card .iq-card-body {
-     padding: 5px; 
+     padding: 5px;
 }
 .table-row:hover{
     -webkit-box-shadow: inset 1px 0 0 #dadce0, inset -1px 0 0 #dadce0, 0 1px 2px 0 rgb(60 64 67 / 30%), 0 1px 3px 1px rgb(60 64 67 / 15%);
@@ -1156,7 +1156,7 @@ div.dataTables_wrapper div.dataTables_processing {
 }
 .animationLoading {
     background: #fff;
-    
+
     border-radius: 3px;
     display: block;
     height: 324px;
@@ -1340,3 +1340,92 @@ input[type="checkbox"] {
     z-index: 4;
     border-radius: 5px;
 }
+
+
+/* ---------------------------------------------------
+Bootstrap DatePicker (Start) - Version 1.9.0
+---------------------------------------------------- */
+
+.datepicker {
+    border-radius: 0;
+    padding: 0 !important;
+}
+.datepicker-days table thead, .datepicker-days table tbody, .datepicker-days table tfoot {
+    padding: 10px;
+    display: list-item;
+}
+.datepicker-days table thead, .datepicker-months table thead, .datepicker-years table thead, .datepicker-decades table thead, .datepicker-centuries table thead {
+    background: #089eaf;
+    color: #ffffff;
+    border-radius: 0;
+}
+.datepicker-days table thead tr:nth-child(2n+0) td, .datepicker-days table thead tr:nth-child(2n+0) th {
+    border-radius: 3px;
+}
+.datepicker-days table thead tr:nth-child(3n+0) {
+    text-transform: uppercase;
+    font-weight: 300 !important;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+}
+.table-condensed > tbody > tr > td, .table-condensed > tbody > tr > th, .table-condensed > tfoot > tr > td, .table-condensed > tfoot > tr > th, .table-condensed > thead > tr > td, .table-condensed > thead > tr > th {
+    padding: 11px 13px;
+}
+.datepicker-months table thead td, .datepicker-months table thead th, .datepicker-years table thead td, .datepicker-years table thead th, .datepicker-decades table thead td, .datepicker-decades table thead th, .datepicker-centuries table thead td, .datepicker-centuries table thead th {
+    border-radius: 0;
+}
+.datepicker td, .datepicker th {
+    border-radius: 50% !important;
+    padding: 0 12px;
+}
+.datepicker-days table thead, .datepicker-months table thead, .datepicker-years table thead, .datepicker-decades table thead, .datepicker-centuries table thead {
+    background: #089eaf;
+    color: #ffffff;
+    border-radius: 0;
+}
+.datepicker table tr td.active, .datepicker table tr td.active:hover, .datepicker table tr td.active.disabled, .datepicker table tr td.active.disabled:hover {
+    background-image: none;
+}
+.datepicker .prev, .datepicker .next {
+    color: rgba(255, 255, 255, 0.5);
+    transition: 0.3s;
+    width: 37px;
+    height: 37px;
+}
+.datepicker .prev:hover, .datepicker .next:hover {
+    background: transparent !important;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 21px;
+}
+.datepicker .datepicker-switch {
+    font-size: 24px;
+    font-weight: 400;
+    transition: 0.3s;
+}
+.datepicker .datepicker-switch:hover {
+    color: rgba(255, 255, 255, 0.7);
+    background: transparent !important;
+}
+.datepicker table tr td span {
+    border-radius: 2px;
+    margin: 3%;
+    width: 27%;
+}
+.datepicker table tr td span.active, .datepicker table tr td span.active:hover, .datepicker table tr td span.active.disabled, .datepicker table tr td span.active.disabled:hover {
+    background-color: #089eaf;
+    background-image: none;
+}
+.datepicker td.active.day {
+    background: #089eaf !important;
+}
+.dropdown-menu {
+    border: 1px solid rgba(0,0,0,.1);
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+}
+.datepicker-dropdown.datepicker-orient-top:before {
+    border-top: 7px solid rgba(0,0,0,.1);
+}
+
+/* ---------------------------------------------------
+Bootstrap DatePicker (End)
+---------------------------------------------------- */

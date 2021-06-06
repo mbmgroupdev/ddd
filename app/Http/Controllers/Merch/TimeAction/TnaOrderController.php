@@ -205,7 +205,7 @@ class TnaOrderController extends Controller
 
 
                  // List return
-                  $list= "<h5 class=\"page-header\">Time & Action</h5>
+                  $list= " <span style='color: green; margin-bottom: 10px'>Time & Action</span>
 
                                 <table class=\"table responsive \" style=\"width:100%;border:1px solid #ccc;font-size:12px;\"  cellpadding=\"2\" cellspacing=\"0\" border=\"1\" align=\"center\">
                                           <thead>

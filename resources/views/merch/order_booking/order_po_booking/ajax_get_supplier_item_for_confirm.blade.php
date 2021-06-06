@@ -10,7 +10,7 @@
                 $ptotal = ($bom->consumption * $bom->extra_percent)/100;
                 $total  = $ptotal + $bom->consumption;
             @endphp
-            @if($bom->po_pos_cid != null)
+            @if($bom->po_po_id != null)
                 @php
                     $color_ids = [];
                     $color_ids = array_keys($poSizeQtyListC[$bom->po_no]);
@@ -18,14 +18,14 @@
             @endif
             {{-- color dependancy --}}
             @if($bom->depends_on == 1)
-                @foreach($colors as $color) 
+                @foreach($colors as $color)
                     {{-- 0 check --}}
-                    @if($bom->po_pos_cid != null)
+                    @if($bom->po_po_id != null)
                         @if(in_array($color->clr_id, $color_ids))
                             @php
                                 $posSubTotalQty = 0;
-                                if(isset($poColorQtyList[$bom->po_pos_cid])){
-                                    foreach($poColorQtyList[$bom->po_pos_cid] as $poSizeQtyListSingle) {
+                                if(isset($poColorQtyList[$bom->po_po_id])){
+                                    foreach($poColorQtyList[$bom->po_po_id] as $poSizeQtyListSingle) {
                                         $posSubTotalQty += array_sum($poSizeQtyListSingleS);
                                     }
                                 }
@@ -89,7 +89,7 @@
 
                             <!--COlor input field-->
                             <td style="color: {{$color->clr_name}}; font-weight: bold;">
-                                @if($bom->po_pos_cid != null)
+                                @if($bom->po_po_id != null)
                                     @if(in_array($color->clr_id, $color_ids))
                                         {{ $color->clr_name }}
                                         <input type="hidden" value="{{ $color->clr_id }}" name="mr_material_color_clr_id[{{ $bom->id }}][{{ $bom->order_id }}][{{ $bom->item_id }}][{{$color->clr_id}}]"  class="{{$id}}">
@@ -154,9 +154,9 @@
                                     }
                                     if(empty($posSubTotalQty) && $posSubTotalQtyDataZero==1) {
                                         $posSubTotalQty = 0;
-                                        if($bom->po_pos_cid != null) {
-                                            if(isset($poColorQtyList[$bom->po_pos_cid])){
-                                                foreach($poColorQtyList[$bom->po_pos_cid] as $poSizeQtyListSingle) {
+                                        if($bom->po_po_id != null) {
+                                            if(isset($poColorQtyList[$bom->po_po_id])){
+                                                foreach($poColorQtyList[$bom->po_po_id] as $poSizeQtyListSingle) {
                                                     $posSubTotalQty += array_sum($poSizeQtyListSingleS);
                                                 }
                                             }
@@ -179,7 +179,7 @@
 
                             <!--total value input field-->
                             <td class="text-custom-style">
-                                
+
                                 <input type="number" value="{{ $posSubTotalQty*$bom->precost_unit_price}}" id="tvalue_{{$id}}" name="value[{{ $bom->id }}][{{ $bom->order_id }}][{{ $bom->item_id }}][{{$color->clr_id}}]" class="tvalueC {{$id}}" readonly="readonly"/>
                             </td>
                         </tr>
@@ -342,7 +342,7 @@
 
                             {{-- total qty section --}}
                             <td class="text-custom-style">
-                                
+
                                 <input type="number" value="{{$poSizeQty*$bom->precost_unit_price}}" name="value[{{ $bom->id }}][{{ $bom->order_id }}][{{ $bom->item_id }}][{{$size->id}}]" class="form-control global-qty {{ $bom->po_no!=null?'inputBgLightGolder':'inputBgLight' }} tvalueC {{$id}}" id="tvalue_{{$id}}" size="1" readonly="readonly">
                             </td>
                         </tr>
@@ -352,7 +352,7 @@
             @elseif($bom->depends_on == 3)
                 @foreach($care_label as $color)
                     {{-- 0 check --}}
-                    @if($bom->po_pos_cid != null)
+                    @if($bom->po_po_id != null)
                         @if(in_array($color->clr_id, $color_ids))
                             @php
                                 $posSubTotalQtyCS = 0;
@@ -424,7 +424,7 @@
                             <input type="hidden" name="mr_cat_item_mcat_id[{{ $bom->id }}][{{ $bom->order_id }}][{{$bom->item_id}}]" value="{{ $bom->mcat_id }}">
 
                             {{-- COlor input field --}}
-                            @if($bom->po_pos_cid != null)
+                            @if($bom->po_po_id != null)
                                 @if(in_array($color->clr_id, $color_ids))
                                     <input type="hidden" value="{{ $color->clr_id }}" name="mr_material_color_clr_id[{{ $bom->id }}][{{ $bom->order_id }}][{{ $bom->item_id }}][{{$color->clr_id}}]" id="{{$id}}">
                                 @endif
@@ -437,7 +437,7 @@
 
                             {{-- size input field --}}
                             <td>
-                                @if($bom->po_pos_cid != null)
+                                @if($bom->po_po_id != null)
                                     @if(in_array($color->clr_id, $color_ids))
                                         {{ $color->mr_product_pallete_name }}
                                         <input type="hidden" value="{{ $color->mr_product_pallete_name }}" name="size[{{ $bom->id }}][{{ $bom->order_id }}][{{ $bom->item_id }}][{{$color->clr_id}}][{{$color->product_size_id}}]" class="{{$id}}">
@@ -499,7 +499,7 @@
                                     }
                                     if(empty($posSubTotalQtyCS) && $posSubTotalQtyCSDataZero==1) {
                                         $posSubTotalQtyCS = 0;
-                                        if($bom->po_pos_cid != null) {
+                                        if($bom->po_po_id != null) {
                                             if(isset($poSizeQtyListC[$bom->po_no][$color->clr_id])){
                                                 foreach($poSizeQtyListC[$bom->po_no][$color->clr_id] as $clrId=>$pos_value) {
                                                     foreach($pos_value as $sizId=>$pos_clr_value) {
@@ -528,7 +528,7 @@
 
                             <!--total value input field-->
                             <td>
-                                
+
                                 <input type="number" value="{{$posSubTotalQtyCS*$bom->precost_unit_price}}" name="value[{{ $bom->id }}][{{ $bom->order_id }}][{{ $bom->item_id }}][{{$color->clr_id}}][{{$color->product_size_id}}]" id="tvalue_{{$id}}" class="{{$id}} form-control global-qty {{ $bom->po_no!=null?'inputBgLightGolder':'inputBgLight' }} tvalueC" size="1" readonly="readonly">
                             </td>
                         </tr>
@@ -689,7 +689,7 @@
 
                         <!--total value input field-->
                         <td>
-                           
+
                             <input type="number" data-qty="{{$noDependTotalQty*$bom->precost_unit_price}}" value="{{$noDependTotalQty}}" id="tvalue_{{$id}}" name="value[{{ $bom->id }}][{{ $bom->order_id }}][{{ $bom->item_id }}][]" class="form-control tvalueC {{$id}}" readonly="readonly" />
                         </td>
                     </tr>

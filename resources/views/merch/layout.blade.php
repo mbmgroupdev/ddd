@@ -10,7 +10,7 @@
     <title>@yield('title') - MBM ERP</title>
     <!-- Favicon -->
     <link rel="shortcut icon" href="{{ asset('images/mbm.ico')}} " />
-    
+
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet" media='screen,print'>
@@ -22,16 +22,17 @@
     <link rel="stylesheet" href="{{ asset('assets/css/merchandising-custom.css') }}" media='screen,print'>
     <!-- Responsive CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/responsive.css') }}" media='screen,print'>
+    <link rel="stylesheet" href="{{asset('assets/css/bootstrap-datepicker-1-9-0.min.css')}}" media="screen, print">
     <script src="{{ asset('js/app.js') }}"></script>
     <script>
         var count = 0;
-        var refreshIntervalId =setInterval(function(){ 
+        var refreshIntervalId =setInterval(function(){
             count++;
             jQuery(document).ready(function() {
                 clearInterval(refreshIntervalId);
                 jQuery("#load").fadeOut();
                 jQuery("#loading").fadeOut("");
-                
+
             });
             if( count == 5){
                 clearInterval(refreshIntervalId);
@@ -41,7 +42,7 @@
         }, 300);
 
 
-        
+
     </script>
 </head>
 <body class="@if(request()->segment(3) =='bom' || request()->segment(3) =='costing' || request()->segment(2) =='po-costing' || request()->segment(2) =='po-bom') sidebar-main-menu @endif">
@@ -147,7 +148,7 @@
                                               </div>
                                            </div>
                                         </a>
-                                        
+
                                         <a href="{{url('user/change-password')}}" class="iq-sub-card iq-bg-primary-hover">
                                            <div class="media align-items-center">
                                               <div class="rounded iq-card-icon iq-bg-primary">
@@ -160,7 +161,7 @@
                                            </div>
                                         </a>
                                         <div class="d-inline-block w-100 text-center p-3">
-                                           
+
                                            <a class="bg-primary iq-sign-btn" role="button" href="{{ route('logout') }}"
                                               onclick="event.preventDefault();
                                               document.getElementById('logout-form').submit();">
@@ -206,7 +207,7 @@
             <div class="app-loader">
                 <i class="fa fa-spinner fa-spin"></i>
             </div>
-            
+
 
         </div>
     </div>
@@ -256,7 +257,8 @@
       });
     </script>
     <script src="{{ asset('assets/js/custom.js') }}"></script>
+    <script src="{{ asset('assets/js/bootstrap-datepicker-1-9-0.min.js') }}"></script>
     <script src="{{ asset('js/custom.js') }}"></script>
-    
+
 </body>
 </html>

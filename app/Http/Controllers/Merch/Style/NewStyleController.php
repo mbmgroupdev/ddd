@@ -346,7 +346,7 @@ class NewStyleController extends Controller
       "stl_smv"          => "required|max:20",
       "stl_no"           => "required|max:30|unique:mr_style,stl_no,stl_type,mr_buyer_b_id,prd_type_id,mr_season_se_id"
     ]);
-    
+
     if ($validator->fails()) {
       $failedRules = $validator->failed();
 
@@ -358,7 +358,7 @@ class NewStyleController extends Controller
             toastr()->error($message);
         }
         return redirect()->back()->withErrors($validator)->withInput();
-        
+
       }
 
     }
@@ -389,7 +389,15 @@ class NewStyleController extends Controller
         $stlimg   = $request->style_img;
       }
 
-      $data->stl_type         = $request->stl_order_type;
+        //$stl_type = $request->stl_order_type;
+
+      if ($request->stl_order_type == true){
+          $stl_type = 'D';
+      } else{
+          $stl_type = 'B';
+      }
+
+      $data->stl_type         = $stl_type;
       $data->unit_id          = auth()->user()->unit_permissions()[0];
       $data->mr_buyer_b_id    = $request->b_id;
       $data->prd_type_id      = $request->prd_type_id;
@@ -539,7 +547,7 @@ class NewStyleController extends Controller
         ->addIndexColumn()
         ->editColumn('stl_img_link', function ($data) {
           $imageUrl = style_picture($data);
-          return '<img src="'.url('/').$imageUrl.'" width="30" height="40">';
+          return '<img src="'.asset($imageUrl).'" width="30" height="40">';
         })
 
         // ->editColumn('stl_type', function ($data) {
@@ -564,7 +572,7 @@ class NewStyleController extends Controller
         ->editColumn('action', function ($data) use ($styleOrder) {
             $return = '<div class="btn-group" >';
             if(isset($styleOrder[$data->stl_id])){
-              $return .= "<a class=\"btn btn-sm btn-primary text-white\" data-toggle=\"tooltip\" title=\"Style Copy\">
+              $return .= "<a class=\"btn btn-sm btn-primary text-white\" data-toggle=\"tooltip\" title=\"Style Copy\" href='style_copy_search?style_no=$data->stl_id'>
                     <i class=\"ace-icon fa fa-copy bigger-120\"></i>
               </a>";
             }else{
@@ -572,13 +580,19 @@ class NewStyleController extends Controller
                     <i class=\"ace-icon fa fa-pencil bigger-120\"></i>
               </a>";
             }
-            if(!isset($styleOrder[$data->stl_id])){ 
+            if(!isset($styleOrder[$data->stl_id])){
               // BOM
               $bomStatus = ($data->bom_status == 1)?'Edit Style BOM':'Create Style BOM';
               $bomClass = ($data->bom_status == 1)?'btn-primary':'btn-warning';
               $return .= '<a href="'.url('merch/style/bom/'.$data->stl_id).'" class="btn btn-sm text-white '.$bomClass.'" data-toggle="tooltip" title="'.$bomStatus.'">
                   <i class="las la-clipboard-list"></i>
               </a>';
+
+              //View
+                $return .= '<a href="'.url('merch/style/style_profile/'.$data->stl_id).'" class="btn btn-sm text-white btn-info" data-toggle="tooltip" title="View Style">
+                  <i class="las la-eye"></i>
+              </a>';
+
               // Costing
               $costingStatus = ($data->bom_status == 1)?'Edit Style Costing':'Create Style Costing';
               $costingClass = ($data->costing_status == 1)?'btn-primary':'btn-warning';
@@ -995,7 +1009,7 @@ class NewStyleController extends Controller
             toastr()->error($message);
         }
         return redirect()->back()->withErrors($validator)->withInput();
-        
+
       }
 
     }
@@ -1021,9 +1035,15 @@ class NewStyleController extends Controller
       }
       $pdSizeList = DB::table('mr_product_type')->pluck('prd_type_id','prd_type_name');
 
+      //dd($request->stl_order_type);
+        if ($request->stl_order_type == 'on'){
+            $stl_type = 'D';
+        } else {
+            $stl_type = 'B';
+        }
       // Style Data Update
       $style_record = Style::where('stl_id', $request->style_id)->update([
-        /*'stl_type'         => $request->stl_order_type,*/
+        'stl_type'         => $stl_type,
         'mr_buyer_b_id'    => $request->b_id,
         'prd_type_id'      => $request->prd_type_id,
         'stl_product_name' => $this->quoteReplaceHtmlEntry($request->stl_product_name),
@@ -1730,7 +1750,7 @@ class NewStyleController extends Controller
           $this->logFileWrite("Style Bulk Created", $stl_id);
         }
         DB::commit();
-        
+
         return redirect('merch/style/style_new_edit/'.$stl_id)
         ->with('success', 'Bulk Created Successfully !!');
       } else {

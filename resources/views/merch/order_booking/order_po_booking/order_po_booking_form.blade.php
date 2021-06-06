@@ -62,7 +62,7 @@
 		                    </div>
 			        	</div>
 			            <div class="panel-body" style="height: 270px;">
-			                
+
 		                	<div class="form-group has-float-label select-search-group has-required" id="bookingList" style="display: none;">
 	                            {{ Form::select("booking_id", $poBookingList, null, ['class'=>'form-control', 'id'=>'booking_id', 'placeholder'=>'Select Booking']) }}
 			                        <label for="booking_id"> Booking List </label>
@@ -73,10 +73,10 @@
 		                            <label for="unit_id"> Unit </label>
 		                        </div>
 		                        <div class="form-group has-float-label has-required select-search-group">
-		                           
+
 		                             {{ Form::select("mr_buyer_b_id", $buyerOrderList, null, ['class'=>'form-control disabled-input', 'id'=>'buyer_id', 'placeholder'=>'Select Buyer']) }}
 		                            <label for="buyer_id"> Buyer </label>
-		                            
+
 		                        </div>
 		                        <div class="form-group has-float-label has-required select-search-group">
 		                            {{ Form::select("mr_supplier_sup_id", $supplierList, null, ['class'=>'form-control disabled-input', 'id'=>'mr_supplier_sup_id', 'placeholder'=>'Select Supplier']) }}
@@ -89,13 +89,13 @@
 		                        <div class="form-group has-float-label has-required select-search-group" id="orderList" style="display: none;">
 									{{ Form::select("order_id", $orderList, null, ['class'=>'form-control disabled-input', 'id'=>'order_id', 'placeholder'=>'Select Order']) }}
 		                            <label for="order_id"> Order List </label>
-		                            
+
 		                        </div>
 		                    </div>
-		                    
+
 		                </div>
 		            </div>
-        			
+
         		</div>
         		<div class="col-sm-9">
         			<div class="panel" id="orderSection">
@@ -117,16 +117,16 @@
 	                            </thead>
 	                            <tbody id="order_list2"></tbody>
 	                        </table>
-	                  
-				                        
+
+
 			            </div>
 			        </div>
-        			
+
         		</div>
         	</div>
-			        
 
-				    
+
+
 
 	        <div class="panel panel-info" id="aaa">
 	            <div class="panel-heading page-headline-bar"><h6> BOM</h6> </div>
@@ -152,7 +152,7 @@
 										<th>Qty</th>
 										<th>Req Qty</th>
 										<th>Total Value</th>
-										{{-- <th>Booking Qty</th> --}}
+										 <th>Booking Qty</th>
 									</tr>
 	                            </thead>
 	                            {{-- fabric category --}}
@@ -167,9 +167,9 @@
 	                </div>
 	            </div>
 	        </div>
-    		
+
         </form>
-      
+
     </div>
 </div>
 

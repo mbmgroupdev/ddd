@@ -61,33 +61,31 @@
                           <a href="#">Style</a>
                       </li>
                       <li class="active">Style Copy</li>
+
+                      <li class="top-nav-btn">
+                          <a class="btn btn-primary" href="{{ url('merch/style/style_list') }}"><i class="las la-list"></i> Style List</a>
+                      </li>
                   </ul><!-- /.breadcrumb -->
-       
+
               </div>
               <div class="panel">
-                <div class="panel-heading">
-                      <h6>Style Copy
-                          <div class="pull-right">
-                            
-                            <a class="btn btn-primary" href="{{ url('merch/style/style_list') }}"><i class="las la-list"></i> Style List</a>
-                            
-                        </div>
-                      </h6>
-                </div>
+
                 <div class="panel-body">
                   @include('inc/message')
                   <div class="style_section">
                     <div class="row" style="margin-top: 20px;">
                          <div class="offset-sm-1 form-group col-sm-8">
                             <form action="" class="form-horizontal row" method="get">
-                                <label class="col-sm-4 control-label no-padding-right" for="style_no" style="text-align: right;"> Style<span style="color: warning">&#42;</span> </label>
-                                <div class="col-sm-7">
+                                <div class="col-sm-12">
                                   <div class="row">
                                       <div class="col-sm-9">
-                                        {{ Form::select('style_no', $stylelist, Request::get('style_no'), ['placeholder'=>'Select Style', 'class'=> 'col-xs-12', 'id'=>"style_no", 'data-validation' => 'required']) }}
+                                              <div class="form-group has-float-label select-search-group has-required">
+                                                  {{ Form::select('style_no', $stylelist, Request::get('style_no'), ['placeholder'=>'Select Style', 'class'=> 'col-xs-12 form-control', 'id'=>"style_no", 'data-validation' => 'required']) }}
+                                                  <label for="style" >Style </label>
+                                              </div>
                                       </div>
                                       <div class="col-sm-3">
-                                        <button class="btn btn-info btn-sm pull-right" type="submit" style="border-radius: 5px;">
+                                        <button class="btn btn-primary btn-sm" type="submit" style="border-radius: 5px;">
                                             <i class="ace-icon fa fa-search bigger-110"></i> Search
                                         </button>
                                       </div>
@@ -97,7 +95,7 @@
                          </div>
                       </div>
                       @if (!empty(request()->has('style_no')))
-         
+
                         <div class="panel panel-success">
                             <div class="panel-heading">
                                 <div class="row no-padding no-margin">
@@ -105,7 +103,7 @@
 
                                     </div>
                                     <div class="col-sm-4 no-padding no-margin">
-                                         <center><span style="color: green; font-size: 14px;">Production Type {{ $style->stl_type}}</span></center>
+                                         <center><span style="color: green; font-size: 14px;">Production Type {{ ($style->stl_type == 'D' ? 'Development' : 'Bulk')}}</span></center>
                                     </div>
                                     <div class="col-sm-4 no-padding no-margin">
 

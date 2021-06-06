@@ -2,6 +2,8 @@
 @section('title', 'Style Edit')
 @section('main-content')
 @push('css')
+
+    <link href="{{asset('assets/css/bootstrap4-toggle.min.css')}}" rel="stylesheet" media="screen, print">
 <style>
   .ui-autocomplete {
     position: absolute;
@@ -64,6 +66,15 @@
 }
 .slide_upload::before{content: "+";position: absolute;top: 50%;color: rgb(8 155 171);left: 50%;font-size: 52px;margin-left: -17px;margin-top: -37px;}
 
+
+
+  .toggle.btn{
+      width: 12.1em !important;
+  }
+
+  .slow  .toggle-group { transition: left 0.7s; -webkit-transition: left 2s; }
+
+
 </style>
 @endpush
 <div class="main-content">
@@ -78,17 +89,18 @@
                 <a href="#">Style</a>
             </li>
             <li class="active">Style Edit</li>
-            <li>{{ $style->stl_type}}</li>
+            <li>{{ $style->stl_type == 'D' ? 'Development' : 'Bulk'}}</li>
             <li class="top-nav-btn">
                 <a class="btn btn-sm btn-primary" href="{{ url('merch/style/style_list') }}"><i class="las la-list"></i></a>
             </li>
           </ul><!-- /.breadcrumb -->
 
         </div>
+        {{-- -- --}}
         @include('inc/message')
         <div class="panel">
             <div class="panel-body">
-                
+
                 <div class="style_section">
                     {{ Form::open(["url" => "merch/style/style_update", "class"=>"form-horizontal", "files"=>true]) }}
                         @csrf
@@ -96,10 +108,10 @@
                        <input type="hidden" name="style_id" value="{{ $style->stl_id }}">
                         <div class="row">
                             <div class="col-sm-6">
-                                <input type="hidden" name="stl_order_type" id="inlineRadio1" value="Development" required="required" readonly>
-                                <span style="color: green">* Production Type ({{ $style->stl_type}})</span>
+{{--                                <input type="hidden" name="stl_order_type" id="inlineRadio1" value="Development" required="required" readonly>--}}
+                                <span style="color: green">* Production Type ({{ $style->stl_type == 'D' ? 'Development' : 'Bulk'}})</span>
                                 <div class="row mt-3">
-                                    
+
                                     <div class="col-sm-6" id="buyerSection">
 
                                         @php
@@ -136,7 +148,7 @@
 
                                         <div class="form-group has-float-label">
                                             <label for="se_id"> Season  </label>
-                                          
+
                                               <div class="row">
                                                   <div class="col-sm-9">
                                                     {{ Form::select('se_id', $season, $style->mr_season_se_id, ['placeholder'=>'Please Select season', 'id'=>'se_id', 'class'=> 'form-control  ', 'required' => 'required']) }}
@@ -145,7 +157,7 @@
                                                 <div class="col-sm-3 pl-0">
                                                     <input type="year" class=" form-control" id="year" name="stl_year" placeholder="Y" required="required" value="{{ date('Y') }}" autocomplete="off" onClick="this.select()">
                                                 </div>
-                                            </div> 
+                                            </div>
                                         </div>
 
                                         <div class="form-group has-float-label select-search-group has-required">
@@ -154,6 +166,11 @@
                                             <label for="gender"> Gender  </label>
 
                                         </div>
+
+                                        <div class="form-group">
+                                            <input type="checkbox" {{$style->stl_type == 'D' ? 'checked' : ''}} data-toggle="toggle" name="stl_order_type" data-on="Development" data-off="Bulk" data-onstyle="primary" data-offstyle="info">
+                                        </div>
+
                                         <div class="form-group">
                                             <button class="btn btn-success" type="submit">
                                                 Update  &nbsp;
@@ -191,8 +208,8 @@
                                             <label for="mr_sample_style"> Sample Type  </label>
 
                                         </div>
-                                        
-                                        
+
+
                                     </div>
                                 </div>
                             </div>
@@ -200,13 +217,14 @@
                                 <label> Image  </label>
                                 <div class="image-block mb-3">
                                     <div class="row" id="multi-image-div" style="padding:0;">
-                                        
+
                                         @php $cc = 0; @endphp
                                         @if(count($stlImageGallery)>0)
                                             @foreach($stlImageGallery as $image)
                                             @php $cc = $cc+1; @endphp
                                             <div class="col-sm-3 multi-image">
-                                                <button title="Remove this image!" type="button" class="fa fa-close close-button" onclick="removeImage({{ $image->id }},file_image_{{ $cc }})"></button>
+                                                {{-- <button title="Remove this image!" type="button" class="fa fa-close close-button" onclick="removeImage({{ $image->id }},file_image_{{ $cc }})"></button> --}}
+                                                <button title="Remove this image!" type="button" class="fa fa-close close-button" onclick="$(this).parent().remove()"></button>
                                                 <label class="slide_upload" for="file_image_{{ $cc }}">
                                                   <!--  -->
                                                   <img id="imagepreview_{{ $cc }}" src='{{ url($image->image) }}'>
@@ -228,13 +246,13 @@
                                         @else
                                             <div class="col-sm-3 multi-image">
                                                 <label class="slide_upload" for="file_image_0">
-                                                    <img id="imagepreview_0" src='{{asset('assets/files/style/placeholder.png')}}'>
+                                                    <img id="imagepreview_0" src='{{ asset($style->stl_img_link?$style->stl_img_link:'assets/images/avatars/profile-pic.jpg') }}'>
                                                 </label>
                                                 <input type="file" class="multi-image-input" id="file_image_0" name="style_img_n" onchange="readURL(this,this.id)" style="display:none">
                                                 <input type="hidden" class="setfile" name="style_img" value="/assets/files/style/placeholder.png">
                                             </div>
                                         @endif
-                                        
+
                                     </div>
                                 </div>
                                 <div class="core-selecting-area">
@@ -265,7 +283,7 @@
                                                     @endif
                                                 @endforeach
                                         </div>
-                                            
+
                                         </div>
                                     </div>
 
@@ -280,11 +298,11 @@
                                     </div>
                                 </div>
                             </div>
-                            
 
-                                
+
+
                         </div>
-                        
+
                     {{ Form::close() }}
                 </div>
             </div>
@@ -407,7 +425,7 @@
 
 
 <div class="modal right fade" id="operationModal" tabindex="-1" role="dialog" aria-labelledby="operationModal">
-  <div class="modal-dialog modal-lg right-modal-width" role="document" > 
+  <div class="modal-dialog modal-lg right-modal-width" role="document" >
     <div class="modal-content">
       <div class="modal-header">
         <a class="view prev_btn" data-toggle="tooltip" data-dismiss="modal" data-placement="top" title="" data-original-title="Back to Report">
@@ -422,7 +440,7 @@
         <div class="modal-content-result" id="operationModalBody"></div>
         <button type="button" id="operationModalDone" class="btn btn-primary btn-sm">Done</button>
       </div>
-      
+
     </div>
   </div>
 </div>
@@ -471,6 +489,7 @@
 @include('merch.modals.add_size_group')
 @include('merch.modals.add_wash')
 @push('js')
+<script src="{{asset('assets/js/bootstrap4-toggle.min.js')}}"></script>
 <script type="text/javascript">
     var url = "{{ url('/') }}";
 //autocomplete placement script
@@ -544,7 +563,7 @@ $(document).ready(function()
 });
     });
 
-   
+
     var loaded = false;
     $('#sizeGroupModalId').on('click', function() {
         var buyer = $("#b_id").val();
@@ -721,12 +740,12 @@ $(document).ready(function()
         });
     });
 
-   
+
      $("#b_id").on("change",function(){
 
         $("#addListToModal").html("<span>No Size group, Please Select Buyer</span>");
         $("#show_selected_size_group").html("");
-        
+
         var b_id = $(this).val();
         if(b_id != ''){
             // Action Element list
@@ -846,7 +865,7 @@ $(document).ready(function()
         var tr_end = 0;
         //-------- modal actions ------------------
         data += '<table class="table table-bordered" style="margin-bottom:0px;">';
-        
+
         data += '<tbody>';
         wmodal.find('.modal-body input[type=checkbox]').each(function(i,v) {
             if ($(this).prop("checked") == true) {
@@ -895,7 +914,7 @@ $(document).ready(function()
         var tr_end = 0;
         data += '<div class="row " style="padding-left: 15px;" >';
         smodal.find('.modal-body input[type=checkbox]').each(function(i,v) {
-           
+
             if ($(this).prop("checked") == true) {
                 data += '<div class="col-sm-2 text-center pr-2 pl-0"><div class="opr-item"><img style="width:45px;" src="'+$(this).data('img-src')+'"><br><span>'+$(this).data('name')+'</span></div>';
                 data+= '<input type="hidden" name="machine_id[]" value="'+$(this).val()+'">';

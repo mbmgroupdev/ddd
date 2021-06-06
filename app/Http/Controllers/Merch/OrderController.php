@@ -62,6 +62,8 @@ class OrderController extends Controller
 
             return view('merch.order.create', compact('style', 'season', 'productType', 'brand', 'unitList', 'buyerList', 'reservation'));
         }
+
+
         return view('merch.order.create');
     }
 
@@ -75,7 +77,7 @@ class OrderController extends Controller
     {
         $input = $request->all();
         $data['type'] = 'error';
-        
+
         $input['created_by'] = auth()->user()->id;
         if(!isset($input['hr_unit_id'])){
             $input['hr_unit_id'] = $input['unit_id'];
@@ -91,6 +93,7 @@ class OrderController extends Controller
         DB::beginTransaction();
         try {
 
+
             if($input['res_id'] == 0){
                 // check reservation exists
                 $getRes = Reservation::checkReservationExists($input);
@@ -102,10 +105,10 @@ class OrderController extends Controller
                 $resYearMonth = explode('-', $input['res_year_month']);
                 $input['res_month'] = $resYearMonth[1];
                 $input['res_year'] = $resYearMonth[0];
-                
+
                 $input['res_id'] = Reservation::create($input)->id;
             }
-            
+
             // check & create order base on mr_style_stl_id
             if($input['mr_style_stl_id'] == null && $input['mr_style_stl_id'] == ''){
                 DB::rollback();
@@ -125,7 +128,7 @@ class OrderController extends Controller
             $input['costing_status'] = 1;
             // order entry
             $input['order_code'] = make_order_number($input, $input['order_year']);
-            
+
             $checkOrder = OrderEntry::getCheckOrderExists($input);
             if($checkOrder == true){
                 DB::rollback();
@@ -147,7 +150,7 @@ class OrderController extends Controller
                 return $bomNCosting;
             });
             OrderBOM::insert($orderBOMCosting->toArray());
-            // style Special operation 
+            // style Special operation
             $getStlSP = OperationCost::getStyleIdWiseSpOperationInfo($input['mr_style_stl_id'], 2)->toArray();
 
             // order Special operation create
@@ -166,6 +169,11 @@ class OrderController extends Controller
             unset($ordOtherCosting['id']);
 
             OrderBomOtherCosting::insert($ordOtherCosting);
+
+            Style::where('stl_id', $request->mr_style_stl_id)->update([
+                'stl_type' => 'B',
+            ]);
+
 
             $data['message'] = "Order Entry Successfully.";
             $data['type'] = 'success';
@@ -255,7 +263,7 @@ class OrderController extends Controller
 
             $data['url'] = url()->previous();
             $data['message'] = "Order Successfully Update.";
-            
+
             DB::commit();
             $data['type'] = 'success';
             return response()->json($data);
@@ -286,7 +294,7 @@ class OrderController extends Controller
         $getSeason = season_by_id();
         $getBrand = brand_by_id();
         // return $getUnit;
-        
+
         $data = OrderEntry::getOrderListWithStyleResIdWise();
         $orderIds = collect($data)->pluck('order_id');
         $orderFOB = DB::table('mr_order_bom_other_costing')

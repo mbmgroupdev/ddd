@@ -23,7 +23,7 @@
     }
 </style>
 <div class="col-sm-12"><div class="checkbox">
-    @if(count($sizeList) > 0) 
+    @if(count($sizeList) > 0)
         @foreach ($sizeList as $key => $v)
             <label class="col-sm-12" style="padding:0px;">
                 <input name='sizeGroups[]' type='radio' id='sizeGroups-{{$key}}' class='ace-checkbox' value='{{$key}}'>
@@ -39,8 +39,9 @@
         @endforeach
     @else
         <div class="row">
-            <h4 class="center" style="padding: 15px;">No Size Group Found</h4>
+            <h4 style="margin-left: 10px;"  class="center" style="padding: 15px;">No Size Group Found</h4>
         </div>
     @endif
-    <button type="button" id="sizeGroupModalDone" class="btn btn-success btn-sm">Done</button>
+    <button style="margin-left: 10px; padding: 5px 10px" type="button" id="sizeGroupModalDone" class="btn btn-primary btn-sm">Done</button>
+</div>
 </div>

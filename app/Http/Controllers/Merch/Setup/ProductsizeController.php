@@ -154,7 +154,7 @@ class ProductsizeController extends Controller
       $data->size_grp_product_type  = $productType[$request->product_type];
       $data->size_grp_gender        = $request->gender;
       $data->size_grp_name          = $this->quoteReplaceHtmlEntry($request->sg_name);
-      $data->created_by             = auth()->user()->id;
+      //$data->created_by             = auth()->user()->id;
       $data->save();
 
       $last_id = $data->id;
@@ -177,7 +177,7 @@ class ProductsizeController extends Controller
       toastr()->error($bug);
       return back();
     }
-    
+
   }
 
 
