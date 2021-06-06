@@ -249,7 +249,7 @@ class SalesContractController extends Controller
 
 	# Sales Store
   	public function salesStore(Request $request){
-  		// dd($request->all());
+//  		 dd($request->all());
 
        	$validator= Validator::make($request->all(),[
             'buyer'               => 'required|max:11',
