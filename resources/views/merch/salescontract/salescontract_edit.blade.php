@@ -84,7 +84,7 @@
                                       </div>
                                       <div class="form-group has-float-label has-required">
                                             <input type="text" name="contract_value" id="contract_value"  placeholder="Enter" class="contract_value form-control"  data-validation ="required" value="{{$amend->contract_value}}"/>
-                                            <!-- <strong id="contract_value_suggestion"></strong> -->
+                                            <!-- <strong id="contract_value_suggestion"></strong> --> 
                                             <label for="contract_value" > Contract Value: </label>
                                       </div>
     
