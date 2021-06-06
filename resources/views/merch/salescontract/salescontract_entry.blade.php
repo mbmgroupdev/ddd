@@ -3,8 +3,13 @@
 @push('css')
     <style>
         input[type=text], input[type=number] {
-            padding: 4px !important;
+            padding: 10px !important;
         }
+
+        input[type="date" i] {
+    padding: 10px !important;
+    
+}
         @media only screen and (max-width: 767px) {
 
             .modal{padding-top: 50px;}
@@ -48,7 +53,7 @@
 
 
                     <form class="form-horizontal" role="form" method="post" action=" {{ url('merch/sales_contract/sales_contract_store') }}" enctype="multipart/form-data">
-                        {{ csrf_field() }}
+                        @csrf
                         <div class="row">
 
 
@@ -98,7 +103,7 @@
 
                                     <input type="text" name="contract_value"  value="" placeholder="Enter Value" id="contract_value" class="col-xs-12 form-control" autocomplete="off" data-validation ="required"/>
                                     <label for="contract_value" > Contract Value: </label>
-                                    <strong id="contract_value_suggestion"></strong>
+                                   <!-- <strong id="contract_value_suggestion"></strong> -->
                                 </div>
 
                                 <div class="form-group has-float-label">

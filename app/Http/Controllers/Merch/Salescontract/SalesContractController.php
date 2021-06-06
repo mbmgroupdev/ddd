@@ -249,7 +249,7 @@ class SalesContractController extends Controller
 
 	# Sales Store
   	public function salesStore(Request $request){
-//  		 dd($request->all());
+  		 //dd($request->all());
 
        	$validator= Validator::make($request->all(),[
             'buyer'               => 'required|max:11',
@@ -302,17 +302,33 @@ class SalesContractController extends Controller
 		        'expire_date'     => $request->exp_date,
 						'cm_sales_contract_id' => $last_id
 					]);
+
+						
 					if(!empty($request->order_id)){
 
-		             	for($i=0; $i<sizeof($request->order_id); $i++){
-		                  	SalesContractOrder::insert([
-		                      	'cm_sales_contract_id'     => $last_sales_id,
-		                      	'mr_order_entry_order_id'  => $request->order_id[$i],
-		                      	'contract_fob'     => ($request->new_fob[$i] != null)? $request->new_fob[$i]: 0,
-		                      	'contract_value'     => ($request->new_order_value[$i] != null)? $request->new_order_value[$i]:0,
-		                      	'cm_sales_contract_amend_id'  => $last_id
-		                  	]);
-		              	}
+						if($request->new_fob){
+							for($i=0; $i<sizeof($request->order_id); $i++){
+								SalesContractOrder::insert([
+									'cm_sales_contract_id'     => $last_sales_id,
+									'mr_order_entry_order_id'  => $request->order_id[$i],
+									'contract_fob'     => ($request->new_fob[$i] != null)? $request->new_fob[$i]: 0,
+									'contract_value'     => ($request->new_order_value[$i] != null)? $request->new_order_value[$i]:0,
+									'cm_sales_contract_amend_id'  => $last_id
+								]);
+							}
+						}else{
+							for($i=0; $i<sizeof($request->order_id); $i++){
+								SalesContractOrder::insert([
+									'cm_sales_contract_id'     => $last_sales_id,
+									'mr_order_entry_order_id'  => $request->order_id[$i],
+									'contract_fob'     => ($request->fob[$i] != null)? $request->fob[$i]: 0,
+									'contract_value'     => ($request->order_value[$i] != null)? $request->order_value[$i]:0,
+									'cm_sales_contract_amend_id'  => $last_id
+								]);
+							}
+						}
+
+		             	
 		            }
 
 		            DB::commit();

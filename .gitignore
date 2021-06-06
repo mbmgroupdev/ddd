@@ -13,3 +13,4 @@ yarn-error.log
 /.idea
 /app/Http/Controllers/riadTestController.php
 /public/assets/log.txt
+/public/assets/files/style
