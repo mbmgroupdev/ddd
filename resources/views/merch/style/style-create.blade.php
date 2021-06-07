@@ -190,7 +190,7 @@
                                         </div>
 
                                         <div class="form-group has-float-label select-search-group">
-                                            {{ Form::select('mr_sample_style', $sampleType, null, ['placeholder'=>'Please Select Sample Type', 'id'=>'mr_sample_style', 'class'=> 'form-control ']) }}
+                                            {{ Form::select('mr_sample_style[]', $sampleType, null, ['id'=>'mr_sample_style', 'class'=> 'form-control ','multiple']) }}
                                             <label for="mr_sample_style"> Sample Type  </label>
                                         </div>
                                     </div>
