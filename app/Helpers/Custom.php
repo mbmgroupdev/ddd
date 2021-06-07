@@ -348,9 +348,10 @@ class Custom
             $where['mr_supplier_sup_id'] = $supplierId;
         }
         $cosBookingList = [];
-        $cosBookingList = DB::table('mr_order_bom_costing_booking as a')
+        $cosBookingList = DB::table('mr_po_bom_costing_booking as a')
                     ->select([
                         'a.id as cosId',
+                        'a.order_id',
                         'a.mr_cat_item_id',
                         'b.item_name',
                         'c.sup_name'
@@ -398,14 +399,15 @@ class Custom
         }*/
         foreach($cosBookingList as $key=>$cosBooking) {
             //return $cosBooking;
-            $mr_order_bom_costing = OrderBomCostingBooking::where(['id' => $cosBooking->cosId])->first();
-            $reqQty = $mr_order_bom_costing->precost_req_qty;
-            //$mr_booking_qty = PoBookingDetail::where(['mr_po_booking_id' => $cosBooking->cosId])->sum('booking_qty')->groupBy('mr_po_booking_id')->first();
-            //return $mr_booking_qty;
-//            $booking_qty = $mr_booking_qty->aggregate;
-            $booking_qty = 0;
-           // $reqQty = 13;
-            $result[] = $cosBooking->sup_name.' ('.$cosBooking->item_name.')'.'~'.$booking_qty.'|'.$reqQty.'|0.00%';
+            $mr_order_bom_costing = DB::table('mr_po_bom_costing_booking')->where(['id' => $cosBooking->cosId])->first();
+            $precost_reqQty = $mr_order_bom_costing->precost_req_qty;
+            $mr_booking_qty = DB::table('mr_po_booking_detail')->select(DB::raw('sum(booking_qty) as booking_qty'), 'req_qty')->where(['mr_order_bom_costing_booking_id' => $cosBooking->cosId])->first();
+            //$mr_booking_qty = PoBookingDetail::where(['mr_order_bom_costing_booking_id' => $cosBooking->cosId])->first();
+            $booking_qty = $mr_booking_qty->booking_qty??0;
+            $reqQty = $mr_booking_qty->req_qty??$precost_reqQty;
+            $precentage = round(ceil((($booking_qty/$reqQty)*100)))??0;
+
+            $result[] = $cosBooking->sup_name.' ('.$cosBooking->item_name.')'.'~'.$booking_qty.'|'.$reqQty.'|'.$precentage.'%';
         }
         return $result;
     }
