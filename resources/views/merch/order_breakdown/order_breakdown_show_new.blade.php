@@ -1061,9 +1061,7 @@
                                                                    class="form-control global-qty" size="1"
                                                                    readonly="readonly">
                                                         @endif
-                                                            
-                                                           
-                                                            
+  
                                                             @endforeach
                                                         
                                                         @endforeach
