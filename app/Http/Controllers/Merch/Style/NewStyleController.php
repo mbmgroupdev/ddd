@@ -336,6 +336,7 @@ class NewStyleController extends Controller
   # store Style data
   public function store(Request $request)
   {
+    //dd($request->all()); 
 
     $request->merge([
       'mr_buyer_b_id' => $request->b_id,
@@ -412,6 +413,9 @@ class NewStyleController extends Controller
       $data->mr_brand_br_id   = $request->mr_brand_br_id;
       $data->created_by       = auth()->id();
       $data->gender           = $request->gender;
+      //$data->mr_sample_style   = $request->mr_sample_style;
+
+      //dd($data);
 
       if ($data->save()) {
         $stl_id = $data->id;
