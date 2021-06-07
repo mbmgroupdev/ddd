@@ -377,11 +377,11 @@ where b.order_id = a.order_id
 					}
 				}
 								// end loop one
-				if($orderIdOrderWise != null) {
+/*				if($orderIdOrderWise != null) {*/
 					return redirect('merch/order_po_booking')->with('success','Order place success.');
-				} else {
+/*				} else {
 					return redirect('merch/order_po_booking/confirm/'.$poTableId)->with('success','Please Confirm Purchase Order.');
-				}
+				}*/
 			} else {
 				return redirect()->back()->with('error','No purchase order found.');
 			}
