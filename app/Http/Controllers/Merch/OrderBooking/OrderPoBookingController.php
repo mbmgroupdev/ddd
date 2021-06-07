@@ -55,6 +55,25 @@ class OrderPoBookingController extends Controller
 	public function getSupOrderList(Request $request)
 	{
 
+/*	    $supplier_order_list = DB::select (DB::raw("select b.order_code,
+       c.item_name,
+       ms.sup_name,
+       a.precost_req_qty,
+       b.order_delivery_date,
+       a.order_id,
+       a.mr_supplier_sup_id,
+       b.unit_id
+From mr_order_bom_costing_booking  a ,
+          mr_order_entry  b,
+          mr_supplier ms ,
+          mr_cat_item  c
+where b.order_id = a.order_id
+  and c.id = a.mr_cat_item_id
+  and ms.sup_id=a.mr_supplier_sup_id
+  and a.mr_supplier_sup_id = ". $request->sup_id));
+
+        return ['result' => view('merch.order_booking.order_po_booking.ajax_get_supplier_order', compact('supplier_order_list'))->render()];*/
+
 		$team =[];
 
 		$unitId = $request->unit_id;
@@ -132,6 +151,7 @@ class OrderPoBookingController extends Controller
 		}
 
 		return ['orderList' => $orderList, 'result' => view("merch.order_booking.order_po_booking.ajax_get_supplier_order", compact('buyerOrderList','exOrderList','supId','orderId'))->render()];
+
 	}
 
 	public function showForm()
@@ -198,6 +218,7 @@ class OrderPoBookingController extends Controller
 
 	public function store(Request $request)
 	{
+	    //dd($request->all());
 		try {
 			$costingBookingIdList = $request->mr_order_bom_costing_booking_id;
 			$orderIdOrderWise = $request->order_id;
@@ -237,13 +258,14 @@ class OrderPoBookingController extends Controller
 					$poTableId = PoBooking::insertGetId($poTable);
 
 										// loop one
-					foreach($costingBookingIdList  as $costingBookingIdK=>$costingBookingId) {
+                    foreach($costingBookingIdList  as $costingBookingIdK=>$costingBookingId) {
 												// loop two
 						foreach($orderPoIdList[$costingBookingId] as $orderIdK=>$orderList) {
 														// loop three
 							foreach($orderIdList[$orderIdK][$supplier_id] as $poIdK=>$cosBookingIdList) {
 																// loop four
 								foreach($cosBookingIdList as $cosBookingIdListK=>$dependOn){
+/*
 									if($dependOn == 1) {
 																				// $result2[$cosBookingIdListK][$orderIdK][$poIdK][] = $dependOn;
 										if(!isset($result[$cosBookingIdListK][$supplier_id][$poIdK])) {
@@ -263,9 +285,6 @@ class OrderPoBookingController extends Controller
 													$poTableDetailC['created_by'] = auth()->user()->associate_id;
 													$result[$cosBookingIdListK][$supplier_id][$poIdK][] = $poTableDetailC;
 													PoBookingDetail::insert($poTableDetailC);
-													MrPoBomCostingBooking::where('id', $poIdK)->update([
-													    'booking_qty' => $poTableDetailC['booking_qty'],
-                                                    ]);
 												}
 											}
 																						// end isset two
@@ -326,9 +345,10 @@ class OrderPoBookingController extends Controller
 																						// end isset two
 										}
 																				// end isset one
-									} else if($dependOn == 0) {
+									} else if($dependOn == 0) {*/
 																				// $result2[$cosBookingIdListK][$orderIdK][$supplier_id][$poIdK][] = $dependOn;
-										if(!isset($result[$cosBookingIdListK][$supplier_id][$poIdK])) {
+
+                                    if(!isset($result[$cosBookingIdListK][$supplier_id][$poIdK])) {
 																				// isset one
 											$poTableDetailN['mr_order_entry_order_id'] = $orderIdK;
 											$poTableDetailN['mr_purchase_order_po_id'] = $poIdK;
@@ -343,7 +363,7 @@ class OrderPoBookingController extends Controller
 											PoBookingDetail::insert($poTableDetailN);
 										}
 																				// end isset one
-									}
+/*									}*/
 								}
 																// end loop four
 							}
