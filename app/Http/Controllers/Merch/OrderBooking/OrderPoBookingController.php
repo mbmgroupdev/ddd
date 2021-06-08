@@ -265,7 +265,7 @@ where b.order_id = a.order_id
 							foreach($orderIdList[$orderIdK][$supplier_id] as $poIdK=>$cosBookingIdList) {
 																// loop four
 								foreach($cosBookingIdList as $cosBookingIdListK=>$dependOn){
-/*
+
 									if($dependOn == 1) {
 																				// $result2[$cosBookingIdListK][$orderIdK][$poIdK][] = $dependOn;
 										if(!isset($result[$cosBookingIdListK][$supplier_id][$poIdK])) {
@@ -345,7 +345,7 @@ where b.order_id = a.order_id
 																						// end isset two
 										}
 																				// end isset one
-									} else if($dependOn == 0) {*/
+									} else if($dependOn == 0) {
 																				// $result2[$cosBookingIdListK][$orderIdK][$supplier_id][$poIdK][] = $dependOn;
 
                                     if(!isset($result[$cosBookingIdListK][$supplier_id][$poIdK])) {
@@ -363,7 +363,7 @@ where b.order_id = a.order_id
 											PoBookingDetail::insert($poTableDetailN);
 										}
 																				// end isset one
-/*									}*/
+									}
 								}
 																// end loop four
 							}
@@ -377,11 +377,11 @@ where b.order_id = a.order_id
 					}
 				}
 								// end loop one
-				if($orderIdOrderWise != null) {
+/*				if($orderIdOrderWise != null) {*/
 					return redirect('merch/order_po_booking')->with('success','Order place success.');
-				} else {
+/*				} else {
 					return redirect('merch/order_po_booking/confirm/'.$poTableId)->with('success','Please Confirm Purchase Order.');
-				}
+				}*/
 			} else {
 				return redirect()->back()->with('error','No purchase order found.');
 			}
@@ -1722,11 +1722,10 @@ where b.order_id = a.order_id
 		->select([
 			'a.po_id',
 			'a.mr_order_entry_order_id',
-			'b.clr_id',
-			'b.po_sub_style_id',
+			'a.clr_id',
 			'b.mr_product_size_id'
 		])
-		->join('mr_po_sub_style as b', function($query) {
+		->join('mr_po_size_qty as b', function($query) {
 			$query->on('b.po_id','=','a.po_id');
 		})
 		->where('a.mr_order_entry_order_id',$orderId)
@@ -1750,20 +1749,20 @@ where b.order_id = a.order_id
 
 		foreach($poDataList as $key=>$poDataL) {
 
-            $poSizeAr[$poDataL->po_sub_style_id] = DB::table('mr_po_size_qty')
-			->where('po_id',$poDataL->po_sub_style_id)->get();
+            $poSizeAr[$poDataL->po_id] = DB::table('mr_po_size_qty')
+			->where('po_id',$poDataL->po_id)->get();
 
-            $poColorAr[$poDataL->po_sub_style_id] = DB::table('mr_purchase_order')
-			->where('po_id',$poDataL->po_sub_style_id)->get();
+            $poColorAr[$poDataL->po_id] = DB::table('mr_purchase_order')
+			->where('po_id',$poDataL->po_id)->get();
 
-			foreach($poSizeAr[$poDataL->po_sub_style_id] as $key1=>$poSizeSingle) {
-				$poSizeQtyList[$poDataL->clr_id][$poDataL->po_sub_style_id][$key][$poSizeSingle->mr_product_size_id] = $poSizeSingle->qty;
+			foreach($poSizeAr[$poDataL->po_id] as $key1=>$poSizeSingle) {
+				$poSizeQtyList[$poDataL->clr_id][$poDataL->po_id][$key][$poSizeSingle->mr_product_size_id] = $poSizeSingle->qty;
 				$poSizeQtyListC[$poDataL->po_id][$poDataL->clr_id][$poDataL->po_id][$key][$poSizeSingle->mr_product_size_id] = $poSizeSingle->qty;
 				$poSizeQtyListS[$poDataL->po_id][$poSizeSingle->mr_product_size_id][$key] = $poSizeSingle->qty;
 			}
 
-			foreach($poColorAr[$poDataL->po_sub_style_id] as $key1=>$poColorSingle) {
-				$poColorQtyList[$poDataL->clr_id][$poDataL->po_sub_style_id][$key] = $poColorSingle->po_qty;
+			foreach($poColorAr[$poDataL->po_id] as $key1=>$poColorSingle) {
+				$poColorQtyList[$poDataL->clr_id][$poDataL->po_id][$key] = $poColorSingle->po_qty;
 				$poColorQtyListC[$poDataL->po_id][$poDataL->clr_id][$poDataL->po_id][$key] = $poColorSingle->po_qty;
 			}
 		}
@@ -1772,9 +1771,9 @@ where b.order_id = a.order_id
 			if($bom->po_po_id == null) {
 				foreach($poDataList as $key=>$poDataL) {
 					$poSizeArN[$bom->order_id][$key] = DB::table('mr_po_size_qty')
-					->where('mr_po_sub_style_id',$poDataL->po_sub_style_id)->get();
+					->where('po_id',$poDataL->po_id)->get();
 					$poColorArN[$bom->order_id][$key] = DB::table('mr_purchase_order')
-					->where('po_id',$poDataL->po_sub_style_id)->get();
+					->where('po_id',$poDataL->po_id)->get();
 					foreach($poSizeArN[$bom->order_id][$key] as $key1=>$orderSizeSingle) {
 						$poSizeQtyListN[$bom->order_id][$key][$key1] = $orderSizeSingle->qty;
 						$poSizeQtyListCN[$bom->order_id][$poDataL->clr_id][$orderSizeSingle->mr_product_size_id][$key] = $orderSizeSingle->qty;
@@ -1802,7 +1801,7 @@ where b.order_id = a.order_id
 		$itemUnique = array_unique($bomsItem);
 		$catCount = array_count_values($bomsCat);
 
-		if($flag == 'insert') {
+        if($flag == 'insert') {
 		return view('merch.order_booking.order_po_booking.ajax_get_supplier_item',
 				compact('order','boms','colors','sizes','care_label','filter','poSizeQtyList','poSizeQtyListC','poSizeQtyListS','poList', 'itemUnique', 'catCount','poSizeQtyListN','poSizeQtyListCN','poSizeQtyListSN','poColorQtyList','poColorQtyListC','poColorQtyListN','poColorQtyListCN'))->render();
 		}

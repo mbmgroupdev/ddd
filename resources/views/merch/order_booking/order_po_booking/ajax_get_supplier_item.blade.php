@@ -26,10 +26,10 @@
                         }
                     @endphp
                     {{-- color dependancy --}}
-{{--                    @if($bom->depends_on == 1)
+                    @if($bom->depends_on == 1)
                         @foreach($colors as $color)
                             @if(in_array($color->clr_id, $color_ids))
-                                --}}{{-- 0 check --}}{{--
+
                                 @php
                                     $posSubTotalQty = 0;
                                     if(isset($poSizeQtyListC[$poSingle->po_id][$color->clr_id][$poSingle->po_id])) {
@@ -37,8 +37,9 @@
                                             $posSubTotalQty += array_sum($pos_value);
                                         }
                                     }
+
                                 @endphp
-                                --}}{{-- 0 check --}}{{--
+
                                 @if($posSubTotalQty != 0)
                                     <tr style="background-color: {{ $poTrStyle }}" class="tr_order_id_{{ $bom->order_id }}">
                                         <td class="vertical-align-center order-code-class">{{ $order->order_code }}</td>
@@ -64,10 +65,10 @@
                                             {{$color->clr_name}}
                                             <input type="hidden" value="{{ $color->clr_id }}" name="mr_material_color_clr_id[{{ $bom->id }}][{{ $bom->order_id }}][{{$bom->sup_id}}][{{ $poSingle->po_id }}][{{$color->clr_id}}]" class="color_rm_class {{ $bom->id.$bom->order_id.$poSingle->po_id.$color->clr_id }}" readonly="readonly">
                                         </td>
-                                        --}}{{-- size input --}}{{--
+
                                         <td></td>
 
-                                        <!--qty input field-->
+
                                         <td class="text-custom-style">
                                             @php
                                                 $posSubTotalQty = 0;
@@ -99,10 +100,10 @@
                                             @endphp
                                             {{$posSubTotalQty}}
                                            <input type="hidden" value="{{ $posSubTotalQty }}" name="req_qty[{{ $bom->id }}][{{ $bom->order_id }}][{{$bom->sup_id}}][{{ $poSingle->po_id }}][{{$color->clr_id}}]" class="form-control rqty_rm_class {{$bom->id.$bom->order_id.$poSingle->po_id}}" readonly="readonly">
---}}{{--                                           <input type="hidden" value="{{ $bom->booking_qty }}" name="booking_qty[{{ $bom->id }}][{{ $bom->order_id }}][{{$bom->sup_id}}][{{ $poSingle->po_id }}][{{$color->clr_id}}]" class="form-control rqty_rm_class {{$bom->id.$bom->order_id.$poSingle->po_id}}" readonly="readonly">--}}{{--
+{{--                                          <input type="hidden" value="{{ $bom->booking_qty }}" name="booking_qty[{{ $bom->id }}][{{ $bom->order_id }}][{{$bom->sup_id}}][{{ $poSingle->po_id }}][{{$color->clr_id}}]" class="form-control rqty_rm_class {{$bom->id.$bom->order_id.$poSingle->po_id}}" readonly="readonly">--}}
                                         </td>
 
-                                        <!--total value input field-->
+
                                         <td class="text-custom-style">
                                             @php $r_qtyF = 0; @endphp
                                             @php
@@ -111,7 +112,8 @@
                                             @endphp
                                             @php
                                                 $posSubTotalQty = 0;
-                                                if(isset($poColorQtyListC[$poSingle->po_id][$color->clr_id][$poSingle->po_id])) {
+
+if(isset($poColorQtyListC[$poSingle->po_id][$color->clr_id][$poSingle->po_id])) {
                                                     foreach($poColorQtyListC[$poSingle->po_id][$color->clr_id][$poSingle->po_id] as $pos_id=>$pos_value) {
                                                         $posSubTotalQty += $pos_value;
                                                     }
@@ -122,14 +124,16 @@
                                             {{$posSubTotalQty}}
                                            <input type="hidden" value="{{ $posSubTotalQty }}" name="total_value[{{ $bom->id }}][{{ $bom->order_id }}][{{$bom->sup_id}}][{{ $poSingle->po_id }}][{{$color->clr_id}}]" class="form-control tvlu_rm_class {{$bom->id.$bom->order_id.$poSingle->po_id.$color->clr_id}}" readonly="readonly">
                                         </td>
+                                        <td><input type="text" value="{{ $bom->booking_qty }}" name="booking_qty[{{ $bom->id }}][{{ $bom->order_id }}][{{$bom->sup_id}}][{{ $poSingle->po_id }}][{{$color->clr_id}}]" class="form-control rqty_rm_class {{$bom->id.$bom->order_id.$poSingle->po_id}}"></td>
                                     </tr>
                                 @endif
                             @endif
                         @endforeach
-                    --}}{{-- size dependancy --}}{{--
+
                     @elseif($bom->depends_on == 2)
+
                         @foreach($sizes as $size)
-                            --}}{{-- 0 check --}}{{--
+
                             @php $poSizeQty = 0;
                                 if(isset($poSizeQtyListS[$poSingle->po_id])){
                                     if(isset($poSizeQtyListS[$poSingle->po_id][$size->id])){
@@ -137,7 +141,7 @@
                                     }
                                 }
                             @endphp
-                            --}}{{-- 0 check --}}{{--
+
                             @if($poSizeQty != 0)
                                 <tr style="background-color: {{ $poTrStyle }}" class="tr_order_id_{{ $bom->order_id }}">
                                     <td class="vertical-align-center order-code-class">{{ $order->order_code }}</td>
@@ -159,7 +163,7 @@
                                     <input type="hidden" name="mr_supplier[{{ $bom->sup_id }}]" value="{{ $bom->sup_id }}">
 
                                     <!--COlor input field-->
-                                    <td>erettgrrhthryh</td>
+                                    <td></td>
 
                                     <!--size input field-->
                                     <td>
@@ -219,15 +223,15 @@
                                         {{$poSizeQty}}
                                         <input type="hidden" name="total_value[{{ $bom->id }}][{{ $bom->order_id }}][{{$bom->sup_id}}][{{ $poSingle->po_id }}][{{$size->id}}]" value="{{ $poSizeQty }}" class="form-control global_total {{ $bom->po_no!=null?'inputBgLightGolder':'inputBgLight' }} tvlu_rm_class {{$bom->id.$bom->order_id.$poSingle->po_id.$size->id}}" size="1" readonly="readonly">
                                     </td>
-                                    <td>aosidhfoashdf</td>
+                                    <td><input type="text" value="{{ $bom->booking_qty }}" name="booking_qty[{{ $bom->id }}][{{ $bom->order_id }}][{{$bom->sup_id}}][{{ $poSingle->po_id }}][{{$size->id}}]" class="form-control rqty_rm_class {{$bom->id.$bom->order_id.$poSingle->po_id}}"></td>
                                 </tr>
                             @endif
                         @endforeach
-                    --}}{{-- color + size dependancy --}}{{--
+
                     @elseif($bom->depends_on == 3)
                         @foreach($care_label as $color)
                             @if(in_array($color->clr_id, $color_ids))
-                                --}}{{-- 0 check --}}{{--
+
                                 @php
                                     $posSubTotalQtyCS = 0;
                                     if(isset($poSizeQtyListC[$poSingle->po_id][$color->clr_id])){
@@ -240,7 +244,7 @@
                                         }
                                     }
                                 @endphp
-                                --}}{{-- 0 check --}}{{--
+
                                 @if($posSubTotalQtyCS != 0)
                                     <tr style="background-color: {{ $poTrStyle }}" class="tr_order_id_{{ $bom->order_id }}">
                                         <td class="vertical-align-center order-code-class">{{ $order->order_code }}</td>
@@ -340,14 +344,14 @@
                                             {{$posSubTotalQtyCS}}
                                             <input type="hidden" value="{{ $posSubTotalQtyCS }}" name="total_value[{{ $bom->id }}][{{ $bom->order_id }}][{{$bom->sup_id}}][{{ $poSingle->po_id }}][{{$color->clr_id}}][{{$color->product_size_id}}]" class="form-control global_totals {{ $bom->po_no!=null?'inputBgLightGolder':'inputBgLight' }} tvlu_rm_class {{$bom->id.$bom->order_id.$poSingle->po_id.$color->clr_id.$color->product_size_id}}" size="1" readonly="readonly">
                                         </td>
-                                        <td>asdfasdf</td>
+                                        <td><input type="text" value="{{ $bom->booking_qty }}" name="booking_qty[{{ $bom->id }}][{{ $bom->order_id }}][{{$bom->sup_id}}][{{ $poSingle->po_id }}][{{$color->clr_id}}][{{$size->id}}]" class="form-control rqty_rm_class {{$bom->id.$bom->order_id.$poSingle->po_id}}"></td>
                                     </tr>
                                 @endif
                             @endif
-                        @endforeach--}}
+                        @endforeach
+
                     {{-- no dependancy --}}
-                    {{--@elseif($bom->depends_on == 0)--}}
-                        {{-- 0 check --}}
+@elseif($bom->depends_on == 0)
                         @php
                             if($bom->po_no != null) {
                                 $noDependTotalQty = 0;
@@ -477,7 +481,7 @@
                                 <td><input type="text"  name="booking_qty[{{ $bom->id }}][{{ $bom->order_id }}][{{$bom->sup_id}}][{{ $poSingle->po_id }}][{{0}}]" class="form-control rqty_rm_class {{$bom->id.$bom->order_id.$poSingle->po_id}}"></td>
                             </tr>
                         @endif
-                    {{--@endif--}}
+                    @endif
                     @php $itemIndex++; @endphp
                 @endif
             @endif
